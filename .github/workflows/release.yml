@@ -1,0 +1,67 @@
+name: Publish Foundry release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Validate, package, and publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v4
+
+      - name: Validate tag and module manifest
+        run: node .github/scripts/validate-release.mjs
+
+      - name: Resolve release filenames
+        id: metadata
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "archive=olegurps-qol-v${VERSION}.zip" >> "${GITHUB_OUTPUT}"
+
+      - name: Build release assets
+        shell: bash
+        run: |
+          mkdir -p dist
+          git archive --format=zip --output="dist/${{ steps.metadata.outputs.archive }}" HEAD
+          cp module.json dist/module.json
+
+      - name: Verify release archive
+        shell: bash
+        run: |
+          ARCHIVE="dist/${{ steps.metadata.outputs.archive }}"
+          unzip -t "$ARCHIVE"
+          unzip -Z1 "$ARCHIVE" > dist/archive-entries.txt
+
+          grep -qx "module.json" dist/archive-entries.txt
+          grep -qx "scripts/main.js" dist/archive-entries.txt
+          grep -q "^packs/macros/" dist/archive-entries.txt
+          grep -q "^assets/" dist/archive-entries.txt
+
+          if grep -Eq '(^|/)(\.git|\.github|node_modules|dist|release)(/|$)|(^|/)AGENTS\.md$|\.(bak|backup|tmp)$|~$' dist/archive-entries.txt; then
+            echo "Development-only files found in release archive"
+            exit 1
+          fi
+
+          if grep -q "^olegurps-qol/" dist/archive-entries.txt; then
+            echo "Unexpected top-level olegurps-qol directory found in release archive"
+            exit 1
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: OleGURPS QOL v${{ steps.metadata.outputs.version }}
+          generate_release_notes: true
+          make_latest: true
+          files: |
+            dist/module.json
+            dist/${{ steps.metadata.outputs.archive }}

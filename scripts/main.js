@@ -1,0 +1,25 @@
+import { openAmmoManager } from "./tools/ammo.js";
+import { openFrightCheck } from "./tools/fright.js";
+import { openReactionRoll } from "./tools/reaction.js";
+import { openCriticalTables } from "./tools/critical.js";
+import { openFallingDamage } from "./tools/falling.js";
+
+const MODULE_ID = "olegurps-qol";
+
+const api = {
+  ammo: { open: openAmmoManager },
+  fright: { open: openFrightCheck },
+  reaction: { open: openReactionRoll },
+  critical: { open: openCriticalTables },
+  falling: { open: openFallingDamage }
+};
+
+Hooks.once("init", () => {
+  globalThis.OleGURPSQOL = api;
+});
+
+Hooks.once("ready", () => {
+  const module = game.modules.get(MODULE_ID);
+  if (module) module.api = api;
+  game.olegurpsQOL = api;
+});

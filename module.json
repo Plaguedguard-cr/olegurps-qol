@@ -1,0 +1,42 @@
+{
+  "id": "olegurps-qol",
+  "title": "OleGURPS QOL",
+  "description": "Набор инструментов качества жизни для GURPS Game Aid: оружие и патроны, проверка страха, реакции, критические таблицы и урон от падения.",
+  "version": "0.1.0",
+  "authors": [
+    { "name": "Олег" }
+  ],
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14"
+  },
+  "esmodules": [
+    "scripts/main.js"
+  ],
+  "packs": [
+    {
+      "name": "macros",
+      "label": "Macro",
+      "system": "gurps",
+      "path": "packs/macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OWNER",
+        "TRUSTED": "OWNER",
+        "ASSISTANT": "OWNER",
+        "GAMEMASTER": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "OleGURPS QOL",
+      "sorting": "a",
+      "color": "#9b1535",
+      "packs": ["macros"]
+    }
+  ],
+  "url": "https://github.com/Plaguedguard-cr/olegurps-qol",
+  "manifest": "https://github.com/Plaguedguard-cr/olegurps-qol/releases/latest/download/module.json",
+  "download": "https://github.com/Plaguedguard-cr/olegurps-qol/releases/download/v0.1.0/olegurps-qol-v0.1.0.zip"
+}

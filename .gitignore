@@ -1,0 +1,31 @@
+# Local editor and operating-system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Secrets and local credentials
+.env
+.env.*
+*.pem
+*.key
+credentials.json
+
+# Dependencies and generated release output
+node_modules/
+dist/
+release/
+/*.zip
+
+# Temporary and backup files
+*.tmp
+*.bak
+*.backup
+*~
+/logs/
+/*.log
+
+# Foundry user data must never be committed here
+/worlds/
+/userdata/
+/backups/
