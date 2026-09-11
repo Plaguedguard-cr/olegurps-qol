@@ -3,6 +3,7 @@ import { openFrightCheck } from "./tools/fright.js";
 import { openReactionRoll } from "./tools/reaction.js";
 import { openCriticalTables } from "./tools/critical.js";
 import { openFallingDamage } from "./tools/falling.js";
+import { openExplosionFragmentation } from "./tools/explosion-fragmentation.js";
 
 const MODULE_ID = "olegurps-qol";
 
@@ -11,7 +12,8 @@ const api = {
   fright: { open: openFrightCheck },
   reaction: { open: openReactionRoll },
   critical: { open: openCriticalTables },
-  falling: { open: openFallingDamage }
+  falling: { open: openFallingDamage },
+  explosion: { open: openExplosionFragmentation }
 };
 
 Hooks.once("init", () => {

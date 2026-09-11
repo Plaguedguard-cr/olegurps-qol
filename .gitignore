@@ -29,3 +29,6 @@ release/
 /worlds/
 /userdata/
 /backups/
+
+# Imported macro source
+/Explosion-Fragmentation.txt
