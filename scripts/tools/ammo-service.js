@@ -77,6 +77,9 @@ export class AmmoService {
     const allocated = this.sumMagazines(weapon);
     const storedTotal = parseNumber(weapon.totalAmmo, Number.NaN);
     weapon.totalAmmo = Number.isFinite(storedTotal) ? clampInteger(storedTotal, 0) : allocated;
+    const governingSpecialty = String(weapon.governingSpecialty ?? "").trim();
+    if (governingSpecialty) weapon.governingSpecialty = governingSpecialty;
+    else delete weapon.governingSpecialty;
     delete weapon.ammoRef;
     return weapon;
   }

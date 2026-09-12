@@ -39,6 +39,22 @@ const FIRE_PREPARATION_CSS = `
   }
 
   .gam-fire-summary-main { min-width: 0; }
+  .gam-fire-governing-skill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    margin-top: 5px;
+    font-size: 0.86em;
+    color: rgba(230, 224, 216, 0.82);
+  }
+  .gam-fire-governing-skill select {
+    width: auto;
+    min-width: 120px;
+    max-width: 220px;
+    height: 26px;
+    margin: 0;
+  }
   .gam-fire-summary h3 { margin: 0 0 4px; }
   .gam-fire-summary p { margin: 0; opacity: 0.82; }
   .gam-fire-attack-stats {
@@ -423,10 +439,18 @@ const FIRE_PREPARATION_CSS = `
   }
 
   .gam-hit-row-penalty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 3px;
     min-width: 26px;
     text-align: right;
     white-space: nowrap;
   }
+  .gam-hit-row-penalty-base.has-ta { color: #e45b64; }
+  .gam-hit-row-penalty-arrow { opacity: 0.72; }
+  .gam-hit-row-penalty-effective { color: #67c985; }
+  .gam-hit-row-ta { font-size: 0.72em; color: #67c985; }
 
   .gam-hit-row.is-hovered {
     background: color-mix(in srgb, var(--zone-color) 28%, transparent);
@@ -503,7 +527,7 @@ export class FirePreparationApp extends ApplicationV2 {
     position: { width: 1120, height: "auto" }
   };
 
-  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, beamWeapon = false, targetingService, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateFireMode, calculateEffectiveSkill, onConfirm, onClose }, options = {}) {
+  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateFireMode, calculateEffectiveSkill, onGoverningSpecialtyChange, onConfirm, onClose }, options = {}) {
     super({
       ...options,
       id: options.id ?? (mode === "standalone" ? "olegurps-fire-control-standalone" : `olegurps-fire-preparation-${token.id}-${weapon.id}`),
@@ -518,6 +542,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this.recommendation = recommendation;
     this.beamWeapon = beamWeapon;
     this.targetingService = targetingService;
+    this.targetedAttackContext = targetedAttackContext;
     this.maximumShots = maximumShots;
     this.rateOfFireProfile = rateOfFireProfile;
     this.calculateShotLimits = calculateShotLimits;
@@ -526,16 +551,23 @@ export class FirePreparationApp extends ApplicationV2 {
     this.calculateBracingBonus = calculateBracingBonus;
     this.calculateFireMode = calculateFireMode;
     this.calculateEffectiveSkill = calculateEffectiveSkill;
+    this.governingSpecialtyChangeCallback = onGoverningSpecialtyChange;
     this.confirmCallback = onConfirm;
     this.closeCallback = onClose;
     const defaultHitLocation = targetingService.getDefaultSelection();
     const recommendedRangeIndex = Number.isInteger(recommendation?.rangeIndex) ? recommendation.rangeIndex : null;
     const initialRofMode = rateOfFireProfile?.type === "full-auto" ? "0" : null;
+    const savedGoverningSpecialty = String(initialGoverningSpecialty ?? "").trim();
+    const governingSpecialty = targetedAttackContext?.automaticSpecialty ??
+      (targetedAttackContext?.specialtyOptions.some(option => option.value === savedGoverningSpecialty)
+        ? savedGoverningSpecialty
+        : "");
     this.fireState = {
       skillLevel: "", acc: "", bulk: "", rcl: "", halfd: "",
       shotgun: false,
       projectileMultiplier: "",
       shots: "",
+      governingSpecialty,
       rofMode: initialRofMode,
       manualModifier: "",
       aimSeconds: "",
@@ -627,6 +659,8 @@ export class FirePreparationApp extends ApplicationV2 {
     if (!(root instanceof HTMLElement)) return;
     this.fireState.shots = root.querySelector('[name="shots"]')?.value ?? "";
     this.fireState.rofMode = root.querySelector('[name="rofMode"]')?.value ?? this.fireState.rofMode;
+    this.fireState.governingSpecialty = root.querySelector('[name="governingSpecialty"]')?.value ??
+      this.fireState.governingSpecialty;
     this.fireState.manualModifier = root.querySelector('[name="manualModifier"]')?.value ?? "";
     this.fireState.aimSeconds = root.querySelector('[name="aimSeconds"]')?.value ?? "";
     this.fireState.braced = !!root.querySelector('[name="braced"]')?.checked;
@@ -662,6 +696,7 @@ export class FirePreparationApp extends ApplicationV2 {
     return {
       shots: this._getShotsValue(),
       rofMode: this.fireState.rofMode,
+      governingSpecialty: this.fireState.governingSpecialty,
       shotgun: this.fireState.shotgun,
       projectileMultiplier: this.fireState.projectileMultiplier,
       manualModifier: this.fireState.manualModifier,
@@ -915,6 +950,7 @@ export class FirePreparationApp extends ApplicationV2 {
       region.classList.toggle("is-selected", selected);
       region.setAttribute("aria-pressed", String(selected));
     }
+    this._updateTargetedAttackPreview();
     this._updateSkillPreview();
   }
 
@@ -961,6 +997,19 @@ export class FirePreparationApp extends ApplicationV2 {
     this._selectHitLocation(control.dataset.hitZoneId, control.dataset.hitRegionId ?? null);
   }
 
+  _persistGoverningSpecialty(value) {
+    try {
+      const pending = this.governingSpecialtyChangeCallback?.(value);
+      pending?.catch?.(error => {
+        console.error("Не удалось сохранить governing Guns specialty:", error);
+        ui.notifications.error("Не удалось сохранить выбранный governing Guns specialty.");
+      });
+    } catch (error) {
+      console.error("Не удалось сохранить governing Guns specialty:", error);
+      ui.notifications.error("Не удалось сохранить выбранный governing Guns specialty.");
+    }
+  }
+
   _onInput(event) {
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
@@ -991,6 +1040,12 @@ export class FirePreparationApp extends ApplicationV2 {
       }
     }
     else if (field.name === "rofMode") this.fireState.rofMode = field.value;
+    else if (field.name === "governingSpecialty") {
+      const changed = this.fireState.governingSpecialty !== field.value;
+      this.fireState.governingSpecialty = field.value;
+      this._updateTargetedAttackPreview();
+      if (changed) this._persistGoverningSpecialty(field.value);
+    }
     else if (field.name === "manualModifier") this.fireState.manualModifier = field.value;
     else if (field.name === "aimSeconds") {
       const seconds = Number(String(field.value).replace(",", "."));
@@ -1076,11 +1131,59 @@ export class FirePreparationApp extends ApplicationV2 {
     return `<polygon class="gam-hit-region-shape" points="${points}"></polygon>`;
   }
 
+  _formatModifier(value) {
+    const number = Math.trunc(Number(value) || 0);
+    return number >= 0 ? `+${number}` : String(number);
+  }
+
+  _getTargetedAttack(zone, fireState = this.fireState) {
+    return this.targetedAttackContext?.resolve({
+      specialty: fireState.governingSpecialty,
+      target: zone?.id,
+      basePenalty: zone?.penalty
+    }) ?? null;
+  }
+
+  _buildHitLocationPenalty(zone, fireState = this.fireState) {
+    const base = this._formatModifier(zone?.penalty);
+    const targetedAttack = this._getTargetedAttack(zone, fireState);
+    if (!targetedAttack) return `<span class="gam-hit-row-penalty-base">${base}</span>`;
+    return `
+      <span class="gam-hit-row-penalty-base has-ta">${base}</span>
+      <span class="gam-hit-row-penalty-arrow" aria-hidden="true">→</span>
+      <span class="gam-hit-row-penalty-effective">${this._formatModifier(targetedAttack.effectivePenalty)}</span>
+      <span class="gam-hit-row-ta">TA</span>
+    `;
+  }
+
+  _updateTargetedAttackPreview() {
+    for (const row of this.element?.querySelectorAll(".gam-hit-row[data-hit-zone-id]") ?? []) {
+      const zone = this.targetingService.getZone(row.dataset.hitZoneId);
+      const penalty = row.querySelector("[data-hit-penalty]");
+      if (zone && penalty) penalty.innerHTML = this._buildHitLocationPenalty(zone);
+    }
+  }
+
+  _buildGoverningSkillSelector(fireState) {
+    if (this.mode !== "weapon" || !this.targetedAttackContext?.requiresSelection) return "";
+    const options = this.targetedAttackContext.specialtyOptions.map(option =>
+      `<option value="${escapeHTML(option.value)}" ${fireState.governingSpecialty === option.value ? "selected" : ""}>Guns (${escapeHTML(option.label)})</option>`
+    ).join("");
+    return `
+      <label class="gam-fire-governing-skill">
+        <span>Governing skill:</span>
+        <select name="governingSpecialty" required aria-label="Governing Guns specialty">
+          <option value="">Выберите Guns specialty</option>
+          ${options}
+        </select>
+      </label>
+    `;
+  }
+
   _buildHitLocationContent(fireState) {
     const selection = fireState.hitLocation;
     const rows = this.targetingService.zones.map(zone => {
       const selected = selection.zoneId === zone.id;
-      const penalty = zone.penalty >= 0 ? `+${zone.penalty}` : String(zone.penalty);
       const disabled = !zone.available;
       return `
         <button
@@ -1095,7 +1198,7 @@ export class FirePreparationApp extends ApplicationV2 {
         >
           <span class="gam-hit-row-color" aria-hidden="true"></span>
           <span class="gam-hit-row-label">${escapeHTML(zone.label)}</span>
-          <strong class="gam-hit-row-penalty">${penalty}</strong>
+          <strong class="gam-hit-row-penalty" data-hit-penalty>${this._buildHitLocationPenalty(zone, fireState)}</strong>
         </button>
       `;
     }).join("");
@@ -1244,6 +1347,7 @@ export class FirePreparationApp extends ApplicationV2 {
           <div class="gam-fire-summary-main">
             <h3>${escapeHTML(this.mode === "standalone" ? "Fire Control" : this.weapon.name)}</h3>
             ${this.mode === "standalone" ? this._buildStandaloneStats(fireState) : `<p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>`}
+            ${this._buildGoverningSkillSelector(fireState)}
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>

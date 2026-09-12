@@ -190,7 +190,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     return fireService.getPreviewModifierTotal();
   }
 
-  function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService) {
+  function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext = null) {
     const baseLevel = Number(attack?.level);
     if (!Number.isFinite(baseLevel) || baseLevel <= 0) return null;
 
@@ -219,7 +219,12 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const fireMode = getFireModeState(attack, values, rangeBands);
     const rapidFireBonus = getRapidFireBonus(attack, fireMode.effectiveRoF);
     const hitLocation = targetingService?.getSelection(values?.hitLocationId, values?.hitRegionId);
-    const hitLocationPenalty = Number(hitLocation?.penalty ?? 0);
+    const targetedAttack = targetedAttackContext?.resolve({
+      specialty: values?.governingSpecialty,
+      target: hitLocation?.zoneId,
+      basePenalty: hitLocation?.penalty
+    });
+    const hitLocationPenalty = Number(targetedAttack?.effectivePenalty ?? hitLocation?.penalty ?? 0);
 
     return baseLevel +
       getPreviewBucketTotal() +

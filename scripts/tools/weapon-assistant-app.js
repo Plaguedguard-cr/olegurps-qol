@@ -96,7 +96,7 @@ export class WeaponAssistantApp extends ApplicationV2 {
     const weaponId = button.dataset.weaponId;
     button.disabled = true;
     try {
-      const result = await this.handleAction({ action, weaponId, app: this });
+      const result = await this.handleAction({ action, weaponId, magazineIndex: button.dataset.magazineIndex, app: this });
       if (result?.managerState) this.setManagerState(result.managerState);
       if (result?.message) this.setResult(result.message);
       if (result?.changed) await this.refreshContent();

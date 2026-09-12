@@ -4,6 +4,7 @@ import { FirePreparationApp } from "./fire-preparation-app.js";
 import { FireService } from "./fire-service.js";
 import { AmmoService } from "./ammo-service.js";
 import { TargetingService } from "./targeting-service.js";
+import { createTargetedAttackContext } from "./targeted-attack-service.js";
 import {
   isBeamWeapon,
   parseElevationHeight,
@@ -12,6 +13,7 @@ import {
 
 const OPEN_ASSISTANTS = new Map();
 const OPEN_FIRE_PREPARATIONS = new Map();
+const TARGETED_ATTACK_CONTEXTS = new WeakMap();
 
 export async function openAmmoManager() {
   const ApplicationV2 = foundry?.applications?.api?.ApplicationV2;
@@ -219,22 +221,36 @@ export async function openAmmoManager() {
       display: inline-flex !important;
       align-items: center !important;
       flex: 0 0 auto !important;
+      width: auto !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
       margin: 0 !important;
       padding: 3px 7px !important;
       border: 1px solid rgba(128, 128, 128, 0.34);
       border-radius: 999px;
+      color: inherit;
+      background: rgba(255, 255, 255, 0.025);
       white-space: nowrap !important;
       line-height: 1.2 !important;
+      cursor: pointer;
+    }
+
+    .gam-mag:hover,
+    .gam-mag:focus-visible {
+      border-color: rgba(220, 210, 190, 0.72);
+      background: rgba(255, 255, 255, 0.09);
     }
 
     .gam-mag.loaded {
       border-color: var(--color-border-highlight, #ff6400);
       box-shadow: inset 0 0 0 1px var(--color-border-highlight, #ff6400);
+      cursor: default;
     }
 
     .gam-actions {
-      display: grid !important;
-      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
       align-items: stretch !important;
       gap: 7px !important;
       width: 100% !important;
@@ -246,8 +262,9 @@ export async function openAmmoManager() {
       display: flex !important;
       align-items: center !important;
       justify-content: center !important;
+      flex: 1 1 135px !important;
       gap: 6px !important;
-      width: 100% !important;
+      width: auto !important;
       min-width: 0 !important;
       min-height: 34px !important;
       margin: 0 !important;
@@ -257,6 +274,23 @@ export async function openAmmoManager() {
       text-align: center !important;
       font-size: 0.91em !important;
       line-height: 1.15 !important;
+    }
+
+    .gam-actions .gam-action-remove {
+      flex: 0 0 36px !important;
+      width: 36px !important;
+      min-width: 36px !important;
+      padding: 5px !important;
+      border-color: rgba(224, 70, 78, 0.72);
+      color: #ef5962;
+      background: rgba(160, 28, 35, 0.16);
+    }
+
+    .gam-actions .gam-action-remove:hover,
+    .gam-actions .gam-action-remove:focus-visible {
+      border-color: #ff626b;
+      color: #ff737b;
+      background: rgba(190, 34, 43, 0.3);
     }
 
     .gam-actions button i,
@@ -282,15 +316,13 @@ export async function openAmmoManager() {
     }
 
     @media (max-width: 720px) {
-      .gam-toolbar,
-      .gam-actions {
+      .gam-toolbar {
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
       }
     }
 
     @media (max-width: 480px) {
-      .gam-toolbar,
-      .gam-actions {
+      .gam-toolbar {
         grid-template-columns: 1fr !important;
       }
 
@@ -552,6 +584,12 @@ export async function openAmmoManager() {
       beamWeapon
     });
     const hitLocation = targetingService?.getSelection(values.hitLocationId, values.hitRegionId);
+    const targetedAttackContext = TARGETED_ATTACK_CONTEXTS.get(targetingService) ?? null;
+    const targetedAttack = targetedAttackContext?.resolve({
+      specialty: values.governingSpecialty,
+      target: hitLocation?.zoneId,
+      basePenalty: hitLocation?.penalty
+    });
     const fireMode = getFireModeState(attack, values, rangeBands);
     const errors = [];
 
@@ -573,12 +611,16 @@ export async function openAmmoManager() {
     if (!hitLocation) {
       errors.push("выберите доступную зону попадания");
     }
+    if (targetedAttackContext?.requiresSelection &&
+      !targetedAttackContext.specialtyOptions.some(option => option.value === values.governingSpecialty)) {
+      errors.push("выберите governing Guns specialty");
+    }
     if (errors.length > 0) {
       ui.notifications.error(`Ошибка заполнения: ${errors.join("; ")}.`);
       return null;
     }
 
-    const effectiveSkill = calculateEffectiveFireSkill(attack, values, rangeBands, targetingService);
+    const effectiveSkill = calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext);
     const rcl = fireService.parseAttackRcl(attack, { extremelyClose: fireMode.extremelyClose });
     return {
       shots,
@@ -612,8 +654,8 @@ export async function openAmmoManager() {
       hitLocationId: hitLocation.zoneId,
       hitRegionId: hitLocation.regionId,
       hitLocationLabel: hitLocation.label,
-      hitLocationModifierLabel: hitLocation.modifierLabel,
-      hitLocationPenalty: hitLocation.penalty,
+      hitLocationModifierLabel: targetedAttack ? `${hitLocation.modifierLabel} (TA)` : hitLocation.modifierLabel,
+      hitLocationPenalty: targetedAttack?.effectivePenalty ?? hitLocation.penalty,
       randomHitLocation: hitLocation.random
     };
   }
@@ -807,69 +849,14 @@ export async function openAmmoManager() {
     return true;
   }
 
-  async function chooseReloadMagazine(weapon) {
-    const options = weapon.magazines
-      .map((rounds, index) => {
-        if (index === weapon.loadedIndex) return "";
-        return `
-          <option value="${index}">
-            Магазин ${index + 1}: ${rounds}/${weapon.capacity}
-          </option>
-        `;
-      })
-      .join("");
-
-    if (!options) {
-      ui.notifications.warn(`У «${weapon.name}» нет запасных магазинов.`);
-      return null;
-    }
-
-    const data = await DialogV2.input({
-      window: { title: `Перезарядка: ${weapon.name}` },
-      position: { width: 500 },
-      content: `
-        <style>
-          .gam-reload-row {
-            padding: 9px 2px;
-            border-top: 1px solid rgba(128,128,128,0.28);
-            border-bottom: 1px solid rgba(128,128,128,0.28);
-          }
-          .gam-reload-line {
-            display: grid;
-            grid-template-columns: 1fr minmax(210px, 260px);
-            align-items: center;
-            gap: 10px;
-          }
-          .gam-reload-line select { width: 100%; margin: 0; }
-          .gam-reload-row .hint { margin: 4px 0 0; }
-        </style>
-        <div class="standard-form">
-          <div class="gam-reload-row">
-            <div class="gam-reload-line">
-              <label><strong>Установить магазин</strong></label>
-              <select name="magazine">${options}</select>
-            </div>
-            <p class="hint">
-              Текущий магазин ${weapon.loadedIndex + 1}: ${weapon.magazines[weapon.loadedIndex]}/${weapon.capacity}
-            </p>
-          </div>
-        </div>
-      `,
-      ok: { label: "Перезарядить", icon: "fa-solid fa-rotate" },
-      rejectClose: false,
-      modal: true
-    });
-
-    if (!data) return null;
-    const values = data.object ?? data;
-    return clampInteger(values.magazine, 0, weapon.magazines.length - 1);
-  }
-
-  async function reloadWeapon(state, weaponId) {
+  async function switchMagazine(state, weaponId, magazineIndex) {
     const { weapon } = getWeaponContext(state, weaponId);
-    const newIndex = await chooseReloadMagazine(weapon);
-
-    if (newIndex === null || newIndex === weapon.loadedIndex) return false;
+    const newIndex = Number(magazineIndex);
+    if (!Number.isInteger(newIndex) || newIndex < 0 || newIndex >= weapon.magazines.length) {
+      ui.notifications.error("Выбранный магазин больше недоступен.");
+      return false;
+    }
+    if (newIndex === weapon.loadedIndex) return false;
 
     const oldIndex = weapon.loadedIndex;
     weapon.loadedIndex = newIndex;
@@ -887,7 +874,17 @@ export async function openAmmoManager() {
     return true;
   }
 
-  async function topUpMagazines(state, weaponId) {
+  function renderTopUpTargetOptions(weapon) {
+    return [
+      '<option value="all">Все магазины</option>',
+      ...weapon.magazines.map((rounds, index) => {
+        const loadedText = index === weapon.loadedIndex ? " — установлен" : "";
+        return `<option value="${index}">Магазин ${index + 1}: ${rounds}/${weapon.capacity}${loadedText}</option>`;
+      })
+    ].join("");
+  }
+
+  async function topUpMagazines(state, weaponId, selectedTarget = null) {
     await repairState(state, false);
     const { weapon } = getWeaponContext(state, weaponId);
     const loose = looseAmmo(weapon);
@@ -897,58 +894,30 @@ export async function openAmmoManager() {
       return false;
     }
 
-    const options = [
-      `<option value="all">Все магазины</option>`,
-      ...weapon.magazines.map((rounds, index) => {
-        const loadedText = index === weapon.loadedIndex ? " — установлен" : "";
-        return `
-          <option value="${index}">
-            Магазин ${index + 1}: ${rounds}/${weapon.capacity}${loadedText}
-          </option>
-        `;
-      })
-    ].join("");
-
-    const data = await DialogV2.input({
-      window: { title: `Снаряжение магазинов: ${weapon.name}` },
-      position: { width: 540 },
-      content: `
-        <style>
-          .gam-topup-row {
-            padding: 9px 2px;
-            border-top: 1px solid rgba(128,128,128,0.28);
-            border-bottom: 1px solid rgba(128,128,128,0.28);
-          }
-          .gam-topup-line {
-            display: grid;
-            grid-template-columns: 1fr minmax(220px, 280px);
-            align-items: center;
-            gap: 10px;
-          }
-          .gam-topup-line select { width: 100%; margin: 0; }
-          .gam-topup-row .hint { margin: 4px 0 0; }
-        </style>
-        <div class="standard-form">
-          <div class="gam-topup-row">
-            <div class="gam-topup-line">
+    let target = selectedTarget === null ? null : String(selectedTarget);
+    if (target === null) {
+      const data = await DialogV2.input({
+        window: { title: `Снаряжение магазинов: ${weapon.name}` },
+        position: { width: 540 },
+        content: `
+          <div class="standard-form">
+            <div class="form-group">
               <label><strong>Какие магазины снарядить</strong></label>
-              <select name="target">${options}</select>
+              <div class="form-fields">
+                <select name="target">${renderTopUpTargetOptions(weapon)}</select>
+              </div>
             </div>
-            <p class="hint">
-              Свободный запас: ${loose}
-              Общий боезапас не изменится
-            </p>
+            <p class="hint">Свободный запас: ${loose}. Общий боезапас не изменится.</p>
           </div>
-        </div>
-      `,
-      ok: { label: "Снарядить", icon: "fa-solid fa-box-open" },
-      rejectClose: false,
-      modal: true
-    });
-
-    if (!data) return false;
-    const values = data.object ?? data;
-    const target = String(values.target ?? "all");
+        `,
+        ok: { label: "Снарядить", icon: "fa-solid fa-box-open" },
+        rejectClose: false,
+        modal: true
+      });
+      if (!data) return false;
+      const values = data.object ?? data;
+      target = String(values.target ?? "all");
+    }
     let remaining = loose;
     let moved = 0;
 
@@ -1013,6 +982,59 @@ export async function openAmmoManager() {
     );
 
     return true;
+  }
+
+  async function manageMagazineLoad(state, weaponId) {
+    const { weapon } = getWeaponContext(state, weaponId);
+    const canTopUp = looseAmmo(weapon) > 0;
+    const canUnload = weapon.magazines[weapon.loadedIndex] > 0;
+    if (!canTopUp && !canUnload) {
+      ui.notifications.warn("Нет доступных действий для снаряжения или разряжания.");
+      return false;
+    }
+
+    const readTarget = button => button.form?.elements?.target?.value ?? "all";
+    const buttons = [
+      canTopUp ? {
+        action: "top-up",
+        label: "Снарядить",
+        icon: "fa-solid fa-box-open",
+        default: true,
+        callback: (_event, button) => ({ operation: "top-up", target: readTarget(button) })
+      } : null,
+      canUnload ? {
+        action: "unload",
+        label: "Разрядить",
+        icon: "fa-solid fa-arrow-down",
+        default: !canTopUp,
+        callback: () => ({ operation: "unload" })
+      } : null
+    ].filter(Boolean);
+    const decision = await DialogV2.wait({
+      window: { title: `Снарядить / разрядить: ${weapon.name}` },
+      position: { width: 540 },
+      content: `
+        <div class="standard-form">
+          ${canTopUp ? `
+            <div class="form-group">
+              <label><strong>Какие магазины снарядить</strong></label>
+              <div class="form-fields">
+                <select name="target">${renderTopUpTargetOptions(weapon)}</select>
+              </div>
+            </div>
+            <p class="hint">Свободный запас: ${looseAmmo(weapon)}. Общий боезапас не изменится.</p>
+          ` : '<p class="hint">Свободных патронов для снаряжения нет.</p>'}
+        </div>
+      `,
+      buttons,
+      rejectClose: false,
+      modal: true
+    });
+    if (!decision) return false;
+
+    return decision.operation === "unload"
+      ? unloadCurrentMagazine(state, weaponId)
+      : topUpMagazines(state, weaponId, decision.target);
   }
 
   async function editAmmoStock(state, weaponId) {
@@ -1638,12 +1660,18 @@ export async function openAmmoManager() {
           rounds === 0 ? "empty" : ratio <= 0.25 ? "low" : "";
 
         return `
-          <span
+          <button
+            type="button"
             class="gam-mag ${className} ${loaded ? "loaded" : ""}"
-            title="${loaded ? "Установленный магазин" : "Запасной магазин"}"
+            data-ammo-action="select-magazine"
+            data-weapon-id="${weapon.id}"
+            data-magazine-index="${index}"
+            aria-pressed="${loaded}"
+            aria-label="${loaded ? "Установленный" : "Установить"} магазин ${index + 1}: ${rounds} из ${weapon.capacity}"
+            title="${loaded ? "Установленный магазин" : `Установить магазин ${index + 1}`}"
           >
             ${loaded ? "● " : ""}${index + 1}: ${rounds}/${weapon.capacity}
-          </span>
+          </button>
         `;
       })
       .join("");
@@ -1679,6 +1707,8 @@ export async function openAmmoManager() {
     const rangeBands = getRangeBands();
     const recommendation = getGgaTargetRangeRecommendation(rangeBands);
     const targetingService = await TargetingService.create({ attack });
+    const targetedAttackContext = createTargetedAttackContext({ actor, attack });
+    TARGETED_ATTACK_CONTEXTS.set(targetingService, targetedAttackContext);
     const rateOfFireProfile = fireService.parseRateOfFire(attack.rof);
     const preparation = new FirePreparationApp({
       token,
@@ -1688,6 +1718,8 @@ export async function openAmmoManager() {
       recommendation,
       beamWeapon: isBeamWeapon(attack),
       targetingService,
+      targetedAttackContext,
+      initialGoverningSpecialty: weapon.governingSpecialty,
       maximumShots: getMaximumShots(attack, loaded),
       rateOfFireProfile,
       calculateShotLimits: modeIndex => getShotLimits(attack, loaded, modeIndex),
@@ -1699,7 +1731,13 @@ export async function openAmmoManager() {
         accuracy: attack.acc, aimSeconds, braced, moveAndAttack
       }).bracingBonus,
       calculateFireMode: shotOptions => getFireModeState(attack, shotOptions, rangeBands),
-      calculateEffectiveSkill: shotOptions => calculateEffectiveFireSkill(attack, shotOptions, rangeBands, targetingService),
+      calculateEffectiveSkill: shotOptions => calculateEffectiveFireSkill(
+        attack, shotOptions, rangeBands, targetingService, targetedAttackContext),
+      onGoverningSpecialtyChange: async specialty => {
+        if (specialty) weapon.governingSpecialty = specialty;
+        else delete weapon.governingSpecialty;
+        await saveState(state);
+      },
       onClose: () => OPEN_FIRE_PREPARATIONS.delete(preparationKey),
       onConfirm: async rawShotOptions => {
         const changed = await fireAndRoll(state, weaponId, rawShotOptions, targetingService);
@@ -1775,29 +1813,9 @@ export async function openAmmoManager() {
                     Списать
                   </button>
 
-                  <button type="button" data-ammo-action="reload" data-weapon-id="${weapon.id}" ${weapon.magazines.length < 2 ? "disabled" : ""}>
-                    <i class="fa-solid fa-rotate"></i>
-                    Перезарядить
-                  </button>
-
-                  <button type="button" data-ammo-action="top-up" data-weapon-id="${weapon.id}" ${loose <= 0 ? "disabled" : ""}>
+                  <button type="button" data-ammo-action="manage-load" data-weapon-id="${weapon.id}" ${loose <= 0 && loaded <= 0 ? "disabled" : ""}>
                     <i class="fa-solid fa-box-open"></i>
-                    Снарядить
-                  </button>
-
-                  <button type="button" data-ammo-action="unload" data-weapon-id="${weapon.id}" ${loaded <= 0 ? "disabled" : ""}>
-                    <i class="fa-solid fa-arrow-down"></i>
-                    Разрядить
-                  </button>
-
-                  <button type="button" data-ammo-action="stock" data-weapon-id="${weapon.id}">
-                    <i class="fa-solid fa-boxes-stacked"></i>
-                    Боезапас
-                  </button>
-
-                  <button type="button" data-ammo-action="magazines" data-weapon-id="${weapon.id}">
-                    <i class="fa-solid fa-grip"></i>
-                    Магазины
+                    Снарядить / Разрядить
                   </button>
 
                   <button type="button" data-ammo-action="edit" data-weapon-id="${weapon.id}">
@@ -1805,9 +1823,15 @@ export async function openAmmoManager() {
                     Настроить
                   </button>
 
-                  <button type="button" data-ammo-action="remove" data-weapon-id="${weapon.id}" title="Удалить оружие">
-                    <i class="fa-solid fa-trash"></i>
-                    Удалить
+                  <button
+                    type="button"
+                    class="gam-action-remove"
+                    data-ammo-action="remove"
+                    data-weapon-id="${weapon.id}"
+                    title="Удалить оружие"
+                    aria-label="Удалить оружие"
+                  >
+                    <i class="fa-solid fa-trash" aria-hidden="true"></i>
                   </button>
                 </div>
               </section>
@@ -1859,7 +1883,8 @@ export async function openAmmoManager() {
     await repairState(persistentState, true);
     const actionMessages = {
       spend: "Патроны списаны.",
-      reload: "Магазин заменён.",
+      "select-magazine": "Магазин заменён.",
+      "manage-load": "Состояние магазинов обновлено.",
       "top-up": "Магазины снаряжены.",
       unload: "Текущий магазин разряжен.",
       stock: "Общий боезапас обновлён.",
@@ -1878,7 +1903,7 @@ export async function openAmmoManager() {
       styles: MANAGER_CSS,
       buildContent: buildManagerContent,
       onClose: () => OPEN_ASSISTANTS.delete(assistantKey),
-      handleAction: async ({ action, weaponId, app: managerApp }) => {
+      handleAction: async ({ action, weaponId, magazineIndex, app: managerApp }) => {
         if (action === "fire-roll") {
           await openFirePreparation(persistentState, weaponId, managerApp);
           return { changed: false, managerState: persistentState, message: "" };
@@ -1888,7 +1913,8 @@ export async function openAmmoManager() {
         else if (action === "edit") changed = await configureWeapon(persistentState, weaponId);
         else if (action === "remove") changed = await removeWeapon(persistentState, weaponId);
         else if (action === "spend") changed = await spendWithoutRoll(persistentState, weaponId);
-        else if (action === "reload") changed = await reloadWeapon(persistentState, weaponId);
+        else if (action === "select-magazine") changed = await switchMagazine(persistentState, weaponId, magazineIndex);
+        else if (action === "manage-load") changed = await manageMagazineLoad(persistentState, weaponId);
         else if (action === "top-up") changed = await topUpMagazines(persistentState, weaponId);
         else if (action === "unload") changed = await unloadCurrentMagazine(persistentState, weaponId);
         else if (action === "stock") changed = await editAmmoStock(persistentState, weaponId);
