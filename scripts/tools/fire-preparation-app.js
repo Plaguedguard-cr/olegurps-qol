@@ -1,8 +1,20 @@
+import { createStandaloneAttack } from "./fire-control-context.js";
 import { resolveElevationRange } from "./fire-range-service.js";
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
 const FIRE_PREPARATION_CSS = `
+  .gam-fire-rof-container { display: contents; }
+  .gam-fire-manual-stats { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 6px; }
+  .gam-fire-manual-stats label { display: inline-flex; align-items: center; gap: 5px; }
+  .gam-fire-manual-stats input { width: 68px; margin: 0; }
+  .gam-fire-shotgun { display: inline-flex; align-items: center; gap: 5px; }
+  .gam-fire-shotgun input[type="checkbox"] { width: auto; margin: 0; }
+  .gam-fire-shotgun input[name="projectileMultiplier"] { width: 56px; margin: 0; }
+  .gam-fire-shotgun input[name="projectileMultiplier"]:disabled { opacity: 0.45; }
+  .gam-fire-source-skill input { width: 68px; margin: 0; }
+  .gam-fire-missing-stats { display: block; color: #e5bd73; min-height: 1em; }
+
   .gam-fire-preparation {
     display: grid;
     gap: 12px;
@@ -72,11 +84,19 @@ const FIRE_PREPARATION_CSS = `
   }
 
   .gam-fire-field input { width: 100%; margin: 0; }
+  .gam-fire-field input::placeholder,
+  .gam-fire-aim input::placeholder { color: currentColor; opacity: 0.45; }
   .gam-fire-field-checkbox {
     align-self: start;
     min-height: 34px;
   }
   .gam-fire-field-checkbox input { width: auto; justify-self: start; }
+
+  .gam-fire-toggle-group {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
 
   .gam-fire-aim-group {
     display: grid;
@@ -87,7 +107,7 @@ const FIRE_PREPARATION_CSS = `
   .gam-fire-aim,
   .gam-fire-braced {
     display: grid;
-    grid-template-columns: 46px 74px auto auto auto;
+    grid-template-columns: 46px 60px auto auto auto;
     align-items: center;
     gap: 7px;
     min-width: 0;
@@ -96,7 +116,7 @@ const FIRE_PREPARATION_CSS = `
   .gam-fire-aim { min-height: 34px; }
 
   .gam-fire-aim input {
-    width: 74px;
+    width: 60px;
     margin: 0;
   }
 
@@ -117,6 +137,27 @@ const FIRE_PREPARATION_CSS = `
     border-radius: 5px;
     text-align: center;
   }
+  .gam-fire-rof-full-auto {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    text-align: left;
+  }
+
+  .gam-fire-rof-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .gam-fire-rof-mode select {
+    width: auto;
+    min-width: 82px;
+    margin: 0;
+  }
+
   .gam-fire-rof-multiple {
     grid-column: 1 / -1;
     display: grid;
@@ -462,12 +503,14 @@ export class FirePreparationApp extends ApplicationV2 {
     position: { width: 1120, height: "auto" }
   };
 
-  constructor({ token, weapon, attack, rangeBands, recommendation, beamWeapon = false, targetingService, maximumShots, rateOfFireProfile, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateFireMode, calculateEffectiveSkill, onConfirm, onClose }, options = {}) {
+  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, beamWeapon = false, targetingService, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateFireMode, calculateEffectiveSkill, onConfirm, onClose }, options = {}) {
     super({
       ...options,
-      id: options.id ?? `olegurps-fire-preparation-${token.id}-${weapon.id}`,
-      window: { title: `Огонь — ${weapon.name}`, resizable: true, ...(options.window ?? {}) }
+      id: options.id ?? (mode === "standalone" ? "olegurps-fire-control-standalone" : `olegurps-fire-preparation-${token.id}-${weapon.id}`),
+      window: { title: mode === "standalone" ? "Огонь — Fire Control" : `Огонь — ${weapon.name}`, resizable: true, ...(options.window ?? {}) }
     });
+    this.mode = mode;
+    this.parseRateOfFire = parseRateOfFire;
     this.token = token;
     this.weapon = weapon;
     this.attack = attack;
@@ -477,6 +520,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this.targetingService = targetingService;
     this.maximumShots = maximumShots;
     this.rateOfFireProfile = rateOfFireProfile;
+    this.calculateShotLimits = calculateShotLimits;
     this.calculateRapidFireBonus = calculateRapidFireBonus;
     this.calculateAimBonus = calculateAimBonus;
     this.calculateBracingBonus = calculateBracingBonus;
@@ -486,12 +530,18 @@ export class FirePreparationApp extends ApplicationV2 {
     this.closeCallback = onClose;
     const defaultHitLocation = targetingService.getDefaultSelection();
     const recommendedRangeIndex = Number.isInteger(recommendation?.rangeIndex) ? recommendation.rangeIndex : null;
+    const initialRofMode = rateOfFireProfile?.type === "full-auto" ? "0" : null;
     this.fireState = {
+      skillLevel: "", acc: "", bulk: "", rcl: "", halfd: "",
+      shotgun: false,
+      projectileMultiplier: "",
       shots: "",
-      manualModifier: "0",
-      aimSeconds: "0",
+      rofMode: initialRofMode,
+      manualModifier: "",
+      aimSeconds: "",
       braced: false,
       laserSight: false,
+      moveAndAttack: false,
       height: "",
       highGround: false,
       selectedRangeIndex: recommendedRangeIndex,
@@ -499,6 +549,7 @@ export class FirePreparationApp extends ApplicationV2 {
       elevationSourceRangeIndex: recommendedRangeIndex,
       hitLocation: { ...defaultHitLocation }
     };
+    if (this.mode === "standalone") this._refreshStandaloneAttack();
     this._submitting = false;
     this._closeNotified = false;
     this._skillPreviewTimer = null;
@@ -575,21 +626,49 @@ export class FirePreparationApp extends ApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
     this.fireState.shots = root.querySelector('[name="shots"]')?.value ?? "";
-    this.fireState.manualModifier = root.querySelector('[name="manualModifier"]')?.value ?? "0";
-    this.fireState.aimSeconds = root.querySelector('[name="aimSeconds"]')?.value ?? "0";
+    this.fireState.rofMode = root.querySelector('[name="rofMode"]')?.value ?? this.fireState.rofMode;
+    this.fireState.manualModifier = root.querySelector('[name="manualModifier"]')?.value ?? "";
+    this.fireState.aimSeconds = root.querySelector('[name="aimSeconds"]')?.value ?? "";
     this.fireState.braced = !!root.querySelector('[name="braced"]')?.checked;
     this.fireState.laserSight = !!root.querySelector('[name="laserSight"]')?.checked;
+    this.fireState.moveAndAttack = !!root.querySelector('[name="moveAndAttack"]')?.checked;
     this.fireState.height = root.querySelector('[name="height"]')?.value ?? "";
     this.fireState.highGround = !!root.querySelector('[name="highGround"]')?.checked;
+    if (this.mode === "standalone") {
+      for (const name of ["skillLevel", "acc", "bulk", "rcl", "halfd", "projectileMultiplier"]) {
+        this.fireState[name] = root.querySelector(`[name="${name}"]`)?.value ?? this.fireState[name];
+      }
+      this.fireState.shotgun = !!root.querySelector('[name="shotgun"]')?.checked;
+      this._refreshStandaloneAttack();
+    }
+  }
+
+  _refreshStandaloneAttack() {
+    if (this.mode !== "standalone") return;
+    this.attack = createStandaloneAttack(this.fireState);
+    this.rateOfFireProfile = this.parseRateOfFire?.(this.attack.rof) ?? this.rateOfFireProfile;
+    this.fireState.rofMode = null;
+  }
+
+  _getShotsValue(fireState = this.fireState) {
+    if (String(fireState.shots ?? "").trim() !== "") return fireState.shots;
+    if (this.mode === "standalone" || this.rateOfFireProfile?.type === "full-auto") {
+      return String(this._getShotLimits(fireState).minShots);
+    }
+    return fireState.shots;
   }
 
   getShotOptions() {
     return {
-      shots: this.fireState.shots,
+      shots: this._getShotsValue(),
+      rofMode: this.fireState.rofMode,
+      shotgun: this.fireState.shotgun,
+      projectileMultiplier: this.fireState.projectileMultiplier,
       manualModifier: this.fireState.manualModifier,
       aimSeconds: this.fireState.aimSeconds,
       braced: this.fireState.braced,
       laserSight: this.fireState.laserSight,
+      moveAndAttack: this.fireState.moveAndAttack,
       height: this.fireState.height,
       highGround: this.fireState.highGround,
       rangeIndex: this.fireState.selectedRangeIndex,
@@ -597,6 +676,53 @@ export class FirePreparationApp extends ApplicationV2 {
       hitLocationId: this.fireState.hitLocation.zoneId,
       hitRegionId: this.fireState.hitLocation.regionId
     };
+  }
+
+  _getShotLimits(fireState = this.fireState) {
+    const calculated = this.calculateShotLimits?.(fireState.rofMode);
+    const fallbackMax = Math.max(1, Math.trunc(Number(this.maximumShots) || 1));
+    const minShots = Math.max(1, Math.trunc(Number(calculated?.minShots) || 1));
+    const unlimited = this.mode === "standalone" && calculated?.maxShots == null;
+    const maxShots = unlimited
+      ? null
+      : Math.max(minShots, Math.trunc(Number(calculated?.maxShots) || fallbackMax));
+    return { ...calculated, minShots, maxShots };
+  }
+
+  _syncShotLimits({ clamp = false } = {}) {
+    const limits = this._getShotLimits();
+    const input = this.element?.querySelector('[name="shots"]');
+    const label = this.element?.querySelector('[data-shots-label]');
+    if (input) {
+      input.min = String(limits.minShots);
+      if (Number.isFinite(limits.maxShots)) input.max = String(limits.maxShots);
+      else input.removeAttribute("max");
+      input.placeholder = String(limits.minShots);
+    }
+    if (label) {
+      if (this.mode === "standalone") label.textContent = "Выстрелы";
+      else {
+        const range = limits.minShots === limits.maxShots
+          ? String(limits.maxShots)
+          : `${limits.minShots}–${limits.maxShots}`;
+        label.textContent = `Выстрелы (${range})`;
+      }
+    }
+    if (!clamp || (this.mode !== "standalone" && this.rateOfFireProfile?.type !== "full-auto")) return limits;
+
+    const rawShots = String(this.fireState.shots ?? "").trim();
+    if (rawShots === "") {
+      if (input) input.value = "";
+      return limits;
+    }
+    const current = Number(rawShots);
+    const shots = Number.isInteger(current)
+      ? Math.max(limits.minShots, Number.isFinite(limits.maxShots) ? Math.min(limits.maxShots, current) : current)
+      : limits.minShots;
+    this.fireState.shots = String(shots);
+    if (this.mode === "standalone") this._refreshStandaloneAttack();
+    if (input) input.value = this.fireState.shots;
+    return limits;
   }
 
   _getSkillPreview() {
@@ -621,7 +747,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getAimBonus(fireState = this.fireState) {
-    const value = Number(this.calculateAimBonus?.(fireState.aimSeconds));
+    const value = Number(this.calculateAimBonus?.(fireState.aimSeconds, fireState.moveAndAttack));
     return Number.isFinite(value) && value >= 0 ? Math.trunc(value) : 0;
   }
 
@@ -633,7 +759,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getBracingBonus(fireState = this.fireState) {
-    const value = Number(this.calculateBracingBonus?.(fireState.braced, fireState.aimSeconds));
+    const value = Number(this.calculateBracingBonus?.(fireState.braced, fireState.aimSeconds, fireState.moveAndAttack));
     return value === 1 ? 1 : 0;
   }
 
@@ -646,9 +772,10 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getDisplayedAcc(fireState = this.fireState) {
+    if (this.mode === "standalone" && this.attack?.acc === null) return "—";
     const baseAcc = Number(this.attack?.acc);
     if (!Number.isFinite(baseAcc)) return "—";
-    return String(Math.trunc(baseAcc) + (fireState.braced ? 1 : 0));
+    return String(Math.trunc(baseAcc) + (fireState.braced && !fireState.moveAndAttack ? 1 : 0));
   }
 
   _getAttackStatsText(displayedRoF, displayedAcc = this._getDisplayedAcc()) {
@@ -665,7 +792,7 @@ export class FirePreparationApp extends ApplicationV2 {
   _getRapidFireState(fireState = this.fireState) {
     const calculated = this.calculateFireMode?.({
       ...this.getShotOptions(),
-      shots: fireState.shots,
+      shots: this._getShotsValue(fireState),
       rangeIndex: fireState.selectedRangeIndex
     });
     const effectiveRoF = Math.max(1, Math.trunc(Number(calculated?.effectiveRoF) || Number(fireState.shots) || 1));
@@ -677,6 +804,10 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _updateAttackStats(fireMode = this._getRapidFireState()) {
+    if (this.mode === "standalone") {
+      this._updateStandaloneHints();
+      return;
+    }
     const attackStats = this.element?.querySelector("[data-attack-stats]");
     if (!attackStats) return;
     const text = this._getAttackStatsText(this._getDisplayedRoF(fireMode));
@@ -831,9 +962,35 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _onInput(event) {
-    const field = event.target instanceof HTMLInputElement ? event.target : null;
+    const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
-    if (field.name === "shots") this.fireState.shots = field.value;
+    if (this.mode === "standalone" &&
+      ["skillLevel", "acc", "bulk", "rcl", "halfd", "projectileMultiplier", "shotgun"].includes(field.name)) {
+      if (field.name === "shotgun") this.fireState.shotgun = field.checked;
+      else this.fireState[field.name] = field.value;
+      this._refreshStandaloneAttack();
+      if (field.name === "shotgun") {
+        const multiplier = this.element?.querySelector('[name="projectileMultiplier"]');
+        if (multiplier) multiplier.disabled = !field.checked;
+      }
+      if (field.name === "shotgun" || field.name === "projectileMultiplier") {
+        const rofBlock = this.element?.querySelector("[data-rof-container]");
+        if (rofBlock) rofBlock.innerHTML = this._buildRofContent(this.fireState);
+      }
+      this._updateAimPreview();
+      this._updateRapidFirePreview();
+      this._updateSkillPreview();
+      return;
+    }
+    if (field.name === "shots") {
+      this.fireState.shots = field.value;
+      if (this.mode === "standalone") {
+        this._refreshStandaloneAttack();
+        const rofBlock = this.element?.querySelector("[data-rof-container]");
+        if (rofBlock) rofBlock.innerHTML = this._buildRofContent(this.fireState);
+      }
+    }
+    else if (field.name === "rofMode") this.fireState.rofMode = field.value;
     else if (field.name === "manualModifier") this.fireState.manualModifier = field.value;
     else if (field.name === "aimSeconds") {
       const seconds = Number(String(field.value).replace(",", "."));
@@ -841,6 +998,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this.fireState.aimSeconds = field.value;
     } else if (field.name === "braced") this.fireState.braced = field.checked;
     else if (field.name === "laserSight") this.fireState.laserSight = field.checked;
+    else if (field.name === "moveAndAttack") this.fireState.moveAndAttack = field.checked;
     else if (field.name === "height") {
       const numericHeight = Number(String(field.value).replace(",", "."));
       if (field.value !== "" && Number.isFinite(numericHeight) && numericHeight < 0) field.value = "0";
@@ -848,8 +1006,11 @@ export class FirePreparationApp extends ApplicationV2 {
     } else if (field.name === "highGround") {
       this.fireState.highGround = field.checked;
     }
-    if (field.name === "shots") this._updateRapidFirePreview();
-    if (field.name === "aimSeconds" || field.name === "braced") this._updateAimPreview();
+    if (field.name === "shots" || field.name === "rofMode") {
+      this._syncShotLimits({ clamp: field.name === "rofMode" || event.type === "change" });
+      this._updateRapidFirePreview();
+    }
+    if (field.name === "aimSeconds" || field.name === "braced" || field.name === "moveAndAttack") this._updateAimPreview();
     if (field.name === "height" || field.name === "highGround") this._updateElevationPreview();
     this._updateSkillPreview();
   }
@@ -979,26 +1140,81 @@ export class FirePreparationApp extends ApplicationV2 {
     `;
   }
 
-  _buildContent(fireState) {
+
+  _buildStandaloneStats(fireState) {
+    const fields = [["acc", "Acc"], ["bulk", "Bulk"], ["rcl", "Rcl"], ["halfd", "½D, yd"]];
+    const stats = fields.map(([name, label]) =>
+      `<label>${label} <input type="text" name="${name}" value="${escapeHTML(fireState[name])}" placeholder="—" aria-label="${label}" title="${name === "halfd" ? "Необязательно: ½D для определения Extremely Close" : "Необязательная характеристика"}"></label>`
+    ).join("");
+    const shotgun = `<div class="gam-fire-shotgun">
+      <span>Дробовик</span>
+      <input type="checkbox" name="shotgun" aria-label="Дробовик" ${fireState.shotgun ? "checked" : ""}>
+      <span aria-hidden="true">×</span>
+      <input type="number" name="projectileMultiplier" value="${escapeHTML(fireState.projectileMultiplier)}" placeholder="—" min="2" step="1" inputmode="numeric" aria-label="Число снарядов после ×" ${fireState.shotgun ? "" : "disabled"}>
+    </div>`;
+    return `<div class="gam-fire-manual-stats">${stats}${shotgun}</div><small class="gam-fire-missing-stats" data-missing-stats></small>`;
+  }
+
+  _updateStandaloneHints() {
+    const hints = this.element?.querySelector("[data-missing-stats]");
+    if (!hints) return;
+    const missing = [];
+    if (Number(this.fireState.aimSeconds) > 0 && this.attack.acc === null) missing.push("Aim: нужен Acc");
+    if (this.fireState.moveAndAttack && this.attack.data.bulk === null) missing.push("Движение и атака: нужен Bulk");
+    if (this.fireState.shotgun && !(Number.isInteger(Number(this.fireState.projectileMultiplier)) && Number(this.fireState.projectileMultiplier) > 1)) {
+      missing.push("Дробовик: нужен целый множитель после ×");
+    }
+    if (this.rateOfFireProfile.type === "multiple-projectile" && !this.fireState.halfd) missing.push("Для Extremely Close нужен ½D");
+    hints.textContent = missing.join(" · ");
+  }
+
+  _buildRofContent(fireState) {
     const fireMode = this._getRapidFireState(fireState);
     const rapidFireBonus = fireMode.rapidFireBonus;
-    const aimBonus = this._getAimBonus(fireState);
-    const bracingBonus = this._getBracingBonus(fireState);
-    const aimedFireModifier = aimBonus + bracingBonus;
-    const displayedAcc = this._getDisplayedAcc(fireState);
     const multipleProjectile = this.rateOfFireProfile?.type === "multiple-projectile";
+    const fullAuto = this.rateOfFireProfile?.type === "full-auto";
     const displayedRoF = this._getDisplayedRoF(fireMode);
+    const rofModeOptions = fullAuto
+      ? this.rateOfFireProfile.modes.map(mode => `
+          <option value="${mode.index}" ${String(fireState.rofMode ?? "0") === String(mode.index) ? "selected" : ""}>${escapeHTML(mode.label)}</option>
+        `).join("")
+      : "";
     const rofContent = multipleProjectile
       ? `<div class="gam-fire-rof gam-fire-rof-multiple">
           <span>RoF: <strong data-rof-preview>${escapeHTML(displayedRoF)}</strong></span>
           <span>Эффективный RoF: <strong data-effective-rof>${fireMode.effectiveRoF}</strong></span>
           <span>Бонус RoF: <strong data-rapid-preview>+${rapidFireBonus}</strong></span>
         </div>`
-      : `<div class="gam-fire-rof">Бонус RoF: <strong data-rapid-preview>+${rapidFireBonus}</strong></div>`;
+      : fullAuto && this.rateOfFireProfile.modes.length > 1
+        ? `<div class="gam-fire-rof gam-fire-rof-full-auto">
+            <label class="gam-fire-rof-mode">
+              <span>Режим RoF:</span>
+              <select name="rofMode" aria-label="Режим скорострельности">${rofModeOptions}</select>
+            </label>
+            <span>Бонус RoF: <strong data-rapid-preview>+${rapidFireBonus}</strong></span>
+          </div>`
+        : `<div class="gam-fire-rof">Бонус RoF: <strong data-rapid-preview>+${rapidFireBonus}</strong></div>`;
+    return rofContent;
+  }
+
+  _buildContent(fireState) {
+    const fireMode = this._getRapidFireState(fireState);
+    const aimBonus = this._getAimBonus(fireState);
+    const bracingBonus = this._getBracingBonus(fireState);
+    const aimedFireModifier = aimBonus + bracingBonus;
+    const displayedAcc = this._getDisplayedAcc(fireState);
+    const displayedRoF = this._getDisplayedRoF(fireMode);
+    const shotLimits = this._getShotLimits(fireState);
+    const shotsRange = shotLimits.minShots === shotLimits.maxShots
+      ? String(shotLimits.maxShots)
+      : `${shotLimits.minShots}–${shotLimits.maxShots}`;
+    const shotsLabel = this.mode === "standalone" ? "Выстрелы" : `Выстрелы (${shotsRange})`;
+    const shotsMax = Number.isFinite(shotLimits.maxShots) ? ` max="${shotLimits.maxShots}"` : "";
+    const rofContent = this._buildRofContent(fireState);
     const skillPreview = this._getSkillPreview();
     const sourceSkill = Number(this.attack?.level);
     const sourceSkillText = Number.isFinite(sourceSkill) && sourceSkill > 0 ? String(Math.trunc(sourceSkill)) : "—";
-    const attackStats = this._getAttackStatsText(displayedRoF, displayedAcc);
+    const attackStats = this.mode === "standalone" ? "" : this._getAttackStatsText(displayedRoF, displayedAcc);
     const elevation = this._getElevationCalculation(fireState);
     const recommendedPenalty = Number(this.recommendation?.penalty);
     const recommendationText = Number.isFinite(recommendedPenalty)
@@ -1026,34 +1242,40 @@ export class FirePreparationApp extends ApplicationV2 {
       <div class="gam-fire-preparation">
         <div class="gam-fire-summary">
           <div class="gam-fire-summary-main">
-            <h3>${escapeHTML(this.weapon.name)}</h3>
-            <p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>
+            <h3>${escapeHTML(this.mode === "standalone" ? "Fire Control" : this.weapon.name)}</h3>
+            ${this.mode === "standalone" ? this._buildStandaloneStats(fireState) : `<p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>`}
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
             <strong class="gam-fire-skill-value" data-skill-preview style="color: ${skillProbabilityColor(skillPreview.probability)}">${skillPreview.level} (${skillPreview.chance}%)</strong>
-            <span class="gam-fire-source-skill">Значение умения: ${sourceSkillText}</span>
+            ${this.mode === "standalone" ? `<label class="gam-fire-source-skill">Значение умения: <input type="number" name="skillLevel" value="${escapeHTML(fireState.skillLevel)}" placeholder="0" min="1" step="1" required autofocus></label>` : `<span class="gam-fire-source-skill">Значение умения: ${sourceSkillText}</span>`}
           </div>
         </div>
         <div class="gam-fire-layout">
           <div class="gam-fire-left">
             <div class="gam-fire-fields">
               <label class="gam-fire-field">
-                <span>Выстрелы (1–${this.maximumShots})</span>
-                <input type="number" name="shots" value="${escapeHTML(fireState.shots)}" min="1" max="${this.maximumShots}" step="1" autofocus>
+                <span data-shots-label>${shotsLabel}</span>
+                <input type="number" name="shots" value="${escapeHTML(fireState.shots)}" placeholder="${shotLimits.minShots}" min="${shotLimits.minShots}"${shotsMax} step="1" ${this.mode === "weapon" ? "autofocus" : ""}>
               </label>
               <label class="gam-fire-field">
                 <span>Бонусы/штрафы</span>
                 <input type="number" name="manualModifier" value="${escapeHTML(fireState.manualModifier)}" placeholder="0" step="1">
               </label>
-              <div class="gam-fire-field gam-fire-field-checkbox">
-                <span>Лазер +1</span>
-                <input type="checkbox" name="laserSight" aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
+              <div class="gam-fire-toggle-group">
+                <div class="gam-fire-field gam-fire-field-checkbox">
+                  <span>Лазер +1</span>
+                  <input type="checkbox" name="laserSight" aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
+                </div>
+                <div class="gam-fire-field gam-fire-field-checkbox">
+                  <span>Движение и атака</span>
+                  <input type="checkbox" name="moveAndAttack" aria-label="Движение и атака" ${fireState.moveAndAttack ? "checked" : ""}>
+                </div>
               </div>
               <div class="gam-fire-aim-group">
                 <label class="gam-fire-aim">
                   <span>Aim:</span>
-                  <input type="number" name="aimSeconds" value="${escapeHTML(fireState.aimSeconds)}" min="0" step="1" inputmode="numeric" aria-label="Aim в секундах">
+                  <input type="number" name="aimSeconds" value="${escapeHTML(fireState.aimSeconds)}" placeholder="0" min="0" step="1" inputmode="numeric" aria-label="Aim в секундах">
                   <span>сек.</span>
                   <span class="gam-fire-aim-effective">Eff. mod:</span>
                   <strong class="gam-fire-aim-bonus" data-aim-preview>+${aimedFireModifier}</strong>
@@ -1063,7 +1285,7 @@ export class FirePreparationApp extends ApplicationV2 {
                   <input type="checkbox" name="braced" aria-label="Упор" ${fireState.braced ? "checked" : ""}>
                 </div>
               </div>
-              ${rofContent}
+              <div class="gam-fire-rof-container" data-rof-container>${rofContent}</div>
             </div>
             <section>
               <div class="gam-fire-range-heading">

@@ -2,6 +2,26 @@ import { executePreparedGgaRoll } from "./prepared-gga-roll.js";
 
 export function parseRateOfFire(value) {
   const text = String(value ?? "").trim();
+  if (/^\d+\s*!(?:\s*\/\s*\d+\s*!)*$/u.test(text)) {
+    const modes = Array.from(text.matchAll(/(\d+)\s*!/gu), (match, index) => {
+      const fullRoF = Math.max(1, Number(match[1]));
+      return {
+        index,
+        fullRoF,
+        minRoF: Math.ceil(fullRoF / 4),
+        label: `${fullRoF}!`
+      };
+    });
+    return {
+      type: "full-auto",
+      source: text,
+      baseRoF: modes[0].fullRoF,
+      projectileMultiplier: 1,
+      display: text,
+      modes
+    };
+  }
+
   const multiple = text.match(/^(\d+)\s*[xX\u00d7*]\s*(\d+)$/u);
   if (multiple) {
     const baseRoF = Number(multiple[1]);
@@ -24,6 +44,34 @@ export function parseRateOfFire(value) {
     baseRoF: ordinary ? Math.max(1, Number(ordinary[0])) : 1,
     projectileMultiplier: 1,
     display: text
+  };
+}
+
+export function resolveRateOfFireLimits({ rof, loaded, modeIndex = 0 } = {}) {
+  const profile = typeof rof === "object" && rof?.type ? rof : parseRateOfFire(rof);
+  const ammo = Math.max(0, Math.trunc(Number(loaded) || 0));
+  if (profile.type !== "full-auto") {
+    return {
+      profile,
+      modeIndex: 0,
+      fullRoF: profile.baseRoF,
+      minRoF: 1,
+      minShots: 1,
+      maxShots: Math.max(1, Math.min(profile.baseRoF, ammo))
+    };
+  }
+
+  const requestedMode = Math.trunc(Number(modeIndex));
+  const selectedMode = profile.modes[requestedMode] ?? profile.modes[0];
+  const maxShots = Math.min(selectedMode.fullRoF, ammo);
+  const minShots = ammo < selectedMode.minRoF ? ammo : selectedMode.minRoF;
+  return {
+    profile,
+    modeIndex: selectedMode.index,
+    fullRoF: selectedMode.fullRoF,
+    minRoF: selectedMode.minRoF,
+    minShots,
+    maxShots
   };
 }
 
@@ -50,6 +98,30 @@ export function calculateBracingBonus(braced, aimSeconds) {
   const enabled = braced === true || braced === 1 ||
     ["true", "1", "on"].includes(String(braced ?? "").trim().toLowerCase());
   return enabled && normalizeAimSeconds(aimSeconds) > 0 ? 1 : 0;
+}
+
+export function normalizeBulk(value) {
+  const match = String(value ?? "").trim().match(/^[+-]?\d+/);
+  if (!match) return null;
+  const bulk = Number(match[0]);
+  return Number.isFinite(bulk) ? Math.trunc(bulk) : null;
+}
+
+export function calculateMoveAttackPenalty(bulk, moveAndAttack) {
+  const enabled = moveAndAttack === true || moveAndAttack === 1 ||
+    ["true", "1", "on"].includes(String(moveAndAttack ?? "").trim().toLowerCase());
+  if (!enabled) return 0;
+  return Math.min(-2, normalizeBulk(bulk) ?? -2);
+}
+
+export function resolveAimedFireBonuses({ accuracy, aimSeconds, braced, moveAndAttack = false } = {}) {
+  const moving = moveAndAttack === true || moveAndAttack === 1 ||
+    ["true", "1", "on"].includes(String(moveAndAttack ?? "").trim().toLowerCase());
+  if (moving) return { aimBonus: 0, bracingBonus: 0 };
+  return {
+    aimBonus: calculateAimBonus(accuracy, aimSeconds),
+    bracingBonus: calculateBracingBonus(braced, aimSeconds)
+  };
 }
 
 export function parseHalfDamageRange(value) {
@@ -122,9 +194,12 @@ export class FireService {
     this._previewModifierSnapshot = null;
   }
 
-  getMaximumShots(attack, loaded) {
-    const rofMaximum = parseRateOfFire(attack?.rof).baseRoF;
-    return Math.max(1, Math.min(rofMaximum, loaded));
+  getShotLimits(attack, loaded, modeIndex = 0) {
+    return resolveRateOfFireLimits({ rof: attack?.rof, loaded, modeIndex });
+  }
+
+  getMaximumShots(attack, loaded, modeIndex = 0) {
+    return this.getShotLimits(attack, loaded, modeIndex).maxShots;
   }
 
   parseAttackRcl(attack, options = {}) {
@@ -146,6 +221,10 @@ export class FireService {
     return parseRateOfFire(value);
   }
 
+  resolveRateOfFireLimits(options) {
+    return resolveRateOfFireLimits(options);
+  }
+
   normalizeAccuracy(value) {
     return normalizeAccuracy(value);
   }
@@ -160,6 +239,18 @@ export class FireService {
 
   calculateBracingBonus(braced, aimSeconds) {
     return calculateBracingBonus(braced, aimSeconds);
+  }
+
+  normalizeBulk(value) {
+    return normalizeBulk(value);
+  }
+
+  calculateMoveAttackPenalty(bulk, moveAndAttack) {
+    return calculateMoveAttackPenalty(bulk, moveAndAttack);
+  }
+
+  resolveAimedFireBonuses(options) {
+    return resolveAimedFireBonuses(options);
   }
 
   parseHalfDamageRange(value) {
@@ -293,6 +384,10 @@ export class FireService {
       if (options.bracingBonus > 0) {
         GURPS.ModifierBucket.addModifier(options.bracingBonus, "Упор");
         appliedModifiers.push(`Упор +${options.bracingBonus}`);
+      }
+      if (options.moveAttackPenalty < 0) {
+        GURPS.ModifierBucket.addModifier(options.moveAttackPenalty, "Движение и атака");
+        appliedModifiers.push(`движение и атака ${options.moveAttackPenalty}`);
       }
       if (options.manualModifier !== 0) {
         GURPS.ModifierBucket.addModifier(options.manualModifier, "Бонусы/штрафы");

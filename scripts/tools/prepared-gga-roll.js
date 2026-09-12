@@ -148,3 +148,49 @@ export async function executePreparedGgaRoll({
 
   return { rolled: true, rollData: chatdata, roll };
 }
+// Generic prepared skill roll: no ranged document, attack dialogs or ammunition side effects.
+export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkill, effectiveRoF = 1,
+  rcl = null, location, targetingService, closeMultiplier = null, runtime = globalThis }) {
+  if (!Number.isFinite(Number(effectiveSkill))) throw new Error("Не рассчитано Эффективное умение.");
+  const finaltarget = Math.max(3, Math.trunc(Number(effectiveSkill)));
+  const roll = runtime.Roll.create("3d6[Fire Control]");
+  await roll.evaluate();
+  const total = Number(roll.total);
+  const margin = finaltarget - total;
+  const failure = total >= 17 || margin < 0;
+  const critical = getCriticalState(total, finaltarget);
+  const hits = !failure && Number.isFinite(rcl) && rcl > 0
+    ? Math.min(effectiveRoF, 1 + Math.floor(margin / rcl)) : null;
+  let locationLabel = location?.label ?? "";
+  if (!failure && location?.random && targetingService) {
+    try {
+      const random = await targetingService.resolveRandomHitLocation();
+      locationLabel = random.label;
+    } catch (error) {
+      console.error("Fire Control: не удалось определить случайную зону.", error);
+      runtime.ui?.notifications?.warn?.("Бросок выполнен, но случайная зона не определена.");
+    }
+  }
+  const data = {
+    prefix: "", chatthing: "Fire Control", thing: "Fire Control", origtarget: baseSkill,
+    fromUser: runtime.game.user.id,
+    targetmods: finaltarget === baseSkill ? [] : [{
+      mod: finaltarget - baseSkill, modint: finaltarget - baseSkill, desc: "Fire Control: сумма модификаторов"
+    }], showPlus: true,
+    multiples: [{ rtotal: total, loaded: !!roll.isLoaded, rolls: (roll.dice?.[0]?.results ?? []).map(r => r.result).join() }],
+    rtotal: total, modifier: finaltarget - baseSkill, finaltarget, margin, failure,
+    seventeen: total >= 17, ...critical, isDraggable: false,
+    followon: "", optlabel: "", isBlind: false,
+    rof: hits === null ? null : String(effectiveRoF), rcl, rofrcl: hits
+  };
+  const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  let content = await runtime.renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", data);
+  if (locationLabel) content += `<p>Hit Location: ${escape(locationLabel)}</p>`;
+  if (closeMultiplier) content += `<p>Extremely Close: basic damage ×${closeMultiplier}, DR ×${closeMultiplier}</p>`;
+  const message = { user: runtime.game.user.id, speaker: runtime.ChatMessage.getSpeaker(actor ? { actor } : {}),
+    content, rolls: [roll], sound: runtime.CONFIG?.sounds?.dice };
+  const rollMode = runtime.game.settings?.get?.("core", "rollMode");
+  if (rollMode) runtime.ChatMessage.applyRollMode?.(message, rollMode);
+  await runtime.ChatMessage.create(message);
+  return { rolled: true, rollData: data, roll };
+}

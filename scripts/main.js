@@ -1,3 +1,4 @@
+import { openFireControl } from "./tools/fire-control.js";
 import { openAmmoManager } from "./tools/ammo.js";
 import { openFrightCheck } from "./tools/fright.js";
 import { openReactionRoll } from "./tools/reaction.js";
@@ -9,6 +10,7 @@ const MODULE_ID = "olegurps-qol";
 
 const api = {
   ammo: { open: openAmmoManager },
+  fireControl: { open: openFireControl },
   fright: { open: openFrightCheck },
   reaction: { open: openReactionRoll },
   critical: { open: openCriticalTables },
