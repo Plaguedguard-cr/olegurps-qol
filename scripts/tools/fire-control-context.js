@@ -26,7 +26,8 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const hasBulk = fireService.normalizeBulk(attack?.data?.bulk ?? attack?.bulk) !== null;
     const aimed = fireService.resolveAimedFireBonuses({
       accuracy: attack?.acc, aimSeconds: values?.aimSeconds,
-      braced: values?.braced, moveAndAttack: parseBoolean(values?.moveAndAttack)
+      braced: values?.braced, laserSight: values?.laserSight,
+      moveAndAttack: parseBoolean(values?.moveAndAttack)
     });
     return {
       ...aimed,
@@ -214,14 +215,13 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       : 0;
     const manualValue = Number(String(values?.manualModifier ?? "").replace(",", "."));
     const manualModifier = Number.isFinite(manualValue) ? Math.trunc(manualValue) : 0;
-    const { aimBonus, bracingBonus, moveAttackPenalty } = getFireBonuses(attack, values);
-    const laserBonus = parseBoolean(values?.laserSight) ? 1 : 0;
+    const { aimBonus, bracingBonus, laserBonus, moveAttackPenalty } = getFireBonuses(attack, values);
     const fireMode = getFireModeState(attack, values, rangeBands);
     const rapidFireBonus = getRapidFireBonus(attack, fireMode.effectiveRoF);
     const hitLocation = targetingService?.getSelection(values?.hitLocationId, values?.hitRegionId);
     const targetedAttack = targetedAttackContext?.resolve({
       specialty: values?.governingSpecialty,
-      target: hitLocation?.zoneId,
+      target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
     });
     const hitLocationPenalty = Number(targetedAttack?.effectivePenalty ?? hitLocation?.penalty ?? 0);

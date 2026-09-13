@@ -91,7 +91,8 @@ export function calculateAimBonus(accuracy, seconds) {
   const normalizedAccuracy = normalizeAccuracy(accuracy);
   const normalizedSeconds = normalizeAimSeconds(seconds);
   if (normalizedAccuracy === null || normalizedSeconds === 0) return 0;
-  return normalizedAccuracy + Math.min(normalizedSeconds - 1, 2);
+  const uncappedBonus = normalizedAccuracy + Math.min(normalizedSeconds - 1, 2);
+  return Math.min(uncappedBonus, normalizedAccuracy * 2);
 }
 
 export function calculateBracingBonus(braced, aimSeconds) {
@@ -114,14 +115,44 @@ export function calculateMoveAttackPenalty(bulk, moveAndAttack) {
   return Math.min(-2, normalizeBulk(bulk) ?? -2);
 }
 
-export function resolveAimedFireBonuses({ accuracy, aimSeconds, braced, moveAndAttack = false } = {}) {
+export function resolveAimedFireBonuses({
+  accuracy,
+  aimSeconds,
+  braced,
+  laserSight,
+  moveAndAttack = false
+} = {}) {
   const moving = moveAndAttack === true || moveAndAttack === 1 ||
     ["true", "1", "on"].includes(String(moveAndAttack ?? "").trim().toLowerCase());
-  if (moving) return { aimBonus: 0, bracingBonus: 0 };
-  return {
-    aimBonus: calculateAimBonus(accuracy, aimSeconds),
-    bracingBonus: calculateBracingBonus(braced, aimSeconds)
-  };
+  const laserEnabled = laserSight === true || laserSight === 1 ||
+    ["true", "1", "on"].includes(String(laserSight ?? "").trim().toLowerCase());
+  const normalizedSeconds = normalizeAimSeconds(aimSeconds);
+  const normalizedAccuracy = normalizeAccuracy(accuracy);
+
+  if (moving || normalizedSeconds === 0 || normalizedAccuracy === null) {
+    const laserBonus = laserEnabled ? 1 : 0;
+    return {
+      aimBonus: 0,
+      bracingBonus: 0,
+      laserBonus,
+      aimedFireBonus: laserBonus,
+      aimedFireCap: null
+    };
+  }
+
+  const aimedFireCap = normalizedAccuracy * 2;
+  let remaining = aimedFireCap;
+  const baseAimBonus = Math.min(normalizedAccuracy, remaining);
+  remaining -= baseAimBonus;
+  const bracingBonus = Math.min(calculateBracingBonus(braced, normalizedSeconds), remaining);
+  remaining -= bracingBonus;
+  const extraAimBonus = Math.min(Math.min(normalizedSeconds - 1, 2), remaining);
+  remaining -= extraAimBonus;
+  const aimBonus = baseAimBonus + extraAimBonus;
+  const laserBonus = Math.min(laserEnabled ? 1 : 0, remaining);
+  const aimedFireBonus = aimBonus + bracingBonus + laserBonus;
+
+  return { aimBonus, bracingBonus, laserBonus, aimedFireBonus, aimedFireCap };
 }
 
 export function parseHalfDamageRange(value) {
@@ -373,9 +404,9 @@ export class FireService {
         );
         appliedModifiers.push(`скорострельность +${options.rapidFireBonus}`);
       }
-      if (options.laserSight) {
-        GURPS.ModifierBucket.addModifier(1, "Лазерный прицел");
-        appliedModifiers.push("лазерный прицел +1");
+      if (options.laserBonus > 0) {
+        GURPS.ModifierBucket.addModifier(options.laserBonus, "Лазерный прицел");
+        appliedModifiers.push(`лазерный прицел +${options.laserBonus}`);
       }
       if (options.aimBonus > 0) {
         GURPS.ModifierBucket.addModifier(options.aimBonus, "Aim");

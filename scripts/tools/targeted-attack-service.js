@@ -16,8 +16,26 @@ registerAliases(TARGET_ALIASES, "neck", ["Neck", "Шея"]);
 registerAliases(TARGET_ALIASES, "arm", ["Arm", "Arms", "Рука", "Руки"]);
 registerAliases(TARGET_ALIASES, "hand", ["Hand", "Hands", "Кисть", "Кисти"]);
 registerAliases(TARGET_ALIASES, "leg", ["Leg", "Legs", "Нога", "Ноги"]);
-registerAliases(TARGET_ALIASES, "foot", ["Foot", "Feet", "Ступня", "Ступни", "Стопа", "Стопы"]);
+registerAliases(TARGET_ALIASES, "foot", ["Foot", "Feet", "Forefoot", "Front Foot", "Hind Foot", "Hoof", "Hooves", "Ступня", "Ступни", "Стопа", "Стопы", "Переднее копыто", "Заднее копыто", "Копыто", "Копыта"]);
 registerAliases(TARGET_ALIASES, "groin", ["Groin", "Пах"]);
+registerAliases(TARGET_ALIASES, "torso", ["Torso", "Торс"]);
+registerAliases(TARGET_ALIASES, "human-torso", ["Human Torso", "Humanoid Torso", "Человеческий торс"]);
+registerAliases(TARGET_ALIASES, "animal-torso", ["Animal Torso", "Horse Torso", "Конский торс", "Животный торс"]);
+registerAliases(TARGET_ALIASES, "extremity", ["Extremity", "Extremities", "Конечность", "Конечности"]);
+registerAliases(TARGET_ALIASES, "tail", ["Tail", "Хвост"]);
+registerAliases(TARGET_ALIASES, "wing", ["Wing", "Wings", "Крыло", "Крылья"]);
+registerAliases(TARGET_ALIASES, "wing-right", ["Right Wing", "Правое крыло"]);
+registerAliases(TARGET_ALIASES, "wing-left", ["Left Wing", "Левое крыло"]);
+registerAliases(TARGET_ALIASES, "foreleg", ["Foreleg", "Fore Leg", "Передняя нога", "Передние ноги"]);
+registerAliases(TARGET_ALIASES, "mid-leg", ["Mid Leg", "Middle Leg", "Midleg", "Средняя нога", "Средние ноги"]);
+registerAliases(TARGET_ALIASES, "foreleg-right", ["Right Foreleg", "Right Fore Leg", "Правая передняя нога"]);
+registerAliases(TARGET_ALIASES, "foreleg-left", ["Left Foreleg", "Left Fore Leg", "Левая передняя нога"]);
+registerAliases(TARGET_ALIASES, "hindleg", ["Hind Leg", "Hindleg", "Задняя нога", "Задние ноги"]);
+registerAliases(TARGET_ALIASES, "hind-leg", ["Hind Leg", "Hindleg", "Задняя нога", "Задние ноги"]);
+registerAliases(TARGET_ALIASES, "hindleg-right", ["Right Hind Leg", "Right Hindleg", "Правая задняя нога"]);
+registerAliases(TARGET_ALIASES, "hindleg-left", ["Left Hind Leg", "Left Hindleg", "Левая задняя нога"]);
+registerAliases(TARGET_ALIASES, "foot-right", ["Right Foot", "Правая ступня", "Правая стопа"]);
+registerAliases(TARGET_ALIASES, "foot-left", ["Left Foot", "Левая ступня", "Левая стопа"]);
 registerAliases(SPECIALTY_ALIASES, "pistol", ["Pistol", "Пистолет"]);
 registerAliases(SPECIALTY_ALIASES, "rifle", ["Rifle", "Винтовка"]);
 registerAliases(SPECIALTY_ALIASES, "shotgun", ["Shotgun", "Дробовик"]);
@@ -234,20 +252,21 @@ export function createTargetedAttackContext({ actor, attack, mode = "weapon" } =
     resolve({ specialty, target, basePenalty } = {}) {
       if (!enabled) return null;
       const canonicalSpecialty = automaticSpecialty ?? normalizeGunsSpecialty(specialty);
-      const canonicalTarget = normalizeTargetedAttackLocation(target);
-      if (!canonicalSpecialty || !canonicalTarget) return null;
+      const targetValues = Array.isArray(target) ? target : [target];
+      const canonicalTargets = [...new Set(targetValues.map(normalizeTargetedAttackLocation).filter(Boolean))];
+      if (!canonicalSpecialty || canonicalTargets.length === 0) return null;
       const governing = gunsSkills.filter(skill => skill.specialty === canonicalSpecialty && Number.isFinite(skill.level))
         .sort((left, right) => right.level - left.level)[0];
       if (!governing) return null;
       let best = null;
       for (const technique of techniques) {
-        if (technique.specialty !== canonicalSpecialty || technique.target !== canonicalTarget) continue;
+        if (technique.specialty !== canonicalSpecialty || !canonicalTargets.includes(technique.target)) continue;
         const modifier = Number.isFinite(technique.relativeLevel) ? technique.relativeLevel
           : (Number.isFinite(technique.level) ? technique.level - governing.level : null);
         if (!Number.isFinite(modifier)) continue;
         const effectivePenalty = clampTargetedAttackModifier(basePenalty, modifier);
         if (effectivePenalty === null || (best && best.effectivePenalty >= effectivePenalty)) continue;
-        best = { target: canonicalTarget, specialty: canonicalSpecialty, basePenalty: Math.trunc(Number(basePenalty)),
+        best = { target: technique.target, specialty: canonicalSpecialty, basePenalty: Math.trunc(Number(basePenalty)),
           techniqueModifier: modifier, effectivePenalty, techniqueLevel: technique.level,
           governingSkillLevel: governing.level, source: technique.source, entry: technique.entry };
       }

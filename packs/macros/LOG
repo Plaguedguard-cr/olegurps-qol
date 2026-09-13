@@ -1,5 +1,3 @@
-2026/09/12-16:23:08.330 1f3c Recovering log #43
-2026/09/12-16:23:08.330 1f3c Level-0 table #45: started
-2026/09/12-16:23:08.335 1f3c Level-0 table #45: 568 bytes OK
-2026/09/12-16:23:08.340 1f3c Delete type=0 #43
-2026/09/12-16:23:08.340 1f3c Delete type=3 #42
+2026/09/13-14:57:05.284 32ac Recovering log #53
+2026/09/13-14:57:05.288 32ac Delete type=0 #53
+2026/09/13-14:57:05.288 32ac Delete type=3 #51

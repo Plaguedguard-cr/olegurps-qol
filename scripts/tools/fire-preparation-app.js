@@ -1,5 +1,6 @@
 import { createStandaloneAttack } from "./fire-control-context.js";
 import { resolveElevationRange } from "./fire-range-service.js";
+import { TargetingService } from "./targeting-service.js";
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
@@ -204,6 +205,22 @@ const FIRE_PREPARATION_CSS = `
   .gam-fire-range-heading p,
   .gam-hit-heading p { opacity: 0.72; font-size: 0.82em; }
 
+  .gam-hit-heading-controls {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 7px;
+    min-width: 0;
+  }
+
+  .gam-hit-heading-controls select {
+    width: auto;
+    min-width: 118px;
+    height: 28px;
+    margin: 0;
+    padding-block: 1px;
+  }
+
   .gam-fire-elevation-controls {
     display: flex;
     align-items: center;
@@ -338,6 +355,8 @@ const FIRE_PREPARATION_CSS = `
 
   .gam-hit-map {
     position: relative;
+    display: grid;
+    place-items: center;
     width: 100%;
     aspect-ratio: 941 / 1672;
     overflow: hidden;
@@ -346,7 +365,14 @@ const FIRE_PREPARATION_CSS = `
     background: #000;
   }
 
-  .gam-hit-map img,
+  .gam-hit-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: var(--gam-hit-aspect, 941 / 1672);
+    max-height: 100%;
+  }
+
+  .gam-hit-stage img,
   .gam-hit-overlay {
     position: absolute;
     inset: 0;
@@ -355,8 +381,8 @@ const FIRE_PREPARATION_CSS = `
     height: 100%;
   }
 
-  .gam-hit-map img { object-fit: fill; pointer-events: none; }
-  .gam-hit-overlay { overflow: visible; pointer-events: none; }
+  .gam-hit-stage img { object-fit: fill; pointer-events: none; }
+  .gam-hit-overlay { overflow: hidden; pointer-events: none; }
   .gam-hit-region { pointer-events: all; cursor: pointer; outline: none; }
   .gam-hit-region[aria-disabled="true"] { pointer-events: none; cursor: not-allowed; }
 
@@ -369,6 +395,16 @@ const FIRE_PREPARATION_CSS = `
     transition: fill-opacity 100ms ease, stroke 100ms ease, filter 100ms ease;
   }
 
+  .gam-hit-region.has-base-fill .gam-hit-region-shape {
+    fill-opacity: 0.82;
+    stroke: #fff;
+    stroke-width: 1.25px;
+  }
+
+  .gam-hit-region-shape.has-base-fill {
+    fill-opacity: 0.82;
+  }
+
   .gam-hit-region.is-hovered .gam-hit-region-shape {
     fill-opacity: 0.35;
     stroke: var(--zone-color);
@@ -379,6 +415,13 @@ const FIRE_PREPARATION_CSS = `
     fill-opacity: 0.5;
     stroke: #fff;
     filter: drop-shadow(0 0 5px var(--zone-color));
+  }
+
+  .gam-hit-region.has-base-fill.is-hovered .gam-hit-region-shape,
+  .gam-hit-region.has-base-fill.is-selected .gam-hit-region-shape,
+  .gam-hit-region.is-hovered .gam-hit-region-shape.has-base-fill,
+  .gam-hit-region.is-selected .gam-hit-region-shape.has-base-fill {
+    fill-opacity: 0.82;
   }
 
   .gam-hit-region.has-base-outline .gam-hit-region-shape {
@@ -396,8 +439,8 @@ const FIRE_PREPARATION_CSS = `
     display: grid;
     min-width: 0;
     gap: 3px;
-    max-height: 500px;
-    overflow-y: auto;
+    max-height: none;
+    overflow: visible;
     padding: 1px;
   }
 
@@ -466,11 +509,16 @@ const FIRE_PREPARATION_CSS = `
   .gam-hit-row:disabled { opacity: 0.38; cursor: not-allowed; }
 
   .gam-fire-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
     padding-top: 10px;
     border-top: 1px solid rgba(128, 128, 128, 0.32);
+    background: rgba(12, 12, 20, 0.96);
+    box-shadow: 0 -6px 12px rgba(0, 0, 0, 0.28);
   }
 
   .gam-fire-actions button { width: 100%; min-height: 36px; margin: 0; }
@@ -527,7 +575,7 @@ export class FirePreparationApp extends ApplicationV2 {
     position: { width: 1120, height: "auto" }
   };
 
-  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateFireMode, calculateEffectiveSkill, onGoverningSpecialtyChange, onConfirm, onClose }, options = {}) {
+  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", initialStandaloneValues = null, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateLaserBonus, calculateFireMode, calculateEffectiveSkill, onTargetingServiceChange, onGoverningSpecialtyChange, onStandaloneValuesChange, onConfirm, onClose }, options = {}) {
     super({
       ...options,
       id: options.id ?? (mode === "standalone" ? "olegurps-fire-control-standalone" : `olegurps-fire-preparation-${token.id}-${weapon.id}`),
@@ -542,6 +590,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this.recommendation = recommendation;
     this.beamWeapon = beamWeapon;
     this.targetingService = targetingService;
+    this._targetingServices = new Map([[targetingService.bodyplan, targetingService]]);
+    this._bodyplanRequestId = 0;
     this.targetedAttackContext = targetedAttackContext;
     this.maximumShots = maximumShots;
     this.rateOfFireProfile = rateOfFireProfile;
@@ -549,9 +599,12 @@ export class FirePreparationApp extends ApplicationV2 {
     this.calculateRapidFireBonus = calculateRapidFireBonus;
     this.calculateAimBonus = calculateAimBonus;
     this.calculateBracingBonus = calculateBracingBonus;
+    this.calculateLaserBonus = calculateLaserBonus;
     this.calculateFireMode = calculateFireMode;
     this.calculateEffectiveSkill = calculateEffectiveSkill;
+    this.targetingServiceChangeCallback = onTargetingServiceChange;
     this.governingSpecialtyChangeCallback = onGoverningSpecialtyChange;
+    this.standaloneValuesChangeCallback = onStandaloneValuesChange;
     this.confirmCallback = onConfirm;
     this.closeCallback = onClose;
     const defaultHitLocation = targetingService.getDefaultSelection();
@@ -579,8 +632,15 @@ export class FirePreparationApp extends ApplicationV2 {
       selectedRangeIndex: recommendedRangeIndex,
       manualRangeSelected: false,
       elevationSourceRangeIndex: recommendedRangeIndex,
+      bodyplanId: targetingService.bodyplan,
       hitLocation: { ...defaultHitLocation }
     };
+    if (this.mode === "standalone" && initialStandaloneValues && typeof initialStandaloneValues === "object") {
+      for (const name of ["skillLevel", "acc", "bulk", "rcl", "halfd", "projectileMultiplier"]) {
+        this.fireState[name] = String(initialStandaloneValues[name] ?? "");
+      }
+      this.fireState.shotgun = initialStandaloneValues.shotgun === true;
+    }
     if (this.mode === "standalone") this._refreshStandaloneAttack();
     this._submitting = false;
     this._closeNotified = false;
@@ -654,6 +714,30 @@ export class FirePreparationApp extends ApplicationV2 {
     return result;
   }
 
+  getStandaloneValues() {
+    if (this.mode !== "standalone") return null;
+    return {
+      skillLevel: String(this.fireState.skillLevel ?? ""),
+      acc: String(this.fireState.acc ?? ""),
+      bulk: String(this.fireState.bulk ?? ""),
+      rcl: String(this.fireState.rcl ?? ""),
+      halfd: String(this.fireState.halfd ?? ""),
+      shotgun: this.fireState.shotgun === true,
+      projectileMultiplier: String(this.fireState.projectileMultiplier ?? "")
+    };
+  }
+
+  _notifyStandaloneValuesChange() {
+    const values = this.getStandaloneValues();
+    if (!values || !this.standaloneValuesChangeCallback) return;
+    try {
+      const pending = this.standaloneValuesChangeCallback(values);
+      pending?.catch?.(error => console.error("Не удалось сохранить параметры standalone Fire Control:", error));
+    } catch (error) {
+      console.error("Не удалось сохранить параметры standalone Fire Control:", error);
+    }
+  }
+
   _captureFields() {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
@@ -674,6 +758,7 @@ export class FirePreparationApp extends ApplicationV2 {
       }
       this.fireState.shotgun = !!root.querySelector('[name="shotgun"]')?.checked;
       this._refreshStandaloneAttack();
+      this._notifyStandaloneValuesChange();
     }
   }
 
@@ -708,6 +793,7 @@ export class FirePreparationApp extends ApplicationV2 {
       highGround: this.fireState.highGround,
       rangeIndex: this.fireState.selectedRangeIndex,
       manualRangeSelected: this.fireState.manualRangeSelected,
+      bodyplanId: this.fireState.bodyplanId,
       hitLocationId: this.fireState.hitLocation.zoneId,
       hitRegionId: this.fireState.hitLocation.regionId
     };
@@ -739,7 +825,7 @@ export class FirePreparationApp extends ApplicationV2 {
       else {
         const range = limits.minShots === limits.maxShots
           ? String(limits.maxShots)
-          : `${limits.minShots}–${limits.maxShots}`;
+          : `${limits.minShots}-${limits.maxShots}`;
         label.textContent = `Выстрелы (${range})`;
       }
     }
@@ -761,7 +847,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getSkillPreview() {
-    const calculatedValue = this.calculateEffectiveSkill?.(this.getShotOptions());
+    const calculatedValue = this.calculateEffectiveSkill?.(this.getShotOptions(), this.targetingService);
     const calculated = calculatedValue === null || calculatedValue === undefined
       ? Number.NaN
       : Number(calculatedValue);
@@ -782,19 +868,41 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getAimBonus(fireState = this.fireState) {
-    const value = Number(this.calculateAimBonus?.(fireState.aimSeconds, fireState.moveAndAttack));
+    const value = Number(this.calculateAimBonus?.(
+      fireState.aimSeconds,
+      fireState.moveAndAttack,
+      fireState.braced,
+      fireState.laserSight
+    ));
     return Number.isFinite(value) && value >= 0 ? Math.trunc(value) : 0;
   }
 
   _updateAimPreview() {
-    const preview = this.element?.querySelector("[data-aim-preview]");
+    const aimPreview = this.element?.querySelector("[data-aim-preview]");
+    const laserPreview = this.element?.querySelector("[data-laser-preview]");
     const effectiveModifier = this._getAimBonus() + this._getBracingBonus();
-    if (preview) preview.textContent = `+${effectiveModifier}`;
+    if (aimPreview) aimPreview.textContent = `+${effectiveModifier}`;
+    if (laserPreview) laserPreview.textContent = `+${this.fireState.laserSight ? this._getLaserBonus() : 1}`;
     this._updateAttackStats();
   }
 
   _getBracingBonus(fireState = this.fireState) {
-    const value = Number(this.calculateBracingBonus?.(fireState.braced, fireState.aimSeconds, fireState.moveAndAttack));
+    const value = Number(this.calculateBracingBonus?.(
+      fireState.braced,
+      fireState.aimSeconds,
+      fireState.moveAndAttack,
+      fireState.laserSight
+    ));
+    return value === 1 ? 1 : 0;
+  }
+
+  _getLaserBonus(fireState = this.fireState) {
+    const value = Number(this.calculateLaserBonus?.(
+      fireState.laserSight,
+      fireState.aimSeconds,
+      fireState.braced,
+      fireState.moveAndAttack
+    ));
     return value === 1 ? 1 : 0;
   }
 
@@ -901,19 +1009,28 @@ export class FirePreparationApp extends ApplicationV2 {
   _syncRangeListHeight() {
     const rangeList = this.element?.querySelector(".gam-fire-range-list");
     const hitList = this.element?.querySelector(".gam-hit-list");
-    const eyeRow = hitList?.querySelector('.gam-hit-row[data-hit-zone-id="eye"]');
-    if (!rangeList || !hitList || !eyeRow) return;
+    if (!rangeList || !hitList) return;
 
     const rangeRect = rangeList.getBoundingClientRect();
     const hitRect = hitList.getBoundingClientRect();
-    const eyeRect = eyeRow.getBoundingClientRect();
     const sideBySide = hitRect.left >= rangeRect.right - 4;
     if (!sideBySide) {
       rangeList.style.removeProperty("max-height");
       return;
     }
 
-    const height = Math.floor(eyeRect.bottom - rangeRect.top);
+    const visibleRows = [...rangeList.querySelectorAll(".gam-fire-range-row")].slice(0, 7);
+    if (!visibleRows.length) return;
+
+    const styles = globalThis.getComputedStyle?.(rangeList);
+    const gap = Number.parseFloat(styles?.rowGap || styles?.gap || "0") || 0;
+    const paddingTop = Number.parseFloat(styles?.paddingTop || "0") || 0;
+    const paddingBottom = Number.parseFloat(styles?.paddingBottom || "0") || 0;
+    const rowsHeight = visibleRows.reduce(
+      (total, row) => total + row.getBoundingClientRect().height,
+      0
+    );
+    const height = Math.ceil(rowsHeight + gap * Math.max(0, visibleRows.length - 1) + paddingTop + paddingBottom);
     if (height > 120) rangeList.style.maxHeight = `${height}px`;
   }
 
@@ -952,6 +1069,43 @@ export class FirePreparationApp extends ApplicationV2 {
     }
     this._updateTargetedAttackPreview();
     this._updateSkillPreview();
+  }
+
+
+  async _switchBodyplan(bodyplanId) {
+    const requestedId = String(bodyplanId ?? "");
+    if (requestedId === this.targetingService.bodyplan) return;
+
+    const requestId = ++this._bodyplanRequestId;
+    const selector = this.element?.querySelector('[name="bodyplanId"]');
+    if (selector) selector.disabled = true;
+
+    try {
+      let service = this._targetingServices.get(requestedId);
+      if (!service) {
+        service = await TargetingService.create({ attack: this.attack, bodyplan: requestedId });
+        this._targetingServices.set(service.bodyplan, service);
+      }
+      if (requestId !== this._bodyplanRequestId) return;
+
+      this.targetingServiceChangeCallback?.(service);
+      this.targetingService = service;
+      this.fireState.bodyplanId = service.bodyplan;
+      this.fireState.hitLocation = { ...service.getDefaultSelection() };
+
+      const targeting = this.element?.querySelector(".gam-fire-targeting");
+      if (targeting) targeting.outerHTML = this._buildHitLocationContent(this.fireState);
+      this._updateSkillPreview();
+      globalThis.requestAnimationFrame?.(() => this._syncRangeListHeight());
+    } catch (error) {
+      console.error("Не удалось переключить bodyplan:", error);
+      ui.notifications.error(error?.message ?? "Не удалось переключить bodyplan.");
+      const currentSelector = this.element?.querySelector('[name="bodyplanId"]');
+      if (currentSelector) currentSelector.value = this.targetingService.bodyplan;
+    } finally {
+      const currentSelector = this.element?.querySelector('[name="bodyplanId"]');
+      if (currentSelector) currentSelector.disabled = false;
+    }
   }
 
   _setHoveredHitLocation(zoneId = null, regionId = null) {
@@ -1010,14 +1164,19 @@ export class FirePreparationApp extends ApplicationV2 {
     }
   }
 
-  _onInput(event) {
+  async _onInput(event) {
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
+    if (field.name === "bodyplanId") {
+      await this._switchBodyplan(field.value);
+      return;
+    }
     if (this.mode === "standalone" &&
       ["skillLevel", "acc", "bulk", "rcl", "halfd", "projectileMultiplier", "shotgun"].includes(field.name)) {
       if (field.name === "shotgun") this.fireState.shotgun = field.checked;
       else this.fireState[field.name] = field.value;
       this._refreshStandaloneAttack();
+      this._notifyStandaloneValuesChange();
       if (field.name === "shotgun") {
         const multiplier = this.element?.querySelector('[name="projectileMultiplier"]');
         if (multiplier) multiplier.disabled = !field.checked;
@@ -1065,7 +1224,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this._syncShotLimits({ clamp: field.name === "rofMode" || event.type === "change" });
       this._updateRapidFirePreview();
     }
-    if (field.name === "aimSeconds" || field.name === "braced" || field.name === "moveAndAttack") this._updateAimPreview();
+    if (field.name === "aimSeconds" || field.name === "braced" || field.name === "laserSight" || field.name === "moveAndAttack") this._updateAimPreview();
     if (field.name === "height" || field.name === "highGround") this._updateElevationPreview();
     this._updateSkillPreview();
   }
@@ -1104,7 +1263,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this._submitting = true;
     button.disabled = true;
     try {
-      const completed = await this.confirmCallback?.(this.getShotOptions());
+      const completed = await this.confirmCallback?.(this.getShotOptions(), this.targetingService);
       if (completed) await this.close();
     } catch (error) {
       console.error("GURPS Fire Preparation:", error);
@@ -1116,19 +1275,20 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _renderSvgGeometry(geometry) {
+    const shapeClass = ["gam-hit-region-shape", geometry.baseFill ? "has-base-fill" : ""].filter(Boolean).join(" ");
     if (geometry.type === "ellipse") {
-      return `<ellipse class="gam-hit-region-shape" cx="${svgCoordinate(geometry.cx)}" cy="${svgCoordinate(geometry.cy)}" rx="${svgCoordinate(geometry.rx)}" ry="${svgCoordinate(geometry.ry)}"></ellipse>`;
+      return `<ellipse class="${shapeClass}" cx="${svgCoordinate(geometry.cx)}" cy="${svgCoordinate(geometry.cy)}" rx="${svgCoordinate(geometry.rx)}" ry="${svgCoordinate(geometry.ry)}"></ellipse>`;
     }
     if (geometry.type === "path") {
       const path = (geometry.rings ?? [])
         .map(points => `M ${points.map(([x, y]) => `${svgCoordinate(x)} ${svgCoordinate(y)}`).join(" L ")} Z`)
         .join(" ");
-      return `<path class="gam-hit-region-shape" fill-rule="${geometry.fillRule ?? "nonzero"}" d="${path}"></path>`;
+      return `<path class="${shapeClass}" fill-rule="${geometry.fillRule ?? "nonzero"}" d="${path}"></path>`;
     }
     const points = (geometry.points ?? [])
       .map(([x, y]) => `${svgCoordinate(x)},${svgCoordinate(y)}`)
       .join(" ");
-    return `<polygon class="gam-hit-region-shape" points="${points}"></polygon>`;
+    return `<polygon class="${shapeClass}" points="${points}"></polygon>`;
   }
 
   _formatModifier(value) {
@@ -1139,7 +1299,7 @@ export class FirePreparationApp extends ApplicationV2 {
   _getTargetedAttack(zone, fireState = this.fireState) {
     return this.targetedAttackContext?.resolve({
       specialty: fireState.governingSpecialty,
-      target: zone?.id,
+      target: [zone?.canonicalKey ?? zone?.id, ...(zone?.taAliases ?? [])],
       basePenalty: zone?.penalty
     }) ?? null;
   }
@@ -1182,6 +1342,9 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _buildHitLocationContent(fireState) {
     const selection = fireState.hitLocation;
+    const bodyplanOptions = TargetingService.getBodyplanOptions().map(option =>
+      `<option value="${escapeHTML(option.id)}" ${this.targetingService.bodyplan === option.id ? "selected" : ""}>${escapeHTML(option.label)}</option>`
+    ).join("");
     const rows = this.targetingService.zones.map(zone => {
       const selected = selection.zoneId === zone.id;
       const disabled = !zone.available;
@@ -1210,7 +1373,7 @@ export class FirePreparationApp extends ApplicationV2 {
       const shapes = region.geometry.map(geometry => this._renderSvgGeometry(geometry)).join("");
       return `
         <g
-          class="gam-hit-region ${region.baseOutline ? "has-base-outline" : ""} ${selected ? "is-selected" : ""}"
+          class="gam-hit-region ${region.baseOutline ? "has-base-outline" : ""} ${region.baseFill ? "has-base-fill" : ""} ${selected ? "is-selected" : ""}"
           data-hit-zone-id="${region.zoneId}"
           data-hit-region-id="${region.id}"
           data-hit-disabled="${disabled}"
@@ -1225,16 +1388,21 @@ export class FirePreparationApp extends ApplicationV2 {
     }).join("");
 
     return `
-      <aside class="gam-fire-targeting">
+      <aside class="gam-fire-targeting gam-bodyplan-${escapeHTML(this.targetingService.bodyplan)}">
         <section>
           <div class="gam-hit-heading">
             <h4>Hit Location</h4>
-            <p>humanoid · ${this.targetingService.tableSource === "gga" ? "GGA" : "fallback"}</p>
+            <div class="gam-hit-heading-controls">
+              <select name="bodyplanId" aria-label="Bodyplan">${bodyplanOptions}</select>
+              <p>${escapeHTML(this.targetingService.label)} · ${this.targetingService.tableSource === "gga" ? "GGA" : "fallback"}</p>
+            </div>
           </div>
           <div class="gam-hit-panel">
             <div class="gam-hit-map">
-              <img src="${escapeHTML(this.targetingService.image)}" alt="Humanoid hit locations">
-              <svg class="gam-hit-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-label="Интерактивная схема зон попадания">${regions}</svg>
+              <div class="gam-hit-stage" style="--gam-hit-aspect:${escapeHTML(this.targetingService.aspectRatio)}">
+                <img src="${escapeHTML(this.targetingService.image)}" alt="${escapeHTML(this.targetingService.label)} hit locations">
+                <svg class="gam-hit-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-label="Интерактивная схема зон попадания">${regions}</svg>
+              </div>
             </div>
             <div class="gam-hit-list" role="listbox" aria-label="Зоны попадания">${rows}</div>
           </div>
@@ -1304,13 +1472,14 @@ export class FirePreparationApp extends ApplicationV2 {
     const fireMode = this._getRapidFireState(fireState);
     const aimBonus = this._getAimBonus(fireState);
     const bracingBonus = this._getBracingBonus(fireState);
+    const laserBonus = this._getLaserBonus(fireState);
     const aimedFireModifier = aimBonus + bracingBonus;
     const displayedAcc = this._getDisplayedAcc(fireState);
     const displayedRoF = this._getDisplayedRoF(fireMode);
     const shotLimits = this._getShotLimits(fireState);
     const shotsRange = shotLimits.minShots === shotLimits.maxShots
       ? String(shotLimits.maxShots)
-      : `${shotLimits.minShots}–${shotLimits.maxShots}`;
+      : `${shotLimits.minShots}-${shotLimits.maxShots}`;
     const shotsLabel = this.mode === "standalone" ? "Выстрелы" : `Выстрелы (${shotsRange})`;
     const shotsMax = Number.isFinite(shotLimits.maxShots) ? ` max="${shotLimits.maxShots}"` : "";
     const rofContent = this._buildRofContent(fireState);
@@ -1368,7 +1537,7 @@ export class FirePreparationApp extends ApplicationV2 {
               </label>
               <div class="gam-fire-toggle-group">
                 <div class="gam-fire-field gam-fire-field-checkbox">
-                  <span>Лазер +1</span>
+                  <span>Лазер <strong data-laser-preview>+${fireState.laserSight ? laserBonus : 1}</strong></span>
                   <input type="checkbox" name="laserSight" aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
                 </div>
                 <div class="gam-fire-field gam-fire-field-checkbox">

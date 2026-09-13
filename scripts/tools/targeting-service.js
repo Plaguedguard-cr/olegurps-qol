@@ -1,7 +1,30 @@
+import { QUADRUPED_BODYPLAN } from "./quadruped-bodyplan.js";
+import { WINGED_QUADRUPED_BODYPLAN } from "./winged-quadruped-bodyplan.js";
+import { HEXAPOD_BODYPLAN } from "./hexapod-bodyplan.js";
+import { WINGED_HEXAPOD_BODYPLAN } from "./winged-hexapod-bodyplan.js";
+import { CENTAUR_BODYPLAN } from "./centaur-bodyplan.js";
+
 export const BODYPLAN_DEFINITIONS = Object.freeze({
   humanoid: {
     id: "humanoid",
+    label: "Humanoid",
     image: "modules/olegurps-qol/assets/humanoid-zone.png",
+    aspectRatio: "941 / 1672",
+    randomTable: {
+      Eye: { roll: "-", penalty: -9, zoneId: "eye" },
+      Skull: { roll: "3-4", penalty: -7, zoneId: "skull" },
+      Face: { roll: "5", penalty: -5, zoneId: "face" },
+      "Right Leg": { roll: "6-7", penalty: -2, zoneId: "leg", regionId: "right-leg" },
+      "Right Arm": { roll: "8", penalty: -2, zoneId: "arm", regionId: "right-arm" },
+      Torso: { roll: "9-10", penalty: 0, zoneId: "torso" },
+      Groin: { roll: "11", penalty: -3, zoneId: "groin" },
+      "Left Arm": { roll: "12", penalty: -2, zoneId: "arm", regionId: "left-arm" },
+      "Left Leg": { roll: "13-14", penalty: -2, zoneId: "leg", regionId: "left-leg" },
+      Hand: { roll: "15", penalty: -4, zoneId: "hand" },
+      Foot: { roll: "16", penalty: -4, zoneId: "foot" },
+      Neck: { roll: "17-18", penalty: -5, zoneId: "neck" },
+      Vitals: { roll: "-", penalty: -3, zoneId: "vitals" }
+    },
     zones: [
       { id: "silhouette", label: "Силуэт / случайная зона", modifierLabel: "Random Location", penalty: 0, color: "#8A8A8A", random: true },
       { id: "torso", label: "Торс", modifierLabel: "Torso", ggaKeys: ["Torso"], fallbackPenalty: 0, color: "#584F39" },
@@ -235,7 +258,12 @@ export const BODYPLAN_DEFINITIONS = Object.freeze({
         ]
       }
     ]
-  }
+  },
+  quadruped: QUADRUPED_BODYPLAN,
+  "winged-quadruped": WINGED_QUADRUPED_BODYPLAN,
+  hexapod: HEXAPOD_BODYPLAN,
+  "winged-hexapod": WINGED_HEXAPOD_BODYPLAN,
+  centaur: CENTAUR_BODYPLAN
 });
 
 export class TargetingService {
@@ -248,19 +276,31 @@ export class TargetingService {
         "systems/gurps/module/hitlocation/hitlocation.js"
       ) ?? "/systems/gurps/module/hitlocation/hitlocation.js";
       const ggaHitLocations = await import(systemModulePath);
-      table = ggaHitLocations.HitLocation?.getHitLocationRolls?.(definition.id) ?? null;
+      table = ggaHitLocations.HitLocation?.getHitLocationRolls?.(definition.ggaBodyplan ?? definition.id) ?? null;
     } catch (error) {
       loadError = error;
     }
+    const tableSource = table ? "gga" : "fallback";
+    table ??= definition.randomTable ?? null;
     if (!table) {
-      throw new Error("GGA не предоставила humanoid Hit Location Table.", { cause: loadError });
+      throw new Error("Не найдена Hit Location Table для " + definition.label + ".", { cause: loadError });
     }
-    return new TargetingService({ definition, table, tableSource: "gga", attack });
+    return new TargetingService({ definition, table, tableSource, attack });
+  }
+
+  static getBodyplanOptions() {
+    return Object.values(BODYPLAN_DEFINITIONS).map(definition => ({
+      id: definition.id,
+      label: definition.label
+    }));
   }
 
   constructor({ definition, table, tableSource, attack }) {
+    this.definition = definition;
     this.bodyplan = definition.id;
+    this.label = definition.label;
     this.image = definition.image;
+    this.aspectRatio = definition.aspectRatio;
     this.table = table;
     this.tableSource = tableSource;
     this.damageProfile = this._inspectDamageProfile(attack);
@@ -292,9 +332,13 @@ export class TargetingService {
     if (!zone || !zone.available) return null;
     const region = regionId ? this.getRegion(regionId) : null;
     if (regionId && (!region || region.zoneId !== zone.id)) return null;
+    const canonicalKey = region?.canonicalKey ?? zone.canonicalKey ?? zone.id;
     return {
       zoneId: zone.id,
       regionId: region?.selectWholeZone ? null : region?.id ?? null,
+      canonicalKey,
+      semanticKey: region?.semanticKey ?? zone.semanticKey ?? canonicalKey,
+      canonicalKeys: [canonicalKey, ...(region?.taAliases ?? zone.taAliases ?? [])],
       side: region?.side ?? null,
       label: region?.selectWholeZone ? zone.label : region?.label ?? zone.label,
       modifierLabel: region?.modifierLabel ?? zone.modifierLabel,
@@ -303,32 +347,95 @@ export class TargetingService {
     };
   }
 
-  async resolveRandomHitLocation() {
-    const roll = Roll.create("3d6[Hit Location]");
+  async _evaluateLocationRoll(formula) {
+    const roll = Roll.create(formula);
     await roll.evaluate();
-    if (typeof roll.toMessage === "function") {
-      try {
-        await roll.toMessage({ chatMessage: "Rolling for Hit Location." });
-      } catch (_error) {
-        // The resolved location remains valid even if publishing the die message fails.
-      }
-    }
+    return roll;
+  }
+
+  async resolveRandomHitLocation() {
+    const roll = await this._evaluateLocationRoll("3d6[Hit Location]");
     const total = Number(roll.total);
     const match = Object.entries(this.table).find(([, entry]) => this._expandRoll(entry?.roll).includes(total));
-    if (!match) throw new Error(`В humanoid Hit Location Table нет результата для ${total}.`);
+    if (!match) throw new Error("В " + this.label + " Hit Location Table нет результата для " + total + ".");
+
     const [ggaKey] = match;
-    const region = /^(?:Right|Left) /.test(ggaKey)
-      ? this.regions.find(entry => entry.modifierLabel === ggaKey)
-      : null;
-    const zone = region ? this.getZone(region.zoneId) : this.zones.find(entry => entry.ggaKeys?.includes(ggaKey));
+    const definitionMapping = this.definition.randomTable?.[ggaKey] ?? null;
+    const mapped = definitionMapping?.byRoll?.[total] ?? definitionMapping;
+    let region = mapped?.regionId
+      ? this.getRegion(mapped.regionId)
+      : /^(?:Right|Left) /.test(ggaKey)
+        ? this.regions.find(entry => entry.modifierLabel === ggaKey)
+        : null;
+    const zone = this.getZone(mapped?.zoneId ?? region?.zoneId) ??
+      this.zones.find(entry => entry.ggaKeys?.includes(ggaKey));
+    const detailRolls = [];
+    let label = region?.label ?? zone?.label ?? ggaKey;
+
+    if (mapped?.detailTable && zone) {
+      const detailTable = this.definition.detailTables?.[mapped.detailTable] ?? null;
+      if (!detailTable) throw new Error("Не найдена таблица уточнения Hit Location: " + mapped.detailTable + ".");
+      const detailRoll = await this._evaluateLocationRoll(detailTable.formula ?? "1d6[Hit Location Detail]");
+      const detailTotal = Number(detailRoll.total);
+      const detail = detailTable.results?.[detailTotal] ?? null;
+      if (!detail) throw new Error("В таблице уточнения " + mapped.detailTable + " нет результата для " + detailTotal + ".");
+      detailRolls.push({ label: detailTable.rollLabel ?? "уточнение", total: detailTotal });
+      region = {
+        ...detail,
+        id: detail.id ?? mapped.detailTable + "-" + detailTotal,
+        zoneId: zone.id,
+        side: detail.side ?? null,
+        canonicalKey: detail.canonicalKey ?? zone.canonicalKey ?? zone.id
+      };
+      label = detail.label ?? label;
+    }
+
+    if (mapped?.randomSide && zone) {
+      const sideRoll = await this._evaluateLocationRoll("1d6[Hit Side]");
+      const side = Number(sideRoll.total) <= 3 ? "right" : "left";
+      detailRolls.push({ label: "сторона", total: Number(sideRoll.total) });
+      const sideDefinition = this.definition.randomSides?.[zone.id]?.[side] ?? null;
+      region = this.getRegion(`${zone.id}-${side}`) ?? (sideDefinition ? {
+        ...sideDefinition,
+        id: sideDefinition.id ?? `${zone.id}-${side}`,
+        zoneId: zone.id,
+        side,
+        canonicalKey: sideDefinition.canonicalKey ?? `${zone.id}-${side}`
+      } : region);
+
+      if (mapped.randomPosition) {
+        const positionRoll = await this._evaluateLocationRoll("1d6[Foot Position]");
+        const position = Number(positionRoll.total) <= 3 ? "передняя" : "задняя";
+        const sideLabel = side === "right" ? "Правая" : "Левая";
+        detailRolls.push({ label: "положение", total: Number(positionRoll.total) });
+        label = `${sideLabel} ${position} ступня`;
+      } else {
+        label = region?.label ?? label;
+      }
+    }
+
     return {
       total,
       roll,
+      detailRolls,
       ggaKey,
       zoneId: zone?.id ?? null,
       regionId: region?.id ?? null,
-      label: region?.label ?? zone?.label ?? ggaKey
+      side: region?.side ?? null,
+      canonicalKey: region?.canonicalKey ?? zone?.canonicalKey ?? zone?.id ?? null,
+      semanticKey: region?.semanticKey ?? zone?.semanticKey ?? null,
+      subtype: region?.subtype ?? null,
+      label
     };
+  }
+
+  async resolveRandomHitLocations(count) {
+    const total = Math.max(0, Math.trunc(Number(count) || 0));
+    const locations = [];
+    for (let index = 0; index < total; index += 1) {
+      locations.push(await this.resolveRandomHitLocation());
+    }
+    return locations;
   }
 
   _resolvePenalty(zone) {

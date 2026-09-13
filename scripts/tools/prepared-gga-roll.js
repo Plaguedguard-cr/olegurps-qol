@@ -66,7 +66,7 @@ export async function executePreparedGgaRoll({
     const value = Number(entry?.modint ?? entry?.mod ?? 0);
     if (Number.isFinite(value)) modifier += value;
     const cap = await GURPS.applyModifierDesc?.(actor, String(entry?.desc ?? ""));
-    if (Number.isFinite(Number(cap))) maximumTarget = Number(cap);
+    if (typeof cap === "number" && Number.isFinite(cap)) maximumTarget = cap;
   }
 
   const baseSkill = Math.trunc(Number(attack?.level) || 0);
@@ -162,13 +162,15 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   const hits = !failure && Number.isFinite(rcl) && rcl > 0
     ? Math.min(effectiveRoF, 1 + Math.floor(margin / rcl)) : null;
   let locationLabel = location?.label ?? "";
+  let randomHitLocations = [];
   if (!failure && location?.random && targetingService) {
     try {
-      const random = await targetingService.resolveRandomHitLocation();
-      locationLabel = random.label;
+      const locationCount = Number.isInteger(hits) ? hits : 1;
+      randomHitLocations = await targetingService.resolveRandomHitLocations(locationCount);
+      locationLabel = "";
     } catch (error) {
-      console.error("Fire Control: не удалось определить случайную зону.", error);
-      runtime.ui?.notifications?.warn?.("Бросок выполнен, но случайная зона не определена.");
+      console.error("Fire Control: не удалось определить случайные зоны попаданий.", error);
+      runtime.ui?.notifications?.warn?.("Бросок выполнен, но случайные зоны не определены.");
     }
   }
   const data = {
@@ -185,6 +187,16 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   };
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   let content = await runtime.renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", data);
+  if (randomHitLocations.length) {
+    const items = randomHitLocations.map(random => {
+      const details = (random.detailRolls ?? []).map(detail => `${detail.label} 1d6: ${detail.total}`).join("; ");
+      const rollDetails = details ? `; ${details}` : "";
+      return `<li>${escape(random.label)} ` +
+        `(3d6: ${escape(random.total)}${escape(rollDetails)})</li>`;
+    }).join("");
+    content += `<details><summary style="cursor:pointer;"><strong>Зоны попаданий (${randomHitLocations.length})</strong></summary>` +
+      `<ol style="margin:6px 0 0;padding-left:24px;">${items}</ol></details>`;
+  }
   if (locationLabel) content += `<p>Hit Location: ${escape(locationLabel)}</p>`;
   if (closeMultiplier) content += `<p>Extremely Close: basic damage ×${closeMultiplier}, DR ×${closeMultiplier}</p>`;
   const message = { user: runtime.game.user.id, speaker: runtime.ChatMessage.getSpeaker(actor ? { actor } : {}),

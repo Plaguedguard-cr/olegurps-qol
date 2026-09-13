@@ -13,6 +13,7 @@ import {
 
 const OPEN_ASSISTANTS = new Map();
 const OPEN_FIRE_PREPARATIONS = new Map();
+const LAST_FIRE_BODYPLANS = new Map();
 const TARGETED_ATTACK_CONTEXTS = new WeakMap();
 
 export async function openAmmoManager() {
@@ -558,11 +559,13 @@ export async function openAmmoManager() {
     const manualModifier = manualText === "" ? 0 : Number(manualText.replace(",", "."));
     const aimSeconds = fireService.normalizeAimSeconds(values.aimSeconds);
     const braced = parseBoolean(values.braced);
+    const laserSight = parseBoolean(values.laserSight);
     const moveAndAttack = parseBoolean(values.moveAndAttack);
-    const { aimBonus, bracingBonus } = fireService.resolveAimedFireBonuses({
+    const { aimBonus, bracingBonus, laserBonus } = fireService.resolveAimedFireBonuses({
       accuracy: attack?.acc,
       aimSeconds,
       braced,
+      laserSight,
       moveAndAttack
     });
     const moveAttackPenalty = fireService.calculateMoveAttackPenalty(
@@ -587,7 +590,7 @@ export async function openAmmoManager() {
     const targetedAttackContext = TARGETED_ATTACK_CONTEXTS.get(targetingService) ?? null;
     const targetedAttack = targetedAttackContext?.resolve({
       specialty: values.governingSpecialty,
-      target: hitLocation?.zoneId,
+      target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
     });
     const fireMode = getFireModeState(attack, values, rangeBands);
@@ -642,7 +645,8 @@ export async function openAmmoManager() {
       bracingBonus,
       moveAndAttack,
       moveAttackPenalty,
-      laserSight: parseBoolean(values.laserSight),
+      laserSight,
+      laserBonus,
       manualModifier,
       height: elevationHeight,
       highGround,
@@ -689,7 +693,20 @@ export async function openAmmoManager() {
       lines.push(`Урон: <strong>${damage}</strong>; DR: <strong>×${payload.closeDamage.multiplier}</strong>`);
     }
 
-    if (payload.hitLocationText) {
+    if (payload.randomHitLocations?.length) {
+      const items = payload.randomHitLocations.map(location => {
+        const detailRolls = (location.detailRolls ?? [])
+          .map(detail => `${detail.label} 1d6: ${detail.total}`)
+          .join("; ");
+        const rollDetails = detailRolls ? `; ${detailRolls}` : "";
+        return `<li>${escapeHTML(location.label)} ` +
+          `(3d6: ${escapeHTML(location.total)}${escapeHTML(rollDetails)})</li>`;
+      }).join("");
+      lines.push(
+        `<details><summary style="cursor:pointer;"><strong>Зоны попаданий (${payload.randomHitLocations.length})</strong></summary>` +
+        `<ol style="margin:6px 0 0;padding-left:24px;">${items}</ol></details>`
+      );
+    } else if (payload.hitLocationText) {
       lines.push(`Зона попадания: <strong>${escapeHTML(payload.hitLocationText)}</strong>`);
     }
 
@@ -747,13 +764,14 @@ export async function openAmmoManager() {
     const hits = calculateHitsFromMargin(shotOptions.effectiveRoF, rcl, margin);
     const closeDamage = getCloseDamageReport(attack, shotOptions);
     let hitLocationText = shotOptions.hitLocationLabel;
+    let randomHitLocations = [];
     if (shotOptions.randomHitLocation && hits > 0) {
       try {
-        const randomLocation = await targetingService.resolveRandomHitLocation();
-        hitLocationText = `Случайная зона: ${randomLocation.label} (3d6: ${randomLocation.total})`;
+        randomHitLocations = await targetingService.resolveRandomHitLocations(hits);
+        hitLocationText = null;
       } catch (error) {
-        console.error("Не удалось определить случайную зону попадания:", error);
-        ui.notifications.warn("Попадание подтверждено, но случайную зону определить не удалось.");
+        console.error("Не удалось определить случайные зоны попаданий:", error);
+        ui.notifications.warn("Попадания подтверждены, но случайные зоны определить не удалось.");
       }
     }
 
@@ -765,6 +783,7 @@ export async function openAmmoManager() {
       rcl,
       closeDamage,
       hitLocationText,
+      randomHitLocations,
       loadedAfter: weapon.magazines[weapon.loadedIndex],
       capacity: weapon.capacity,
       totalAmmo: weapon.totalAmmo
@@ -1706,7 +1725,12 @@ export async function openAmmoManager() {
 
     const rangeBands = getRangeBands();
     const recommendation = getGgaTargetRangeRecommendation(rangeBands);
-    const targetingService = await TargetingService.create({ attack });
+    const targetSelectionKey = `${actor.id}:${weapon.id}`;
+    const initialBodyplan = LAST_FIRE_BODYPLANS.get(targetSelectionKey) ?? "humanoid";
+    const targetingService = await TargetingService.create({
+      attack,
+      bodyplan: initialBodyplan
+    });
     const targetedAttackContext = createTargetedAttackContext({ actor, attack });
     TARGETED_ATTACK_CONTEXTS.set(targetingService, targetedAttackContext);
     const rateOfFireProfile = fireService.parseRateOfFire(attack.rof);
@@ -1724,23 +1748,30 @@ export async function openAmmoManager() {
       rateOfFireProfile,
       calculateShotLimits: modeIndex => getShotLimits(attack, loaded, modeIndex),
       calculateRapidFireBonus,
-      calculateAimBonus: (aimSeconds, moveAndAttack) => fireService.resolveAimedFireBonuses({
-        accuracy: attack.acc, aimSeconds, moveAndAttack
+      calculateAimBonus: (aimSeconds, moveAndAttack, braced, laserSight) => fireService.resolveAimedFireBonuses({
+        accuracy: attack.acc, aimSeconds, braced, laserSight, moveAndAttack
       }).aimBonus,
-      calculateBracingBonus: (braced, aimSeconds, moveAndAttack) => fireService.resolveAimedFireBonuses({
-        accuracy: attack.acc, aimSeconds, braced, moveAndAttack
+      calculateBracingBonus: (braced, aimSeconds, moveAndAttack, laserSight) => fireService.resolveAimedFireBonuses({
+        accuracy: attack.acc, aimSeconds, braced, laserSight, moveAndAttack
       }).bracingBonus,
+      calculateLaserBonus: (laserSight, aimSeconds, braced, moveAndAttack) => fireService.resolveAimedFireBonuses({
+        accuracy: attack.acc, aimSeconds, braced, laserSight, moveAndAttack
+      }).laserBonus,
       calculateFireMode: shotOptions => getFireModeState(attack, shotOptions, rangeBands),
-      calculateEffectiveSkill: shotOptions => calculateEffectiveFireSkill(
-        attack, shotOptions, rangeBands, targetingService, targetedAttackContext),
+      calculateEffectiveSkill: (shotOptions, currentTargetingService = targetingService) => calculateEffectiveFireSkill(
+        attack, shotOptions, rangeBands, currentTargetingService, targetedAttackContext),
+      onTargetingServiceChange: currentTargetingService => {
+        TARGETED_ATTACK_CONTEXTS.set(currentTargetingService, targetedAttackContext);
+        LAST_FIRE_BODYPLANS.set(targetSelectionKey, currentTargetingService.bodyplan);
+      },
       onGoverningSpecialtyChange: async specialty => {
         if (specialty) weapon.governingSpecialty = specialty;
         else delete weapon.governingSpecialty;
         await saveState(state);
       },
       onClose: () => OPEN_FIRE_PREPARATIONS.delete(preparationKey),
-      onConfirm: async rawShotOptions => {
-        const changed = await fireAndRoll(state, weaponId, rawShotOptions, targetingService);
+      onConfirm: async (rawShotOptions, currentTargetingService = targetingService) => {
+        const changed = await fireAndRoll(state, weaponId, rawShotOptions, currentTargetingService);
         if (!changed) return false;
         if (managerApp?.rendered) {
           managerApp.setManagerState(state);

@@ -1,3 +1,15 @@
-2026/09/12-16:17:08.132 3b60 Recovering log #41
-2026/09/12-16:17:08.156 3b60 Delete type=0 #41
-2026/09/12-16:17:08.156 3b60 Delete type=3 #40
+2026/09/13-13:59:13.180 c2c Recovering log #50
+2026/09/13-13:59:13.184 c2c Delete type=0 #50
+2026/09/13-13:59:13.184 c2c Delete type=3 #49
+2026/09/13-14:56:29.005 424c Level-0 table #54: started
+2026/09/13-14:56:29.005 424c Level-0 table #54: 0 bytes OK
+2026/09/13-14:56:29.006 424c Delete type=0 #52
+2026/09/13-14:56:29.008 424c Manual compaction at level-0 from '!macros!OQcritical000001' @ 72057594037927935 : 1 .. '!macros!OQshooting000001' @ 0 : 0; will stop at '!macros!OQfirecontrol001' @ 7 : 1
+2026/09/13-14:56:29.008 424c Compacting 3@0 + 0@1 files
+2026/09/13-14:56:29.015 424c Generated table #55@0: 7 keys, 1011 bytes
+2026/09/13-14:56:29.015 424c Compacted 3@0 + 0@1 files => 1011 bytes
+2026/09/13-14:56:29.017 424c compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/09/13-14:56:29.017 424c Delete type=2 #5
+2026/09/13-14:56:29.017 424c Delete type=2 #34
+2026/09/13-14:56:29.017 424c Delete type=2 #45
+2026/09/13-14:56:29.026 424c Manual compaction at level-0 from '!macros!OQfirecontrol001' @ 7 : 1 .. '!macros!OQshooting000001' @ 0 : 0; will stop at (end)
