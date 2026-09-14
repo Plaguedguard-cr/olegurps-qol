@@ -3,6 +3,7 @@ import { WINGED_QUADRUPED_BODYPLAN } from "./winged-quadruped-bodyplan.js";
 import { HEXAPOD_BODYPLAN } from "./hexapod-bodyplan.js";
 import { WINGED_HEXAPOD_BODYPLAN } from "./winged-hexapod-bodyplan.js";
 import { CENTAUR_BODYPLAN } from "./centaur-bodyplan.js";
+import { AVIAN_BODYPLAN } from "./avian-bodyplan.js";
 
 export const BODYPLAN_DEFINITIONS = Object.freeze({
   humanoid: {
@@ -263,7 +264,8 @@ export const BODYPLAN_DEFINITIONS = Object.freeze({
   "winged-quadruped": WINGED_QUADRUPED_BODYPLAN,
   hexapod: HEXAPOD_BODYPLAN,
   "winged-hexapod": WINGED_HEXAPOD_BODYPLAN,
-  centaur: CENTAUR_BODYPLAN
+  centaur: CENTAUR_BODYPLAN,
+  avian: AVIAN_BODYPLAN
 });
 
 export class TargetingService {
