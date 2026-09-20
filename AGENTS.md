@@ -1,4 +1,4 @@
-﻿# OleGURPS QOL
+# OleGURPS QOL
 
 Рабочая папка модуля находится в:
 `A:\Program Files\FoundryVTT-R\Data\modules\olegurps-qol`
@@ -30,3 +30,14 @@ Windows ACL этой папки уже проверены. Группа `CodexSa
 - обычный выбор конкретной зоны, случайная зона, несколько попаданий, Targeted Attack и недоступные precision-зоны должны сохранять поведение уже существующих bodyplan.
 
 Перед завершением изменений Hit Location статически проверить синтаксис затронутых JS-файлов, отсутствие отдельных `roll.toMessage()` для служебных бросков, синхронизацию силуэта со списком и паритет новой реализации как минимум с Humanoid. Лайв-проверки проводить только если они разрешены текущей задачей.
+## UTF-8-safe file editing
+
+All repository text files must remain UTF-8. When `apply_patch` is unavailable because of the known helper/ACL failure:
+
+- read the original file explicitly as UTF-8 and write it explicitly as UTF-8 without BOM;
+- use a targeted replacement or a temporary UTF-8 file followed by an atomic rename; never rewrite unrelated content;
+- never pass repository text through Windows-1251, the active console code page, `Encoding.Default`, or any encode/decode repair heuristic;
+- prefer ASCII-only edit scripts. If a shell command must introduce non-ASCII JavaScript text, use JavaScript `\uXXXX` escapes in string literals or a verified UTF-8 temporary file;
+- do not attempt a whole-file mojibake conversion. If corrupted text is already present, replace each affected literal from a known-good source;
+- after every fallback edit, decode the result with strict UTF-8 and scan changed files for `U+FFFD` plus known mojibake code-point signatures; do not put literal Cyrillic examples into the scan rule itself;
+- run the relevant syntax/parser checks after the encoding scan. Treat any new replacement character or mojibake marker as a failed edit and fix it before continuing.

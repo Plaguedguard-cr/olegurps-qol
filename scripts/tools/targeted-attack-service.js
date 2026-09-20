@@ -49,7 +49,11 @@ export function normalizeTargetedAttackLocation(value) {
     }
     return null;
   }
-  return TARGET_ALIASES.get(aliasKey(value)) ?? null;
+  const exact = TARGET_ALIASES.get(aliasKey(value));
+  if (exact) return exact;
+  const matches = [...new Set(String(value ?? "").split(/\s*[/,;:]\s*/u)
+    .map(part => TARGET_ALIASES.get(aliasKey(part))).filter(Boolean))];
+  return matches.length === 1 ? matches[0] : null;
 }
 export function normalizeGunsSpecialty(value) {
   if (value && typeof value === "object") {
@@ -269,6 +273,234 @@ export function createTargetedAttackContext({ actor, attack, mode = "weapon" } =
         best = { target: technique.target, specialty: canonicalSpecialty, basePenalty: Math.trunc(Number(basePenalty)),
           techniqueModifier: modifier, effectivePenalty, techniqueLevel: technique.level,
           governingSkillLevel: governing.level, source: technique.source, entry: technique.entry };
+      }
+      return best;
+    }
+  };
+}
+
+const meleeIdentity = value => aliasKey(value)
+  .replace(/\s*\/\s*tl\s*\d+\s*$/iu, "")
+  .replace(/\s+tl\s*\d+\s*$/iu, "")
+  .trim();
+
+const MELEE_SKILL_FAMILIES = new Set([
+  "axe/mace",
+  "broadsword",
+  "cloak",
+  "flail",
+  "force sword",
+  "force whip",
+  "garrote",
+  "jitte/sai",
+  "knife",
+  "kusari",
+  "lance",
+  "main-gauche",
+  "monowire whip",
+  "net",
+  "parry missile weapons",
+  "polearm",
+  "rapier",
+  "saber",
+  "shield",
+  "shortsword",
+  "smallsword",
+  "spear",
+  "staff",
+  "tonfa",
+  "two-handed axe/mace",
+  "two-handed flail",
+  "two-handed sword",
+  "whip",
+  "boxing",
+  "brawling",
+  "judo",
+  "karate",
+  "sumo wrestling",
+  "wrestling"
+].map(aliasKey));
+
+function meleeSkillFamily(value) {
+  return aliasKey(value)
+    .replace(/\s*\([^()]*\)\s*$/u, "")
+    .replace(/\s*\/\s*tl\s*\d+\s*$/iu, "")
+    .trim();
+}
+function collectMeleeGoverningSkills(actor) {
+  const skills = [];
+  const seen = new Set();
+  const dx = Number(actor?.system?.attributes?.DX?.value);
+  skills.push({
+    key: "attribute:DX",
+    name: "DX",
+    label: "DX",
+    level: Number.isFinite(dx) ? Math.trunc(dx) : null,
+    entry: actor?.system?.attributes?.DX ?? null,
+    identities: ["attribute:DX"]
+  });
+  seen.add("attribute:DX");
+  for (const entry of flattenEntries(actor?.system?.skills)) {
+    if (aliasKey(entry?.type) === "technique" || /^(?:targeted\s+attack|ta|прицельная\s+атака)(?=\s|\(|$)/iu.test(String(entry?.name ?? ""))) continue;
+    const name = String(entry?.name ?? entry?.originalName ?? "").normalize("NFKC").trim();
+    const level = finiteLevel(entry);
+    if (!name || !Number.isFinite(level) || !MELEE_SKILL_FAMILIES.has(meleeSkillFamily(name))) continue;
+    const identities = skillIdentityValues(entry);
+    const key = identities[0] ? "id:" + identities[0] : "name:" + encodeURIComponent(meleeIdentity(name));
+    if (seen.has(key)) continue;
+    seen.add(key);
+    skills.push({ key, name, label: name, level, entry, identities });
+  }
+  return skills;
+}
+
+function flattenMeleeValues(value, result = []) {
+  if (Array.isArray(value)) {
+    for (const entry of value) flattenMeleeValues(entry, result);
+  } else if (value && typeof value === "object") {
+    for (const key of ["name", "skillName", "governingSkill", "default", "prerequisite"]) {
+      if (value[key] !== undefined) flattenMeleeValues(value[key], result);
+    }
+  } else if (value !== null && value !== undefined && String(value).trim()) {
+    result.push(String(value).trim());
+  }
+  return result;
+}
+
+function explicitMeleeSkills(attack, skills) {
+  const sources = [attack, attack?.data].filter(Boolean);
+  const idKeys = ["skilluuid", "skillUuid", "skillid", "skillId", "governingSkillUuid", "governingSkillId", "defaultSkillUuid", "defaultSkillId", "parentuuid"];
+  const nameKeys = ["governingSkill", "governingSkillName", "skill", "skillName", "default", "defaults", "defaultSkill", "defaultSkillName", "prerequisite", "prereq"];
+  const matches = new Set();
+  for (const source of sources) {
+    for (const id of collectValues(source, idKeys).flat(Infinity)) {
+      for (const skill of skills) if (skill.identities.includes(String(id))) matches.add(skill.key);
+    }
+    for (const value of collectValues(source, nameKeys)) {
+      for (const name of flattenMeleeValues(value)) {
+        const normalized = meleeIdentity(name);
+        for (const skill of skills) if (meleeIdentity(skill.name) === normalized) matches.add(skill.key);
+      }
+    }
+    const otf = String(source?.otf ?? "");
+    const otfMatch = otf.match(/(?:^|\[)S:\s*["']?([^"'\]]+)/iu);
+    if (otfMatch) {
+      const normalized = meleeIdentity(otfMatch[1]);
+      for (const skill of skills) if (meleeIdentity(skill.name) === normalized) matches.add(skill.key);
+    }
+  }
+  return [...matches];
+}
+
+export function parseMeleeTargetedAttackName(value) {
+  const text = String(value ?? "").normalize("NFKC").trim();
+  if (!/^(?:targeted\s+attack|ta|прицельная\s+атака)(?=\s|\(|$)/iu.test(text)) return null;
+  const groups = unwrapParenthesizedGroups(text);
+  for (let groupIndex = 0; groupIndex < groups.length; groupIndex += 1) {
+    const parts = groups[groupIndex].split(/\s*\/\s*/u);
+    const targets = parts.map(normalizeTargetedAttackLocation);
+    const canonicalTargets = [...new Set(targets.filter(Boolean))];
+    if (canonicalTargets.length !== 1) continue;
+    const descriptor = parts.filter((part, index) => !targets[index]).join(" / ").trim();
+    if (!descriptor) continue;
+    return {
+      target: canonicalTargets[0],
+      descriptor,
+      qualifiers: groups.filter((_, index) => index !== groupIndex)
+    };
+  }
+  return null;
+}
+
+function collectMeleeTechniques(actor) {
+  const techniques = [];
+  for (const entry of flattenEntries(actor?.system?.skills)) {
+    if (aliasKey(entry?.type) !== "technique" && !/^(?:targeted\s+attack|ta|прицельная\s+атака)(?=\s|\(|$)/iu.test(String(entry?.name ?? ""))) continue;
+    const named = parseMeleeTargetedAttackName(entry?.name ?? entry?.originalName);
+    const target = firstCanonicalValue([
+      entry?.targetLocation, entry?.targetlocation, entry?.hitLocation, entry?.hitlocation,
+      entry?.techniqueTarget, entry?.target, entry?.location
+    ], normalizeTargetedAttackLocation) ?? named?.target ?? null;
+    const descriptor = String(entry?.attackVariant ?? entry?.attackName ?? entry?.weaponMode ?? named?.descriptor ?? "").trim();
+    const governingSkill = String(entry?.governingSkill ?? entry?.governingSkillName ?? entry?.skillName ??
+      named?.qualifiers?.at(-1) ?? "").trim();
+    if (!target || !descriptor) continue;
+    techniques.push({
+      entry,
+      target,
+      descriptor,
+      governingSkill,
+      relativeLevel: relativeLevel(entry),
+      level: finiteLevel(entry),
+      source: named ? "name-fallback" : "structured"
+    });
+  }
+  return techniques;
+}
+
+const meleeMatchIdentity = value => meleeIdentity(value)
+  .replace(/[()[\]{}]/gu, " ")
+  .replace(/\s*[/\\-]\s*/gu, " ")
+  .replace(/\s+/gu, " ")
+  .trim();
+
+function meleeTechniqueMatches(technique, skill, attack) {
+  const descriptor = meleeMatchIdentity(technique.descriptor);
+  const skillName = meleeMatchIdentity(skill.name);
+  const attackName = meleeMatchIdentity(attack?.name);
+  const mode = meleeMatchIdentity(attack?.mode);
+  const governingSkill = meleeMatchIdentity(technique.governingSkill);
+  if (governingSkill && governingSkill !== skillName) return false;
+  const variants = new Set([skillName, attackName].filter(Boolean));
+  if (mode) {
+    variants.add((skillName + " " + mode).trim());
+    variants.add((attackName + " " + mode).trim());
+  }
+  return variants.has(descriptor);
+}
+
+export function createMeleeTargetedAttackContext({ actor, attack } = {}) {
+  const skills = collectMeleeGoverningSkills(actor);
+  const techniques = collectMeleeTechniques(actor);
+  const candidates = skills;
+  const automaticSpecialty = null;
+  return {
+    enabled: techniques.length > 0 && skills.length > 0,
+    automaticSpecialty,
+    requiresSelection: !automaticSpecialty && candidates.length > 1,
+    specialtyOptions: candidates.map(skill => ({ value: skill.key, label: skill.label, level: skill.level })),
+    getSkillLevel(specialty) {
+      const level = skills.find(skill => skill.key === String(specialty ?? ""))?.level;
+      return Number.isFinite(level) ? Math.trunc(level) : null;
+    },
+    techniques,
+    resolve({ specialty, target, basePenalty } = {}) {
+      const key = automaticSpecialty ?? String(specialty ?? "");
+      const governing = skills.find(skill => skill.key === key);
+      const targetValues = Array.isArray(target) ? target : [target];
+      const targets = [...new Set(targetValues.map(normalizeTargetedAttackLocation).filter(Boolean))];
+      if (!governing || targets.length === 0) return null;
+      let best = null;
+      for (const technique of techniques) {
+        if (!targets.includes(technique.target) || !meleeTechniqueMatches(technique, governing, attack)) continue;
+        const modifier = Number.isFinite(technique.relativeLevel) ? technique.relativeLevel
+          : (Number.isFinite(technique.level) ? technique.level - governing.level : null);
+        if (!Number.isFinite(modifier)) continue;
+        const effectivePenalty = clampTargetedAttackModifier(basePenalty, modifier);
+        if (effectivePenalty === null || (best && best.effectivePenalty >= effectivePenalty)) continue;
+        best = {
+          target: technique.target,
+          specialty: governing.key,
+          governingSkill: governing.name,
+          attackVariant: technique.descriptor,
+          basePenalty: Math.trunc(Number(basePenalty)),
+          techniqueModifier: modifier,
+          effectivePenalty,
+          techniqueLevel: technique.level,
+          governingSkillLevel: governing.level,
+          source: technique.source,
+          entry: technique.entry
+        };
       }
       return best;
     }

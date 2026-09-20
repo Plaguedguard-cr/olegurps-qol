@@ -107,7 +107,7 @@ export async function openFireControl() {
   });
   app = new FirePreparationApp({
     mode: "standalone", token, attack: {}, rangeBands, targetingService,
-    recommendation: context.getGgaTargetRangeRecommendation(rangeBands),
+    getTargetRangeRecommendation: () => context.getTargetRangeRecommendation(rangeBands),
     initialStandaloneValues,
     maximumShots: 1, rateOfFireProfile: service.parseRateOfFire(""),
     calculateShotLimits: shotLimits,
@@ -157,12 +157,14 @@ export async function openFireControl() {
       const location = currentTargetingService.getSelection(values.hitLocationId, values.hitRegionId);
       if (!location) return false;
       const fireMode = context.getFireModeState(app.attack, values, rangeBands);
-      const effectiveSkill = context.calculateEffectiveFireSkill(app.attack, values, rangeBands, currentTargetingService);
+      const skillDetails = context.calculateEffectiveFireSkillDetails(app.attack, values, rangeBands, currentTargetingService);
+      const effectiveSkill = skillDetails?.effectiveSkill;
       const rcl = /^\s*[1-9]\d*(?:\s*\/\s*[1-9]\d*)?\s*$/.test(app.attack.rcl)
         ? service.parseAttackRcl(app.attack, { extremelyClose: fireMode.extremelyClose }) : null;
       const result = await executePreparedSkillRoll({ actor, effectiveSkill, baseSkill,
         effectiveRoF: fireMode.effectiveRoF, rcl,
-        location, targetingService: currentTargetingService, closeMultiplier: fireMode.closeDamageMultiplier });
+        location, targetingService: currentTargetingService, closeMultiplier: fireMode.closeDamageMultiplier,
+        modifierDetails: skillDetails?.modifiers ?? [] });
       return result.rolled;
     }
   });

@@ -1,0 +1,355 @@
+.oq-damage {
+  display: grid;
+  gap: 10px;
+  font-size: 0.94em;
+}
+
+.oq-damage .oq-damage-row {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 10px 12px;
+  align-items: center;
+}
+
+.oq-damage .oq-damage-row label,
+.oq-damage .oq-damage-label {
+  font-weight: 700;
+}
+
+.oq-damage .oq-damage-row input {
+  width: 100%;
+  margin: 0;
+}
+
+.oq-damage .oq-damage-types {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px 10px;
+}
+
+.oq-damage .oq-damage-type {
+  grid-column: auto !important;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin: 0 !important;
+  padding: 5px 6px;
+  border: 1px solid rgba(128, 128, 128, 0.42);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.025);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
+  transform: translateY(0);
+  transition: background-color 0.12s ease, border-color 0.12s ease,
+    box-shadow 0.12s ease, transform 0.08s ease;
+}
+
+.oq-damage .oq-damage-type:hover {
+  border-color: #d29a48;
+  background: rgba(210, 154, 72, 0.12);
+}
+
+.oq-damage .oq-damage-type.selected {
+  border-color: var(--oq-damage-accent, #ffb04a);
+  background: color-mix(in srgb, var(--oq-damage-accent, #ff9f3d) 42%, transparent);
+  color: #fff3d6;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.78),
+    inset 0 0 0 2px var(--oq-damage-accent, #ff8a30),
+    0 0 12px var(--oq-damage-accent, #ff8a30);
+  transform: translateY(2px);
+}
+
+.oq-damage .oq-damage-type-icon {
+  min-height: 18px;
+  font-size: 1.12em;
+}
+
+.oq-damage .oq-damage-type-code {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 1px 2px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.oq-damage .oq-damage-hint {
+  margin: 0;
+  opacity: 0.76;
+  font-size: 0.9em;
+}
+
+@media (max-width: 480px) {
+  .oq-damage .oq-damage-types {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.gam-config .gam-config-attack-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.gam-config .gam-config-edit-attack {
+  grid-column: auto !important;
+  width: auto !important;
+  min-height: 30px;
+  margin: 0 !important;
+  padding: 4px 9px;
+  font-size: 0.9em;
+}
+
+.gam-attack-editor {
+  display: grid;
+  gap: 9px;
+}
+
+.gam-attack-editor .gam-attack-editor-row {
+  display: grid;
+  grid-template-columns: minmax(100px, 1fr) minmax(150px, 210px);
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+.gam-attack-editor input {
+  width: 100%;
+  margin: 0;
+}
+
+.gam-attack-editor .gam-attack-editor-accuracy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: 8px;
+}
+
+.gam-attack-editor .gam-attack-editor-accuracy label {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.gam-attack-editor .gam-attack-editor-accuracy strong {
+  padding-bottom: 7px;
+}
+/* Melee Assistant */
+.melee-assistant {
+  --gam-rapid-attack-1: #39a9ff;
+  --gam-rapid-attack-2: #ff5aa5;
+}
+.melee-assistant .gam-melee-governing-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+
+.melee-assistant .gam-melee-governing-controls .gam-fire-governing-skill {
+  margin-top: 5px;
+}
+
+.melee-assistant .gam-melee-rapid-mastery {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  white-space: nowrap;
+  font-size: 0.82em;
+  color: rgba(230, 224, 216, 0.82);
+}
+
+.melee-assistant .gam-melee-rapid-mastery input {
+  width: auto;
+  margin: 0;
+}
+
+.melee-assistant .gam-melee-summary .gam-fire-summary-main {
+  flex: 1 1 auto;
+}
+
+.melee-assistant .gam-melee-attack-row {
+  display: grid;
+  grid-template-columns: minmax(210px, 1fr) 32px auto auto;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+}
+
+.melee-assistant .gam-melee-attack-select {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  margin: 0;
+  font-size: 1.05em;
+  font-weight: 700;
+}
+
+.melee-assistant .gam-melee-icon-button,
+.melee-assistant .gam-melee-damage-button {
+  grid-column: auto !important;
+  width: auto !important;
+  height: 32px;
+  min-height: 32px;
+  margin: 0 !important;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+
+.melee-assistant .gam-melee-icon-button {
+  width: 32px !important;
+  padding: 3px;
+}
+
+.melee-assistant .gam-melee-dice-adds {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  white-space: nowrap;
+  font-size: 0.86em;
+}
+
+.melee-assistant .gam-melee-dice-adds input {
+  width: auto;
+  margin: 0;
+}
+
+.melee-assistant .gam-melee-fields {
+  align-content: start;
+}
+
+.melee-assistant .gam-melee-all-out-controls {
+  display: grid;
+  grid-template-columns: auto minmax(76px, 1fr);
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.melee-assistant .gam-melee-all-out-controls input {
+  width: auto;
+  margin: 0;
+}
+
+.melee-assistant .gam-melee-all-out-controls select,
+.melee-assistant .gam-melee-deceptive-controls select {
+  width: 100%;
+  min-width: 0;
+  height: 30px;
+  margin: 0;
+}
+
+.melee-assistant .gam-melee-deceptive-controls {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.melee-assistant .gam-melee-deceptive-controls small {
+  white-space: nowrap;
+  opacity: 0.78;
+  font-size: 0.78em;
+}
+
+.melee-assistant .gam-melee-evaluate {
+  grid-column: 1 / -1;
+  grid-template-columns: max-content 48px max-content max-content max-content;
+  column-gap: 7px;
+}
+
+.melee-assistant .gam-melee-evaluate input {
+  width: 48px;
+  min-width: 0;
+}
+
+.melee-assistant .gam-melee-empty-range {
+  min-height: 360px;
+  border-top: 1px solid rgba(128, 128, 128, 0.16);
+}
+
+
+.melee-assistant .gam-melee-rapid-strike {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 8px;
+  width: max-content;
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+.melee-assistant .gam-melee-rapid-controls {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.melee-assistant .gam-melee-rapid-controls > input {
+  width: auto;
+  margin: 0;
+}
+
+.melee-assistant .gam-melee-rapid-attacks {
+  display: inline-grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 6px;
+}
+
+.melee-assistant .gam-melee-rapid-attacks[hidden] {
+  display: none;
+}
+
+.melee-assistant .gam-melee-rapid-attack {
+  width: auto !important;
+  min-width: 72px;
+  min-height: 28px;
+  margin: 0 !important;
+  padding: 3px 9px;
+  border: 1px solid currentColor;
+  opacity: 0.72;
+}
+
+.melee-assistant .gam-melee-rapid-attack.gam-rapid-attack-1 {
+  color: var(--gam-rapid-attack-1);
+}
+
+.melee-assistant .gam-melee-rapid-attack.gam-rapid-attack-2 {
+  color: var(--gam-rapid-attack-2);
+}
+
+.melee-assistant .gam-melee-rapid-attack.is-active {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 25%, transparent);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.55), 0 0 5px currentColor;
+  transform: translateY(1px);
+}
+
+.gam-melee-editor .notes {
+  margin: 2px 0 0;
+  opacity: 0.72;
+  font-size: 0.86em;
+}
+
+@media (max-width: 850px) {
+  .melee-assistant .gam-melee-attack-row {
+    grid-template-columns: minmax(180px, 1fr) 32px auto;
+  }
+
+  .melee-assistant .gam-melee-dice-adds {
+    grid-column: 1 / -1;
+  }
+
+  .melee-assistant .gam-melee-empty-range {
+    min-height: 180px;
+  }
+}

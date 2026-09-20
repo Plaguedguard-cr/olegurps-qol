@@ -1,6 +1,8 @@
+import { normalizeAttackOverrides } from "./weapon-attack-overrides.js";
+
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "gurpsAmmoManager";
-const STATE_VERSION = 8;
+const STATE_VERSION = 9;
 
 const clone = value => foundry?.utils?.deepClone?.(value) ?? structuredClone(value);
 const randomId = () => foundry?.utils?.randomID?.(16) ?? crypto.randomUUID();
@@ -59,7 +61,7 @@ export class AmmoService {
   }
 
   defaultState() {
-    return { version: STATE_VERSION, chatSettings: this.defaultChatSettings(), weapons: [] };
+    return { version: STATE_VERSION, chatSettings: this.defaultChatSettings(), attackOverrides: {}, weapons: [] };
   }
 
   normalizeWeaponShape(weapon) {
@@ -89,6 +91,7 @@ export class AmmoService {
     const state = saved && typeof saved === "object" ? clone(saved) : this.defaultState();
     state.version = STATE_VERSION;
     state.chatSettings = this.normalizeChatSettings(state.chatSettings);
+    state.attackOverrides = normalizeAttackOverrides(state.attackOverrides);
     delete state.chatReports;
     state.weapons = Array.isArray(state.weapons) ? state.weapons : [];
     state.weapons.forEach(weapon => this.normalizeWeaponShape(weapon));
@@ -97,6 +100,17 @@ export class AmmoService {
 
   async saveState(state) {
     await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, state);
+  }
+
+  async consumeLoadedRounds(state, weapon, amount) {
+    this.normalizeWeaponShape(weapon);
+    const rounds = clampInteger(amount, 0);
+    const loaded = weapon.magazines[weapon.loadedIndex] ?? 0;
+    if (rounds < 1 || rounds > loaded || rounds > weapon.totalAmmo) return false;
+    weapon.magazines[weapon.loadedIndex] -= rounds;
+    weapon.totalAmmo -= rounds;
+    await this.saveState(state);
+    return rounds;
   }
 
   repairWeaponAmmo(weapon) {

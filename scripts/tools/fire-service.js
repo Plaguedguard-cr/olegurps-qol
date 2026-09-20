@@ -14,6 +14,7 @@ export function parseRateOfFire(value) {
     });
     return {
       type: "full-auto",
+      valid: true,
       source: text,
       baseRoF: modes[0].fullRoF,
       projectileMultiplier: 1,
@@ -29,6 +30,7 @@ export function parseRateOfFire(value) {
     if (baseRoF >= 1 && projectileMultiplier > 1) {
       return {
         type: "multiple-projectile",
+        valid: true,
         source: text,
         baseRoF,
         projectileMultiplier,
@@ -40,6 +42,7 @@ export function parseRateOfFire(value) {
   const ordinary = text.match(/\d+/);
   return {
     type: "ordinary",
+    valid: !!ordinary,
     source: text,
     baseRoF: ordinary ? Math.max(1, Number(ordinary[0])) : 1,
     projectileMultiplier: 1,
@@ -114,9 +117,17 @@ export function calculateMoveAttackPenalty(bulk, moveAndAttack) {
   if (!enabled) return 0;
   return Math.min(-2, normalizeBulk(bulk) ?? -2);
 }
+export function calculateRangedAllOutAttackBonus(allOutAttack, moveAndAttack = false) {
+  const enabled = allOutAttack === true || allOutAttack === 1 ||
+    ["true", "1", "on"].includes(String(allOutAttack ?? "").trim().toLowerCase());
+  const moving = moveAndAttack === true || moveAndAttack === 1 ||
+    ["true", "1", "on"].includes(String(moveAndAttack ?? "").trim().toLowerCase());
+  return enabled && !moving ? 1 : 0;
+}
 
 export function resolveAimedFireBonuses({
   accuracy,
+  scopeBonus = 0,
   aimSeconds,
   braced,
   laserSight,
@@ -128,12 +139,14 @@ export function resolveAimedFireBonuses({
     ["true", "1", "on"].includes(String(laserSight ?? "").trim().toLowerCase());
   const normalizedSeconds = normalizeAimSeconds(aimSeconds);
   const normalizedAccuracy = normalizeAccuracy(accuracy);
+  const normalizedScopeBonus = Math.max(0, Math.trunc(Number(scopeBonus) || 0));
 
   if (moving || normalizedSeconds === 0 || normalizedAccuracy === null) {
     const laserBonus = laserEnabled ? 1 : 0;
     return {
       aimBonus: 0,
       bracingBonus: 0,
+      sightBonus: 0,
       laserBonus,
       aimedFireBonus: laserBonus,
       aimedFireCap: null
@@ -144,15 +157,17 @@ export function resolveAimedFireBonuses({
   let remaining = aimedFireCap;
   const baseAimBonus = Math.min(normalizedAccuracy, remaining);
   remaining -= baseAimBonus;
+  const sightBonus = Math.min(normalizedScopeBonus, remaining);
+  remaining -= sightBonus;
   const bracingBonus = Math.min(calculateBracingBonus(braced, normalizedSeconds), remaining);
   remaining -= bracingBonus;
   const extraAimBonus = Math.min(Math.min(normalizedSeconds - 1, 2), remaining);
   remaining -= extraAimBonus;
   const aimBonus = baseAimBonus + extraAimBonus;
   const laserBonus = Math.min(laserEnabled ? 1 : 0, remaining);
-  const aimedFireBonus = aimBonus + bracingBonus + laserBonus;
+  const aimedFireBonus = aimBonus + bracingBonus + sightBonus + laserBonus;
 
-  return { aimBonus, bracingBonus, laserBonus, aimedFireBonus, aimedFireCap };
+  return { aimBonus, bracingBonus, sightBonus, laserBonus, aimedFireBonus, aimedFireCap };
 }
 
 export function parseHalfDamageRange(value) {
@@ -278,6 +293,9 @@ export class FireService {
 
   calculateMoveAttackPenalty(bulk, moveAndAttack) {
     return calculateMoveAttackPenalty(bulk, moveAndAttack);
+  }
+  calculateRangedAllOutAttackBonus(allOutAttack, moveAndAttack = false) {
+    return calculateRangedAllOutAttackBonus(allOutAttack, moveAndAttack);
   }
 
   resolveAimedFireBonuses(options) {
@@ -412,6 +430,10 @@ export class FireService {
         GURPS.ModifierBucket.addModifier(options.aimBonus, "Aim");
         appliedModifiers.push(`Aim +${options.aimBonus}`);
       }
+      if (options.sightBonus > 0) {
+        GURPS.ModifierBucket.addModifier(options.sightBonus, "Optical Sight");
+        appliedModifiers.push(`optical sight +${options.sightBonus}`);
+      }
       if (options.bracingBonus > 0) {
         GURPS.ModifierBucket.addModifier(options.bracingBonus, "Упор");
         appliedModifiers.push(`Упор +${options.bracingBonus}`);
@@ -419,6 +441,10 @@ export class FireService {
       if (options.moveAttackPenalty < 0) {
         GURPS.ModifierBucket.addModifier(options.moveAttackPenalty, "Движение и атака");
         appliedModifiers.push(`движение и атака ${options.moveAttackPenalty}`);
+      }
+      if (options.allOutAttackBonus > 0) {
+        GURPS.ModifierBucket.addModifier(options.allOutAttackBonus, "Тотальная атака (Точная)");
+        appliedModifiers.push(`тотальная атака (Точная) +${options.allOutAttackBonus}`);
       }
       if (options.manualModifier !== 0) {
         GURPS.ModifierBucket.addModifier(options.manualModifier, "Бонусы/штрафы");
@@ -435,7 +461,11 @@ export class FireService {
         physicalShots: options.physicalShots,
         effectiveRoF: options.effectiveRoF,
         extremelyClose: options.extremelyClose,
-        rcl: options.rcl
+        rcl: options.rcl,
+        maximumHits: options.maximumHits,
+        contextLabel: options.contextLabel,
+        consumeAction: options.consumeAction !== false,
+        maneuver: options.maneuver
       });
     } finally {
       try {

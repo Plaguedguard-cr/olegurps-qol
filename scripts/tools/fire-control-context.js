@@ -1,5 +1,5 @@
 import { normalizeAccuracy, normalizeBulk } from "./fire-service.js";
-import { getRangeBandDistance, isBeamWeapon, resolveEffectiveRange } from "./fire-range-service.js";
+import { findRangeBandForDistance, getRangeBandDistance, isBeamWeapon, resolveEffectiveRange } from "./fire-range-service.js";
 
 export function createStandaloneAttack(values) {
   const rawShots = Number(values.shots);
@@ -25,7 +25,8 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const hasAcc = fireService.normalizeAccuracy(attack?.acc) !== null;
     const hasBulk = fireService.normalizeBulk(attack?.data?.bulk ?? attack?.bulk) !== null;
     const aimed = fireService.resolveAimedFireBonuses({
-      accuracy: attack?.acc, aimSeconds: values?.aimSeconds,
+      accuracy: attack?.acc, scopeBonus: attack?.scopeBonus ?? attack?.data?.scopeBonus ?? 0,
+      aimSeconds: values?.aimSeconds,
       braced: values?.braced, laserSight: values?.laserSight,
       moveAndAttack: parseBoolean(values?.moveAndAttack)
     });
@@ -110,6 +111,19 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     }
   }
 
+  function getTargetRangeRecommendation(rangeBands) {
+    const distance = getSingleTargetPhysicalDistanceYards();
+    if (!Number.isFinite(distance)) return null;
+    const range = findRangeBandForDistance(rangeBands, distance);
+    if (!range) return null;
+    return {
+      rangeIndex: range.index,
+      penalty: range.penalty,
+      distance,
+      source: "physical-target-distance"
+    };
+  }
+
   function getFireModeState(attack, values, rangeBands) {
     const selectedIndex = values?.rangeIndex === null || values?.rangeIndex === ""
       ? Number.NaN
@@ -191,7 +205,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     return fireService.getPreviewModifierTotal();
   }
 
-  function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext = null) {
+  function calculateEffectiveFireSkillDetails(attack, values, rangeBands, targetingService, targetedAttackContext = null) {
     const baseLevel = Number(attack?.level);
     if (!Number.isFinite(baseLevel) || baseLevel <= 0) return null;
 
@@ -215,7 +229,10 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       : 0;
     const manualValue = Number(String(values?.manualModifier ?? "").replace(",", "."));
     const manualModifier = Number.isFinite(manualValue) ? Math.trunc(manualValue) : 0;
-    const { aimBonus, bracingBonus, laserBonus, moveAttackPenalty } = getFireBonuses(attack, values);
+    const { aimBonus, bracingBonus, sightBonus, laserBonus, moveAttackPenalty } = getFireBonuses(attack, values);
+    const allOutAttackBonus = fireService.calculateRangedAllOutAttackBonus(
+      values?.allOutAttack, values?.moveAndAttack
+    );
     const fireMode = getFireModeState(attack, values, rangeBands);
     const rapidFireBonus = getRapidFireBonus(attack, fireMode.effectiveRoF);
     const hitLocation = targetingService?.getSelection(values?.hitLocationId, values?.hitRegionId);
@@ -225,22 +242,42 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       basePenalty: hitLocation?.penalty
     });
     const hitLocationPenalty = Number(targetedAttack?.effectivePenalty ?? hitLocation?.penalty ?? 0);
+    const bucketModifier = getPreviewBucketTotal();
+    const effectModifier = getApplicableEffectModifierTotal(attack);
+    const targetLabel = targetedAttack?.entry?.name ?? targetedAttack?.attackVariant ?? "";
+    const targetedAttackLabel = /^Targeted Attack\b/iu.test(targetLabel)
+      ? targetLabel : (targetLabel ? `Targeted Attack: ${targetLabel}` : "Targeted Attack");
+    const hitLocationLabel = targetedAttack
+      ? `${targetedAttackLabel} / Hit Location: ${hitLocation?.label ?? ""}`
+      : `Hit Location: ${hitLocation?.label ?? ""}`;
+    const modifiers = [
+      { label: "Modifier Bucket", value: bucketModifier },
+      { label: "Эффекты GGA", value: effectModifier },
+      { label: `Расстояние: ${effectiveRange?.label ?? ""}`, value: rangeAdjustment },
+      { label: `Скорострельность: ${fireMode.effectiveRoF ?? ""}`, value: rapidFireBonus },
+      { label: "Aim", value: aimBonus },
+      { label: "Упор", value: bracingBonus },
+      { label: "Optical Sight", value: sightBonus },
+      { label: "Лазерный прицел", value: laserBonus },
+      { label: "Движение и атака", value: moveAttackPenalty },
+      { label: "Тотальная атака (Точная)", value: allOutAttackBonus },
+      { label: "Бонусы/штрафы", value: manualModifier },
+      { label: hitLocationLabel, value: hitLocationPenalty }
+    ];
 
-    return baseLevel +
-      getPreviewBucketTotal() +
-      getApplicableEffectModifierTotal(attack) +
-      rangeAdjustment +
-      rapidFireBonus +
-      aimBonus +
-      bracingBonus +
-      laserBonus +
-      moveAttackPenalty +
-      manualModifier +
-      hitLocationPenalty;
+    return {
+      effectiveSkill: baseLevel + modifiers.reduce((total, entry) => total + Number(entry.value || 0), 0),
+      modifiers
+    };
   }
 
+  function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext = null) {
+    return calculateEffectiveFireSkillDetails(
+      attack, values, rangeBands, targetingService, targetedAttackContext
+    )?.effectiveSkill ?? null;
+  }
 
-  return { getRangeBands, getGgaTargetRangeRecommendation, getFireModeState,
-    getTaggedModifierSettings, getApplicableEffectModifierTotal, calculateEffectiveFireSkill,
+  return { getRangeBands, getGgaTargetRangeRecommendation, getTargetRangeRecommendation, getFireModeState,
+    getTaggedModifierSettings, getApplicableEffectModifierTotal, calculateEffectiveFireSkill, calculateEffectiveFireSkillDetails,
     getFireBonuses, getRapidFireBonus };
 }

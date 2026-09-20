@@ -1,5 +1,8 @@
 import { buildTableNote } from "./table-reference.js";
 
+const FLAG_SCOPE = "world";
+const FLAG_KEY = "gurpsFrightCheck";
+
 export async function openFrightCheck() {
   const DialogV2 = foundry?.applications?.api?.DialogV2;
   if (!DialogV2) return ui.notifications.error("Этот инструмент требует DialogV2.");
@@ -7,6 +10,17 @@ export async function openFrightCheck() {
   const escapeHTML = value => foundry?.utils?.escapeHTML ? foundry.utils.escapeHTML(String(value ?? "")) : String(value ?? "");
   const parseIntOr = (v, fallback=0) => { const t=String(v??"").trim().replace(",", "."); if(!t) return fallback; const n=Number(t); return Number.isInteger(n)?n:Number.NaN; };
   const bool = v => v===true || v==="true" || v==="on" || v===1 || v==="1";
+  const saved = game.user.getFlag(FLAG_SCOPE, FLAG_KEY) ?? {};
+  const savedFearValue = String(saved.fearValue ?? "");
+  const savedRule15 = bool(saved.rule15);
+  let saveQueue = Promise.resolve();
+  const savePreferences = ({ fearValue, rule15 }) => {
+    const preferences = { fearValue: String(fearValue ?? ""), rule15: bool(rule15) };
+    saveQueue = saveQueue.catch(() => undefined).then(() =>
+      game.user.setFlag(FLAG_SCOPE, FLAG_KEY, preferences)
+    ).catch(error => console.warn("Не удалось сохранить настройки Fright Check:", error));
+    return saveQueue;
+  };
 
   const TABLE = [
     [4,5,"4–5","Оглушение на 1 секунду; затем — автоматическое восстановление."],
@@ -46,14 +60,29 @@ export async function openFrightCheck() {
   const entryFor = total => total <= 5 ? TABLE[0] : (TABLE.find(e => total>=e[0] && total<=e[1]) ?? TABLE.at(-1));
   const tableNoteFor = entry => buildTableNote({entries:TABLE,entry,escapeHTML});
   const read = button => ({fearValue:button.form?.elements?.fearValue?.value??"", modifier:button.form?.elements?.modifier?.value??"", rule15:button.form?.elements?.rule15?.checked??false});
+  const readAndSave = async (button, mode) => {
+    const values = read(button);
+    await savePreferences(values);
+    return { mode, ...values };
+  };
 
   const data = await DialogV2.wait({
     window:{title:"Проверка страха"}, position:{width:540},
     content:`<style>.oq-fr{font-size:.94em}.oq-fr-r{display:grid;grid-template-columns:1fr 150px;gap:10px 14px;align-items:center;padding:9px 2px;border-bottom:1px solid rgba(128,128,128,.28)}.oq-fr-r:first-child{border-top:1px solid rgba(128,128,128,.28)}.oq-fr-r input[type=number]{width:100%;margin:0}.oq-fr-rule{display:grid;grid-template-columns:1fr auto;align-items:center;padding:9px 2px;border-bottom:1px solid rgba(128,128,128,.28)}.oq-fr label,.oq-fr .lbl{font-weight:700}.oq-fr .hint{opacity:.78;font-size:.9em;margin:8px 2px 0}</style>
-    <div class="standard-form oq-fr"><div class="oq-fr-r"><label>Значение проверки страха</label><input type="number" name="fearValue" value="" step="1" autofocus></div><div class="oq-fr-r"><label>Штрафы / бонусы</label><input type="number" name="modifier" value="" placeholder="+0" step="1"></div><label class="oq-fr-rule"><span class="lbl">Правило 15</span><input type="checkbox" name="rule15"></label><p class="hint">«Бросок по таблице» игнорирует первое поле и сразу бросает 3к6 с указанным модификатором.</p></div>`,
+    <div class="standard-form oq-fr"><div class="oq-fr-r"><label>Значение проверки страха</label><input type="number" name="fearValue" value="${escapeHTML(savedFearValue)}" step="1" autofocus></div><div class="oq-fr-r"><label>Штрафы / бонусы</label><input type="number" name="modifier" value="" placeholder="+0" step="1"></div><label class="oq-fr-rule"><span class="lbl">Правило 15</span><input type="checkbox" name="rule15" ${savedRule15 ? "checked" : ""}></label><p class="hint">«Бросок по таблице» игнорирует первое поле и сразу бросает 3к6 с указанным модификатором.</p></div>`,
+    render: (_event, dialog) => {
+      const fearValue = dialog.element?.querySelector('[name="fearValue"]');
+      const rule15 = dialog.element?.querySelector('[name="rule15"]');
+      const persist = () => savePreferences({
+        fearValue: fearValue?.value ?? "",
+        rule15: rule15?.checked ?? false
+      });
+      fearValue?.addEventListener("change", persist);
+      rule15?.addEventListener("change", persist);
+    },
     buttons:[
-      {action:"check",label:"Бросить",icon:"fa-solid fa-dice",default:true,callback:(_e,b)=>({mode:"check",...read(b)})},
-      {action:"table",label:"Бросок по таблице",icon:"fa-solid fa-table-list",callback:(_e,b)=>({mode:"table",...read(b)})}
+      {action:"check",label:"Бросить",icon:"fa-solid fa-dice",default:true,callback:(_e,b)=>readAndSave(b,"check")},
+      {action:"table",label:"Бросок по таблице",icon:"fa-solid fa-table-list",callback:(_e,b)=>readAndSave(b,"table")}
     ], rejectClose:false, modal:true
   });
   if(!data) return;

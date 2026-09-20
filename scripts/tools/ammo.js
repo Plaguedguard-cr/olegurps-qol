@@ -1,18 +1,31 @@
 import { createFireControlContext } from "./fire-control-context.js";
 import { WeaponAssistantApp } from "./weapon-assistant-app.js";
 import { FirePreparationApp } from "./fire-preparation-app.js";
+import { SuppressionFireApp } from "./suppression-fire-app.js";
+import { getSuppressionFireCapacity } from "./suppression-fire-service.js";
+import { SuppressionFireSessionService } from "./suppression-fire-session-service.js";
 import { FireService } from "./fire-service.js";
 import { AmmoService } from "./ammo-service.js";
 import { TargetingService } from "./targeting-service.js";
+import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { createTargetedAttackContext } from "./targeted-attack-service.js";
 import {
   isBeamWeapon,
   parseElevationHeight,
   resolveEffectiveRange
 } from "./fire-range-service.js";
+import { openWeaponAttackEditor } from "./weapon-attack-editor.js";
+import {
+  applyAttackOverride,
+  clearAttackOverride,
+  getAttackOverrideKey,
+  parseAccuracyComponents,
+  setAttackOverride
+} from "./weapon-attack-overrides.js";
 
 const OPEN_ASSISTANTS = new Map();
 const OPEN_FIRE_PREPARATIONS = new Map();
+const OPEN_SUPPRESSION_FIRE = new Map();
 const LAST_FIRE_BODYPLANS = new Map();
 const TARGETED_ATTACK_CONTEXTS = new WeakMap();
 
@@ -68,8 +81,9 @@ export async function openAmmoManager() {
   }
 
   const fireService = new FireService({ actor, token });
-  const { getRangeBands, getGgaTargetRangeRecommendation, getFireModeState,
-    getTaggedModifierSettings, calculateEffectiveFireSkill } = createFireControlContext({ token, fireService });
+  const { getRangeBands, getGgaTargetRangeRecommendation, getTargetRangeRecommendation, getFireModeState,
+    getTaggedModifierSettings, calculateEffectiveFireSkill, calculateEffectiveFireSkillDetails } =
+      createFireControlContext({ token, fireService });
   const ammoService = new AmmoService(actor);
 
   const MANAGER_CSS = `
@@ -403,14 +417,15 @@ export async function openAmmoManager() {
     }
   }
 
-  function getRangedAttacks() {
+  function getRangedAttacks(state = null) {
     const result = [];
 
     walkTree(actor.system?.ranged, "system.ranged", (attack, path) => {
       const name = String(attack.name ?? "Без названия").trim();
       const mode = String(attack.mode ?? "").trim();
+      const accuracy = parseAccuracyComponents(attack.acc);
 
-      result.push({
+      result.push(applyAttackOverride({
         path,
         uuid: String(attack.uuid ?? ""),
         name,
@@ -418,11 +433,13 @@ export async function openAmmoManager() {
         level: clampInteger(attack.level, 0, 999),
         shots: String(attack.shots ?? "").trim(),
         rof: String(attack.rof ?? "").trim(),
-        acc: fireService.normalizeAccuracy(attack.acc),
+        acc: accuracy.acc,
+        scopeBonus: accuracy.scopeBonus,
+        bulk: fireService.normalizeBulk(attack.bulk),
         rcl: String(attack.rcl ?? "").trim(),
         label: mode ? `${name} — ${mode}` : name,
         data: attack
-      });
+      }, state));
     });
 
     return result.sort((a, b) => a.label.localeCompare(b.label, "ru"));
@@ -498,7 +515,7 @@ export async function openAmmoManager() {
     normalizeWeaponShape(weapon);
     return {
       weapon,
-      attack: resolveAttack(weapon.attackRef)
+      attack: resolveAttack(weapon.attackRef, getRangedAttacks(state))
     };
   }
 
@@ -561,8 +578,11 @@ export async function openAmmoManager() {
     const braced = parseBoolean(values.braced);
     const laserSight = parseBoolean(values.laserSight);
     const moveAndAttack = parseBoolean(values.moveAndAttack);
-    const { aimBonus, bracingBonus, laserBonus } = fireService.resolveAimedFireBonuses({
+    const allOutAttack = parseBoolean(values.allOutAttack) && !moveAndAttack;
+    const allOutAttackBonus = fireService.calculateRangedAllOutAttackBonus(allOutAttack, moveAndAttack);
+    const { aimBonus, bracingBonus, sightBonus, laserBonus } = fireService.resolveAimedFireBonuses({
       accuracy: attack?.acc,
+      scopeBonus: attack?.scopeBonus ?? attack?.data?.scopeBonus ?? 0,
       aimSeconds,
       braced,
       laserSight,
@@ -643,8 +663,11 @@ export async function openAmmoManager() {
       aimBonus,
       braced,
       bracingBonus,
+      sightBonus,
       moveAndAttack,
       moveAttackPenalty,
+      allOutAttack,
+      allOutAttackBonus,
       laserSight,
       laserBonus,
       manualModifier,
@@ -694,18 +717,7 @@ export async function openAmmoManager() {
     }
 
     if (payload.randomHitLocations?.length) {
-      const items = payload.randomHitLocations.map(location => {
-        const detailRolls = (location.detailRolls ?? [])
-          .map(detail => `${detail.label} 1d6: ${detail.total}`)
-          .join("; ");
-        const rollDetails = detailRolls ? `; ${detailRolls}` : "";
-        return `<li>${escapeHTML(location.label)} ` +
-          `(3d6: ${escapeHTML(location.total)}${escapeHTML(rollDetails)})</li>`;
-      }).join("");
-      lines.push(
-        `<details><summary style="cursor:pointer;"><strong>Зоны попаданий (${payload.randomHitLocations.length})</strong></summary>` +
-        `<ol style="margin:6px 0 0;padding-left:24px;">${items}</ol></details>`
-      );
+      lines.push(buildRandomHitLocationsHtml(payload.randomHitLocations, { escapeHtml: escapeHTML }));
     } else if (payload.hitLocationText) {
       lines.push(`Зона попадания: <strong>${escapeHTML(payload.hitLocationText)}</strong>`);
     }
@@ -1233,8 +1245,60 @@ export async function openAmmoManager() {
     return true;
   }
 
+  async function refreshAttackOverrideConsumers(state, reference) {
+    const referenceKey = getAttackOverrideKey(reference);
+    if (!referenceKey) return;
+    const effectiveAttacks = getRangedAttacks(state);
+
+    for (const preparation of OPEN_FIRE_PREPARATIONS.values()) {
+      if (preparation.token?.actor?.id !== actor.id) continue;
+      if (getAttackOverrideKey(preparation.weapon?.attackRef) !== referenceKey) continue;
+      const effectiveAttack = resolveAttack(preparation.weapon.attackRef, effectiveAttacks);
+      if (!effectiveAttack) continue;
+      const loaded = preparation.weapon.magazines[preparation.weapon.loadedIndex];
+      await preparation.updateWeaponAttack(effectiveAttack, {
+        rateOfFireProfile: fireService.parseRateOfFire(effectiveAttack.rof),
+        maximumShots: getMaximumShots(effectiveAttack, loaded)
+      });
+    }
+
+    for (const assistant of OPEN_ASSISTANTS.values()) {
+      if (assistant.token?.actor?.id !== actor.id || !assistant.rendered) continue;
+      assistant.setManagerState(state);
+      await assistant.refreshContent();
+    }
+  }
+
+  async function editAttackParameters(state, attack) {
+    const result = await openWeaponAttackEditor({
+      DialogV2,
+      attack,
+      escapeHTML,
+      parseRateOfFire: value => fireService.parseRateOfFire(value)
+    });
+    if (!result) return false;
+
+    let changed = false;
+    if (result.action === "reset") {
+      changed = clearAttackOverride(state, attack);
+      if (!changed) {
+        ui.notifications.info("\u0414\u043b\u044f \u044d\u0442\u043e\u0439 \u0430\u0442\u0430\u043a\u0438 \u043d\u0435\u0442 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0439 OleGURPS QOL.");
+        return false;
+      }
+    } else if (result.action === "save") {
+      changed = setAttackOverride(state, attack, result.value);
+    }
+    if (!changed) return false;
+
+    await saveState(state);
+    await refreshAttackOverrideConsumers(state, attack);
+    ui.notifications.info(result.action === "reset"
+      ? "\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b GGA \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u044b."
+      : "\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u043e\u0440\u0443\u0436\u0438\u044f \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u044b.");
+    return true;
+  }
   async function configureWeapon(state, existingId = null) {
-    const attacks = getRangedAttacks();
+    const attacks = getRangedAttacks(state);
     const existing = existingId
       ? state.weapons.find(weapon => weapon.id === existingId)
       : null;
@@ -1342,9 +1406,12 @@ export async function openAmmoManager() {
               <label class="gam-config-label" for="gam-attack-path">Дистанционная атака</label>
               <select id="gam-attack-path" name="attackPath">${attackOptions}</select>
             </div>
-            <p class="gam-config-hint">
-              Кнопка «Огонь» запускает эту дистанционную атаку из листа выбранного токена
-            </p>
+            <div class="gam-config-attack-actions">
+              <button type="button" class="gam-config-edit-attack" data-edit-attack-parameters>
+                <i class="fa-solid fa-sliders" aria-hidden="true"></i>
+                \u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u043e\u0440\u0443\u0436\u0438\u044f
+              </button>
+            </div>
           </div>
 
           <div class="gam-config-row">
@@ -1391,6 +1458,32 @@ export async function openAmmoManager() {
           </div>
         </div>
       `,
+      render: (_event, dialog) => {
+        const root = dialog.element;
+        const select = root?.querySelector('[name="attackPath"]');
+        const editButton = root?.querySelector("[data-edit-attack-parameters]");
+        if (!select || !editButton) return;
+        const updateButton = () => {
+          editButton.disabled = !attacks.some(entry => entry.path === select.value);
+        };
+        select.addEventListener("change", updateButton);
+        editButton.addEventListener("click", async event => {
+          event.preventDefault();
+          const selectedAttack = attacks.find(entry => entry.path === select.value);
+          if (!selectedAttack) return;
+          editButton.disabled = true;
+          try {
+            const changed = await editAttackParameters(state, selectedAttack);
+            if (changed) {
+              const refreshed = resolveAttack(makeAttackRef(selectedAttack), getRangedAttacks(state));
+              if (refreshed) Object.assign(selectedAttack, refreshed);
+            }
+          } finally {
+            updateButton();
+          }
+        });
+        updateButton();
+      },
       ok: { label: "Сохранить", icon: "fa-solid fa-floppy-disk" },
       rejectClose: false,
       modal: true
@@ -1724,7 +1817,7 @@ export async function openAmmoManager() {
     }
 
     const rangeBands = getRangeBands();
-    const recommendation = getGgaTargetRangeRecommendation(rangeBands);
+
     const targetSelectionKey = `${actor.id}:${weapon.id}`;
     const initialBodyplan = LAST_FIRE_BODYPLANS.get(targetSelectionKey) ?? "humanoid";
     const targetingService = await TargetingService.create({
@@ -1734,32 +1827,42 @@ export async function openAmmoManager() {
     const targetedAttackContext = createTargetedAttackContext({ actor, attack });
     TARGETED_ATTACK_CONTEXTS.set(targetingService, targetedAttackContext);
     const rateOfFireProfile = fireService.parseRateOfFire(attack.rof);
-    const preparation = new FirePreparationApp({
+    let preparation;
+    const currentAttack = () => preparation?.attack ?? attack;
+    preparation = new FirePreparationApp({
       token,
       weapon,
       attack,
       rangeBands,
-      recommendation,
+      getTargetRangeRecommendation: () => getTargetRangeRecommendation(rangeBands),
       beamWeapon: isBeamWeapon(attack),
       targetingService,
       targetedAttackContext,
       initialGoverningSpecialty: weapon.governingSpecialty,
       maximumShots: getMaximumShots(attack, loaded),
       rateOfFireProfile,
-      calculateShotLimits: modeIndex => getShotLimits(attack, loaded, modeIndex),
+      calculateShotLimits: modeIndex => getShotLimits(currentAttack(), loaded, modeIndex),
       calculateRapidFireBonus,
-      calculateAimBonus: (aimSeconds, moveAndAttack, braced, laserSight) => fireService.resolveAimedFireBonuses({
-        accuracy: attack.acc, aimSeconds, braced, laserSight, moveAndAttack
-      }).aimBonus,
+      calculateAimBonus: (aimSeconds, moveAndAttack, braced, laserSight) => {
+        const bonuses = fireService.resolveAimedFireBonuses({
+          accuracy: currentAttack().acc,
+          scopeBonus: currentAttack().scopeBonus ?? 0,
+          aimSeconds,
+          braced,
+          laserSight,
+          moveAndAttack
+        });
+        return bonuses.aimBonus + bonuses.sightBonus;
+      },
       calculateBracingBonus: (braced, aimSeconds, moveAndAttack, laserSight) => fireService.resolveAimedFireBonuses({
-        accuracy: attack.acc, aimSeconds, braced, laserSight, moveAndAttack
+        accuracy: currentAttack().acc, scopeBonus: currentAttack().scopeBonus ?? 0, aimSeconds, braced, laserSight, moveAndAttack
       }).bracingBonus,
       calculateLaserBonus: (laserSight, aimSeconds, braced, moveAndAttack) => fireService.resolveAimedFireBonuses({
-        accuracy: attack.acc, aimSeconds, braced, laserSight, moveAndAttack
+        accuracy: currentAttack().acc, scopeBonus: currentAttack().scopeBonus ?? 0, aimSeconds, braced, laserSight, moveAndAttack
       }).laserBonus,
-      calculateFireMode: shotOptions => getFireModeState(attack, shotOptions, rangeBands),
+      calculateFireMode: shotOptions => getFireModeState(currentAttack(), shotOptions, rangeBands),
       calculateEffectiveSkill: (shotOptions, currentTargetingService = targetingService) => calculateEffectiveFireSkill(
-        attack, shotOptions, rangeBands, currentTargetingService, targetedAttackContext),
+        currentAttack(), shotOptions, rangeBands, currentTargetingService, targetedAttackContext),
       onTargetingServiceChange: currentTargetingService => {
         TARGETED_ATTACK_CONTEXTS.set(currentTargetingService, targetedAttackContext);
         LAST_FIRE_BODYPLANS.set(targetSelectionKey, currentTargetingService.bodyplan);
@@ -1796,8 +1899,78 @@ export async function openAmmoManager() {
     }
   }
 
+  async function openSuppressionFire(state, weaponId, managerApp) {
+    await repairState(state, false);
+    const { weapon, attack } = getWeaponContext(state, weaponId);
+    if (!attack) throw new Error(`No linked ranged attack was found for "${weapon.name}".`);
+
+    const appKey = `${canvas?.scene?.id ?? "scene"}:${token.document?.id ?? token.id}:${weapon.id}`;
+    const existing = OPEN_SUPPRESSION_FIRE.get(appKey);
+    if (existing?.rendered) {
+      existing.bringToTop();
+      return existing;
+    }
+
+    const sessionService = new SuppressionFireSessionService({ token, actor, weapon, attack });
+    const restoredSession = await sessionService.loadExisting();
+    const capacity = getSuppressionFireCapacity({
+      profile: fireService.parseRateOfFire(attack.rof),
+      loaded: weapon.magazines[weapon.loadedIndex],
+      totalAmmo: weapon.totalAmmo
+    });
+    if (!capacity.eligible && !restoredSession) {
+      ui.notifications.warn("Suppression Fire requires effective RoF 5+ and at least 5 rounds in the loaded magazine.");
+      return null;
+    }
+    await sessionService.ensureSession();
+
+    const rangeBands = getRangeBands();
+    const targetSelectionKey = `${actor.id}:${weapon.id}`;
+    const bodyplan = LAST_FIRE_BODYPLANS.get(targetSelectionKey) ?? "humanoid";
+    const targetingService = await TargetingService.create({ attack, bodyplan });
+    const targetedAttackContext = createTargetedAttackContext({ actor, attack });
+    let suppressionApp;
+    suppressionApp = new SuppressionFireApp({
+      token,
+      actor,
+      weapon,
+      attack,
+      fireService,
+      rangeBands,
+      targetingService,
+      targetedAttackContext,
+      sessionService,
+      placementApps: [managerApp],
+      calculateEffectiveFireSkillDetails,
+      getEffectRangePenalty: () => getTaggedModifierSettings()?.autoAdd
+        ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
+        : null,
+      consumeAmmo: amount => ammoService.consumeLoadedRounds(state, weapon, amount),
+      onGoverningSkillChange: async specialty => {
+        if (specialty) weapon.governingSpecialty = specialty;
+        else delete weapon.governingSpecialty;
+        await saveState(state);
+      },
+      onComplete: async () => {
+        if (!managerApp?.rendered) return;
+        managerApp.setManagerState(state);
+        managerApp.setResult("Suppression Fire completed; ammunition updated.");
+        await managerApp.refreshContent();
+      },
+      onClose: () => OPEN_SUPPRESSION_FIRE.delete(appKey)
+    });
+
+    OPEN_SUPPRESSION_FIRE.set(appKey, suppressionApp);
+    try {
+      await suppressionApp.render({ force: true });
+      return suppressionApp;
+    } catch (error) {
+      OPEN_SUPPRESSION_FIRE.delete(appKey);
+      throw error;
+    }
+  }
   function buildManagerContent(state, uiState = {}) {
-    const attacks = getRangedAttacks();
+    const attacks = getRangedAttacks(state);
 
     const cards = state.weapons.length
       ? state.weapons
@@ -1807,11 +1980,24 @@ export async function openAmmoManager() {
             const loaded = weapon.magazines[weapon.loadedIndex];
             const loose = looseAmmo(weapon);
             const broken = !attack;
+            const suppressionCapacity = attack ? getSuppressionFireCapacity({
+              profile: fireService.parseRateOfFire(attack.rof),
+              loaded,
+              totalAmmo: weapon.totalAmmo
+            }) : { eligible: false };
+            const suppressionSession = attack
+              ? new SuppressionFireSessionService({ token, actor, weapon, attack }).findExisting()
+              : null;
+            const canOpenSuppression = suppressionCapacity.eligible || !!suppressionSession;
             const loadedHue = magazineLoadHue(loaded, weapon.capacity);
 
             const levelText = attack?.level > 0 ? `Навык ${attack.level}` : "Навык не указан";
             const rofText = attack?.rof ? `RoF ${escapeHTML(attack.rof)}` : "RoF не указан";
             const rclText = attack?.rcl ? `Rcl ${escapeHTML(attack.rcl)}` : "Rcl не указан";
+            const accText = Number.isFinite(Number(attack?.acc)) ? `Acc ${attack.acc}` : "Acc \u2014";
+            const scopeText = `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(attack?.scopeBonus) || 0))}`;
+            const bulkValue = attack?.data?.bulk ?? attack?.bulk;
+            const bulkText = Number.isFinite(Number(bulkValue)) ? `Bulk ${bulkValue}` : "Bulk \u2014";
 
             return `
               <section class="gam-card ${broken ? "broken" : ""}" data-weapon-card="${weapon.id}">
@@ -1819,7 +2005,7 @@ export async function openAmmoManager() {
                   <div class="gam-card-info">
                     <h3>${escapeHTML(weapon.name)}</h3>
                     <div class="gam-sub">
-                      ${broken ? "Связанная дистанционная атака не найдена" : `${levelText} · ${rofText} · ${rclText}`}
+                      ${broken ? "Связанная дистанционная атака не найдена" : [levelText, rofText, accText, scopeText, bulkText, rclText].join(" \u00b7 ")}
                     </div>
                     <div class="gam-sub">
                       <strong>${escapeHTML(weapon.ammoType)}</strong>: всего ${weapon.totalAmmo}, свободно ${loose}
@@ -1837,6 +2023,12 @@ export async function openAmmoManager() {
                   <button type="button" data-ammo-action="fire-roll" data-weapon-id="${weapon.id}" ${broken || loaded <= 0 ? "disabled" : ""}>
                     <i class="fa-solid fa-crosshairs"></i>
                     Огонь
+                  </button>
+
+                  <button type="button" data-ammo-action="suppression-fire" data-weapon-id="${weapon.id}"
+                    title="Suppression Fire \u2014 \u0432 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0435" disabled>
+                    <i class="fa-solid fa-burst"></i>
+                    Suppression Fire
                   </button>
 
                   <button type="button" data-ammo-action="spend" data-weapon-id="${weapon.id}" ${loaded <= 0 ? "disabled" : ""}>
@@ -1937,6 +2129,10 @@ export async function openAmmoManager() {
       handleAction: async ({ action, weaponId, magazineIndex, app: managerApp }) => {
         if (action === "fire-roll") {
           await openFirePreparation(persistentState, weaponId, managerApp);
+          return { changed: false, managerState: persistentState, message: "" };
+        }
+        if (action === "suppression-fire") {
+          await openSuppressionFire(persistentState, weaponId, managerApp);
           return { changed: false, managerState: persistentState, message: "" };
         }
         let changed = false;

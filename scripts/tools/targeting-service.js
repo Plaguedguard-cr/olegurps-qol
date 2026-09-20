@@ -4,6 +4,7 @@ import { HEXAPOD_BODYPLAN } from "./hexapod-bodyplan.js";
 import { WINGED_HEXAPOD_BODYPLAN } from "./winged-hexapod-bodyplan.js";
 import { CENTAUR_BODYPLAN } from "./centaur-bodyplan.js";
 import { AVIAN_BODYPLAN } from "./avian-bodyplan.js";
+import { createRandomHitLocationDisplay } from "./hit-location-result.js";
 
 export const BODYPLAN_DEFINITIONS = Object.freeze({
   humanoid: {
@@ -416,7 +417,7 @@ export class TargetingService {
       }
     }
 
-    return {
+    return createRandomHitLocationDisplay({
       total,
       roll,
       detailRolls,
@@ -428,7 +429,7 @@ export class TargetingService {
       semanticKey: region?.semanticKey ?? zone?.semanticKey ?? null,
       subtype: region?.subtype ?? null,
       label
-    };
+    });
   }
 
   async resolveRandomHitLocations(count) {

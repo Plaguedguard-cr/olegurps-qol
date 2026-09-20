@@ -1,7 +1,95 @@
+import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
+
 function getRollMessages(result) {
   return Object.keys(result ?? {})
     .filter(key => key.toLowerCase().includes("message") && result[key])
     .map(key => result[key]);
+}
+
+export function buildCompactAttackModifiers(value) {
+  const modifier = Number(value);
+  if (!Number.isFinite(modifier) || modifier === 0) return [];
+  const normalized = Math.trunc(modifier);
+  return [{ mod: normalized, modint: normalized, desc: "" }];
+}
+
+const escapeModifierHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+})[character]);
+
+export function normalizeAttackModifierDetails(modifiers = []) {
+  return (Array.isArray(modifiers) ? modifiers : []).flatMap(entry => {
+    const rawValue = typeof entry === "number" ? entry : entry?.value ?? entry?.modint ?? entry?.mod;
+    const value = Math.trunc(Number(rawValue));
+    if (!Number.isFinite(value) || value === 0) return [];
+    const rawLabel = typeof entry === "object" ? entry?.label ?? entry?.desc : "";
+    const label = String(rawLabel ?? "").trim().replace(/^[-+]?\d+\s+/u, "") || "\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440";
+    return [{ label, value }];
+  });
+}
+
+export function reconcileAttackModifierDetails(modifiers = [], expectedTotal = 0, capLabel = "Ограничение effective skill") {
+  const details = normalizeAttackModifierDetails(modifiers);
+  const describedTotal = details.reduce((total, entry) => total + entry.value, 0);
+  const adjustment = Math.trunc(Number(expectedTotal)) - describedTotal;
+  if (Number.isFinite(adjustment) && adjustment !== 0) {
+    details.push({ label: capLabel, value: adjustment });
+  }
+  return details;
+}
+
+export function buildAttackModifierBreakdownHtml(modifiers = []) {
+  const details = normalizeAttackModifierDetails(modifiers);
+  if (!details.length) return "";
+  const lines = details.map(({ label, value }) =>
+    `<span class="olegurps-attack-modifier-item">${escapeModifierHtml(label)} (${value > 0 ? "+" : ""}${value})</span>`
+  ).join("<br>");
+  return `<span class="olegurps-attack-modifiers"><strong>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b:</strong><br>${lines}</span>`;
+}
+const ACTIVE_CHAT_MESSAGE_CAPTURES = new WeakMap();
+
+export async function createRollChatMessage(ChatMessage, messageData, options) {
+  if (typeof ChatMessage?.create !== "function") throw new Error("ChatMessage.create недоступен.");
+  return ChatMessage.create(messageData, options);
+}
+
+export async function executeWithCapturedRollMessage({ ChatMessage = globalThis.ChatMessage, actorId = "", execute } = {}) {
+  if (typeof ChatMessage?.create !== "function" || typeof execute !== "function") {
+    return { result: await execute?.(), message: null };
+  }
+
+  let captureState = ACTIVE_CHAT_MESSAGE_CAPTURES.get(ChatMessage);
+  if (!captureState) {
+    const originalCreate = ChatMessage.create;
+    captureState = { originalCreate, sessions: new Set(), wrapper: null };
+    captureState.wrapper = function(messageData, ...args) {
+      const creation = Promise.resolve(originalCreate.call(this, messageData, ...args));
+      const speakerActor = String(messageData?.speaker?.actor ?? "");
+      const hasRoll = Array.isArray(messageData?.rolls) && messageData.rolls.length > 0;
+      for (const session of captureState.sessions) {
+        if (!session.messagePromise && hasRoll && (!session.actorId || speakerActor === session.actorId)) {
+          session.messagePromise = creation;
+        }
+      }
+      return creation;
+    };
+    ChatMessage.create = captureState.wrapper;
+    ACTIVE_CHAT_MESSAGE_CAPTURES.set(ChatMessage, captureState);
+  }
+
+  const session = { actorId: String(actorId ?? ""), messagePromise: null };
+  captureState.sessions.add(session);
+  let result;
+  try {
+    result = await execute();
+  } finally {
+    captureState.sessions.delete(session);
+    if (captureState.sessions.size === 0) {
+      if (ChatMessage.create === captureState.wrapper) ChatMessage.create = captureState.originalCreate;
+      ACTIVE_CHAT_MESSAGE_CAPTURES.delete(ChatMessage);
+    }
+  }
+  return { result, message: session.messagePromise ? await session.messagePromise : null };
 }
 
 function getCriticalState(total, target) {
@@ -20,6 +108,10 @@ export async function executePreparedGgaRoll({
   effectiveRoF,
   extremelyClose = false,
   rcl,
+  maximumHits = null,
+  contextLabel = "",
+  consumeAction = true,
+  maneuver = null,
   runtime = globalThis
 }) {
   const GURPS = runtime.GURPS;
@@ -43,7 +135,8 @@ export async function executePreparedGgaRoll({
     name: exactName,
     orig: `R:"${quotedName}"`,
     isMelee: false,
-    isRanged: true
+    isRanged: true,
+    ...(maneuver ? { maneuver } : {})
   };
   const actionObject = attack?.data ?? attack;
   const canRoll = typeof actor?.canRoll === "function"
@@ -85,7 +178,12 @@ export async function executePreparedGgaRoll({
   const { isCritSuccess, isCritFailure } = getCriticalState(total, finaltarget);
   const rollValues = roll.dice?.[0]?.results?.map(entry => entry.result) ?? [];
   const speaker = ChatMessage.getSpeaker({ actor });
-  const hitCap = Math.max(0, Math.trunc(Number(effectiveRoF) || 0));
+  const normalHitCap = Math.max(0, Math.trunc(Number(effectiveRoF) || 0));
+  const hasRequestedHitCap = maximumHits !== null && maximumHits !== undefined && maximumHits !== "";
+  const requestedHitCap = Number(maximumHits);
+  const hitCap = hasRequestedHitCap && Number.isFinite(requestedHitCap)
+    ? Math.min(normalHitCap, Math.max(0, Math.trunc(requestedHitCap)))
+    : normalHitCap;
   const safeRcl = Math.max(1, Math.trunc(Number(rcl) || 1));
   const potentialHits = margin >= 0 ? Math.min(hitCap, 1 + Math.floor(margin / safeRcl)) : 0;
   const displayRof = !extremelyClose && attack?.rof && String(attack.rof).match(/[xX\u00d7*]/u)
@@ -98,7 +196,7 @@ export async function executePreparedGgaRoll({
     thing: cleanName,
     origtarget: baseSkill,
     fromUser: game.user.id,
-    targetmods,
+    targetmods: buildCompactAttackModifiers(finaltarget - baseSkill),
     multiples: [{ rtotal: total, loaded: !!roll.isLoaded, rolls: rollValues.join() }],
     showPlus: true,
     rtotal: total,
@@ -122,7 +220,16 @@ export async function executePreparedGgaRoll({
   };
   GURPS.setLastTargetedRoll?.(chatdata, speaker.actor, speaker.token, true);
 
-  const content = await renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", chatdata);
+  let content = await renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", chatdata);
+  if (contextLabel) {
+    const safeContext = String(contextLabel).replace(/[&<>"']/g, character => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[character]);
+    content += `<p><strong>${safeContext}</strong></p>`;
+  }
+  const displayedModifiers = reconcileAttackModifierDetails(targetmods, finaltarget - baseSkill);
+  const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
+  if (modifierBreakdown) content += `<p>${modifierBreakdown}</p>`;
   const messageData = {
     user: game.user.id,
     speaker,
@@ -132,10 +239,10 @@ export async function executePreparedGgaRoll({
   };
   const rollMode = game.settings?.get?.("core", "rollMode");
   if (rollMode) ChatMessage.applyRollMode?.(messageData, rollMode);
-  await ChatMessage.create(messageData);
+  const chatMessage = await createRollChatMessage(ChatMessage, messageData);
 
   const actorToken = canvas?.tokens?.placeables?.find(entry => entry.id === speaker.token);
-  if (actorToken) {
+  if (consumeAction && actorToken) {
     try {
       const loader = runtime.__olegurpsLoadTokenActions ?? (() => import("/systems/gurps/module/token-actions.js"));
       const { TokenActions } = await loader();
@@ -146,11 +253,11 @@ export async function executePreparedGgaRoll({
     }
   }
 
-  return { rolled: true, rollData: chatdata, roll };
+  return { rolled: true, rollData: chatdata, roll, message: chatMessage };
 }
 // Generic prepared skill roll: no ranged document, attack dialogs or ammunition side effects.
 export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkill, effectiveRoF = 1,
-  rcl = null, location, targetingService, closeMultiplier = null, runtime = globalThis }) {
+  rcl = null, location, targetingService, closeMultiplier = null, modifierDetails = [], runtime = globalThis }) {
   if (!Number.isFinite(Number(effectiveSkill))) throw new Error("Не рассчитано Эффективное умение.");
   const finaltarget = Math.max(3, Math.trunc(Number(effectiveSkill)));
   const roll = runtime.Roll.create("3d6[Fire Control]");
@@ -176,9 +283,7 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   const data = {
     prefix: "", chatthing: "Fire Control", thing: "Fire Control", origtarget: baseSkill,
     fromUser: runtime.game.user.id,
-    targetmods: finaltarget === baseSkill ? [] : [{
-      mod: finaltarget - baseSkill, modint: finaltarget - baseSkill, desc: "Fire Control: сумма модификаторов"
-    }], showPlus: true,
+    targetmods: buildCompactAttackModifiers(finaltarget - baseSkill), showPlus: true,
     multiples: [{ rtotal: total, loaded: !!roll.isLoaded, rolls: (roll.dice?.[0]?.results ?? []).map(r => r.result).join() }],
     rtotal: total, modifier: finaltarget - baseSkill, finaltarget, margin, failure,
     seventeen: total >= 17, ...critical, isDraggable: false,
@@ -187,22 +292,21 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   };
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   let content = await runtime.renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", data);
+  const displayedModifiers = reconcileAttackModifierDetails(modifierDetails, finaltarget - baseSkill);
+  const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
+  if (modifierBreakdown) content += `<p>${modifierBreakdown}</p>`;
   if (randomHitLocations.length) {
-    const items = randomHitLocations.map(random => {
-      const details = (random.detailRolls ?? []).map(detail => `${detail.label} 1d6: ${detail.total}`).join("; ");
-      const rollDetails = details ? `; ${details}` : "";
-      return `<li>${escape(random.label)} ` +
-        `(3d6: ${escape(random.total)}${escape(rollDetails)})</li>`;
-    }).join("");
-    content += `<details><summary style="cursor:pointer;"><strong>Зоны попаданий (${randomHitLocations.length})</strong></summary>` +
-      `<ol style="margin:6px 0 0;padding-left:24px;">${items}</ol></details>`;
+    content += buildRandomHitLocationsHtml(randomHitLocations, { escapeHtml: escape });
   }
-  if (locationLabel) content += `<p>Hit Location: ${escape(locationLabel)}</p>`;
+  const hasDisplayedLocationModifier = displayedModifiers.some(entry =>
+    String(entry?.label ?? "").includes("Hit Location:")
+  );
+  if (locationLabel && !hasDisplayedLocationModifier) content += `<p>Hit Location: ${escape(locationLabel)}</p>`;
   if (closeMultiplier) content += `<p>Extremely Close: basic damage ×${closeMultiplier}, DR ×${closeMultiplier}</p>`;
   const message = { user: runtime.game.user.id, speaker: runtime.ChatMessage.getSpeaker(actor ? { actor } : {}),
     content, rolls: [roll], sound: runtime.CONFIG?.sounds?.dice };
   const rollMode = runtime.game.settings?.get?.("core", "rollMode");
   if (rollMode) runtime.ChatMessage.applyRollMode?.(message, rollMode);
-  await runtime.ChatMessage.create(message);
-  return { rolled: true, rollData: data, roll };
+  const chatMessage = await createRollChatMessage(runtime.ChatMessage, message);
+  return { rolled: true, rollData: data, roll, message: chatMessage };
 }

@@ -435,6 +435,23 @@ const FIRE_PREPARATION_CSS = `
     stroke-width: 2px;
   }
 
+  .gam-hit-region-marker { pointer-events: none; }
+  .gam-hit-region-marker .gam-hit-region-shape {
+    fill-opacity: 0 !important;
+    stroke-width: 2.5px;
+    vector-effect: non-scaling-stroke;
+  }
+  .gam-hit-region-marker.gam-rapid-attack-1 .gam-hit-region-shape {
+    stroke: var(--gam-rapid-attack-1, #39a9ff);
+    filter: drop-shadow(0 0 2px var(--gam-rapid-attack-1, #39a9ff));
+  }
+  .gam-hit-region-marker.gam-rapid-attack-2 .gam-hit-region-shape {
+    stroke: var(--gam-rapid-attack-2, #ff5aa5);
+    stroke-dasharray: 7 4;
+    filter: drop-shadow(0 0 2px var(--gam-rapid-attack-2, #ff5aa5));
+  }
+  .gam-hit-region-marker.is-active .gam-hit-region-shape { stroke-width: 4px; }
+
   .gam-hit-list {
     display: grid;
     min-width: 0;
@@ -479,6 +496,27 @@ const FIRE_PREPARATION_CSS = `
     overflow-wrap: anywhere;
     line-height: 1.08;
     white-space: normal;
+  }
+
+  .gam-hit-selection-markers {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    min-width: 0;
+  }
+  .gam-hit-selection-marker {
+    width: 9px;
+    height: 9px;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    opacity: 0.72;
+  }
+  .gam-hit-selection-marker.gam-rapid-attack-1 { background: var(--gam-rapid-attack-1, #39a9ff); color: var(--gam-rapid-attack-1, #39a9ff); }
+  .gam-hit-selection-marker.gam-rapid-attack-2 { background: var(--gam-rapid-attack-2, #ff5aa5); color: var(--gam-rapid-attack-2, #ff5aa5); }
+  .gam-hit-selection-marker.is-active {
+    opacity: 1;
+    box-shadow: 0 0 5px currentColor;
+    transform: scale(1.22);
   }
 
   .gam-hit-row-penalty {
@@ -575,7 +613,7 @@ export class FirePreparationApp extends ApplicationV2 {
     position: { width: 1120, height: "auto" }
   };
 
-  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", initialStandaloneValues = null, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateLaserBonus, calculateFireMode, calculateEffectiveSkill, onTargetingServiceChange, onGoverningSpecialtyChange, onStandaloneValuesChange, onConfirm, onClose }, options = {}) {
+  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, getTargetRangeRecommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", initialStandaloneValues = null, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateLaserBonus, calculateFireMode, calculateEffectiveSkill, onTargetingServiceChange, onGoverningSpecialtyChange, onStandaloneValuesChange, onConfirm, onClose }, options = {}) {
     super({
       ...options,
       id: options.id ?? (mode === "standalone" ? "olegurps-fire-control-standalone" : `olegurps-fire-preparation-${token.id}-${weapon.id}`),
@@ -587,7 +625,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this.weapon = weapon;
     this.attack = attack;
     this.rangeBands = rangeBands;
-    this.recommendation = recommendation;
+    this.targetRangeRecommendationProvider = getTargetRangeRecommendation;
+    this.recommendation = this._readTargetRangeRecommendation(recommendation);
     this.beamWeapon = beamWeapon;
     this.targetingService = targetingService;
     this._targetingServices = new Map([[targetingService.bodyplan, targetingService]]);
@@ -608,7 +647,6 @@ export class FirePreparationApp extends ApplicationV2 {
     this.confirmCallback = onConfirm;
     this.closeCallback = onClose;
     const defaultHitLocation = targetingService.getDefaultSelection();
-    const recommendedRangeIndex = Number.isInteger(recommendation?.rangeIndex) ? recommendation.rangeIndex : null;
     const initialRofMode = rateOfFireProfile?.type === "full-auto" ? "0" : null;
     const savedGoverningSpecialty = String(initialGoverningSpecialty ?? "").trim();
     const governingSpecialty = targetedAttackContext?.automaticSpecialty ??
@@ -627,11 +665,12 @@ export class FirePreparationApp extends ApplicationV2 {
       braced: false,
       laserSight: false,
       moveAndAttack: false,
+      allOutAttack: false,
       height: "",
       highGround: false,
-      selectedRangeIndex: recommendedRangeIndex,
+      selectedRangeIndex: null,
       manualRangeSelected: false,
-      elevationSourceRangeIndex: recommendedRangeIndex,
+      elevationSourceRangeIndex: null,
       bodyplanId: targetingService.bodyplan,
       hitLocation: { ...defaultHitLocation }
     };
@@ -646,11 +685,14 @@ export class FirePreparationApp extends ApplicationV2 {
     this._closeNotified = false;
     this._skillPreviewTimer = null;
     this._rangeLayoutObserver = null;
+    this._targetHookId = null;
+    this._targetRefreshTimer = null;
     this._boundClick = this._onClick.bind(this);
     this._boundInput = this._onInput.bind(this);
     this._boundPointerOver = this._onPointerOver.bind(this);
     this._boundPointerOut = this._onPointerOut.bind(this);
     this._boundKeydown = this._onKeydown.bind(this);
+    this._boundTargetToken = this._onTargetToken.bind(this);
   }
 
   async _prepareContext(_options) {
@@ -667,6 +709,7 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _onRender(context, options) {
     super._onRender(context, options);
+    this._registerTargetHook();
     if (!this._skillPreviewTimer) {
       this._skillPreviewTimer = globalThis.setInterval(() => {
         this._updateRapidFirePreview();
@@ -680,6 +723,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this._rangeLayoutObserver.observe(root);
     }
     if (root.dataset.gamFireListeners === "true") {
+      this._updateTargetRecommendation();
       globalThis.requestAnimationFrame?.(() => this._syncRangeListHeight());
       return;
     }
@@ -696,9 +740,30 @@ export class FirePreparationApp extends ApplicationV2 {
     root.addEventListener("pointerout", this._boundPointerOut);
     root.addEventListener("keydown", this._boundKeydown);
     root.dataset.gamFireListeners = "true";
+    this._updateTargetRecommendation();
     globalThis.requestAnimationFrame?.(() => this._syncRangeListHeight());
   }
 
+  async updateWeaponAttack(attack, { rateOfFireProfile = null, maximumShots = null } = {}) {
+    if (this.mode !== "weapon" || !attack) return;
+    this._captureFields();
+    this.attack = attack;
+    this.rateOfFireProfile = rateOfFireProfile ?? this.parseRateOfFire?.(attack.rof) ?? this.rateOfFireProfile;
+    this.maximumShots = maximumShots ?? this.maximumShots;
+
+    if (this.rateOfFireProfile?.type === "full-auto") {
+      const mode = Math.trunc(Number(this.fireState.rofMode));
+      this.fireState.rofMode = String(this.rateOfFireProfile.modes?.[mode]?.index ?? 0);
+    } else {
+      this.fireState.rofMode = null;
+    }
+
+    const limits = this._getShotLimits(this.fireState);
+    const currentShots = Math.trunc(Number(this.fireState.shots));
+    if (!Number.isFinite(currentShots)) this.fireState.shots = String(limits.minShots);
+    else this.fireState.shots = String(Math.min(limits.maxShots, Math.max(limits.minShots, currentShots)));
+    await this.render({ force: true });
+  }
   async close(options = {}) {
     if (this._skillPreviewTimer) {
       globalThis.clearInterval(this._skillPreviewTimer);
@@ -706,12 +771,67 @@ export class FirePreparationApp extends ApplicationV2 {
     }
     this._rangeLayoutObserver?.disconnect();
     this._rangeLayoutObserver = null;
+    if (this._targetRefreshTimer) globalThis.clearTimeout(this._targetRefreshTimer);
+    this._targetRefreshTimer = null;
+    if (this._targetHookId !== null) globalThis.Hooks?.off?.("targetToken", this._targetHookId);
+    this._targetHookId = null;
     const result = await super.close(options);
     if (!this._closeNotified) {
       this._closeNotified = true;
       this.closeCallback?.(this);
     }
     return result;
+  }
+
+  _readTargetRangeRecommendation(fallback = null) {
+    try {
+      if (typeof this.targetRangeRecommendationProvider === "function") {
+        return this.targetRangeRecommendationProvider() ?? null;
+      }
+      return fallback ?? null;
+    } catch (error) {
+      console.warn("Не удалось обновить рекомендацию дистанции до target:", error);
+      return null;
+    }
+  }
+
+  _formatTargetRecommendation(recommendation = this.recommendation) {
+    const penalty = Number(recommendation?.penalty);
+    if (!Number.isFinite(penalty)) return "GGA target: нет рекомендации";
+    const distance = Number(recommendation?.distance);
+    const distanceText = Number.isFinite(distance) ? `${formatDistance(distance)} ярдов · ` : "";
+    return `GGA target: ${distanceText}${penalty >= 0 ? "+" : ""}${penalty}`;
+  }
+
+  _registerTargetHook() {
+    if (this._targetHookId !== null || !globalThis.Hooks?.on) return;
+    this._targetHookId = globalThis.Hooks.on("targetToken", this._boundTargetToken);
+  }
+
+  _onTargetToken(user) {
+    if (user && globalThis.game?.user && user !== globalThis.game.user) return;
+    if (this._targetRefreshTimer) globalThis.clearTimeout(this._targetRefreshTimer);
+    this._targetRefreshTimer = globalThis.setTimeout(() => {
+      this._targetRefreshTimer = null;
+      this._updateTargetRecommendation();
+    }, 40);
+  }
+
+  _updateTargetRecommendation() {
+    this.recommendation = this._readTargetRangeRecommendation();
+    const recommendedIndex = Number.isInteger(this.recommendation?.rangeIndex)
+      ? this.recommendation.rangeIndex
+      : null;
+    const summary = this.element?.querySelector("[data-target-recommendation]");
+    if (summary) summary.textContent = this._formatTargetRecommendation();
+    for (const row of this.element?.querySelectorAll("[data-range-index]") ?? []) {
+      const recommended = recommendedIndex === Number(row.dataset.rangeIndex);
+      row.classList.toggle("recommended", recommended);
+      const marker = row.querySelector("[data-target-marker]");
+      if (marker) marker.hidden = !recommended;
+    }
+    this._updateRapidFirePreview();
+    this._updateSkillPreview();
   }
 
   getStandaloneValues() {
@@ -750,6 +870,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this.fireState.braced = !!root.querySelector('[name="braced"]')?.checked;
     this.fireState.laserSight = !!root.querySelector('[name="laserSight"]')?.checked;
     this.fireState.moveAndAttack = !!root.querySelector('[name="moveAndAttack"]')?.checked;
+    this.fireState.allOutAttack = !!root.querySelector('[name="allOutAttack"]')?.checked;
+    if (this.fireState.moveAndAttack && this.fireState.allOutAttack) this.fireState.allOutAttack = false;
     this.fireState.height = root.querySelector('[name="height"]')?.value ?? "";
     this.fireState.highGround = !!root.querySelector('[name="highGround"]')?.checked;
     if (this.mode === "standalone") {
@@ -789,6 +911,7 @@ export class FirePreparationApp extends ApplicationV2 {
       braced: this.fireState.braced,
       laserSight: this.fireState.laserSight,
       moveAndAttack: this.fireState.moveAndAttack,
+      allOutAttack: this.fireState.allOutAttack,
       height: this.fireState.height,
       highGround: this.fireState.highGround,
       rangeIndex: this.fireState.selectedRangeIndex,
@@ -927,6 +1050,7 @@ export class FirePreparationApp extends ApplicationV2 {
       `магазин ${this.weapon.magazines[this.weapon.loadedIndex]}/${this.weapon.capacity}`,
       `RoF ${displayedRoF}`,
       `Acc ${displayedAcc}`,
+      `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(this.attack?.scopeBonus) || 0))}`,
       `Bulk ${formatAttackStat(this.attack?.data?.bulk ?? this.attack?.bulk)}`,
       `Rcl ${formatAttackStat(this.attack?.rcl ?? this.attack?.data?.rcl)}`
     ].join(" · ");
@@ -1212,7 +1336,21 @@ export class FirePreparationApp extends ApplicationV2 {
       this.fireState.aimSeconds = field.value;
     } else if (field.name === "braced") this.fireState.braced = field.checked;
     else if (field.name === "laserSight") this.fireState.laserSight = field.checked;
-    else if (field.name === "moveAndAttack") this.fireState.moveAndAttack = field.checked;
+    else if (field.name === "moveAndAttack") {
+      this.fireState.moveAndAttack = field.checked;
+      if (field.checked) {
+        this.fireState.allOutAttack = false;
+        const allOutAttack = this.element?.querySelector('[name="allOutAttack"]');
+        if (allOutAttack) allOutAttack.checked = false;
+      }
+    } else if (field.name === "allOutAttack") {
+      this.fireState.allOutAttack = field.checked;
+      if (field.checked) {
+        this.fireState.moveAndAttack = false;
+        const moveAndAttack = this.element?.querySelector('[name="moveAndAttack"]');
+        if (moveAndAttack) moveAndAttack.checked = false;
+      }
+    }
     else if (field.name === "height") {
       const numericHeight = Number(String(field.value).replace(",", "."));
       if (field.value !== "" && Number.isFinite(numericHeight) && numericHeight < 0) field.value = "0";
@@ -1224,7 +1362,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this._syncShotLimits({ clamp: field.name === "rofMode" || event.type === "change" });
       this._updateRapidFirePreview();
     }
-    if (field.name === "aimSeconds" || field.name === "braced" || field.name === "laserSight" || field.name === "moveAndAttack") this._updateAimPreview();
+    if (field.name === "aimSeconds" || field.name === "braced" || field.name === "laserSight" || field.name === "moveAndAttack" || field.name === "allOutAttack") this._updateAimPreview();
     if (field.name === "height" || field.name === "highGround") this._updateElevationPreview();
     this._updateSkillPreview();
   }
@@ -1340,6 +1478,10 @@ export class FirePreparationApp extends ApplicationV2 {
     `;
   }
 
+  _getHitLocationMarkers(_zoneId, _regionId = null, _fireState = this.fireState) {
+    return [];
+  }
+
   _buildHitLocationContent(fireState) {
     const selection = fireState.hitLocation;
     const bodyplanOptions = TargetingService.getBodyplanOptions().map(option =>
@@ -1348,6 +1490,10 @@ export class FirePreparationApp extends ApplicationV2 {
     const rows = this.targetingService.zones.map(zone => {
       const selected = selection.zoneId === zone.id;
       const disabled = !zone.available;
+      const markers = this._getHitLocationMarkers(zone.id, null, fireState);
+      const markerHtml = markers.map(marker =>
+        `<span class="gam-hit-selection-marker ${escapeHTML(marker.className)}" title="${escapeHTML(marker.label)}" aria-label="${escapeHTML(marker.label)}"></span>`
+      ).join("");
       return `
         <button
           type="button"
@@ -1360,7 +1506,10 @@ export class FirePreparationApp extends ApplicationV2 {
           ${disabled ? "disabled" : ""}
         >
           <span class="gam-hit-row-color" aria-hidden="true"></span>
-          <span class="gam-hit-row-label">${escapeHTML(zone.label)}</span>
+          <span class="gam-hit-row-label">
+            ${escapeHTML(zone.label)}
+            <span class="gam-hit-selection-markers">${markerHtml}</span>
+          </span>
           <strong class="gam-hit-row-penalty" data-hit-penalty>${this._buildHitLocationPenalty(zone, fireState)}</strong>
         </button>
       `;
@@ -1371,6 +1520,10 @@ export class FirePreparationApp extends ApplicationV2 {
       const selected = selection.zoneId === region.zoneId && (!selection.regionId || selection.regionId === region.id);
       const disabled = !zone?.available;
       const shapes = region.geometry.map(geometry => this._renderSvgGeometry(geometry)).join("");
+      const markers = this._getHitLocationMarkers(region.zoneId, region.id, fireState);
+      const markerShapes = markers.map(marker =>
+        `<g class="gam-hit-region-marker ${escapeHTML(marker.className)}" aria-hidden="true">${shapes}</g>`
+      ).join("");
       return `
         <g
           class="gam-hit-region ${region.baseOutline ? "has-base-outline" : ""} ${region.baseFill ? "has-base-fill" : ""} ${selected ? "is-selected" : ""}"
@@ -1383,7 +1536,7 @@ export class FirePreparationApp extends ApplicationV2 {
           aria-pressed="${selected}"
           aria-disabled="${disabled}"
           style="--zone-color:${zone?.color ?? "#888"}"
-        >${shapes}</g>
+        >${shapes}</g>${markerShapes}
       `;
     }).join("");
 
@@ -1488,10 +1641,8 @@ export class FirePreparationApp extends ApplicationV2 {
     const sourceSkillText = Number.isFinite(sourceSkill) && sourceSkill > 0 ? String(Math.trunc(sourceSkill)) : "—";
     const attackStats = this.mode === "standalone" ? "" : this._getAttackStatsText(displayedRoF, displayedAcc);
     const elevation = this._getElevationCalculation(fireState);
-    const recommendedPenalty = Number(this.recommendation?.penalty);
-    const recommendationText = Number.isFinite(recommendedPenalty)
-      ? `GGA target: ${recommendedPenalty >= 0 ? "+" : ""}${recommendedPenalty}`
-      : "GGA target: нет рекомендации";
+    const recommendationText = this._formatTargetRecommendation();
+
     const rows = this.rangeBands.map(range => {
       const selected = fireState.selectedRangeIndex === range.index;
       const recommended = this.recommendation?.rangeIndex === range.index;
@@ -1503,7 +1654,7 @@ export class FirePreparationApp extends ApplicationV2 {
           <strong class="gam-fire-range-penalty">${penalty}</strong>
           <span class="gam-fire-range-markers">
             <span class="gam-fire-range-marker gam-fire-range-marker-selected" data-selected-marker ${selected ? "" : "hidden"}>Выбрано</span>
-            ${recommended ? '<span class="gam-fire-range-marker gam-fire-range-marker-recommended">GGA target</span>' : ""}
+            <span class="gam-fire-range-marker gam-fire-range-marker-recommended" data-target-marker ${recommended ? "" : "hidden"}>GGA target</span>
             <span class="gam-fire-range-marker gam-fire-range-marker-elevation" data-elevation-marker ${elevationRecommended ? "" : "hidden"}>Высота</span>
           </span>
         </button>
@@ -1544,6 +1695,10 @@ export class FirePreparationApp extends ApplicationV2 {
                   <span>Движение и атака</span>
                   <input type="checkbox" name="moveAndAttack" aria-label="Движение и атака" ${fireState.moveAndAttack ? "checked" : ""}>
                 </div>
+                <div class="gam-fire-field gam-fire-field-checkbox">
+                  <span>\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 <strong>+1</strong></span>
+                  <input type="checkbox" name="allOutAttack" aria-label="\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430" ${fireState.allOutAttack ? "checked" : ""}>
+                </div>
               </div>
               <div class="gam-fire-aim-group">
                 <label class="gam-fire-aim">
@@ -1575,7 +1730,7 @@ export class FirePreparationApp extends ApplicationV2 {
                     <input type="checkbox" name="highGround" ${fireState.highGround ? "checked" : ""}>
                   </label>
                 </div>
-                <p>${escapeHTML(recommendationText)}</p>
+                <p data-target-recommendation>${escapeHTML(recommendationText)}</p>
               </div>
               <div
                 class="gam-fire-effective-distance"
