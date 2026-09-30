@@ -39,6 +39,24 @@ export function getSuppressionRegionFlag(region) {
   return nested?.type === REGION_TYPE ? nested : null;
 }
 
+function normalizeGridCells(cells, limit = Number.MAX_SAFE_INTEGER) {
+  return (Array.isArray(cells) ? cells : [])
+    .map(cell => ({ i: Number(cell?.i), j: Number(cell?.j) }))
+    .filter(cell => Number.isInteger(cell.i) && Number.isInteger(cell.j))
+    .filter((cell, index, entries) =>
+      entries.findIndex(other => other.i === cell.i && other.j === cell.j) === index)
+    .slice(0, limit);
+}
+
+function normalizeTargetId(targetId, legacyTargetIds = []) {
+  const value = String(targetId ?? "").trim();
+  if (value) return value;
+  const legacy = (Array.isArray(legacyTargetIds) ? legacyTargetIds : [])
+    .map(entry => String(entry ?? "").trim())
+    .find(Boolean);
+  return legacy || null;
+}
+
 function normalizeZone(zone, index, defaultShots = 5) {
   const shotsAllocated = Math.max(0, integer(zone?.shotsAllocated ?? defaultShots));
   const hitsUsed = Math.max(0, Math.min(shotsAllocated, integer(zone?.hitsUsed)));
@@ -46,6 +64,8 @@ function normalizeZone(zone, index, defaultShots = 5) {
     shotsAllocated - hitsUsed,
     integer(zone?.hitsRemaining ?? shotsAllocated - hitsUsed)
   ));
+  const gridCells = normalizeGridCells(zone?.gridCells, 2);
+  const corridorCells = normalizeGridCells(zone?.corridorCells ?? zone?.corridorGridCells);
   return {
     zoneIndex: index,
     shotsAllocated,
@@ -55,7 +75,18 @@ function normalizeZone(zone, index, defaultShots = 5) {
     targetRegionId: zone?.targetRegionId ?? null,
     corridorRegionId: zone?.corridorRegionId ?? null,
     targetShapeId: zone?.targetShapeId ?? null,
-    corridorShapeId: zone?.corridorShapeId ?? null
+    corridorShapeId: zone?.corridorShapeId ?? null,
+    gridCells,
+    corridorCells,
+    manuallyEdited: zone?.manuallyEdited === true,
+    targetId: Object.prototype.hasOwnProperty.call(zone ?? {}, "targetId")
+      ? normalizeTargetId(zone?.targetId)
+      : normalizeTargetId(null, zone?.targetIds),
+    rangeIndex: Number.isInteger(Number(zone?.rangeIndex)) ? Number(zone.rangeIndex) : null,
+    height: zone?.height ?? "",
+    highGround: zone?.highGround === true,
+    active: zone?.active === true,
+    geometrySnapshot: zone?.geometrySnapshot ? copy(zone.geometrySnapshot) : null
   };
 }
 
@@ -64,8 +95,13 @@ function normalizeSession(session) {
   const zones = Array.from({ length: zoneCount }, (_entry, index) =>
     normalizeZone(session?.zones?.[index], index)
   );
+  const state = session?.state === "active" || session?.state === "activating" ? session.state : "draft";
+  const mode = state === "draft"
+    ? null
+    : ["manual", "automatic"].includes(session?.mode) ? session.mode : "automatic";
+  const ammoSpent = session?.ammoSpent === true || session?.ammoConsumed === true;
   return {
-    version: 1,
+    version: 2,
     sessionId: String(session?.sessionId ?? ""),
     sceneId: session?.sceneId ?? null,
     sourceTokenId: session?.sourceTokenId ?? null,
@@ -88,9 +124,11 @@ function normalizeSession(session) {
       rangeIndex: session?.controls?.rangeIndex ?? null,
       governingSpecialty: session?.controls?.governingSpecialty ?? ""
     },
-    state: session?.state === "active" || session?.state === "activating" ? session.state : "draft",
-    active: session?.active === true,
-    ammoConsumed: session?.ammoConsumed === true,
+    state,
+    mode,
+    active: state === "active" && session?.active === true,
+    ammoConsumed: ammoSpent,
+    ammoSpent,
     createdAt: Number(session?.createdAt) || now(),
     updatedAt: Number(session?.updatedAt) || now()
   };
@@ -148,12 +186,23 @@ function recoverSessionsFromRegions(scene, context) {
       zone.hitsUsed = Math.max(0, integer(flag.hitsUsed));
       zone.hitsRemaining = Math.max(0, integer(flag.hitsRemaining ?? zone.shotsAllocated - zone.hitsUsed));
       zone.depleted = flag.depleted === true || zone.hitsRemaining <= 0;
+      zone.targetId = Object.prototype.hasOwnProperty.call(flag, "targetId")
+        ? normalizeTargetId(flag.targetId)
+        : normalizeTargetId(null, flag.targetIds);
+      zone.rangeIndex = Number.isInteger(Number(flag.rangeIndex)) ? Number(flag.rangeIndex) : null;
+      zone.height = flag.height ?? "";
+      zone.highGround = flag.highGround === true;
+      zone.active = flag.zoneActive === true;
+      zone.geometrySnapshot = flag.geometrySnapshot ? copy(flag.geometrySnapshot) : null;
+      if (Array.isArray(flag.gridCells)) zone.gridCells = copy(flag.gridCells);
       if (flag.regionRole === "target") {
         zone.targetRegionId = region.id;
         zone.targetShapeId = flag.targetShapeId ?? `${region.id}:0`;
       } else if (flag.regionRole === "corridor") {
         zone.corridorRegionId = region.id;
         zone.corridorShapeId = flag.corridorShapeId ?? `${region.id}:0`;
+        zone.corridorCells = copy(flag.corridorGridCells ?? flag.corridorCells ?? []);
+        zone.manuallyEdited = flag.manuallyEdited === true;
       }
     }
     sessions.push(normalizeSession({
@@ -197,12 +246,15 @@ function regionLinkData(regions, zoneCount) {
     const flag = getSuppressionRegionFlag(region);
     const index = integer(flag?.zoneIndex);
     if (index < 0 || index >= zoneCount) continue;
+    if (Array.isArray(flag.gridCells)) zones[index].gridCells = copy(flag.gridCells);
     if (flag.regionRole === "target") {
       zones[index].targetRegionId = region.id;
       zones[index].targetShapeId = flag.targetShapeId ?? `${region.id}:0`;
     } else if (flag.regionRole === "corridor") {
       zones[index].corridorRegionId = region.id;
       zones[index].corridorShapeId = flag.corridorShapeId ?? `${region.id}:0`;
+      zones[index].corridorCells = copy(flag.corridorGridCells ?? flag.corridorCells ?? []);
+      zones[index].manuallyEdited = flag.manuallyEdited === true;
     }
   }
   return zones;
@@ -231,6 +283,8 @@ export class SuppressionFireSessionService {
       [this.attack?.name, this.attack?.mode].filter(Boolean).join("::") || "ranged-attack");
   }
   get isActive() { return this.session?.active === true && this.session?.state === "active"; }
+  get isManualActive() { return this.isActive && this.session?.mode === "manual"; }
+  get isAutomaticActive() { return this.isActive && this.session?.mode === "automatic"; }
   get hasStarted() { return this.session?.state === "active" || this.session?.state === "activating"; }
 
   _context() {
@@ -286,15 +340,26 @@ export class SuppressionFireSessionService {
     return this.session;
   }
 
+  async reconcileRegions() {
+    return this._reconcileRegionLinks();
+  }
+
   async _reconcileRegionLinks() {
     if (!this.session) return null;
     const links = regionLinkData(sessionRegions(this.scene, this.session.sessionId), this.session.zoneCount);
     let changed = false;
     const zones = this.session.zones.map((zone, index) => {
       const next = { ...zone };
-      for (const key of ["targetRegionId", "corridorRegionId", "targetShapeId", "corridorShapeId"]) {
-        const value = links[index]?.[key] ?? null;
-        if (next[key] !== value) changed = true;
+      for (const key of [
+        "targetRegionId", "corridorRegionId", "targetShapeId", "corridorShapeId",
+        "gridCells", "corridorCells", "manuallyEdited"
+      ]) {
+        const value = ["gridCells", "corridorCells"].includes(key)
+          ? (links[index]?.[key] ?? [])
+          : key === "manuallyEdited"
+            ? links[index]?.manuallyEdited === true
+            : (links[index]?.[key] ?? null);
+        if (JSON.stringify(next[key]) !== JSON.stringify(value)) changed = true;
         next[key] = value;
       }
       return next;
@@ -323,6 +388,8 @@ export class SuppressionFireSessionService {
         _id: region.id,
         [`flags.${MODULE_ID}.state`]: session.state,
         [`flags.${MODULE_ID}.active`]: session.active,
+        [`flags.${MODULE_ID}.mode`]: session.mode,
+        [`flags.${MODULE_ID}.ammoSpent`]: session.ammoSpent,
         [`flags.${MODULE_ID}.ammoConsumed`]: session.ammoConsumed,
         [`flags.${MODULE_ID}.combatId`]: session.combatId,
         [`flags.${MODULE_ID}.combatantId`]: session.combatantId,
@@ -336,46 +403,153 @@ export class SuppressionFireSessionService {
         [`flags.${MODULE_ID}.shotsAllocated`]: zone?.shotsAllocated ?? 0,
         [`flags.${MODULE_ID}.hitsUsed`]: zone?.hitsUsed ?? 0,
         [`flags.${MODULE_ID}.hitsRemaining`]: zone?.hitsRemaining ?? 0,
-        [`flags.${MODULE_ID}.depleted`]: zone?.depleted ?? false
+        [`flags.${MODULE_ID}.depleted`]: zone?.depleted ?? false,
+        [`flags.${MODULE_ID}.gridCells`]: copy(zone?.gridCells ?? []),
+        [`flags.${MODULE_ID}.corridorGridCells`]: copy(zone?.corridorCells ?? []),
+        [`flags.${MODULE_ID}.manuallyEdited`]: zone?.manuallyEdited === true,
+        [`flags.${MODULE_ID}.targetId`]: zone?.targetId ?? null,
+        [`flags.${MODULE_ID}.-=targetIds`]: null,
+        [`flags.${MODULE_ID}.rangeIndex`]: zone?.rangeIndex ?? null,
+        [`flags.${MODULE_ID}.height`]: zone?.height ?? "",
+        [`flags.${MODULE_ID}.highGround`]: zone?.highGround === true,
+        [`flags.${MODULE_ID}.zoneActive`]: zone?.active === true,
+        [`flags.${MODULE_ID}.geometrySnapshot`]: copy(zone?.geometrySnapshot ?? null)
       };
     });
     return this.scene.updateEmbeddedDocuments("Region", updates);
   }
 
-  async saveDraftConfiguration({ zoneCount, zoneShots, controls } = {}) {
+  async saveDraftConfiguration({ zoneCount, zoneShots, zoneConfigs, controls } = {}) {
     await this.ensureSession();
-    if (this.hasStarted) return this.session;
-    const count = Math.max(1, integer(zoneCount ?? this.session.zoneCount));
+    if (this.isAutomaticActive || (this.hasStarted && this.session?.mode === "automatic")) return this.session;
+    const manualLocked = this.hasStarted && this.session?.mode === "manual";
+    const count = manualLocked
+      ? this.session.zoneCount
+      : Math.max(1, integer(zoneCount ?? this.session.zoneCount));
     const zones = Array.from({ length: count }, (_entry, index) => {
-      const shotsAllocated = Math.max(0, integer(
-        zoneShots?.[index] ?? this.session.zones[index]?.shotsAllocated ?? 5
-      ));
+      const previous = this.session.zones[index] ?? {};
+      const shotsAllocated = manualLocked
+        ? Math.max(0, integer(previous.shotsAllocated ?? 5))
+        : Math.max(0, integer(zoneShots?.[index] ?? previous.shotsAllocated ?? 5));
+      const shotsChanged = shotsAllocated !== Math.max(0, integer(previous.shotsAllocated ?? 5));
       return normalizeZone({
-        ...(this.session.zones[index] ?? {}),
+        ...previous,
+        ...(zoneConfigs?.[index] ?? {}),
         shotsAllocated,
-        hitsUsed: 0,
-        hitsRemaining: shotsAllocated,
-        depleted: false
+        hitsUsed: shotsChanged ? 0 : previous.hitsUsed,
+        hitsRemaining: shotsChanged ? shotsAllocated : previous.hitsRemaining,
+        depleted: shotsChanged ? false : previous.depleted
       }, index);
     });
-    return this._save({ ...this.session, zoneCount: count, zones, controls: { ...this.session.controls, ...controls } });
+    const nextControls = manualLocked
+      ? this.session.controls
+      : { ...this.session.controls, ...controls };
+    return this._save({ ...this.session, zoneCount: count, zones, controls: nextControls });
+  }
+
+  async resizeDraftZones(zoneCount, { defaultShots = 5 } = {}) {
+    await this.ensureSession();
+    if (this.hasStarted) return this.session;
+    const count = Math.max(1, integer(zoneCount));
+    const zones = Array.from({ length: count }, (_entry, index) =>
+      this.session.zones[index]
+        ? normalizeZone(this.session.zones[index], index)
+        : normalizeZone(null, index, defaultShots)
+    );
+    return this._save({ ...this.session, zoneCount: count, zones });
   }
 
   async setPlacement(zoneRefs = []) {
     await this.ensureSession();
+    if (this.hasStarted) return this.session;
     const zones = this.session.zones.map((zone, index) => ({
       ...zone,
       targetRegionId: zoneRefs[index]?.targetRegionId ?? null,
       corridorRegionId: zoneRefs[index]?.corridorRegionId ?? null,
       targetShapeId: zoneRefs[index]?.targetShapeId ?? null,
-      corridorShapeId: zoneRefs[index]?.corridorShapeId ?? null
+      corridorShapeId: zoneRefs[index]?.corridorShapeId ?? null,
+      gridCells: copy(zoneRefs[index]?.gridCells ?? []),
+      corridorCells: copy(zoneRefs[index]?.corridorCells ?? []),
+      manuallyEdited: false
     }));
     return this._save({ ...this.session, zones });
   }
 
-  async activate({ zoneShots, controls } = {}) {
+  async setZonePlacement(zoneIndex, zoneRef = {}) {
     await this.ensureSession();
-    if (this.isActive || this.session.ammoConsumed) return { session: this.session, alreadyActive: true };
+    if (this.hasStarted) return this.session;
+    const index = integer(zoneIndex);
+    if (!this.session.zones[index]) throw new Error("Suppression Fire zone was not found.");
+    const zones = this.session.zones.map((zone, entryIndex) => entryIndex === index
+      ? normalizeZone({
+          ...zone,
+          targetRegionId: zoneRef.targetRegionId ?? null,
+          corridorRegionId: zoneRef.corridorRegionId ?? null,
+          targetShapeId: zoneRef.targetShapeId ?? null,
+          corridorShapeId: zoneRef.corridorShapeId ?? null,
+          gridCells: copy(zoneRef.gridCells ?? []),
+          corridorCells: copy(zoneRef.corridorCells ?? []),
+          manuallyEdited: zoneRef.manuallyEdited === true
+        }, entryIndex)
+      : zone
+    );
+    return this._save({ ...this.session, zones });
+  }
+
+  async clearZone(zoneIndex) {
+    await this.ensureSession();
+    if (this.hasStarted) return this.session;
+    const index = integer(zoneIndex);
+    const zones = this.session.zones.map((zone, entryIndex) => entryIndex === index
+      ? normalizeZone({
+          ...zone,
+          targetRegionId: null,
+          corridorRegionId: null,
+          targetShapeId: null,
+          corridorShapeId: null,
+          gridCells: [],
+          corridorCells: [],
+          manuallyEdited: false,
+          targetId: null,
+          rangeIndex: null,
+          height: "",
+          highGround: false,
+          active: false,
+          geometrySnapshot: null
+        }, entryIndex)
+      : zone
+    );
+    return this._save({ ...this.session, zones });
+  }
+
+  async setZoneTarget(zoneIndex, targetId = null) {
+    await this.ensureSession();
+    if (this.isAutomaticActive || (this.hasStarted && this.session?.mode === "automatic")) return this.session;
+    const index = integer(zoneIndex);
+    if (!this.session.zones[index]) throw new Error("Suppression Fire zone was not found.");
+    const zones = this.session.zones.map((zone, entryIndex) => entryIndex === index
+      ? normalizeZone({ ...zone, targetId: normalizeTargetId(targetId) }, entryIndex)
+      : zone
+    );
+    return this._save({ ...this.session, zones });
+  }
+
+  async setManualCorridor(zoneIndex, corridorCells = []) {
+    await this.ensureSession();
+    if (this.hasStarted) return this.session;
+    const index = integer(zoneIndex);
+    if (!this.session.zones[index]) throw new Error("Suppression Fire zone was not found.");
+    const zones = this.session.zones.map((zone, entryIndex) => entryIndex === index
+      ? normalizeZone({ ...zone, corridorCells, manuallyEdited: true }, entryIndex)
+      : zone
+    );
+    return this._save({ ...this.session, zones });
+  }
+
+  async activate({ zoneShots, controls, mode = "automatic" } = {}) {
+    await this.ensureSession();
+    if (this.isActive || this.session.ammoSpent) return { session: this.session, alreadyActive: true };
+    const activationMode = mode === "manual" ? "manual" : "automatic";
     const count = this.session.zoneCount;
     const zones = Array.from({ length: count }, (_entry, index) => {
       const shotsAllocated = Math.max(0, integer(
@@ -389,44 +563,87 @@ export class SuppressionFireSessionService {
         depleted: false
       }, index);
     });
-    const combat = combatSnapshot(this.runtime, this.scene?.id, this.sourceTokenId, this.actorId);
+    const combat = activationMode === "automatic"
+      ? combatSnapshot(this.runtime, this.scene?.id, this.sourceTokenId, this.actorId)
+      : { combatId: null, combatantId: null, startingRound: null, startingTurn: null };
+    if (activationMode === "automatic" && (!combat.combatId || !combat.combatantId)) {
+      throw new Error("\u0410\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u043f\u043e\u0434\u0430\u0432\u043b\u044f\u044e\u0449\u0438\u0439 \u043e\u0433\u043e\u043d\u044c \u043c\u043e\u0436\u043d\u043e \u0437\u0430\u043f\u0443\u0441\u0442\u0438\u0442\u044c \u0442\u043e\u043b\u044c\u043a\u043e \u0432 Combat, \u0433\u0434\u0435 \u0441\u0442\u0440\u0435\u043b\u043e\u043a \u044f\u0432\u043b\u044f\u0435\u0442\u0441\u044f combatant.");
+    }
+    const activeZones = zones.map((zone, index) => normalizeZone({
+      ...zone,
+      active: true,
+      geometrySnapshot: {
+        targetRegionId: zone.targetRegionId,
+        corridorRegionId: zone.corridorRegionId,
+        gridCells: copy(zone.gridCells),
+        corridorCells: copy(zone.corridorCells),
+        manuallyEdited: zone.manuallyEdited === true
+      }
+    }, index));
     const session = await this._save({
       ...this.session,
       ...combat,
-      zones,
+      mode: activationMode,
+      zones: activeZones,
       controls: { ...this.session.controls, ...controls },
       state: "activating",
       active: false,
-      ammoConsumed: false
+      ammoConsumed: false,
+      ammoSpent: false
     });
     return { session, alreadyActive: false };
   }
 
+  async activateManual(options = {}) {
+    return this.activate({ ...options, mode: "manual" });
+  }
+
+  async activateAutomatic(options = {}) {
+    return this.activate({ ...options, mode: "automatic" });
+  }
+
   async markAmmoConsumed() {
     if (!this.session) throw new Error("Suppression Fire session was not found.");
-    return this._save({ ...this.session, state: "active", active: true, ammoConsumed: true });
+    return this._save({
+      ...this.session,
+      state: "active",
+      active: true,
+      ammoConsumed: true,
+      ammoSpent: true
+    });
   }
 
   async revertActivation() {
-    if (!this.session || this.session.ammoConsumed) return this.session;
+    if (!this.session || this.session.ammoSpent) return this.session;
+    const zones = this.session.zones.map((zone, index) => normalizeZone({
+      ...zone,
+      hitsUsed: 0,
+      hitsRemaining: zone.shotsAllocated,
+      depleted: false,
+      active: false,
+      geometrySnapshot: null
+    }, index));
     return this._save({
       ...this.session,
+      zones,
+      mode: null,
       state: "draft",
       active: false,
+      ammoConsumed: false,
+      ammoSpent: false,
       combatId: null,
       combatantId: null,
       startingRound: null,
       startingTurn: null
     });
   }
-
-  async recordHits(zoneIndex, calculatedHits) {
+  async recordHits(zoneIndex, calculatedHits, { allowDraft = false } = {}) {
     if (!this.session) return { actualHits: 0, completed: false, session: null };
     const live = readSessions(this.storageDocument)[this.session.sessionId] ?? this.session;
     const session = normalizeSession(live);
     const index = integer(zoneIndex);
     const zone = session.zones[index];
-    if (!session.active || !zone || zone.depleted) {
+    if ((!session.active && !allowDraft) || !zone || zone.depleted) {
       return { actualHits: 0, completed: false, session };
     }
     const actualHits = Math.min(zone.hitsRemaining, Math.max(0, integer(calculatedHits)));
@@ -439,9 +656,43 @@ export class SuppressionFireSessionService {
       : entry
     );
     const updated = await this._save({ ...session, zones });
-    const completed = updated.zones.every(entry => entry.depleted);
-    if (completed) await this.finish({ deleteRegions: true });
-    return { actualHits, completed, session: completed ? null : this.session };
+    const completed = updated.active && updated.zones.every(entry => entry.depleted);
+    if (completed) {
+      if (updated.mode === "manual") {
+        await this.finishManual();
+      } else {
+        const completedSessionId = updated.sessionId;
+        await this.finish({ deleteRegions: true });
+        this.runtime.Hooks?.callAll?.("olegurpsQolSuppressionFireEnded", [completedSessionId]);
+      }
+    }
+    return { actualHits, completed, session: this.session };
+  }
+
+  async finishManual() {
+    await this.ensureSession();
+    if (!this.isManualActive && this.session?.mode !== "manual") return this.session;
+    const zones = this.session.zones.map((zone, index) => normalizeZone({
+      ...zone,
+      hitsUsed: 0,
+      hitsRemaining: zone.shotsAllocated,
+      depleted: false,
+      active: false,
+      geometrySnapshot: null
+    }, index));
+    return this._save({
+      ...this.session,
+      zones,
+      mode: null,
+      state: "draft",
+      active: false,
+      ammoConsumed: false,
+      ammoSpent: false,
+      combatId: null,
+      combatantId: null,
+      startingRound: null,
+      startingTurn: null
+    });
   }
 
   async finish({ deleteRegions = true } = {}) {
@@ -478,7 +729,7 @@ function hasTurnAdvanced(session, combat) {
   return round > startingRound || (round === startingRound && turn > startingTurn);
 }
 
-function isHookAuthority(session, runtime) {
+export function isSuppressionFireAuthority(session, runtime = globalThis) {
   const user = runtime.game?.user;
   if (!user) return false;
   if (String(user.id) === String(session.userId)) return true;
@@ -502,10 +753,10 @@ export async function expireSuppressionFireForCombat(combat, runtime = globalThi
   const expired = [];
   for (const store of stores) {
     for (const session of Object.values(store.sessions)) {
-      if (session?.active !== true || session?.state !== "active") continue;
+      if (session?.active !== true || session?.state !== "active" || session?.mode !== "automatic") continue;
       if (String(session.combatId ?? "") !== String(combat.id ?? "")) continue;
       if (String(session.combatantId ?? "") !== String(currentCombatantId)) continue;
-      if (!hasTurnAdvanced(session, combat) || !isHookAuthority(session, runtime)) continue;
+      if (!hasTurnAdvanced(session, combat) || !isSuppressionFireAuthority(session, runtime)) continue;
       expired.push({ store, session });
     }
   }
@@ -527,7 +778,9 @@ export async function expireSuppressionFireForCombat(combat, runtime = globalThi
     }
     if (changed) await writeSessions(store.document, store.sessions);
   }
-  return [...sessionIds];
+  const expiredIds = [...sessionIds];
+  runtime.Hooks?.callAll?.("olegurpsQolSuppressionFireEnded", expiredIds);
+  return expiredIds;
 }
 
 let hooksRegistered = false;

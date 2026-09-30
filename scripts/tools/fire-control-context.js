@@ -1,6 +1,50 @@
 import { normalizeAccuracy, normalizeBulk } from "./fire-service.js";
 import { findRangeBandForDistance, getRangeBandDistance, isBeamWeapon, resolveEffectiveRange } from "./fire-range-service.js";
 
+function sceneDistanceToYards(value, runtime = globalThis) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  const Length = runtime.GURPS?.Length;
+  if (!Length?.from || !Length?.Unit?.Yard) return number;
+  const unit = Length.unitFromString?.(
+    runtime.canvas?.scene?.grid?.units ?? Length.Unit.Yard
+  ) ?? Length.Unit.Yard;
+  const yards = Length.from(number, unit)?.to(Length.Unit.Yard)?.value;
+  return Number.isFinite(Number(yards)) ? Number(yards) : null;
+}
+
+export function measureTokenDistanceYards(sourceToken, targetToken, runtime = globalThis) {
+  if (!sourceToken || !targetToken || sourceToken === targetToken) return null;
+  try {
+    const sourceDocument = sourceToken.document ?? sourceToken;
+    const targetDocument = targetToken.document ?? targetToken;
+    const path = runtime.canvas?.grid?.measurePath?.([sourceDocument, targetDocument]);
+    const sceneDistance = runtime.canvas?.grid?.isGridless ? path?.distance : path?.spaces;
+    const yards = sceneDistanceToYards(sceneDistance, runtime);
+    return Number.isFinite(yards) && yards >= 0 ? yards : null;
+  } catch (error) {
+    console.warn("OleGURPS QOL | Unable to measure target distance:", error);
+    return null;
+  }
+}
+
+export function getTokenFireRangeContext({ sourceToken, targetToken, rangeBands, runtime = globalThis } = {}) {
+  const distance = measureTokenDistanceYards(sourceToken, targetToken, runtime);
+  if (!Number.isFinite(distance)) return null;
+  const sourceElevation = Number((sourceToken?.document ?? sourceToken)?.elevation ?? 0);
+  const targetElevation = Number((targetToken?.document ?? targetToken)?.elevation ?? 0);
+  const height = sceneDistanceToYards(Math.abs(targetElevation - sourceElevation), runtime) ?? 0;
+  const range = findRangeBandForDistance(rangeBands, distance);
+  return {
+    distance,
+    height,
+    highGround: sourceElevation > targetElevation,
+    rangeIndex: range?.index ?? null,
+    rangePenalty: range?.penalty ?? 0,
+    rangeLabel: range?.label ?? ""
+  };
+}
+
 export function createStandaloneAttack(values) {
   const rawShots = Number(values.shots);
   const shots = Number.isInteger(rawShots) && rawShots > 0 ? rawShots : 1;
@@ -96,19 +140,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
   function getSingleTargetPhysicalDistanceYards() {
     const targets = Array.from(game.user?.targets ?? []);
     if (targets.length !== 1 || !token || targets[0] === token) return null;
-    try {
-      const target = targets[0];
-      const path = canvas?.grid?.measurePath?.([token.document, target.document]);
-      const sceneDistance = canvas?.grid?.isGridless ? path?.distance : path?.spaces;
-      const Length = globalThis.GURPS?.Length;
-      if (!Number.isFinite(Number(sceneDistance)) || !Length?.from || !Length?.Unit?.Yard) return null;
-      const unit = Length.unitFromString?.(canvas?.scene?.grid?.units ?? Length.Unit.Yard) ?? Length.Unit.Yard;
-      const yards = Length.from(Number(sceneDistance), unit)?.to(Length.Unit.Yard)?.value;
-      return Number.isFinite(Number(yards)) && Number(yards) >= 0 ? Number(yards) : null;
-    } catch (error) {
-      console.warn("Не удалось определить физическую дистанцию до target:", error);
-      return null;
-    }
+    return measureTokenDistanceYards(token, targets[0], globalThis);
   }
 
   function getTargetRangeRecommendation(rangeBands) {

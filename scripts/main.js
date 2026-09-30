@@ -10,6 +10,7 @@ import { openDamageRoll } from "./tools/damage.js";
 import { openMeleeAssistant } from "./tools/melee-assistant.js";
 import { ensureModuleMacros } from "./module-macros.js";
 import { registerSuppressionFireHooks } from "./tools/suppression-fire-session-service.js";
+import { registerSuppressionFireRuntimeHooks } from "./tools/suppression-fire-runtime-service.js";
 
 const MODULE_ID = "olegurps-qol";
 const STYLESHEET_PATH = `modules/${MODULE_ID}/styles/olegurps-qol.css`;
@@ -42,6 +43,7 @@ const api = {
 Hooks.once("init", () => {
   ensureModuleStylesheet();
   registerSuppressionFireHooks();
+  registerSuppressionFireRuntimeHooks();
   globalThis.OleGURPSQOL = api;
 });
 

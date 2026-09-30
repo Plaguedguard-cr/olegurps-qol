@@ -36,6 +36,7 @@ All repository text files must remain UTF-8. When `apply_patch` is unavailable b
 
 - read the original file explicitly as UTF-8 and write it explicitly as UTF-8 without BOM;
 - use a targeted replacement or a temporary UTF-8 file followed by an atomic rename; never rewrite unrelated content;
+- for large-file changes, start with small targeted replacements split into bounded steps; do not attempt a full-file rewrite first, because Windows command-line length limits can reject the operation before it starts;
 - never pass repository text through Windows-1251, the active console code page, `Encoding.Default`, or any encode/decode repair heuristic;
 - prefer ASCII-only edit scripts. If a shell command must introduce non-ASCII JavaScript text, use JavaScript `\uXXXX` escapes in string literals or a verified UTF-8 temporary file;
 - do not attempt a whole-file mojibake conversion. If corrupted text is already present, replace each affected literal from a known-good source;

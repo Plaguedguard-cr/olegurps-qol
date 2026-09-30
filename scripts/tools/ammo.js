@@ -1951,10 +1951,12 @@ export async function openAmmoManager() {
         else delete weapon.governingSpecialty;
         await saveState(state);
       },
-      onComplete: async () => {
+      onComplete: async mode => {
         if (!managerApp?.rendered) return;
         managerApp.setManagerState(state);
-        managerApp.setResult("Suppression Fire completed; ammunition updated.");
+        managerApp.setResult(mode === "manual"
+          ? "Manual Suppression Fire started; ammunition updated."
+          : "Automatic Suppression Fire activated; ammunition updated.");
         await managerApp.refreshContent();
       },
       onClose: () => OPEN_SUPPRESSION_FIRE.delete(appKey)
@@ -2025,8 +2027,7 @@ export async function openAmmoManager() {
                     Огонь
                   </button>
 
-                  <button type="button" data-ammo-action="suppression-fire" data-weapon-id="${weapon.id}"
-                    title="Suppression Fire \u2014 \u0432 \u0440\u0430\u0437\u0440\u0430\u0431\u043e\u0442\u043a\u0435" disabled>
+                  <button type="button" data-ammo-action="suppression-fire" data-weapon-id="${weapon.id}">
                     <i class="fa-solid fa-burst"></i>
                     Suppression Fire
                   </button>

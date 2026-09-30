@@ -1,4 +1,5 @@
 import { createStandaloneAttack } from "./fire-control-context.js";
+import { getFireSkillPreview, skillProbabilityColor } from "./fire-skill-preview.js";
 import { resolveElevationRange } from "./fire-range-service.js";
 import { TargetingService } from "./targeting-service.js";
 
@@ -595,15 +596,6 @@ const formatDistance = value => new Intl.NumberFormat("ru-RU", {
 
 const formatAttackStat = value => String(value ?? "").trim() || "—";
 
-const skillProbabilityColor = probability => {
-  if (!Number.isFinite(probability)) return "inherit";
-  const ratio = Math.min(1, Math.max(0, probability / 100));
-  const start = [224, 74, 74];
-  const end = [74, 190, 105];
-  const channel = index => Math.round(start[index] + ((end[index] - start[index]) * ratio));
-  return `rgb(${channel(0)}, ${channel(1)}, ${channel(2)})`;
-};
-
 export class FirePreparationApp extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "olegurps-fire-preparation",
@@ -970,26 +962,10 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getSkillPreview() {
-    const calculatedValue = this.calculateEffectiveSkill?.(this.getShotOptions(), this.targetingService);
-    const calculated = calculatedValue === null || calculatedValue === undefined
-      ? Number.NaN
-      : Number(calculatedValue);
-    if (!Number.isFinite(calculated)) return { level: "—", chance: "—", probability: Number.NaN };
-    const level = Math.max(3, Math.trunc(calculated));
-    const successTarget = Math.min(16, level);
-    let successfulOutcomes = 0;
-    for (let first = 1; first <= 6; first += 1) {
-      for (let second = 1; second <= 6; second += 1) {
-        for (let third = 1; third <= 6; third += 1) {
-          if (first + second + third <= successTarget) successfulOutcomes += 1;
-        }
-      }
-    }
-    const probability = (successfulOutcomes / 216) * 100;
-    const chance = probability.toFixed(1).replace(".", ",");
-    return { level: String(level), chance, probability };
+    return getFireSkillPreview(this.calculateEffectiveSkill?.(
+      this.getShotOptions(), this.targetingService
+    ));
   }
-
   _getAimBonus(fireState = this.fireState) {
     const value = Number(this.calculateAimBonus?.(
       fireState.aimSeconds,
