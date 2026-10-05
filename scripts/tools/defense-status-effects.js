@@ -1,5 +1,5 @@
 import { getStatusEffectVisibility, getManagedStatusEffects, applyStatusEffectVisibility } from "./status-effect-visibility.js";
-import { buildAimStatusEffects } from "./aim-status-effects.js";
+import { buildAimStatusEffects, buildEvaluateStatusEffects } from "./aim-status-effects.js";
 
 const MODULE_ID = "olegurps-qol";
 const TAGGED_MODIFIERS_SETTING = "use-tagged-modifiers";
@@ -71,7 +71,7 @@ export async function registerCustomStatusEffects() {
   // GGA replaces CONFIG.statusEffects during init and lists explicit IDs in its picker.
   const { default: EffectPicker } = await import("/systems/gurps/module/actor/effect-picker.js");
   const settings = game.settings.get("gurps", TAGGED_MODIFIERS_SETTING);
-  const effects = [...buildAimStatusEffects(), ...buildDefenseStatusEffects(settings)];
+  const effects = [...buildAimStatusEffects(), ...buildEvaluateStatusEffects(), ...buildDefenseStatusEffects(settings)];
   for (const effect of effects) {
     const existing = CONFIG.statusEffects.find(entry => entry.id === effect.id);
     if (!existing) CONFIG.statusEffects.push(effect);

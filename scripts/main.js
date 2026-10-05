@@ -14,6 +14,7 @@ import { registerSuppressionFireRuntimeHooks } from "./tools/suppression-fire-ru
 import { registerRollConfirmationProbability } from "./tools/roll-confirmation-probability.js";
 import { registerCustomStatusEffects } from "./tools/defense-status-effects.js";
 import { registerStatusEffectVisibilitySetting } from "./tools/status-effect-visibility.js";
+import { registerEvaluateStatusSetting } from "./tools/aim-status-effects.js";
 import { registerReelingTiredSetting, installReelingTiredCompatibility } from "./tools/reeling-tired-compat.js";
 import { installEquipmentContainerCompatibility } from "./tools/equipment-container-compat.js";
 import { installEncumbranceCompatibility } from "./tools/encumbrance-compat.js";
@@ -52,6 +53,7 @@ Hooks.once("init", () => {
   registerSuppressionFireRuntimeHooks();
   registerRollConfirmationProbability();
   registerStatusEffectVisibilitySetting();
+  registerEvaluateStatusSetting();
   registerReelingTiredSetting();
   globalThis.OleGURPSQOL = api;
 });

@@ -1,4 +1,5 @@
 import { FirePreparationApp } from "./fire-preparation-app.js";
+import { getEvaluateStatusTurns, isEvaluateStatusAutofillEnabled } from "./aim-status-effects.js";
 import { checkHearingMinusTwo, meleeVisibilityRules, normalizeVisibility } from "./limited-visibility.js";
 import { TargetingService } from "./targeting-service.js";
 import { MeleeAttackExecutionApp, executeMeleeAttackSnapshot } from "./melee-attack-execution-app.js";
@@ -83,6 +84,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
       window: { title: "Melee Assistant - " + actor.name, resizable: true, ...(options.window ?? {}) }
     });
     this.actor = actor;
+    this._evaluateManuallyEdited = false;
+    this._lastEvaluateStatusTurns = this._getStatusEvaluateTurns();
     this.sourceAttacks = sourceAttacks;
     this._meleeState = state;
     this.stateService = stateService;
@@ -91,7 +94,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this.sourceAttack = sourceAttack;
     this.attack = attack;
     this.calculateEffectiveSkill = () => this._calculateEffectiveSkill();
-    this.fireState.evaluate = "";
+    this.fireState.evaluate = this._lastEvaluateStatusTurns ? String(this._lastEvaluateStatusTurns) : "";
     this.fireState.dicePlusAdds = state.dicePlusAdds === true;
     this.fireState.allOutAttack = false;
     this.fireState.allOutAttackMode = "determined";
@@ -683,6 +686,23 @@ export class MeleeAssistantApp extends FirePreparationApp {
     `;
   }
 
+  _getStatusEvaluateTurns() {
+    return isEvaluateStatusAutofillEnabled()
+      ? getEvaluateStatusTurns(this.token?.actor ?? this.actor) : 0;
+  }
+
+  _syncEvaluateStatusEffect() {
+    const turns = this._getStatusEvaluateTurns();
+    if (turns === this._lastEvaluateStatusTurns) return;
+    this._lastEvaluateStatusTurns = turns;
+    if (this._evaluateManuallyEdited) return;
+    const value = turns ? String(turns) : "";
+    this.fireState.evaluate = value;
+    const input = this.element?.querySelector('[name="evaluate"]');
+    if (input) input.value = value;
+    this._updateMeleePreview();
+  }
+
   _registerTargetHook() {}
 
   _updateTargetRecommendation() {
@@ -1109,6 +1129,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       const value = Number(String(field.value).replace(",", "."));
       if (field.value !== "" && (!Number.isInteger(value) || value < 0)) field.value = "0";
       this.fireState.evaluate = field.value;
+      this._evaluateManuallyEdited = true;
     } else if (field.name === "moveAndAttack") {
       this.fireState.moveAndAttack = field.checked && !this.fireState.rapidStrike;
       if (this.fireState.moveAndAttack) {

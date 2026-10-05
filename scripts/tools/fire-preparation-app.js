@@ -737,6 +737,7 @@ export class FirePreparationApp extends ApplicationV2 {
     if (!this._skillPreviewTimer) {
       this._skillPreviewTimer = globalThis.setInterval(() => {
         this._syncAimStatusEffect();
+        this._syncEvaluateStatusEffect?.();
         this._updateRapidFirePreview();
         this._updateSkillPreview();
       }, 300);
