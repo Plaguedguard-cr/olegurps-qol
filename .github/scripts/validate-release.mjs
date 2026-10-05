@@ -15,7 +15,7 @@ try {
 
 const tag = process.env.GITHUB_REF_NAME ?? "";
 const repository = process.env.GITHUB_REPOSITORY ?? "";
-const versionPattern = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/;
+const versionPattern = /^\d+\.\d+\.\d+(?:[a-z]|[-+][0-9A-Za-z.-]+)?$/i;
 
 if (manifest.id !== "olegurps-qol") fail(`unexpected module id: ${manifest.id}`);
 if (!versionPattern.test(String(manifest.version ?? ""))) fail(`invalid version: ${manifest.version}`);

@@ -15,6 +15,8 @@ import { registerRollConfirmationProbability } from "./tools/roll-confirmation-p
 import { registerCustomStatusEffects } from "./tools/defense-status-effects.js";
 import { registerStatusEffectVisibilitySetting } from "./tools/status-effect-visibility.js";
 import { registerReelingTiredSetting, installReelingTiredCompatibility } from "./tools/reeling-tired-compat.js";
+import { installEquipmentContainerCompatibility } from "./tools/equipment-container-compat.js";
+import { installEncumbranceCompatibility } from "./tools/encumbrance-compat.js";
 
 const MODULE_ID = "olegurps-qol";
 const STYLESHEET_PATH = `modules/${MODULE_ID}/styles/olegurps-qol.css`;
@@ -68,6 +70,16 @@ Hooks.once("ready", async () => {
     installReelingTiredCompatibility();
   } catch (error) {
     console.error("OleGURPS QOL: failed to install Reeling/Tired compatibility.", error);
+  }
+  try {
+    await installEquipmentContainerCompatibility();
+  } catch (error) {
+    console.error("OleGURPS QOL: equipment container compatibility failed.", error);
+  }
+  try {
+    installEncumbranceCompatibility();
+  } catch (error) {
+    console.error("OleGURPS QOL: encumbrance compatibility failed.", error);
   }
   const module = game.modules.get(MODULE_ID);
   if (module) module.api = api;

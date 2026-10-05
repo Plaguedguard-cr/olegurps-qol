@@ -549,3 +549,14 @@ dialog.gam-roll-confirmation {
 .olegurps-status-effect-row { display: flex; align-items: center; gap: 8px; padding: 3px 5px; }
 .olegurps-status-effect-row input { flex: 0 0 auto; margin: 0; }
 .olegurps-status-effect-visibility .sheet-footer { flex: 0 0 auto; margin-top: 4px; }
+
+#encumbrance .enc.olegurps-enc-clickable,
+.ms-encumbrance-table .ms-enc-row.olegurps-enc-clickable {
+  cursor: pointer;
+}
+
+#encumbrance .enc.olegurps-enc-calculated,
+.ms-encumbrance-table .ms-enc-row.olegurps-enc-calculated {
+  box-shadow: inset 0 0 0 2px rgba(61, 143, 188, 0.85);
+  background-color: rgba(61, 143, 188, 0.16);
+}
