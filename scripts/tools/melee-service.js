@@ -19,26 +19,34 @@ export function getAllOutAttackSkillBonus(allOutAttack, mode) {
 
 export function calculateMeleeSkillBeforeDeceptive({ baseSkill, manualModifier = 0, evaluate = 0,
   moveAndAttack = false, allOutAttack = false, allOutAttackMode = "determined",
-  hitLocationPenalty = 0, rapidStrikePenalty = 0 } = {}) {
+  hitLocationPenalty = 0, rapidStrikePenalty = 0, visibilityPenalty = 0, visibilityCap = false,
+  telegraphicAttack = false, committedAttack = false, committedMode = "determined", committedSteps = false } = {}) {
   const base = Number(baseSkill);
   if (!Number.isFinite(base)) return null;
   const allOutBonus = moveAndAttack ? 0 : getAllOutAttackSkillBonus(allOutAttack, allOutAttackMode);
-  let effective = Math.trunc(base) + integer(manualModifier) + getEvaluateBonus(evaluate) +
-    integer(hitLocationPenalty) + integer(rapidStrikePenalty) + allOutBonus;
+  const evaluateBonus = telegraphicAttack ? 0 : getEvaluateBonus(evaluate);
+  const committedBonus = committedAttack && committedMode === "determined" ? 2 : 0;
+  const stepsPenalty = committedAttack && committedSteps ? -2 : 0;
+  let effective = Math.trunc(base) + integer(manualModifier) + evaluateBonus +
+    integer(hitLocationPenalty) + integer(rapidStrikePenalty) + integer(visibilityPenalty) + allOutBonus +
+    (telegraphicAttack ? 4 : 0) + committedBonus + stepsPenalty;
   if (moveAndAttack) effective = Math.min(9, effective - 4);
+  if (visibilityCap) effective = Math.min(9, effective);
   return effective;
 }
 
-export function getMaximumDeceptiveAttackPenalty(skillBeforeDeceptive, moveAndAttack = false) {
+export function getMaximumDeceptiveAttackPenalty(skillBeforeDeceptive, moveAndAttack = false, telegraphicAttack = false) {
   const skill = Number(skillBeforeDeceptive);
-  if (moveAndAttack || !Number.isFinite(skill) || skill <= 10) return 0;
+  if (moveAndAttack || telegraphicAttack || !Number.isFinite(skill) || skill <= 10) return 0;
   return Math.max(0, Math.floor((Math.trunc(skill) - 10) / 2) * 2);
 }
 
-export function normalizeDeceptiveAttackPenalty(value, skillBeforeDeceptive, moveAndAttack = false) {
+export function normalizeDeceptiveAttackPenalty(value, skillBeforeDeceptive, moveAndAttack = false,
+  telegraphicAttack = false) {
   const requested = Math.floor(Math.abs(integer(value)) / 2) * 2;
-  const maximum = getMaximumDeceptiveAttackPenalty(skillBeforeDeceptive, moveAndAttack);
-  return -Math.min(requested, maximum);
+  const maximum = getMaximumDeceptiveAttackPenalty(skillBeforeDeceptive, moveAndAttack, telegraphicAttack);
+  const penalty = Math.min(requested, maximum);
+  return penalty === 0 ? 0 : -penalty;
 }
 
 export function getDeceptiveDefensePenalty(value) {
@@ -51,9 +59,41 @@ export function calculateMeleeEffectiveSkill(options = {}) {
   const deceptive = normalizeDeceptiveAttackPenalty(
     options.deceptiveAttack,
     beforeDeceptive,
-    options.moveAndAttack
+    options.moveAndAttack,
+    options.telegraphicAttack
   );
   return beforeDeceptive + deceptive;
+}
+
+export function getTelegraphicCriticalBonus(options = {}) {
+  if (!options.telegraphicAttack) return 0;
+  const withBonus = calculateMeleeEffectiveSkill(options);
+  const withoutBonus = calculateMeleeEffectiveSkill({ ...options, telegraphicAttack: false,
+    evaluate: 0, deceptiveAttack: 0 });
+  return Number.isFinite(withBonus) && Number.isFinite(withoutBonus)
+    ? Math.max(0, withBonus - withoutBonus) : 0;
+}
+
+export function isMeleeCriticalSuccess(total, target) {
+  return total <= 4 || (total === 5 && target >= 15) || (total === 6 && target >= 16);
+}
+
+async function withTelegraphicCriticalLimit(GURPS, actorId, attackName, bonus, perform) {
+  if (!bonus || typeof GURPS?.setLastTargetedRoll !== "function") return perform();
+  const original = GURPS.setLastTargetedRoll;
+  const wrapped = function(chatdata, rolledActorId, tokenId, updateOtherClients) {
+    if (String(rolledActorId ?? "") === String(actorId ?? "") &&
+        (!chatdata?.thing || String(chatdata.thing).trim() === attackName) &&
+        Number.isFinite(Number(chatdata?.rtotal)) && Number.isFinite(Number(chatdata?.finaltarget))) {
+      chatdata.isCritSuccess = isMeleeCriticalSuccess(
+        Number(chatdata.rtotal), Number(chatdata.finaltarget) - bonus
+      );
+    }
+    return original.call(this, chatdata, rolledActorId, tokenId, updateOtherClients);
+  };
+  GURPS.setLastTargetedRoll = wrapped;
+  try { return await perform(); }
+  finally { if (GURPS.setLastTargetedRoll === wrapped) GURPS.setLastTargetedRoll = original; }
 }
 
 export function modifyDicePlusAdds(formula) {
@@ -69,6 +109,24 @@ export function modifyDicePlusAdds(formula) {
     adds -= 4;
   }
   return String(dice) + "d" + (adds > 0 ? "+" + adds : "") + match[3];
+}
+
+export function applyMartialArtsDamage(formula, { committedStrong = false, defensiveAttack = false } = {}) {
+  const source = String(formula ?? "").trim();
+  if (!committedStrong && !defensiveAttack) return source;
+  const dice = source.match(/^(\d+)d(6)?([+-]\d+)?(.*)$/iu);
+  if (dice) {
+    const count = Number(dice[1]);
+    const adjustment = (committedStrong ? 1 : 0) - (defensiveAttack ? Math.max(2, count) : 0);
+    const adds = integer(dice[3]) + adjustment;
+    return `${count}d${dice[2] ?? ""}${adds ? (adds > 0 ? "+" : "") + adds : ""}${dice[4]}`;
+  }
+  const flat = source.match(/^(\d+)(.*)$/u);
+  if (flat) {
+    const adjustment = (committedStrong ? 1 : 0) - (defensiveAttack ? 2 : 0);
+    return String(Number(flat[1]) + adjustment) + flat[2];
+  }
+  throw new Error("Unsupported melee damage formula for Martial Arts modifier.");
 }
 
 export function applyAllOutAttackStrong(formula) {
@@ -142,7 +200,7 @@ async function performMeleeActionWithoutConfirmation(callback) {
   }
 }
 
-export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0 } = {}) {
+export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0 } = {}) {
   if (typeof globalThis.GURPS?.performAction !== "function") throw new Error("GGA performAction недоступен.");
   const originalLevel = Number(sourceAttack?.level ?? sourceAttack?.import);
   if (!Number.isFinite(originalLevel) || !Number.isFinite(Number(effectiveSkill))) {
@@ -169,13 +227,17 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
     orig: "M:" + actionName
   }, actor, null, getCurrentTargetNames()));
   globalThis.GURPS.SetLastActor?.(actor);
+  const criticalName = name.replace(/\[[^\]]*\]/gu, "").replace(/ +/gu, " ").trim();
+  const execute = () => withTelegraphicCriticalLimit(globalThis.GURPS, actor?.id,
+    criticalName, telegraphicCriticalBonus, perform);
   const execution = captureMessage
-    ? await executeWithCapturedRollMessage({ ChatMessage: globalThis.ChatMessage, actorId: actor?.id, execute: perform })
-    : { result: await perform(), message: null };
+    ? await executeWithCapturedRollMessage({ ChatMessage: globalThis.ChatMessage, actorId: actor?.id, execute })
+    : { result: await execute(), message: null };
   return { success: !!execution.result, message: execution.message ?? null };
 }
 
-function materializeDamageAction(source, actor, dicePlusAdds, allOutStrong = false, overrideText = "") {
+function materializeDamageAction(source, actor, { dicePlusAdds = false, allOutStrong = false,
+  committedStrong = false, defensiveAttack = false } = {}, overrideText = "") {
   if (!source || !["damage", "deriveddamage"].includes(source.type)) return null;
   const action = { ...source };
   if (action.type === "deriveddamage") {
@@ -188,6 +250,9 @@ function materializeDamageAction(source, actor, dicePlusAdds, allOutStrong = fal
     delete action.derivedformula;
   }
   if (allOutStrong) action.formula = applyAllOutAttackStrong(action.formula);
+  if (committedStrong || defensiveAttack) {
+    action.formula = applyMartialArtsDamage(action.formula, { committedStrong, defensiveAttack });
+  }
   if (dicePlusAdds) action.formula = modifyDicePlusAdds(action.formula);
   return action;
 }
@@ -233,7 +298,8 @@ function fallbackDamageAction(expression) {
   };
 }
 
-export async function buildMeleeDamageAction({ actor, attack, damage, dicePlusAdds = false, allOutStrong = false } = {}) {
+export async function buildMeleeDamageAction({ actor, attack, damage, dicePlusAdds = false,
+  allOutStrong = false, committedStrong = false, defensiveAttack = false } = {}) {
   const expression = String(damage ?? attack?.damage ?? "").trim();
   const sourceExpression = String(Array.isArray(attack?.sourceDamage)
     ? attack.sourceDamage.join(", ")
@@ -245,7 +311,8 @@ export async function buildMeleeDamageAction({ actor, attack, damage, dicePlusAd
     action = nativeParser?.(expression)?.action ?? fallbackDamageAction(expression);
   }
   const applyStrong = allOutStrong && isStrengthBasedMeleeDamage(attack);
-  return materializeDamageAction(action, actor, dicePlusAdds, applyStrong, expression);
+  return materializeDamageAction(action, actor,
+    { dicePlusAdds, allOutStrong: applyStrong, committedStrong, defensiveAttack }, expression);
 }
 
 export function formatMeleeDamageAction(action) {
@@ -256,18 +323,21 @@ export function formatMeleeDamageAction(action) {
     .join(" ");
 }
 
-export async function prepareEffectiveMeleeDamage({ actor, attack, dicePlusAdds = false, allOutStrong = false } = {}) {
-  const action = await buildMeleeDamageAction({ actor, attack, dicePlusAdds, allOutStrong });
+export async function prepareEffectiveMeleeDamage({ actor, attack, dicePlusAdds = false,
+  allOutStrong = false, committedStrong = false, defensiveAttack = false } = {}) {
+  const action = await buildMeleeDamageAction({ actor, attack, dicePlusAdds, allOutStrong,
+    committedStrong, defensiveAttack });
   return action ? { action, formula: formatMeleeDamageAction(action) } : null;
 }
 
 export async function executeNativeMeleeDamage({ actor, attack, dicePlusAdds = false, allOutStrong = false,
-  preparedDamage = null } = {}) {
+  committedStrong = false, defensiveAttack = false, preparedDamage = null } = {}) {
   const DamageChat = globalThis.GURPS?.DamageChat;
   if (typeof DamageChat?.create !== "function") throw new Error("GGA DamageChat недоступен.");
   const applyStrong = allOutStrong && isStrengthBasedMeleeDamage(attack);
   let action = preparedDamage?.action
-    ?? (await prepareEffectiveMeleeDamage({ actor, attack, dicePlusAdds, allOutStrong: applyStrong }))?.action;
+    ?? (await prepareEffectiveMeleeDamage({ actor, attack, dicePlusAdds, allOutStrong: applyStrong,
+      committedStrong, defensiveAttack }))?.action;
   if (!action) throw new Error("Формула урона выбранной melee-атаки не распознана GGA.");
   globalThis.GURPS.SetLastActor?.(actor);
   const targets = getCurrentTargetNames();
@@ -288,7 +358,8 @@ export async function executeNativeMeleeDamage({ actor, attack, dicePlusAdds = f
       ]
     });
     rolled = true;
-    action = materializeDamageAction(action.next, actor, dicePlusAdds, applyStrong, action.next?.orig ?? "");
+    action = materializeDamageAction(action.next, actor,
+      { dicePlusAdds, allOutStrong: applyStrong, committedStrong, defensiveAttack }, action.next?.orig ?? "");
   }
   return rolled;
 }

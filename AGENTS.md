@@ -30,6 +30,11 @@ Windows ACL этой папки уже проверены. Группа `CodexSa
 - обычный выбор конкретной зоны, случайная зона, несколько попаданий, Targeted Attack и недоступные precision-зоны должны сохранять поведение уже существующих bodyplan.
 
 Перед завершением изменений Hit Location статически проверить синтаксис затронутых JS-файлов, отсутствие отдельных `roll.toMessage()` для служебных бросков, синхронизацию силуэта со списком и паритет новой реализации как минимум с Humanoid. Лайв-проверки проводить только если они разрешены текущей задачей.
+
+## ApplicationV2 windows and settings menus
+
+All new OleGURPS QOL windows, including settings submenus, must extend `foundry.applications.api.ApplicationV2` and use its window styling. Do not introduce legacy `Application` or `FormApplication` (V1) windows. When modifying an existing V1 window, migrate it to `ApplicationV2` while preserving its behavior. Use an `ApplicationV2` subclass for new `game.settings.registerMenu` menus.
+
 ## UTF-8-safe file editing
 
 All repository text files must remain UTF-8. When `apply_patch` is unavailable because of the known helper/ACL failure:

@@ -129,6 +129,7 @@ function normalizeSession(session) {
     active: state === "active" && session?.active === true,
     ammoConsumed: ammoSpent,
     ammoSpent,
+    ammoEverSpent: session?.ammoEverSpent === true || ammoSpent,
     createdAt: Number(session?.createdAt) || now(),
     updatedAt: Number(session?.updatedAt) || now()
   };
@@ -286,6 +287,10 @@ export class SuppressionFireSessionService {
   get isManualActive() { return this.isActive && this.session?.mode === "manual"; }
   get isAutomaticActive() { return this.isActive && this.session?.mode === "automatic"; }
   get hasStarted() { return this.session?.state === "active" || this.session?.state === "activating"; }
+  get canCancelUnfired() {
+    return this.session?.state === "draft" && !this.session.ammoSpent &&
+      !this.session.ammoConsumed && !this.session.ammoEverSpent;
+  }
 
   _context() {
     return {
@@ -390,6 +395,7 @@ export class SuppressionFireSessionService {
         [`flags.${MODULE_ID}.active`]: session.active,
         [`flags.${MODULE_ID}.mode`]: session.mode,
         [`flags.${MODULE_ID}.ammoSpent`]: session.ammoSpent,
+        [`flags.${MODULE_ID}.ammoEverSpent`]: session.ammoEverSpent,
         [`flags.${MODULE_ID}.ammoConsumed`]: session.ammoConsumed,
         [`flags.${MODULE_ID}.combatId`]: session.combatId,
         [`flags.${MODULE_ID}.combatantId`]: session.combatantId,
@@ -609,7 +615,8 @@ export class SuppressionFireSessionService {
       state: "active",
       active: true,
       ammoConsumed: true,
-      ammoSpent: true
+      ammoSpent: true,
+      ammoEverSpent: true
     });
   }
 
@@ -695,6 +702,15 @@ export class SuppressionFireSessionService {
     });
   }
 
+  async cancelUnfired() {
+    const session = this.session;
+    if (!session || !this.canCancelUnfired) return false;
+    const stored = readSessions(this.storageDocument)[session.sessionId];
+    if (!stored || stored.state !== "draft" || stored.ammoSpent === true ||
+        stored.ammoConsumed === true || stored.ammoEverSpent === true) return false;
+    await this.finish({ deleteRegions: true });
+    return true;
+  }
   async finish({ deleteRegions = true } = {}) {
     const session = this.session;
     if (!session) return { removedRegions: 0 };

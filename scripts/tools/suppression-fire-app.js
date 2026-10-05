@@ -150,7 +150,7 @@ const SUPPRESSION_FIRE_CSS = `
   .gam-suppression-status { min-height: 1.2em; margin: 0; color: #e4bd75; }
   .gam-suppression-actions {
     display: grid;
-    grid-template-columns: minmax(86px, auto) minmax(0, 1fr);
+    grid-template-columns: minmax(86px, auto) minmax(0, 1fr) minmax(90px, auto);
     gap: 8px;
     padding-top: 7px;
     border-top: 1px solid rgba(128,128,128,.32);
@@ -184,7 +184,7 @@ export class SuppressionFireApp extends ApplicationV2 {
     id: "olegurps-suppression-fire",
     classes: ["olegurps-qol", "suppression-fire"],
     tag: "section",
-    window: { title: "\u041f\u043e\u0434\u0430\u0432\u043b\u044f\u044e\u0449\u0438\u0439 \u043e\u0433\u043e\u043d\u044c", resizable: true },
+    window: { title: "\u041f\u043e\u0434\u0430\u0432\u043b\u044f\u044e\u0449\u0438\u0439 \u043e\u0433\u043e\u043d\u044c (\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430)", resizable: true },
     position: { width: 680, height: "auto" }
   };
 
@@ -196,7 +196,7 @@ export class SuppressionFireApp extends ApplicationV2 {
     super({
       ...options,
       id: options.id ?? "olegurps-suppression-fire-" + token.id + "-" + weapon.id,
-      window: { title: "\u041f\u043e\u0434\u0430\u0432\u043b\u044f\u044e\u0449\u0438\u0439 \u043e\u0433\u043e\u043d\u044c - " + weapon.name, resizable: true, ...(options.window ?? {}) }
+      window: { title: "\u041f\u043e\u0434\u0430\u0432\u043b\u044f\u044e\u0449\u0438\u0439 \u043e\u0433\u043e\u043d\u044c (\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430) - " + weapon.name, resizable: true, ...(options.window ?? {}) }
     });
     this.token = token;
     this.actor = actor;
@@ -244,6 +244,7 @@ export class SuppressionFireApp extends ApplicationV2 {
     this._submitting = false;
     this._switchingTargets = false;
     this._targetsInitialized = false;
+    this._skipCloseTargetSave = false;
     this._boundInput = this._onInput.bind(this);
     this._boundClick = this._onClick.bind(this);
     this._boundTargetChange = this._onTargetChange.bind(this);
@@ -721,6 +722,10 @@ export class SuppressionFireApp extends ApplicationV2 {
               ? "\u0410\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0440\u0435\u0436\u0438\u043c \u0430\u043a\u0442\u0438\u0432\u0435\u043d"
               : "\u0410\u0432\u0442\u043e\u043c\u0430\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0440\u0435\u0436\u0438\u043c"}</span>
           </button>
+          <button type="button" data-suppression-action="cancel"
+            ${this.sessionService.canCancelUnfired ? "" : "disabled"}>
+            <i class="fa-solid fa-xmark"></i><span>\u041e\u0442\u043c\u0435\u043d\u0438\u0442\u044c</span>
+          </button>
         </div>
       </div>
     `;
@@ -751,7 +756,7 @@ export class SuppressionFireApp extends ApplicationV2 {
 
   async close(options = {}) {
     this.regionService?.clearPlacementHighlights?.({ cancel: true });
-    if (!this._isAutomaticActive() && this._targetsInitialized) await this._saveCurrentZoneTarget();
+    if (!this._skipCloseTargetSave && !this._isAutomaticActive() && this._targetsInitialized) await this._saveCurrentZoneTarget();
     if (!this._isAutomaticActive()) this._unregisterRuntime?.();
     if (this._targetHookId !== undefined) {
       globalThis.Hooks?.off?.("targetToken", this._targetHookId);
@@ -788,6 +793,8 @@ export class SuppressionFireApp extends ApplicationV2 {
     }
     const execute = this.element?.querySelector('[data-suppression-action="execute"]');
     if (execute) execute.disabled = this._submitting || this._isStarted() || !capacity.eligible;
+    const cancel = this.element?.querySelector('[data-suppression-action="cancel"]');
+    if (cancel) cancel.disabled = this._submitting || !this.sessionService.canCancelUnfired;
     const manualToggle = this.element?.querySelector('[data-suppression-action="toggle-manual"]');
     if (manualToggle) manualToggle.disabled = this._submitting || this._isAutomaticActive() ||
       (!this._isManualActive() && !capacity.eligible);
@@ -845,7 +852,7 @@ export class SuppressionFireApp extends ApplicationV2 {
   }
 
   async _onTargetChange(user, token, targeted) {
-    if (this._switchingTargets || this._isAutomaticActive() ||
+    if (this._skipCloseTargetSave || !this.sessionService.session || this._switchingTargets || this._isAutomaticActive() ||
         String(user?.id ?? "") !== String(globalThis.game?.user?.id ?? "")) return;
     this._targetsInitialized = true;
     await this._saveCurrentZoneTarget(targeted ? token : null);
@@ -859,7 +866,7 @@ export class SuppressionFireApp extends ApplicationV2 {
   }
 
   async _saveCurrentZoneTarget(preferredToken = null) {
-    if (this._switchingTargets || this._isAutomaticActive() || !this._targetsInitialized) return;
+    if (this._skipCloseTargetSave || !this.sessionService.session || this._switchingTargets || this._isAutomaticActive() || !this._targetsInitialized) return;
     const target = selectSuppressionManualTarget(globalThis.game?.user?.targets, preferredToken);
     const targetId = suppressionTargetId(target);
     const currentIds = valuesOf(globalThis.game?.user?.targets).map(suppressionTargetId).filter(Boolean);
@@ -1015,9 +1022,8 @@ export class SuppressionFireApp extends ApplicationV2 {
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: this.actor, token: this.token }),
       content: '<div style="font-size:.88em;line-height:1.3">' +
-        '<h3 style="margin:0 0 5px">Suppression Fire</h3>' +
+        '<h3 style="margin:0 0 5px">Suppression Fire (\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430)</h3>' +
         '<p style="margin:0 0 5px"><strong>' + escapeHTML(this.weapon.name) + '</strong>' +
-        ' | All-Out Attack (Suppression Fire)' +
         ' | mounted/stabilized: <strong>' + mountedText + '</strong></p>' +
         '<ol style="margin:0;padding-left:22px">' + rows + '</ol></div>'
     });
@@ -1174,6 +1180,7 @@ export class SuppressionFireApp extends ApplicationV2 {
     this._submitting = true;
     if (button?.isConnected) button.disabled = true;
     let activated = false;
+    let ammoConsumed = false;
     try {
       const activation = mode === "manual"
         ? await this.sessionService.activateManual({
@@ -1190,6 +1197,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       if (!consumed) {
         throw new Error("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043f\u0438\u0441\u0430\u0442\u044c \u0440\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0451\u043d\u043d\u044b\u0435 \u043f\u0430\u0442\u0440\u043e\u043d\u044b.");
       }
+      ammoConsumed = true;
       await this.sessionService.markAmmoConsumed();
       await this._createSummary(validation.allocation.shots.map((shots, index) => ({
         index,
@@ -1204,7 +1212,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       await this.completeCallback?.(mode);
       await this.render({ force: true });
     } catch (error) {
-      if (activated && !this.sessionService.session?.ammoSpent) {
+      if (activated && !ammoConsumed && !this.sessionService.session?.ammoSpent) {
         await this.sessionService.revertActivation();
       }
       console.error("Suppression Fire:", error);
@@ -1234,6 +1242,40 @@ export class SuppressionFireApp extends ApplicationV2 {
     }
   }
 
+  async _cancelUnfired(button) {
+    if (this._submitting || !this.sessionService.canCancelUnfired) return;
+    this._submitting = true;
+    this._skipCloseTargetSave = true;
+    this._switchingTargets = true;
+    this._updatePreview();
+    this.regionService.clearPlacementHighlights({ cancel: true });
+    try {
+      const cancelled = await this.sessionService.cancelUnfired();
+      if (!cancelled) {
+        this._skipCloseTargetSave = false;
+        this._switchingTargets = false;
+        ui.notifications.warn("\u041e\u0442\u043c\u0435\u043d\u0430 \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u0430: \u0440\u0435\u0436\u0438\u043c \u0443\u0436\u0435 \u043d\u0430\u0447\u0430\u0442 \u0438\u043b\u0438 \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 \u0438\u0437\u043c\u0435\u043d\u0438\u043b\u043e\u0441\u044c.");
+        await this.render({ force: true });
+        return;
+      }
+      try { await setSuppressionTargets([]); }
+      finally {
+        this._targetsInitialized = false;
+        await this.close();
+      }
+    } catch (error) {
+      if (this.sessionService.session) {
+        this._skipCloseTargetSave = false;
+        this._switchingTargets = false;
+      }
+      console.error("Suppression Fire cancel:", error);
+      ui.notifications.error(error?.message ?? String(error));
+    } finally {
+      this._submitting = false;
+      if (button?.isConnected) button.disabled = false;
+      if (this.rendered) this._updatePreview();
+    }
+  }
   async _perform(button) {
     return this._startSuppressionMode("automatic", button);
   }
@@ -1252,5 +1294,6 @@ export class SuppressionFireApp extends ApplicationV2 {
     if (action === "delete-zone" && !this._submitting) return this._deleteZone(button, zoneIndex);
     if (action === "toggle-manual" && !this._submitting) return this._toggleManual(button);
     if (action === "execute" && !this._submitting) return this._perform(button);
+    if (action === "cancel" && !this._submitting) return this._cancelUnfired(button);
   }
 }

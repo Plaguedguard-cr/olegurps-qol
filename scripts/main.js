@@ -11,6 +11,10 @@ import { openMeleeAssistant } from "./tools/melee-assistant.js";
 import { ensureModuleMacros } from "./module-macros.js";
 import { registerSuppressionFireHooks } from "./tools/suppression-fire-session-service.js";
 import { registerSuppressionFireRuntimeHooks } from "./tools/suppression-fire-runtime-service.js";
+import { registerRollConfirmationProbability } from "./tools/roll-confirmation-probability.js";
+import { registerCustomStatusEffects } from "./tools/defense-status-effects.js";
+import { registerStatusEffectVisibilitySetting } from "./tools/status-effect-visibility.js";
+import { registerReelingTiredSetting, installReelingTiredCompatibility } from "./tools/reeling-tired-compat.js";
 
 const MODULE_ID = "olegurps-qol";
 const STYLESHEET_PATH = `modules/${MODULE_ID}/styles/olegurps-qol.css`;
@@ -44,10 +48,27 @@ Hooks.once("init", () => {
   ensureModuleStylesheet();
   registerSuppressionFireHooks();
   registerSuppressionFireRuntimeHooks();
+  registerRollConfirmationProbability();
+  registerStatusEffectVisibilitySetting();
+  registerReelingTiredSetting();
   globalThis.OleGURPSQOL = api;
 });
 
 Hooks.once("ready", async () => {
+  try {
+    await registerCustomStatusEffects();
+    globalThis.setTimeout(() => {
+      registerCustomStatusEffects().catch(error =>
+        console.error("OleGURPS QOL: failed to finalize custom status effects.", error));
+    }, 0);
+  } catch (error) {
+    console.error("OleGURPS QOL: failed to register custom status effects.", error);
+  }
+  try {
+    installReelingTiredCompatibility();
+  } catch (error) {
+    console.error("OleGURPS QOL: failed to install Reeling/Tired compatibility.", error);
+  }
   const module = game.modules.get(MODULE_ID);
   if (module) module.api = api;
   game.olegurpsQOL = api;

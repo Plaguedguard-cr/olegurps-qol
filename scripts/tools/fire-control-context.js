@@ -1,4 +1,5 @@
 import { normalizeAccuracy, normalizeBulk } from "./fire-service.js";
+import { visibilityRules } from "./limited-visibility.js";
 import { findRangeBandForDistance, getRangeBandDistance, isBeamWeapon, resolveEffectiveRange } from "./fire-range-service.js";
 
 function sceneDistanceToYards(value, runtime = globalThis) {
@@ -24,6 +25,22 @@ export function measureTokenDistanceYards(sourceToken, targetToken, runtime = gl
     return Number.isFinite(yards) && yards >= 0 ? yards : null;
   } catch (error) {
     console.warn("OleGURPS QOL | Unable to measure target distance:", error);
+    return null;
+  }
+}
+
+export function measureCanvasPointDistanceYards(sourceToken, point, runtime = globalThis) {
+  const grid = runtime.canvas?.grid;
+  const source = (sourceToken?.document ?? sourceToken)?.getCenterPoint?.() ?? sourceToken?.center;
+  if (!grid || !Number.isFinite(source?.x) || !Number.isFinite(source?.y) ||
+      !Number.isFinite(point?.x) || !Number.isFinite(point?.y)) return null;
+  try {
+    const path = grid.measurePath?.([source, point]);
+    const sceneDistance = grid.isGridless ? path?.distance : path?.spaces;
+    const yards = sceneDistanceToYards(sceneDistance, runtime);
+    return Number.isFinite(yards) && yards >= 0 ? yards : null;
+  } catch (error) {
+    console.warn("OleGURPS QOL | Unable to measure selected hex:", error);
     return null;
   }
 }
@@ -68,10 +85,12 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
   function getFireBonuses(attack, values) {
     const hasAcc = fireService.normalizeAccuracy(attack?.acc) !== null;
     const hasBulk = fireService.normalizeBulk(attack?.data?.bulk ?? attack?.bulk) !== null;
+    const visibility = visibilityRules(values?.visibility);
     const aimed = fireService.resolveAimedFireBonuses({
       accuracy: attack?.acc, scopeBonus: attack?.scopeBonus ?? attack?.data?.scopeBonus ?? 0,
-      aimSeconds: values?.aimSeconds,
-      braced: values?.braced, laserSight: values?.laserSight,
+      aimSeconds: visibility && !visibility.aimAllowed ? 0 : values?.aimSeconds,
+      braced: visibility && !visibility.aimAllowed ? false : values?.braced,
+      laserSight: visibility?.random ? false : values?.laserSight,
       moveAndAttack: parseBoolean(values?.moveAndAttack)
     });
     return {
@@ -162,7 +181,12 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       : Number(values?.rangeIndex);
     const selectedRange = rangeBands.find(entry => entry.index === selectedIndex) ?? null;
     const selectedDistance = getRangeBandDistance(selectedRange);
-    const targetDistance = getSingleTargetPhysicalDistanceYards();
+    const explicitDistance = values?.targetDistanceOverride;
+    const blindUnknown = values?.visibility?.mode === "unseen" ||
+      values?.visibility?.mode === "blind" && !values.visibility.knownLocation;
+    const targetDistance = explicitDistance !== null && explicitDistance !== undefined &&
+      explicitDistance !== "" && Number.isFinite(Number(explicitDistance))
+      ? Number(explicitDistance) : blindUnknown ? null : getSingleTargetPhysicalDistanceYards();
     const physicalDistance = fireService.resolvePhysicalFireDistance({
       selectedDistance,
       targetDistance,
@@ -200,7 +224,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     ]);
   }
 
-  function getApplicableEffectModifierTotal(attack) {
+  function getApplicableEffectModifierTotal(attack, skipTargets = false) {
     const settings = getTaggedModifierSettings();
     if (!settings?.autoAdd || (mode === "standalone" && !token)) return 0;
 
@@ -213,7 +237,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       if (!data || typeof data.then === "function") return 0;
       const entries = [
         ...(Array.isArray(data.selfmodifiers) ? data.selfmodifiers : []),
-        ...(Array.isArray(data.targets)
+        ...(!skipTargets && Array.isArray(data.targets)
           ? data.targets.flatMap(group => Array.isArray(group?.targetmodifiers) ? group.targetmodifiers : [])
           : [])
       ];
@@ -253,7 +277,9 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     });
     const settings = getTaggedModifierSettings();
     const useEffects = mode === "weapon" || (token && globalThis.GURPS?.EffectModifierControl?._ui?.getToken?.() === token);
-    const effectRangePenalty = settings?.autoAdd && useEffects
+    const blindUnknown = values?.visibility?.mode === "unseen" ||
+      values?.visibility?.mode === "blind" && !values.visibility.knownLocation;
+    const effectRangePenalty = settings?.autoAdd && useEffects && !blindUnknown
       ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
       : null;
     const rangeAdjustment = effectiveRange
@@ -267,15 +293,19 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     );
     const fireMode = getFireModeState(attack, values, rangeBands);
     const rapidFireBonus = getRapidFireBonus(attack, fireMode.effectiveRoF);
-    const hitLocation = targetingService?.getSelection(values?.hitLocationId, values?.hitRegionId);
-    const targetedAttack = targetedAttackContext?.resolve({
+    const visibility = visibilityRules(values?.visibility);
+    const hitLocation = targetingService?.getSelection(
+      visibility?.random ? "silhouette" : values?.hitLocationId,
+      visibility?.random ? null : values?.hitRegionId
+    );
+    const targetedAttack = !visibility?.random && !values?.suppressTargetedAttack && targetedAttackContext?.resolve({
       specialty: values?.governingSpecialty,
       target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
     });
     const hitLocationPenalty = Number(targetedAttack?.effectivePenalty ?? hitLocation?.penalty ?? 0);
     const bucketModifier = getPreviewBucketTotal();
-    const effectModifier = getApplicableEffectModifierTotal(attack);
+    const effectModifier = getApplicableEffectModifierTotal(attack, blindUnknown);
     const targetLabel = targetedAttack?.entry?.name ?? targetedAttack?.attackVariant ?? "";
     const targetedAttackLabel = /^Targeted Attack\b/iu.test(targetLabel)
       ? targetLabel : (targetLabel ? `Targeted Attack: ${targetLabel}` : "Targeted Attack");
@@ -294,13 +324,16 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       { label: "Движение и атака", value: moveAttackPenalty },
       { label: "Тотальная атака (Точная)", value: allOutAttackBonus },
       { label: "Бонусы/штрафы", value: manualModifier },
+      { label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c", value: visibility?.penalty ?? 0 },
       { label: hitLocationLabel, value: hitLocationPenalty }
     ];
 
-    return {
-      effectiveSkill: baseLevel + modifiers.reduce((total, entry) => total + Number(entry.value || 0), 0),
-      modifiers
-    };
+    const calculatedSkill = baseLevel + modifiers.reduce((total, entry) => total + Number(entry.value || 0), 0);
+    const effectiveSkill = visibility?.blind ? Math.min(calculatedSkill, 9) : calculatedSkill;
+    if (visibility?.blind && effectiveSkill < calculatedSkill) {
+      modifiers.push({ label: "Cap Shooting Blind: 9", value: effectiveSkill - calculatedSkill });
+    }
+    return { effectiveSkill, calculatedSkill, modifiers };
   }
 
   function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext = null) {

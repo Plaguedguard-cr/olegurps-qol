@@ -112,6 +112,10 @@ export async function executePreparedGgaRoll({
   contextLabel = "",
   consumeAction = true,
   maneuver = null,
+  capLabel = undefined,
+  visibilityPenalty = 0,
+  visibilityCapAdjustment = 0,
+  concealTargetDetails = false,
   runtime = globalThis
 }) {
   const GURPS = runtime.GURPS;
@@ -216,7 +220,7 @@ export async function executePreparedGgaRoll({
     isBlind: false,
     rof: displayRof,
     rcl: safeRcl,
-    rofrcl: potentialHits
+    rofrcl: concealTargetDetails ? null : potentialHits
   };
   GURPS.setLastTargetedRoll?.(chatdata, speaker.actor, speaker.token, true);
 
@@ -227,7 +231,13 @@ export async function executePreparedGgaRoll({
     })[character]);
     content += `<p><strong>${safeContext}</strong></p>`;
   }
-  const displayedModifiers = reconcileAttackModifierDetails(targetmods, finaltarget - baseSkill);
+  const displayedModifiers = concealTargetDetails
+    ? normalizeAttackModifierDetails([
+        { label: "\u041f\u0440\u043e\u0447\u0438\u0435 \u043c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b", value: finaltarget - baseSkill - visibilityPenalty - visibilityCapAdjustment },
+        { label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c", value: visibilityPenalty },
+        { label: capLabel ?? "Cap Shooting Blind: 9", value: visibilityCapAdjustment }
+      ])
+    : reconcileAttackModifierDetails(targetmods, finaltarget - baseSkill, capLabel);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
   if (modifierBreakdown) content += `<p>${modifierBreakdown}</p>`;
   const messageData = {

@@ -98,7 +98,13 @@ export class AmmoService {
     return state;
   }
 
-  async saveState(state) {
+  async saveState(state, { preserveSprayingSessions = true } = {}) {
+    if (preserveSprayingSessions) {
+      const current = this.actor.getFlag(FLAG_SCOPE, FLAG_KEY);
+      const sessions = current?.sprayingFireSessions;
+      if (sessions && Object.keys(sessions).length) state.sprayingFireSessions = clone(sessions);
+      else delete state.sprayingFireSessions;
+    }
     await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, state);
   }
 

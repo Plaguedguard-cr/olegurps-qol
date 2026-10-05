@@ -4,6 +4,8 @@ import { TargetingService } from "./targeting-service.js";
 import { createFireControlContext } from "./fire-control-context.js";
 import { executePreparedSkillRoll } from "./prepared-gga-roll.js";
 import { parseElevationHeight } from "./fire-range-service.js";
+import { normalizeVisibility } from "./limited-visibility.js";
+import { withClearedFoundryTargets } from "./foundry-targets.js";
 
 const MODULE_ID = "olegurps-qol";
 const STANDALONE_VALUES_FLAG = "standaloneFireControlValues";
@@ -106,7 +108,7 @@ export async function openFireControl() {
     maxShots: null
   });
   app = new FirePreparationApp({
-    mode: "standalone", token, attack: {}, rangeBands, targetingService,
+    mode: "standalone", token, actor, attack: {}, rangeBands, targetingService,
     getTargetRangeRecommendation: () => context.getTargetRangeRecommendation(rangeBands),
     initialStandaloneValues,
     maximumShots: 1, rateOfFireProfile: service.parseRateOfFire(""),
@@ -161,10 +163,22 @@ export async function openFireControl() {
       const effectiveSkill = skillDetails?.effectiveSkill;
       const rcl = /^\s*[1-9]\d*(?:\s*\/\s*[1-9]\d*)?\s*$/.test(app.attack.rcl)
         ? service.parseAttackRcl(app.attack, { extremelyClose: fireMode.extremelyClose }) : null;
-      const result = await executePreparedSkillRoll({ actor, effectiveSkill, baseSkill,
+      const visibility = normalizeVisibility(values.visibility);
+      const targets = visibility?.targetTokenId ? [...(game.user?.targets ?? [])] : [];
+      if (visibility?.mode === "unseen" &&
+          (Boolean(visibility.targetTokenId) === Boolean(visibility.blindFireHex) ||
+           visibility.targetTokenId &&
+             (visibility.location !== "approximate" && visibility.location !== "exact" ||
+              targets.length !== 1 || targets[0]?.id !== visibility.targetTokenId))) {
+        ui.notifications.warn("\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u0435\u043a\u0441 \u0434\u043b\u044f \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b");
+        return false;
+      }
+      const roll = () => executePreparedSkillRoll({ actor, effectiveSkill, baseSkill,
         effectiveRoF: fireMode.effectiveRoF, rcl,
         location, targetingService: currentTargetingService, closeMultiplier: fireMode.closeDamageMultiplier,
         modifierDetails: skillDetails?.modifiers ?? [] });
+      const result = visibility?.mode === "unseen" && visibility.blindFireHex
+        ? await withClearedFoundryTargets(roll) : await roll();
       return result.rolled;
     }
   });

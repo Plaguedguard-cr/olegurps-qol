@@ -1,0 +1,15 @@
+<form class="olegurps-status-effect-visibility">
+  <p>Выберите эффекты, которые будут видны в Assign Status Effect:</p>
+  <div class="olegurps-status-effect-list">
+    {{#each effects}}
+      <label class="olegurps-status-effect-row">
+        <input type="checkbox" name="{{this.id}}" {{#if this.visible}}checked{{/if}}>
+        <span>Показывать {{this.name}}</span>
+      </label>
+    {{/each}}
+  </div>
+  <footer class="sheet-footer flexrow">
+    <button type="submit"><i class="fas fa-save"></i> Сохранить</button>
+    <button type="button" data-action="cancel">Отмена</button>
+  </footer>
+</form>

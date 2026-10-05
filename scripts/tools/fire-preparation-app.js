@@ -1,11 +1,30 @@
-import { createStandaloneAttack } from "./fire-control-context.js";
+import { createStandaloneAttack, measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
+import { normalizeVisibility, visibilityRules } from "./limited-visibility.js";
+import { selectBlindFireHex } from "./blind-fire-hex-selection.js";
+import { getSafeTargetName, clearFoundryTargets } from "./foundry-targets.js";
 import { getFireSkillPreview, skillProbabilityColor } from "./fire-skill-preview.js";
-import { resolveElevationRange } from "./fire-range-service.js";
+import { findRangeBandForDistance, resolveElevationRange } from "./fire-range-service.js";
 import { TargetingService } from "./targeting-service.js";
+import { getAimStatusSeconds } from "./aim-status-effects.js";
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
 const FIRE_PREPARATION_CSS = `
+  .gam-visibility { display: grid; gap: 4px; padding: 6px 8px; border: 1px solid rgba(153, 102, 255, .5); border-radius: 5px; }
+  .gam-visibility-header { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .gam-visibility-header h4 { margin: 0; }
+  .gam-visibility-header button { width: auto; min-height: 24px; padding: 2px 7px; }
+  .gam-visibility-fields { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+  .gam-visibility-fields label, .gam-visibility-location label { display: inline-flex; align-items: center; gap: 4px; margin: 0; }
+  .gam-visibility-fields select { width: auto; min-height: 24px; margin: 0; }
+  .gam-visibility-fields input[type="number"], .gam-visibility-location input[type="number"] { width: 62px; margin: 0; }
+  .gam-visibility-location { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 5px; }
+  .gam-visibility-location strong { margin-right: 3px; }
+  .gam-visibility-location button { width: auto; min-height: 24px; margin: 0; padding: 2px 7px; line-height: 1.2; }
+  .gam-visibility-location button.is-selected { background: rgba(119, 69, 180, .56); border-color: #c7a3ef; box-shadow: inset 0 2px 5px rgba(0, 0, 0, .55); transform: translateY(1px); }
+  .gam-visibility-location-status { flex: 1 1 180px; min-width: 0; }
+  .gam-visibility-breakdown { display: flex; flex-wrap: wrap; gap: 3px 10px; }
+  .gam-visibility p { margin: 0; line-height: 1.2; }
   .gam-fire-rof-container { display: contents; }
   .gam-fire-manual-stats { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 6px; }
   .gam-fire-manual-stats label { display: inline-flex; align-items: center; gap: 5px; }
@@ -451,6 +470,11 @@ const FIRE_PREPARATION_CSS = `
     stroke-dasharray: 7 4;
     filter: drop-shadow(0 0 2px var(--gam-rapid-attack-2, #ff5aa5));
   }
+  .gam-hit-region-marker.gam-rapid-attack-3 .gam-hit-region-shape {
+    stroke: var(--gam-rapid-attack-3, #f2ba53);
+    stroke-dasharray: 3 3;
+    filter: drop-shadow(0 0 2px var(--gam-rapid-attack-3, #f2ba53));
+  }
   .gam-hit-region-marker.is-active .gam-hit-region-shape { stroke-width: 4px; }
 
   .gam-hit-list {
@@ -514,6 +538,7 @@ const FIRE_PREPARATION_CSS = `
   }
   .gam-hit-selection-marker.gam-rapid-attack-1 { background: var(--gam-rapid-attack-1, #39a9ff); color: var(--gam-rapid-attack-1, #39a9ff); }
   .gam-hit-selection-marker.gam-rapid-attack-2 { background: var(--gam-rapid-attack-2, #ff5aa5); color: var(--gam-rapid-attack-2, #ff5aa5); }
+  .gam-hit-selection-marker.gam-rapid-attack-3 { background: var(--gam-rapid-attack-3, #f2ba53); color: var(--gam-rapid-attack-3, #f2ba53); }
   .gam-hit-selection-marker.is-active {
     opacity: 1;
     box-shadow: 0 0 5px currentColor;
@@ -605,7 +630,7 @@ export class FirePreparationApp extends ApplicationV2 {
     position: { width: 1120, height: "auto" }
   };
 
-  constructor({ mode = "weapon", parseRateOfFire, token, weapon, attack, rangeBands, recommendation, getTargetRangeRecommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", initialStandaloneValues = null, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateLaserBonus, calculateFireMode, calculateEffectiveSkill, onTargetingServiceChange, onGoverningSpecialtyChange, onStandaloneValuesChange, onConfirm, onClose }, options = {}) {
+  constructor({ mode = "weapon", parseRateOfFire, token, actor = null, weapon, attack, rangeBands, recommendation, getTargetRangeRecommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", initialStandaloneValues = null, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateLaserBonus, calculateFireMode, calculateEffectiveSkill, onTargetingServiceChange, onGoverningSpecialtyChange, onStandaloneValuesChange, onConfirm, onClose, initialVisibility = null, onHearingCheck = null, placementApps = [] }, options = {}) {
     super({
       ...options,
       id: options.id ?? (mode === "standalone" ? "olegurps-fire-control-standalone" : `olegurps-fire-preparation-${token.id}-${weapon.id}`),
@@ -614,10 +639,15 @@ export class FirePreparationApp extends ApplicationV2 {
     this.mode = mode;
     this.parseRateOfFire = parseRateOfFire;
     this.token = token;
+    this.actor = actor ?? token?.actor ?? null;
+    this._aimManuallyEdited = false;
+    this._lastAimStatusSeconds = mode === "melee" ? 0 : getAimStatusSeconds(token?.actor ?? actor);
     this.weapon = weapon;
     this.attack = attack;
     this.rangeBands = rangeBands;
     this.targetRangeRecommendationProvider = getTargetRangeRecommendation;
+    this.visibility = normalizeVisibility(initialVisibility);
+    this.placementApps = placementApps;
     this.recommendation = this._readTargetRangeRecommendation(recommendation);
     this.beamWeapon = beamWeapon;
     this.targetingService = targetingService;
@@ -638,6 +668,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this.standaloneValuesChangeCallback = onStandaloneValuesChange;
     this.confirmCallback = onConfirm;
     this.closeCallback = onClose;
+    this.hearingCheckCallback = onHearingCheck;
     const defaultHitLocation = targetingService.getDefaultSelection();
     const initialRofMode = rateOfFireProfile?.type === "full-auto" ? "0" : null;
     const savedGoverningSpecialty = String(initialGoverningSpecialty ?? "").trim();
@@ -653,7 +684,7 @@ export class FirePreparationApp extends ApplicationV2 {
       governingSpecialty,
       rofMode: initialRofMode,
       manualModifier: "",
-      aimSeconds: "",
+      aimSeconds: this._lastAimStatusSeconds ? String(this._lastAimStatusSeconds) : "",
       braced: false,
       laserSight: false,
       moveAndAttack: false,
@@ -674,6 +705,7 @@ export class FirePreparationApp extends ApplicationV2 {
     }
     if (this.mode === "standalone") this._refreshStandaloneAttack();
     this._submitting = false;
+    this._hexSelectionController = null;
     this._closeNotified = false;
     this._skillPreviewTimer = null;
     this._rangeLayoutObserver = null;
@@ -704,6 +736,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this._registerTargetHook();
     if (!this._skillPreviewTimer) {
       this._skillPreviewTimer = globalThis.setInterval(() => {
+        this._syncAimStatusEffect();
         this._updateRapidFirePreview();
         this._updateSkillPreview();
       }, 300);
@@ -714,16 +747,16 @@ export class FirePreparationApp extends ApplicationV2 {
       this._rangeLayoutObserver = new globalThis.ResizeObserver(() => this._syncRangeListHeight());
       this._rangeLayoutObserver.observe(root);
     }
-    if (root.dataset.gamFireListeners === "true") {
-      this._updateTargetRecommendation();
-      globalThis.requestAnimationFrame?.(() => this._syncRangeListHeight());
-      return;
-    }
     if (!root.querySelector("style[data-gam-fire-style]")) {
       const style = document.createElement("style");
       style.dataset.gamFireStyle = "true";
       style.textContent = FIRE_PREPARATION_CSS;
       root.prepend(style);
+    }
+    if (root.dataset.gamFireListeners === "true") {
+      this._updateTargetRecommendation();
+      globalThis.requestAnimationFrame?.(() => this._syncRangeListHeight());
+      return;
     }
     root.addEventListener("click", this._boundClick);
     root.addEventListener("input", this._boundInput);
@@ -757,6 +790,7 @@ export class FirePreparationApp extends ApplicationV2 {
     await this.render({ force: true });
   }
   async close(options = {}) {
+    this._hexSelectionController?.abort();
     if (this._skillPreviewTimer) {
       globalThis.clearInterval(this._skillPreviewTimer);
       this._skillPreviewTimer = null;
@@ -775,8 +809,48 @@ export class FirePreparationApp extends ApplicationV2 {
     return result;
   }
 
+  async _pickBlindFireHex() {
+    if (this._hexSelectionController) return null;
+    const controller = new AbortController();
+    this._hexSelectionController = controller;
+    try {
+      return await selectBlindFireHex(this, globalThis, controller.signal);
+    } finally {
+      if (this._hexSelectionController === controller) this._hexSelectionController = null;
+    }
+  }
+
+  async activateVisibility(state = { mode: "partial", partialPenalty: -1 }) {
+    this._captureFields();
+    this.visibility = normalizeVisibility(state);
+    if (this.visibility?.mode === "unseen") await clearFoundryTargets();
+    if (!this.visibility) this.manualHearingLevel = "";
+    this.recommendation = this._readTargetRangeRecommendation();
+    await this.render({ force: true });
+    this.bringToTop?.();
+  }
+
   _readTargetRangeRecommendation(fallback = null) {
     try {
+      if (this.visibility?.mode === "unseen") {
+        const hex = this.visibility.blindFireHex;
+        const target = this._hasUnseenDirection() && this.visibility.targetTokenId
+          ? globalThis.canvas?.tokens?.get?.(this.visibility.targetTokenId) : null;
+        const distance = hex
+          ? measureCanvasPointDistanceYards(this.token, globalThis.canvas?.grid?.getCenterPoint?.(hex))
+          : target ? measureTokenDistanceYards(this.token, target) : null;
+        if (!Number.isFinite(distance)) return null;
+        const range = findRangeBandForDistance(this.rangeBands, distance);
+        return range ? { rangeIndex: range.index, penalty: range.penalty, distance,
+          source: hex ? "blind-fire-hex" : "known-token" } : null;
+      }
+      if (this.visibility?.mode === "blind" && !this.visibility.knownLocation) {
+        if (!this.visibility.hex) return null;
+        const center = globalThis.canvas?.grid?.getCenterPoint?.(this.visibility.hex);
+        const distance = measureCanvasPointDistanceYards(this.token, center);
+        const range = findRangeBandForDistance(this.rangeBands, distance);
+        return range ? { rangeIndex: range.index, penalty: range.penalty, distance, source: "blind-fire-hex" } : null;
+      }
       if (typeof this.targetRangeRecommendationProvider === "function") {
         return this.targetRangeRecommendationProvider() ?? null;
       }
@@ -788,11 +862,15 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _formatTargetRecommendation(recommendation = this.recommendation) {
-    const penalty = Number(recommendation?.penalty);
-    if (!Number.isFinite(penalty)) return "GGA target: нет рекомендации";
+    const label = this.visibility?.mode === "unseen"
+      ? this.visibility.blindFireHex ? "\u0412\u044b\u0431\u0440\u0430\u043d\u043d\u044b\u0439 \u0433\u0435\u043a\u0441" : "\u0426\u0435\u043b\u044c"
+      : this.visibility?.mode === "blind" && !this.visibility.knownLocation
+        ? "\u0412\u044b\u0431\u0440\u0430\u043d\u043d\u044b\u0439 \u0433\u0435\u043a\u0441" : "GGA target";
+    const penalty = recommendation ? Number(recommendation.penalty) : Number.NaN;
+    if (!Number.isFinite(penalty)) return `${label}: \u043d\u0435\u0442 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u0438`;
     const distance = Number(recommendation?.distance);
-    const distanceText = Number.isFinite(distance) ? `${formatDistance(distance)} ярдов · ` : "";
-    return `GGA target: ${distanceText}${penalty >= 0 ? "+" : ""}${penalty}`;
+    const distanceText = Number.isFinite(distance) ? `${formatDistance(distance)} \u044f\u0440\u0434\u043e\u0432 \u00b7 ` : "";
+    return `${label}: ${distanceText}${penalty >= 0 ? "+" : ""}${penalty}`;
   }
 
   _registerTargetHook() {
@@ -802,6 +880,15 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _onTargetToken(user) {
     if (user && globalThis.game?.user && user !== globalThis.game.user) return;
+    if (this.visibility?.mode === "unseen" && this.visibility.targetTokenId &&
+        ![...(globalThis.game?.user?.targets ?? [])].some(target => target.id === this.visibility.targetTokenId)) {
+      this.visibility.targetTokenId = null;
+    }
+    if (this.visibility?.mode === "unseen" &&
+        (!["approximate", "exact"].includes(this.visibility.location) ||
+         this.visibility.blindFireHex)) {
+      clearFoundryTargets().catch(error => console.warn("Unable to clear unseen target:", error));
+    }
     if (this._targetRefreshTimer) globalThis.clearTimeout(this._targetRefreshTimer);
     this._targetRefreshTimer = globalThis.setTimeout(() => {
       this._targetRefreshTimer = null;
@@ -811,6 +898,8 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _updateTargetRecommendation() {
     this.recommendation = this._readTargetRangeRecommendation();
+    const confirm = this.element?.querySelector('button[data-fire-action="confirm"]');
+    if (confirm && this.visibility?.mode === "unseen") confirm.disabled = !this._hasUnseenDirection();
     const recommendedIndex = Number.isInteger(this.recommendation?.rangeIndex)
       ? this.recommendation.rangeIndex
       : null;
@@ -858,6 +947,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this.fireState.governingSpecialty = root.querySelector('[name="governingSpecialty"]')?.value ??
       this.fireState.governingSpecialty;
     this.fireState.manualModifier = root.querySelector('[name="manualModifier"]')?.value ?? "";
+    const hearingField = root.querySelector('[name="manualHearing"]');
+    if (hearingField) this.manualHearingLevel = hearingField.value;
     this.fireState.aimSeconds = root.querySelector('[name="aimSeconds"]')?.value ?? "";
     this.fireState.braced = !!root.querySelector('[name="braced"]')?.checked;
     this.fireState.laserSight = !!root.querySelector('[name="laserSight"]')?.checked;
@@ -892,6 +983,16 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   getShotOptions() {
+    const visibility = this.visibility
+      ? { ...normalizeVisibility(this.visibility), partialPenalty: this.visibility.partialPenalty } : null;
+    const rules = visibilityRules(visibility);
+    const hex = visibility?.mode === "unseen" ? visibility.blindFireHex
+      : visibility?.mode === "blind" && !visibility.knownLocation ? visibility.hex : null;
+    const center = hex ? globalThis.canvas?.grid?.getCenterPoint?.(hex) : null;
+    const selectedToken = visibility?.mode === "unseen" && this._hasUnseenDirection() && visibility.targetTokenId
+      ? globalThis.canvas?.tokens?.get?.(visibility.targetTokenId) : null;
+    const targetDistance = center ? measureCanvasPointDistanceYards(this.token, center)
+      : selectedToken ? measureTokenDistanceYards(this.token, selectedToken) : null;
     return {
       shots: this._getShotsValue(),
       rofMode: this.fireState.rofMode,
@@ -899,9 +1000,11 @@ export class FirePreparationApp extends ApplicationV2 {
       shotgun: this.fireState.shotgun,
       projectileMultiplier: this.fireState.projectileMultiplier,
       manualModifier: this.fireState.manualModifier,
-      aimSeconds: this.fireState.aimSeconds,
-      braced: this.fireState.braced,
-      laserSight: this.fireState.laserSight,
+      aimSeconds: rules && !rules.aimAllowed ? 0 : this.fireState.aimSeconds,
+      braced: rules && !rules.aimAllowed ? false : this.fireState.braced,
+      laserSight: rules?.random ? false : this.fireState.laserSight,
+      visibility,
+      targetDistanceOverride: targetDistance,
       moveAndAttack: this.fireState.moveAndAttack,
       allOutAttack: this.fireState.allOutAttack,
       height: this.fireState.height,
@@ -909,8 +1012,8 @@ export class FirePreparationApp extends ApplicationV2 {
       rangeIndex: this.fireState.selectedRangeIndex,
       manualRangeSelected: this.fireState.manualRangeSelected,
       bodyplanId: this.fireState.bodyplanId,
-      hitLocationId: this.fireState.hitLocation.zoneId,
-      hitRegionId: this.fireState.hitLocation.regionId
+      hitLocationId: rules?.random ? "silhouette" : this.fireState.hitLocation.zoneId,
+      hitRegionId: rules?.random ? null : this.fireState.hitLocation.regionId
     };
   }
 
@@ -967,6 +1070,7 @@ export class FirePreparationApp extends ApplicationV2 {
     ));
   }
   _getAimBonus(fireState = this.fireState) {
+    if (visibilityRules(this.visibility)?.aimAllowed === false) return 0;
     const value = Number(this.calculateAimBonus?.(
       fireState.aimSeconds,
       fireState.moveAndAttack,
@@ -976,16 +1080,32 @@ export class FirePreparationApp extends ApplicationV2 {
     return Number.isFinite(value) && value >= 0 ? Math.trunc(value) : 0;
   }
 
+  _syncAimStatusEffect() {
+    if (this.mode === "melee") return;
+    const seconds = getAimStatusSeconds(this.token?.actor ?? this.actor);
+    if (seconds === this._lastAimStatusSeconds) return;
+    this._lastAimStatusSeconds = seconds;
+    if (this._aimManuallyEdited) return;
+    const value = seconds ? String(seconds) : "";
+    this.fireState.aimSeconds = value;
+    const input = this.element?.querySelector('[name="aimSeconds"]');
+    if (input) input.value = value;
+    this._updateAimPreview();
+    this._updateSkillPreview();
+  }
+
   _updateAimPreview() {
     const aimPreview = this.element?.querySelector("[data-aim-preview]");
     const laserPreview = this.element?.querySelector("[data-laser-preview]");
-    const effectiveModifier = this._getAimBonus() + this._getBracingBonus();
+    const effectiveModifier = visibilityRules(this.visibility)?.aimAllowed === false
+      ? 0 : this._getAimBonus() + this._getBracingBonus();
     if (aimPreview) aimPreview.textContent = `+${effectiveModifier}`;
-    if (laserPreview) laserPreview.textContent = `+${this.fireState.laserSight ? this._getLaserBonus() : 1}`;
+    if (laserPreview) laserPreview.textContent = `+${visibilityRules(this._visibilityForTargeting())?.random ? 0 : this.fireState.laserSight ? this._getLaserBonus() : 1}`;
     this._updateAttackStats();
   }
 
   _getBracingBonus(fireState = this.fireState) {
+    if (visibilityRules(this.visibility)?.aimAllowed === false) return 0;
     const value = Number(this.calculateBracingBonus?.(
       fireState.braced,
       fireState.aimSeconds,
@@ -996,6 +1116,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getLaserBonus(fireState = this.fireState) {
+    if (visibilityRules(this._visibilityForTargeting())?.random) return 0;
     const value = Number(this.calculateLaserBonus?.(
       fireState.laserSight,
       fireState.aimSeconds,
@@ -1077,6 +1198,8 @@ export class FirePreparationApp extends ApplicationV2 {
     const { level, chance, probability } = this._getSkillPreview();
     preview.textContent = `${level} (${chance}%)`;
     preview.style.color = skillProbabilityColor(probability);
+    const breakdown = this.element?.querySelector("[data-visibility-breakdown]");
+    if (breakdown && this.visibility) breakdown.innerHTML = this._buildVisibilityBreakdown();
   }
 
   _getElevationCalculation(fireState = this.fireState) {
@@ -1151,7 +1274,10 @@ export class FirePreparationApp extends ApplicationV2 {
     this._updateSkillPreview();
   }
 
+  _visibilityForTargeting() { return this.visibility; }
+
   _selectHitLocation(zoneId, regionId = null) {
+    if (visibilityRules(this._visibilityForTargeting())?.random && zoneId !== "silhouette") return;
     const selection = this.targetingService.getSelection(zoneId, regionId);
     if (!selection) return;
     this.fireState.hitLocation = { zoneId: selection.zoneId, regionId: selection.regionId };
@@ -1267,6 +1393,30 @@ export class FirePreparationApp extends ApplicationV2 {
   async _onInput(event) {
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
+    if (field.name === "visibilityMode") {
+      this._captureFields();
+      this.visibility = normalizeVisibility({ mode: field.value, partialPenalty: -1, accustomed: false });
+      if (field.value === "unseen") await clearFoundryTargets();
+      this.recommendation = this._readTargetRangeRecommendation();
+      await this.render({ force: true });
+      return;
+    }
+    if (field.name === "partialPenalty") {
+      const value = Number(field.value);
+      if (event.type === "change") field.value = String(Number.isInteger(value) ? Math.max(-9, Math.min(-1, value)) : -1);
+      this.visibility.partialPenalty = Number(field.value);
+      this._updateSkillPreview();
+      return;
+    }
+    if (field.name === "accustomed") {
+      this.visibility.accustomed = field.checked;
+      this._updateSkillPreview();
+      return;
+    }
+    if (field.name === "manualHearing") {
+      this.manualHearingLevel = field.value;
+      return;
+    }
     if (field.name === "bodyplanId") {
       await this._switchBodyplan(field.value);
       return;
@@ -1310,6 +1460,7 @@ export class FirePreparationApp extends ApplicationV2 {
       const seconds = Number(String(field.value).replace(",", "."));
       if (field.value !== "" && (!Number.isInteger(seconds) || seconds < 0)) field.value = "0";
       this.fireState.aimSeconds = field.value;
+      this._aimManuallyEdited = true;
     } else if (field.name === "braced") this.fireState.braced = field.checked;
     else if (field.name === "laserSight") this.fireState.laserSight = field.checked;
     else if (field.name === "moveAndAttack") {
@@ -1371,9 +1522,130 @@ export class FirePreparationApp extends ApplicationV2 {
       await this.close();
       return;
     }
+    if (button.dataset.fireAction === "exit-visibility") {
+      await this.activateVisibility(null);
+      return;
+    }
+    if (this.visibility?.mode === "unseen") {
+      const action = button.dataset.fireAction;
+      if (action === "known-location") {
+        this._knownMethodOpen = true;
+        await this.render({ force: true });
+        return;
+      }
+      if (action === "known-approx" || action === "known-exact") {
+        this._captureFields();
+        this.visibility.location = action === "known-exact" ? "exact" : "approximate";
+        this.visibility.locationMethod = "other";
+        this.visibility.hearing = null;
+        this.visibility.targetTokenId = null;
+        this.visibility.blindFireHex = null;
+        await clearFoundryTargets();
+        this.recommendation = null;
+        await this.render({ force: true });
+        return;
+      }
+      if (action === "choose-token") {
+        const targets = [...(globalThis.game?.user?.targets ?? [])];
+        if (targets.length !== 1 || !targets[0]?.id) {
+          globalThis.ui?.notifications?.warn?.("Select exactly one Token on the canvas.");
+          return;
+        }
+        this._captureFields();
+        this.visibility.targetTokenId = targets[0].id;
+        this.visibility.blindFireHex = null;
+        this.recommendation = this._readTargetRangeRecommendation();
+        if (!this.fireState.manualRangeSelected)
+          this.fireState.selectedRangeIndex = this.recommendation?.rangeIndex ?? null;
+        await this.render({ force: true });
+        return;
+      }
+      if (action === "choose-hex" || action === "blind-fire") {
+        this._captureFields();
+        const previousLocation = this.visibility.location;
+        const previousMethod = this.visibility.locationMethod;
+        const hex = await this._pickBlindFireHex();
+        if (!this.rendered) return;
+        if (hex) {
+          this.visibility.targetTokenId = null;
+          this.visibility.blindFireHex = hex.offset;
+          this.visibility.location = action === "blind-fire" ? "hex"
+            : ["approximate", "exact"].includes(previousLocation) ? previousLocation : "hex";
+          this.visibility.locationMethod = action === "blind-fire" ? "blind-fire" : previousMethod;
+          await clearFoundryTargets();
+          this.recommendation = this._readTargetRangeRecommendation();
+          if (!this.fireState.manualRangeSelected)
+            this.fireState.selectedRangeIndex = this.recommendation?.rangeIndex ?? null;
+        }
+        await this.render({ force: true });
+        return;
+      }
+    }
+    if (button.dataset.fireAction === "known-location") {
+      this.visibility.knownLocation = true;
+      this.visibility.hearing = null;
+      this.visibility.hex = null;
+      this._captureFields();
+      this.recommendation = this._readTargetRangeRecommendation();
+      await this.render({ force: true });
+      return;
+    }
+    if (button.dataset.fireAction === "choose-hex") {
+      const hex = await this._pickBlindFireHex();
+      if (hex) {
+        this.visibility.hex = hex.offset;
+        this.visibility.knownLocation = false;
+        this.recommendation = this._readTargetRangeRecommendation();
+        if (!this.fireState.manualRangeSelected) this.fireState.selectedRangeIndex = this.recommendation?.rangeIndex ?? null;
+        await this.render({ force: true });
+      }
+      return;
+    }
+    if (button.dataset.fireAction === "hearing-check") {
+      this._captureFields();
+      const manual = this.manualHearingLevel === undefined || this.manualHearingLevel === ""
+        ? null : Number(this.manualHearingLevel);
+      const success = await this.hearingCheckCallback?.(manual);
+      if (typeof success !== "boolean") return;
+      if (this.visibility.mode === "unseen") {
+        const hex = success ? null : await this._pickBlindFireHex();
+        if (!this.rendered) return;
+        if (!success && !hex) return;
+        this.visibility.hearing = success ? "success" : "failure";
+        this.visibility.location = success ? "approximate" : "hex";
+        this.visibility.locationMethod = "hearing";
+        this.visibility.targetTokenId = null;
+        this.visibility.blindFireHex = hex?.offset ?? null;
+        await clearFoundryTargets();
+        this.recommendation = this._readTargetRangeRecommendation();
+        if (!this.fireState.manualRangeSelected)
+          this.fireState.selectedRangeIndex = this.recommendation?.rangeIndex ?? null;
+        await this.render({ force: true });
+        return;
+      }
+      this.visibility.hearing = success ? "success" : "failure";
+      this.visibility.knownLocation = success;
+      this.visibility.hex = null;
+      if (!success) {
+        const hex = await this._pickBlindFireHex();
+        if (hex) this.visibility.hex = hex.offset;
+      }
+      this.recommendation = this._readTargetRangeRecommendation();
+      if (this.visibility.hex && !this.fireState.manualRangeSelected) this.fireState.selectedRangeIndex = this.recommendation?.rangeIndex ?? null;
+      await this.render({ force: true });
+      return;
+    }
     if (button.dataset.fireAction !== "confirm" || this._submitting) return;
 
     this._captureFields();
+    if (this.visibility?.mode === "unseen" && !this._hasUnseenDirection()) {
+      globalThis.ui?.notifications?.warn?.("\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u0435\u043a\u0441 \u0434\u043b\u044f \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b");
+      return;
+    }
+    if (this.visibility?.mode === "blind" && !this.visibility.knownLocation && !this.visibility.hex) {
+      ui.notifications.warn("Выберите предполагаемый гекс.");
+      return;
+    }
     this._submitting = true;
     button.disabled = true;
     try {
@@ -1411,6 +1683,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getTargetedAttack(zone, fireState = this.fireState) {
+    if (visibilityRules(this._visibilityForTargeting())?.random) return null;
     return this.targetedAttackContext?.resolve({
       specialty: fireState.governingSpecialty,
       target: [zone?.canonicalKey ?? zone?.id, ...(zone?.taAliases ?? [])],
@@ -1439,7 +1712,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _buildGoverningSkillSelector(fireState) {
-    if (this.mode !== "weapon" || !this.targetedAttackContext?.requiresSelection) return "";
+    if (this.mode !== "weapon" || visibilityRules(this._visibilityForTargeting())?.random || !this.targetedAttackContext?.requiresSelection) return "";
     const options = this.targetedAttackContext.specialtyOptions.map(option =>
       `<option value="${escapeHTML(option.value)}" ${fireState.governingSpecialty === option.value ? "selected" : ""}>Guns (${escapeHTML(option.label)})</option>`
     ).join("");
@@ -1459,13 +1732,14 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _buildHitLocationContent(fireState) {
-    const selection = fireState.hitLocation;
+    const selection = visibilityRules(this._visibilityForTargeting())?.random
+      ? this.targetingService.getDefaultSelection() : fireState.hitLocation;
     const bodyplanOptions = TargetingService.getBodyplanOptions().map(option =>
       `<option value="${escapeHTML(option.id)}" ${this.targetingService.bodyplan === option.id ? "selected" : ""}>${escapeHTML(option.label)}</option>`
     ).join("");
     const rows = this.targetingService.zones.map(zone => {
       const selected = selection.zoneId === zone.id;
-      const disabled = !zone.available;
+      const disabled = !zone.available || (visibilityRules(this._visibilityForTargeting())?.random && zone.id !== "silhouette");
       const markers = this._getHitLocationMarkers(zone.id, null, fireState);
       const markerHtml = markers.map(marker =>
         `<span class="gam-hit-selection-marker ${escapeHTML(marker.className)}" title="${escapeHTML(marker.label)}" aria-label="${escapeHTML(marker.label)}"></span>`
@@ -1494,7 +1768,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const regions = this.targetingService.regions.map(region => {
       const zone = this.targetingService.getZone(region.zoneId);
       const selected = selection.zoneId === region.zoneId && (!selection.regionId || selection.regionId === region.id);
-      const disabled = !zone?.available;
+      const disabled = !zone?.available || (visibilityRules(this._visibilityForTargeting())?.random && region.zoneId !== "silhouette");
       const shapes = region.geometry.map(geometry => this._renderSvgGeometry(geometry)).join("");
       const markers = this._getHitLocationMarkers(region.zoneId, region.id, fireState);
       const markerShapes = markers.map(marker =>
@@ -1597,6 +1871,100 @@ export class FirePreparationApp extends ApplicationV2 {
     return rofContent;
   }
 
+  _buildVisibilityBreakdown() {
+    const rules = visibilityRules(this.visibility);
+    if (!rules) return "";
+    const options = this.getShotOptions();
+    const safeUnseen = this.visibility?.mode === "unseen";
+    const skill = this.calculateEffectiveSkill?.(
+      { ...options, visibility: safeUnseen ? options.visibility : null,
+        suppressTargetedAttack: rules.random }, this.targetingService);
+    const base = Number.isFinite(skill) ? skill - (safeUnseen ? rules.penalty : 0) : null;
+    const calculated = Number.isFinite(base) ? base + rules.penalty : null;
+    const final = calculated === null ? null : rules.blind ? Math.min(calculated, 9) : calculated;
+    return `<span>\u0420\u0430\u0441\u0447\u0451\u0442: ${base ?? "\u2014"}</span>
+      <span>\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c: ${rules.penalty}</span>
+      ${rules.blind ? "<span>Cap Shooting Blind: 9</span>" : ""}
+      <strong>\u0418\u0442\u043e\u0433: ${final ?? "\u2014"}</strong>`;
+  }
+
+  _hasUnseenDirection() {
+    const state = this.visibility;
+    if (state?.mode !== "unseen") return true;
+    if (state.blindFireHex) return !state.targetTokenId;
+    if (!["approximate", "exact"].includes(state.location) || !state.targetTokenId) return false;
+    const targets = [...(globalThis.game?.user?.targets ?? [])];
+    return targets.length === 1 && targets[0]?.id === state.targetTokenId;
+  }
+
+  _buildUnseenLocationContent(state) {
+    const hex = state.blindFireHex;
+    const status = hex ? (this.mode === "melee" ? "\u0410\u0442\u0430\u043a\u0430 \u0432 \u0433\u0435\u043a\u0441: " : "\u0421\u0442\u0440\u0435\u043b\u044c\u0431\u0430 \u0432 \u0433\u0435\u043a\u0441: ") + hex.i + ", " + hex.j
+      : state.location === "exact" ? "\u041c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435: \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e \u0442\u043e\u0447\u043d\u043e"
+      : state.hearing === "success" ? "\u041c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435: \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e \u043f\u043e \u0441\u043b\u0443\u0445\u0443"
+      : state.location === "approximate" ? "\u041c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435: \u043f\u0440\u0438\u0431\u043b\u0438\u0437\u0438\u0442\u0435\u043b\u044c\u043d\u043e \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e"
+      : "\u041c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435: \u043d\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e";
+    const hearing = Number(this.token?.actor?.system?.hearing);
+    const manual = !Number.isFinite(hearing) || hearing <= 0;
+    const canChoose = ["approximate", "exact"].includes(state.location);
+    const method = state.locationMethod ??
+      (state.hearing ? "hearing" : state.location === "hex" ? "blind-fire"
+        : canChoose ? "other" : null);
+    const button = (action, label, selected) =>
+      '<button type="button" data-fire-action="' + action + '" class="' +
+      (selected ? 'is-selected' : '') + '" aria-pressed="' + (selected ? 'true' : 'false') +
+      '">' + label + '</button>';
+    return '<div class="gam-visibility-location"><strong>\u041c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438</strong>'
+      + (manual ? '<label>Hearing <input type="number" name="manualHearing" min="1" step="1" value="' + escapeHTML(this.manualHearingLevel ?? "") + '"></label>' : "")
+      + button("hearing-check", "\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u0441\u043b\u0443\u0445\u0430 (Hearing-2)", method === "hearing")
+      + button("known-location", "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e \u0434\u0440\u0443\u0433\u0438\u043c \u0441\u043f\u043e\u0441\u043e\u0431\u043e\u043c", method === "other")
+      + button("blind-fire", this.mode === "melee" ? "\u0410\u0442\u0430\u043a\u043e\u0432\u0430\u0442\u044c \u043d\u0430\u0443\u0433\u0430\u0434" : "\u0421\u0442\u0440\u0435\u043b\u044f\u0442\u044c \u043d\u0430\u0443\u0433\u0430\u0434", method === "blind-fire")
+      + (this._knownMethodOpen || method === "other"
+        ? button("known-approx", "\u041f\u0440\u0438\u0431\u043b\u0438\u0437\u0438\u0442\u0435\u043b\u044c\u043d\u043e \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e (-6)", method === "other" && state.location === "approximate")
+          + button("known-exact", "\u0422\u043e\u0447\u043d\u043e \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e \u0432 \u043f\u0440\u0435\u0434\u0435\u043b\u0430\u0445 1 \u044f\u0440\u0434\u0430 (" + (this.mode === "melee" ? "-5" : "-4") + ")", method === "other" && state.location === "exact")
+        : "")
+      + (canChoose
+        ? button("choose-token", "\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u0432\u044b\u0431\u0440\u0430\u043d\u043d\u044b\u0439 Token", !!state.targetTokenId)
+          + button("choose-hex", "\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0433\u0435\u043a\u0441", !!hex)
+        : "")
+      + '<span class="gam-visibility-location-status">' + status + '</span></div>';
+  }
+
+  _buildVisibilityRuleHint(rules) {
+    return !rules.aimAllowed ? "<p>Aim \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d; Hit Location: Random; \u043b\u0430\u0437\u0435\u0440 \u043d\u0435 \u0434\u0430\u0451\u0442 \u0431\u043e\u043d\u0443\u0441.</p>" : "";
+  }
+
+  _buildVisibilityContent() {
+    const state = this.visibility;
+    if (!state) return "";
+    const rules = visibilityRules(state);
+    const opts = [
+      ["partial", "\u0427\u0430\u0441\u0442\u0438\u0447\u043d\u0430\u044f \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c"],
+      ["unseen", "\u0426\u0435\u043b\u044c \u043d\u0435 \u0432\u0438\u0434\u043d\u0430"],
+      ["known", "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e"],
+      ["blind", "\u041f\u043e\u043b\u043d\u0430\u044f \u0442\u0435\u043c\u043d\u043e\u0442\u0430 / \u043e\u0441\u043b\u0435\u043f\u043b\u0451\u043d"]
+    ].map(([id, label]) => `<option value="${id}" ${state.mode === id ? "selected" : ""}>${label}</option>`).join("");
+    const hearing = Number(this.token?.actor?.system?.hearing);
+    const manual = !Number.isFinite(hearing) || hearing <= 0;
+    const target = state.knownLocation ? [...(globalThis.game?.user?.targets ?? [])][0] : null;
+    const safeName = target && target.visible !== false ? getSafeTargetName(target) : "\u0426\u0435\u043b\u044c";
+    return `<section class="gam-visibility">
+      <div class="gam-visibility-header"><h4>\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c</h4>${this.mode === "melee" ? "" : '<button type="button" data-fire-action="exit-visibility">\u041e\u0431\u044b\u0447\u043d\u0430\u044f \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c</button>'}</div>
+      <div class="gam-visibility-fields"><label>\u0421\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 <select name="visibilityMode">${opts}</select></label>
+      ${state.mode === "partial" ? `<label>\u0428\u0442\u0440\u0430\u0444 \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u0438 <input type="number" name="partialPenalty" min="-9" max="-1" step="1" value="${state.partialPenalty}"></label>` : ""}
+      ${state.mode === "blind" ? `<label><input type="checkbox" name="accustomed" ${state.accustomed ? "checked" : ""}> \u041f\u0440\u0438\u0432\u044b\u043a \u043a \u0441\u043b\u0435\u043f\u043e\u0442\u0435</label>` : ""}</div>
+      ${state.mode === "unseen" ? this._buildUnseenLocationContent(state) : ""}
+      ${state.mode === "blind" ? `<div class="gam-visibility-location"><strong>\u041e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u044f</strong>
+        ${manual ? `<label>Hearing (\u0432\u0440\u0443\u0447\u043d\u0443\u044e) <input type="number" name="manualHearing" min="1" step="1" value="${escapeHTML(this.manualHearingLevel ?? "")}"></label>` : ""}
+        <button type="button" data-fire-action="hearing-check">\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u0441\u043b\u0443\u0445\u0430 (Hearing-2)</button>
+        <button type="button" data-fire-action="known-location">\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e \u0434\u0440\u0443\u0433\u0438\u043c \u0441\u043f\u043e\u0441\u043e\u0431\u043e\u043c</button>
+        <span>${state.knownLocation ? "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e: " + escapeHTML(safeName) : state.hearing === "success" && state.hex ? "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e: \u0433\u0435\u043a\u0441" : "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e"}</span>
+        <button type="button" data-fire-action="choose-hex">\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u0433\u0435\u043a\u0441</button><span>${state.hex ? `\u0413\u0435\u043a\u0441: ${state.hex.i}, ${state.hex.j}` : ""}</span></div>` : ""}
+      ${this._buildVisibilityRuleHint(rules)}
+      <div class="gam-visibility-breakdown" data-visibility-breakdown>${this._buildVisibilityBreakdown()}</div>
+    </section>`;
+  }
+
   _buildContent(fireState) {
     const fireMode = this._getRapidFireState(fireState);
     const aimBonus = this._getAimBonus(fireState);
@@ -1630,7 +1998,8 @@ export class FirePreparationApp extends ApplicationV2 {
           <strong class="gam-fire-range-penalty">${penalty}</strong>
           <span class="gam-fire-range-markers">
             <span class="gam-fire-range-marker gam-fire-range-marker-selected" data-selected-marker ${selected ? "" : "hidden"}>Выбрано</span>
-            <span class="gam-fire-range-marker gam-fire-range-marker-recommended" data-target-marker ${recommended ? "" : "hidden"}>GGA target</span>
+            <span class="gam-fire-range-marker gam-fire-range-marker-recommended" data-target-marker ${recommended ? "" : "hidden"}>${this.visibility?.mode === "unseen" && this.visibility.blindFireHex ||
+              this.visibility?.mode === "blind" && !this.visibility.knownLocation ? "\u0413\u0435\u043a\u0441" : "GGA target"}</span>
             <span class="gam-fire-range-marker gam-fire-range-marker-elevation" data-elevation-marker ${elevationRecommended ? "" : "hidden"}>Высота</span>
           </span>
         </button>
@@ -1651,6 +2020,7 @@ export class FirePreparationApp extends ApplicationV2 {
             ${this.mode === "standalone" ? `<label class="gam-fire-source-skill">Значение умения: <input type="number" name="skillLevel" value="${escapeHTML(fireState.skillLevel)}" placeholder="0" min="1" step="1" required autofocus></label>` : `<span class="gam-fire-source-skill">Значение умения: ${sourceSkillText}</span>`}
           </div>
         </div>
+        ${this._buildVisibilityContent()}
         <div class="gam-fire-layout">
           <div class="gam-fire-left">
             <div class="gam-fire-fields">
@@ -1665,7 +2035,7 @@ export class FirePreparationApp extends ApplicationV2 {
               <div class="gam-fire-toggle-group">
                 <div class="gam-fire-field gam-fire-field-checkbox">
                   <span>Лазер <strong data-laser-preview>+${fireState.laserSight ? laserBonus : 1}</strong></span>
-                  <input type="checkbox" name="laserSight" aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
+                  <input type="checkbox" name="laserSight" ${visibilityRules(this._visibilityForTargeting())?.random ? "disabled" : ""} aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
                 </div>
                 <div class="gam-fire-field gam-fire-field-checkbox">
                   <span>Движение и атака</span>
@@ -1679,14 +2049,14 @@ export class FirePreparationApp extends ApplicationV2 {
               <div class="gam-fire-aim-group">
                 <label class="gam-fire-aim">
                   <span>Aim:</span>
-                  <input type="number" name="aimSeconds" value="${escapeHTML(fireState.aimSeconds)}" placeholder="0" min="0" step="1" inputmode="numeric" aria-label="Aim в секундах">
+                  <input type="number" name="aimSeconds" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} value="${escapeHTML(fireState.aimSeconds)}" placeholder="0" min="0" step="1" inputmode="numeric" aria-label="Aim в секундах">
                   <span>сек.</span>
                   <span class="gam-fire-aim-effective">Eff. mod:</span>
                   <strong class="gam-fire-aim-bonus" data-aim-preview>+${aimedFireModifier}</strong>
                 </label>
                 <div class="gam-fire-braced" title="Бонус применяется только при Aim">
                   <span>Упор</span>
-                  <input type="checkbox" name="braced" aria-label="Упор" ${fireState.braced ? "checked" : ""}>
+                  <input type="checkbox" name="braced" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} aria-label="Упор" ${fireState.braced ? "checked" : ""}>
                 </div>
               </div>
               <div class="gam-fire-rof-container" data-rof-container>${rofContent}</div>
@@ -1722,7 +2092,7 @@ export class FirePreparationApp extends ApplicationV2 {
           ${this._buildHitLocationContent(fireState)}
         </div>
         <div class="gam-fire-actions">
-          <button type="button" data-fire-action="confirm"><i class="fa-solid fa-crosshairs"></i> Выполнить выстрел</button>
+          <button type="button" data-fire-action="confirm" ${this.visibility?.mode === "unseen" && !this._hasUnseenDirection() ? "disabled" : ""} title="${this.visibility?.mode === "unseen" && !this._hasUnseenDirection() ? "\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u0435\u043a\u0441 \u0434\u043b\u044f \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b" : ""}"><i class="fa-solid fa-crosshairs"></i> Выполнить выстрел</button>
           <button type="button" data-fire-action="cancel"><i class="fa-solid fa-xmark"></i> Отмена</button>
         </div>
       </div>

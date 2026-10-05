@@ -1,7 +1,15 @@
 import { createFireControlContext } from "./fire-control-context.js";
 import { WeaponAssistantApp } from "./weapon-assistant-app.js";
 import { FirePreparationApp } from "./fire-preparation-app.js";
+import { measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
+import { checkHearingMinusTwo, normalizeVisibility, visibilityRules } from "./limited-visibility.js";
 import { SuppressionFireApp } from "./suppression-fire-app.js";
+import { SpecialFireMenuApp } from "./special-fire-menu-app.js";
+import { SprayingFireApp } from "./spraying-fire-app.js";
+import { selectSprayingTargets } from "./spraying-fire-selection.js";
+import { sprayingCapacity, planSprayingFire } from "./spraying-fire-service.js";
+import { SprayingFireSessionService, getSpecialFireOwner } from "./spraying-fire-session-service.js";
+import { getSafeTargetName, withClearedFoundryTargets, clearFoundryTargets } from "./foundry-targets.js";
 import { getSuppressionFireCapacity } from "./suppression-fire-service.js";
 import { SuppressionFireSessionService } from "./suppression-fire-session-service.js";
 import { FireService } from "./fire-service.js";
@@ -26,6 +34,9 @@ import {
 const OPEN_ASSISTANTS = new Map();
 const OPEN_FIRE_PREPARATIONS = new Map();
 const OPEN_SUPPRESSION_FIRE = new Map();
+const OPEN_SPECIAL_FIRE_MENUS = new Map();
+const OPEN_SPRAYING_FIRE = new Map();
+const OPEN_SPRAYING_SELECTIONS = new Map();
 const LAST_FIRE_BODYPLANS = new Map();
 const TARGETED_ATTACK_CONTEXTS = new WeakMap();
 
@@ -82,7 +93,7 @@ export async function openAmmoManager() {
 
   const fireService = new FireService({ actor, token });
   const { getRangeBands, getGgaTargetRangeRecommendation, getTargetRangeRecommendation, getFireModeState,
-    getTaggedModifierSettings, calculateEffectiveFireSkill, calculateEffectiveFireSkillDetails } =
+    getTaggedModifierSettings, calculateEffectiveFireSkill, calculateEffectiveFireSkillDetails, getFireBonuses } =
       createFireControlContext({ token, fireService });
   const ammoService = new AmmoService(actor);
 
@@ -568,6 +579,12 @@ export async function openAmmoManager() {
     return fireService.calculateHitsFromMargin(shots, rcl, margin);
   }
   function parseShotOptions(weapon, attack, values, rangeBands, targetingService, effectRangePenalty = null) {
+    const visibility = normalizeVisibility(values.visibility);
+    const visibilityRule = visibilityRules(visibility);
+    if (visibilityRule?.random) {
+      values = { ...values, aimSeconds: 0, braced: false, laserSight: false,
+        hitLocationId: "silhouette", hitRegionId: null };
+    }
     const loaded = weapon.magazines[weapon.loadedIndex];
     const shotLimits = getShotLimits(attack, loaded, values.rofMode);
     const shotsText = String(values.shots ?? "").trim();
@@ -608,7 +625,7 @@ export async function openAmmoManager() {
     });
     const hitLocation = targetingService?.getSelection(values.hitLocationId, values.hitRegionId);
     const targetedAttackContext = TARGETED_ATTACK_CONTEXTS.get(targetingService) ?? null;
-    const targetedAttack = targetedAttackContext?.resolve({
+    const targetedAttack = !visibilityRule?.random && targetedAttackContext?.resolve({
       specialty: values.governingSpecialty,
       target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
@@ -634,16 +651,31 @@ export async function openAmmoManager() {
     if (!hitLocation) {
       errors.push("выберите доступную зону попадания");
     }
-    if (targetedAttackContext?.requiresSelection &&
+    if (!visibilityRule?.random && targetedAttackContext?.requiresSelection &&
       !targetedAttackContext.specialtyOptions.some(option => option.value === values.governingSpecialty)) {
       errors.push("выберите governing Guns specialty");
+    }
+    if (visibility?.mode === "partial" &&
+        (!Number.isInteger(Number(values.visibility?.partialPenalty)) ||
+         Number(values.visibility.partialPenalty) < -9 || Number(values.visibility.partialPenalty) > -1)) {
+      errors.push("\u0448\u0442\u0440\u0430\u0444 \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u0438 \u0434\u043e\u043b\u0436\u0435\u043d \u0431\u044b\u0442\u044c \u043e\u0442 -9 \u0434\u043e -1");
+    }
+    if (visibility?.mode === "unseen" &&
+        (Boolean(visibility.targetTokenId) === Boolean(visibility.blindFireHex) ||
+         (visibility.targetTokenId && !["approximate", "exact"].includes(visibility.location)))) {
+      errors.push("\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u0435\u043a\u0441 \u0434\u043b\u044f \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b");
+    }
+    if (visibility?.mode === "blind" && !visibility.knownLocation && !visibility.hex) {
+      errors.push("\u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043f\u0440\u0435\u0434\u043f\u043e\u043b\u0430\u0433\u0430\u0435\u043c\u044b\u0439 \u0433\u0435\u043a\u0441");
     }
     if (errors.length > 0) {
       ui.notifications.error(`Ошибка заполнения: ${errors.join("; ")}.`);
       return null;
     }
 
-    const effectiveSkill = calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext);
+    const skillDetails = calculateEffectiveFireSkillDetails(
+      attack, values, rangeBands, targetingService, targetedAttackContext);
+    const effectiveSkill = skillDetails?.effectiveSkill ?? null;
     const rcl = fireService.parseAttackRcl(attack, { extremelyClose: fireMode.extremelyClose });
     return {
       shots,
@@ -658,6 +690,11 @@ export async function openAmmoManager() {
       closeDamageMultiplier: fireMode.closeDamageMultiplier,
       rapidFireBonus: calculateRapidFireBonus(fireMode.effectiveRoF),
       effectiveSkill,
+      visibilityPenalty: visibilityRule?.penalty ?? 0,
+      visibilityCapAdjustment: visibilityRule?.blind
+        ? Math.min(0, effectiveSkill - (skillDetails?.calculatedSkill ?? effectiveSkill)) : 0,
+      concealTargetDetails: visibility?.mode === "unseen" || visibility?.mode === "blind" && !visibility.knownLocation,
+      capLabel: visibilityRule?.blind ? "Cap Shooting Blind: 9" : undefined,
       rcl,
       aimSeconds,
       aimBonus,
@@ -705,6 +742,8 @@ export async function openAmmoManager() {
     if (shouldReportField(state, "hits")) {
       const hitText = payload.hits === null
         ? `не удалось определить автоматически; Rcl: <strong>${payload.rcl}</strong>`
+        : payload.blindHex
+          ? `\u043f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435): <strong>${payload.hits}</strong>; \u0437\u0430\u043f\u0430\u0441 \u0443\u0441\u043f\u0435\u0445\u0430: <strong>${payload.margin}</strong>; Rcl: <strong>${payload.rcl}</strong>`
         : `попаданий: <strong>${payload.hits}</strong>; запас успеха: <strong>${payload.margin}</strong>; Rcl: <strong>${payload.rcl}</strong>`;
       lines.push(`Результат попаданий: <strong>${hitText}</strong>`);
     }
@@ -716,7 +755,9 @@ export async function openAmmoManager() {
       lines.push(`Урон: <strong>${damage}</strong>; DR: <strong>×${payload.closeDamage.multiplier}</strong>`);
     }
 
+    if (payload.blindHex) lines.push(`\u041f\u0440\u0435\u0434\u043f\u043e\u043b\u0430\u0433\u0430\u0435\u043c\u044b\u0439 \u0433\u0435\u043a\u0441: <strong>${payload.blindHex.i}, ${payload.blindHex.j}</strong>`);
     if (payload.randomHitLocations?.length) {
+      if (payload.blindHex) lines.push("\u0421\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0435 \u0437\u043e\u043d\u044b \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435)");
       lines.push(buildRandomHitLocationsHtml(payload.randomHitLocations, { escapeHtml: escapeHTML }));
     } else if (payload.hitLocationText) {
       lines.push(`Зона попадания: <strong>${escapeHTML(payload.hitLocationText)}</strong>`);
@@ -736,6 +777,32 @@ export async function openAmmoManager() {
   }
 
   async function fireAndRoll(state, weaponId, rawShotOptions, targetingService) {
+    const visibility = normalizeVisibility(rawShotOptions.visibility);
+    if (visibility?.mode === "unseen") {
+      if (Boolean(visibility.targetTokenId) === Boolean(visibility.blindFireHex))
+        throw new Error("Select exactly one target source.");
+      if (visibility.blindFireHex) {
+        const center = canvas?.grid?.getCenterPoint?.(visibility.blindFireHex);
+        const distance = measureCanvasPointDistanceYards(token, center);
+        if (!Number.isFinite(distance)) throw new Error("Unable to measure selected hex.");
+        rawShotOptions = { ...rawShotOptions, targetDistanceOverride: distance };
+      } else {
+        const targets = [...(game.user?.targets ?? [])];
+        if (targets.length !== 1 || targets[0]?.id !== visibility.targetTokenId ||
+            !["approximate", "exact"].includes(visibility.location))
+          throw new Error("Selected Token is no longer available.");
+        const distance = measureTokenDistanceYards(token, targets[0]);
+        if (!Number.isFinite(distance)) throw new Error("Unable to measure selected Token.");
+        rawShotOptions = { ...rawShotOptions, targetDistanceOverride: distance };
+      }
+    }
+    if (visibility?.mode === "blind" && !visibility.knownLocation) {
+      if (!visibility.hex) throw new Error("\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043f\u0440\u0435\u0434\u043f\u043e\u043b\u0430\u0433\u0430\u0435\u043c\u044b\u0439 \u0433\u0435\u043a\u0441.");
+      const center = canvas?.grid?.getCenterPoint?.(visibility.hex);
+      const distance = measureCanvasPointDistanceYards(token, center);
+      if (!Number.isFinite(distance)) throw new Error("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0438\u0437\u043c\u0435\u0440\u0438\u0442\u044c \u0434\u0438\u0441\u0442\u0430\u043d\u0446\u0438\u044e \u0434\u043e \u0433\u0435\u043a\u0441\u0430.");
+      rawShotOptions = { ...rawShotOptions, targetDistanceOverride: distance };
+    }
     await repairState(state, false);
 
     const { weapon, attack } = getWeaponContext(state, weaponId);
@@ -752,13 +819,16 @@ export async function openAmmoManager() {
     }
 
     const rangeBands = getRangeBands();
-    const effectRangePenalty = getTaggedModifierSettings()?.autoAdd
+    const effectRangePenalty = getTaggedModifierSettings()?.autoAdd && visibility?.mode !== "unseen" && !visibility?.hex
       ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
       : null;
     const shotOptions = parseShotOptions(weapon, attack, rawShotOptions, rangeBands, targetingService, effectRangePenalty);
     if (!shotOptions) return false;
 
-    const result = await executeRangedAttack(attack, shotOptions);
+    const result = visibility?.mode === "unseen" && visibility.blindFireHex ||
+      visibility?.mode === "blind" && !visibility.knownLocation
+      ? await withClearedFoundryTargets(() => executeRangedAttack(attack, shotOptions))
+      : await executeRangedAttack(attack, shotOptions);
     if (!result.rolled) {
       ui.notifications.warn(
         "Бросок атаки не был выполнен. Патроны не списаны."
@@ -796,6 +866,8 @@ export async function openAmmoManager() {
       closeDamage,
       hitLocationText,
       randomHitLocations,
+      blindHex: visibility?.mode === "unseen" ? visibility.blindFireHex
+        : visibility?.mode === "blind" && !visibility.knownLocation ? visibility.hex : null,
       loadedAfter: weapon.magazines[weapon.loadedIndex],
       capacity: weapon.capacity,
       totalAmmo: weapon.totalAmmo
@@ -1796,7 +1868,7 @@ export async function openAmmoManager() {
     return (ratio * 120).toFixed(2);
   }
 
-  async function openFirePreparation(state, weaponId, managerApp) {
+  async function openFirePreparation(state, weaponId, managerApp, initialVisibility = null) {
     await repairState(state, false);
     const { weapon, attack } = getWeaponContext(state, weaponId);
     if (!attack) {
@@ -1812,11 +1884,14 @@ export async function openAmmoManager() {
     const preparationKey = `${canvas?.scene?.id ?? "scene"}:${token.document?.id ?? token.id}:${weapon.id}`;
     const existing = OPEN_FIRE_PREPARATIONS.get(preparationKey);
     if (existing?.rendered) {
-      existing.bringToTop();
+      existing.placementApps = [managerApp];
+      if (initialVisibility) await existing.activateVisibility(initialVisibility);
+      else await existing.activateVisibility(null);
       return existing;
     }
 
     const rangeBands = getRangeBands();
+    if (initialVisibility?.mode === "unseen") await clearFoundryTargets();
 
     const targetSelectionKey = `${actor.id}:${weapon.id}`;
     const initialBodyplan = LAST_FIRE_BODYPLANS.get(targetSelectionKey) ?? "humanoid";
@@ -1838,6 +1913,9 @@ export async function openAmmoManager() {
       beamWeapon: isBeamWeapon(attack),
       targetingService,
       targetedAttackContext,
+      initialVisibility,
+      placementApps: [managerApp],
+      onHearingCheck: manualLevel => checkHearingMinusTwo(actor, manualLevel),
       initialGoverningSpecialty: weapon.governingSpecialty,
       maximumShots: getMaximumShots(attack, loaded),
       rateOfFireProfile,
@@ -1900,6 +1978,16 @@ export async function openAmmoManager() {
   }
 
   async function openSuppressionFire(state, weaponId, managerApp) {
+    const selectionKey = [canvas?.scene?.id, token.document?.id ?? token.id, game.user?.id].join(":");
+    const selecting = OPEN_SPRAYING_SELECTIONS.get(selectionKey);
+    if (selecting) {
+      selecting.controller.abort();
+      await selecting.promise.catch(() => null);
+    }
+    const specialOwner = getSpecialFireOwner({ token, actor });
+    if (specialOwner?.type === "spraying") {
+      throw new Error("\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u0435 \u0438\u043b\u0438 \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u0435 \u0442\u0435\u043a\u0443\u0449\u0438\u0439 \u0440\u0435\u0436\u0438\u043c \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b");
+    }
     await repairState(state, false);
     const { weapon, attack } = getWeaponContext(state, weaponId);
     if (!attack) throw new Error(`No linked ranged attack was found for "${weapon.name}".`);
@@ -1913,6 +2001,9 @@ export async function openAmmoManager() {
 
     const sessionService = new SuppressionFireSessionService({ token, actor, weapon, attack });
     const restoredSession = await sessionService.loadExisting();
+    if (specialOwner && !restoredSession) {
+      throw new Error("\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u0435 \u0438\u043b\u0438 \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u0435 \u0442\u0435\u043a\u0443\u0449\u0438\u0439 \u0440\u0435\u0436\u0438\u043c \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b");
+    }
     const capacity = getSuppressionFireCapacity({
       profile: fireService.parseRateOfFire(attack.rof),
       loaded: weapon.magazines[weapon.loadedIndex],
@@ -1971,6 +2062,198 @@ export async function openAmmoManager() {
       throw error;
     }
   }
+
+  async function openSprayingFire(state, weaponId, managerApp) {
+    const currentState = await loadState();
+    await repairState(currentState, false);
+    const { weapon, attack } = getWeaponContext(currentState, weaponId);
+    if (!attack) throw new Error("\u041d\u0435 \u0432\u044b\u0431\u0440\u0430\u043d\u043e \u043f\u043e\u0434\u0445\u043e\u0434\u044f\u0449\u0435\u0435 \u043e\u0440\u0443\u0436\u0438\u0435");
+    const key = (canvas?.scene?.id ?? "scene") + ":" + token.id + ":" + weapon.id;
+    const open = OPEN_SPRAYING_FIRE.get(key);
+    if (open?.rendered) { open.bringToTop(); return open; }
+    const selectionKey = [canvas?.scene?.id, token.document?.id ?? token.id, game.user?.id].join(":");
+    const previousSelection = OPEN_SPRAYING_SELECTIONS.get(selectionKey);
+    if (previousSelection) {
+      previousSelection.controller.abort();
+      await previousSelection.promise.catch(() => null);
+    }
+    const service = new SprayingFireSessionService({ token, actor, weapon, attack });
+    await service.discardUnconfirmed();
+    let session = service.findExisting();
+    const capacity = sprayingCapacity(fireService.parseRateOfFire(attack.rof),
+      weapon.magazines[weapon.loadedIndex], weapon.totalAmmo);
+    if (!session && !capacity.eligible) throw new Error(capacity.reason);
+    const rangeBands = getRangeBands();
+    if (!session) {
+      const modeIndex = capacity.usableModes[0].index;
+      const direction = "left-to-right";
+      while (true) {
+        const controller = new AbortController();
+        const picker = selectSprayingTargets(token, [managerApp], globalThis, controller.signal);
+        OPEN_SPRAYING_SELECTIONS.set(selectionKey, { controller, promise: picker });
+        let picked;
+        try { picked = await picker; }
+        finally {
+          if (OPEN_SPRAYING_SELECTIONS.get(selectionKey)?.promise === picker) {
+            OPEN_SPRAYING_SELECTIONS.delete(selectionKey);
+          }
+        }
+        if (!picked) return null;
+        const profile = fireService.parseRateOfFire(attack.rof);
+        const mode = profile.type === "full-auto" ? profile.modes[modeIndex] : {
+          index: 0, fullRoF: profile.baseRoF, minRoF: 1
+        };
+        const plan = planSprayingFire({
+          source: token, targets: picked, direction,
+          fullRoF: mode.fullRoF, minRoF: mode.minRoF
+        });
+        const currentAmmo = await service.currentAmmo();
+        const available = Math.min(currentAmmo.loaded, currentAmmo.total);
+        if (!plan.valid || plan.minimum > available) {
+          ui.notifications.warn(plan.minimum > available
+            ? "\u041d\u0435\u0434\u043e\u0441\u0442\u0430\u0442\u043e\u0447\u043d\u043e \u0431\u043e\u0435\u043f\u0440\u0438\u043f\u0430\u0441\u043e\u0432 \u0434\u043b\u044f \u044d\u0442\u0438\u0445 \u0446\u0435\u043b\u0435\u0439"
+            : "\u0426\u0435\u043b\u0438 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u0434\u0430\u043b\u0435\u043a\u043e \u0434\u0440\u0443\u0433 \u043e\u0442 \u0434\u0440\u0443\u0433\u0430 \u0434\u043b\u044f RoF");
+          continue;
+        }
+        const snapshots = new Map(picked.map(target => {
+          const document = target.document;
+          return [target.id, {
+            tokenId: target.id, sceneId: canvas.scene.id,
+            name: getSafeTargetName(target),
+            geometry: {
+              id: target.id, x: document.x, y: document.y,
+              width: document.width, height: document.height, elevation: document.elevation
+            },
+            elevation: document.elevation, shots: 1, modifier: 0,
+            manualDistance: null, heightOverride: null, highGroundOverride: null,
+            completed: false, traverseDistance: 0, wastedShots: 0, usedSnapshot: null
+          }];
+        }));
+        const targets = plan.rows.map(row => {
+          const snapshot = snapshots.get(row.target.id);
+          snapshot.traverseDistance = row.traverseDistance;
+          snapshot.wastedShots = row.wastedShots;
+          return snapshot;
+        });
+        targets[0].shots += Math.max(0, mode.minRoF - (targets.length + plan.waste));
+        session = await service.createPlanned({
+          modeIndex, direction, targets,
+          plannedAmmo: Math.max(mode.minRoF, targets.length + plan.waste)
+        });
+        break;
+      }
+    }
+    const targetingService = await TargetingService.create({
+      attack, bodyplan: LAST_FIRE_BODYPLANS.get(actor.id + ":" + weapon.id) ?? "humanoid"
+    });
+    const app = new SprayingFireApp({
+      token, actor, weapon, attack, fireService, fireContext: {
+        getFireModeState, calculateEffectiveFireSkillDetails, getFireBonuses,
+        getTaggedModifierSettings, getGgaTargetRangeRecommendation
+      }, rangeBands, targetingService, targetedAttackContext: createTargetedAttackContext({ actor, attack }),
+      sessionService: service, managerApp,
+      onReselect: () => openSprayingFire(currentState, weaponId, managerApp),
+      onCancel: () => openSpecialFireMenu(currentState, weaponId, managerApp),
+      onComplete: async () => {
+        if (managerApp?.rendered) {
+          managerApp.setManagerState(await loadState());
+          await managerApp.refreshContent();
+        }
+      },
+      onClose: () => OPEN_SPRAYING_FIRE.delete(key)
+    });
+    OPEN_SPRAYING_FIRE.set(key, app);
+    try { await app.render({ force: true }); return app; }
+    catch (error) { OPEN_SPRAYING_FIRE.delete(key); throw error; }
+  }
+
+  function specialFireRegistry(state, weaponId, managerApp) {
+    const context = () => {
+      const latest = actor.getFlag("world", "gurpsAmmoManager") ?? state;
+      const weapon = latest.weapons?.find(entry => entry.id === weaponId);
+      const attack = weapon ? resolveAttack(weapon.attackRef, getRangedAttacks(latest)) : null;
+      const owner = getSpecialFireOwner({ token, actor });
+      const suppression = weapon && attack ? new SuppressionFireSessionService({ token, actor, weapon, attack }).findExisting() : null;
+      const spraying = weapon && attack ? new SprayingFireSessionService({ token, actor, weapon, attack }).findExisting() : null;
+      return { weapon, attack, owner, suppression, spraying };
+    };
+    const availability = (type, check) => {
+      const current = context();
+      if (!token || !canvas?.tokens?.get?.(token.id)) return { available: false, reason: "\u041d\u0435\u0442 \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0433\u043e \u0442\u043e\u043a\u0435\u043d\u0430 \u0441\u0442\u0440\u0435\u043b\u043a\u0430" };
+      if (!actor || !current.weapon || !current.attack) return {
+        available: false, reason: "\u041d\u0435 \u0432\u044b\u0431\u0440\u0430\u043d\u043e \u043f\u043e\u0434\u0445\u043e\u0434\u044f\u0449\u0435\u0435 \u043e\u0440\u0443\u0436\u0438\u0435"
+      };
+      const own = type === "suppression" ? current.suppression : current.spraying;
+      if (current.owner && !own) return {
+        available: false, reason: "\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u0437\u0430\u0432\u0435\u0440\u0448\u0438\u0442\u0435 \u0438\u043b\u0438 \u043e\u0442\u043c\u0435\u043d\u0438\u0442\u0435 \u0442\u0435\u043a\u0443\u0449\u0438\u0439 \u0440\u0435\u0436\u0438\u043c \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b"
+      };
+      if (own) return { available: true, reason: null };
+      const capacity = check(current);
+      return { available: capacity.eligible, reason: capacity.reason };
+    };
+    return [
+      {
+        id: "suppression", label: "Suppression Fire (\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430)",
+        description: "\u041f\u043e\u0434\u0430\u0432\u043b\u044f\u044e\u0449\u0438\u0439 \u043e\u0433\u043e\u043d\u044c",
+        icon: "fa-solid fa-burst", sessionType: "suppressionFireSessions",
+        hasSession: () => !!context().suppression,
+        availability: () => availability("suppression", current => {
+          const result = getSuppressionFireCapacity({
+            profile: fireService.parseRateOfFire(current.attack.rof),
+            loaded: current.weapon.magazines[current.weapon.loadedIndex],
+            totalAmmo: current.weapon.totalAmmo
+          });
+          return { ...result, reason: result.eligible ? null :
+            result.fullRoF < 5
+              ? "\u041d\u0435\u0434\u043e\u0441\u0442\u0430\u0442\u043e\u0447\u043d\u044b\u0439 RoF: \u0442\u0440\u0435\u0431\u0443\u0435\u0442\u0441\u044f 5+"
+              : "\u041d\u0435\u0434\u043e\u0441\u0442\u0430\u0442\u043e\u0447\u043d\u043e \u0431\u043e\u0435\u043f\u0440\u0438\u043f\u0430\u0441\u043e\u0432" };
+        }),
+        open: () => openSuppressionFire(state, weaponId, managerApp)
+      },
+      {
+        id: "spraying", label: "Spraying Fire",
+        description: "\u041f\u0435\u0440\u0435\u043d\u043e\u0441 \u043e\u0433\u043d\u044f \u043f\u043e \u043d\u0435\u0441\u043a\u043e\u043b\u044c\u043a\u0438\u043c \u0446\u0435\u043b\u044f\u043c",
+        icon: "fa-solid fa-arrows-left-right", sessionType: "sprayingFireSessions",
+        hasSession: () => !!context().spraying,
+        availability: () => availability("spraying", current => sprayingCapacity(
+          fireService.parseRateOfFire(current.attack.rof),
+          current.weapon.magazines[current.weapon.loadedIndex], current.weapon.totalAmmo
+        )),
+        open: () => openSprayingFire(state, weaponId, managerApp)
+      },
+      {
+        id: "visibility", label: "\u041e\u0433\u0440\u0430\u043d\u0438\u0447\u0435\u043d\u043d\u0430\u044f \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c",
+        description: "Shooting Blind / \u043d\u0435\u0432\u0438\u0434\u0438\u043c\u0430\u044f \u0446\u0435\u043b\u044c",
+        icon: "fa-solid fa-eye-slash",
+        hasSession: () => false,
+        availability: () => {
+          const current = context();
+          if (!token || !canvas?.tokens?.get?.(token.id) || !current.weapon || !current.attack)
+            return { available: false, reason: "\u041d\u0435\u0442 \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0433\u043e \u043e\u0440\u0443\u0436\u0438\u044f" };
+          return { available: true, reason: null };
+        },
+        open: () => openFirePreparation(state, weaponId, managerApp, { mode: "partial", partialPenalty: -1 })
+      }
+    ];
+  }
+
+  async function openSpecialFireMenu(state, weaponId, managerApp) {
+    const configuredWeapon = state.weapons?.find(entry => entry.id === weaponId);
+    if (configuredWeapon) {
+      await new SprayingFireSessionService({ token, actor, weapon: configuredWeapon })
+        .discardUnconfirmed();
+    }
+    const key = (canvas?.scene?.id ?? "scene") + ":" + token.id + ":" + weaponId;
+    const open = OPEN_SPECIAL_FIRE_MENUS.get(key);
+    if (open?.rendered) { open.bringToTop(); return open; }
+    const app = new SpecialFireMenuApp({
+      registry: specialFireRegistry(state, weaponId, managerApp),
+      onClose: () => OPEN_SPECIAL_FIRE_MENUS.delete(key)
+    }, { id: "olegurps-special-fire-menu-" + token.id + "-" + weaponId });
+    OPEN_SPECIAL_FIRE_MENUS.set(key, app);
+    try { await app.render({ force: true }); return app; }
+    catch (error) { OPEN_SPECIAL_FIRE_MENUS.delete(key); throw error; }
+  }
   function buildManagerContent(state, uiState = {}) {
     const attacks = getRangedAttacks(state);
 
@@ -1982,15 +2265,6 @@ export async function openAmmoManager() {
             const loaded = weapon.magazines[weapon.loadedIndex];
             const loose = looseAmmo(weapon);
             const broken = !attack;
-            const suppressionCapacity = attack ? getSuppressionFireCapacity({
-              profile: fireService.parseRateOfFire(attack.rof),
-              loaded,
-              totalAmmo: weapon.totalAmmo
-            }) : { eligible: false };
-            const suppressionSession = attack
-              ? new SuppressionFireSessionService({ token, actor, weapon, attack }).findExisting()
-              : null;
-            const canOpenSuppression = suppressionCapacity.eligible || !!suppressionSession;
             const loadedHue = magazineLoadHue(loaded, weapon.capacity);
 
             const levelText = attack?.level > 0 ? `Навык ${attack.level}` : "Навык не указан";
@@ -2027,9 +2301,9 @@ export async function openAmmoManager() {
                     Огонь
                   </button>
 
-                  <button type="button" data-ammo-action="suppression-fire" data-weapon-id="${weapon.id}">
+                  <button type="button" data-ammo-action="special-fire-modes" data-weapon-id="${weapon.id}">
                     <i class="fa-solid fa-burst"></i>
-                    Suppression Fire
+                    \u0420\u0435\u0436\u0438\u043c\u044b \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b
                   </button>
 
                   <button type="button" data-ammo-action="spend" data-weapon-id="${weapon.id}" ${loaded <= 0 ? "disabled" : ""}>
@@ -2132,8 +2406,8 @@ export async function openAmmoManager() {
           await openFirePreparation(persistentState, weaponId, managerApp);
           return { changed: false, managerState: persistentState, message: "" };
         }
-        if (action === "suppression-fire") {
-          await openSuppressionFire(persistentState, weaponId, managerApp);
+        if (action === "special-fire-modes") {
+          await openSpecialFireMenu(persistentState, weaponId, managerApp);
           return { changed: false, managerState: persistentState, message: "" };
         }
         let changed = false;

@@ -446,6 +446,10 @@ export class FireService {
         GURPS.ModifierBucket.addModifier(options.allOutAttackBonus, "Тотальная атака (Точная)");
         appliedModifiers.push(`тотальная атака (Точная) +${options.allOutAttackBonus}`);
       }
+      if (options.visibilityPenalty) {
+        GURPS.ModifierBucket.addModifier(options.visibilityPenalty, "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c");
+        appliedModifiers.push(`visibility ${options.visibilityPenalty}`);
+      }
       if (options.manualModifier !== 0) {
         GURPS.ModifierBucket.addModifier(options.manualModifier, "Бонусы/штрафы");
         const sign = options.manualModifier > 0 ? "+" : "";
@@ -465,7 +469,11 @@ export class FireService {
         maximumHits: options.maximumHits,
         contextLabel: options.contextLabel,
         consumeAction: options.consumeAction !== false,
-        maneuver: options.maneuver
+        maneuver: options.maneuver,
+        capLabel: options.capLabel,
+        visibilityPenalty: options.visibilityPenalty,
+        visibilityCapAdjustment: options.visibilityCapAdjustment,
+        concealTargetDetails: options.concealTargetDetails
       });
     } finally {
       try {
