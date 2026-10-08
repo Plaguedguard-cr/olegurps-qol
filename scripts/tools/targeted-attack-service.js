@@ -75,7 +75,7 @@ function parseGunsSkillString(value) {
   const specialty = normalizeGunsSpecialty(match[2]);
   return specialty ? { specialty, label: match[2].trim(), text } : null;
 }
-function flattenEntries(tree, result = [], seen = new Set()) {
+export function flattenEntries(tree, result = [], seen = new Set()) {
   if (!tree || typeof tree !== "object" || seen.has(tree)) return result;
   seen.add(tree);
   if (Array.isArray(tree)) {
@@ -90,7 +90,7 @@ function flattenEntries(tree, result = [], seen = new Set()) {
   }
   return result;
 }
-function finiteLevel(entry) {
+export function finiteLevel(entry) {
   for (const key of ["level", "import"]) {
     const source = entry?.[key];
     if (source === null || source === undefined || String(source).trim() === "") continue;
@@ -99,7 +99,7 @@ function finiteLevel(entry) {
   }
   return null;
 }
-function relativeLevel(entry) {
+export function relativeLevel(entry) {
   for (const key of ["relativelevel", "relativeLevel", "relative", "rsl"]) {
     const text = String(entry?.[key] ?? "").trim();
     if (/^[+-]?\d+$/.test(text)) return Number(text);
@@ -118,7 +118,7 @@ function firstCanonicalValue(values, normalizer) {
   }
   return null;
 }
-function specialtyFromPrerequisite(value) {
+export function specialtyFromPrerequisite(value) {
   if (Array.isArray(value)) {
     for (const entry of value) {
       const parsed = specialtyFromPrerequisite(entry);
@@ -192,7 +192,7 @@ function skillIdentityValues(skill) {
   return [skill?.uuid, skill?.id, skill?._id, skill?.itemid, skill?.itemId]
     .filter(value => value !== null && value !== undefined && String(value).trim() !== "").map(String);
 }
-function collectGunsSkills(actor) {
+export function collectGunsSkills(actor) {
   const result = [];
   for (const entry of flattenEntries(actor?.system?.skills)) {
     const parsed = parseGunsSkillString(entry?.name) ?? parseGunsSkillString(entry?.originalName);
@@ -209,7 +209,7 @@ function collectTechniques(actor) {
 function collectValues(source, keys) {
   return keys.map(key => source?.[key]).filter(value => value !== null && value !== undefined && value !== "");
 }
-function explicitAttackSpecialties(attack, gunsSkills) {
+export function explicitAttackSpecialties(attack, gunsSkills) {
   const sources = [attack, attack?.data].filter(Boolean);
   const idKeys = ["skilluuid", "skillUuid", "skillid", "skillId", "governingSkillUuid", "governingSkillId",
     "defaultSkillUuid", "defaultSkillId", "parentuuid"];
@@ -253,14 +253,17 @@ export function createTargetedAttackContext({ actor, attack, mode = "weapon" } =
     requiresSelection,
     specialtyOptions: enabled ? specialtyOptions : [],
     techniques,
-    resolve({ specialty, target, basePenalty } = {}) {
+    resolve({ specialty, governingSkill, target, basePenalty } = {}) {
       if (!enabled) return null;
-      const canonicalSpecialty = automaticSpecialty ?? normalizeGunsSpecialty(specialty);
+      const canonicalSpecialty = governingSkill
+        ? (governingSkill.family === "guns" ? governingSkill.specialty : null)
+        : normalizeGunsSpecialty(specialty) ?? automaticSpecialty;
       const targetValues = Array.isArray(target) ? target : [target];
       const canonicalTargets = [...new Set(targetValues.map(normalizeTargetedAttackLocation).filter(Boolean))];
       if (!canonicalSpecialty || canonicalTargets.length === 0) return null;
-      const governing = gunsSkills.filter(skill => skill.specialty === canonicalSpecialty && Number.isFinite(skill.level))
-        .sort((left, right) => right.level - left.level)[0];
+      const matchingSkills = gunsSkills.filter(skill =>
+        skill.specialty === canonicalSpecialty && Number.isFinite(skill.level));
+      const governing = governingSkill ?? (matchingSkills.length === 1 ? matchingSkills[0] : null);
       if (!governing) return null;
       let best = null;
       for (const technique of techniques) {

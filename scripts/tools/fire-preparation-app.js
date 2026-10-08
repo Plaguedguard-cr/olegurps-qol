@@ -1,11 +1,17 @@
-import { createStandaloneAttack, measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
+import { createStandaloneAttack, getTokenFireRangeContext, measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
 import { normalizeVisibility, visibilityRules } from "./limited-visibility.js";
 import { selectBlindFireHex } from "./blind-fire-hex-selection.js";
-import { getSafeTargetName, clearFoundryTargets } from "./foundry-targets.js";
+import { getSafeTargetName, clearFoundryTargets, replaceFoundryTargets } from "./foundry-targets.js";
 import { getFireSkillPreview, skillProbabilityColor } from "./fire-skill-preview.js";
-import { findRangeBandForDistance, resolveElevationRange } from "./fire-range-service.js";
+import { calculateEffectiveDistance, findRangeBandForDistance, resolveElevationRange } from "./fire-range-service.js";
 import { TargetingService } from "./targeting-service.js";
+import { createTargetedAttackContext } from "./targeted-attack-service.js";
+import { listRangedGoverningSkills, resolveRangedGoverningSkill,
+  bindingForGoverningSkill } from "./ranged-governing-skill-service.js";
 import { getAimStatusSeconds } from "./aim-status-effects.js";
+import { getRangedRapidStrikeSpecialties, resolveRangedRapidStrike, validateRangedRapidStrikeSplit } from "./ranged-rapid-strike-service.js";
+import { findCloseHipShooting, resolveCloseHipShooting } from "./close-hip-shooting-service.js";
+import { RangedTechniquesApp } from "./ranged-techniques-app.js";
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
@@ -25,7 +31,19 @@ const FIRE_PREPARATION_CSS = `
   .gam-visibility-location-status { flex: 1 1 180px; min-width: 0; }
   .gam-visibility-breakdown { display: flex; flex-wrap: wrap; gap: 3px 10px; }
   .gam-visibility p { margin: 0; line-height: 1.2; }
-  .gam-fire-rof-container { display: contents; }
+  .gam-fire-rof-container { min-width: 0; }
+  .gam-fire-rof-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  .gam-fire-rof-row.has-rrs-slots { grid-template-columns: minmax(0, 1fr) max-content; }
+  .gam-fire-rof-row .gam-fire-rof-full-auto,
+  .gam-fire-rof-row .gam-fire-rof-multiple { grid-column: auto; }
+  .gam-fire-rof-row .gam-fire-rof-full-auto { flex-wrap: wrap; }
   .gam-fire-manual-stats { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 6px; }
   .gam-fire-manual-stats label { display: inline-flex; align-items: center; gap: 5px; }
   .gam-fire-manual-stats input { width: 68px; margin: 0; }
@@ -129,18 +147,6 @@ const FIRE_PREPARATION_CSS = `
   }
   .gam-fire-field-checkbox input { width: auto; justify-self: start; }
 
-  .gam-fire-toggle-group {
-    display: grid;
-    gap: 4px;
-    min-width: 0;
-  }
-
-  .gam-fire-aim-group {
-    display: grid;
-    gap: 4px;
-    min-width: 0;
-  }
-
   .gam-fire-aim,
   .gam-fire-braced {
     display: grid;
@@ -194,6 +200,23 @@ const FIRE_PREPARATION_CSS = `
     min-width: 82px;
     margin: 0;
   }
+
+  .gam-rrs-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-self: start;
+    gap: 6px;
+    width: max-content;
+    max-width: 100%;
+    min-height: 34px;
+    white-space: nowrap;
+  }
+  .gam-rrs-toggle input { width: auto; margin: 0; }
+  .gam-techniques-button { width: max-content; min-height: 28px; padding: 3px 10px; margin: 0; }
+  .gam-rrs-slots { align-items: center; flex-wrap: nowrap; white-space: nowrap; }
+  .gam-rrs-slots [data-rrs-split] { min-width: 82px; font-variant-numeric: tabular-nums; }
+  .gam-rrs-slots [data-invalid="true"] { color: #e5bd73; }
+
 
   .gam-fire-rof-multiple {
     grid-column: 1 / -1;
@@ -343,6 +366,22 @@ const FIRE_PREPARATION_CSS = `
       rgba(40, 110, 160, 0.18) 50%,
       rgba(155, 38, 38, 0.17) 100%
     );
+  }
+
+  .gam-fire-range-row.gam-rrs-range-1 {
+    border-color: var(--gam-rapid-attack-1, #39a9ff) !important;
+    box-shadow: inset 4px 0 var(--gam-rapid-attack-1, #39a9ff) !important;
+    background: rgba(57, 169, 255, 0.18) !important;
+  }
+  .gam-fire-range-row.gam-rrs-range-2 {
+    border-color: var(--gam-rapid-attack-2, #ff5aa5) !important;
+    box-shadow: inset 4px 0 var(--gam-rapid-attack-2, #ff5aa5) !important;
+    background: rgba(255, 90, 165, 0.18) !important;
+  }
+  .gam-fire-range-row.gam-rrs-range-1.gam-rrs-range-2 {
+    box-shadow: inset 4px 0 var(--gam-rapid-attack-1, #39a9ff),
+      inset -4px 0 var(--gam-rapid-attack-2, #ff5aa5) !important;
+    background: linear-gradient(90deg, rgba(57, 169, 255, 0.18), rgba(255, 90, 165, 0.18)) !important;
   }
 
   .gam-fire-range-penalty { min-width: 34px; text-align: right; }
@@ -593,6 +632,8 @@ const FIRE_PREPARATION_CSS = `
   }
 
   @media (max-width: 560px) {
+    .gam-fire-rof-row.has-rrs-slots { grid-template-columns: minmax(0, 1fr); }
+    .gam-rrs-slots { flex-wrap: wrap; }
     .gam-fire-summary { align-items: flex-start; }
     .gam-fire-fields,
     .gam-fire-actions,
@@ -672,7 +713,9 @@ export class FirePreparationApp extends ApplicationV2 {
     const defaultHitLocation = targetingService.getDefaultSelection();
     const initialRofMode = rateOfFireProfile?.type === "full-auto" ? "0" : null;
     const savedGoverningSpecialty = String(initialGoverningSpecialty ?? "").trim();
-    const governingSpecialty = targetedAttackContext?.automaticSpecialty ??
+    const selectedSkill = resolveRangedGoverningSkill({ actor: this.actor,
+      binding: attack?.governingSkillBinding });
+    const governingSpecialty = selectedSkill?.specialty ?? targetedAttackContext?.automaticSpecialty ??
       (targetedAttackContext?.specialtyOptions.some(option => option.value === savedGoverningSpecialty)
         ? savedGoverningSpecialty
         : "");
@@ -681,7 +724,10 @@ export class FirePreparationApp extends ApplicationV2 {
       shotgun: false,
       projectileMultiplier: "",
       shots: "",
+      rangedRapidStrike: false,
+      closeHipShooting: false,
       governingSpecialty,
+      governingSkillKey: selectedSkill?.key ?? "",
       rofMode: initialRofMode,
       manualModifier: "",
       aimSeconds: this._lastAimStatusSeconds ? String(this._lastAimStatusSeconds) : "",
@@ -690,7 +736,7 @@ export class FirePreparationApp extends ApplicationV2 {
       moveAndAttack: false,
       allOutAttack: false,
       height: "",
-      highGround: false,
+      elevationDirection: "level",
       selectedRangeIndex: null,
       manualRangeSelected: false,
       elevationSourceRangeIndex: null,
@@ -704,12 +750,20 @@ export class FirePreparationApp extends ApplicationV2 {
       this.fireState.shotgun = initialStandaloneValues.shotgun === true;
     }
     if (this.mode === "standalone") this._refreshStandaloneAttack();
+    this._syncTargetElevation();
+    this.recommendation = this._readTargetRangeRecommendation(recommendation);
+    this._rrsSlots = null;
+    this._techniqueApp = null;
+    this._activeRrsSlot = 0;
+    this._switchingRrsTarget = false;
     this._submitting = false;
     this._hexSelectionController = null;
     this._closeNotified = false;
     this._skillPreviewTimer = null;
     this._rangeLayoutObserver = null;
     this._targetHookId = null;
+    this._tokenHookId = null;
+    this._actorHookId = null;
     this._targetRefreshTimer = null;
     this._boundClick = this._onClick.bind(this);
     this._boundInput = this._onInput.bind(this);
@@ -717,6 +771,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this._boundPointerOut = this._onPointerOut.bind(this);
     this._boundKeydown = this._onKeydown.bind(this);
     this._boundTargetToken = this._onTargetToken.bind(this);
+    this._boundTokenUpdate = this._onTokenUpdate.bind(this);
+    this._boundActorUpdate = this._onActorUpdate.bind(this);
   }
 
   async _prepareContext(_options) {
@@ -734,6 +790,8 @@ export class FirePreparationApp extends ApplicationV2 {
   _onRender(context, options) {
     super._onRender(context, options);
     this._registerTargetHook();
+    if (this._actorHookId === null && globalThis.Hooks?.on)
+      this._actorHookId = globalThis.Hooks.on("updateActor", this._boundActorUpdate);
     if (!this._skillPreviewTimer) {
       this._skillPreviewTimer = globalThis.setInterval(() => {
         this._syncAimStatusEffect();
@@ -774,6 +832,7 @@ export class FirePreparationApp extends ApplicationV2 {
     if (this.mode !== "weapon" || !attack) return;
     this._captureFields();
     this.attack = attack;
+    this.targetedAttackContext = createTargetedAttackContext({ actor: this.actor, attack });
     this.rateOfFireProfile = rateOfFireProfile ?? this.parseRateOfFire?.(attack.rof) ?? this.rateOfFireProfile;
     this.maximumShots = maximumShots ?? this.maximumShots;
 
@@ -788,10 +847,15 @@ export class FirePreparationApp extends ApplicationV2 {
     const currentShots = Math.trunc(Number(this.fireState.shots));
     if (!Number.isFinite(currentShots)) this.fireState.shots = String(limits.minShots);
     else this.fireState.shots = String(Math.min(limits.maxShots, Math.max(limits.minShots, currentShots)));
+    if (this.fireState.rangedRapidStrike && !this._rrsAllowed()) {
+      this.fireState.rangedRapidStrike = false;
+      this._rrsSlots = null;
+    }
     await this.render({ force: true });
   }
   async close(options = {}) {
     this._hexSelectionController?.abort();
+    if (this._techniqueApp) await this._techniqueApp.close();
     if (this._skillPreviewTimer) {
       globalThis.clearInterval(this._skillPreviewTimer);
       this._skillPreviewTimer = null;
@@ -801,7 +865,11 @@ export class FirePreparationApp extends ApplicationV2 {
     if (this._targetRefreshTimer) globalThis.clearTimeout(this._targetRefreshTimer);
     this._targetRefreshTimer = null;
     if (this._targetHookId !== null) globalThis.Hooks?.off?.("targetToken", this._targetHookId);
+    if (this._tokenHookId !== null) globalThis.Hooks?.off?.("updateToken", this._tokenHookId);
+    if (this._actorHookId !== null) globalThis.Hooks?.off?.("updateActor", this._actorHookId);
     this._targetHookId = null;
+    this._tokenHookId = null;
+    this._actorHookId = null;
     const result = await super.close(options);
     if (!this._closeNotified) {
       this._closeNotified = true;
@@ -831,6 +899,24 @@ export class FirePreparationApp extends ApplicationV2 {
     this.bringToTop?.();
   }
 
+  _syncTargetElevation() {
+    if (this.visibility?.mode === "unseen" || this.visibility?.mode === "blind" && !this.visibility.knownLocation) return;
+    const targets = [...(globalThis.game?.user?.targets ?? [])];
+    const target = targets.length === 1 ? targets[0] : null;
+    const context = target ? getTokenFireRangeContext({
+      sourceToken: this.token, targetToken: target, rangeBands: this.rangeBands
+    }) : null;
+    if (context) {
+      this.fireState.height = String(context.height);
+      this.fireState.elevationDirection = context.elevationDirection;
+      if (!this.fireState.manualRangeSelected) this.fireState.selectedRangeIndex = context.rangeIndex;
+    } else if (!target && !this.fireState.manualRangeSelected) {
+      this.fireState.selectedRangeIndex = null;
+      this.fireState.height = "";
+      this.fireState.elevationDirection = "level";
+    }
+  }
+
   _readTargetRangeRecommendation(fallback = null) {
     try {
       if (this.visibility?.mode === "unseen") {
@@ -852,6 +938,22 @@ export class FirePreparationApp extends ApplicationV2 {
         const range = findRangeBandForDistance(this.rangeBands, distance);
         return range ? { rangeIndex: range.index, penalty: range.penalty, distance, source: "blind-fire-hex" } : null;
       }
+      const targets = [...(globalThis.game?.user?.targets ?? [])];
+      const target = targets.length === 1 ? targets[0] : null;
+      const context = target ? getTokenFireRangeContext({
+        sourceToken: this.token, targetToken: target, rangeBands: this.rangeBands
+      }) : null;
+      if (context) {
+        const effectiveDistance = calculateEffectiveDistance(context.distance,
+          this.fireState?.height ?? context.height, {
+            elevationDirection: this.fireState?.elevationDirection ?? context.elevationDirection,
+            beamWeapon: this.beamWeapon
+          });
+        const range = findRangeBandForDistance(this.rangeBands, effectiveDistance);
+        return range ? { rangeIndex: range.index, penalty: range.penalty,
+          distance: context.distance, effectiveDistance, source: "physical-target-distance" } : null;
+      }
+      if (this.fireState?.rangedRapidStrike) return null;
       if (typeof this.targetRangeRecommendationProvider === "function") {
         return this.targetRangeRecommendationProvider() ?? null;
       }
@@ -877,10 +979,34 @@ export class FirePreparationApp extends ApplicationV2 {
   _registerTargetHook() {
     if (this._targetHookId !== null || !globalThis.Hooks?.on) return;
     this._targetHookId = globalThis.Hooks.on("targetToken", this._boundTargetToken);
+    if (this._tokenHookId === null)
+      this._tokenHookId = globalThis.Hooks.on("updateToken", this._boundTokenUpdate);
+  }
+
+  _onTokenUpdate(document, change) {
+    if (!["x", "y", "elevation"].some(key => Object.hasOwn(change ?? {}, key))) return;
+    const targets = [...(globalThis.game?.user?.targets ?? [])];
+    const targetId = targets.length === 1 ? targets[0]?.id : null;
+    if (document?.id !== this.token?.id && document?.id !== targetId &&
+        document?.id !== this.visibility?.targetTokenId) return;
+    this._onTargetToken(globalThis.game?.user);
+  }
+
+  _onActorUpdate(updated) {
+    if (updated?.id !== this.actor?.id) return;
+    this._captureFields();
+    this.targetedAttackContext = createTargetedAttackContext({ actor: this.actor, attack: this.attack });
+    this.render({ force: true });
   }
 
   _onTargetToken(user) {
     if (user && globalThis.game?.user && user !== globalThis.game.user) return;
+    if (this._switchingRrsTarget) return;
+    this._syncTargetElevation();
+    if (this.fireState.rangedRapidStrike && this._rrsSlots) {
+      const targets = [...(globalThis.game?.user?.targets ?? [])];
+      this._rrsSlots[this._activeRrsSlot].targetId = targets.length === 1 ? targets[0].id : null;
+    }
     if (this.visibility?.mode === "unseen" && this.visibility.targetTokenId &&
         ![...(globalThis.game?.user?.targets ?? [])].some(target => target.id === this.visibility.targetTokenId)) {
       this.visibility.targetTokenId = null;
@@ -894,6 +1020,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this._targetRefreshTimer = globalThis.setTimeout(() => {
       this._targetRefreshTimer = null;
       this._updateTargetRecommendation();
+      this._saveActiveRrsSlot();
+      if (this.rendered) this.render({ force: true });
     }, 40);
   }
 
@@ -906,6 +1034,7 @@ export class FirePreparationApp extends ApplicationV2 {
       : null;
     const summary = this.element?.querySelector("[data-target-recommendation]");
     if (summary) summary.textContent = this._formatTargetRecommendation();
+    this._updateRrsRangeMarkers();
     for (const row of this.element?.querySelectorAll("[data-range-index]") ?? []) {
       const recommended = recommendedIndex === Number(row.dataset.rangeIndex);
       row.classList.toggle("recommended", recommended);
@@ -944,9 +1073,11 @@ export class FirePreparationApp extends ApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
     this.fireState.shots = root.querySelector('[name="shots"]')?.value ?? "";
+    const rrsField = root.querySelector('[name="rangedRapidStrike"]');
+    if (rrsField) this.fireState.rangedRapidStrike = !!rrsField.checked;
     this.fireState.rofMode = root.querySelector('[name="rofMode"]')?.value ?? this.fireState.rofMode;
-    this.fireState.governingSpecialty = root.querySelector('[name="governingSpecialty"]')?.value ??
-      this.fireState.governingSpecialty;
+    this.fireState.governingSkillKey = root.querySelector('[name="governingSkillKey"]')?.value ??
+      this.fireState.governingSkillKey;
     this.fireState.manualModifier = root.querySelector('[name="manualModifier"]')?.value ?? "";
     const hearingField = root.querySelector('[name="manualHearing"]');
     if (hearingField) this.manualHearingLevel = hearingField.value;
@@ -957,7 +1088,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this.fireState.allOutAttack = !!root.querySelector('[name="allOutAttack"]')?.checked;
     if (this.fireState.moveAndAttack && this.fireState.allOutAttack) this.fireState.allOutAttack = false;
     this.fireState.height = root.querySelector('[name="height"]')?.value ?? "";
-    this.fireState.highGround = !!root.querySelector('[name="highGround"]')?.checked;
+    this.fireState.elevationDirection = root.querySelector('[name="highGround"]')?.checked ? "high"
+      : root.querySelector('[name="lowGround"]')?.checked ? "low" : "level";
     if (this.mode === "standalone") {
       for (const name of ["skillLevel", "acc", "bulk", "rcl", "halfd", "projectileMultiplier"]) {
         this.fireState[name] = root.querySelector(`[name="${name}"]`)?.value ?? this.fireState[name];
@@ -996,6 +1128,9 @@ export class FirePreparationApp extends ApplicationV2 {
       : selectedToken ? measureTokenDistanceYards(this.token, selectedToken) : null;
     return {
       shots: this._getShotsValue(),
+      rangedRapidStrike: this.fireState.rangedRapidStrike,
+      closeHipShooting: this.fireState.closeHipShooting,
+      rangedRapidStrikePart: this.fireState.rangedRapidStrike,
       rofMode: this.fireState.rofMode,
       governingSpecialty: this.fireState.governingSpecialty,
       shotgun: this.fireState.shotgun,
@@ -1009,7 +1144,7 @@ export class FirePreparationApp extends ApplicationV2 {
       moveAndAttack: this.fireState.moveAndAttack,
       allOutAttack: this.fireState.allOutAttack,
       height: this.fireState.height,
-      highGround: this.fireState.highGround,
+      elevationDirection: this.fireState.elevationDirection,
       rangeIndex: this.fireState.selectedRangeIndex,
       manualRangeSelected: this.fireState.manualRangeSelected,
       bodyplanId: this.fireState.bodyplanId,
@@ -1018,15 +1153,156 @@ export class FirePreparationApp extends ApplicationV2 {
     };
   }
 
+  _getTechniqueContext() {
+    const governingSkill = this._getGoverningSkill();
+    const rrs = resolveRangedRapidStrike({ actor: this.actor, attack: this.attack,
+      governingSkill, governingSpecialty: governingSkill?.specialty ?? this.fireState.governingSpecialty });
+    const closeHipApplied = this.fireState.closeHipShooting
+      ? resolveCloseHipShooting({ actor: this.actor, attack: this.attack,
+        governingSkill, enabled: true }) : null;
+    return { actor: this.actor, attack: this.attack, governingSkill,
+      fireState: this.fireState, rrsAvailable: this._rrsAllowed(), rrsPenalty: rrs.penalty,
+      closeHipApplied };
+  }
+
+  async _openTechniques() {
+    if (this.mode !== "weapon") return;
+    if (!this._techniqueApp) this._techniqueApp = new RangedTechniquesApp({
+      getContext: () => this._getTechniqueContext(),
+      onToggle: (id, checked) => this._setTechniqueActive(id, checked),
+      onClose: () => { this._techniqueApp = null; }
+    });
+    await this._techniqueApp.render({ force: true });
+    this._techniqueApp.bringToFront();
+  }
+
+  async _setTechniqueActive(id, checked) {
+    this._captureFields();
+    if (id === "rangedRapidStrike") {
+      if (checked && this._rrsAllowed()) this._enableRrs();
+      else { this.fireState.rangedRapidStrike = false; this._rrsSlots = null; }
+    } else if (id === "closeHipShooting") {
+      const available = findCloseHipShooting({ actor: this.actor,
+        governingSkill: this._getGoverningSkill() });
+      this.fireState.closeHipShooting = Boolean(checked && available);
+    } else return;
+    await this.render({ force: true });
+    this._techniqueApp?.syncRows();
+    this._techniqueApp?.bringToFront();
+  }
+
+  _availableRrsRoF() {
+    const limits = this.calculateShotLimits?.(this.fireState.rofMode);
+    return Math.max(0, Math.trunc(Number(limits?.maxShots ?? this.maximumShots) || 0));
+  }
+
+  _rrsAllowed() { return this.mode === "weapon" && this._availableRrsRoF() >= 2; }
+
+  _snapshotRrsSlot() {
+    const targets = [...(globalThis.game?.user?.targets ?? [])];
+    return {
+      shots: String(this.fireState.shots || "1"),
+      hitLocation: { ...this.fireState.hitLocation },
+      selectedRangeIndex: this.fireState.selectedRangeIndex,
+      manualRangeSelected: this.fireState.manualRangeSelected,
+      height: this.fireState.height,
+      elevationDirection: this.fireState.elevationDirection,
+      targetId: targets.length === 1 ? targets[0].id : null,
+      distance: this.recommendation?.distance ?? null,
+      visibility: this.visibility ? { ...this.visibility } : null
+    };
+  }
+
+  _saveActiveRrsSlot() {
+    if (this.fireState.rangedRapidStrike && this._rrsSlots)
+      this._rrsSlots[this._activeRrsSlot] = this._snapshotRrsSlot();
+  }
+
+  _getRrsRangeMarkers(rangeIndex) {
+    if (!this.fireState.rangedRapidStrike || !this._rrsSlots) return [];
+    return this._rrsSlots.flatMap((slot, index) => {
+      const selectedIndex = index === this._activeRrsSlot
+        ? this.fireState.selectedRangeIndex : slot.selectedRangeIndex;
+      return selectedIndex === rangeIndex ? [index + 1] : [];
+    });
+  }
+
+  _buildRrsRangeMarkers(markers) {
+    return markers.map(index => `<span class="gam-hit-selection-marker gam-rapid-attack-${index} ${index === this._activeRrsSlot + 1 ? "is-active" : ""}"
+      title="Attack ${index}" aria-label="Attack ${index}"></span>`).join("");
+  }
+
+  _updateRrsRangeMarkers() {
+    for (const row of this.element?.querySelectorAll(".gam-fire-range-row[data-range-index]") ?? []) {
+      const markers = this._getRrsRangeMarkers(Number(row.dataset.rangeIndex));
+      row.classList.toggle("gam-rrs-range-1", markers.includes(1));
+      row.classList.toggle("gam-rrs-range-2", markers.includes(2));
+      const container = row.querySelector("[data-rrs-range-markers]");
+      if (container) container.innerHTML = this._buildRrsRangeMarkers(markers);
+    }
+  }
+
+  _applyRrsSlot(slot) {
+    this.fireState.shots = slot.shots;
+    this.fireState.hitLocation = { ...slot.hitLocation };
+    this.fireState.selectedRangeIndex = slot.selectedRangeIndex;
+    this.fireState.manualRangeSelected = slot.manualRangeSelected;
+    this.fireState.height = slot.height;
+    this.fireState.elevationDirection = slot.elevationDirection;
+    this.visibility = slot.visibility ? { ...slot.visibility } : null;
+  }
+
+  async _switchRrsSlot(index) {
+    if (!this._rrsSlots || index === this._activeRrsSlot || ![0, 1].includes(index)) return;
+    this._captureFields();
+    this._saveActiveRrsSlot();
+    this._activeRrsSlot = index;
+    const slot = this._rrsSlots[index];
+    this._applyRrsSlot(slot);
+    this._switchingRrsTarget = true;
+    try { await replaceFoundryTargets(slot.targetId ? [slot.targetId] : []); }
+    finally { this._switchingRrsTarget = false; }
+    this.recommendation = this._readTargetRangeRecommendation();
+    await this.render({ force: true });
+  }
+
+  _enableRrs() {
+    const total = Math.max(2, Math.min(this._availableRrsRoF(), Math.trunc(Number(this.fireState.shots) || 2)));
+    const first = Math.max(1, Math.ceil(total / 2));
+    const current = this._snapshotRrsSlot();
+    this._rrsSlots = [
+      { ...current, shots: String(first) },
+      { ...current, shots: String(total - first), targetId: null, distance: null,
+        selectedRangeIndex: null, manualRangeSelected: false, height: "", elevationDirection: "level",
+        hitLocation: { ...current.hitLocation }, visibility: current.visibility ? { ...current.visibility, targetTokenId: null } : null }
+    ];
+    this._activeRrsSlot = 0;
+    this.fireState.shots = String(first);
+    this.fireState.rangedRapidStrike = true;
+  }
+
+  getRrsShotOptions() {
+    this._saveActiveRrsSlot();
+    const shared = this.getShotOptions();
+    return this._rrsSlots?.map((slot, index) => ({
+      ...shared, shots: slot.shots, hitLocationId: slot.hitLocation.zoneId,
+      hitRegionId: slot.hitLocation.regionId, rangeIndex: slot.selectedRangeIndex,
+      manualRangeSelected: slot.manualRangeSelected, height: slot.height,
+      elevationDirection: slot.elevationDirection, targetDistanceOverride: slot.distance,
+      visibility: slot.visibility, targetTokenId: slot.targetId,
+      rangedRapidStrike: true, rangedRapidStrikePart: true,
+      contextLabel: "Attack " + (index + 1)
+    })) ?? [];
+  }
   _getShotLimits(fireState = this.fireState) {
     const calculated = this.calculateShotLimits?.(fireState.rofMode);
     const fallbackMax = Math.max(1, Math.trunc(Number(this.maximumShots) || 1));
-    const minShots = Math.max(1, Math.trunc(Number(calculated?.minShots) || 1));
+    const minShots = fireState.rangedRapidStrike ? 1 : Math.max(1, Math.trunc(Number(calculated?.minShots) || 1));
     const unlimited = this.mode === "standalone" && calculated?.maxShots == null;
     const maxShots = unlimited
       ? null
       : Math.max(minShots, Math.trunc(Number(calculated?.maxShots) || fallbackMax));
-    return { ...calculated, minShots, maxShots };
+    return { ...calculated, minShots, maxShots: fireState.rangedRapidStrike ? Math.max(1, maxShots - 1) : maxShots };
   }
 
   _syncShotLimits({ clamp = false } = {}) {
@@ -1069,6 +1345,13 @@ export class FirePreparationApp extends ApplicationV2 {
     return getFireSkillPreview(this.calculateEffectiveSkill?.(
       this.getShotOptions(), this.targetingService
     ));
+  }
+  _getModifierTotalText() {
+    const base = Number(this.attack?.level);
+    const effective = this.calculateEffectiveSkill?.(this.getShotOptions(), this.targetingService);
+    if (!Number.isFinite(base) || base <= 0 || !Number.isFinite(effective)) return "\u2014";
+    const total = Math.trunc(effective - base);
+    return total > 0 ? `+${total}` : String(total);
   }
   _getAimBonus(fireState = this.fireState) {
     if (visibilityRules(this.visibility)?.aimAllowed === false) return 0;
@@ -1185,10 +1468,8 @@ export class FirePreparationApp extends ApplicationV2 {
     const displayedRoF = this._getDisplayedRoF(fireMode);
     const rof = this.element?.querySelector("[data-rof-preview]");
     const effective = this.element?.querySelector("[data-effective-rof]");
-    const preview = this.element?.querySelector("[data-rapid-preview]");
     if (rof) rof.textContent = displayedRoF;
     if (effective) effective.textContent = String(fireMode.effectiveRoF);
-    if (preview) preview.textContent = `+${fireMode.rapidFireBonus}`;
     this._updateAttackStats(fireMode);
   }
 
@@ -1199,16 +1480,39 @@ export class FirePreparationApp extends ApplicationV2 {
     const { level, chance, probability } = this._getSkillPreview();
     preview.textContent = `${level} (${chance}%)`;
     preview.style.color = skillProbabilityColor(probability);
+    const total = this.element?.querySelector("[data-total-modifier]");
+    if (total) total.textContent = this._getModifierTotalText();
+    this._updateRrsPreview();
     const breakdown = this.element?.querySelector("[data-visibility-breakdown]");
     if (breakdown && this.visibility) breakdown.innerHTML = this._buildVisibilityBreakdown();
   }
 
+  _updateRrsPreview() {
+    const checkbox = this.element?.querySelector('[name="rangedRapidStrike"]');
+    if (checkbox) {
+      checkbox.disabled = !this._rrsAllowed();
+      checkbox.title = checkbox.disabled ? "Ranged Rapid Strike requires RoF 2+ and two available shots." : "";
+    }
+    const label = this.element?.querySelector("[data-rrs-penalty]");
+    if (label) label.textContent = String(resolveRangedRapidStrike({ actor: this.actor,
+      attack: this.attack, governingSkill: this._getGoverningSkill(),
+      governingSpecialty: this._getGoverningSkill()?.specialty ?? this.fireState.governingSpecialty }).penalty);
+    this._techniqueApp?.syncRows();
+    const split = this.element?.querySelector("[data-rrs-split]");
+    if (split && this._rrsSlots) {
+      const shots = this._rrsSlots.map((slot, index) =>
+        index === this._activeRrsSlot ? Number(this.fireState.shots) : Number(slot.shots));
+      split.textContent = shots.join(" + ") + " / " + this._availableRrsRoF();
+      split.dataset.invalid = String(!validateRangedRapidStrikeSplit(shots[0], shots[1], this._availableRrsRoF()));
+    }
+  }
   _getElevationCalculation(fireState = this.fireState) {
     return resolveElevationRange({
       rangeBands: this.rangeBands,
       rangeIndex: fireState.selectedRangeIndex ?? fireState.elevationSourceRangeIndex,
+      distance: fireState.manualRangeSelected ? null : this.recommendation?.distance,
       height: fireState.height,
-      highGround: fireState.highGround,
+      elevationDirection: fireState.elevationDirection,
       beamWeapon: this.beamWeapon
     });
   }
@@ -1271,6 +1575,7 @@ export class FirePreparationApp extends ApplicationV2 {
       if (marker) marker.hidden = !selected;
     }
     this._updateElevationPreview();
+    this._updateRrsRangeMarkers();
     this._updateRapidFirePreview();
     this._updateSkillPreview();
   }
@@ -1294,6 +1599,7 @@ export class FirePreparationApp extends ApplicationV2 {
       region.classList.toggle("is-selected", selected);
       region.setAttribute("aria-pressed", String(selected));
     }
+    this._updateRrsHitLocationMarkers();
     this._updateTargetedAttackPreview();
     this._updateSkillPreview();
   }
@@ -1319,6 +1625,9 @@ export class FirePreparationApp extends ApplicationV2 {
       this.targetingService = service;
       this.fireState.bodyplanId = service.bodyplan;
       this.fireState.hitLocation = { ...service.getDefaultSelection() };
+      if (this.fireState.rangedRapidStrike && this._rrsSlots) {
+        for (const slot of this._rrsSlots) slot.hitLocation = { ...this.fireState.hitLocation };
+      }
 
       const targeting = this.element?.querySelector(".gam-fire-targeting");
       if (targeting) targeting.outerHTML = this._buildHitLocationContent(this.fireState);
@@ -1394,6 +1703,14 @@ export class FirePreparationApp extends ApplicationV2 {
   async _onInput(event) {
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
+    if (field.name === "rangedRapidStrike") {
+      if (event.type !== "change") return;
+      this._captureFields();
+      if (field.checked && this._rrsAllowed()) this._enableRrs();
+      else { this.fireState.rangedRapidStrike = false; this._rrsSlots = null; }
+      await this.render({ force: true });
+      return;
+    }
     if (field.name === "visibilityMode") {
       this._captureFields();
       this.visibility = normalizeVisibility({ mode: field.value, partialPenalty: -1, accustomed: false });
@@ -1450,9 +1767,16 @@ export class FirePreparationApp extends ApplicationV2 {
       }
     }
     else if (field.name === "rofMode") this.fireState.rofMode = field.value;
-    else if (field.name === "governingSpecialty") {
-      const changed = this.fireState.governingSpecialty !== field.value;
-      this.fireState.governingSpecialty = field.value;
+    else if (field.name === "governingSkillKey") {
+      const changed = this.fireState.governingSkillKey !== field.value;
+      const skill = listRangedGoverningSkills(this.actor).find(entry => entry.key === field.value);
+      this.fireState.governingSkillKey = skill?.key ?? "";
+      this.fireState.governingSpecialty = skill?.specialty ?? "";
+      this.attack.governingSkillBinding = bindingForGoverningSkill(skill);
+      if (this.fireState.closeHipShooting && !findCloseHipShooting({ actor: this.actor, governingSkill: skill }))
+        this.fireState.closeHipShooting = false;
+      const source = this.element?.querySelector("[data-source-skill]");
+      if (source) source.textContent = "\u0417\u043d\u0430\u0447\u0435\u043d\u0438\u0435 \u0443\u043c\u0435\u043d\u0438\u044f: Ranged Weapon Level " + (this.attack?.level ?? "");
       this._updateTargetedAttackPreview();
       if (changed) this._persistGoverningSpecialty(field.value);
     }
@@ -1483,20 +1807,33 @@ export class FirePreparationApp extends ApplicationV2 {
       const numericHeight = Number(String(field.value).replace(",", "."));
       if (field.value !== "" && Number.isFinite(numericHeight) && numericHeight < 0) field.value = "0";
       this.fireState.height = field.value;
-    } else if (field.name === "highGround") {
-      this.fireState.highGround = field.checked;
+    } else if (field.name === "highGround" || field.name === "lowGround") {
+      if (field.checked) {
+        const other = this.element?.querySelector(field.name === "highGround" ? '[name="lowGround"]' : '[name="highGround"]');
+        if (other) other.checked = false;
+      }
+      this.fireState.elevationDirection = field.checked ? field.name === "highGround" ? "high" : "low" : "level";
     }
     if (field.name === "shots" || field.name === "rofMode") {
+      if (field.name === "rofMode" && this.fireState.rangedRapidStrike && !this._rrsAllowed()) {
+        this.fireState.rangedRapidStrike = false; this._rrsSlots = null;
+      }
       this._syncShotLimits({ clamp: field.name === "rofMode" || event.type === "change" });
       this._updateRapidFirePreview();
+      this._updateRrsPreview();
     }
     if (field.name === "aimSeconds" || field.name === "braced" || field.name === "laserSight" || field.name === "moveAndAttack" || field.name === "allOutAttack") this._updateAimPreview();
-    if (field.name === "height" || field.name === "highGround") this._updateElevationPreview();
+    if (field.name === "height" || field.name === "highGround" || field.name === "lowGround") {
+      this._updateElevationPreview();
+      this._updateTargetRecommendation();
+    }
     this._updateSkillPreview();
   }
 
   async _onClick(event) {
     const target = event.target instanceof Element ? event.target : null;
+    const rrsSlot = target?.closest("[data-rrs-slot]");
+    if (rrsSlot) { event.preventDefault(); await this._switchRrsSlot(Number(rrsSlot.dataset.rrsSlot)); return; }
     const hitControl = this._getHitControl(target);
     if (hitControl) {
       event.preventDefault();
@@ -1521,6 +1858,10 @@ export class FirePreparationApp extends ApplicationV2 {
     event.stopPropagation();
     if (button.dataset.fireAction === "cancel") {
       await this.close();
+      return;
+    }
+    if (button.dataset.fireAction === "techniques") {
+      await this._openTechniques();
       return;
     }
     if (button.dataset.fireAction === "exit-visibility") {
@@ -1650,13 +1991,21 @@ export class FirePreparationApp extends ApplicationV2 {
     this._submitting = true;
     button.disabled = true;
     try {
-      const completed = await this.confirmCallback?.(this.getShotOptions(), this.targetingService);
+      const options = this.fireState.rangedRapidStrike ? this.getRrsShotOptions() : this.getShotOptions();
+      if (Array.isArray(options) && !validateRangedRapidStrikeSplit(
+        Number(options[0]?.shots), Number(options[1]?.shots), this._availableRrsRoF())) {
+        globalThis.ui?.notifications?.warn?.("Ranged Rapid Strike: split available RoF between both attacks.");
+        return;
+      }
+      this._switchingRrsTarget = Array.isArray(options);
+      const completed = await this.confirmCallback?.(options, this.targetingService);
       if (completed) await this.close();
     } catch (error) {
       console.error("GURPS Fire Preparation:", error);
       ui.notifications.error(error?.message ?? String(error));
     } finally {
       this._submitting = false;
+      this._switchingRrsTarget = false;
       if (button.isConnected) button.disabled = false;
     }
   }
@@ -1683,10 +2032,16 @@ export class FirePreparationApp extends ApplicationV2 {
     return number >= 0 ? `+${number}` : String(number);
   }
 
+  _getGoverningSkill() {
+    return this.mode === "weapon" ? resolveRangedGoverningSkill({
+      actor: this.actor, binding: this.attack?.governingSkillBinding }) : null;
+  }
+
   _getTargetedAttack(zone, fireState = this.fireState) {
     if (visibilityRules(this._visibilityForTargeting())?.random) return null;
     return this.targetedAttackContext?.resolve({
-      specialty: fireState.governingSpecialty,
+      governingSkill: this._getGoverningSkill(),
+      specialty: this._getGoverningSkill()?.specialty ?? fireState.governingSpecialty,
       target: [zone?.canonicalKey ?? zone?.id, ...(zone?.taAliases ?? [])],
       basePenalty: zone?.penalty
     }) ?? null;
@@ -1713,23 +2068,52 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _buildGoverningSkillSelector(fireState) {
-    if (this.mode !== "weapon" || visibilityRules(this._visibilityForTargeting())?.random || !this.targetedAttackContext?.requiresSelection) return "";
-    const options = this.targetedAttackContext.specialtyOptions.map(option =>
-      `<option value="${escapeHTML(option.value)}" ${fireState.governingSpecialty === option.value ? "selected" : ""}>Guns (${escapeHTML(option.label)})</option>`
+    if (this.mode !== "weapon") return "";
+    const options = listRangedGoverningSkills(this.actor).map(skill =>
+      '<option value="' + escapeHTML(skill.key) + '"' +
+      (fireState.governingSkillKey === skill.key ? ' selected' : '') + '>' +
+      escapeHTML(skill.name) + ': ' + skill.level + '</option>'
     ).join("");
-    return `
-      <label class="gam-fire-governing-skill">
-        <span>Governing skill:</span>
-        <select name="governingSpecialty" required aria-label="Governing Guns specialty">
-          <option value="">Выберите Guns specialty</option>
-          ${options}
-        </select>
-      </label>
-    `;
+    return '<label class="gam-fire-governing-skill"><span>Governing skill (techniques):</span>' +
+      '<select name="governingSkillKey" aria-label="Governing Skill">' +
+      '<option value="">Select Skill</option>' + options + '</select></label>';
   }
 
-  _getHitLocationMarkers(_zoneId, _regionId = null, _fireState = this.fireState) {
-    return [];
+  _getHitLocationMarkers(zoneId, regionId = null, _fireState = this.fireState) {
+    if (!this.fireState.rangedRapidStrike || !this._rrsSlots) return [];
+    return this._rrsSlots.flatMap((slot, index) => {
+      const hit = slot.hitLocation;
+      if (hit?.zoneId !== zoneId || regionId && hit.regionId && hit.regionId !== regionId) return [];
+      return [{ className: "gam-rapid-attack-" + (index + 1) + (index === this._activeRrsSlot ? " is-active" : ""),
+        label: "Attack " + (index + 1) }];
+    });
+  }
+
+  _updateRrsHitLocationMarkers() {
+    if (!this.fireState.rangedRapidStrike || !this._rrsSlots) return;
+    this._rrsSlots[this._activeRrsSlot].hitLocation = { ...this.fireState.hitLocation };
+    for (const row of this.element?.querySelectorAll(".gam-hit-row[data-hit-zone-id]") ?? []) {
+      const container = row.querySelector(".gam-hit-selection-markers");
+      if (!container) continue;
+      container.innerHTML = this._getHitLocationMarkers(row.dataset.hitZoneId).map(marker =>
+        `<span class="gam-hit-selection-marker ${escapeHTML(marker.className)}" title="${escapeHTML(marker.label)}" aria-label="${escapeHTML(marker.label)}"></span>`
+      ).join("");
+    }
+    for (const region of this.element?.querySelectorAll(".gam-hit-region[data-hit-region-id]") ?? []) {
+      let next = region.nextElementSibling;
+      while (next?.classList.contains("gam-hit-region-marker")) {
+        const marker = next;
+        next = next.nextElementSibling;
+        marker.remove();
+      }
+      const definition = this.targetingService.regions.find(entry => entry.id === region.dataset.hitRegionId);
+      if (!definition) continue;
+      const shapes = definition.geometry.map(geometry => this._renderSvgGeometry(geometry)).join("");
+      const markers = this._getHitLocationMarkers(region.dataset.hitZoneId, region.dataset.hitRegionId);
+      region.insertAdjacentHTML("afterend", markers.map(marker =>
+        `<g class="gam-hit-region-marker ${escapeHTML(marker.className)}" aria-hidden="true">${shapes}</g>`
+      ).join(""));
+    }
   }
 
   _buildHitLocationContent(fireState) {
@@ -1845,7 +2229,7 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _buildRofContent(fireState) {
     const fireMode = this._getRapidFireState(fireState);
-    const rapidFireBonus = fireMode.rapidFireBonus;
+    const modifierTotal = this._getModifierTotalText();
     const multipleProjectile = this.rateOfFireProfile?.type === "multiple-projectile";
     const fullAuto = this.rateOfFireProfile?.type === "full-auto";
     const displayedRoF = this._getDisplayedRoF(fireMode);
@@ -1858,7 +2242,7 @@ export class FirePreparationApp extends ApplicationV2 {
       ? `<div class="gam-fire-rof gam-fire-rof-multiple">
           <span>RoF: <strong data-rof-preview>${escapeHTML(displayedRoF)}</strong></span>
           <span>Эффективный RoF: <strong data-effective-rof>${fireMode.effectiveRoF}</strong></span>
-          <span>Бонус RoF: <strong data-rapid-preview>+${rapidFireBonus}</strong></span>
+          <span>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b: <strong data-total-modifier>${modifierTotal}</strong></span>
         </div>`
       : fullAuto && this.rateOfFireProfile.modes.length > 1
         ? `<div class="gam-fire-rof gam-fire-rof-full-auto">
@@ -1866,9 +2250,9 @@ export class FirePreparationApp extends ApplicationV2 {
               <span>Режим RoF:</span>
               <select name="rofMode" aria-label="Режим скорострельности">${rofModeOptions}</select>
             </label>
-            <span>Бонус RoF: <strong data-rapid-preview>+${rapidFireBonus}</strong></span>
+            <span>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b: <strong data-total-modifier>${modifierTotal}</strong></span>
           </div>`
-        : `<div class="gam-fire-rof">Бонус RoF: <strong data-rapid-preview>+${rapidFireBonus}</strong></div>`;
+        : `<div class="gam-fire-rof">\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b: <strong data-total-modifier>${modifierTotal}</strong></div>`;
     return rofContent;
   }
 
@@ -1983,22 +2367,29 @@ export class FirePreparationApp extends ApplicationV2 {
     const rofContent = this._buildRofContent(fireState);
     const skillPreview = this._getSkillPreview();
     const sourceSkill = Number(this.attack?.level);
-    const sourceSkillText = Number.isFinite(sourceSkill) && sourceSkill > 0 ? String(Math.trunc(sourceSkill)) : "—";
+    const sourceSkillText = "Ranged Weapon Level " + (Number.isFinite(sourceSkill) ? Math.trunc(sourceSkill) : "?");
     const attackStats = this.mode === "standalone" ? "" : this._getAttackStatsText(displayedRoF, displayedAcc);
     const elevation = this._getElevationCalculation(fireState);
     const recommendationText = this._formatTargetRecommendation();
+    const rrs = resolveRangedRapidStrike({ actor: this.actor, attack: this.attack,
+      governingSkill: this._getGoverningSkill(),
+      governingSpecialty: this._getGoverningSkill()?.specialty ?? fireState.governingSpecialty });
+    const rrsAvailable = this._rrsAllowed();
 
     const rows = this.rangeBands.map(range => {
       const selected = fireState.selectedRangeIndex === range.index;
       const recommended = this.recommendation?.rangeIndex === range.index;
       const elevationRecommended = elevation?.rangeIndex === range.index;
+      const rrsMarkers = this._getRrsRangeMarkers(range.index);
       const penalty = range.penalty >= 0 ? `+${range.penalty}` : String(range.penalty);
       return `
-        <button type="button" class="gam-fire-range-row ${selected ? "selected" : ""} ${recommended ? "recommended" : ""} ${elevationRecommended ? "elevation-recommended" : ""}" data-range-index="${range.index}" aria-pressed="${selected}">
+        <button type="button" class="gam-fire-range-row ${selected ? "selected" : ""} ${recommended ? "recommended" : ""} ${elevationRecommended ? "elevation-recommended" : ""} ${rrsMarkers.map(index => `gam-rrs-range-${index}`).join(" ")}" data-range-index="${range.index}" aria-pressed="${selected}">
           <span>${escapeHTML(range.label)}</span>
           <strong class="gam-fire-range-penalty">${penalty}</strong>
           <span class="gam-fire-range-markers">
-            <span class="gam-fire-range-marker gam-fire-range-marker-selected" data-selected-marker ${selected ? "" : "hidden"}>Выбрано</span>
+            ${fireState.rangedRapidStrike && this._rrsSlots
+              ? `<span class="gam-hit-selection-markers" data-rrs-range-markers>${this._buildRrsRangeMarkers(rrsMarkers)}</span>`
+              : `<span class="gam-fire-range-marker gam-fire-range-marker-selected" data-selected-marker ${selected ? "" : "hidden"}>\u0412\u044b\u0431\u0440\u0430\u043d\u043e</span>`}
             <span class="gam-fire-range-marker gam-fire-range-marker-recommended" data-target-marker ${recommended ? "" : "hidden"}>${this.visibility?.mode === "unseen" && this.visibility.blindFireHex ||
               this.visibility?.mode === "blind" && !this.visibility.knownLocation ? "\u0413\u0435\u043a\u0441" : "GGA target"}</span>
             <span class="gam-fire-range-marker gam-fire-range-marker-elevation" data-elevation-marker ${elevationRecommended ? "" : "hidden"}>Высота</span>
@@ -2018,7 +2409,7 @@ export class FirePreparationApp extends ApplicationV2 {
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
             <strong class="gam-fire-skill-value" data-skill-preview style="color: ${skillProbabilityColor(skillPreview.probability)}">${skillPreview.level} (${skillPreview.chance}%)</strong>
-            ${this.mode === "standalone" ? `<label class="gam-fire-source-skill">Значение умения: <input type="number" name="skillLevel" value="${escapeHTML(fireState.skillLevel)}" placeholder="0" min="1" step="1" required autofocus></label>` : `<span class="gam-fire-source-skill">Значение умения: ${sourceSkillText}</span>`}
+            ${this.mode === "standalone" ? `<label class="gam-fire-source-skill">Значение умения: <input type="number" name="skillLevel" value="${escapeHTML(fireState.skillLevel)}" placeholder="0" min="1" step="1" required autofocus></label>` : `<span class="gam-fire-source-skill" data-source-skill>Значение умения: ${escapeHTML(sourceSkillText)}</span>`}
           </div>
         </div>
         ${this._buildVisibilityContent()}
@@ -2033,34 +2424,38 @@ export class FirePreparationApp extends ApplicationV2 {
                 <span>Бонусы/штрафы</span>
                 <input type="number" name="manualModifier" value="${escapeHTML(fireState.manualModifier)}" placeholder="0" step="1">
               </label>
-              <div class="gam-fire-toggle-group">
-                <div class="gam-fire-field gam-fire-field-checkbox">
+              <div class="gam-fire-field gam-fire-field-checkbox">
                   <span>Лазер <strong data-laser-preview>+${fireState.laserSight ? laserBonus : 1}</strong></span>
                   <input type="checkbox" name="laserSight" ${visibilityRules(this._visibilityForTargeting())?.random ? "disabled" : ""} aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
                 </div>
-                <div class="gam-fire-field gam-fire-field-checkbox">
-                  <span>Движение и атака</span>
-                  <input type="checkbox" name="moveAndAttack" aria-label="Движение и атака" ${fireState.moveAndAttack ? "checked" : ""}>
-                </div>
-                <div class="gam-fire-field gam-fire-field-checkbox">
-                  <span>\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 <strong>+1</strong></span>
-                  <input type="checkbox" name="allOutAttack" aria-label="\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430" ${fireState.allOutAttack ? "checked" : ""}>
-                </div>
-              </div>
-              <div class="gam-fire-aim-group">
-                <label class="gam-fire-aim">
+              <label class="gam-fire-aim">
                   <span>Aim:</span>
                   <input type="number" name="aimSeconds" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} value="${escapeHTML(fireState.aimSeconds)}" placeholder="0" min="0" step="1" inputmode="numeric" aria-label="Aim в секундах">
                   <span>сек.</span>
                   <span class="gam-fire-aim-effective">Eff. mod:</span>
                   <strong class="gam-fire-aim-bonus" data-aim-preview>+${aimedFireModifier}</strong>
                 </label>
-                <div class="gam-fire-braced" title="Бонус применяется только при Aim">
+              <div class="gam-fire-field gam-fire-field-checkbox">
+                  <span>Движение и атака</span>
+                  <input type="checkbox" name="moveAndAttack" aria-label="Движение и атака" ${fireState.moveAndAttack ? "checked" : ""}>
+                </div>
+              <div class="gam-fire-braced" title="Бонус применяется только при Aim">
                   <span>Упор</span>
                   <input type="checkbox" name="braced" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} aria-label="Упор" ${fireState.braced ? "checked" : ""}>
                 </div>
+              <div class="gam-fire-field gam-fire-field-checkbox">
+                  <span>\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 <strong>+1</strong></span>
+                  <input type="checkbox" name="allOutAttack" aria-label="\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430" ${fireState.allOutAttack ? "checked" : ""}>
+                </div>
+              ${this.mode === "weapon" ? `<button type="button" class="gam-techniques-button" data-fire-action="techniques">\u0422\u0435\u0445\u043d\u0438\u043a\u0438</button>` : ""}
+              <div class="gam-fire-rof-row ${fireState.rangedRapidStrike && this._rrsSlots ? "has-rrs-slots" : ""}">
+                <div class="gam-fire-rof-container" data-rof-container>${rofContent}</div>
+                ${fireState.rangedRapidStrike && this._rrsSlots ? `<div class="gam-attack-slots gam-rrs-slots">
+                  ${this._rrsSlots.map((_slot, index) => `<button type="button" data-rrs-slot="${index}"
+                    class="gam-attack-slot gam-rapid-attack-${index + 1} ${index === this._activeRrsSlot ? "is-active" : ""}"
+                    aria-pressed="${index === this._activeRrsSlot}">Attack ${index + 1}</button>`).join("")}
+                  <span data-rrs-split></span></div>` : ""}
               </div>
-              <div class="gam-fire-rof-container" data-rof-container>${rofContent}</div>
             </div>
             <section>
               <div class="gam-fire-range-heading">
@@ -2073,8 +2468,12 @@ export class FirePreparationApp extends ApplicationV2 {
                   </label>
                   <span class="gam-fire-elevation-separator" aria-hidden="true">|</span>
                   <label class="gam-fire-high-ground">
-                    <span>I have the high ground</span>
-                    <input type="checkbox" name="highGround" ${fireState.highGround ? "checked" : ""}>
+                    <span>High Ground</span>
+                    <input type="checkbox" name="highGround" ${fireState.elevationDirection === "high" ? "checked" : ""}>
+                  </label>
+                  <label class="gam-fire-high-ground">
+                    <span>Low Ground</span>
+                    <input type="checkbox" name="lowGround" ${fireState.elevationDirection === "low" ? "checked" : ""}>
                   </label>
                 </div>
                 <p data-target-recommendation>${escapeHTML(recommendationText)}</p>

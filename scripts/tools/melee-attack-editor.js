@@ -1,3 +1,5 @@
+import { weaponBondCheckbox } from "./weapon-bond-service.js";
+
 const text = value => String(value ?? "").trim();
 
 export function validateMeleeAttackOverride(values) {
@@ -18,7 +20,7 @@ export function validateMeleeAttackOverride(values) {
   };
 }
 
-export async function openMeleeAttackEditor({ DialogV2, attack, escapeHTML }) {
+export async function openMeleeAttackEditor({ DialogV2, attack, escapeHTML, weaponBondAvailable = false, weaponBond = false }) {
   const result = await DialogV2.wait({
     window: { title: "Параметры: " + attack.label },
     position: { width: 440 },
@@ -40,6 +42,7 @@ export async function openMeleeAttackEditor({ DialogV2, attack, escapeHTML }) {
           <span>Parry</span>
           <input type="text" name="parry" value="${escapeHTML(attack.parry)}" placeholder="0 / 0F / -">
         </label>
+        ${weaponBondCheckbox({ available: weaponBondAvailable, checked: weaponBond })}
         <p class="notes">Изменения хранятся в OleGURPS QOL и не изменяют атаку в чарлисте GGA.</p>
       </div>
     `,
@@ -70,5 +73,6 @@ export async function openMeleeAttackEditor({ DialogV2, attack, escapeHTML }) {
     ui.notifications.error("Ошибка заполнения: " + validation.errors.join("; ") + ".");
     return null;
   }
-  return { action: "save", value: validation.value };
+  return { action: "save", value: validation.value,
+    weaponBond: weaponBondAvailable && result.values.weaponBond === "on" };
 }

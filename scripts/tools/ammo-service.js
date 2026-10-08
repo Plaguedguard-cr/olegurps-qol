@@ -1,4 +1,6 @@
 import { normalizeAttackOverrides } from "./weapon-attack-overrides.js";
+import { resolveRangedGoverningSkill, bindingForGoverningSkill,
+  getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "gurpsAmmoManager";
@@ -61,11 +63,13 @@ export class AmmoService {
   }
 
   defaultState() {
-    return { version: STATE_VERSION, chatSettings: this.defaultChatSettings(), attackOverrides: {}, weapons: [] };
+    return { version: STATE_VERSION, chatSettings: this.defaultChatSettings(),
+      attackOverrides: {}, governingSkills: {}, weapons: [] };
   }
 
   normalizeWeaponShape(weapon) {
     weapon.id ||= randomId();
+    weapon.weaponBond = weapon.weaponBond === true;
     weapon.name = String(weapon.name ?? "Оружие");
     weapon.attackRef ||= {};
     weapon.ammoType =
@@ -92,9 +96,36 @@ export class AmmoService {
     state.version = STATE_VERSION;
     state.chatSettings = this.normalizeChatSettings(state.chatSettings);
     state.attackOverrides = normalizeAttackOverrides(state.attackOverrides);
+    state.governingSkills = state.governingSkills && typeof state.governingSkills === "object" &&
+      !Array.isArray(state.governingSkills) ? state.governingSkills : {};
     delete state.chatReports;
     state.weapons = Array.isArray(state.weapons) ? state.weapons : [];
     state.weapons.forEach(weapon => this.normalizeWeaponShape(weapon));
+    let migrated = false;
+    for (const [key, binding] of Object.entries(state.governingSkills)) {
+      if (binding && typeof binding === "object" && !binding.key && !binding.name) {
+        delete state.governingSkills[key];
+      }
+    }
+    for (const weapon of state.weapons) {
+      const key = getRangedGoverningAttackKey(weapon.attackRef);
+      if (!key) continue;
+      const existing = state.governingSkills[key];
+      if (existing) {
+        const current = resolveRangedGoverningSkill({ actor: this.actor, binding: existing });
+        if (current && (existing.key !== current.key || existing.name !== current.name)) {
+          state.governingSkills[key] = bindingForGoverningSkill(current);
+          migrated = true;
+        }
+        continue;
+      }
+      const skill = resolveRangedGoverningSkill({ actor: this.actor,
+        legacySpecialty: weapon.governingSpecialty, allowAutomatic: !weapon.governingSpecialty });
+      if (!skill) continue;
+      state.governingSkills[key] = bindingForGoverningSkill(skill);
+      migrated = true;
+    }
+    if (migrated) await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, state);
     return state;
   }
 

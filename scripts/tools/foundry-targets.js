@@ -10,7 +10,7 @@ export function getSafeTargetName(token, runtime = globalThis) {
   return name || TARGET_NAME_FALLBACK;
 }
 
-function replaceTargets(ids, runtime) {
+export function replaceFoundryTargets(ids, runtime = globalThis) {
   const layer = runtime.canvas?.tokens;
   if (typeof layer?.setTargets === "function") {
     return layer.setTargets(ids, { mode: "replace" });
@@ -22,8 +22,20 @@ function replaceTargets(ids, runtime) {
   throw new Error("Foundry target API is unavailable.");
 }
 
+export async function withFoundryTargets(ids, operation, runtime = globalThis) {
+  const previous = [...(runtime.game?.user?.targets ?? [])].map(token => token?.document?.id ?? token?.id);
+  if (previous.some(id => !id)) throw new Error("Cannot restore a Foundry target without its ID.");
+  const desired = ids.filter(Boolean);
+  if (previous.length === desired.length && previous.every((id, index) => id === desired[index])) return operation();
+  try {
+    await replaceFoundryTargets(desired, runtime);
+    return await operation();
+  } finally {
+    await replaceFoundryTargets(previous, runtime);
+  }
+}
 export async function clearFoundryTargets(runtime = globalThis) {
-  if ((runtime.game?.user?.targets?.size ?? 0) > 0) await replaceTargets([], runtime);
+  if ((runtime.game?.user?.targets?.size ?? 0) > 0) await replaceFoundryTargets([], runtime);
 }
 
 export async function withClearedFoundryTargets(roll, runtime = globalThis) {
@@ -34,9 +46,9 @@ export async function withClearedFoundryTargets(roll, runtime = globalThis) {
     throw new Error("Cannot restore a Foundry target without its ID.");
   }
   try {
-    await replaceTargets([], runtime);
+    await replaceFoundryTargets([], runtime);
     return await roll();
   } finally {
-    await replaceTargets(previous, runtime);
+    await replaceFoundryTargets(previous, runtime);
   }
 }

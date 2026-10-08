@@ -93,8 +93,8 @@ test("Blind Fighting success applies only to its slot and adds -2 for a chosen l
   assert.deepEqual(snapshots.map(slot => slot.randomLocation), [true, false, true]);
   assert.deepEqual(snapshots.map(slot => slot.blindFighting), [null, "success", "failure"]);
   assert.deepEqual(snapshots.map(slot => slot.visibility.mode), ["unseen", "unseen", "unseen"]);
-  assert.equal(snapshots[1].modifierDetails.some(entry => entry.value === -5), true);
-  assert.equal(snapshots[1].modifierDetails.some(entry => entry.value === -2), false);
+  assert.equal(snapshots[1].modifierDetails.some(entry => entry.label.includes("Hit Location") && entry.value === -3), true);
+  assert.equal(snapshots[1].modifierDetails.some(entry => entry.label === "Precision" && entry.value === -2), true);
   assert.equal(snapshots[1].clearTargets, false);
   assert.equal(snapshots[0].clearTargets, true);
 });

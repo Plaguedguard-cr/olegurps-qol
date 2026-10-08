@@ -29,7 +29,7 @@ export class SpecialFireMenuApp extends ApplicationV2 {
       return '<div class="sf-menu-entry" title="' + escape(title) + '">' +
         '<button type="button" data-mode="' + escape(mode.id) + '" ' + (disabled ? "disabled" : "") + '>' +
         (mode.icon ? '<i class="' + escape(mode.icon) + '"></i> ' : "") +
-        escape(mode.label) + (saved ? " \u2014 \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c" : "") + '</button>' +
+        escape(mode.label) + (saved && mode.showSavedSuffix !== false ? " \u2014 \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c" : "") + '</button>' + (saved && mode.edit ? '<button type="button" class="sf-menu-edit" data-mode-edit="' + escape(mode.id) + '" title="Edit Trademark Move" aria-label="Edit Trademark Move"><i class="fa-solid fa-pencil"></i></button>' : "") +
         '<small>' + escape(disabled ? availability.reason : mode.description) + '</small></div>';
     }).join("") + '</div>';
   }
@@ -45,9 +45,9 @@ export class SpecialFireMenuApp extends ApplicationV2 {
   }
 
   async _onClick(event) {
-    const button = event.target?.closest?.("button[data-mode]");
+    const button = event.target?.closest?.("button[data-mode], button[data-mode-edit]");
     if (!button || button.disabled) return;
-    const mode = this.registry.find(entry => entry.id === button.dataset.mode);
+    const mode = this.registry.find(entry => entry.id === (button.dataset.modeEdit ?? button.dataset.mode));
     if (!mode) return;
     const availability = mode.availability();
     if (!availability.available) {
@@ -58,7 +58,7 @@ export class SpecialFireMenuApp extends ApplicationV2 {
     button.disabled = true;
     try {
       await this.close();
-      await mode.open();
+      if (button.dataset.modeEdit) await mode.edit(); else await mode.open();
     } catch (error) {
       console.error("OleGURPS QOL | Special fire mode:", error);
       ui.notifications.error(error?.message ?? String(error));

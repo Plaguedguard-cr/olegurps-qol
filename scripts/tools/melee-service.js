@@ -1,5 +1,8 @@
 import { createGgaDamageWithEasterEgg } from "./damage-result-easter-egg.js";
 import { buildAttackModifierBreakdownHtml, buildCompactAttackModifiers, executeWithCapturedRollMessage } from "./prepared-gga-roll.js";
+import { resolveCombatCalculation } from "./combat-calculation-engine.js";
+import { getCombatRules } from "./combat-technique-registry.js";
+import { isWeaponBondActive } from "./weapon-bond-service.js";
 
 const integer = value => {
   const number = Number(String(value ?? "").trim().replace(",", "."));
@@ -17,22 +20,59 @@ export function getAllOutAttackSkillBonus(allOutAttack, mode) {
   return allOutAttack && mode === "determined" ? 4 : 0;
 }
 
-export function calculateMeleeSkillBeforeDeceptive({ baseSkill, manualModifier = 0, evaluate = 0,
-  moveAndAttack = false, allOutAttack = false, allOutAttackMode = "determined",
-  hitLocationPenalty = 0, rapidStrikePenalty = 0, visibilityPenalty = 0, visibilityCap = false,
-  telegraphicAttack = false, committedAttack = false, committedMode = "determined", committedSteps = false } = {}) {
-  const base = Number(baseSkill);
-  if (!Number.isFinite(base)) return null;
-  const allOutBonus = moveAndAttack ? 0 : getAllOutAttackSkillBonus(allOutAttack, allOutAttackMode);
-  const evaluateBonus = telegraphicAttack ? 0 : getEvaluateBonus(evaluate);
-  const committedBonus = committedAttack && committedMode === "determined" ? 2 : 0;
-  const stepsPenalty = committedAttack && committedSteps ? -2 : 0;
-  let effective = Math.trunc(base) + integer(manualModifier) + evaluateBonus +
-    integer(hitLocationPenalty) + integer(rapidStrikePenalty) + integer(visibilityPenalty) + allOutBonus +
-    (telegraphicAttack ? 4 : 0) + committedBonus + stepsPenalty;
-  if (moveAndAttack) effective = Math.min(9, effective - 4);
-  if (visibilityCap) effective = Math.min(9, effective);
-  return effective;
+function resolveMeleePass(options, deceptivePenalty = 0) {
+  const baseSkill = Number(options.baseSkill);
+  if (!Number.isFinite(baseSkill)) return null;
+  const hitLocationBase = Number(options.hitLocationBasePenalty ?? options.hitLocationPenalty ?? 0);
+  const precisionPenalty = integer(options.precisionPenalty);
+  const context = {
+    weaponBond: isWeaponBondActive(options.actor, options.weaponBond),
+    targetedAttack: options.targetedAttack ?? null,
+    hitLocationBase, hitLocationLabel: options.hitLocationLabel ?? "Hit Location",
+    rapidStrikePenalty: integer(options.rapidStrikePenalty),
+    telegraphicAttack: !!options.telegraphicAttack, deceptivePenalty,
+    evaluateBonus: getEvaluateBonus(options.evaluate), moveAndAttack: !!options.moveAndAttack,
+    allOutAttack: !!options.allOutAttack, allOutAttackMode: options.allOutAttackMode,
+    committedAttack: !!options.committedAttack, committedMode: options.committedMode,
+    committedSteps: !!options.committedSteps
+  };
+  return resolveCombatCalculation({ combatType: "melee", actor: options.actor,
+    attack: options.attack, baseAttackLevel: baseSkill, governingSkill: options.governingSkill,
+    attackSlot: options.attackSlot, context,
+    channels: [
+      { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
+      { id: "situational", value: integer(options.manualModifier), label: "\u0411\u043e\u043d\u0443\u0441\u044b/\u0448\u0442\u0440\u0430\u0444\u044b" },
+      { id: "evaluate", value: 0, label: "\u041e\u0446\u0435\u043d\u043a\u0430" },
+      { id: "telegraphicAttack", value: 0, label: "Telegraphic Attack" },
+      { id: "committedSteps", value: 0, label: "Committed Attack (2 steps)" },
+      { id: "maneuverAttackBonus", value: 0, label: "Maneuver attack bonus" },
+      { id: "moveAndAttack", value: 0, label: "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0438 \u0430\u0442\u0430\u043a\u0430" },
+      { id: "rapidStrike", value: 0, label: "Rapid Strike" },
+      { id: "visibility", value: integer(options.visibilityPenalty), label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c" },
+      { id: "hitLocation", value: Number.isFinite(hitLocationBase) ? hitLocationBase : 0,
+        label: options.hitLocationLabel ?? "Hit Location" },
+      { id: "precision", value: precisionPenalty, label: "Precision" },
+      { id: "deceptiveAttack", value: 0, label: "Deceptive Attack" }
+    ], rules: getCombatRules("melee"), caps: [
+      ...(options.moveAndAttack ? [{ maximum: 9, label: "Move and Attack cap: 9" }] : []),
+      ...(options.visibilityCap ? [{ maximum: 9, label: "Visibility cap: 9" }] : [])
+    ] });
+}
+
+export function calculateMeleeSkillBeforeDeceptive(options = {}) {
+  return resolveMeleePass(options)?.effectiveSkill ?? null;
+}
+
+export function resolveMeleeCombatCalculation(options = {}) {
+  const before = resolveMeleePass(options);
+  if (!before) return null;
+  const deceptivePenalty = normalizeDeceptiveAttackPenalty(options.deceptiveAttack,
+    before.effectiveSkill, options.moveAndAttack, options.telegraphicAttack);
+  const result = resolveMeleePass(options, deceptivePenalty);
+  if (result) result.metadata = { ...result.metadata,
+    defenseModifier: (result.metadata.defenseModifier ?? 0),
+    deceptivePenalty, beforeDeceptive: before.effectiveSkill };
+  return result;
 }
 
 export function getMaximumDeceptiveAttackPenalty(skillBeforeDeceptive, moveAndAttack = false, telegraphicAttack = false) {
@@ -54,15 +94,7 @@ export function getDeceptiveDefensePenalty(value) {
 }
 
 export function calculateMeleeEffectiveSkill(options = {}) {
-  const beforeDeceptive = calculateMeleeSkillBeforeDeceptive(options);
-  if (!Number.isFinite(beforeDeceptive)) return null;
-  const deceptive = normalizeDeceptiveAttackPenalty(
-    options.deceptiveAttack,
-    beforeDeceptive,
-    options.moveAndAttack,
-    options.telegraphicAttack
-  );
-  return beforeDeceptive + deceptive;
+  return resolveMeleeCombatCalculation(options)?.effectiveSkill ?? null;
 }
 
 export function getTelegraphicCriticalBonus(options = {}) {
@@ -213,7 +245,10 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   const modifier = Math.trunc(Number(effectiveSkill)) - Math.trunc(originalLevel);
   const [compactModifier] = buildCompactAttackModifiers(modifier);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(modifierDetails);
-  const displayText = [overrideText || locationText, modifierBreakdown].filter(Boolean).join("<br>");
+  const attackContext = overrideText || locationText;
+  const contextBreakdown = attackContext
+    ? `<details class="olegurps-attack-context"><summary style="cursor:pointer">Attack details</summary><div>${attackContext}</div></details>` : "";
+  const displayText = [contextBreakdown, modifierBreakdown].filter(Boolean).join("");
   const perform = () => performMeleeActionWithoutConfirmation(() => globalThis.GURPS.performAction({
     type: "attack",
     name: actionName,

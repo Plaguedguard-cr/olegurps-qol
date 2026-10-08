@@ -6,6 +6,7 @@ import { MeleeAttackExecutionApp, executeMeleeAttackSnapshot } from "./melee-att
 import { getMeleeAttackSlots } from "./melee-attack-slots.js";
 import { createMeleeTargetedAttackContext } from "./targeted-attack-service.js";
 import { openMeleeAttackEditor } from "./melee-attack-editor.js";
+import { hasWeaponBondPerk } from "./weapon-bond-service.js";
 import {
   applyMeleeAttackOverride,
   clearMeleeAttackOverride,
@@ -15,11 +16,13 @@ import {
   setMeleeDicePlusAdds,
   setMeleeGoverningSkill,
   setMeleeRapidStrikeMastery,
+  setMeleeWeaponBond,
   setSelectedMeleeAttack
 } from "./melee-assistant-state.js";
 import {
   calculateMeleeEffectiveSkill,
   calculateMeleeSkillBeforeDeceptive,
+  resolveMeleeCombatCalculation,
   executeNativeMeleeDamage,
   getDeceptiveDefensePenalty,
   getEvaluateBonus,
@@ -361,15 +364,24 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   _getBaseSkillLevel() {
-    const governingLevel = this.targetedAttackContext?.getSkillLevel?.(this.fireState.governingSpecialty);
-    if (Number.isFinite(governingLevel)) return governingLevel;
-    const attackLevel = Number(this.attack?.level);
+    const attackLevel = Number(this.attack?.level ?? this.sourceAttack?.level);
     return Number.isFinite(attackLevel) ? Math.trunc(attackLevel) : null;
   }
 
   _getMeleeCalculationOptions() {
+    const location = this._getLocationResult();
+    const precisionPenalty = this._getMeleeVisibilityRules()?.precisionPenalty &&
+      location.selection?.zoneId !== "silhouette"
+      ? this._getMeleeVisibilityRules().precisionPenalty : 0;
+    const governing = this.targetedAttackContext?.specialtyOptions?.find(
+      option => option.value === this.fireState.governingSpecialty);
     return {
+      actor: this.actor,
+      attack: this.attack,
+      attackSlot: this._attackSlots[this._activeAttackSlot]?.type ?? null,
+      governingSkill: governing ? { name: governing.label, level: governing.level } : null,
       baseSkill: this._getBaseSkillLevel(),
+      weaponBond: getMeleeAttackSettings(this._meleeState, this.sourceAttack).weaponBond === true,
       manualModifier: this.fireState.manualModifier,
       evaluate: this.fireState.evaluate,
       moveAndAttack: this.fireState.moveAndAttack,
@@ -380,7 +392,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
       committedAttack: this.fireState.committedAttack,
       committedMode: this.fireState.committedMode,
       committedSteps: this.fireState.committedSteps,
-      hitLocationPenalty: this._getLocationResult().penalty,
+      hitLocationPenalty: location.penalty,
+      hitLocationBasePenalty: location.selection?.penalty ?? 0,
+      hitLocationLabel: "Hit Location: " + (location.selection?.label ?? ""),
+      targetedAttack: location.targetedAttack,
+      precisionPenalty,
       rapidStrikePenalty: this._getRapidStrikePenalty(),
       visibilityPenalty: this._getMeleeVisibilityRules()?.penalty ?? 0,
       visibilityCap: this._getMeleeVisibilityRules()?.cap ?? false
@@ -419,11 +435,14 @@ export class MeleeAssistantApp extends FirePreparationApp {
       this.fireState.telegraphicAttack
     );
     this.fireState.deceptiveAttack = String(deceptive);
+    const calculation = resolveMeleeCombatCalculation({ ...options, deceptiveAttack: deceptive });
     this._saveActiveAttackConfiguration();
     return {
       beforeDeceptive,
       deceptive,
       defensePenalty: getDeceptiveDefensePenalty(deceptive),
+      defenseModifier: calculation?.metadata.defenseModifier ??
+        getDeceptiveDefensePenalty(deceptive) + (this.fireState.telegraphicAttack ? 2 : 0),
       maximum: getMaximumDeceptiveAttackPenalty(beforeDeceptive,
         this.fireState.moveAndAttack, this.fireState.telegraphicAttack)
     };
@@ -447,83 +466,18 @@ export class MeleeAssistantApp extends FirePreparationApp {
     return calculateMeleeEffectiveSkill(this._getMeleeCalculationOptions());
   }
 
-  _buildAttackModifierDetails(locationResult, maneuver, effectiveSkill) {
-    const integer = value => {
-      const number = Number(String(value ?? "").trim().replace(",", "."));
-      return Number.isFinite(number) ? Math.trunc(number) : 0;
-    };
-    const details = [];
-    const sourceLevel = integer(this.sourceAttack?.level ?? this.sourceAttack?.import);
-    const baseSkill = integer(this._getBaseSkillLevel());
-    const governing = this.targetedAttackContext?.specialtyOptions?.find(
-      option => option.value === this.fireState.governingSpecialty
-    );
-    if (baseSkill !== sourceLevel) {
-      details.push({
-        label: governing ? `Governing skill: ${governing.label}` : "Изменение базового уровня атаки",
-        value: baseSkill - sourceLevel
-      });
-    }
-
-    const manualModifier = integer(this.fireState.manualModifier);
-    const evaluateBonus = this.fireState.telegraphicAttack ? 0 : getEvaluateBonus(this.fireState.evaluate);
-    if (manualModifier) details.push({ label: "Бонусы/штрафы", value: manualModifier });
-    if (evaluateBonus) details.push({ label: "Оценка", value: evaluateBonus });
-    if (this.fireState.telegraphicAttack) details.push({ label: "Telegraphic Attack", value: 4 });
-    if (this.fireState.committedAttack && this.fireState.committedMode === "determined") {
-      details.push({ label: "Committed Attack (Determined)", value: 2 });
-    }
-    if (this.fireState.committedAttack && this.fireState.committedSteps) {
-      details.push({ label: "Committed Attack (2 steps)", value: -2 });
-    }
-    if (this.fireState.allOutAttack && this.fireState.allOutAttackMode === "determined") {
-      details.push({ label: "Тотальная атака (Точная)", value: 4 });
-    }
-    if (this.fireState.moveAndAttack) {
-      details.push({ label: "Движение и атака", value: -4 });
-    }
-    const rapidStrikePenalty = this._getRapidStrikePenalty();
-    if (rapidStrikePenalty) {
-      details.push({
-        label: rapidStrikePenalty === -3 ? "Rapid Strike (WM / TBaM)" : "Rapid Strike",
-        value: rapidStrikePenalty
-      });
-    }
-
-    const locationPenalty = integer(locationResult?.penalty);
-    const visibilityPenalty = this._getMeleeVisibilityRules()?.penalty ?? 0;
-    if (visibilityPenalty) details.push({ label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c", value: visibilityPenalty });
-    if (locationPenalty) {
-      const locationLabel = locationResult?.selection?.label ?? "";
-      const techniqueName = locationResult?.targetedAttack?.entry?.name ??
-        locationResult?.targetedAttack?.attackVariant;
-      const techniqueLabel = techniqueName && /^Targeted Attack\b/iu.test(techniqueName)
-        ? techniqueName : (techniqueName ? `Targeted Attack: ${techniqueName}` : "");
-      details.push({
-        label: techniqueLabel
-          ? `${techniqueLabel} / Hit Location: ${locationLabel}`
-          : `Hit Location: ${locationLabel}`,
-        value: locationPenalty
-      });
-    }
-    if (maneuver.deceptive) {
-      details.push({
-        label: `Обманная атака (защита цели ${maneuver.defensePenalty})`,
-        value: maneuver.deceptive
-      });
-    }
-
-    const expectedModifier = integer(effectiveSkill) - sourceLevel;
-    const describedModifier = details.reduce((total, entry) => total + integer(entry.value), 0);
-    const undisclosedModifier = expectedModifier - describedModifier;
-    if (undisclosedModifier) {
-      details.push({
-        label: this.fireState.moveAndAttack
-          ? "Ограничение Движения и атаки (макс. 9)"
-          : "Коррекция итогового уровня",
-        value: undisclosedModifier
-      });
-    }
+  _buildAttackModifierDetails(_locationResult, _maneuver, effectiveSkill, calculation = null) {
+    calculation ??= resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+    const details = calculation?.modifiers.filter(entry => entry.value !== 0)
+      .map(entry => ({ label: entry.explanation || entry.label, value: entry.value })) ?? [];
+    const sourceLevel = Number(this.sourceAttack?.level ?? this.sourceAttack?.import);
+    const adjustment = Number.isFinite(sourceLevel) && calculation
+      ? calculation.baseSkill - sourceLevel : 0;
+    if (adjustment) details.unshift({ label: "Attack entry level adjustment", value: adjustment });
+    const described = details.reduce((total, entry) => total + Number(entry.value), 0);
+    const expected = Number(effectiveSkill) - (Number.isFinite(sourceLevel) ? sourceLevel : calculation?.baseSkill ?? 0);
+    if (Number.isFinite(expected) && expected !== described)
+      details.push({ label: "Roll adjustment", value: expected - described });
     return details;
   }
 
@@ -646,7 +600,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
                   <input type="checkbox" name="rapidStrike" aria-label="Rapid Strike" ${fireState.rapidStrike ? "checked" : ""}>
                 </span>
               </div>
-              <div class="gam-melee-attack-slots" data-melee-attack-slots></div>
+              <div class="gam-attack-slots gam-melee-attack-slots" data-melee-attack-slots></div>
               <div class="gam-fire-field gam-melee-all-out">
                 <span>Тотальная атака</span>
                 <span class="gam-melee-all-out-controls">
@@ -781,7 +735,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     root.hidden = this._attackSlots.length < 2;
     root.innerHTML = this._attackSlots.map((slot, index) =>
       `<button type="button" data-melee-action="attack-slot" data-attack-slot="${index}"
-        class="gam-melee-rapid-attack gam-rapid-attack-${index + 1} ${index === this._activeAttackSlot ? "is-active" : ""}"
+        class="gam-attack-slot gam-melee-rapid-attack gam-rapid-attack-${index + 1} ${index === this._activeAttackSlot ? "is-active" : ""}"
         aria-pressed="${index === this._activeAttackSlot}">${escapeHTML(slot.label)}</button>`
     ).join("");
   }
@@ -903,13 +857,22 @@ export class MeleeAssistantApp extends FirePreparationApp {
     const result = await openMeleeAttackEditor({
       DialogV2: foundry.applications.api.DialogV2,
       attack: this.attack,
-      escapeHTML
+      escapeHTML,
+      weaponBondAvailable: hasWeaponBondPerk(this.actor),
+      weaponBond: getMeleeAttackSettings(this._meleeState, this.sourceAttack).weaponBond === true
     });
     if (!result) return;
     if (result.action === "reset") {
       clearMeleeAttackOverride(this._meleeState, this.sourceAttack);
     } else if (result.action === "save") {
-      setMeleeAttackOverride(this._meleeState, this.sourceAttack, result.value);
+      const current = { skillLevel: Number(this.attack.level),
+        damage: String(this.attack.damage ?? "").trim(),
+        reach: String(this.attack.reach ?? "").trim(),
+        parry: String(this.attack.parry ?? "").trim() };
+      if (Object.keys(current).some(key => current[key] !== result.value[key])) {
+        setMeleeAttackOverride(this._meleeState, this.sourceAttack, result.value);
+      }
+      setMeleeWeaponBond(this._meleeState, this.sourceAttack, result.weaponBond);
     }
     await this._persistState();
     const currentKey = this.selectedAttackKey;
@@ -965,7 +928,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
         const randomLocation = locationResult.selection?.random === true;
         const locationText = !randomLocation && locationResult.selection?.label && Number(locationResult.penalty) === 0
           ? "Hit Location: " + locationResult.selection.label : "";
-        const effectiveSkill = this._calculateEffectiveSkill();
+        const combatCalculation = resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+        const effectiveSkill = combatCalculation?.effectiveSkill;
         if (!Number.isFinite(effectiveSkill)) throw new Error("Effective skill is unavailable.");
         const telegraphicCriticalBonus = getTelegraphicCriticalBonus(this._getMeleeCalculationOptions());
         const martialNotes = [
@@ -986,8 +950,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
           sourceAttack,
           selectedAttack: globalThis.foundry?.utils?.deepClone?.(this.attack) ?? structuredClone(this.attack),
           governingSkill: this.fireState.governingSpecialty,
-          baseSkill: this._getBaseSkillLevel(),
+          baseSkill: combatCalculation.baseSkill,
           effectiveSkill,
+          combatCalculation,
           hitLocation: { ...(randomLocation ? locationResult.selection : this.fireState.hitLocation) },
           visibility: normalizeVisibility(this.visibility),
           blindFighting: this._blindFighting,
@@ -1013,12 +978,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
           locationText,
           overrideText: [this._attackSlots.length > 1 ? slot.label : "", locationText,
             ...martialNotes].filter(Boolean).join("<br>"),
-          modifierDetails: this._buildAttackModifierDetails(locationResult, maneuverState, effectiveSkill),
+          modifierDetails: this._buildAttackModifierDetails(locationResult, maneuverState, effectiveSkill, combatCalculation),
           randomLocation,
           targetingService: this.targetingService,
           maneuver: this._getManeuverPayload(),
-          deceptiveDefensePenalty: maneuverState.defensePenalty +
-            (this.fireState.telegraphicAttack ? 2 : 0)
+          deceptiveDefensePenalty: maneuverState.defenseModifier
         });
       }
     } finally {

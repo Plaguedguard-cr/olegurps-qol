@@ -1,5 +1,12 @@
 import { normalizeAccuracy, normalizeBulk } from "./fire-service.js";
 import { visibilityRules } from "./limited-visibility.js";
+import { resolveRangedRapidStrike } from "./ranged-rapid-strike-service.js";
+import { resolveCloseQuartersBattle } from "./close-quarters-battle-service.js";
+import { resolveCloseHipShooting } from "./close-hip-shooting-service.js";
+import { resolveRangedGoverningSkill } from "./ranged-governing-skill-service.js";
+import { resolveCombatCalculation } from "./combat-calculation-engine.js";
+import { isWeaponBondActive } from "./weapon-bond-service.js";
+import { getCombatRules } from "./combat-technique-registry.js";
 import { findRangeBandForDistance, getRangeBandDistance, isBeamWeapon, resolveEffectiveRange } from "./fire-range-service.js";
 
 function sceneDistanceToYards(value, runtime = globalThis) {
@@ -48,18 +55,70 @@ export function measureCanvasPointDistanceYards(sourceToken, point, runtime = gl
 export function getTokenFireRangeContext({ sourceToken, targetToken, rangeBands, runtime = globalThis } = {}) {
   const distance = measureTokenDistanceYards(sourceToken, targetToken, runtime);
   if (!Number.isFinite(distance)) return null;
-  const sourceElevation = Number((sourceToken?.document ?? sourceToken)?.elevation ?? 0);
-  const targetElevation = Number((targetToken?.document ?? targetToken)?.elevation ?? 0);
-  const height = sceneDistanceToYards(Math.abs(targetElevation - sourceElevation), runtime) ?? 0;
+  const sourceRawElevation = (sourceToken?.document ?? sourceToken)?.elevation;
+  const targetRawElevation = (targetToken?.document ?? targetToken)?.elevation;
+  const hasElevation = sourceRawElevation !== null && sourceRawElevation !== undefined &&
+    targetRawElevation !== null && targetRawElevation !== undefined &&
+    Number.isFinite(Number(sourceRawElevation)) && Number.isFinite(Number(targetRawElevation));
+  const sourceElevation = hasElevation ? Number(sourceRawElevation) : 0;
+  const targetElevation = hasElevation ? Number(targetRawElevation) : 0;
+  const height = hasElevation
+    ? sceneDistanceToYards(Math.abs(targetElevation - sourceElevation), runtime) ?? 0 : 0;
   const range = findRangeBandForDistance(rangeBands, distance);
   return {
     distance,
     height,
-    highGround: sourceElevation > targetElevation,
+    elevationDirection: sourceElevation > targetElevation ? "high" : sourceElevation < targetElevation ? "low" : "level",
     rangeIndex: range?.index ?? null,
     rangePenalty: range?.penalty ?? 0,
     rangeLabel: range?.label ?? ""
   };
+}
+
+function validPhysicalDistance(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const distance = Number(value);
+  return Number.isFinite(distance) && distance >= 0 ? distance : null;
+}
+
+export function resolveCurrentTargetDistance({ values, rangeBands, sourceToken, runtime = globalThis } = {}) {
+  if (values?.manualRangeSelected === true) {
+    const selectedIndex = values.rangeIndex === null || values.rangeIndex === undefined ||
+      values.rangeIndex === "" ? Number.NaN : Number(values.rangeIndex);
+    const selectedRange = rangeBands?.find(range => range.index === selectedIndex);
+    const distance = getRangeBandDistance(selectedRange);
+    return distance === null ? null : { distance, source: "manual-range" };
+  }
+  if (values?.configuredPreview) return null;
+
+  const visibility = values?.visibility;
+  const targetId = values?.targetTokenId ?? visibility?.targetTokenId;
+  const explicitDistance = validPhysicalDistance(values?.targetDistanceOverride);
+  if (targetId) {
+    const target = runtime.canvas?.tokens?.get?.(targetId);
+    const distance = target ? measureTokenDistanceYards(sourceToken, target, runtime) : null;
+    const resolved = validPhysicalDistance(distance) ?? explicitDistance;
+    return resolved === null ? null : { distance: resolved, source: "target" };
+  }
+
+  const hex = visibility?.mode === "unseen" ? visibility.blindFireHex
+    : visibility?.mode === "blind" && !visibility.knownLocation ? visibility.hex : null;
+  if (hex) {
+    const center = runtime.canvas?.grid?.getCenterPoint?.(hex);
+    const distance = measureCanvasPointDistanceYards(sourceToken, center, runtime);
+    const resolved = validPhysicalDistance(distance) ?? explicitDistance;
+    return resolved === null ? null : { distance: resolved, source: "blind-fire-hex" };
+  }
+  if (visibility?.mode === "unseen" || visibility?.mode === "blind" && !visibility.knownLocation)
+    return null;
+
+  const targets = Array.from(runtime.game?.user?.targets ?? []);
+  if (targets.length === 1 && targets[0] !== sourceToken) {
+    const distance = measureTokenDistanceYards(sourceToken, targets[0], runtime);
+    if (validPhysicalDistance(distance) !== null) return { distance, source: "target" };
+  }
+
+  return explicitDistance === null ? null : { distance: explicitDistance, source: "target" };
 }
 
 export function createStandaloneAttack(values) {
@@ -162,6 +221,9 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     return measureTokenDistanceYards(token, targets[0], globalThis);
   }
 
+  function getCurrentTargetDistance(values, rangeBands) {
+    return resolveCurrentTargetDistance({ values, rangeBands, sourceToken: token });
+  }
   function getTargetRangeRecommendation(rangeBands) {
     const distance = getSingleTargetPhysicalDistanceYards();
     if (!Number.isFinite(distance)) return null;
@@ -186,7 +248,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       values?.visibility?.mode === "blind" && !values.visibility.knownLocation;
     const targetDistance = explicitDistance !== null && explicitDistance !== undefined &&
       explicitDistance !== "" && Number.isFinite(Number(explicitDistance))
-      ? Number(explicitDistance) : blindUnknown ? null : getSingleTargetPhysicalDistanceYards();
+      ? Number(explicitDistance) : blindUnknown || values?.configuredPreview ? null : getSingleTargetPhysicalDistanceYards();
     const physicalDistance = fireService.resolvePhysicalFireDistance({
       selectedDistance,
       targetDistance,
@@ -262,6 +324,9 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
   }
 
   function calculateEffectiveFireSkillDetails(attack, values, rangeBands, targetingService, targetedAttackContext = null) {
+    const governingSkill = mode === "weapon" ? resolveRangedGoverningSkill({
+      actor: token?.actor, binding: attack?.governingSkillBinding
+    }) : null;
     const baseLevel = Number(attack?.level);
     if (!Number.isFinite(baseLevel) || baseLevel <= 0) return null;
 
@@ -271,15 +336,17 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const { effectiveRange } = resolveEffectiveRange({
       rangeBands,
       rangeIndex: selectedIndex,
+      distance: values?.manualRangeSelected ? null : values?.targetDistanceOverride,
       height: values?.height,
-      highGround: parseBoolean(values?.highGround),
+      elevationDirection: values?.elevationDirection ?? "level",
       beamWeapon: isBeamWeapon(attack)
     });
+    const configuredPreview = values?.configuredPreview === true;
     const settings = getTaggedModifierSettings();
     const useEffects = mode === "weapon" || (token && globalThis.GURPS?.EffectModifierControl?._ui?.getToken?.() === token);
     const blindUnknown = values?.visibility?.mode === "unseen" ||
       values?.visibility?.mode === "blind" && !values.visibility.knownLocation;
-    const effectRangePenalty = settings?.autoAdd && useEffects && !blindUnknown
+    const effectRangePenalty = !configuredPreview && settings?.autoAdd && useEffects && !blindUnknown
       ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
       : null;
     const rangeAdjustment = effectiveRange
@@ -288,6 +355,13 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const manualValue = Number(String(values?.manualModifier ?? "").replace(",", "."));
     const manualModifier = Number.isFinite(manualValue) ? Math.trunc(manualValue) : 0;
     const { aimBonus, bracingBonus, sightBonus, laserBonus, moveAttackPenalty } = getFireBonuses(attack, values);
+    const closeHipShooting = !configuredPreview && values?.closeHipShooting
+      ? resolveCloseHipShooting({ actor: token?.actor, attack, governingSkill, enabled: true }) : null;
+    const closeQuartersBattle = resolveCloseQuartersBattle({ actor: token?.actor, attack,
+      governingSkill, governingSpecialty: governingSkill?.specialty ?? values?.governingSpecialty,
+      moveAndAttack: parseBoolean(values?.moveAndAttack),
+      movePenalty: moveAttackPenalty, physicalDistance: configuredPreview ? null
+        : getCurrentTargetDistance(values, rangeBands)?.distance ?? null });
     const allOutAttackBonus = fireService.calculateRangedAllOutAttackBonus(
       values?.allOutAttack, values?.moveAndAttack
     );
@@ -299,41 +373,65 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       visibility?.random ? null : values?.hitRegionId
     );
     const targetedAttack = !visibility?.random && !values?.suppressTargetedAttack && targetedAttackContext?.resolve({
-      specialty: values?.governingSpecialty,
+      governingSkill, specialty: governingSkill?.specialty ?? values?.governingSpecialty,
       target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
     });
-    const hitLocationPenalty = Number(targetedAttack?.effectivePenalty ?? hitLocation?.penalty ?? 0);
-    const bucketModifier = getPreviewBucketTotal();
-    const effectModifier = getApplicableEffectModifierTotal(attack, blindUnknown);
+    const rapidStrike = values?.rangedRapidStrike
+      ? resolveRangedRapidStrike({ actor: token?.actor, attack, governingSkill,
+        governingSpecialty: governingSkill?.specialty ?? values?.governingSpecialty }) : null;
+    const bucketModifier = configuredPreview ? 0 : getPreviewBucketTotal();
+    const effectModifier = configuredPreview ? 0 : getApplicableEffectModifierTotal(attack, blindUnknown);
     const targetLabel = targetedAttack?.entry?.name ?? targetedAttack?.attackVariant ?? "";
     const targetedAttackLabel = /^Targeted Attack\b/iu.test(targetLabel)
       ? targetLabel : (targetLabel ? `Targeted Attack: ${targetLabel}` : "Targeted Attack");
     const hitLocationLabel = targetedAttack
       ? `${targetedAttackLabel} / Hit Location: ${hitLocation?.label ?? ""}`
       : `Hit Location: ${hitLocation?.label ?? ""}`;
-    const modifiers = [
-      { label: "Modifier Bucket", value: bucketModifier },
-      { label: "Эффекты GGA", value: effectModifier },
-      { label: `Расстояние: ${effectiveRange?.label ?? ""}`, value: rangeAdjustment },
-      { label: `Скорострельность: ${fireMode.effectiveRoF ?? ""}`, value: rapidFireBonus },
-      { label: "Aim", value: aimBonus },
-      { label: "Упор", value: bracingBonus },
-      { label: "Optical Sight", value: sightBonus },
-      { label: "Лазерный прицел", value: laserBonus },
-      { label: "Движение и атака", value: moveAttackPenalty },
-      { label: "Тотальная атака (Точная)", value: allOutAttackBonus },
-      { label: "Бонусы/штрафы", value: manualModifier },
-      { label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c", value: visibility?.penalty ?? 0 },
-      { label: hitLocationLabel, value: hitLocationPenalty }
-    ];
-
-    const calculatedSkill = baseLevel + modifiers.reduce((total, entry) => total + Number(entry.value || 0), 0);
-    const effectiveSkill = visibility?.blind ? Math.min(calculatedSkill, 9) : calculatedSkill;
-    if (visibility?.blind && effectiveSkill < calculatedSkill) {
-      modifiers.push({ label: "Cap Shooting Blind: 9", value: effectiveSkill - calculatedSkill });
-    }
-    return { effectiveSkill, calculatedSkill, modifiers };
+    const closeHipLabel = closeHipShooting
+      ? `${closeHipShooting.governingSkillName}: ${closeHipShooting.governingSkillLevel}; ${closeHipShooting.label}: ${closeHipShooting.techniqueLevel}; Bulk: ${closeHipShooting.bulk}; Close-Hip result: ${closeHipShooting.closeHipBase}`
+      : "Close Combat Bulk";
+    const cqbLabel = closeQuartersBattle
+      ? `${closeQuartersBattle.governingSkillName}: ${closeQuartersBattle.governingSkillLevel}; ${closeQuartersBattle.label}: ${closeQuartersBattle.techniqueLevel}; weapon technique: ${closeQuartersBattle.weaponTechniqueLevel}; Move and Attack / Bulk: ${closeQuartersBattle.movePenalty}; CQB base: ${closeQuartersBattle.cqbBase}`
+      : "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0438 \u0430\u0442\u0430\u043a\u0430";
+    const closeCombatBulkBase = closeHipShooting || values?.closeCombat === true
+      ? normalizeBulk(attack?.data?.bulk ?? attack?.bulk) ?? 0 : 0;
+    const calculation = resolveCombatCalculation({
+      combatType: "ranged", actor: token?.actor, attack, baseAttackLevel: baseLevel,
+      governingSkill, attackSlot: values?.contextLabel ?? null,
+      context: { weaponBond: mode === "weapon" && isWeaponBondActive(token?.actor, attack?.weaponBond),
+        rapidStrike, targetedAttack, hitLocationBase: Number(hitLocation?.penalty ?? 0),
+        hitLocationLabel, closeQuartersBattle, closeQuartersBattleLabel: cqbLabel,
+        closeHipShooting, closeHipLabel, moveAttackBase: moveAttackPenalty,
+        closeCombatBulkBase },
+      channels: [
+        { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
+        { id: "modifierBucket", value: bucketModifier, label: "Modifier Bucket", roll: false },
+        { id: "ggaEffects", value: effectModifier, label: "\u042d\u0444\u0444\u0435\u043a\u0442\u044b GGA", roll: false },
+        { id: "range", value: rangeAdjustment, label: `\u0420\u0430\u0441\u0441\u0442\u043e\u044f\u043d\u0438\u0435: ${effectiveRange?.label ?? ""}` },
+        { id: "elevation", value: 0, label: "Elevation" },
+        { id: "rapidFire", value: rapidFireBonus, label: `\u0421\u043a\u043e\u0440\u043e\u0441\u0442\u0440\u0435\u043b\u044c\u043d\u043e\u0441\u0442\u044c: ${fireMode.effectiveRoF ?? ""}` },
+        { id: "rangedRapidStrike", value: rapidStrike ? -6 : 0, label: "Ranged Rapid Strike", kind: "combat-option" },
+        { id: "aim", value: aimBonus, label: "Aim" },
+        { id: "braced", value: bracingBonus, label: "\u0423\u043f\u043e\u0440" },
+        { id: "opticalSight", value: sightBonus, label: "Optical Sight" },
+        { id: "laser", value: laserBonus, label: "\u041b\u0430\u0437\u0435\u0440\u043d\u044b\u0439 \u043f\u0440\u0438\u0446\u0435\u043b" },
+        { id: "moveAndAttack", value: moveAttackPenalty, label: cqbLabel, kind: "maneuver" },
+        { id: "closeCombatBulk", value: closeCombatBulkBase, label: closeHipLabel },
+        { id: "maneuverAttackBonus", value: allOutAttackBonus, label: "\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 (\u0422\u043e\u0447\u043d\u0430\u044f)", kind: "maneuver" },
+        { id: "situational", value: manualModifier, label: "\u0411\u043e\u043d\u0443\u0441\u044b/\u0448\u0442\u0440\u0430\u0444\u044b" },
+        { id: "visibility", value: visibility?.penalty ?? 0, label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c" },
+        { id: "hitLocation", value: Number(hitLocation?.penalty ?? 0), label: hitLocationLabel }
+      ],
+      rules: getCombatRules("ranged"),
+      caps: visibility?.blind ? [{ maximum: 9, label: "Cap Shooting Blind: 9" }] : []
+    });
+    const movementChannel = calculation.channels.find(channel => channel.id === "moveAndAttack");
+    return { effectiveSkill: calculation.effectiveSkill, calculatedSkill: calculation.uncappedSkill,
+      modifiers: calculation.modifiers, combatCalculation: calculation,
+      closeQuartersBattle, closeHipShooting, rapidStrike,
+      moveAttackPenalty: movementChannel?.resolvedValue ?? moveAttackPenalty,
+      baseSkill: baseLevel, governingSkill, baseSkillName: "Ranged Weapon Level" };
   }
 
   function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext = null) {

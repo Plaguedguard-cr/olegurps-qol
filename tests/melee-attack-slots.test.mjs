@@ -89,7 +89,8 @@ test("execution permits RS 2, AoA, RS 1 and closes after all complete", async ()
   let closed = 0;
   const window = new MeleeAttackExecutionApp({ slots: assistant({ double: true, rapidStrike: true })._createAttackSnapshots(), onClose: () => closed++ });
   for (const index of [2, 0, 1]) await window._onClick({ target: new FakeElement(index) });
-  assert.deepEqual(calls.map(text => text.split("<br>")[0]), ["RS 2", "AoA", "RS 1"]);
+  assert.deepEqual(calls.map(text => text.match(/<details class="olegurps-attack-context"><summary[^>]*>Attack details<\/summary><div>([^<]+)/)?.[1]), ["RS 2", "AoA", "RS 1"]);
+  assert.equal(calls.every(text => !/<details[^>]*\bopen\b/.test(text)), true);
   assert.equal(calls[0].includes("Rapid Strike (-6)"), true);
   assert.equal(calls[1].includes("Rapid Strike"), false);
   assert.equal(closed, 1);

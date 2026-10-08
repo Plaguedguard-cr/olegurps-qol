@@ -44,7 +44,7 @@ export function buildAttackModifierBreakdownHtml(modifiers = []) {
   const lines = details.map(({ label, value }) =>
     `<span class="olegurps-attack-modifier-item">${escapeModifierHtml(label)} (${value > 0 ? "+" : ""}${value})</span>`
   ).join("<br>");
-  return `<span class="olegurps-attack-modifiers"><strong>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b:</strong><br>${lines}</span>`;
+  return `<details class="olegurps-attack-modifiers"><summary style="cursor:pointer"><strong>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b:</strong></summary><div>${lines}</div></details>`;
 }
 const ACTIVE_CHAT_MESSAGE_CAPTURES = new WeakMap();
 
@@ -103,6 +103,8 @@ export async function executePreparedGgaRoll({
   actor,
   token,
   attack,
+  baseSkill: preparedBaseSkill = null,
+  baseSkillName = null,
   effectiveSkill,
   physicalShots,
   effectiveRoF,
@@ -116,6 +118,11 @@ export async function executePreparedGgaRoll({
   visibilityPenalty = 0,
   visibilityCapAdjustment = 0,
   concealTargetDetails = false,
+  trademarkMoveBonus = 0,
+  rangedRapidStrikePenalty = 0,
+  quickShotBonus = 0,
+  quickShotLabel = null,
+  combatCalculation = null,
   runtime = globalThis
 }) {
   const GURPS = runtime.GURPS;
@@ -166,7 +173,8 @@ export async function executePreparedGgaRoll({
     if (typeof cap === "number" && Number.isFinite(cap)) maximumTarget = cap;
   }
 
-  const baseSkill = Math.trunc(Number(attack?.level) || 0);
+  const selectedBase = preparedBaseSkill === null ? Number.NaN : Number(preparedBaseSkill);
+  const baseSkill = Math.trunc(Number.isFinite(selectedBase) ? selectedBase : Number(attack?.level) || 0);
   const preparedSkill = Math.trunc(Number(effectiveSkill));
   let finaltarget = Number.isFinite(preparedSkill) ? preparedSkill : baseSkill + modifier;
   if (Number.isFinite(maximumTarget)) finaltarget = Math.min(finaltarget, maximumTarget);
@@ -233,13 +241,30 @@ export async function executePreparedGgaRoll({
   }
   const displayedModifiers = concealTargetDetails
     ? normalizeAttackModifierDetails([
-        { label: "\u041f\u0440\u043e\u0447\u0438\u0435 \u043c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b", value: finaltarget - baseSkill - visibilityPenalty - visibilityCapAdjustment },
+        { label: "\u041f\u0440\u043e\u0447\u0438\u0435 \u043c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b", value: finaltarget - baseSkill - visibilityPenalty - visibilityCapAdjustment - trademarkMoveBonus - rangedRapidStrikePenalty - quickShotBonus },
         { label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c", value: visibilityPenalty },
-        { label: capLabel ?? "Cap Shooting Blind: 9", value: visibilityCapAdjustment }
+        { label: capLabel ?? "Cap Shooting Blind: 9", value: visibilityCapAdjustment },
+        { label: "Trademark Move", value: trademarkMoveBonus },
+        ...(combatCalculation ? [{ label: "Ranged Rapid Strike / Quick-Shot",
+          value: combatCalculation.channels.find(entry => entry.id === "rangedRapidStrike")?.resolvedValue ?? 0 }]
+          : [{ label: "Ranged Rapid Strike", value: rangedRapidStrikePenalty },
+            { label: quickShotLabel ?? "Quick-Shot", value: quickShotBonus }])
       ])
-    : reconcileAttackModifierDetails(targetmods, finaltarget - baseSkill, capLabel);
+    : reconcileAttackModifierDetails(combatCalculation
+      ? [...combatCalculation.modifiers.filter(entry => entry.value !== 0),
+          { label: "Trademark Move", value: trademarkMoveBonus }]
+      : targetmods, finaltarget - baseSkill, capLabel);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
-  if (modifierBreakdown) content += `<p>${modifierBreakdown}</p>`;
+  if (modifierBreakdown) content += modifierBreakdown;
+  if (combatCalculation && !concealTargetDetails) {
+    const transitions = combatCalculation.channels.filter(entry =>
+      entry.resolver && entry.baseValue !== entry.resolvedValue)
+      .map(entry => `<span>${escapeModifierHtml(entry.explanation ||
+        `${entry.id}: ${entry.baseValue} -> ${entry.resolvedValue}`)}</span>`);
+    content += `<details class="olegurps-combat-channel-breakdown"><summary style="cursor:pointer">Skill details</summary><div><strong>${escapeModifierHtml(
+      combatCalculation.baseSkillName)}: ${combatCalculation.baseSkill}</strong>` +
+      (transitions.length ? `<br>${transitions.join("<br>")}` : "") + `</div></details>`;
+  }
   const messageData = {
     user: game.user.id,
     speaker,
@@ -304,15 +329,17 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   let content = await runtime.renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", data);
   const displayedModifiers = reconcileAttackModifierDetails(modifierDetails, finaltarget - baseSkill);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
-  if (modifierBreakdown) content += `<p>${modifierBreakdown}</p>`;
+  if (modifierBreakdown) content += modifierBreakdown;
   if (randomHitLocations.length) {
     content += buildRandomHitLocationsHtml(randomHitLocations, { escapeHtml: escape });
   }
   const hasDisplayedLocationModifier = displayedModifiers.some(entry =>
     String(entry?.label ?? "").includes("Hit Location:")
   );
-  if (locationLabel && !hasDisplayedLocationModifier) content += `<p>Hit Location: ${escape(locationLabel)}</p>`;
-  if (closeMultiplier) content += `<p>Extremely Close: basic damage ×${closeMultiplier}, DR ×${closeMultiplier}</p>`;
+  const attackDetails = [];
+  if (locationLabel && !hasDisplayedLocationModifier) attackDetails.push(`Hit Location: ${escape(locationLabel)}`);
+  if (closeMultiplier) attackDetails.push(`Extremely Close: basic damage \u00d7${closeMultiplier}, DR \u00d7${closeMultiplier}`);
+  if (attackDetails.length) content += `<details class="olegurps-attack-context"><summary style="cursor:pointer">Attack details</summary><div>${attackDetails.join("<br>")}</div></details>`;
   const message = { user: runtime.game.user.id, speaker: runtime.ChatMessage.getSpeaker(actor ? { actor } : {}),
     content, rolls: [roll], sound: runtime.CONFIG?.sounds?.dice };
   const rollMode = runtime.game.settings?.get?.("core", "rollMode");

@@ -409,7 +409,8 @@ export class SuppressionFireApp extends ApplicationV2 {
       moveAndAttack: false,
       allOutAttack: false,
       height: targetContext?.height ?? this._state.zoneRanges[zoneIndex]?.height ?? "",
-      highGround: targetContext?.highGround ?? this._state.zoneRanges[zoneIndex]?.highGround ?? false,
+      elevationDirection: targetContext?.elevationDirection ?? (Number(this._state.zoneRanges[zoneIndex]?.height) > 0
+        ? this._state.zoneRanges[zoneIndex]?.highGround ? "high" : "low" : "level"),
       rangeIndex: targetContext?.rangeIndex ?? this._state.zoneRanges[zoneIndex]?.rangeIndex ?? null,
       hitLocationId: silhouette?.zoneId ?? "silhouette",
       hitRegionId: silhouette?.regionId ?? null
@@ -917,7 +918,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       targetName: getSafeSuppressionTargetName(target),
       distance: targetContext.distance,
       height: targetContext.height,
-      highGround: targetContext.highGround,
+      highGround: targetContext.elevationDirection === "high",
       rangeIndex: targetContext.rangeIndex,
       rangePenalty: targetContext.rangePenalty,
       rangeLabel: targetContext.rangeLabel,
@@ -952,7 +953,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       rangeIndex: request.rangeIndex,
       distance: request.distance,
       height: request.height,
-      highGround: request.highGround
+      elevationDirection: Number(request.height) > 0 ? request.highGround ? "high" : "low" : "level"
     };
     return this._withTargetSelection(request.targetId, async () => {
       const options = this._executionOptions({
@@ -1023,9 +1024,10 @@ export class SuppressionFireApp extends ApplicationV2 {
       speaker: ChatMessage.getSpeaker({ actor: this.actor, token: this.token }),
       content: '<div style="font-size:.88em;line-height:1.3">' +
         '<h3 style="margin:0 0 5px">Suppression Fire (\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430)</h3>' +
-        '<p style="margin:0 0 5px"><strong>' + escapeHTML(this.weapon.name) + '</strong>' +
-        ' | mounted/stabilized: <strong>' + mountedText + '</strong></p>' +
-        '<ol style="margin:0;padding-left:22px">' + rows + '</ol></div>'
+        '<p style="margin:0 0 5px"><strong>' + escapeHTML(this.weapon.name) + '</strong></p>' +
+        '<details class="olegurps-suppression-breakdown"><summary style="cursor:pointer">Zone details</summary>' +
+        '<div>mounted/stabilized: <strong>' + mountedText + '</strong></div>' +
+        '<ol style="margin:0;padding-left:22px">' + rows + '</ol></details></div>'
     });
   }
 

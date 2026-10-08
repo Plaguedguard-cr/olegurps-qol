@@ -28,14 +28,14 @@ export function findRangeBandForDistance(rangeBands, distance) {
   return null;
 }
 
-export function calculateEffectiveDistance(distance, height, { highGround = false, beamWeapon = false } = {}) {
+export function calculateEffectiveDistance(distance, height, { elevationDirection = "level", beamWeapon = false } = {}) {
   const sourceDistance = Number(distance);
   const elevation = parseElevationHeight(height);
   if (!Number.isFinite(sourceDistance) || sourceDistance < 0 || elevation === null) return null;
-  if (elevation === 0 || beamWeapon) return sourceDistance;
-  return highGround
-    ? Math.max(sourceDistance / 2, sourceDistance - elevation / 2)
-    : sourceDistance + elevation;
+  if (elevation === 0 || beamWeapon || elevationDirection === "level") return sourceDistance;
+  if (elevationDirection === "high") return Math.max(sourceDistance / 2, sourceDistance - elevation / 2);
+  if (elevationDirection === "low") return sourceDistance + elevation;
+  return null;
 }
 
 export function isBeamWeapon(attack) {
@@ -46,18 +46,22 @@ export function isBeamWeapon(attack) {
 export function resolveElevationRange({
   rangeBands,
   rangeIndex,
+  distance = null,
   height,
-  highGround = false,
+  elevationDirection = "level",
   beamWeapon = false
 } = {}) {
   const elevation = parseElevationHeight(height);
-  if (elevation === null || elevation <= 0 || beamWeapon) return null;
+  if (elevation === null || elevation <= 0 || beamWeapon || elevationDirection === "level") return null;
 
   const selectedRange = rangeBands?.find(range => range.index === Number(rangeIndex)) ?? null;
-  const sourceDistance = getRangeBandDistance(selectedRange);
+  const measured = distance !== null && distance !== undefined && distance !== ""
+    ? Number(distance) : null;
+  const sourceDistance = Number.isFinite(measured) && measured >= 0
+    ? measured : getRangeBandDistance(selectedRange);
   if (!selectedRange || !Number.isFinite(sourceDistance)) return null;
 
-  const effectiveDistance = calculateEffectiveDistance(sourceDistance, elevation, { highGround, beamWeapon });
+  const effectiveDistance = calculateEffectiveDistance(sourceDistance, elevation, { elevationDirection, beamWeapon });
   const effectiveRange = findRangeBandForDistance(rangeBands, effectiveDistance);
   if (!effectiveRange) return null;
 
@@ -72,12 +76,13 @@ export function resolveElevationRange({
 export function resolveEffectiveRange({
   rangeBands,
   rangeIndex,
+  distance = null,
   height,
-  highGround = false,
+  elevationDirection = "level",
   beamWeapon = false
 } = {}) {
   const selectedRange = rangeBands?.find(range => range.index === Number(rangeIndex)) ?? null;
-  const elevation = resolveElevationRange({ rangeBands, rangeIndex, height, highGround, beamWeapon });
+  const elevation = resolveElevationRange({ rangeBands, rangeIndex, distance, height, elevationDirection, beamWeapon });
   return {
     selectedRange,
     effectiveRange: elevation?.range ?? selectedRange,

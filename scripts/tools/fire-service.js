@@ -394,6 +394,12 @@ export class FireService {
     this._previewModifierSnapshot = modifierSnapshot;
 
     try {
+      if (Array.isArray(options.combatCalculation?.rollModifiers)) {
+        for (const modifier of options.combatCalculation.rollModifiers) {
+          GURPS.ModifierBucket.addModifier(modifier.value, modifier.label);
+          appliedModifiers.push(`${modifier.label} ${modifier.value}`);
+        }
+      } else {
       const hasEffectRangePenalty = options.effectRangePenalty !== null &&
         options.effectRangePenalty !== "" &&
         Number.isFinite(Number(options.effectRangePenalty));
@@ -438,7 +444,21 @@ export class FireService {
         GURPS.ModifierBucket.addModifier(options.bracingBonus, "Упор");
         appliedModifiers.push(`Упор +${options.bracingBonus}`);
       }
-      if (options.moveAttackPenalty < 0) {
+      if (options.closeHipShooting) {
+        const chs = options.closeHipShooting;
+        const description = `${chs.governingSkillName}: ${chs.governingSkillLevel}; ` +
+          `${chs.label}: ${chs.techniqueLevel}; Bulk: ${chs.bulk}; ` +
+          `Close-Hip result: ${chs.closeHipBase}`;
+        GURPS.ModifierBucket.addModifier(options.moveAttackPenalty, description);
+        appliedModifiers.push(description);
+      } else if (options.closeQuartersBattle) {
+        const cqb = options.closeQuartersBattle;
+        const description = `${cqb.governingSkillName}: ${cqb.governingSkillLevel}; ` +
+          `${cqb.label}: ${cqb.techniqueLevel}; weapon technique: ${cqb.weaponTechniqueLevel}; Move and Attack / Bulk: ${cqb.movePenalty}; ` +
+          `CQB base: ${cqb.cqbBase}`;
+        GURPS.ModifierBucket.addModifier(options.moveAttackPenalty, description);
+        appliedModifiers.push(description);
+      } else if (options.moveAttackPenalty < 0) {
         GURPS.ModifierBucket.addModifier(options.moveAttackPenalty, "Движение и атака");
         appliedModifiers.push(`движение и атака ${options.moveAttackPenalty}`);
       }
@@ -456,11 +476,19 @@ export class FireService {
         appliedModifiers.push(`ручной модификатор ${sign}${options.manualModifier}`);
       }
 
+      if (options.rangedRapidStrikePenalty) GURPS.ModifierBucket.addModifier(options.rangedRapidStrikePenalty, "Ranged Rapid Strike");
+      if (options.quickShotBonus) GURPS.ModifierBucket.addModifier(options.quickShotBonus, options.quickShotLabel ?? "Quick-Shot");
+      }
+      if (options.trademarkMoveBonus === 1) GURPS.ModifierBucket.addModifier(1, "Trademark Move");
+
       GURPS.SetLastActor?.(this.actor);
       result = await this.preparedRollExecutor({
         actor: this.actor,
         token: this.token,
         attack,
+        baseSkill: options.baseSkill,
+        baseSkillName: options.baseSkillName,
+        combatCalculation: options.combatCalculation ?? null,
         effectiveSkill: options.effectiveSkill,
         physicalShots: options.physicalShots,
         effectiveRoF: options.effectiveRoF,
@@ -473,7 +501,11 @@ export class FireService {
         capLabel: options.capLabel,
         visibilityPenalty: options.visibilityPenalty,
         visibilityCapAdjustment: options.visibilityCapAdjustment,
-        concealTargetDetails: options.concealTargetDetails
+        concealTargetDetails: options.concealTargetDetails,
+        trademarkMoveBonus: options.trademarkMoveBonus === 1 ? 1 : 0,
+        rangedRapidStrikePenalty: options.rangedRapidStrikePenalty ?? 0,
+        quickShotBonus: options.quickShotBonus ?? 0,
+        quickShotLabel: options.quickShotLabel ?? null
       });
     } finally {
       try {

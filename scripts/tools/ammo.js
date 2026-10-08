@@ -1,15 +1,21 @@
-import { createFireControlContext } from "./fire-control-context.js";
+import { createFireControlContext, getTokenFireRangeContext } from "./fire-control-context.js";
 import { WeaponAssistantApp } from "./weapon-assistant-app.js";
 import { FirePreparationApp } from "./fire-preparation-app.js";
 import { measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
 import { checkHearingMinusTwo, normalizeVisibility, visibilityRules } from "./limited-visibility.js";
 import { SuppressionFireApp } from "./suppression-fire-app.js";
 import { SpecialFireMenuApp } from "./special-fire-menu-app.js";
+import { TrademarkMoveEditorApp } from "./trademark-move-editor-app.js";
+import { TrademarkMoveExecutionApp } from "./trademark-move-execution-app.js";
+import { RangedAttackExecutionApp } from "./ranged-attack-execution-app.js";
+import { hasWeaponBondPerk, isWeaponBondActive, weaponBondCheckbox } from "./weapon-bond-service.js";
+import { TRADEMARK_MOVE_FLAG, hasTrademarkMovePerk, normalizeTrademarkMove, normalizeTrademarkMoveStep, applyTrademarkMoveBonus, getTrademarkMoveSkillPreview } from "./trademark-move-model.js";
+import { getRangedRapidStrikeSpecialties, resolveRangedRapidStrike, validateRangedRapidStrikeSplit } from "./ranged-rapid-strike-service.js";
 import { SprayingFireApp } from "./spraying-fire-app.js";
 import { selectSprayingTargets } from "./spraying-fire-selection.js";
 import { sprayingCapacity, planSprayingFire } from "./spraying-fire-service.js";
 import { SprayingFireSessionService, getSpecialFireOwner } from "./spraying-fire-session-service.js";
-import { getSafeTargetName, withClearedFoundryTargets, clearFoundryTargets } from "./foundry-targets.js";
+import { getSafeTargetName, withClearedFoundryTargets, withFoundryTargets, clearFoundryTargets } from "./foundry-targets.js";
 import { getSuppressionFireCapacity } from "./suppression-fire-service.js";
 import { SuppressionFireSessionService } from "./suppression-fire-session-service.js";
 import { FireService } from "./fire-service.js";
@@ -17,6 +23,8 @@ import { AmmoService } from "./ammo-service.js";
 import { TargetingService } from "./targeting-service.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { createTargetedAttackContext } from "./targeted-attack-service.js";
+import { listRangedGoverningSkills, resolveRangedGoverningSkill,
+  bindingForGoverningSkill, getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
 import {
   isBeamWeapon,
   parseElevationHeight,
@@ -39,6 +47,34 @@ const OPEN_SPRAYING_FIRE = new Map();
 const OPEN_SPRAYING_SELECTIONS = new Map();
 const LAST_FIRE_BODYPLANS = new Map();
 const TARGETED_ATTACK_CONTEXTS = new WeakMap();
+
+export function buildFireSkillBreakdownHtml(payload, escapeHTML) {
+  const skillDetails = [];
+  const bond = payload.combatCalculation?.modifiers?.find(entry =>
+    entry.channel === "weaponBond" && entry.value !== 0);
+  if (bond) skillDetails.push(`${escapeHTML(bond.label)}: <strong>+${bond.value}</strong>`);
+  if (payload.closeHipShooting) {
+    const chs = payload.closeHipShooting;
+    skillDetails.push(`${escapeHTML(chs.governingSkillName)}: <strong>${chs.governingSkillLevel}</strong>; ` +
+      `${escapeHTML(chs.label)}: <strong>${chs.techniqueLevel}</strong>; ` +
+      `Bulk: <strong>${chs.bulk}</strong>; Close-Hip result: <strong>${chs.closeHipBase}</strong>`);
+  }
+  if (payload.closeQuartersBattle) {
+    const cqb = payload.closeQuartersBattle;
+    skillDetails.push(`${escapeHTML(cqb.governingSkillName)}: <strong>${cqb.governingSkillLevel}</strong>; ` +
+      `${escapeHTML(cqb.label)}: <strong>${cqb.techniqueLevel}</strong>; ` +
+      `weapon technique: <strong>${cqb.weaponTechniqueLevel}</strong>; Move and Attack / Bulk: <strong>${cqb.movePenalty}</strong>; ` +
+      `CQB base: <strong>${cqb.cqbBase}</strong>`);
+  }
+  if (payload.baseSkillName && Number.isFinite(payload.baseSkill)) {
+    const base = escapeHTML(payload.baseSkillName) + ": <strong>" + payload.baseSkill + "</strong>";
+    return `<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Skill details</summary><div>${base}` +
+      (skillDetails.length ? `<br><br>${skillDetails.join(".<br><br>")}` : "") + `</div></details>`;
+  }
+  return skillDetails.length
+    ? `<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Techniques</summary><div>${skillDetails.join(".<br><br>")}</div></details>`
+    : "";
+}
 
 export async function openAmmoManager() {
   const ApplicationV2 = foundry?.applications?.api?.ApplicationV2;
@@ -442,6 +478,7 @@ export async function openAmmoManager() {
         name,
         mode,
         level: clampInteger(attack.level, 0, 999),
+        governingSkillBinding: state?.governingSkills?.[getRangedGoverningAttackKey({ path, uuid: attack.uuid, name, mode })] ?? null,
         shots: String(attack.shots ?? "").trim(),
         rof: String(attack.rof ?? "").trim(),
         acc: accuracy.acc,
@@ -517,6 +554,10 @@ export async function openAmmoManager() {
     await ChatMessage.create(chatData);
   }
 
+  function withWeaponBond(attack, weapon) {
+    return attack ? { ...attack, weaponBond: isWeaponBondActive(actor, weapon?.weaponBond) } : null;
+  }
+
   function getWeaponContext(state, weaponId) {
     const weapon = state.weapons.find(entry => entry.id === weaponId);
     if (!weapon) {
@@ -526,7 +567,7 @@ export async function openAmmoManager() {
     normalizeWeaponShape(weapon);
     return {
       weapon,
-      attack: resolveAttack(weapon.attackRef, getRangedAttacks(state))
+      attack: withWeaponBond(resolveAttack(weapon.attackRef, getRangedAttacks(state)), weapon)
     };
   }
 
@@ -587,6 +628,7 @@ export async function openAmmoManager() {
     }
     const loaded = weapon.magazines[weapon.loadedIndex];
     const shotLimits = getShotLimits(attack, loaded, values.rofMode);
+    if (values.rangedRapidStrikePart) shotLimits.minShots = 1;
     const shotsText = String(values.shots ?? "").trim();
     const manualText = String(values.manualModifier ?? "").trim();
     const shots = Number(shotsText.replace(",", "."));
@@ -614,23 +656,29 @@ export async function openAmmoManager() {
       : Number(values.rangeIndex);
     const rangeEntry = rangeBands.find(entry => entry.index === rangeIndex);
     const elevationHeight = parseElevationHeight(values.height);
-    const highGround = parseBoolean(values.highGround);
+    const elevationDirection = values.elevationDirection ?? "level";
     const beamWeapon = isBeamWeapon(attack);
     const { effectiveRange, elevation } = resolveEffectiveRange({
       rangeBands,
       rangeIndex,
+      distance: values.manualRangeSelected ? null : values.targetDistanceOverride,
       height: values.height,
-      highGround,
+      elevationDirection,
       beamWeapon
     });
     const hitLocation = targetingService?.getSelection(values.hitLocationId, values.hitRegionId);
     const targetedAttackContext = TARGETED_ATTACK_CONTEXTS.get(targetingService) ?? null;
+    const governingSkill = resolveRangedGoverningSkill({ actor,
+      binding: attack?.governingSkillBinding });
     const targetedAttack = !visibilityRule?.random && targetedAttackContext?.resolve({
-      specialty: values.governingSpecialty,
+      governingSkill, specialty: governingSkill?.specialty ?? values.governingSpecialty,
       target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
     });
     const fireMode = getFireModeState(attack, values, rangeBands);
+    const rapidStrike = values.rangedRapidStrike
+      ? resolveRangedRapidStrike({ actor, attack, governingSkill,
+        governingSpecialty: governingSkill?.specialty ?? values.governingSpecialty }) : null;
     const errors = [];
 
     if (shotsText === "" || !Number.isInteger(shots) || shots < shotLimits.minShots || shots > shotLimits.maxShots) {
@@ -650,6 +698,12 @@ export async function openAmmoManager() {
     }
     if (!hitLocation) {
       errors.push("выберите доступную зону попадания");
+    }
+    const quickSpecialties = values.rangedRapidStrike
+      ? getRangedRapidStrikeSpecialties({ actor, attack }) : [];
+    if (!governingSkill && quickSpecialties.length > 1 &&
+        !quickSpecialties.some(option => option.value === values.governingSpecialty)) {
+      errors.push("Select Governing Skill for Quick-Shot.");
     }
     if (!visibilityRule?.random && targetedAttackContext?.requiresSelection &&
       !targetedAttackContext.specialtyOptions.some(option => option.value === values.governingSpecialty)) {
@@ -690,6 +744,9 @@ export async function openAmmoManager() {
       closeDamageMultiplier: fireMode.closeDamageMultiplier,
       rapidFireBonus: calculateRapidFireBonus(fireMode.effectiveRoF),
       effectiveSkill,
+      combatCalculation: skillDetails?.combatCalculation ?? null,
+      baseSkill: skillDetails?.baseSkill ?? Number(attack?.level),
+      baseSkillName: skillDetails?.baseSkillName ?? "Ranged Weapon Level",
       visibilityPenalty: visibilityRule?.penalty ?? 0,
       visibilityCapAdjustment: visibilityRule?.blind
         ? Math.min(0, effectiveSkill - (skillDetails?.calculatedSkill ?? effectiveSkill)) : 0,
@@ -702,14 +759,19 @@ export async function openAmmoManager() {
       bracingBonus,
       sightBonus,
       moveAndAttack,
-      moveAttackPenalty,
+      moveAttackPenalty: skillDetails?.moveAttackPenalty ?? moveAttackPenalty,
+      closeQuartersBattle: skillDetails?.closeQuartersBattle ?? null,
+      closeHipShooting: skillDetails?.closeHipShooting ?? null,
       allOutAttack,
       allOutAttackBonus,
       laserSight,
       laserBonus,
       manualModifier,
+      rangedRapidStrikePenalty: rapidStrike ? -6 : 0,
+      quickShotBonus: rapidStrike?.quickShotBonus ?? 0,
+      quickShotLabel: rapidStrike?.quickShotLabel ?? null,
       height: elevationHeight,
-      highGround,
+      elevationDirection,
       beamWeapon,
       effectiveDistance: elevation?.effectiveDistance ?? null,
       rangePenalty: (effectiveRange ?? rangeEntry).penalty,
@@ -748,16 +810,22 @@ export async function openAmmoManager() {
       lines.push(`Результат попаданий: <strong>${hitText}</strong>`);
     }
 
+    const skillBreakdown = buildFireSkillBreakdownHtml(payload, escapeHTML);
+    if (skillBreakdown) lines.push(skillBreakdown);
+
+    const shotDetails = [];
     if (payload.closeDamage) {
       const damage = payload.closeDamage.formula
         ? escapeHTML(payload.closeDamage.formula)
-        : `${escapeHTML(payload.closeDamage.source || "не удалось определить")} ×${payload.closeDamage.multiplier}`;
-      lines.push(`Урон: <strong>${damage}</strong>; DR: <strong>×${payload.closeDamage.multiplier}</strong>`);
+        : `${escapeHTML(payload.closeDamage.source || "\u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u044c")} \u00d7${payload.closeDamage.multiplier}`;
+      shotDetails.push(`\u0423\u0440\u043e\u043d: <strong>${damage}</strong>; DR: <strong>\u00d7${payload.closeDamage.multiplier}</strong>`);
     }
-
-    if (payload.blindHex) lines.push(`\u041f\u0440\u0435\u0434\u043f\u043e\u043b\u0430\u0433\u0430\u0435\u043c\u044b\u0439 \u0433\u0435\u043a\u0441: <strong>${payload.blindHex.i}, ${payload.blindHex.j}</strong>`);
+    if (payload.blindHex) shotDetails.push(`\u041f\u0440\u0435\u0434\u043f\u043e\u043b\u0430\u0433\u0430\u0435\u043c\u044b\u0439 \u0433\u0435\u043a\u0441: <strong>${payload.blindHex.i}, ${payload.blindHex.j}</strong>`);
+    if (payload.randomHitLocations?.length && payload.blindHex) {
+      shotDetails.push("\u0421\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0435 \u0437\u043e\u043d\u044b \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435)");
+    }
+    if (shotDetails.length) lines.push(`<details class="olegurps-fire-context-breakdown"><summary style="cursor:pointer">Shot details</summary><div>${shotDetails.join(".<br><br>")}</div></details>`);
     if (payload.randomHitLocations?.length) {
-      if (payload.blindHex) lines.push("\u0421\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0435 \u0437\u043e\u043d\u044b \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435)");
       lines.push(buildRandomHitLocationsHtml(payload.randomHitLocations, { escapeHtml: escapeHTML }));
     } else if (payload.hitLocationText) {
       lines.push(`Зона попадания: <strong>${escapeHTML(payload.hitLocationText)}</strong>`);
@@ -776,9 +844,9 @@ export async function openAmmoManager() {
     return lines.join(".<br><br>");
   }
 
-  async function fireAndRoll(state, weaponId, rawShotOptions, targetingService) {
+  async function fireAndRoll(state, weaponId, rawShotOptions, targetingService, trademarkMove = false, preparedSnapshot = null, expectedEffectiveSkill = null) {
     const visibility = normalizeVisibility(rawShotOptions.visibility);
-    if (visibility?.mode === "unseen") {
+    if (visibility?.mode === "unseen" && !preparedSnapshot) {
       if (Boolean(visibility.targetTokenId) === Boolean(visibility.blindFireHex))
         throw new Error("Select exactly one target source.");
       if (visibility.blindFireHex) {
@@ -796,7 +864,7 @@ export async function openAmmoManager() {
         rawShotOptions = { ...rawShotOptions, targetDistanceOverride: distance };
       }
     }
-    if (visibility?.mode === "blind" && !visibility.knownLocation) {
+    if (visibility?.mode === "blind" && !visibility.knownLocation && !preparedSnapshot) {
       if (!visibility.hex) throw new Error("\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u043f\u0440\u0435\u0434\u043f\u043e\u043b\u0430\u0433\u0430\u0435\u043c\u044b\u0439 \u0433\u0435\u043a\u0441.");
       const center = canvas?.grid?.getCenterPoint?.(visibility.hex);
       const distance = measureCanvasPointDistanceYards(token, center);
@@ -822,13 +890,23 @@ export async function openAmmoManager() {
     const effectRangePenalty = getTaggedModifierSettings()?.autoAdd && visibility?.mode !== "unseen" && !visibility?.hex
       ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
       : null;
-    const shotOptions = parseShotOptions(weapon, attack, rawShotOptions, rangeBands, targetingService, effectRangePenalty);
+    let shotOptions = preparedSnapshot?.shotOptions ??
+      parseShotOptions(weapon, attack, rawShotOptions, rangeBands, targetingService, effectRangePenalty);
     if (!shotOptions) return false;
+    if (preparedSnapshot && (loaded < shotOptions.physicalShots || weapon.totalAmmo < shotOptions.physicalShots)) {
+      ui.notifications.warn("Ranged Rapid Strike: insufficient ammunition for this attack.");
+      return false;
+    }
+    if (trademarkMove) shotOptions = applyTrademarkMoveBonus(shotOptions);
+    if (trademarkMove && Number.isFinite(expectedEffectiveSkill) &&
+        shotOptions.effectiveSkill !== expectedEffectiveSkill)
+      throw new Error("Effective skill changed. Review the updated preview before rolling.");
 
+    const rollAttack = preparedSnapshot?.attack ?? attack;
     const result = visibility?.mode === "unseen" && visibility.blindFireHex ||
       visibility?.mode === "blind" && !visibility.knownLocation
-      ? await withClearedFoundryTargets(() => executeRangedAttack(attack, shotOptions))
-      : await executeRangedAttack(attack, shotOptions);
+      ? await withClearedFoundryTargets(() => executeRangedAttack(rollAttack, shotOptions))
+      : await executeRangedAttack(rollAttack, shotOptions);
     if (!result.rolled) {
       ui.notifications.warn(
         "Бросок атаки не был выполнен. Патроны не списаны."
@@ -844,7 +922,7 @@ export async function openAmmoManager() {
     const rcl = shotOptions.rcl;
     const margin = extractMarginFromRoll(result.rollData);
     const hits = calculateHitsFromMargin(shotOptions.effectiveRoF, rcl, margin);
-    const closeDamage = getCloseDamageReport(attack, shotOptions);
+    const closeDamage = getCloseDamageReport(rollAttack, shotOptions);
     let hitLocationText = shotOptions.hitLocationLabel;
     let randomHitLocations = [];
     if (shotOptions.randomHitLocation && hits > 0) {
@@ -864,6 +942,10 @@ export async function openAmmoManager() {
       margin,
       rcl,
       closeDamage,
+      closeQuartersBattle: shotOptions.closeQuartersBattle,
+      closeHipShooting: shotOptions.closeHipShooting,
+      baseSkill: shotOptions.baseSkill, baseSkillName: shotOptions.baseSkillName,
+      combatCalculation: shotOptions.combatCalculation,
       hitLocationText,
       randomHitLocations,
       blindHex: visibility?.mode === "unseen" ? visibility.blindFireHex
@@ -1325,7 +1407,7 @@ export async function openAmmoManager() {
     for (const preparation of OPEN_FIRE_PREPARATIONS.values()) {
       if (preparation.token?.actor?.id !== actor.id) continue;
       if (getAttackOverrideKey(preparation.weapon?.attackRef) !== referenceKey) continue;
-      const effectiveAttack = resolveAttack(preparation.weapon.attackRef, effectiveAttacks);
+      const effectiveAttack = withWeaponBond(resolveAttack(preparation.weapon.attackRef, effectiveAttacks), preparation.weapon);
       if (!effectiveAttack) continue;
       const loaded = preparation.weapon.magazines[preparation.weapon.loadedIndex];
       await preparation.updateWeaponAttack(effectiveAttack, {
@@ -1406,6 +1488,7 @@ export async function openAmmoManager() {
       })
       .join("");
 
+    const weaponBondAvailable = hasWeaponBondPerk(actor);
     const ammoTypeValue = existing ? escapeHTML(existing.ammoType) : "";
     const totalAmmoValue = existing ? String(existing.totalAmmo) : "";
     const capacityValue = existing ? String(existing.capacity) : "";
@@ -1523,6 +1606,10 @@ export async function openAmmoManager() {
           </div>
 
           <div class="gam-config-row">
+            ${weaponBondCheckbox({ available: weaponBondAvailable, checked: existing?.weaponBond === true })}
+          </div>
+
+          <div class="gam-config-row">
             <label class="gam-config-checkbox">
               <input type="checkbox" name="fillAvailable" ${existing ? "" : "checked"}>
               <span>Заполнить магазины доступными патронами</span>
@@ -1622,12 +1709,14 @@ export async function openAmmoManager() {
     const newTotalAmmo = clampInteger(parsedTotalAmmo, 0);
     const newAmmoType = rawAmmoType;
     const fillAvailable = parseBoolean(values.fillAvailable);
+    const weaponBond = weaponBondAvailable && parseBoolean(values.weaponBond);
 
     let weapon = existing;
 
     if (!weapon) {
       weapon = {
         id: randomId(),
+        weaponBond,
         name: attack.label,
         attackRef: makeAttackRef(attack),
         ammoType: newAmmoType,
@@ -1639,6 +1728,7 @@ export async function openAmmoManager() {
       state.weapons.push(weapon);
     } else {
       weapon.name = attack.label;
+      weapon.weaponBond = weaponBond;
       weapon.attackRef = makeAttackRef(attack);
       weapon.ammoType = newAmmoType;
       weapon.totalAmmo = newTotalAmmo;
@@ -1940,18 +2030,84 @@ export async function openAmmoManager() {
       }).laserBonus,
       calculateFireMode: shotOptions => getFireModeState(currentAttack(), shotOptions, rangeBands),
       calculateEffectiveSkill: (shotOptions, currentTargetingService = targetingService) => calculateEffectiveFireSkill(
-        currentAttack(), shotOptions, rangeBands, currentTargetingService, targetedAttackContext),
+        currentAttack(), shotOptions, rangeBands, currentTargetingService, preparation?.targetedAttackContext ?? targetedAttackContext),
       onTargetingServiceChange: currentTargetingService => {
         TARGETED_ATTACK_CONTEXTS.set(currentTargetingService, targetedAttackContext);
         LAST_FIRE_BODYPLANS.set(targetSelectionKey, currentTargetingService.bodyplan);
       },
-      onGoverningSpecialtyChange: async specialty => {
-        if (specialty) weapon.governingSpecialty = specialty;
+      onGoverningSpecialtyChange: async skillKey => {
+        const skill = listRangedGoverningSkills(actor).find(entry => entry.key === skillKey);
+        const attackKey = getRangedGoverningAttackKey(weapon.attackRef);
+        state.governingSkills ??= {};
+        if (skill) state.governingSkills[attackKey] = bindingForGoverningSkill(skill);
+        else delete state.governingSkills[attackKey];
+        if (skill?.specialty) weapon.governingSpecialty = skill.specialty;
         else delete weapon.governingSpecialty;
         await saveState(state);
       },
       onClose: () => OPEN_FIRE_PREPARATIONS.delete(preparationKey),
       onConfirm: async (rawShotOptions, currentTargetingService = targetingService) => {
+        if (Array.isArray(rawShotOptions)) {
+          const latest = await loadState();
+          await repairState(latest, false);
+          const { weapon: latestWeapon, attack: latestAttack } = getWeaponContext(latest, weaponId);
+          const loadedNow = latestWeapon.magazines[latestWeapon.loadedIndex];
+          const mode = rawShotOptions[0]?.rofMode;
+          const availableRoF = getShotLimits(latestAttack, loadedNow, mode).maxShots;
+          if (!validateRangedRapidStrikeSplit(Number(rawShotOptions[0]?.shots),
+            Number(rawShotOptions[1]?.shots), availableRoF))
+            throw new Error("Ranged Rapid Strike: split the available RoF between Attack 1 and Attack 2.");
+          TARGETED_ATTACK_CONTEXTS.set(currentTargetingService,
+            createTargetedAttackContext({ actor, attack: latestAttack }));
+          const snapshots = [];
+          for (const [index, raw] of rawShotOptions.entries()) {
+            const targetId = raw.targetTokenId ?? null;
+            const target = targetId ? canvas?.tokens?.get?.(targetId) : null;
+            if (targetId && !target) throw new Error("Attack " + (index + 1) + ": target Token is unavailable.");
+            const snapshot = await withFoundryTargets(targetId ? [targetId] : [], () => {
+              const measured = target ? getTokenFireRangeContext({
+                sourceToken: token, targetToken: target, rangeBands
+              }) : null;
+              const values = { ...raw,
+                targetDistanceOverride: measured?.distance ?? raw.targetDistanceOverride,
+                rangeIndex: raw.manualRangeSelected ? raw.rangeIndex : measured?.rangeIndex ?? raw.rangeIndex
+              };
+              const effectRangePenalty = getTaggedModifierSettings()?.autoAdd &&
+                raw.visibility?.mode !== "unseen" && !raw.visibility?.hex
+                ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null : null;
+              const shotOptions = parseShotOptions(latestWeapon, latestAttack, values,
+                rangeBands, currentTargetingService, effectRangePenalty);
+              if (!shotOptions) throw new Error("Attack " + (index + 1) + ": invalid shot options.");
+              return {
+                targetId, targetingService: currentTargetingService,
+                visibility: raw.visibility,
+                attack: foundry.utils.deepClone(latestAttack),
+                shotOptions: { ...shotOptions, contextLabel: "Attack " + (index + 1) },
+                summary: shotOptions.hitLocationLabel + " | " + shotOptions.physicalShots + " shots | " +
+                  shotOptions.effectiveSkill
+              };
+            });
+            snapshots.push(snapshot);
+          }
+          const execution = new RangedAttackExecutionApp({
+            slots: snapshots,
+            execute: async (snapshot, consumeAction) => {
+              const fresh = await loadState();
+              const done = await withFoundryTargets(snapshot.targetId ? [snapshot.targetId] : [], () =>
+                fireAndRoll(fresh, weaponId, { visibility: snapshot.visibility },
+                  snapshot.targetingService, false, { attack: snapshot.attack,
+                    shotOptions: { ...snapshot.shotOptions, consumeAction } }));
+              if (done && managerApp?.rendered) {
+                managerApp.setManagerState(fresh);
+                await managerApp.refreshContent();
+              }
+              return done;
+            }
+          });
+          await execution.render({ force: true });
+          return true;
+        }
+        TARGETED_ATTACK_CONTEXTS.set(currentTargetingService, preparation?.targetedAttackContext ?? targetedAttackContext);
         const changed = await fireAndRoll(state, weaponId, rawShotOptions, currentTargetingService);
         if (!changed) return false;
         if (managerApp?.rendered) {
@@ -2167,6 +2323,179 @@ export async function openAmmoManager() {
     catch (error) { OPEN_SPRAYING_FIRE.delete(key); throw error; }
   }
 
+
+  function trademarkWeapons(state) {
+    const attacks = getRangedAttacks(state);
+    return (state.weapons ?? []).flatMap(weapon => {
+      const attack = resolveAttack(weapon.attackRef, attacks);
+      return attack ? [{ weapon, attack: withWeaponBond(attack, weapon), attackRef: makeAttackRef(attack),
+        profile: fireService.parseRateOfFire(attack.rof) }] : [];
+    });
+  }
+
+  function savedTrademarkMove() {
+    const storage = actor.getFlag("olegurps-qol", TRADEMARK_MOVE_FLAG);
+    return normalizeTrademarkMove(storage?.moves?.find(move => move.id === "default"));
+  }
+
+  async function validateTrademarkSteps(steps, state) {
+    if (!Array.isArray(steps) || !steps.length) throw new Error("Trademark Move needs at least one attack.");
+    const weapons = trademarkWeapons(state);
+    for (const [index, raw] of steps.entries()) {
+      const step = normalizeTrademarkMoveStep(raw);
+      const current = weapons.find(entry => entry.weapon.id === step.weaponId);
+      if (!current || !step.attackRef ||
+          resolveAttack(step.attackRef, getRangedAttacks(state))?.path !== current.attack.path)
+        throw new Error("Trademark Move attack " + (index + 1) + ": ranged attack is unavailable.");
+      const mode = current.profile.type === "full-auto"
+        ? current.profile.modes[step.rofMode] : null;
+      if (current.profile.type === "full-auto" && !mode)
+        throw new Error("Trademark Move attack " + (index + 1) + ": invalid RoF mode.");
+      const maximum = mode?.fullRoF ?? current.profile.baseRoF;
+      const minimum = step.rangedRapidStrike ? 1 : mode?.minRoF ?? 1;
+      if (!Number.isInteger(step.shots) || step.shots < minimum || step.shots > maximum)
+        throw new Error("Trademark Move attack " + (index + 1) + ": invalid shots.");
+      if (!Number.isInteger(step.aimSeconds) || step.aimSeconds < 0)
+        throw new Error("Trademark Move attack " + (index + 1) + ": invalid Aim.");
+      if (!TargetingService.getBodyplanOptions().some(entry => entry.id === step.bodyplanId))
+        throw new Error("Trademark Move attack " + (index + 1) + ": invalid bodyplan.");
+      const targeting = await TargetingService.create({ attack: current.attack, bodyplan: step.bodyplanId });
+      if (!targeting.getSelection(step.hitLocationId, step.hitRegionId))
+        throw new Error("Trademark Move attack " + (index + 1) + ": Hit Location is unavailable.");
+      const targeted = createTargetedAttackContext({ actor, attack: current.attack });
+      const quickSpecialties = step.rangedRapidStrike
+        ? getRangedRapidStrikeSpecialties({ actor, attack: current.attack }) : [];
+      if (!resolveRangedGoverningSkill({ actor, binding: current.attack.governingSkillBinding }) &&
+          step.rangedRapidStrike && quickSpecialties.length > 1 &&
+          !quickSpecialties.some(entry => entry.value === step.governingSpecialty))
+        throw new Error("Trademark Move attack " + (index + 1) + ": select Governing Skill for Quick-Shot.");
+      if (!resolveRangedGoverningSkill({ actor, binding: current.attack.governingSkillBinding }) &&
+          targeted.requiresSelection && !targeted.specialtyOptions.some(entry => entry.value === step.governingSpecialty))
+        throw new Error("Trademark Move attack " + (index + 1) + ": select Governing Skill.");
+    }
+  }
+
+  async function openTrademarkEditor() {
+    const state = await loadState();
+    const saved = savedTrademarkMove();
+    const app = new TrademarkMoveEditorApp({
+      actor, weapons: trademarkWeapons(state), steps: saved?.steps,
+      calculatePreview: (current, step, targetingService, targetedAttackContext) => getTrademarkMoveSkillPreview({
+        attack: current.attack, values: { ...step, configuredPreview: true },
+        rangeBands: getRangeBands(), targetingService, targetedAttackContext,
+        calculateSkillDetails: calculateEffectiveFireSkillDetails
+      }),
+      onSave: async steps => {
+        const latest = await loadState();
+        await validateTrademarkSteps(steps, latest);
+        const storage = actor.getFlag("olegurps-qol", TRADEMARK_MOVE_FLAG);
+        const moves = Array.isArray(storage?.moves) ? storage.moves.filter(move => move.id !== "default") : [];
+        moves.push({ id: "default", version: 1, steps: steps.map(normalizeTrademarkMoveStep) });
+        await actor.setFlag("olegurps-qol", TRADEMARK_MOVE_FLAG, { version: 1, moves });
+      },
+      onDelete: async () => {
+        const storage = actor.getFlag("olegurps-qol", TRADEMARK_MOVE_FLAG);
+        const moves = Array.isArray(storage?.moves) ? storage.moves.filter(move => move.id !== "default") : [];
+        if (moves.length) await actor.setFlag("olegurps-qol", TRADEMARK_MOVE_FLAG, { version: 1, moves });
+        else await actor.unsetFlag("olegurps-qol", TRADEMARK_MOVE_FLAG);
+      }
+    }, { id: "olegurps-trademark-move-editor-" + actor.id });
+    await app.render({ force: true });
+    return app;
+  }
+
+  function getTrademarkExecutionOptions(step, situation, rangeBands) {
+    if (parseElevationHeight(situation.height) === null || !Number.isInteger(situation.manualModifier) ||
+        situation.visibilityMode === "partial" &&
+        (!Number.isInteger(situation.partialPenalty) || situation.partialPenalty < -9 || situation.partialPenalty > -1))
+      throw new Error("Invalid range, height, situational modifier, or visibility penalty.");
+    const targets = [...(game.user?.targets ?? [])];
+    if (targets.length > 1) throw new Error("Select no target or just one current target.");
+    const manualRange = situation.rangeIndex === null ? null
+      : rangeBands.find(entry => entry.index === situation.rangeIndex);
+    if (situation.rangeIndex !== null && !manualRange)
+      throw new Error("Select an available range.");
+    const measuredRange = targets.length === 1 ? getTokenFireRangeContext({
+      sourceToken: token, targetToken: targets[0], rangeBands
+    }) : null;
+    if (!manualRange && !measuredRange)
+      throw new Error("Select a range or target exactly one Token.");
+    if (!manualRange && !rangeBands.some(entry => entry.index === measuredRange.rangeIndex))
+      throw new Error("The selected target is outside the available range table.");
+    const visibility = situation.visibilityMode === "normal" ? null
+      : situation.visibilityMode === "partial" ? { mode: "partial", partialPenalty: situation.partialPenalty }
+      : situation.visibilityMode === "unseen" || situation.visibilityMode === "unseen-exact"
+        ? { mode: "unseen", location: situation.visibilityMode === "unseen-exact" ? "exact" : "approximate", targetTokenId: targets[0]?.id }
+        : situation.visibilityMode === "known" ? { mode: "known", knownLocation: true }
+        : { mode: "blind", knownLocation: true };
+    return { ...step, visibility, manualModifier: situation.manualModifier,
+      rangeIndex: manualRange?.index ?? measuredRange?.rangeIndex,
+      manualRangeSelected: !!manualRange,
+      targetDistanceOverride: manualRange ? null : measuredRange?.distance ?? null,
+      height: situation.height,
+      elevationDirection: situation.elevationDirection };
+  }
+
+  async function openTrademarkExecution(managerApp) {
+    const move = savedTrademarkMove();
+    if (!move) return openTrademarkEditor();
+    const state = await loadState();
+    await validateTrademarkSteps(move.steps, state);
+    const weapons = trademarkWeapons(state);
+    const slots = await Promise.all(move.steps.map(async raw => {
+      const step = normalizeTrademarkMoveStep(raw);
+      const current = weapons.find(entry => entry.weapon.id === step.weaponId);
+      const service = await TargetingService.create({ attack: current.attack, bodyplan: step.bodyplanId });
+      const location = service.getSelection(step.hitLocationId, step.hitRegionId);
+      return { step, label: current.attack.label, summary: location.label + " | RoF " + step.shots };
+    }));
+    const app = new TrademarkMoveExecutionApp({
+      slots, rangeBands: getRangeBands(),
+      calculatePreviews: async situation => {
+        const latest = await loadState();
+        const weapons = trademarkWeapons(latest);
+        const rangeBands = getRangeBands();
+        return Promise.all(slots.map(async slot => {
+          try {
+            const current = weapons.find(entry => entry.weapon.id === slot.step.weaponId);
+            if (!current) return null;
+            const values = getTrademarkExecutionOptions(slot.step, situation, rangeBands);
+            const targetingService = await TargetingService.create({
+              attack: current.attack, bodyplan: slot.step.bodyplanId
+            });
+            return getTrademarkMoveSkillPreview({
+              attack: current.attack, values, rangeBands, targetingService,
+              targetedAttackContext: createTargetedAttackContext({ actor, attack: current.attack }),
+              calculateSkillDetails: calculateEffectiveFireSkillDetails
+            });
+          } catch (_error) { return null; }
+        }));
+      },
+      readTargetRangeContext: () => {
+        const targets = [...(game.user?.targets ?? [])];
+        return targets.length === 1 ? getTokenFireRangeContext({
+          sourceToken: token, targetToken: targets[0], rangeBands: getRangeBands()
+        }) : null;
+      },
+      execute: async (step, situation, expectedEffectiveSkill) => {
+        const latest = await loadState();
+        await validateTrademarkSteps([step], latest);
+        const rangeBands = getRangeBands();
+        const options = getTrademarkExecutionOptions(step, situation, rangeBands);
+        const current = trademarkWeapons(latest).find(entry => entry.weapon.id === step.weaponId);
+        const targeting = await TargetingService.create({ attack: current.attack, bodyplan: step.bodyplanId });
+        TARGETED_ATTACK_CONTEXTS.set(targeting, createTargetedAttackContext({ actor, attack: current.attack }));
+        const done = await fireAndRoll(latest, step.weaponId, options, targeting, true, null, expectedEffectiveSkill);
+        if (done && managerApp?.rendered) {
+          managerApp.setManagerState(await loadState());
+          await managerApp.refreshContent();
+        }
+        return done;
+      }
+    }, { id: "olegurps-trademark-move-execution-" + actor.id });
+    await app.render({ force: true });
+    return app;
+  }
   function specialFireRegistry(state, weaponId, managerApp) {
     const context = () => {
       const latest = actor.getFlag("world", "gurpsAmmoManager") ?? state;
@@ -2233,7 +2562,14 @@ export async function openAmmoManager() {
           return { available: true, reason: null };
         },
         open: () => openFirePreparation(state, weaponId, managerApp, { mode: "partial", partialPenalty: -1 })
-      }
+      },
+      ...(hasTrademarkMovePerk(actor) ? [{
+        id: "trademark-move", label: "Trademark Move", description: "Saved ranged attack sequence",
+        icon: "fa-solid fa-star", showSavedSuffix: false,
+        hasSession: () => !!savedTrademarkMove(),
+        availability: () => ({ available: !!canvas?.tokens?.get?.(token.id), reason: "No active shooter token" }),
+        open: () => openTrademarkExecution(managerApp), edit: () => openTrademarkEditor()
+      }] : [])
     ];
   }
 

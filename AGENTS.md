@@ -31,6 +31,16 @@ Windows ACL этой папки уже проверены. Группа `CodexSa
 
 Перед завершением изменений Hit Location статически проверить синтаксис затронутых JS-файлов, отсутствие отдельных `roll.toMessage()` для служебных бросков, синхронизацию силуэта со списком и паритет новой реализации как минимум с Humanoid. Лайв-проверки проводить только если они разрешены текущей задачей.
 
+## Collapsible calculation details in chat
+
+In module-authored chat messages, keep the action and its outcome visible: roll result, hit or miss, final damage, and resource totals. Put supporting calculation details inside native `<details>` sections that are closed by default (no `open` attribute). This includes modifier and penalty lists, technique levels and their application, base skill derivations, channel replacements, situational calculations, and explanatory notes. The summary should name the section without exposing its detailed values.
+
+Apply this consistently to public and personal messages from Shooting Assistant, Trademark Move, standalone Fire Control, Melee Assistant, special fire, falling damage, and future reports with similar calculations. Keep every related line inside its section, including cases where the base skill is unavailable. Preserve existing mechanics and the GGA-owned roll result template. Do not wrap `<details>` in a `<p>` element.
+
+The existing fear and reaction tools, and the fragmentation report, are excluded from this presentation rule unless a later user request explicitly includes them.
+
+Before finishing a chat presentation change, check representative messages for closed-by-default sections, visible outcomes, and no modifier or technique explanation left outside a section. Run syntax checks and the relevant tests.
+
 ## ApplicationV2 windows and settings menus
 
 All new OleGURPS QOL windows, including settings submenus, must extend `foundry.applications.api.ApplicationV2` and use its window styling. Do not introduce legacy `Application` or `FormApplication` (V1) windows. When modifying an existing V1 window, migrate it to `ApplicationV2` while preserving its behavior. Use an `ApplicationV2` subclass for new `game.settings.registerMenu` menus.

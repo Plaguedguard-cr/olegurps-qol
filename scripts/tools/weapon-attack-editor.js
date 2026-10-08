@@ -46,10 +46,7 @@ export async function openWeaponAttackEditor({ DialogV2, attack, escapeHTML, par
     position: { width: 480 },
     content: `
       <div class="standard-form gam-attack-editor">
-        <label class="gam-attack-editor-row">
-          <span>\u041d\u0430\u0432\u044b\u043a</span>
-          <input type="number" name="skillLevel" value="${escapeHTML(attack.level)}" min="0" max="999" step="1" required autofocus>
-        </label>
+        <input type="hidden" name="skillLevel" value="${escapeHTML(attack.level)}">
         <label class="gam-attack-editor-row">
           <span>RoF</span>
           <input type="text" name="rof" value="${escapeHTML(attack.rof)}" placeholder="3 / 15! / 2\u00d79" required>

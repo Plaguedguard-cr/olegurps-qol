@@ -138,7 +138,7 @@
   padding-bottom: 7px;
 }
 /* Melee Assistant */
-.melee-assistant {
+.olegurps-qol.fire-preparation {
   --gam-rapid-attack-1: #39a9ff;
   --gam-rapid-attack-2: #ff5aa5;
   --gam-rapid-attack-3: #f2ba53;
@@ -391,13 +391,14 @@
   display: none;
 }
 
-.melee-assistant .gam-melee-rapid-attack {
+.olegurps-qol .gam-attack-slot {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   flex: 0 0 76px;
   width: 76px !important;
+  min-width: 76px;
   height: 30px;
   min-height: 30px;
   margin: 0 !important;
@@ -408,25 +409,25 @@
   opacity: 0.72;
 }
 
-.melee-assistant .gam-melee-rapid-attack.gam-rapid-attack-1 {
+.olegurps-qol .gam-attack-slot.gam-rapid-attack-1 {
   color: var(--gam-rapid-attack-1);
 }
 
-.melee-assistant .gam-melee-rapid-attack.gam-rapid-attack-2 {
+.olegurps-qol .gam-attack-slot.gam-rapid-attack-2 {
   color: var(--gam-rapid-attack-2);
 }
-.melee-assistant .gam-melee-rapid-attack.gam-rapid-attack-3 {
+.olegurps-qol .gam-attack-slot.gam-rapid-attack-3 {
   color: var(--gam-rapid-attack-3);
 }
-.melee-assistant .gam-melee-attack-slots {
-  grid-column: 1 / -1;
+.olegurps-qol .gam-attack-slots {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
+.melee-assistant .gam-melee-attack-slots { grid-column: 1 / -1; }
 .melee-assistant .gam-melee-attack-slots[hidden] { display: none; }
 
-.melee-assistant .gam-melee-rapid-attack.is-active {
+.olegurps-qol .gam-attack-slot.is-active {
   opacity: 1;
   background: color-mix(in srgb, currentColor 18%, #10141b);
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.75), inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 5px currentColor;
@@ -560,3 +561,113 @@ dialog.gam-roll-confirmation {
   box-shadow: inset 0 0 0 2px rgba(61, 143, 188, 0.85);
   background-color: rgba(61, 143, 188, 0.16);
 }
+
+.olegurps-qol.special-fire-menu .sf-menu-entry:has(.sf-menu-edit) {
+  grid-template-columns: minmax(0, 1fr) 34px;
+}
+.olegurps-qol.special-fire-menu .sf-menu-entry:has(.sf-menu-edit) small {
+  grid-column: 1 / -1;
+}
+.olegurps-qol.special-fire-menu .sf-menu-entry .sf-menu-edit {
+  width: 34px;
+  text-align: center;
+}
+.olegurps-qol.trademark-move-editor .tm-editor {
+  display: grid;
+  gap: 10px;
+  max-height: 75vh;
+  overflow: auto;
+  padding: 8px;
+}
+.olegurps-qol.trademark-move-editor .tm-list { display: grid; gap: 8px; }
+.olegurps-qol.trademark-move-editor .tm-step {
+  border: 1px solid var(--color-border-light-primary);
+  border-radius: 6px;
+  padding: 8px;
+}
+.olegurps-qol.trademark-move-editor .tm-step header {
+  display: grid;
+  grid-template-columns: auto 1fr repeat(3, auto);
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.olegurps-qol.trademark-move-editor .tm-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.olegurps-qol.trademark-move-editor .tm-fields label { min-width: 0; }
+.olegurps-qol.trademark-move-editor .tm-fields select,
+.olegurps-qol.trademark-move-editor .tm-fields input { width: 100%; }
+.olegurps-qol.trademark-move-editor .tm-aim-preview-row {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px 14px;
+  min-width: 0;
+}
+.olegurps-qol.trademark-move-editor .tm-aim-preview-row label { flex: 0 0 calc((100% - 16px) / 3); }
+.olegurps-qol.trademark-move-editor .tm-aim-preview-row [data-tm-skill-preview] {
+  flex: 1 1 320px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: .85em;
+}
+.olegurps-qol.trademark-move-editor .tm-checks,
+.olegurps-qol.trademark-move-editor footer { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.olegurps-qol.trademark-move-execution .tm-execution-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: max-content;
+  align-content: start;
+  gap: 8px;
+  padding: 8px;
+  max-height: 60vh;
+  overflow-y: auto;
+  min-width: 0;
+}
+.olegurps-qol.trademark-move-execution .tm-execution-list button {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  min-width: 0;
+  padding: 10px;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.olegurps-qol.trademark-move-execution .tm-execution-list button strong,
+.olegurps-qol.trademark-move-execution .tm-execution-list button small {
+  display: block;
+  width: 100%;
+  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.olegurps-qol.trademark-move-execution .tm-execution-list button small { opacity: .75; }
+.olegurps-qol.trademark-move-execution .tm-execution-controls { display: grid; gap: 6px; padding: 8px; }
+.olegurps-qol.trademark-move-execution .tm-execution-controls label { display: grid; grid-template-columns: 1fr 120px; gap: 6px; align-items: center; }
+.olegurps-qol.trademark-move-execution .tm-execution-controls label[hidden] { display: none; }
+.olegurps-qol.trademark-move-execution .tm-execution-controls select { min-width: 0; width: 100%; }
+.olegurps-qol.trademark-move-execution .tm-execution-controls .tm-range-field {
+  grid-template-columns: minmax(0, 1fr);
+}
+.olegurps-qol.trademark-move-execution .tm-range-selection {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: .85em;
+  opacity: .85;
+}
+.olegurps-qol.trademark-move-execution .tm-elevation-directions { display: flex; flex-wrap: wrap; gap: 8px; }
+.olegurps-qol.trademark-move-execution .tm-elevation-directions label { display: inline-flex; align-items: center; gap: 5px; }
+
+.olegurps-qol.ranged-attack-execution .rrs-execution-list { display: grid; grid-auto-rows: max-content; gap: 8px; padding: 8px; max-height: 60vh; overflow-y: auto; }
+.olegurps-qol.ranged-attack-execution .rrs-execution-list button { display: flex; flex-direction: column; align-items: stretch; gap: 3px; width: 100%; height: auto; min-height: 0; min-width: 0; padding: 10px; text-align: left; white-space: normal; overflow-wrap: anywhere; }
+.olegurps-qol.ranged-attack-execution .rrs-execution-list button small { opacity: .75; }

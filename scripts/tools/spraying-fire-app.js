@@ -83,10 +83,10 @@ export class SprayingFireApp extends ApplicationV2 {
         : target.heightOverride ?? automatic?.height ?? 0;
       const highGround = target.completed && target.usedSnapshot
         ? target.usedSnapshot.highGround
-        : target.highGroundOverride ?? automatic?.highGround ?? false;
+        : target.highGroundOverride ?? (automatic?.elevationDirection === "high");
       const values = {
         ...this.session.common, manualModifier: Number(this.session.common.manualModifier || 0) + Number(target.modifier || 0),
-        shots: target.shots, rangeIndex: range?.index ?? null, height, highGround,
+        shots: target.shots, rangeIndex: range?.index ?? null, height, elevationDirection: height > 0 ? highGround ? "high" : "low" : "level",
         targetDistanceOverride: distance, hitLocationId: "silhouette",
         governingSpecialty: this.session.common.governingSpecialty ?? this.weapon.governingSpecialty ?? ""
       };
@@ -97,7 +97,7 @@ export class SprayingFireApp extends ApplicationV2 {
       const bonuses = this.fireContext.getFireBonuses(this.attack, values);
       const effectiveRange = resolveEffectiveRange({
         rangeBands: this.rangeBands, rangeIndex: range?.index,
-        height, highGround, beamWeapon: isBeamWeapon(this.attack)
+        distance, height, elevationDirection: height > 0 ? highGround ? "high" : "low" : "level", beamWeapon: isBeamWeapon(this.attack)
       }).effectiveRange ?? range;
       const rcl = this.fireService.parseAttackRcl(this.attack, { extremelyClose: fireMode.extremelyClose });
       const data = {

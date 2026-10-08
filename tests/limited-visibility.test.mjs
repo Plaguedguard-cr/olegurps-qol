@@ -169,7 +169,7 @@ test("unknown blind position never reads target distance or target modifiers", (
   assert.equal(fire.getFireModeState({ rof: "1" }, blind, bands).physicalDistance, null);
   const details = fire.calculateEffectiveFireSkillDetails(
     { level: 20, acc: 3, rof: "1", data: { bulk: -2 } }, blind, bands, target);
-  assert.equal(details.modifiers.find(entry => entry.label === "\u042d\u0444\u0444\u0435\u043a\u0442\u044b GGA").value, 0);
+  assert.equal(details.combatCalculation.channels.find(entry => entry.id === "ggaEffects").resolvedValue, 0);
 });
 
 
@@ -240,7 +240,7 @@ test("known-position Token keeps safe name and Token distance/elevation", async 
   assert.deepEqual(getTokenFireRangeContext({
     sourceToken: source, targetToken: known, rangeBands: bands, runtime
   }), {
-    distance: 14, height: 6, highGround: true,
+    distance: 14, height: 6, elevationDirection: "high",
     rangeIndex: 0, rangePenalty: 0, rangeLabel: "100"
   });
 });

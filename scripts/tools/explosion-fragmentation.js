@@ -279,9 +279,11 @@ export async function openExplosionFragmentation() {
         <div><strong>Дистанция до центра:</strong> ${escapeHTML(values.distance)} ярд.</div>
         <div><strong>Радиус взрыва:</strong> ${escapeHTML(blastRadius)} ярд.</div>
         ${status ? `<div style="margin-top:4px;"><strong>${escapeHTML(status)}</strong></div>` : ""}
-        <div style="margin-top:6px;"><strong>Расчёт:</strong> ${escapeHTML(calculation)}</div>
+        <details class="olegurps-explosion-calculation"><summary style="cursor:pointer">Calculation</summary>
+          <div style="margin-top:6px;"><strong>Расчёт:</strong> ${escapeHTML(calculation)}</div>
+          <div style="margin-top:4px;opacity:0.8;">Для косвенного взрыва используется DR торса. Делитель брони исходной атаки к этому урону не применяется.</div>
+        </details>
         <div style="margin-top:6px;font-size:1.12em;"><strong>Итоговый урон взрывом: ${finalDamage}</strong></div>
-        <div style="margin-top:4px;opacity:0.8;">Для косвенного взрыва используется DR торса. Делитель брони исходной атаки к этому урону не применяется.</div>
         <details style="margin-top:8px;">
           <summary style="cursor:pointer;">Показать бросок исходного урона</summary>
           ${rollHTML}

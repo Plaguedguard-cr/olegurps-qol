@@ -86,11 +86,13 @@ export function normalizeMeleeAssistantState(value) {
     if (!key || !raw || typeof raw !== "object") continue;
     const governingSkill = text(raw.governingSkill);
     const rapidStrikeMastery = raw.rapidStrikeMastery === true;
+    const weaponBond = raw.weaponBond === true;
     const override = normalizeMeleeAttackOverride(raw.override);
     const safeKey = normalizeStoredAttackKey(key);
-    if (safeKey && (governingSkill || rapidStrikeMastery || override)) attacks[safeKey] = {
+    if (safeKey && (governingSkill || rapidStrikeMastery || weaponBond || override)) attacks[safeKey] = {
       ...(governingSkill ? { governingSkill } : {}),
       ...(rapidStrikeMastery ? { rapidStrikeMastery: true } : {}),
+      ...(weaponBond ? { weaponBond: true } : {}),
       ...(override ? { override } : {})
     };
   }
@@ -157,6 +159,18 @@ export function setMeleeRapidStrikeMastery(state, attack, enabled) {
   const current = { ...(state.attacks[key] ?? {}) };
   if (enabled === true) current.rapidStrikeMastery = true;
   else delete current.rapidStrikeMastery;
+  if (Object.keys(current).length) state.attacks[key] = current;
+  else delete state.attacks[key];
+  return true;
+}
+
+export function setMeleeWeaponBond(state, attack, enabled) {
+  const key = storedAttackKey(attack);
+  if (!key) return false;
+  state.attacks ??= {};
+  const current = { ...(state.attacks[key] ?? {}) };
+  if (enabled === true) current.weaponBond = true;
+  else delete current.weaponBond;
   if (Object.keys(current).length) state.attacks[key] = current;
   else delete state.attacks[key];
   return true;
