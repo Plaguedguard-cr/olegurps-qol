@@ -1,0 +1,850 @@
+{
+  "previous_unlinked_count": 75,
+  "entries": [
+    {
+      "name": "Colt Model 1895, 6x60mmR",
+      "usage": null,
+      "mode_id": "WHjz6HhlYW7ilkb1b",
+      "status": "source_verified_existing_round",
+      "reason": "6×60mmR Lee (.236 Navy) — основной вариант Colt 1895; иностранные версии требуют иного ствола/патронника.",
+      "ref": "HT 130, 137, 177",
+      "links": [
+        "ht_6x60mm_lee_236_navy"
+      ]
+    },
+    {
+      "name": "MAS Pistolet AN XIII, 17.1mm Flintlock",
+      "usage": "Fired",
+      "mode_id": "Wrh0TvNTEz9NqfkEf",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 91, 176",
+      "links": [
+        "ht_specific_mas_an_xiii_17_1_flintlock"
+      ]
+    },
+    {
+      "name": "North & Cheney M1779, .69 Flintlock",
+      "usage": "Fired",
+      "mode_id": "WG9Di1O8YSHqyXEgE",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 91",
+      "links": [
+        "ht_specific_north_cheney_1779_69_flintlock"
+      ]
+    },
+    {
+      "name": "Remington New Model Army, .44 Caplock",
+      "usage": null,
+      "mode_id": "W5xvN3zJ9M6eAwjhZ",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 94, 176",
+      "links": [
+        "ht_specific_remington_new_model_army_44_caplock"
+      ]
+    },
+    {
+      "name": "Remington Rolling Block",
+      "usage": null,
+      "mode_id": "WWp3zBONFoJvOmVoW",
+      "status": "source_verified_existing_round",
+      "reason": "Основная модель рассчитана на .45-70 Springfield; Creedmoor .44-90 — отдельное исполнение.",
+      "ref": "HT 109, 120, 177",
+      "links": [
+        "ht_45_70_springfield_11_43x53mmr"
+      ]
+    },
+    {
+      "name": "Voere VEC91,, 5.7x26mm",
+      "usage": null,
+      "mode_id": "WO9XZem8u8ze77NNs",
+      "status": "source_verified_existing_round",
+      "reason": "5.7×26mm Usel — штатный безгильзовый патрон, пуля HP уже учтена в уроне оружия.",
+      "ref": "HT 119-121",
+      "links": [
+        "ht_5_7x26mm_usel"
+      ]
+    },
+    {
+      "name": "Zip-Gun",
+      "usage": null,
+      "mode_id": "WwlfY-FYthqkLvByK",
+      "status": "source_verified_existing_round",
+      "reason": "Образцовый самодельный Zip-Gun в книге использует .22 LR (масса 0.0077 lb).",
+      "ref": "HT 92, 176",
+      "links": [
+        "ht_22_long_rifle_5_7x16mmr"
+      ]
+    },
+    {
+      "name": "Aérospatiale SS.11, 164mm",
+      "usage": null,
+      "mode_id": "WLtxCaJ16zBNXOM6B",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 150-152",
+      "links": [
+        "ht_specific_ss11_heat"
+      ]
+    },
+    {
+      "name": "BM-13-16, 132mm",
+      "usage": null,
+      "mode_id": "W-eXi2wwaUlJ18L9n",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 150-151",
+      "links": [
+        "ht_specific_katyusha_m13_he"
+      ]
+    },
+    {
+      "name": "Buck HAFLA, 35mm",
+      "usage": null,
+      "mode_id": "Wr3VDL3Z6SR3KCz3K",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 142, 145",
+      "links": [
+        "ht_specific_hafla_dm34_35mm_wp"
+      ]
+    },
+    {
+      "name": "Dynamit-Nobel PZF3, 60mm",
+      "usage": null,
+      "mode_id": "WGykc_h_j4Ojyn6fu",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_pzf3_110mm_heat"
+      ]
+    },
+    {
+      "name": "Euromissile MILAN, 103mm",
+      "usage": null,
+      "mode_id": "WYtq-OBcCaZp7ShJJ",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 151-152",
+      "links": [
+        "ht_specific_milan_103_heat"
+      ]
+    },
+    {
+      "name": "FFV AT4, 84mm",
+      "usage": null,
+      "mode_id": "W-KvhNTS2RaLIZvSw",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_at4_84mm_heat"
+      ]
+    },
+    {
+      "name": "Ford AIM-9L Sidewinder, 127mm",
+      "usage": null,
+      "mode_id": "WQymu6IvqV_kTwiqz",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 152",
+      "links": [
+        "ht_specific_aim9l_abf"
+      ]
+    },
+    {
+      "name": "GD FIM-92A Stinger, 70mm",
+      "usage": null,
+      "mode_id": "WCjHOf4oONWBafSAa",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 152-153",
+      "links": [
+        "ht_specific_stinger_fim92a_heab"
+      ]
+    },
+    {
+      "name": "Hale 9-pr Mk I, 2.5\"",
+      "usage": null,
+      "mode_id": "Wx13jpOUxRC_YeDo6",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 150-151",
+      "links": [
+        "ht_specific_hale_9pr_he"
+      ]
+    },
+    {
+      "name": "HASAG Panzerfaust 30, 44mm",
+      "usage": null,
+      "mode_id": "WbiMQvLGw4VhGQmTc",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 147-148",
+      "links": [
+        "ht_specific_pf30_150mm_heat"
+      ]
+    },
+    {
+      "name": "HEC M72A2, 66mm",
+      "usage": null,
+      "mode_id": "WCN9YaUpioje5KB5t",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_m72a2_66mm_heat"
+      ]
+    },
+    {
+      "name": "Hughes BGM-71A TOW, 127mm",
+      "usage": null,
+      "mode_id": "WmG_jTzAKmvFs5myW",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 151-152",
+      "links": [
+        "ht_specific_tow_bgm71a_heat"
+      ]
+    },
+    {
+      "name": "KBP RPO-A, 93mm",
+      "usage": null,
+      "mode_id": "WVY4ygmbFY_RiJbQz",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_rpoa_93mm_thermobaric"
+      ]
+    },
+    {
+      "name": "KMZ RPG-2, 40mm",
+      "usage": null,
+      "mode_id": "Wm1zVlIxEdhIN7Bdc",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_rpg2_82mm_heat"
+      ]
+    },
+    {
+      "name": "KMZ RPG-7, 40mm",
+      "usage": "85mm HEAT",
+      "mode_id": "W61HbVOrJ-DAQGkHW",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_rpg7_85mm_heat"
+      ]
+    },
+    {
+      "name": "KMZ RPG-7, 40mm",
+      "usage": "40mm HE",
+      "mode_id": "W5KdhhEf7mZ29gKhz",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_rpg7_40mm_he"
+      ]
+    },
+    {
+      "name": "Kolomna 9M17M Malyutka-M, 125mm",
+      "usage": null,
+      "mode_id": "WeXQmnN9negUgW4dp",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 151-152",
+      "links": [
+        "ht_specific_malyutka_m_heat"
+      ]
+    },
+    {
+      "name": "M10, 4.5\"",
+      "usage": null,
+      "mode_id": "Wddtb03yTIO9BFQVe",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 150-151",
+      "links": [
+        "ht_specific_m10_m8_he"
+      ]
+    },
+    {
+      "name": "M20 Super Bazooka 3.5\"",
+      "usage": null,
+      "mode_id": "WhyC2rpq5gO7kJvPq",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 147",
+      "links": [
+        "ht_specific_m20_89mm_heat"
+      ]
+    },
+    {
+      "name": "M260, 70mm",
+      "usage": null,
+      "mode_id": "WjD-b9M0j2HJAcxyy",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 150-151",
+      "links": [
+        "ht_specific_hydra_mk66_he"
+      ]
+    },
+    {
+      "name": "MBB Armbrust, 67mm",
+      "usage": null,
+      "mode_id": "WWhhyDtXaDfdAFrfB",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 148-149",
+      "links": [
+        "ht_specific_armbrust_67mm_heat"
+      ]
+    },
+    {
+      "name": "McDonnell FGM-77A Dragon, 127mm",
+      "usage": null,
+      "mode_id": "WfQbQ4kVYxR2_9Ji1",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 152",
+      "links": [
+        "ht_specific_dragon_127_heat"
+      ]
+    },
+    {
+      "name": "RLM FGM-148A Javelin, 127mm",
+      "usage": null,
+      "mode_id": "W0nH5aEN5CsOLWS2t",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 152-153",
+      "links": [
+        "ht_specific_javelin_fgm148a_mseat"
+      ]
+    },
+    {
+      "name": "AMC M17",
+      "usage": null,
+      "mode_id": "WKSno-oP5R7oj9RRf",
+      "status": "excluded_rifle_grenade",
+      "reason": "Винтовочная граната; пока исключена вместе с гранатами. Требует отдельного интерфейса rifle grenade + патрон для метания, не стандартная пуля.",
+      "ref": "HT 193-194",
+      "links": []
+    },
+    {
+      "name": "AN-M8",
+      "usage": null,
+      "mode_id": "Wg_ZqowKk05rX-txE",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "AN-M14",
+      "usage": null,
+      "mode_id": "WyF9StlgdU94SGHH3",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "ARGES HG 86",
+      "usage": null,
+      "mode_id": "W34TQ9RIZmzKB6TK1",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "Beattie M2-2",
+      "usage": null,
+      "mode_id": "WQ2MI3nooPOkJk6-C",
+      "status": "excluded_flamethrower",
+      "reason": "Огнемёт и топливо; вне текущего патронного каталога.",
+      "ref": "HT 178-180",
+      "links": []
+    },
+    {
+      "name": "Bergmann GSprgr30",
+      "usage": null,
+      "mode_id": "WQT00z6n9U3k1wMgM",
+      "status": "excluded_rifle_grenade",
+      "reason": "Винтовочная граната; пока исключена вместе с гранатами. Требует отдельного интерфейса rifle grenade + патрон для метания, не стандартная пуля.",
+      "ref": "HT 193-194",
+      "links": []
+    },
+    {
+      "name": "Combustion Nail Gun",
+      "usage": "Nail gun",
+      "mode_id": "Wb-nkbkql8XJJvgiI",
+      "status": "deferred_industrial_consumable",
+      "reason": "Гвозди или промышленный заряд; отдельный расходный предмет, не универсальная пуля.",
+      "ref": "HT 28",
+      "links": []
+    },
+    {
+      "name": "Diehl DM51",
+      "usage": null,
+      "mode_id": "Wwn2lB4g_vAfkgYdn",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "Diehl DM51",
+      "usage": null,
+      "mode_id": "Wwa6ZbUCJLT5-0avj",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "DTAT MR60CS, 60mm",
+      "usage": "Indirect",
+      "mode_id": "W4PbNNnd3bbXT_tH2",
+      "status": "weapon_specific",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 140",
+      "links": [
+        "ht_specific_dtat_mr60cs_60mm_gun_mortar_shell"
+      ]
+    },
+    {
+      "name": "DTAT MR60CS, 60mm",
+      "usage": "Direct",
+      "mode_id": "Weia0I-DWGGdsAJnA",
+      "status": "source_verified_existing_round",
+      "reason": "Одна и та же HE-мина DTAT MR60CS для прямого и навесного огня. Не приравнивать к обычной 60-мм мине без подтверждения.",
+      "ref": "HT 140",
+      "links": [
+        "ht_specific_dtat_mr60cs_60mm_gun_mortar_shell"
+      ]
+    },
+    {
+      "name": "DWM FmW46",
+      "usage": null,
+      "mode_id": "W073XWePe7F0ZsLMX",
+      "status": "excluded_flamethrower",
+      "reason": "Огнемёт и топливо; вне текущего патронного каталога.",
+      "ref": "HT 178-180",
+      "links": []
+    },
+    {
+      "name": "Einhandgranate 39",
+      "usage": null,
+      "mode_id": "WaMoBp4cA8_-4mghl",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "Fiedler Klief",
+      "usage": null,
+      "mode_id": "W4BiP2tlnGAJKo8W5",
+      "status": "excluded_flamethrower",
+      "reason": "Огнемёт и топливо; вне текущего патронного каталога.",
+      "ref": "HT 178-180",
+      "links": []
+    },
+    {
+      "name": "Large Squirt Carbine",
+      "usage": null,
+      "mode_id": "W6VX-F3yZIRKI6edi",
+      "status": "excluded_liquid_projector",
+      "reason": "Жидкостный распылитель; вне текущего патронного каталога.",
+      "ref": "HT 180",
+      "links": []
+    },
+    {
+      "name": "M26",
+      "usage": null,
+      "mode_id": "Wi4mo1qYiwfBkJvMo",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "M34 WP",
+      "usage": null,
+      "mode_id": "WwWcYlJpks2oLc-nv",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "M67",
+      "usage": null,
+      "mode_id": "WBxhKpTfRkp7r7qfu",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "M86 PDM",
+      "usage": null,
+      "mode_id": "WuHscB1jzPifZMRwt",
+      "status": "excluded_mine",
+      "reason": "Mina / area denial munition; excluded from cartridge selection.",
+      "ref": "HT 189",
+      "links": []
+    },
+    {
+      "name": "M452 Stingball",
+      "usage": null,
+      "mode_id": "WXKbQfaTOJ0ADcUdk",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "MECAR Energa-75",
+      "usage": null,
+      "mode_id": "WzlP3YV2k_HHdfXey",
+      "status": "excluded_rifle_grenade",
+      "reason": "Винтовочная граната; пока исключена вместе с гранатами. Требует отдельного интерфейса rifle grenade + патрон для метания, не стандартная пуля.",
+      "ref": "HT 193-194",
+      "links": []
+    },
+    {
+      "name": "Mills Number 36M Mk I",
+      "usage": null,
+      "mode_id": "WPb05MGB5U22WhZjX",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "MK II",
+      "usage": null,
+      "mode_id": "WFWBO8gdeijkdufew",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "MK III",
+      "usage": null,
+      "mode_id": "W1AXJetJOp1XY88oe",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "Motovilikha D-81TM",
+      "usage": "Indirect",
+      "mode_id": "WDIUbJ_aRPUMCZ10H",
+      "status": "source_verified_existing_round",
+      "reason": "Штатный 125×408mmR с полусгораемой гильзой; конкретная выбранная боевая часть (HEAT/APFSDS/HE) определяется режимом, не применяется повторно.",
+      "ref": "HT 140, 177",
+      "links": [
+        "ht_125x408mmr"
+      ]
+    },
+    {
+      "name": "Motovilikha D-81TM",
+      "usage": "Direct",
+      "mode_id": "W7O-Gcku1u0PJ5ymg",
+      "status": "source_verified_existing_round",
+      "reason": "Штатный 125×408mmR с полусгораемой гильзой; конкретная выбранная боевая часть (HEAT/APFSDS/HE) определяется режимом, не применяется повторно.",
+      "ref": "HT 140, 177",
+      "links": [
+        "ht_125x408mmr"
+      ]
+    },
+    {
+      "name": "MX Animal TASER",
+      "usage": null,
+      "mode_id": "Wd25u9Begix9h_smN",
+      "status": "proprietary_electrical_cartridge",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 89-90",
+      "links": [
+        "ht_specific_taser_mx_animal_taser"
+      ]
+    },
+    {
+      "name": "NORINCO QXJ04",
+      "usage": "(blinding)",
+      "mode_id": "WALzMQGej7znsQIsa",
+      "status": "excluded_directed_energy",
+      "reason": "Лазерный излучатель, не патронный ствол.",
+      "ref": "HT 181",
+      "links": []
+    },
+    {
+      "name": "NORINCO ZM87",
+      "usage": "(blinding)",
+      "mode_id": "W46_tIuztoKnpftYj",
+      "status": "excluded_directed_energy",
+      "reason": "Лазерный излучатель, не патронный ствол.",
+      "ref": "HT 181",
+      "links": []
+    },
+    {
+      "name": "Pneumatic Nail Gun",
+      "usage": "Nail gun",
+      "mode_id": "WScYMOOBTYb_ixODI",
+      "status": "deferred_industrial_consumable",
+      "reason": "Гвозди или промышленный заряд; отдельный расходный предмет, не универсальная пуля.",
+      "ref": "HT 28",
+      "links": []
+    },
+    {
+      "name": "Powder-Actuated Nail Gun",
+      "usage": "Nail gun",
+      "mode_id": "WyhfUd4p19uPxyebR",
+      "status": "deferred_industrial_consumable",
+      "reason": "Гвозди или промышленный заряд; отдельный расходный предмет, не универсальная пуля.",
+      "ref": "HT 28",
+      "links": []
+    },
+    {
+      "name": "Rafael Simon 150",
+      "usage": null,
+      "mode_id": "WccUWiy7oXGoUsMDG",
+      "status": "excluded_rifle_grenade",
+      "reason": "Винтовочная граната; пока исключена вместе с гранатами. Требует отдельного интерфейса rifle grenade + патрон для метания, не стандартная пуля.",
+      "ref": "HT 193-194",
+      "links": []
+    },
+    {
+      "name": "RPG-43",
+      "usage": null,
+      "mode_id": "WpfYF3t2IuxldyO5N",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "Schermuly Stun",
+      "usage": null,
+      "mode_id": "WMHOvmCZnNN2vFPME",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "Slingshot",
+      "usage": "Stone",
+      "mode_id": "WXGTBHA2uYykWT3zr",
+      "status": "deferred_muscle_projectile",
+      "reason": "Мускульный боеприпас (шарик/стрела), не патрон HT и не ракетное оружие.",
+      "ref": "HT 201",
+      "links": []
+    },
+    {
+      "name": "Slingshot",
+      "usage": "Metal",
+      "mode_id": "WEEouaNXXdn8XU129",
+      "status": "deferred_muscle_projectile",
+      "reason": "Мускульный боеприпас (шарик/стрела), не патрон HT и не ракетное оружие.",
+      "ref": "HT 201",
+      "links": []
+    },
+    {
+      "name": "Speargun",
+      "usage": null,
+      "mode_id": "Wz9SRFE2djqDGbj2Y",
+      "status": "deferred_muscle_projectile",
+      "reason": "Мускульный боеприпас (шарик/стрела), не патрон HT и не ракетное оружие.",
+      "ref": "HT 201",
+      "links": []
+    },
+    {
+      "name": "Squirt Carbine",
+      "usage": null,
+      "mode_id": "WsyoKGgbZuPilRXla",
+      "status": "excluded_liquid_projector",
+      "reason": "Жидкостный распылитель; вне текущего патронного каталога.",
+      "ref": "HT 180",
+      "links": []
+    },
+    {
+      "name": "Stielhandgranate",
+      "usage": null,
+      "mode_id": "WuSwudOPMn3FPi0hn",
+      "status": "excluded_hand_grenade",
+      "reason": "Ручная граната, исключена из активного каталога по решению пользователя.",
+      "ref": "HT192",
+      "links": []
+    },
+    {
+      "name": "TASER M18",
+      "usage": null,
+      "mode_id": "WsRdm1ykv3AFJUMGr",
+      "status": "proprietary_electrical_cartridge",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 89-90",
+      "links": [
+        "ht_specific_taser_taser_m18"
+      ]
+    },
+    {
+      "name": "TASER M26",
+      "usage": null,
+      "mode_id": "WhZTKRbxWw3dUNLFi",
+      "status": "proprietary_electrical_cartridge",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 89-90",
+      "links": [
+        "ht_specific_taser_taser_m26"
+      ]
+    },
+    {
+      "name": "TASER X26",
+      "usage": null,
+      "mode_id": "W5gRSZbBIrYN9XoUY",
+      "status": "proprietary_electrical_cartridge",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 89-90",
+      "links": [
+        "ht_specific_taser_taser_x26"
+      ]
+    },
+    {
+      "name": "Tasertron TE-76",
+      "usage": null,
+      "mode_id": "WBUF21Cjj4FcgwAM2",
+      "status": "proprietary_electrical_cartridge",
+      "reason": "Штатный боеприпас/выстрел подтверждён описанием именно этой системы.",
+      "ref": "HT 89-90",
+      "links": [
+        "ht_specific_taser_tasertron_te_76"
+      ]
+    },
+    {
+      "name": "TOZ LPO-50",
+      "usage": null,
+      "mode_id": "WjKzQQPbrfR6qChS8",
+      "status": "excluded_flamethrower",
+      "reason": "Огнемёт и топливо; вне текущего патронного каталога.",
+      "ref": "HT 178-180",
+      "links": []
+    },
+    {
+      "name": "TOZ ROKS-2",
+      "usage": null,
+      "mode_id": "W74KTEdJzXYUl7_nu",
+      "status": "excluded_flamethrower",
+      "reason": "Огнемёт и топливо; вне текущего патронного каталога.",
+      "ref": "HT 178-180",
+      "links": []
+    }
+  ],
+  "status_counts": {
+    "source_verified_existing_round": 7,
+    "weapon_specific": 27,
+    "excluded_rifle_grenade": 4,
+    "excluded_hand_grenade": 16,
+    "excluded_flamethrower": 5,
+    "deferred_industrial_consumable": 3,
+    "excluded_liquid_projector": 2,
+    "excluded_mine": 1,
+    "proprietary_electrical_cartridge": 5,
+    "excluded_directed_energy": 2,
+    "deferred_muscle_projectile": 3
+  },
+  "original_mode_ids": [
+    "W-KvhNTS2RaLIZvSw",
+    "W-eXi2wwaUlJ18L9n",
+    "W073XWePe7F0ZsLMX",
+    "W0nH5aEN5CsOLWS2t",
+    "W1AXJetJOp1XY88oe",
+    "W34TQ9RIZmzKB6TK1",
+    "W46_tIuztoKnpftYj",
+    "W4BiP2tlnGAJKo8W5",
+    "W4PbNNnd3bbXT_tH2",
+    "W5KdhhEf7mZ29gKhz",
+    "W5gRSZbBIrYN9XoUY",
+    "W5xvN3zJ9M6eAwjhZ",
+    "W61HbVOrJ-DAQGkHW",
+    "W6VX-F3yZIRKI6edi",
+    "W74KTEdJzXYUl7_nu",
+    "W7O-Gcku1u0PJ5ymg",
+    "WALzMQGej7znsQIsa",
+    "WBUF21Cjj4FcgwAM2",
+    "WBxhKpTfRkp7r7qfu",
+    "WCN9YaUpioje5KB5t",
+    "WCjHOf4oONWBafSAa",
+    "WDIUbJ_aRPUMCZ10H",
+    "WEEouaNXXdn8XU129",
+    "WFWBO8gdeijkdufew",
+    "WG9Di1O8YSHqyXEgE",
+    "WGykc_h_j4Ojyn6fu",
+    "WHjz6HhlYW7ilkb1b",
+    "WKSno-oP5R7oj9RRf",
+    "WLtxCaJ16zBNXOM6B",
+    "WMHOvmCZnNN2vFPME",
+    "WO9XZem8u8ze77NNs",
+    "WPb05MGB5U22WhZjX",
+    "WQ2MI3nooPOkJk6-C",
+    "WQT00z6n9U3k1wMgM",
+    "WQymu6IvqV_kTwiqz",
+    "WScYMOOBTYb_ixODI",
+    "WVY4ygmbFY_RiJbQz",
+    "WWhhyDtXaDfdAFrfB",
+    "WWp3zBONFoJvOmVoW",
+    "WXGTBHA2uYykWT3zr",
+    "WXKbQfaTOJ0ADcUdk",
+    "WYtq-OBcCaZp7ShJJ",
+    "WaMoBp4cA8_-4mghl",
+    "Wb-nkbkql8XJJvgiI",
+    "WbiMQvLGw4VhGQmTc",
+    "WccUWiy7oXGoUsMDG",
+    "Wd25u9Begix9h_smN",
+    "Wddtb03yTIO9BFQVe",
+    "WeXQmnN9negUgW4dp",
+    "Weia0I-DWGGdsAJnA",
+    "WfQbQ4kVYxR2_9Ji1",
+    "Wg_ZqowKk05rX-txE",
+    "WhZTKRbxWw3dUNLFi",
+    "WhyC2rpq5gO7kJvPq",
+    "Wi4mo1qYiwfBkJvMo",
+    "WjD-b9M0j2HJAcxyy",
+    "WjKzQQPbrfR6qChS8",
+    "Wm1zVlIxEdhIN7Bdc",
+    "WmG_jTzAKmvFs5myW",
+    "WpfYF3t2IuxldyO5N",
+    "Wr3VDL3Z6SR3KCz3K",
+    "Wrh0TvNTEz9NqfkEf",
+    "WsRdm1ykv3AFJUMGr",
+    "WsyoKGgbZuPilRXla",
+    "WuHscB1jzPifZMRwt",
+    "WuSwudOPMn3FPi0hn",
+    "WwWcYlJpks2oLc-nv",
+    "Wwa6ZbUCJLT5-0avj",
+    "WwlfY-FYthqkLvByK",
+    "Wwn2lB4g_vAfkgYdn",
+    "Wx13jpOUxRC_YeDo6",
+    "WyF9StlgdU94SGHH3",
+    "WyhfUd4p19uPxyebR",
+    "Wz9SRFE2djqDGbj2Y",
+    "WzlP3YV2k_HHdfXey"
+  ],
+  "unreviewed_count": 0,
+  "coverage_note": "Reviewed != every item is compatible with standard ammunition. Exclusions/deferred categories intentionally remain without ammo link."
+}

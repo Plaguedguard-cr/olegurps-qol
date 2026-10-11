@@ -1,11 +1,14 @@
 import { FirePreparationApp } from "./fire-preparation-app.js";
-import { getEvaluateStatusTurns, isEvaluateStatusAutofillEnabled } from "./aim-status-effects.js";
+import { getEvaluateStatusTurns } from "./aim-status-effects.js";
 import { checkHearingMinusTwo, meleeVisibilityRules, normalizeVisibility } from "./limited-visibility.js";
 import { TargetingService } from "./targeting-service.js";
 import { MeleeAttackExecutionApp, executeMeleeAttackSnapshot } from "./melee-attack-execution-app.js";
 import { getMeleeAttackSlots } from "./melee-attack-slots.js";
 import { createMeleeTargetedAttackContext } from "./targeted-attack-service.js";
 import { openMeleeAttackEditor } from "./melee-attack-editor.js";
+import { openStandaloneWeaponLibrary } from "./standalone-weapon-configuration.js";
+import { standaloneText } from "./standalone-weapon-service.js";
+import { readStandaloneAttack, listStandaloneAttacks } from "./standalone-attack-service.js";
 import { hasWeaponBondPerk } from "./weapon-bond-service.js";
 import {
   applyMeleeAttackOverride,
@@ -346,7 +349,20 @@ export class MeleeAssistantApp extends FirePreparationApp {
       ?? this.targetingService.getSelection("silhouette");
   }
 
+  _refreshStandaloneAttack() {
+    const ref = this.sourceAttack?.standaloneRef;
+    if (!ref) return;
+    const current = readStandaloneAttack(this.actor, ref.weaponId, ref.modeId);
+    if (!current) {
+      this.attack = { ...this.attack, level: null, readinessReason: "Автономный режим удалён. Выберите другую атаку." };
+      return;
+    }
+    this.sourceAttack = this.attack = current;
+    this.targetedAttackContext = createMeleeTargetedAttackContext({ actor: this.actor, attack: current });
+  }
+
   _getLocationResult() {
+    this._refreshStandaloneAttack();
     const visibility = this._getMeleeVisibilityRules();
     const selection = visibility?.random ? this.targetingService.getSelection("silhouette") : this._getSelectedLocation();
     const zone = this.targetingService.getZone(selection?.zoneId);
@@ -364,6 +380,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   _getBaseSkillLevel() {
+    this._refreshStandaloneAttack();
+    if (this.attack?.standaloneRef) return this.attack.standaloneRef.governingSkill?.resolved ? this.attack.level : null;
     const attackLevel = Number(this.attack?.level ?? this.sourceAttack?.level);
     return Number.isFinite(attackLevel) ? Math.trunc(attackLevel) : null;
   }
@@ -379,7 +397,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       actor: this.actor,
       attack: this.attack,
       attackSlot: this._attackSlots[this._activeAttackSlot]?.type ?? null,
-      governingSkill: governing ? { name: governing.label, level: governing.level } : null,
+      governingSkill: this.attack?.standaloneRef?.governingSkill ?? (governing ? { name: governing.label, level: governing.level } : null),
       baseSkill: this._getBaseSkillLevel(),
       weaponBond: getMeleeAttackSettings(this._meleeState, this.sourceAttack).weaponBond === true,
       manualModifier: this.fireState.manualModifier,
@@ -491,6 +509,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   _buildGoverningSkillSelector(fireState = this.fireState) {
+    this._refreshStandaloneAttack();
+    if (this.attack?.standaloneRef) return `<p class="gam-standalone-skill" data-standalone-skill>${escapeHTML(this.attack.skillDescription)}</p>`;
     const skills = this.targetedAttackContext?.specialtyOptions ?? [];
     const options = skills.map(skill => '<option value="' + escapeHTML(skill.value) + '" ' +
       (fireState.governingSpecialty === skill.value ? "selected" : "") + '>' +
@@ -575,6 +595,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
             </div>
             <p class="gam-fire-attack-stats" data-melee-attack-meta title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>
             <div data-melee-governing>${this._buildGoverningSkillSelector(fireState)}</div>
+            <button type="button" data-melee-action="standalone-library">${escapeHTML(standaloneText("Library"))}</button>
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
@@ -641,8 +662,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   _getStatusEvaluateTurns() {
-    return isEvaluateStatusAutofillEnabled()
-      ? getEvaluateStatusTurns(this.token?.actor ?? this.actor) : 0;
+    return getEvaluateStatusTurns(this.token?.actor ?? this.actor);
   }
 
   _syncEvaluateStatusEffect() {
@@ -659,6 +679,15 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _registerTargetHook() {}
 
+  _onActorUpdate(updated) {
+    if (updated?.id !== this.actor?.id) return;
+    if (!this.sourceAttacks?.some(attack => attack.standaloneRef)) return super._onActorUpdate(updated);
+    this._captureFields();
+    this.sourceAttacks = [...this.sourceAttacks.filter(a => !a.standaloneRef), ...listStandaloneAttacks(this.actor, "melee")];
+    this._refreshStandaloneAttack();
+    void this.render({ force: true });
+  }
+
   _updateTargetRecommendation() {
     this._updateSkillPreview();
     void this._updateEffectiveDamagePreview();
@@ -667,6 +696,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
   _updateRapidFirePreview() {}
 
   _updateMeleePreview() {
+    this._refreshStandaloneAttack();
+    const skill = this.element?.querySelector("[data-standalone-skill]");
+    if (skill) skill.textContent = this.attack?.skillDescription ?? "";
     const maneuver = this._normalizeManeuverState();
     const evaluateInput = this.element?.querySelector('[name="evaluate"]');
     if (evaluateInput) evaluateInput.disabled = !!this.fireState.telegraphicAttack;
@@ -741,6 +773,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   _getEffectiveDamageOptions() {
+    this._refreshStandaloneAttack();
     return {
       actor: this.actor,
       attack: this.attack,
@@ -816,6 +849,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async _selectAttack(key) {
+    this.sourceAttacks = [...this.sourceAttacks.filter(a => !a.standaloneRef), ...listStandaloneAttacks(this.actor, "melee")];
     this._captureFields();
     const sourceAttack = this.sourceAttacks.find(entry => entry.key === key);
     if (!sourceAttack || sourceAttack.key === this.selectedAttackKey) return;
@@ -854,6 +888,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async _editAttack() {
+    if (this.attack?.standaloneRef) return openStandaloneWeaponLibrary({ actor: this.actor, type: "melee" });
     const result = await openMeleeAttackEditor({
       DialogV2: foundry.applications.api.DialogV2,
       attack: this.attack,
@@ -915,6 +950,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
 
   _createAttackSnapshots() {
+    this._refreshStandaloneAttack();
+    if (this.attack?.readinessReason) throw new Error(this.attack.readinessReason);
     this._saveActiveAttackConfiguration();
     const previousActive = this._activeAttackSlot;
     const snapshots = [];
@@ -948,6 +985,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
           label: slot.label,
           actor: this.actor,
           sourceAttack,
+          damageOptions: this._getEffectiveDamageOptions(),
+          skillCap: this.fireState.moveAndAttack || this._getMeleeVisibilityRules()?.cap ? 9 : null,
           selectedAttack: globalThis.foundry?.utils?.deepClone?.(this.attack) ?? structuredClone(this.attack),
           governingSkill: this.fireState.governingSpecialty,
           baseSkill: combatCalculation.baseSkill,
@@ -1179,6 +1218,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     event.preventDefault();
     event.stopPropagation();
     const action = button.dataset.meleeAction;
+    if (action === "standalone-library") return openStandaloneWeaponLibrary({ actor: this.actor, type: "melee" });
     if (action === "blind-fighting") return this._checkBlindFighting(button);
     if (action === "cancel") return this.close();
     if (action === "attack-slot") return this._switchAttackSlot(button.dataset.attackSlot);

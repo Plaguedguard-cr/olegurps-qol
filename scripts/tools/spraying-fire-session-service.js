@@ -1,4 +1,6 @@
 import { AmmoService } from "./ammo-service.js";
+import { resolveRuntimeAttackProfile, newAttackId, attackProfileError } from "./attack-profile-runtime.js";
+import { createShotSnapshot } from "./attack-profile-resolver.js";
 import { getSuppressionWeaponKey, getSuppressionRegionFlag } from "./suppression-fire-session-service.js";
 
 const FLAG = "gurpsAmmoManager";
@@ -56,6 +58,12 @@ export class SprayingFireSessionService {
     if (session?.state !== "planned") throw new Error("Only a confirmed Spraying Fire plan can be saved.");
     const state = await this.ammo.loadState();
     state.sprayingFireSessions ??= {};
+    const current = state.sprayingFireSessions[this.key];
+    if (current?.sessionId === session.sessionId) {
+      if (current.ammunitionProfile) session.ammunitionProfile = clone(current.ammunitionProfile);
+      if (current.attackExecutions) session.attackExecutions = clone(current.attackExecutions);
+      if (current.ammoConsumed) session.ammoConsumed = true;
+    }
     state.sprayingFireSessions[this.key] = clone({ ...session, updatedAt: Date.now() });
     await this.ammo.saveState(state, { preserveSprayingSessions: false });
     return clone(state.sprayingFireSessions[this.key]);
@@ -107,6 +115,8 @@ export class SprayingFireSessionService {
     });
   }
   async cancel() {
+    const session = this.findExisting();
+    if (session?.attackExecutions) await this.finalizeSnapshots(session, 0, { cancelled: true });
     return this.deleteSession();
   }
 
@@ -117,6 +127,28 @@ export class SprayingFireSessionService {
     return { loaded: weapon.magazines[weapon.loadedIndex] ?? 0, total: weapon.totalAmmo ?? 0 };
   }
 
+  async executeTarget(session, options, execute) {
+    const attackId = newAttackId();
+    const result = await this.ammo.executeShot({ weaponId: this.weapon.id, attackId,
+      resourceTiming: "spraying-completion", deferConsumption: true, sessionKey: this.key,
+      prepare: ({ state, ammunition }) => {
+        const persisted = state.sprayingFireSessions?.[this.key];
+        if (!persisted || persisted.sessionId !== session.sessionId || persisted.ammoConsumed) throw new Error("Review");
+        const pinned = persisted.ammunitionProfile?.resource;
+        if (pinned && (pinned.magazineId !== ammunition?.magazineId || pinned.ammoKey !== ammunition?.ammoKey ||
+            pinned.legacyIndex !== (ammunition?.legacyIndex ?? null))) throw new Error(attackProfileError("BurstMagazineChanged"));
+        const profile = resolveRuntimeAttackProfile({ actor: this.actor, attack: this.attack,
+          weaponId: this.weapon.id, state, ammunition,
+          context: { kind: "spraying", sessionId: session.sessionId, physicalShots: options.physicalShots,
+            effectiveSkill: options.effectiveSkill, effectiveRoF: options.effectiveRoF, rcl: options.rcl } });
+        return { profile, amount: session.plannedAmmo };
+      },
+      execute: ({ profile }) => execute({ ...options, attackProfile: profile, attackId,
+        resourceTiming: "spraying-completion", resourceReceiptId: "spraying:" + session.sessionId })
+    }).catch(error => { throw new Error(attackProfileError(error.message, this.runtime)); });
+    return result;
+  }
+
   async finish() {
     if (this.busy) return false;
     this.busy = true;
@@ -125,19 +157,43 @@ export class SprayingFireSessionService {
       const session = state.sprayingFireSessions?.[this.key];
       if (!session || session.weaponKey !== this.weaponKey || session.state !== "planned" ||
           !session.targets?.length || session.targets.some(target => !target.completed)) return false;
+      if (session.ammoConsumed) {
+        await this.finalizeSnapshots(session, Number(session.plannedAmmo));
+        return this.deleteSession();
+      }
       const weapon = state.weapons.find(entry => entry.id === this.weapon.id);
+      const pinned = session.ammunitionProfile?.resource;
+      const actual = this.ammo.readAttackAmmunition(this.weapon.id);
+      if (pinned && (pinned.magazineId !== actual?.magazineId || pinned.ammoKey !== actual?.ammoKey ||
+          pinned.legacyIndex !== (actual?.legacyIndex ?? null))) throw new Error(attackProfileError("BurstMagazineChanged"));
       const planned = Number(session.plannedAmmo);
       if (!weapon || !Number.isInteger(planned) || planned < 1 ||
           weapon.magazines[weapon.loadedIndex] < planned || weapon.totalAmmo < planned) {
         throw new Error("\u041d\u0435\u0434\u043e\u0441\u0442\u0430\u0442\u043e\u0447\u043d\u043e \u043f\u0430\u0442\u0440\u043e\u043d\u043e\u0432 \u0434\u043b\u044f \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u0439 \u043e\u0447\u0435\u0440\u0435\u0434\u0438");
       }
-      weapon.magazines[weapon.loadedIndex] -= planned;
-      weapon.totalAmmo -= planned;
-      await this.ammo.saveState(state);
+      if (!await this.ammo.consumeLoadedRounds(state, weapon, planned, { sessionKey: this.key, expectedResource: pinned })) throw new Error("Insufficient ammunition");
+      await this.finalizeSnapshots(session, planned);
       await this.deleteSession();
       return true;
     } finally {
       this.busy = false;
+    }
+  }
+
+  async finalizeSnapshots(session, planned, { cancelled = false } = {}) {
+    for (const execution of session.attackExecutions ?? []) {
+      const message = this.runtime.game?.messages?.get?.(execution.messageId);
+      if (!message?.setFlag || message.getFlag?.("olegurps-qol", "shotSnapshot")) continue;
+      const snapshot = createShotSnapshot(execution.profile, { attackId: execution.attackId,
+        spent: cancelled ? 0 : execution.allocatedShots, resourceTiming: cancelled ? "spraying-cancelled" : "spraying-completion",
+        resourceReceiptId: "spraying:" + session.sessionId, messageId: execution.messageId });
+      try {
+        await message.setFlag("olegurps-qol", "shotSnapshot", clone(snapshot));
+        await message.setFlag("olegurps-qol", "burstReceipt", { id: "spraying:" + session.sessionId,
+          totalSpent: planned, magazineId: snapshot.magazineId,
+          // Traverse waste belongs to the one burst receipt, never to another consumption call.
+          traverseSpent: Math.max(0, planned - session.attackExecutions.reduce((sum, entry) => sum + entry.allocatedShots, 0)) });
+      } catch (error) { console.error("OleGURPS QOL | Spraying shot metadata:", error); }
     }
   }
 }

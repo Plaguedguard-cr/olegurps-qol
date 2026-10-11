@@ -1,0 +1,15 @@
+{
+  "scope": "read-only diagnosis of unrelated existing regression failures",
+  "modeId": "W1FMPB_-58qp_bH-M",
+  "withoutRuntimeCorrection": "compatible",
+  "withRuntimeCorrection": "compatible",
+  "factsIdentical": true,
+  "oldTestExpectation": "not compatible",
+  "catalogHashBeforeTask": "6d9aabb0292efbe25d3f302e682eb8120b5fe385788f07ef8d3c8acc0ba6f4d0",
+  "oldTestHash": "165dfdce9fe4cccf9ca0a638deec5fce13711d8de0d22e53aee3adb52e060020",
+  "mainFileChangedByThisTask": false,
+  "mainMockFailures": [
+    "AutomaticAmmunitionProfileService is not a constructor",
+    "undefined.catch (loadWeaponSkillTLTranslations stub returns undefined at stripped main.js line 61)"
+  ]
+}

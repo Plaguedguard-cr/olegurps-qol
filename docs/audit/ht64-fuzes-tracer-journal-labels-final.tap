@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 area +4 only
+ok 1 - Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 area +4 only
+  ---
+  duration_ms: 5.0987
+  type: 'test'
+  ...
+# Subtest: P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry translation load
+ok 2 - P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry translation load
+  ---
+  duration_ms: 53.7039
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 309.1521

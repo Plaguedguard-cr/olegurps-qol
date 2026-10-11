@@ -1,4 +1,5 @@
 import { getAttackOverrideKey } from "./weapon-attack-overrides.js";
+import { listStandaloneAttacks } from "./standalone-attack-service.js";
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "olegurpsMeleeAssistant";
@@ -66,7 +67,7 @@ export function collectMeleeAttacks(actor) {
     const reference = buildMeleeAttackReference(source, path);
     if (reference.key) attacks.push(reference);
   });
-  return attacks;
+  return [...attacks, ...listStandaloneAttacks(actor, "melee")];
 }
 
 export function normalizeMeleeAttackOverride(value) {
@@ -115,6 +116,7 @@ export function getMeleeAttackSettings(state, attack) {
 
 export function applyMeleeAttackOverride(attack, state) {
   if (!attack) return null;
+  if (attack.standaloneRef) return attack;
   const override = normalizeMeleeAttackOverride(getMeleeAttackSettings(state, attack).override);
   if (!override) return attack;
   return {

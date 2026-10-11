@@ -9,6 +9,7 @@ import {
 } from "./melee-assistant-state.js";
 import { TargetingService } from "./targeting-service.js";
 import { createMeleeTargetedAttackContext } from "./targeted-attack-service.js";
+import { openStandaloneWeaponLibrary } from "./standalone-weapon-configuration.js";
 
 const OPEN_MELEE_ASSISTANTS = new Map();
 const LAST_MELEE_BODYPLANS = new Map();
@@ -44,12 +45,16 @@ export async function openMeleeAssistant() {
   const windowKey = String(globalThis.canvas?.scene?.id ?? "scene") + ":" + token.id;
   const existing = OPEN_MELEE_ASSISTANTS.get(windowKey);
   if (existing?.rendered) {
+    existing.sourceAttacks = collectMeleeAttacks(actor);
+    const state = await existing.stateService.load();
+    if (state.selectedAttackKey) await existing._selectAttack(state.selectedAttackKey);
+    await existing.render({ force: true });
     existing.bringToTop?.();
     return existing;
   }
 
   const sourceAttacks = collectMeleeAttacks(actor);
-  if (!sourceAttacks.length) return ui.notifications.warn("У выбранного персонажа нет melee-атак GGA.");
+  if (!sourceAttacks.length) return openStandaloneWeaponLibrary({ actor, type: "melee" });
 
   const stateService = new MeleeAssistantStateService(actor);
   let state = await stateService.load();

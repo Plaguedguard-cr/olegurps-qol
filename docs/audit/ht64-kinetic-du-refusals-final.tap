@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+ok 1 - real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+  ---
+  duration_ms: 47.3623
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 274.0058

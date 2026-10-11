@@ -1,0 +1,13 @@
+[
+  "tests/ht64-hafla-acc.test.mjs",
+  "tests/ht-preservation.test.mjs",
+  "tests/ht64-environment-batch.test.mjs",
+  "tests/ht64-explosives-batch.test.mjs",
+  "tests/ht64-multishot-batch.test.mjs",
+  "tests/ht64-kinetic-batch.test.mjs",
+  "tests/ht-plus-p-category-g.test.mjs",
+  "tests/damage-shot-link.test.mjs",
+  "tests/ammo-inventory.test.mjs",
+  "tests/standalone-combat.test.mjs",
+  "tests/ammunition-effects.test.mjs"
+]

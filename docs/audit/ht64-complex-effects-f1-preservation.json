@@ -1,0 +1,37 @@
+{
+  "baselineFiles": 418,
+  "changed": [
+    "scripts/tools/automatic-ammunition-localization.js",
+    "scripts/tools/damage-shot-link.js",
+    "lang/en.json",
+    "lang/ru.json"
+  ],
+  "protectedCount": 414,
+  "protectedUnchanged": true,
+  "catalogs": [
+    {
+      "p": "data/catalogs/olegurps_ht_ammunition_catalog_v1_3.json",
+      "sha": "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385"
+    },
+    {
+      "p": "data/catalogs/olegurps_lt_ammunition_catalog_v1_2.json",
+      "sha": "2e520c12f437ca917ab87cf6322128ce2e4776f7abd7e1a547503681a0914cdd"
+    },
+    {
+      "p": "data/catalogs/olegurps_ut_ammunition_catalog_v2_7.json",
+      "sha": "888dd25f46b43c8d51d7e81b529d616d84e1cde6591ffc0da5a5b9613d527ccc"
+    },
+    {
+      "p": "data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",
+      "sha": "f98687171a69b27ff46d89ab12d24b457375972de293fe482e881aceb63b5460"
+    },
+    {
+      "p": "docs/audit/ht64-complex-effects-decision-matrix.json",
+      "sha": "d8fa46f323b3204082567e07cc7f3a3ca7a445ce44f12eed3741002fc2dfda18"
+    },
+    {
+      "p": "docs/audit/ht64-complex-effects-decision-report.md",
+      "sha": "e62ba372a79a452fb2eb0fae88d0c7b95656595887056126509f789d66cab45b"
+    }
+  ]
+}

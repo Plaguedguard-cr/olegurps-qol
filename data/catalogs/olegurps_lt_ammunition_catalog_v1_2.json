@@ -1,0 +1,5028 @@
+{
+  "schema_version": 1,
+  "revision": "1.2",
+  "catalog_kind": "olegurps-lt-ammunition-catalog-v1",
+  "source": {
+    "book": "GURPS Low-Tech, Fourth Edition",
+    "main_pages": [
+      "LT 72-78",
+      "LT 80-84",
+      "LT 84-88",
+      "LT 90-95"
+    ],
+    "supplemental": [
+      "Basic Set B277, B410-411 for explicitly delegated rules"
+    ],
+    "imported_equipment_source": "Low Tech Equipment.eqp via weapon reference v5.2",
+    "rules_pdf": "GURPS 4E - Low-Tech.pdf"
+  },
+  "module_policy": {
+    "source_gate": "LT only",
+    "do_not_apply_to_HT_or_UT_by_name_or_caliber": true,
+    "do_not_use_actor_guns_tl_as_ammunition_tl": true,
+    "tl_not_a_strict_mode_filter": "Higher-TL projectile options are optional based on available equipment/GM, not Guns/TL",
+    "do_not_override_gga_attack_roll": true,
+    "ammo_inventory_stored_separately": true,
+    "bodyplan/targeting_not_changed": true,
+    "conditional_options_do_not_auto_attach": true,
+    "crossbow_arrowhead_rule": "Alternate Arrows LT73 explicitly lists arrows; adaptations to hand crossbow bolts require GM approval except standard/bodkin heads referenced in B277."
+  },
+  "ammo_families": [
+    {
+      "id": "arbalest_bolt",
+      "name": "Arbalest Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_arbalest_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W4gnbkfxzHAYre3kO"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "arquebus_bullet",
+      "name": "Arquebus Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_arquebus_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WeCQz_2guzg8JWBca"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "atlatl_dart",
+      "name": "Atlatl Dart",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_atlatl_dart_lt77"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WiQNALmY3-6VRXnXY"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "atlatl_javelin",
+      "name": "Atlatl Javelin",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_atlatl_javelin"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WJu2Z4zwQ9NFqc5Km"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "awe_inspiring_ball",
+      "name": "Awe Inspiring Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_long_range_awe_inspiring_gun_lead_ball_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WrTP-ra4EWWw_9Blj"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "awe_inspiring_shot",
+      "name": "Awe Inspiring Shot",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_long_range_awe_inspiring_gun_lead_shot_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WFiGuhETQ5MGheGwO"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_10_lb_stone",
+      "name": "Ballista 10 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_10_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W-RYCc6uU-OXKoBah",
+        "Wfenu48zGIq5-aPpv"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_15_lb_stone",
+      "name": "Ballista 15 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_15_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WKsEc93SimNUgXPWc",
+        "WbvTQ-Vl5wHmuFel0"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_180_lb_stone",
+      "name": "Ballista 180 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_180_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WdEDlxCiYeL4uSuUU",
+        "WujHSM90sHiX2IyRP"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_1_lb_stone",
+      "name": "Ballista 1 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_1_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WVDXm1zp4eENVl-SF"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_20_lb_stone",
+      "name": "Ballista 20 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_20_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WXMj2wr9SMXV2QbWx",
+        "WoJlf8jv3rl2lwDNy"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_2_lb_stone",
+      "name": "Ballista 2 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_2_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WpoMAB2ff6sb8AoAB"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_30_lb_stone",
+      "name": "Ballista 30 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_30_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WDgJJrXmNb2ltlJ8G",
+        "Wz7rrcb1JQBbvlq8t"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_5_lb_stone",
+      "name": "Ballista 5 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_5_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W1qdiCJHVZnOkBFe6"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ballista_60_lb_stone",
+      "name": "Ballista 60 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_60_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WER8WRUSBxLneb6MY",
+        "WIdMKJBBWBhs51_Vt"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "beam_sling_100_man_stone",
+      "name": "Beam Sling 100 Man Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_beam_sling_100_man_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WQazt507venteh0Yq"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "beam_sling_15_man_stone",
+      "name": "Beam Sling 15 Man Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_beam_sling_15_man_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WYkHC34-KuQjgMNb-"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "beam_sling_30_man_stone",
+      "name": "Beam Sling 30 Man Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_beam_sling_30_man_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W99LmoR-3mwDRYY_2"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "beam_sling_50_man_stone",
+      "name": "Beam Sling 50 Man Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_beam_sling_50_man_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WQ-acgyhAxGxutQQq"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "blowpipe_dart",
+      "name": "Blowpipe Dart",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_blowpipe_dart_lt76"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WD7iZ_sU7XylHwqN_"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "blunderbuss_shot",
+      "name": "Blunderbuss Shot",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_blunderbuss_shot_lt92"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WLVaW6s5nqfPoH8G_"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "bombard_large_metal_ball",
+      "name": "Bombard Large Metal Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_bombard_large_metal_ball_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W3_f6uxd42Wb3ehoq"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "bombard_metal_ball",
+      "name": "Bombard Metal Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_bombard_metal_ball_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WX-yHEQghov5Xp29y"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "bombard_stone_ball",
+      "name": "Bombard Stone Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_bombard_stone_ball_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WX-yHEQghov5Xp29y"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "bow_arrow",
+      "name": "Bow Arrow",
+      "description": "Standard arrows and distinct heads, for named bow models.",
+      "ammo_item_ids": [
+        "lt_barbed_arrow_lt73",
+        "lt_blunt_arrow_lt73",
+        "lt_bodkin_arrow",
+        "lt_bowel_raker_arrow_lt73",
+        "lt_cutting_arrow_lt73",
+        "lt_fire_arrow_lt73",
+        "lt_fire_cage_arrow_lt73",
+        "lt_flight_arrow_lt73",
+        "lt_humming_bulb_arrow_lt73",
+        "lt_regular_arrow"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "bow_arrow_guide_dart",
+      "name": "Bow Arrow Guide Dart",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_arrow_guide_dart"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "breechloading_carbine_bullet",
+      "name": "Breechloading Carbine Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_breechloading_carbine_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WoX0iI3NTeQcKFRxT"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "buccaneer_fusil_ball",
+      "name": "Buccaneer Fusil Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_buccaneer_fusil_ball"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W3hYAnNy6LbS07aXN"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "caliver_bullet",
+      "name": "Caliver Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_caliver_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WbtqX-V-jIgXJn8FL"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "cannon_12lb_metal",
+      "name": "Cannon 12Lb Metal",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_cannon_12_lb_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W8imRocHiAFgWCKuc"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "cannon_24lb_metal",
+      "name": "Cannon 24Lb Metal",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_cannon_24_lb_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WzUOi7EDIwcCQzDSL"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "cannon_3lb_metal",
+      "name": "Cannon 3Lb Metal",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_cannon_3_lb_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WLQYWC5o-Dfr-z1fT"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "cannon_fitted_metal_ball",
+      "name": "Cannon Fitted Metal Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_cannon_fitted_ball"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WadZ9BFUFoPATpyuT"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "carbine_bullet",
+      "name": "Carbine Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_carbine_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W145kPyYunTnGRwY6"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "carroballista_bolt",
+      "name": "Carroballista Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_carroballista_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WewY3nmikKsVjwN_1"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "cheiroballistra_18_bolt",
+      "name": "Cheiroballistra 18 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_cheiroballistra_bolt_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WvGuW2iUJrxKGNrHM"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "cheirosiphon_fuel",
+      "name": "Cheirosiphon Fuel",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_cheirosiphon_fuel"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wf9D7K1uIf9a1YFcF"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "crapaudeau_stone",
+      "name": "Crapaudeau Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_crapaudeau_stone_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WCUk1nj8fHfzittq2"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "crouching_tiger_shot",
+      "name": "Crouching Tiger Shot",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_crouching_tiger_gun_shot_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WXLhR6qAupk40x1vV"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "crouching_tiger_stone",
+      "name": "Crouching Tiger Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_crouching_tiger_gun_stone_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wpnd1luiwl-QynzAY"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "culverin_cannonball",
+      "name": "Culverin Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_culverin_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W0WKa_Z3yrVioQUtE"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "dart_sling_dart",
+      "name": "Dart Sling Dart",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_dart_sling_dart_lt76"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wlxe2_8BiREGT_6TB"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "double_jager_rifle_ball",
+      "name": "Double Jager Rifle Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_double_jager_ball"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WaYnIpM4t6wH57ZYg"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "dragoon_pistol_heavy_bullet",
+      "name": "Dragoon Pistol Heavy Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_dragoon_pistol_heavy_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WN1t6vbkRJTcxlSa9"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "dragoon_pistol_light_bullet",
+      "name": "Dragoon Pistol Light Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_dragoon_pistol_light_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W9zu4Mgjt_cwxISAV"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "duck_s_foot_pistol_bullet",
+      "name": "Duck S Foot Pistol Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_duck_s_foot_pistol_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WNE2rB6BVUwchQrnf"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "eruptor_reload",
+      "name": "Eruptor Reload",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_eruptor_reload"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WWH0OQJ-rgb1mROw-"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "falcon_cannonball",
+      "name": "Falcon Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_falcon_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wl-jCxKGZENItkRcm"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "falconet_cannonball",
+      "name": "Falconet Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_falconet_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WIRUYHmrReGiIhQMg"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "fire_lance_whole_unit",
+      "name": "Fire Lance Whole Unit",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_fire_lance_one_use"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WmWAtzBOn5-B5IvhJ"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "fire_siphon_fuel",
+      "name": "Fire Siphon Fuel",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_fire_siphon_fuel"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WOtCDhbkzhdvewbDK"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "flintlock_carbine_bullet",
+      "name": "Flintlock Carbine Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_flintlock_carbine_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WMqVwH46upN0TpmQE"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "fowling_piece_shot",
+      "name": "Fowling Piece Shot",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_fowling_piece_shot_lt92"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WGd_9lR6GSvYtwJYq",
+        "WuIDDaiXX7__TlDkJ"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "fusil_de_chasse_bullet",
+      "name": "Fusil De Chasse Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_fusil_de_chasse_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WiBwgEFvhbNbmRLJR"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "fusil_ordinaire_bullet",
+      "name": "Fusil Ordinaire Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_fusil_ordinaire_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WYW6_n9V6s4yG4UMc"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "gastraphetes_artillery_bolt",
+      "name": "Gastraphetes Artillery Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_gastraphetes_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WS7SJUj_6I5AIBmpi"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "gastraphetes_mountain_bolt",
+      "name": "Gastraphetes Mountain Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_gastraphetes_mountain_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WIVNnvg1uqbcbGpkY"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "gastraphetes_personal_bolt",
+      "name": "Gastraphetes Personal Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_gastraphetes_bolt_lt76"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Ws0Es7ZR78_sIW-uP"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "gonne_bolt",
+      "name": "Gonne Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_gonne_bolt_lt91"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W45k0TnnRzNd72k0-"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "gonne_bullet",
+      "name": "Gonne Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_gonne_bullet_lt91"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WQdIGb0JaGIWkcygT"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "hand_crossbow_bolt",
+      "name": "Hand Crossbow Bolt",
+      "description": "Hand-crossbow bolts; arrowhead options need GM approval.",
+      "ammo_item_ids": [
+        "lt_bodkin_crossbow_bolt",
+        "lt_standard_crossbow_bolt"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WEG0MRykkKI4AzUzD",
+        "WHwsNi90Y4m49YOzg",
+        "WPn4rW6HE64VST_pm",
+        "WVvwyyO4VoyeTryRo",
+        "Wak71wpexyuS6wOgQ",
+        "WwpI_P5DL8za5501B",
+        "WxBwICnOg7tP-Gqfq"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "heavy_sling_rock",
+      "name": "Heavy Sling Rock",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_heavy_sling_shaped_rock_lt76"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W04WeGwpSVXBrCCCw"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "highland_pistol_bullet",
+      "name": "Highland Pistol Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_highland_pistol_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WsCvHv5FcwbhLT8td"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "hinged_trebuchet_large_stone",
+      "name": "Hinged Trebuchet Large Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_hinged_trebuchet_large_stone"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WUK8gvtaJNSdDQ4HE"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "hinged_trebuchet_small_stone",
+      "name": "Hinged Trebuchet Small Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_hinged_trebuchet_small_stone"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WJE44M7Ljte5q0PJw"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "incendiary_blower",
+      "name": "Incendiary Blower",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_incendiary_blowpipe_charge_lt86"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WMe-qDJxblDc4UUnm"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "iron_fire_lance_reload",
+      "name": "Iron Fire Lance Reload",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_iron_fire_lance_charge"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W4PRplvj0ypVOdY6s"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "jager_rifle_bullet",
+      "name": "Jager Rifle Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_jager_rifle_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WoqqZuhaS1_bS7PGP"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "lantaka_cannonball",
+      "name": "Lantaka Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_lantaka_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "We4h--CLkoQ_mskmE"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "military_pistol_bullet",
+      "name": "Military Pistol Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_military_pistol_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W5zqJN2fmDIv9gXIP"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "monankon_stone",
+      "name": "Monankon Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_monankon_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W4PYHnE0if9L3zath"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "multi_shot_gonne_ball",
+      "name": "Multi Shot Gonne Ball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_multi_gonne_ball"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WBnarXoat3qLrySda",
+        "WQHeXdJ-jVlDztUou",
+        "WZsyvYVuMLMho_olT",
+        "Wk0G5zIrN66TWDaod",
+        "WtCjdhkE6xPYvdH_i",
+        "WtbxiVp4UnahK1ipb"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "musket_bullet",
+      "name": "Musket Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_musket_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W5NUBEljC3LY6b9SX"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_03_lb_lead_bullet",
+      "name": "Personal Ballista Ballista 0 03 Lb Lead Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_03_lb_bullet_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W5TNQWnLaM0EvaZwK"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_03_lb_stone",
+      "name": "Personal Ballista Ballista 0 03 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_03_lb_stone_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W5TNQWnLaM0EvaZwK"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_06_lb_lead_bullet",
+      "name": "Personal Ballista Ballista 0 06 Lb Lead Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_06_lb_bullet_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WUGC7s4EJ_mYffi3H"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_06_lb_stone",
+      "name": "Personal Ballista Ballista 0 06 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_06_lb_stone_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WUGC7s4EJ_mYffi3H"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_12_lb_lead_bullet",
+      "name": "Personal Ballista Ballista 0 12 Lb Lead Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_12_lb_bullet_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WHm2NbM8FdpkrepQR"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_12_lb_stone",
+      "name": "Personal Ballista Ballista 0 12 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_12_lb_stone_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WHm2NbM8FdpkrepQR"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_18_lb_lead_bullet",
+      "name": "Personal Ballista Ballista 0 18 Lb Lead Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_18_lb_bullet_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WKpzIbv50y67GMjMq"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "personal_ballista_ballista_0_18_lb_stone",
+      "name": "Personal Ballista Ballista 0 18 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ballista_0_18_lb_stone_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WKpzIbv50y67GMjMq"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "petrobolos_40_lb_stone",
+      "name": "Petrobolos 40 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_petrobolos_40_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WseAzEHBPrff2YCJP"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "petrobolos_5_lb_stone",
+      "name": "Petrobolos 5 Lb Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_petrobolos_5_lb_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WyNOeQMG16apU0Jip"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "petronel_bullet",
+      "name": "Petronel Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_petronel_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W01YwRKnRlk_R3DYW"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "pistol_crossbow_dart",
+      "name": "Pistol Crossbow Dart",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_pistol_crossbow_dart_lt76"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wdn9cVYekaOlUeQnQ"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "pocket_pistol_bullet",
+      "name": "Pocket Pistol Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_pocket_pistol_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WpgFmfGe-T9BEPFaW"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "polybolos_bolt",
+      "name": "Polybolos Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_polybolos_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WPbgxSlo98d3MBoQ_"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "prodd_pellet",
+      "name": "Prodd Pellet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_prodd_pellet_lt76"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WEccMSldVWlEmz-AU"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "puckle_gun_bullet",
+      "name": "Puckle Gun Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_puckle_gun_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WRLeJSlkTELYgEN_u"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "puffer_pistol_bullet",
+      "name": "Puffer Pistol Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_puffer_pistol_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W9s533ghb5-D_YjQh"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "queen_anne_pistol_bullet",
+      "name": "Queen Anne Pistol Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_queen_anne_pistol_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WjJflZyHGasVNIg-c"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "rabinet_cannonball",
+      "name": "Rabinet Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_rabinet_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wo62p94VGBulhUQU6"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "rocket_missile",
+      "name": "Rocket Missile",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_rocket_complete"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WAd5_TDslv9AXFyLs"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "saker_cannonball",
+      "name": "Saker Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_saker_cannonball_lt897"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WpPPJLeu7u4eZ70nr"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_13_5_bolt",
+      "name": "Scorpion 13 5 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_13_5_bolt_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WeHxrM0WiwSIkqOhR"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_18_bolt",
+      "name": "Scorpion 18 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_18_bolt_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WdMI3ek-qxYwJ05JU"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_27_bolt",
+      "name": "Scorpion 27 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_27_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WMTMPiQWfq4UDEimv"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_36_bolt",
+      "name": "Scorpion 36 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_36_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wj7B6VpUCSltj_n79"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_45_bolt",
+      "name": "Scorpion 45 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_45_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WyyCkc-OOxokqMPyn"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_54_bolt",
+      "name": "Scorpion 54 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_54_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WJMVvkqlc-s1rye5X"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_72_bolt",
+      "name": "Scorpion 72 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_72_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WFbCf_tBcSAhdptA-"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "scorpion_9_bolt",
+      "name": "Scorpion 9 Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_scorpion_9_bolt_lt83"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wipc49tj5CGUW2u1Z"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ship_s_gun_18_lb_cannonball",
+      "name": "Ship S Gun 18 Lb Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ship_s_gun_18_lb_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WHn0l8c_gaWn9f4Do"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ship_s_gun_42_lb_cannonball",
+      "name": "Ship S Gun 42 Lb Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ship_s_gun_42_lb_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WWDfK1fhPOtRnz-Z-"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ship_s_gun_4_lb_cannonball",
+      "name": "Ship S Gun 4 Lb Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ship_s_gun_4_lb_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WUPTOSq5QbpNGSTyk"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "ship_s_gun_9_lb_cannonball",
+      "name": "Ship S Gun 9 Lb Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_ship_s_gun_9_lb_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WJd5Y_RsUT60u2waw"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "sling_projectile",
+      "name": "Sling Projectile",
+      "description": "Sling and staff-sling stones or bullets; weapon-specific limitations apply.",
+      "ammo_item_ids": [
+        "lt_shaped_sling_stone_lt76",
+        "lt_sling_pellet_lt76",
+        "lt_sling_unshaped_stone",
+        "lt_standard_staff_sling_stone"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WoPZ6WfjRMTWppGsv",
+        "Wt63kR2Ebkr9chL4b"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "slurbow_dart",
+      "name": "Slurbow Dart",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_slurbow_dart_lt76"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W11eNBa3voVFCsgWv",
+        "WFAwJH7XlIK-bIy0Q"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "snaphaunce_pistol_bullet",
+      "name": "Snaphaunce Pistol Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_snaphaunce_pistol_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W0ytp97D1m7zBpVnM"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "springald_bolt",
+      "name": "Springald Bolt",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_springald_bolt_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WSik01Y7KOYRybDzf"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "stone_launcher_stone",
+      "name": "Stone Launcher Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_stone_launching_stick_shaped_stone_lt77"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WrowHYC-dAZA488wu"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "swivel_gun_cannonball",
+      "name": "Swivel Gun Cannonball",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_swivel_gun_cannonball_lt89"
+      ],
+      "compatible_weapon_mode_ids": [
+        "Wbkqgv9YvLbfOinA2"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "tantsutsu_bullet",
+      "name": "Tantsutsu Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_tantsutsu_bullet_lt94"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WZFbOwuQe-xNHJAZa"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "teppo_bullet",
+      "name": "Teppo Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_teppo_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WKYEp8I6N0arA1v3A"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "trebuchet_large_stone",
+      "name": "Trebuchet Large Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_trebuchet_large_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WXaJ_qgZAeRV_LccJ"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "trebuchet_small_stone",
+      "name": "Trebuchet Small Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_trebuchet_small_stone_lt81"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WAjiOb3-A2JjSxsxf"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "veuglaire_stone",
+      "name": "Veuglaire Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_veuglaire_stone_lt87"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WcC4MCnmh_cWY8I-G"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "wall_gun_bullet",
+      "name": "Wall Gun Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_wall_gun_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WMfHkvvdm6OGB_4Vt"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "weighted_beam_sling_30_stone",
+      "name": "Weighted Beam Sling 30 Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_weighted_beam_sling_30_stone"
+      ],
+      "compatible_weapon_mode_ids": [
+        "W6okrp1tUXYYdRJkW"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "weighted_beam_sling_50_stone",
+      "name": "Weighted Beam Sling 50 Stone",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_weighted_beam_sling_50_stone"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WfBDjYyWLVcm9IqYO"
+      ],
+      "cross_source_interchangeable": false
+    },
+    {
+      "id": "winged_tiger_gun_bullet",
+      "name": "Winged Tiger Gun Bullet",
+      "description": "Specific projectile loading; not interchangeable merely by name/weight/caliber.",
+      "ammo_item_ids": [
+        "lt_winged_tiger_gun_bullet_lt93"
+      ],
+      "compatible_weapon_mode_ids": [
+        "WdgjNzGS4n0xMiSi4"
+      ],
+      "cross_source_interchangeable": false
+    }
+  ],
+  "ammo_items": [
+    {
+      "id": "lt_arbalest_bolt_lt81",
+      "name": "Arbalest Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "ePe_iowaXTdKzzTsQ",
+      "tech_level_raw": "3",
+      "ammo_family_id": "arbalest_bolt",
+      "ammo_type": "arbalest_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W4gnbkfxzHAYre3kO"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 0.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_arquebus_bullet_lt93",
+      "name": "Arquebus Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "e_n5h6m0ok-GZpOAp",
+      "tech_level_raw": "4",
+      "ammo_family_id": "arquebus_bullet",
+      "ammo_type": "arquebus_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WeCQz_2guzg8JWBca"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.05,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_atlatl_dart_lt77",
+      "name": "Atlatl Dart",
+      "source_ref_raw": "LT77",
+      "source_equipment_id": "eP78V_ZgIenN5xkZm",
+      "tech_level_raw": "0",
+      "ammo_family_id": "atlatl_dart",
+      "ammo_type": "atlatl_dart",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WiQNALmY3-6VRXnXY"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "atlatl_dart"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_03_lb_bullet_lt83",
+      "name": "Ballista, 0.03-lb Bullet",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "eemycJzxXF0mPceOL",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_03_lb_lead_bullet",
+      "ammo_type": "personal_ballista_ballista_0_03_lb_lead_bullet",
+      "variant_id": "lead_substitute_ballista",
+      "weapon_mode_ids": [
+        "W5TNQWnLaM0EvaZwK"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_03_lb_stone_lt83",
+      "name": "Ballista, 0.03-lb Stone",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "eiHxAIGmfPcUVo62r",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_03_lb_stone",
+      "ammo_type": "personal_ballista_ballista_0_03_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W5TNQWnLaM0EvaZwK"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "1 USD × weight (lb.) for stone; 1.60 USD × weight (lb.) for lead",
+      "source_ref_price": "LT 81",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_06_lb_bullet_lt83",
+      "name": "Ballista, 0.06-lb Bullet",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "epJNtDuEOH1txOkpN",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_06_lb_lead_bullet",
+      "ammo_type": "personal_ballista_ballista_0_06_lb_lead_bullet",
+      "variant_id": "lead_substitute_ballista",
+      "weapon_mode_ids": [
+        "WUGC7s4EJ_mYffi3H"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_06_lb_stone_lt83",
+      "name": "Ballista, 0.06-lb Stone",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "e5YvA1uLuSNDQ5xl9",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_06_lb_stone",
+      "ammo_type": "personal_ballista_ballista_0_06_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WUGC7s4EJ_mYffi3H"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "1 USD × weight (lb.) for stone; 1.60 USD × weight (lb.) for lead",
+      "source_ref_price": "LT 81",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_12_lb_bullet_lt83",
+      "name": "Ballista, 0.12-lb Bullet",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "eFFhDpX81yAmXIMRx",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_12_lb_lead_bullet",
+      "ammo_type": "personal_ballista_ballista_0_12_lb_lead_bullet",
+      "variant_id": "lead_substitute_ballista",
+      "weapon_mode_ids": [
+        "WHm2NbM8FdpkrepQR"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_12_lb_stone_lt83",
+      "name": "Ballista, 0.12-lb Stone",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "eb3yB84mb-Wkg7nqi",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_12_lb_stone",
+      "ammo_type": "personal_ballista_ballista_0_12_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WHm2NbM8FdpkrepQR"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "1 USD × weight (lb.) for stone; 1.60 USD × weight (lb.) for lead",
+      "source_ref_price": "LT 81",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_18_lb_bullet_lt83",
+      "name": "Ballista, 0.18-lb Bullet",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "ehRJWWEBe6qKhLZSg",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_18_lb_lead_bullet",
+      "ammo_type": "personal_ballista_ballista_0_18_lb_lead_bullet",
+      "variant_id": "lead_substitute_ballista",
+      "weapon_mode_ids": [
+        "WKpzIbv50y67GMjMq"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_0_18_lb_stone_lt83",
+      "name": "Ballista, 0.18-lb Stone",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "eBfnugKslM0htMG7c",
+      "tech_level_raw": "2",
+      "ammo_family_id": "personal_ballista_ballista_0_18_lb_stone",
+      "ammo_type": "personal_ballista_ballista_0_18_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WKpzIbv50y67GMjMq"
+      ],
+      "specific_model_only": true,
+      "notes_ru": " Specify projectile material and mass; size not inferred from caliber.",
+      "price_formula": "1 USD × weight (lb.) for stone; 1.60 USD × weight (lb.) for lead",
+      "source_ref_price": "LT 81",
+      "projectile_classes": [
+        "personal_ballista_ball"
+      ]
+    },
+    {
+      "id": "lt_ballista_1_lb_stone_lt81",
+      "name": "Ballista, 1-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "euCveVpkiWK7mX_ZC",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_1_lb_stone",
+      "ammo_type": "ballista_1_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WVDXm1zp4eENVl-SF"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 1,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_2_lb_stone_lt81",
+      "name": "Ballista, 2-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eFkvHyzfeDGcCC7-N",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_2_lb_stone",
+      "ammo_type": "ballista_2_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WpoMAB2ff6sb8AoAB"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 2,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_5_lb_stone_lt81",
+      "name": "Ballista, 5-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eXLRYVxpYtxC8o3B1",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_5_lb_stone",
+      "ammo_type": "ballista_5_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W1qdiCJHVZnOkBFe6"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_10_lb_stone_lt81",
+      "name": "Ballista, 10-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "e8gFrM_El7J4ps8M2",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_10_lb_stone",
+      "ammo_type": "ballista_10_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W-RYCc6uU-OXKoBah",
+        "Wfenu48zGIq5-aPpv"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 10,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_15_lb_stone_lt81",
+      "name": "Ballista, 15-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "ejU1-U1U2v5I7wJ2N",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_15_lb_stone",
+      "ammo_type": "ballista_15_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WKsEc93SimNUgXPWc",
+        "WbvTQ-Vl5wHmuFel0"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 15,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_20_lb_stone_lt81",
+      "name": "Ballista, 20-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "e8SoWVlBaTknhBrrZ",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_20_lb_stone",
+      "ammo_type": "ballista_20_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WXMj2wr9SMXV2QbWx",
+        "WoJlf8jv3rl2lwDNy"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 20,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_30_lb_stone_lt81",
+      "name": "Ballista, 30-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eOQX4LkINrPi-k-uV",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_30_lb_stone",
+      "ammo_type": "ballista_30_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WDgJJrXmNb2ltlJ8G",
+        "Wz7rrcb1JQBbvlq8t"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 30,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_60_lb_stone_lt81",
+      "name": "Ballista, 60-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eAtujvFFGiMk5yJwX",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_60_lb_stone",
+      "ammo_type": "ballista_60_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WER8WRUSBxLneb6MY",
+        "WIdMKJBBWBhs51_Vt"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 60,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_ballista_180_lb_stone_lt81",
+      "name": "Ballista, 180-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eiaPzL9sPidgKjCnE",
+      "tech_level_raw": "3",
+      "ammo_family_id": "ballista_180_lb_stone",
+      "ammo_type": "ballista_180_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WdEDlxCiYeL4uSuUU",
+        "WujHSM90sHiX2IyRP"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 180,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_barbed_arrow_lt73",
+      "name": "Barbed Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "eRkNeWkrX-SIJDn2u",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "barbed",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_beam_sling_15_man_stone_lt81",
+      "name": "Beam Sling, 15-Man Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "e7BtbxOkP8BJCCZYb",
+      "tech_level_raw": "3",
+      "ammo_family_id": "beam_sling_15_man_stone",
+      "ammo_type": "beam_sling_15_man_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WYkHC34-KuQjgMNb-"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 2,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_beam_sling_30_man_stone_lt81",
+      "name": "Beam Sling, 30-Man Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "e4h5ePrS9AY3MdGXS",
+      "tech_level_raw": "3",
+      "ammo_family_id": "beam_sling_30_man_stone",
+      "ammo_type": "beam_sling_30_man_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W99LmoR-3mwDRYY_2"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_beam_sling_50_man_stone_lt81",
+      "name": "Beam Sling, 50-Man Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "elO_MSXavnBmsYZqj",
+      "tech_level_raw": "3",
+      "ammo_family_id": "beam_sling_50_man_stone",
+      "ammo_type": "beam_sling_50_man_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WQ-acgyhAxGxutQQq"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 10,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_beam_sling_100_man_stone_lt81",
+      "name": "Beam Sling, 100-Man Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "e1KmS7DhkpiawHjMp",
+      "tech_level_raw": "3",
+      "ammo_family_id": "beam_sling_100_man_stone",
+      "ammo_type": "beam_sling_100_man_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WQazt507venteh0Yq"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 30,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_blowpipe_dart_lt76",
+      "name": "Blowpipe Dart",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "eRpFbr97l-ShhSQS0",
+      "tech_level_raw": "0",
+      "ammo_family_id": "blowpipe_dart",
+      "ammo_type": "blowpipe_dart",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WD7iZ_sU7XylHwqN_"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 0.1,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "blowpipe_dart"
+      ]
+    },
+    {
+      "id": "lt_blunderbuss_shot_lt92",
+      "name": "Blunderbuss Shot",
+      "source_ref_raw": "LT92",
+      "source_equipment_id": "eCWg-L9VYUpe14ZDI",
+      "tech_level_raw": "4",
+      "ammo_family_id": "blunderbuss_shot",
+      "ammo_type": "blunderbuss_shot",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WLVaW6s5nqfPoH8G_"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_firearm"
+      ]
+    },
+    {
+      "id": "lt_blunt_arrow_lt73",
+      "name": "Blunt Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "eAxUEf0lbc8Gj0Xom",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "blunt",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_bombard_metal_ball_lt87",
+      "name": "Bombard Metal Ball",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "edqBrV0SmVtgkIUqQ",
+      "tech_level_raw": "3",
+      "ammo_family_id": "bombard_metal_ball",
+      "ammo_type": "bombard_metal_ball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WX-yHEQghov5Xp29y"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 50,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true,
+      "stone_vs_metal_rule": {
+        "source_ref": "LT 87",
+        "weapon_table_assumes": "stone",
+        "metal_damage_multiplier_relative_to_stone": 2,
+        "metal_range_multiplier_relative_to_stone": 2,
+        "manual_check": "Verify gun bore and charge safety; do not apply multiplier twice."
+      }
+    },
+    {
+      "id": "lt_bombard_stone_ball_lt87",
+      "name": "Bombard Stone Ball",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "euPM_-figgLnr6vgx",
+      "tech_level_raw": "3",
+      "ammo_family_id": "bombard_stone_ball",
+      "ammo_type": "bombard_stone_ball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WX-yHEQghov5Xp29y"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 50,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true,
+      "stone_vs_metal_rule": {
+        "source_ref": "LT 87",
+        "weapon_table_assumes": "stone",
+        "stone_stats_already_in_weapon_table": true,
+        "do_not_half_again": true
+      }
+    },
+    {
+      "id": "lt_bombard_large_metal_ball_lt87",
+      "name": "Bombard, Large Metal Ball",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "exNMd8FFMnAyl-vIo",
+      "tech_level_raw": "3",
+      "ammo_family_id": "bombard_large_metal_ball",
+      "ammo_type": "bombard_large_metal_ball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W3_f6uxd42Wb3ehoq"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 430,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true,
+      "stone_vs_metal_rule": {
+        "source_ref": "LT 87",
+        "weapon_table_assumes": "stone",
+        "metal_damage_multiplier_relative_to_stone": 2,
+        "metal_range_multiplier_relative_to_stone": 2,
+        "manual_check": "Verify gun bore and charge safety; do not apply multiplier twice."
+      }
+    },
+    {
+      "id": "lt_bowel_raker_arrow_lt73",
+      "name": "Bowel-Raker Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "eDBsVBmOiGJXFtkdF",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "bowel_raker",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_breechloading_carbine_bullet_lt94",
+      "name": "Breechloading Carbine Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "ey-9r3gYpcfS5c0gr",
+      "tech_level_raw": "4",
+      "ammo_family_id": "breechloading_carbine_bullet",
+      "ammo_type": "breechloading_carbine_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WoX0iI3NTeQcKFRxT"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.04,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_caliver_bullet_lt93",
+      "name": "Caliver Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "ewNK_KUVOTKDzbmeH",
+      "tech_level_raw": "4",
+      "ammo_family_id": "caliver_bullet",
+      "ammo_type": "caliver_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WbtqX-V-jIgXJn8FL"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.07,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_cannon_3_lb_cannonball_lt89",
+      "name": "Cannon, 3-lb. Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "ev3eJ8RPlSVz4Tw0z",
+      "tech_level_raw": "4",
+      "ammo_family_id": "cannon_3lb_metal",
+      "ammo_type": "cannon_3lb_metal",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WLQYWC5o-Dfr-z1fT"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 4.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_cannon_12_lb_cannonball_lt89",
+      "name": "Cannon, 12-lb. Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "eGjnPScd6NJsgj40O",
+      "tech_level_raw": "4",
+      "ammo_family_id": "cannon_12lb_metal",
+      "ammo_type": "cannon_12lb_metal",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W8imRocHiAFgWCKuc"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 18,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_cannon_24_lb_cannonball_lt89",
+      "name": "Cannon, 24-lb. Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "eeBuZ_y_pquCUvaGv",
+      "tech_level_raw": "4",
+      "ammo_family_id": "cannon_24lb_metal",
+      "ammo_type": "cannon_24lb_metal",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WzUOi7EDIwcCQzDSL"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 36,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_carbine_bullet_lt93",
+      "name": "Carbine Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "ebuCAkkZvwFLBXfnI",
+      "tech_level_raw": "4",
+      "ammo_family_id": "carbine_bullet",
+      "ammo_type": "carbine_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W145kPyYunTnGRwY6"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.08,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_carroballista_bolt_lt81",
+      "name": "Carroballista Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "epzuQ_rBauzbRnL_h",
+      "tech_level_raw": "3",
+      "ammo_family_id": "carroballista_bolt",
+      "ammo_type": "carroballista_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WewY3nmikKsVjwN_1"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 0.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_cheiroballistra_bolt_lt83",
+      "name": "Cheiroballistra Bolt",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "eLE3ZUi62X4FQ2FRO",
+      "tech_level_raw": "2",
+      "ammo_family_id": "cheiroballistra_18_bolt",
+      "ammo_type": "cheiroballistra_18_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WvGuW2iUJrxKGNrHM"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 0.12,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_crapaudeau_stone_lt87",
+      "name": "Crapaudeau Stone",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "eRa-MjHkBhbXRWYMU",
+      "tech_level_raw": "3",
+      "ammo_family_id": "crapaudeau_stone",
+      "ammo_type": "crapaudeau_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WCUk1nj8fHfzittq2"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 0.12,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true,
+      "stone_vs_metal_rule": {
+        "source_ref": "LT 87",
+        "weapon_table_assumes": "stone",
+        "stone_stats_already_in_weapon_table": true,
+        "do_not_half_again": true
+      }
+    },
+    {
+      "id": "lt_crouching_tiger_gun_shot_lt87",
+      "name": "Crouching Tiger Gun Shot",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "eBe65nETpXTl0cIvC",
+      "tech_level_raw": "4",
+      "ammo_family_id": "crouching_tiger_shot",
+      "ammo_type": "crouching_tiger_shot",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WXLhR6qAupk40x1vV"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 3.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_crouching_tiger_gun_stone_lt87",
+      "name": "Crouching Tiger Gun Stone",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "eFDX4FEzN0OV_4Yjj",
+      "tech_level_raw": "4",
+      "ammo_family_id": "crouching_tiger_stone",
+      "ammo_type": "crouching_tiger_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wpnd1luiwl-QynzAY"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 1.15,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_culverin_cannonball_lt89",
+      "name": "Culverin Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "eHc-VP9r7CwvjWLpz",
+      "tech_level_raw": "4",
+      "ammo_family_id": "culverin_cannonball",
+      "ammo_type": "culverin_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W0WKa_Z3yrVioQUtE"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 30,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_cutting_arrow_lt73",
+      "name": "Cutting Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "ekS0JDtneHwtq60Mt",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "cutting",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_dart_sling_dart_lt76",
+      "name": "Dart Sling Dart",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "eBDPUqiXoZPAoPCaY",
+      "tech_level_raw": "1",
+      "ammo_family_id": "dart_sling_dart",
+      "ammo_type": "dart_sling_dart",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wlxe2_8BiREGT_6TB"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "projectile_classes": [
+        "dart_sling_dart"
+      ]
+    },
+    {
+      "id": "lt_dragoon_pistol_heavy_bullet_lt94",
+      "name": "Dragoon Pistol, Heavy Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "ekt9QLYR7ywXpcCGl",
+      "tech_level_raw": "4",
+      "ammo_family_id": "dragoon_pistol_heavy_bullet",
+      "ammo_type": "dragoon_pistol_heavy_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WN1t6vbkRJTcxlSa9"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.06,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_dragoon_pistol_light_bullet_lt94",
+      "name": "Dragoon Pistol, Light Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "ee5aFS8NYxDUkZPNi",
+      "tech_level_raw": "4",
+      "ammo_family_id": "dragoon_pistol_light_bullet",
+      "ammo_type": "dragoon_pistol_light_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W9zu4Mgjt_cwxISAV"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.04,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_duck_s_foot_pistol_bullet_lt94",
+      "name": "Duck's Foot Pistol Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "eEnUHKCG-x43WTZzU",
+      "tech_level_raw": "4",
+      "ammo_family_id": "duck_s_foot_pistol_bullet",
+      "ammo_type": "duck_s_foot_pistol_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WNE2rB6BVUwchQrnf"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.06,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_falcon_cannonball_lt89",
+      "name": "Falcon Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "e1zp2iOviPSkcCwJa",
+      "tech_level_raw": "4",
+      "ammo_family_id": "falcon_cannonball",
+      "ammo_type": "falcon_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wl-jCxKGZENItkRcm"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 3.2,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_falconet_cannonball_lt89",
+      "name": "Falconet Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "etb38g-I0LjNNsLSG",
+      "tech_level_raw": "4",
+      "ammo_family_id": "falconet_cannonball",
+      "ammo_type": "falconet_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WIRUYHmrReGiIhQMg"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 1.4,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_fire_arrow_lt73",
+      "name": "Fire Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "eYLFErhF4ZvksKF0C",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "fire_arrow",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_fire_cage_arrow_lt73",
+      "name": "Fire-Cage Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "e3dAQyLUv46Or8EOE",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "fire_cage",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_flight_arrow_lt73",
+      "name": "Flight Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "ehQ8tMuWSLf294MFA",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "flight",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_flintlock_carbine_bullet_lt93",
+      "name": "Flintlock Carbine Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "eZgfD3B-GBahyBrNK",
+      "tech_level_raw": "4",
+      "ammo_family_id": "flintlock_carbine_bullet",
+      "ammo_type": "flintlock_carbine_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WMqVwH46upN0TpmQE"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.06,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_fowling_piece_shot_lt92",
+      "name": "Fowling Piece Shot",
+      "source_ref_raw": "LT92",
+      "source_equipment_id": "eA0cbtKGT__bxcmy0",
+      "tech_level_raw": "4",
+      "ammo_family_id": "fowling_piece_shot",
+      "ammo_type": "fowling_piece_shot",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WGd_9lR6GSvYtwJYq",
+        "WuIDDaiXX7__TlDkJ"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_firearm"
+      ]
+    },
+    {
+      "id": "lt_fusil_de_chasse_bullet_lt93",
+      "name": "Fusil de Chasse Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "eNvsUp_LPenrQQPR7",
+      "tech_level_raw": "4",
+      "ammo_family_id": "fusil_de_chasse_bullet",
+      "ammo_type": "fusil_de_chasse_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WiBwgEFvhbNbmRLJR"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.04,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_fusil_ordinaire_bullet_lt93",
+      "name": "Fusil Ordinaire Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "eehKXYoNqBO8XCYT1",
+      "tech_level_raw": "4",
+      "ammo_family_id": "fusil_ordinaire_bullet",
+      "ammo_type": "fusil_ordinaire_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WYW6_n9V6s4yG4UMc"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.065,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_gastraphetes_bolt_lt81",
+      "name": "Gastraphetes Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eQnk9AT9ZHPot1Wvf",
+      "tech_level_raw": "3",
+      "ammo_family_id": "gastraphetes_artillery_bolt",
+      "ammo_type": "gastraphetes_artillery_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WS7SJUj_6I5AIBmpi"
+      ],
+      "specific_model_only": true,
+      "notes_ru": "LT81 source for double gastraphetes; mountain has separate bolt",
+      "price_formula": "33 USD × projectile weight (lb.)",
+      "source_ref_price": "LT 81",
+      "projectile_classes": [
+        "artillery_bolt"
+      ]
+    },
+    {
+      "id": "lt_gastraphetes_bolt_lt76",
+      "name": "Gastraphetes Bolt",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "erw4kU6grcxO-8xZl",
+      "tech_level_raw": "2",
+      "ammo_family_id": "gastraphetes_personal_bolt",
+      "ammo_type": "gastraphetes_personal_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Ws0Es7ZR78_sIW-uP"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "hand_crossbow_bolt"
+      ],
+      "price_usd": 2,
+      "source_ref_price": "LT 78 note 3"
+    },
+    {
+      "id": "lt_gastraphetes_mountain_bolt_lt81",
+      "name": "Gastraphetes, Mountain Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eyNt6xlbdc_oYvZMD",
+      "tech_level_raw": "3",
+      "ammo_family_id": "gastraphetes_mountain_bolt",
+      "ammo_type": "gastraphetes_mountain_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WIVNnvg1uqbcbGpkY"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 1,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_gonne_bolt_lt91",
+      "name": "Gonne Bolt",
+      "source_ref_raw": "LT91",
+      "source_equipment_id": "eE1BK8eetKaM3CsVg",
+      "tech_level_raw": "3",
+      "ammo_family_id": "gonne_bolt",
+      "ammo_type": "gonne_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W45k0TnnRzNd72k0-"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "gonne_bolt"
+      ]
+    },
+    {
+      "id": "lt_gonne_bullet_lt91",
+      "name": "Gonne Bullet",
+      "source_ref_raw": "LT91",
+      "source_equipment_id": "ela7UHaiYRvUILncz",
+      "tech_level_raw": "3",
+      "ammo_family_id": "gonne_bullet",
+      "ammo_type": "gonne_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WQdIGb0JaGIWkcygT"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ]
+    },
+    {
+      "id": "lt_heavy_sling_shaped_rock_lt76",
+      "name": "Heavy Sling Shaped Rock",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "evXdv-s-n0e2z7GzK",
+      "tech_level_raw": "0",
+      "ammo_family_id": "heavy_sling_rock",
+      "ammo_type": "heavy_sling_rock",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W04WeGwpSVXBrCCCw"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_usd": 0.1,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "heavy_sling_rock"
+      ]
+    },
+    {
+      "id": "lt_highland_pistol_bullet_lt94",
+      "name": "Highland Pistol Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "e5o60rdgmMOwYlnIK",
+      "tech_level_raw": "4",
+      "ammo_family_id": "highland_pistol_bullet",
+      "ammo_type": "highland_pistol_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WsCvHv5FcwbhLT8td"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.03,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_humming_bulb_arrow_lt73",
+      "name": "Humming Bulb Arrow",
+      "source_ref_raw": "LT73",
+      "source_equipment_id": "eXrImqZlS9g7m6Rdr",
+      "tech_level_raw": "0",
+      "ammo_family_id": "bow_arrow",
+      "ammo_type": "bow_arrow",
+      "variant_id": "humming_bulb",
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 2,
+      "cost_rule": "base $2 times variant modifiers or additive costs; see LT 78 n.3 and LT 73",
+      "weight_rule": "variant weight relative to base arrow",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_incendiary_blowpipe_charge_lt86",
+      "name": "Incendiary Blowpipe Charge",
+      "source_ref_raw": "LT86",
+      "source_equipment_id": "e8opwrhyPI57eTY0X",
+      "tech_level_raw": "2",
+      "ammo_family_id": "incendiary_blower",
+      "ammo_type": "incendiary_blower",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WMe-qDJxblDc4UUnm"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "incendiary_blower"
+      ]
+    },
+    {
+      "id": "lt_jager_rifle_bullet_lt94",
+      "name": "Jäger Rifle Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "e8QDAL6P36bxd9YgL",
+      "tech_level_raw": "4",
+      "ammo_family_id": "jager_rifle_bullet",
+      "ammo_type": "jager_rifle_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WoqqZuhaS1_bS7PGP"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.06,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_lantaka_cannonball_lt89",
+      "name": "Lantaka Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "eh-SalTOVbhfHppYl",
+      "tech_level_raw": "3",
+      "ammo_family_id": "lantaka_cannonball",
+      "ammo_type": "lantaka_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "We4h--CLkoQ_mskmE"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 0.08,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_long_range_awe_inspiring_gun_lead_ball_lt87",
+      "name": "Long-Range Awe-Inspiring Gun Lead Ball",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "ejG-6i_Jj-qx2hGjq",
+      "tech_level_raw": "4",
+      "ammo_family_id": "awe_inspiring_ball",
+      "ammo_type": "awe_inspiring_ball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WrTP-ra4EWWw_9Blj"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 3,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_long_range_awe_inspiring_gun_lead_shot_lt87",
+      "name": "Long-Range Awe-Inspiring Gun Lead Shot",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "ekRfPAjaE7N7sPqsj",
+      "tech_level_raw": "4",
+      "ammo_family_id": "awe_inspiring_shot",
+      "ammo_type": "awe_inspiring_shot",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WFiGuhETQ5MGheGwO"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 3.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_military_pistol_bullet_lt94",
+      "name": "Military Pistol Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "eptFzYkdHskwRqZQ4",
+      "tech_level_raw": "4",
+      "ammo_family_id": "military_pistol_bullet",
+      "ammo_type": "military_pistol_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W5zqJN2fmDIv9gXIP"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.04,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_monankon_stone_lt81",
+      "name": "Monankon Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "erd7Qs5OpwKs0hNFO",
+      "tech_level_raw": "2",
+      "ammo_family_id": "monankon_stone",
+      "ammo_type": "monankon_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W4PYHnE0if9L3zath"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 15,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_musket_bullet_lt93",
+      "name": "Musket Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "e_G-tay1gedXjshH0",
+      "tech_level_raw": "4",
+      "ammo_family_id": "musket_bullet",
+      "ammo_type": "musket_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W5NUBEljC3LY6b9SX"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.15,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_petrobolos_5_lb_stone_lt81",
+      "name": "Petrobolos, 5-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "emkfwDB1NV35fIM53",
+      "tech_level_raw": "3",
+      "ammo_family_id": "petrobolos_5_lb_stone",
+      "ammo_type": "petrobolos_5_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WyNOeQMG16apU0Jip"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_petrobolos_40_lb_stone_lt81",
+      "name": "Petrobolos, 40-lb Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "ek4jbSy-OEfPfkbLM",
+      "tech_level_raw": "3",
+      "ammo_family_id": "petrobolos_40_lb_stone",
+      "ammo_type": "petrobolos_40_lb_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WseAzEHBPrff2YCJP"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 40,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_petronel_bullet_lt94",
+      "name": "Petronel Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "eRS0e_yeACbnXVSAq",
+      "tech_level_raw": "4",
+      "ammo_family_id": "petronel_bullet",
+      "ammo_type": "petronel_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W01YwRKnRlk_R3DYW"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.04,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_pistol_crossbow_dart_lt76",
+      "name": "Pistol Crossbow Dart",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "ermvkTjrY7D4bnhR_",
+      "tech_level_raw": "3",
+      "ammo_family_id": "pistol_crossbow_dart",
+      "ammo_type": "pistol_crossbow_dart",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wdn9cVYekaOlUeQnQ"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 1,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "pistol_crossbow_dart"
+      ]
+    },
+    {
+      "id": "lt_pocket_pistol_bullet_lt94",
+      "name": "Pocket Pistol Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "efn15K-lTwvzHPIRt",
+      "tech_level_raw": "4",
+      "ammo_family_id": "pocket_pistol_bullet",
+      "ammo_type": "pocket_pistol_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WpgFmfGe-T9BEPFaW"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.008,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_polybolos_bolt_lt81",
+      "name": "Polybolos Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "etn28AvsHJdaNh0ax",
+      "tech_level_raw": "3",
+      "ammo_family_id": "polybolos_bolt",
+      "ammo_type": "polybolos_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WPbgxSlo98d3MBoQ_"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ]
+    },
+    {
+      "id": "lt_prodd_pellet_lt76",
+      "name": "Prodd Pellet",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "esC6ppzIhhfD4Lzaa",
+      "tech_level_raw": "3",
+      "ammo_family_id": "prodd_pellet",
+      "ammo_type": "prodd_pellet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WEccMSldVWlEmz-AU"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_usd": 0.1,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "prodd_pellet"
+      ]
+    },
+    {
+      "id": "lt_puckle_gun_bullet_lt93",
+      "name": "Puckle Gun Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "e4tCXT4SdQT9cDYl4",
+      "tech_level_raw": "4",
+      "ammo_family_id": "puckle_gun_bullet",
+      "ammo_type": "puckle_gun_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WRLeJSlkTELYgEN_u"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ]
+    },
+    {
+      "id": "lt_puffer_pistol_bullet_lt94",
+      "name": "Puffer Pistol Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "eXhhbrCXqvJ_6xe9G",
+      "tech_level_raw": "4",
+      "ammo_family_id": "puffer_pistol_bullet",
+      "ammo_type": "puffer_pistol_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W9s533ghb5-D_YjQh"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.035,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_queen_anne_pistol_bullet_lt94",
+      "name": "Queen Anne Pistol Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "eMfQ442H6265Plu_e",
+      "tech_level_raw": "4",
+      "ammo_family_id": "queen_anne_pistol_bullet",
+      "ammo_type": "queen_anne_pistol_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WjJflZyHGasVNIg-c"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.03,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_rabinet_cannonball_lt89",
+      "name": "Rabinet Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "eS2pZGrwQQ6ZbZOr9",
+      "tech_level_raw": "4",
+      "ammo_family_id": "rabinet_cannonball",
+      "ammo_type": "rabinet_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wo62p94VGBulhUQU6"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 0.65,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_saker_cannonball_lt897",
+      "name": "Saker Cannonball",
+      "source_ref_raw": "LT897",
+      "source_equipment_id": "esT4bDr73IZLSvqZg",
+      "tech_level_raw": "4",
+      "ammo_family_id": "saker_cannonball",
+      "ammo_type": "saker_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WpPPJLeu7u4eZ70nr"
+      ],
+      "specific_model_only": true,
+      "notes_ru": "GCS source reference typo LT897; physical book discusses cannon on LT 89 (source raw preserved).",
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 10,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_scorpion_9_bolt_lt83",
+      "name": "Scorpion, 9\" Bolt",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "elA7Kii1dk18XYM_-",
+      "tech_level_raw": "2",
+      "ammo_family_id": "scorpion_9_bolt",
+      "ammo_type": "scorpion_9_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wipc49tj5CGUW2u1Z"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 0.02,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_scorpion_13_5_bolt_lt83",
+      "name": "Scorpion, 13.5\" Bolt",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "e0IzP5dlLSBDk-5of",
+      "tech_level_raw": "2",
+      "ammo_family_id": "scorpion_13_5_bolt",
+      "ammo_type": "scorpion_13_5_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WeHxrM0WiwSIkqOhR"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 0.06,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_scorpion_18_bolt_lt83",
+      "name": "Scorpion, 18\" Bolt",
+      "source_ref_raw": "LT83",
+      "source_equipment_id": "eBPhCVOQ8CO-sVtJ9",
+      "tech_level_raw": "2",
+      "ammo_family_id": "scorpion_18_bolt",
+      "ammo_type": "scorpion_18_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WdMI3ek-qxYwJ05JU"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 0.14,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_scorpion_27_bolt_lt81",
+      "name": "Scorpion, 27\" Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "egzvMWwqHtHiNNZ3z",
+      "tech_level_raw": "3",
+      "ammo_family_id": "scorpion_27_bolt",
+      "ammo_type": "scorpion_27_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WMTMPiQWfq4UDEimv"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 0.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_scorpion_36_bolt_lt81",
+      "name": "Scorpion, 36\" Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "engQMwfWAoWTaq9tg",
+      "tech_level_raw": "3",
+      "ammo_family_id": "scorpion_36_bolt",
+      "ammo_type": "scorpion_36_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wj7B6VpUCSltj_n79"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 1.2,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_scorpion_45_bolt_lt81",
+      "name": "Scorpion, 45\" Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eLTRtEuJfr2H88cue",
+      "tech_level_raw": "3",
+      "ammo_family_id": "scorpion_45_bolt",
+      "ammo_type": "scorpion_45_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WyyCkc-OOxokqMPyn"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 2.25,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_scorpion_54_bolt_lt81",
+      "name": "Scorpion, 54\" Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eTHxWuOFuKpFERwim",
+      "tech_level_raw": "3",
+      "ammo_family_id": "scorpion_54_bolt",
+      "ammo_type": "scorpion_54_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WJMVvkqlc-s1rye5X"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 4,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_scorpion_72_bolt_lt81",
+      "name": "Scorpion, 72\" Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "es-wJrQJnXw2xPnxu",
+      "tech_level_raw": "3",
+      "ammo_family_id": "scorpion_72_bolt",
+      "ammo_type": "scorpion_72_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WFbCf_tBcSAhdptA-"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 10,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_shaped_sling_stone_lt76",
+      "name": "Shaped Sling Stone",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "eAklC43koYlriMKqT",
+      "tech_level_raw": "0",
+      "ammo_family_id": "sling_projectile",
+      "ammo_type": "sling_projectile",
+      "variant_id": "sling_stone_shaped",
+      "weapon_mode_ids": [
+        "WoPZ6WfjRMTWppGsv",
+        "Wt63kR2Ebkr9chL4b"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 0.06,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "sling_projectile"
+      ]
+    },
+    {
+      "id": "lt_ship_s_gun_4_lb_cannonball_lt89",
+      "name": "Ship's Gun, 4-lb. Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "eYy_BK5oehGuVMSAi",
+      "tech_level_raw": "4",
+      "ammo_family_id": "ship_s_gun_4_lb_cannonball",
+      "ammo_type": "ship_s_gun_4_lb_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WUPTOSq5QbpNGSTyk"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 7.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_ship_s_gun_9_lb_cannonball_lt89",
+      "name": "Ship's Gun, 9-lb. Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "eNA2w45uk8D7UQqj_",
+      "tech_level_raw": "4",
+      "ammo_family_id": "ship_s_gun_9_lb_cannonball",
+      "ammo_type": "ship_s_gun_9_lb_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WJd5Y_RsUT60u2waw"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 16.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_ship_s_gun_18_lb_cannonball_lt89",
+      "name": "Ship's Gun, 18-lb. Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "et2MCUquQj6FTKB3G",
+      "tech_level_raw": "4",
+      "ammo_family_id": "ship_s_gun_18_lb_cannonball",
+      "ammo_type": "ship_s_gun_18_lb_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WHn0l8c_gaWn9f4Do"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 28,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_ship_s_gun_42_lb_cannonball_lt89",
+      "name": "Ship's Gun, 42-lb. Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "e4bYSKykFC8rGhkVE",
+      "tech_level_raw": "4",
+      "ammo_family_id": "ship_s_gun_42_lb_cannonball",
+      "ammo_type": "ship_s_gun_42_lb_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WWDfK1fhPOtRnz-Z-"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 60,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_sling_pellet_lt76",
+      "name": "Sling Pellet",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "ex6wnrLj5WShT4of4",
+      "tech_level_raw": "0",
+      "ammo_family_id": "sling_projectile",
+      "ammo_type": "sling_projectile",
+      "variant_id": "sling_lead",
+      "weapon_mode_ids": [
+        "WoPZ6WfjRMTWppGsv",
+        "Wt63kR2Ebkr9chL4b"
+      ],
+      "specific_model_only": false,
+      "notes_ru": null,
+      "price_usd": 0.1,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "sling_projectile"
+      ]
+    },
+    {
+      "id": "lt_slurbow_dart_lt76",
+      "name": "Slurbow Dart",
+      "source_ref_raw": "LT76",
+      "source_equipment_id": "egE0dqPs5N4mOipCK",
+      "tech_level_raw": "0",
+      "ammo_family_id": "slurbow_dart",
+      "ammo_type": "slurbow_dart",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W11eNBa3voVFCsgWv",
+        "WFAwJH7XlIK-bIy0Q"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_usd": 0.5,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "slurbow_dart"
+      ]
+    },
+    {
+      "id": "lt_snaphaunce_pistol_bullet_lt94",
+      "name": "Snaphaunce Pistol Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "eUcSWT8BSeyaRMAj2",
+      "tech_level_raw": "4",
+      "ammo_family_id": "snaphaunce_pistol_bullet",
+      "ammo_type": "snaphaunce_pistol_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "W0ytp97D1m7zBpVnM"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.01,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_springald_bolt_lt81",
+      "name": "Springald Bolt",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "ezsBzrUrbn-v6gsb_",
+      "tech_level_raw": "3",
+      "ammo_family_id": "springald_bolt",
+      "ammo_type": "springald_bolt",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WSik01Y7KOYRybDzf"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_bolt"
+      ],
+      "round_weight_lb_source": 2,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_stone_launching_stick_shaped_stone_lt77",
+      "name": "Stone-Launching Stick Shaped Stone",
+      "source_ref_raw": "LT77",
+      "source_equipment_id": "ephFguS4IjnwiqLHe",
+      "tech_level_raw": "0",
+      "ammo_family_id": "stone_launcher_stone",
+      "ammo_type": "stone_launcher_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WrowHYC-dAZA488wu"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_usd": 0.1,
+      "source_ref_price": "LT 78 n.3",
+      "projectile_classes": [
+        "stone_launcher_stone"
+      ]
+    },
+    {
+      "id": "lt_swivel_gun_cannonball_lt89",
+      "name": "Swivel-Gun Cannonball",
+      "source_ref_raw": "LT89",
+      "source_equipment_id": "e_VDv7yJZTtfMowS-",
+      "tech_level_raw": "4",
+      "ammo_family_id": "swivel_gun_cannonball",
+      "ammo_type": "swivel_gun_cannonball",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "Wbkqgv9YvLbfOinA2"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 2.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_tantsutsu_bullet_lt94",
+      "name": "Tantsutsu Bullet",
+      "source_ref_raw": "LT94",
+      "source_equipment_id": "eOUp7KLIS8QbpGjaz",
+      "tech_level_raw": "4",
+      "ammo_family_id": "tantsutsu_bullet",
+      "ammo_type": "tantsutsu_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WZFbOwuQe-xNHJAZa"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.06,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_teppo_bullet_lt93",
+      "name": "Teppo Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "ervN9xrOgDcTwxC-C",
+      "tech_level_raw": "4",
+      "ammo_family_id": "teppo_bullet",
+      "ammo_type": "teppo_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WKYEp8I6N0arA1v3A"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.025,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_trebuchet_large_stone_lt81",
+      "name": "Trebuchet, Large Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "eefcy26FTydwg3B9q",
+      "tech_level_raw": "3",
+      "ammo_family_id": "trebuchet_large_stone",
+      "ammo_type": "trebuchet_large_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WXaJ_qgZAeRV_LccJ"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 80,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_trebuchet_small_stone_lt81",
+      "name": "Trebuchet, Small Stone",
+      "source_ref_raw": "LT81",
+      "source_equipment_id": "e3ZdNfzVe-zr41ryg",
+      "tech_level_raw": "3",
+      "ammo_family_id": "trebuchet_small_stone",
+      "ammo_type": "trebuchet_small_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WAjiOb3-A2JjSxsxf"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "artillery_spherical"
+      ],
+      "round_weight_lb_source": 25,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+    },
+    {
+      "id": "lt_veuglaire_stone_lt87",
+      "name": "Veuglaire Stone",
+      "source_ref_raw": "LT87",
+      "source_equipment_id": "eZ33OHYf7X59644GA",
+      "tech_level_raw": "3",
+      "ammo_family_id": "veuglaire_stone",
+      "ammo_type": "veuglaire_stone",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WcC4MCnmh_cWY8I-G"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ],
+      "round_weight_lb_source": 2.5,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true,
+      "stone_vs_metal_rule": {
+        "source_ref": "LT 87",
+        "weapon_table_assumes": "stone",
+        "stone_stats_already_in_weapon_table": true,
+        "do_not_half_again": true
+      }
+    },
+    {
+      "id": "lt_wall_gun_bullet_lt93",
+      "name": "Wall Gun Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "eZhnIV_8CCeUoMJBG",
+      "tech_level_raw": "4",
+      "ammo_family_id": "wall_gun_bullet",
+      "ammo_type": "wall_gun_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WMfHkvvdm6OGB_4Vt"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.3,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_winged_tiger_gun_bullet_lt93",
+      "name": "Winged Tiger Gun Bullet",
+      "source_ref_raw": "LT93",
+      "source_equipment_id": "eZ7GjLJyQEE3gNj-S",
+      "tech_level_raw": "4",
+      "ammo_family_id": "winged_tiger_gun_bullet",
+      "ammo_type": "winged_tiger_gun_bullet",
+      "variant_id": null,
+      "weapon_mode_ids": [
+        "WdgjNzGS4n0xMiSi4"
+      ],
+      "specific_model_only": true,
+      "notes_ru": null,
+      "price_formula": "20 USD × shot weight (lb.) for metal; 100 USD × shot weight (lb.) for stone",
+      "source_ref_price": "LT 87",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ],
+      "round_weight_lb_source": 0.135,
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "round_weight_includes_propellant_warning": true
+    },
+    {
+      "id": "lt_regular_arrow",
+      "name": "Regular Arrow",
+      "ammo_family_id": "bow_arrow",
+      "source_ref_raw": "LT 73 / LT 78 note 3",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "variant_id": "regular",
+      "price_usd": 2,
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_bodkin_arrow",
+      "name": "Bodkin Arrow",
+      "ammo_family_id": "bow_arrow",
+      "source_ref_raw": "LT 73 / B277",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "variant_id": "bodkin",
+      "price_usd": 2,
+      "requires_external_rule": "Basic Set B277",
+      "projectile_classes": [
+        "bow_arrow"
+      ]
+    },
+    {
+      "id": "lt_standard_crossbow_bolt",
+      "name": "Standard Crossbow Bolt",
+      "ammo_family_id": "hand_crossbow_bolt",
+      "source_ref_raw": "LT 78 note 3",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WEG0MRykkKI4AzUzD",
+        "WHwsNi90Y4m49YOzg",
+        "WPn4rW6HE64VST_pm",
+        "WVvwyyO4VoyeTryRo",
+        "Wak71wpexyuS6wOgQ",
+        "WwpI_P5DL8za5501B",
+        "WxBwICnOg7tP-Gqfq"
+      ],
+      "variant_id": "crossbow_regular",
+      "price_usd": 2,
+      "projectile_classes": [
+        "hand_crossbow_bolt"
+      ]
+    },
+    {
+      "id": "lt_bodkin_crossbow_bolt",
+      "name": "Bodkin Crossbow Bolt",
+      "ammo_family_id": "hand_crossbow_bolt",
+      "source_ref_raw": "LT 73 / B277",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WEG0MRykkKI4AzUzD",
+        "WHwsNi90Y4m49YOzg",
+        "WPn4rW6HE64VST_pm",
+        "WVvwyyO4VoyeTryRo",
+        "Wak71wpexyuS6wOgQ",
+        "WwpI_P5DL8za5501B",
+        "WxBwICnOg7tP-Gqfq"
+      ],
+      "variant_id": "crossbow_bodkin",
+      "price_usd": 2,
+      "projectile_classes": [
+        "hand_crossbow_bolt"
+      ]
+    },
+    {
+      "id": "lt_sling_unshaped_stone",
+      "name": "Unshaped Sling Stone",
+      "ammo_family_id": "sling_projectile",
+      "source_ref_raw": "LT 78 note 3",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WoPZ6WfjRMTWppGsv",
+        "Wt63kR2Ebkr9chL4b"
+      ],
+      "variant_id": "sling_stone_unshaped",
+      "price_usd": 0,
+      "projectile_classes": [
+        "sling_projectile"
+      ]
+    },
+    {
+      "id": "lt_arrow_guide_dart",
+      "name": "Navak Arrow Guide Dart",
+      "ammo_family_id": "bow_arrow_guide_dart",
+      "source_ref_raw": "LT 78",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WCUkJUmXxsGLdGrEc",
+        "WHHB1FrefOB5s-4aP",
+        "Wjy-E-qXjBlmT-V5z",
+        "WnqU4wFdAaHmghhfn",
+        "WqUeIOkvQIgCeKWou",
+        "Wt-bMJQAZnEeMXWiA"
+      ],
+      "variant_id": "arrow_guide",
+      "price_usd": 0.5,
+      "weight_lb": 0.03,
+      "requires_accessory": "Navak arrow guide",
+      "projectile_classes": [
+        "bow_arrow_guide_dart"
+      ]
+    },
+    {
+      "id": "lt_standard_staff_sling_stone",
+      "name": "Staff Sling Stone",
+      "ammo_family_id": "sling_projectile",
+      "source_ref_raw": "LT 78 note 9",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WoPZ6WfjRMTWppGsv"
+      ],
+      "variant_id": "sling_stone_shaped",
+      "notes_ru": "The LT 78 note 9 lead option applies sling weapon. Do not force lead effect on staff sling without GM reading.",
+      "projectile_classes": [
+        "sling_projectile"
+      ]
+    },
+    {
+      "id": "lt_rocket_complete",
+      "name": "Rocket (complete self-propelled round)",
+      "ammo_family_id": "rocket_missile",
+      "source_ref_raw": "LT 87",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WAd5_TDslv9AXFyLs"
+      ],
+      "variant_id": null,
+      "price_usd": 23,
+      "damage_formula": "2d+2 cr ex",
+      "notes_ru": "Self-propelled rocket is both weapon/consumable; also causes separate 1 burn in a 2-yard radius (LT87).",
+      "projectile_classes": [
+        "rocket_missile"
+      ],
+      "combat_effect": {
+        "resistance": {
+          "attribute": "HT",
+          "modifier": -2,
+          "trigger": "suffered crushing explosion damage",
+          "failure_effect": "Hearing penalty and stun, as Paper Bomb LT85"
+        },
+        "other_damage": {
+          "formula": "1 burn",
+          "radius_yards": 2
+        },
+        "source_ref": "LT 87"
+      }
+    },
+    {
+      "id": "lt_weighted_beam_sling_30_stone",
+      "name": "Weighted Beam Sling 30-Man Stone",
+      "ammo_family_id": "weighted_beam_sling_30_stone",
+      "source_ref_raw": "LT 82 / LT 81",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "W6okrp1tUXYYdRJkW"
+      ],
+      "variant_id": null,
+      "weight_lb": 5,
+      "price_formula": "1 USD × 5 lb = $5",
+      "notes_ru": "Same 5-lb stone as the regular 30-man beam sling; different engine trajectory.",
+      "projectile_classes": [
+        "artillery_spherical"
+      ]
+    },
+    {
+      "id": "lt_weighted_beam_sling_50_stone",
+      "name": "Weighted Beam Sling 50-Man Stone",
+      "ammo_family_id": "weighted_beam_sling_50_stone",
+      "source_ref_raw": "LT 82 / LT 81",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WfBDjYyWLVcm9IqYO"
+      ],
+      "variant_id": null,
+      "weight_lb": 10,
+      "price_formula": "1 USD × 10 lb = $10",
+      "notes_ru": "Same 10-lb stone as the regular 50-man beam sling; different engine trajectory.",
+      "projectile_classes": [
+        "artillery_spherical"
+      ]
+    },
+    {
+      "id": "lt_hinged_trebuchet_large_stone",
+      "name": "Hinged Trebuchet Large Stone",
+      "ammo_family_id": "hinged_trebuchet_large_stone",
+      "source_ref_raw": "LT 82 / LT 81",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WUK8gvtaJNSdDQ4HE"
+      ],
+      "variant_id": null,
+      "weight_lb": 80,
+      "price_formula": "1 USD × 80 lb = $80",
+      "projectile_classes": [
+        "artillery_spherical"
+      ]
+    },
+    {
+      "id": "lt_hinged_trebuchet_small_stone",
+      "name": "Hinged Trebuchet Small Stone",
+      "ammo_family_id": "hinged_trebuchet_small_stone",
+      "source_ref_raw": "LT 82 / LT 81",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WJE44M7Ljte5q0PJw"
+      ],
+      "variant_id": null,
+      "weight_lb": 25,
+      "price_formula": "1 USD × 25 lb = $25",
+      "projectile_classes": [
+        "artillery_spherical"
+      ]
+    },
+    {
+      "id": "lt_cannon_fitted_ball",
+      "name": "Cannon Fitted Metal Ball (model-dependent)",
+      "ammo_family_id": "cannon_fitted_metal_ball",
+      "source_ref_raw": "LT 87-89",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WadZ9BFUFoPATpyuT"
+      ],
+      "variant_id": null,
+      "status": "GM_SELECT_SIZE",
+      "price_formula": "20 USD × shot weight (lb.)",
+      "notes_ru": "Generic artillery model only; match actual bore and ball weight, do not infer a caliber.",
+      "projectile_classes": [
+        "black_powder_cannonball"
+      ]
+    },
+    {
+      "id": "lt_buccaneer_fusil_ball",
+      "name": "Buccaneer Fusil Ball",
+      "ammo_family_id": "buccaneer_fusil_ball",
+      "source_ref_raw": "LT 92-94",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "W3hYAnNy6LbS07aXN"
+      ],
+      "variant_id": null,
+      "price_formula": "20 USD × shot weight (lb.)",
+      "notes_ru": "Model-specific TL4 lead ball; user confirms individual fit.",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ]
+    },
+    {
+      "id": "lt_double_jager_ball",
+      "name": "Double-Barreled Jäger Rifle Ball",
+      "ammo_family_id": "double_jager_rifle_ball",
+      "source_ref_raw": "LT 94",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WaYnIpM4t6wH57ZYg"
+      ],
+      "variant_id": null,
+      "price_formula": "20 USD × shot weight (lb.)",
+      "notes_ru": "Model-specific TL4 rifle lead ball. Each barrel takes one round.",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ]
+    },
+    {
+      "id": "lt_multi_gonne_ball",
+      "name": "Multi-shot Gonne fitted balls",
+      "ammo_family_id": "multi_shot_gonne_ball",
+      "source_ref_raw": "LT 91",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WBnarXoat3qLrySda",
+        "WQHeXdJ-jVlDztUou",
+        "WZsyvYVuMLMho_olT",
+        "Wk0G5zIrN66TWDaod",
+        "WtCjdhkE6xPYvdH_i",
+        "WtbxiVp4UnahK1ipb"
+      ],
+      "variant_id": null,
+      "status": "GM_SELECT_SIZE",
+      "price_formula": "20 USD × shot weight (lb.)",
+      "notes_ru": "Muzzleloading balls measured for each tube; do not assume modern cartridge or cross-weapon interchangeability.",
+      "projectile_classes": [
+        "black_powder_firearm"
+      ]
+    },
+    {
+      "id": "lt_atlatl_javelin",
+      "name": "Atlatl-launched Javelin",
+      "ammo_family_id": "atlatl_javelin",
+      "source_ref_raw": "LT 72 / LT 77",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WJu2Z4zwQ9NFqc5Km"
+      ],
+      "variant_id": null,
+      "status": "EXISTING_THROWN_WEAPON",
+      "notes_ru": "Full javelin is an ordinary piece of equipment that may be recovered, unlike a detachable modern round. Javelin price is determined by its GGA inventory entry.",
+      "projectile_classes": [
+        "atlatl_javelin"
+      ]
+    },
+    {
+      "id": "lt_cheirosiphon_fuel",
+      "name": "Cheirosiphon incendiary liquid charge",
+      "ammo_family_id": "cheirosiphon_fuel",
+      "source_ref_raw": "LT 84 / LT 86",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "Wf9D7K1uIf9a1YFcF"
+      ],
+      "variant_id": null,
+      "status": "GM_SELECTED_FUEL",
+      "notes_ru": "Initial 3d burn; continuing 1d burn per second for 1d seconds; on water can cover radius 2 yd. Fuel choice and price are not fixed in LT86.",
+      "projectile_classes": [
+        "cheirosiphon_fuel"
+      ]
+    },
+    {
+      "id": "lt_fire_siphon_fuel",
+      "name": "Fire-Siphon incendiary liquid charge",
+      "ammo_family_id": "fire_siphon_fuel",
+      "source_ref_raw": "LT 84 / LT 86",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WOtCDhbkzhdvewbDK"
+      ],
+      "variant_id": null,
+      "status": "GM_SELECTED_FUEL",
+      "notes_ru": "Initial 3d burn; continuing 1d burn per second for 10d seconds; on water can cover radius 2 yd. Fuel price depends on selected incendiary.",
+      "projectile_classes": [
+        "fire_siphon_fuel"
+      ]
+    },
+    {
+      "id": "lt_fire_lance_one_use",
+      "name": "Fire-Lance, complete single-use unit",
+      "ammo_family_id": "fire_lance_whole_unit",
+      "source_ref_raw": "LT 86",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WmWAtzBOn5-B5IvhJ"
+      ],
+      "variant_id": null,
+      "price_usd": 50,
+      "status": "SINGLE_USE_WHOLE_WEAPON",
+      "notes_ru": "This fire-lance is discarded after use. Record as consumed device, not as independently reloadable bullet.",
+      "projectile_classes": [
+        "fire_lance_whole_unit"
+      ]
+    },
+    {
+      "id": "lt_iron_fire_lance_charge",
+      "name": "Iron Fire-Lance reload charge",
+      "ammo_family_id": "iron_fire_lance_reload",
+      "source_ref_raw": "LT 86",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "W4PRplvj0ypVOdY6s"
+      ],
+      "variant_id": null,
+      "status": "POWDER_RELOAD",
+      "notes_ru": "Reloading takes 10 minutes and Explosives (Fireworks) roll. Flame 1d burn; additional linked 1 pi-. Charge price not specified.",
+      "projectile_classes": [
+        "iron_fire_lance_reload"
+      ]
+    },
+    {
+      "id": "lt_eruptor_reload",
+      "name": "Eruptor reload charge",
+      "ammo_family_id": "eruptor_reload",
+      "source_ref_raw": "LT 86",
+      "source_equipment_id": null,
+      "catalog_added_from_book": true,
+      "weapon_mode_ids": [
+        "WWH0OQJ-rgb1mROw-"
+      ],
+      "variant_id": null,
+      "status": "POWDER_RELOAD",
+      "notes_ru": "Reloading takes 20 minutes, as iron fire-lance, with Explosives (Fireworks) roll. 1d+1 burn and linked 1 pi-. Charge price not specified.",
+      "projectile_classes": [
+        "eruptor_reload"
+      ]
+    }
+  ],
+  "projectile_options": [
+    {
+      "id": "regular",
+      "name": "Regular Point",
+      "source_ref": "LT 73 / B277",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_rule": "Use native arrow mode damage (normally imp).",
+      "cost_multiplier": 1,
+      "weight_multiplier": 1,
+      "notes_ru": "Обычный наконечник стрелы."
+    },
+    {
+      "id": "bodkin",
+      "name": "Bodkin Point",
+      "source_ref": "LT 73 / B277",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_rule": "Bodkin rules depend on Basic Set B277; no invented armor divisor.",
+      "requires_external_rule": "Basic Set B277",
+      "notes_ru": "Бронебойный наконечник из базовых правил; не приписывать ему бонусы без сверки B277."
+    },
+    {
+      "id": "barbed",
+      "name": "Barbed Arrow",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "removal_damage": "Half the injury caused when the arrow entered, if pulled out.",
+      "cost_multiplier": 1,
+      "weight_multiplier": 1,
+      "notes_ru": "При выдёргивании наносит половину ранее причинённой раны; многие боевые стрелы уже имеют зазубрины по умолчанию."
+    },
+    {
+      "id": "blunt",
+      "name": "Blunt Arrow",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_type_override": "cr",
+      "cost_multiplier": 0.5,
+      "weight_multiplier": 1,
+      "notes_ru": "Тупой наконечник: дробящий урон, половина стоимости."
+    },
+    {
+      "id": "cutting",
+      "name": "Cutting Arrow",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_type_override": "cut",
+      "cost_multiplier": 1,
+      "weight_multiplier": 1,
+      "notes_ru": "Режущий наконечник; прочие характеристики не меняются."
+    },
+    {
+      "id": "bowel_raker",
+      "name": "Bowel-Raker Arrow",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_type_override": "cut",
+      "accuracy_delta": -1,
+      "range_multiplier_subtract_each": 5,
+      "removal_damage": "Half the injury caused when the arrow entered, if pulled out.",
+      "cost_multiplier": 1,
+      "weight_multiplier": 1,
+      "notes_ru": "Зазубренная режущая стрела, –1 Acc и –5 к ОБОИМ множителям дальности; при выдёргивании половина нанесённой раны."
+    },
+    {
+      "id": "fire_arrow",
+      "name": "Fire Arrow",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_rule": "Native arrow damage unchanged; add separate explosive 1d-1 cr ex.",
+      "linked_component": {
+        "formula": "1d-1 cr ex",
+        "relationship": "additional, independently resolved effect",
+        "damage_type": "cr ex"
+      },
+      "accuracy_delta": -1,
+      "range_multiplier_subtract_each": 5,
+      "ready_to_ignite": 1,
+      "cost_delta_usd": 5,
+      "weight_multiplier": 2,
+      "wet_weather_sensitive": true,
+      "notes_ru": "Китайская огневая стрела. Отдельный взрыв 1d-1 cr ex; отсутствует обычный штраф -2 к попаданию от открытого пламени."
+    },
+    {
+      "id": "fire_cage",
+      "name": "Fire-Cage Arrow",
+      "source_ref": "LT 73 / B410",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_type_override": "pi-",
+      "additional_burning_damage": "1d-3 burn",
+      "accuracy_delta": -1,
+      "hit_modifier": -2,
+      "range_multiplier_subtract_each": 5,
+      "cost_multiplier": 1,
+      "weight_multiplier": 1,
+      "requires_external_rule": "Basic Set B410, flaming arrow",
+      "notes_ru": "Подожжённая стрела-клетка: –2 к попаданию, –1 Acc, –5 к обоим множителям дальности, малый колющий урон и 1d-3 burn."
+    },
+    {
+      "id": "flight",
+      "name": "Flight Arrow",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_multiplier_at_or_within_half_d": 0.5,
+      "damage_beyond_half_d": 0,
+      "range_multiplier_factor": 2,
+      "cost_multiplier": 1,
+      "weight_multiplier": 0.5,
+      "notes_ru": "Дальнобойная стрела: урон ×0,5 до 1/2D, за 1/2D урон 0; оба множителя дальности ×2."
+    },
+    {
+      "id": "humming_bulb",
+      "name": "Humming Bulb Arrow",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "damage_type_override": "cr",
+      "armor_divisor": 0.5,
+      "accuracy_delta": -1,
+      "range_multiplier_subtract_each": 5,
+      "cost_multiplier": 1,
+      "weight_multiplier": 1,
+      "notes_ru": "Свистящая головка, сигнал; дробящий урон с бронеделителем (0,5). Наполнитель с горючей смесью только по отдельному решению GM."
+    },
+    {
+      "id": "crossbow_regular",
+      "name": "Standard Crossbow Bolt",
+      "source_ref": "LT 78 / B277",
+      "applies_to": [
+        "hand_crossbow_bolt"
+      ],
+      "damage_rule": "Use weapon native imp damage.",
+      "price_usd": 2
+    },
+    {
+      "id": "crossbow_bodkin",
+      "name": "Bodkin Crossbow Bolt",
+      "source_ref": "LT 73 / B277",
+      "applies_to": [
+        "hand_crossbow_bolt"
+      ],
+      "damage_rule": "Use Basic Set B277; do not assign guessed divisor.",
+      "requires_external_rule": "Basic Set B277"
+    },
+    {
+      "id": "crossbow_alternate_tip",
+      "name": "Adapt LT73 arrowhead to hand crossbow bolt",
+      "source_ref": "LT 73",
+      "applies_to": [
+        "hand_crossbow_bolt"
+      ],
+      "status": "GM_APPROVAL_ONLY",
+      "reuse_options": [
+        "barbed",
+        "blunt",
+        "cutting",
+        "bowel_raker",
+        "fire_arrow",
+        "fire_cage",
+        "flight",
+        "humming_bulb"
+      ],
+      "notes_ru": "LT73 формально описывает стрелы луков; применение модификаций к ручным арбалетным болтам считать факультативным правилом GM."
+    },
+    {
+      "id": "large_flaming_artillery_bolt",
+      "name": "Flaming artillery bolt",
+      "source_ref": "LT 83 / B410",
+      "applies_to": [
+        "artillery_bolt"
+      ],
+      "effect_rule": "Large flaming arrow; on critical failure burning damage applies to launching catapult itself.",
+      "requires_external_rule": "Basic Set B410",
+      "min_tl": 2,
+      "notes_ru": "Крупные горящие болты боевых машин; при критическом провале горение наносит урон самой машине."
+    },
+    {
+      "id": "arrow_guide",
+      "name": "Navak / Arrow Guide Dart",
+      "source_ref": "LT 78",
+      "applies_to": [
+        "bow_arrow_guide_dart"
+      ],
+      "accuracy_delta": 1,
+      "damage_add": -1,
+      "shots_override": "1(3)",
+      "cost_usd": 0.5,
+      "weight_lb": 0.03,
+      "weapon_requires_accessory": "Arrow Guide ($50, 0.5 lb.)"
+    },
+    {
+      "id": "panjagan_5",
+      "name": "Panjagan five-arrow bundle",
+      "source_ref": "LT 78",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "shot_count": 5,
+      "rof_override": "1x5",
+      "hit_modifier": -2,
+      "damage_add": -2,
+      "range_multiplier_factor": 0.5,
+      "fast_draw_arrow_modifier": -3,
+      "requires_accessory": {
+        "name": "Panjagan fastener",
+        "cost_usd": 10
+      },
+      "notes_ru": "5 стрел за выстрел, каждая получает –2 к урону; RoF 1×5, дальность вдвое меньше."
+    },
+    {
+      "id": "panjagan_10",
+      "name": "Panjagan ten-arrow bundle (cinematic)",
+      "source_ref": "LT 78",
+      "applies_to": [
+        "bow_arrow"
+      ],
+      "status": "GM_OPTION",
+      "shot_count": 10,
+      "rof_override": "1x10",
+      "hit_modifier": -4,
+      "damage_add": -4,
+      "range_multiplier_factor": 0.5,
+      "notes_ru": "Кинематографическое правило GM; применение в бою исторически не подтверждено."
+    },
+    {
+      "id": "sling_lead",
+      "name": "Lead sling bullet",
+      "source_ref": "LT 78 note 9",
+      "applies_to": [
+        "sling_projectile"
+      ],
+      "min_tl": 2,
+      "damage_add": 1,
+      "range_multiplier_factor": 2,
+      "cost_usd": 0.1,
+      "notes_ru": "Свинцовая пуля пращи: +1 к урону и удвоение дальности."
+    },
+    {
+      "id": "sling_stone_shaped",
+      "name": "Shaped sling stone",
+      "source_ref": "LT 78 note 3",
+      "applies_to": [
+        "sling_projectile"
+      ],
+      "cost_usd": 0.06,
+      "notes_ru": "Подобранный по форме пращный камень; стандартная точность."
+    },
+    {
+      "id": "sling_stone_unshaped",
+      "name": "Unshaped sling stone",
+      "source_ref": "LT 78 note 3",
+      "applies_to": [
+        "sling_projectile"
+      ],
+      "cost_usd": 0,
+      "hit_modifier": -1,
+      "notes_ru": "Необработанный камень: бесплатно, но –1 к попаданию."
+    },
+    {
+      "id": "sling_harsh_realism",
+      "name": "Poor Sling Penetration (optional)",
+      "source_ref": "LT 75",
+      "applies_to": [
+        "sling_projectile"
+      ],
+      "status": "GM_OPTION",
+      "damage_type_override": "cr",
+      "notes_ru": "Факультативная суровая реалистичность: у пращных снарядов тип ранения меняется с колющего на дробящий; по умолчанию выключено."
+    },
+    {
+      "id": "artillery_lead",
+      "name": "Lead ball (mechanical ballista)",
+      "source_ref": "LT 81, 83",
+      "applies_to": [
+        "artillery_spherical"
+      ],
+      "cost_usd_per_lb": 1.6,
+      "notes_ru": "Свинцовая артиллерийская пуля. Для малых персональных баллист дополнительно действуют специальные правила LT83."
+    },
+    {
+      "id": "artillery_stone",
+      "name": "Stone (mechanical catapult)",
+      "source_ref": "LT 81",
+      "applies_to": [
+        "artillery_spherical"
+      ],
+      "cost_usd_per_lb": 1.0,
+      "notes_ru": "Каменный снаряд; калибры метательных машин по массе индивидуальны."
+    },
+    {
+      "id": "artillery_bolt_cost",
+      "name": "Artillery bolt cost",
+      "source_ref": "LT 81",
+      "applies_to": [
+        "artillery_bolt"
+      ],
+      "cost_usd_per_lb": 33
+    },
+    {
+      "id": "lead_substitute_ballista",
+      "name": "Lead bullet for personal ballista",
+      "source_ref": "LT 83",
+      "applies_to": [
+        "personal_ballista_ball"
+      ],
+      "damage_add": 1,
+      "damage_type_by_weight_lb": {
+        "0.03": "pi+",
+        "0.06": "pi+",
+        "0.12": "pi++",
+        "0.18": "pi++"
+      },
+      "notes_ru": "Только персональная баллиста: +1 к урону; pi+ для 0,03/0,06 фунта, pi++ для более тяжёлых."
+    },
+    {
+      "id": "catapult_overweight",
+      "name": "Heavier catapult projectile",
+      "source_ref": "LT 83",
+      "applies_to": [
+        "artillery_spherical"
+      ],
+      "status": "GM_SELECTION",
+      "weight_to_range_factor": {
+        "1": 1,
+        "1.5": 0.65,
+        "2": 0.5,
+        "2.5": 0.4,
+        "3": 0.35,
+        "4": 0.25,
+        "5": 0.2,
+        "6": 0.15,
+        "8": 0.125,
+        "10": 0.1,
+        "12": 0.08
+      },
+      "notes_ru": "Увеличение веса снаряда уменьшает дальность по таблице LT83; без самостоятельной выдумки урона."
+    },
+    {
+      "id": "incendiary_catapult_pot",
+      "name": "Pitch/charcoal or Greek-fire container",
+      "source_ref": "LT 83-84",
+      "applies_to": [
+        "artillery_spherical"
+      ],
+      "min_tl_by_filler": {
+        "pitch": 2,
+        "greek_fire": 3
+      },
+      "status": "GM_DEFINED_PAYLOAD",
+      "notes_ru": "Зажигательные сосуды: см. LT83–84; итоговый урон зависит от наполнителя и способа доставки; без единой формулы для всех катапульт."
+    },
+    {
+      "id": "incendiary_sphere",
+      "name": "Incendiary Sphere",
+      "source_ref": "LT 85",
+      "applies_to": [
+        "artillery_spherical"
+      ],
+      "min_tl": 3,
+      "status": "GM_VALIDATE_LAUNCHER_AND_PAYLOAD_MASS",
+      "physical_weight_lb": 10,
+      "price_usd": 200,
+      "damage": "1d+1 burn",
+      "area_radius_yards": 1,
+      "duration_seconds": 120,
+      "notes_ru": "Огненная сфера для метательной машины типа Beam Sling. Горит 2 минуты, причиняя 1d+1 burn в радиусе 1 ярда. Для снаряжения требуется подтвердить грузоподъёмность метателя."
+    },
+    {
+      "id": "paper_bomb",
+      "name": "Paper Bomb",
+      "source_ref": "LT 85",
+      "applies_to": [
+        "artillery_spherical"
+      ],
+      "min_tl": 3,
+      "status": "GM_VALIDATE_LAUNCHER_AND_PAYLOAD_MASS",
+      "physical_weight_lb": 5,
+      "price_usd": 100,
+      "damage": "5d cr ex",
+      "smoke": {
+        "radius_yards": 5,
+        "duration_seconds": 60,
+        "vision_penalty": -10,
+        "poison": "Mild poison; see B439"
+      },
+      "resistance": {
+        "attribute": "HT",
+        "modifier": -5,
+        "trigger": "target suffers crushing damage",
+        "ordinary_failure": "Hearing penalty equal margin of failure for max(1,20-HT) minutes, plus stun; roll vs HT each turn to recover",
+        "critical_or_fail_by_10": "Deafness; recovery as crippling injury"
+      },
+      "notes_ru": "Бумажная бомба: 5d cr ex; дым –10 к Vision в радиусе 5 ярдов на 1 минуту; если есть дробящий урон, HT-5 против потери слуха/оглушения; при провале на 10+ или критическом — глухота."
+    },
+    {
+      "id": "iron_bomb",
+      "name": "Iron Bomb",
+      "source_ref": "LT 85",
+      "applies_to": [
+        "artillery_spherical"
+      ],
+      "min_tl": 3,
+      "status": "GM_VALIDATE_LAUNCHER_AND_PAYLOAD_MASS",
+      "physical_weight_lb": 30,
+      "price_usd": 600,
+      "damage": "6d×4 [2d] cr ex",
+      "fragmentation": "2d",
+      "notes_ru": "Железная бомба с осколками: 6d×4 [2d] cr ex. Это не обычный камень: нельзя допустить двойной урон от снаряда и бомбы без решения GM."
+    },
+    {
+      "id": "rocket_hearing",
+      "name": "Rocket explosion hearing and stun",
+      "source_ref": "LT 87",
+      "applies_to": [
+        "rocket_missile"
+      ],
+      "min_tl": 3,
+      "resistance": {
+        "attribute": "HT",
+        "modifier": -2,
+        "trigger": "target suffered crushing blast damage",
+        "failure_effect": "Hearing loss and stun as Paper Bomb LT85; HT-2 replaces the Paper Bomb HT-5"
+      },
+      "additional_area_burning": {
+        "radius_yards": 2,
+        "damage": "1 burn"
+      },
+      "notes_ru": "После взрыва ракеты поражённый дробящим уроном проходит HT-2 против потери слуха и оглушения по правилам Paper Bomb (LT85). Дополнительно 1 burn в радиусе 2 ярдов."
+    },
+    {
+      "id": "chain_shot",
+      "name": "Chain Shot",
+      "source_ref": "LT 88",
+      "applies_to": [
+        "black_powder_cannonball"
+      ],
+      "min_tl": 4,
+      "damage_type_override": "cut",
+      "armor_divisor": 0.5,
+      "range_multiplier_factor": 0.5,
+      "reload_time_multiplier": 1.2,
+      "cost_multiplier": 2,
+      "notes_ru": "Урон той же величины, но рубящий с бронеделителем (0,5); дальность вдвое меньше."
+    },
+    {
+      "id": "grapeshot",
+      "name": "Grapeshot",
+      "source_ref": "LT 88",
+      "applies_to": [
+        "black_powder_cannonball"
+      ],
+      "min_tl": 4,
+      "damage_type_override": "pi+",
+      "pellets_formula": "40 × projectile_weight_lb",
+      "damage_divisor_formula": "sqrt(pellets)",
+      "rof_multiplier_formula": "pellets",
+      "half_d_override_yards": 60,
+      "max_range_override_yards": 600,
+      "recoil_override": 1,
+      "notes_ru": "Дробь из пушек: число шариков 40×вес снаряда в фунтах; урон каждого делится на √число, RoF умножается на число. Книга задаёт 1/2D 60, Max 600, Rcl 1."
+    },
+    {
+      "id": "heated_shot",
+      "name": "Heated Shot",
+      "source_ref": "LT 88",
+      "applies_to": [
+        "black_powder_cannonball"
+      ],
+      "min_tl": 4,
+      "malfunction_modifier": -1,
+      "reload_time_multiplier": 1.5,
+      "extra_crew": 2,
+      "linked_component": {
+        "formula": "3d burn per second",
+        "duration_seconds": 30,
+        "relationship": "extra fire damage, separate from direct hit"
+      },
+      "requires_powder_cloth_bag": true,
+      "notes_ru": "Раскалённый снаряд: +3d burn каждую секунду 30 секунд, нужен мешок с порохом и прокладка, –1 Malf."
+    },
+    {
+      "id": "firearm_extra_charge",
+      "name": "Extra-powerful propellant load",
+      "source_ref": "LT 95",
+      "applies_to": [
+        "black_powder_firearm"
+      ],
+      "damage_multiplier": 1.1,
+      "range_multiplier": 1.1,
+      "strength_multiplier": 1.1,
+      "cost_multiplier": 1.5,
+      "requires_skill": "Armoury (Small Arms), or IQ-based Guns-2",
+      "over_safe_limits_malf_delta": -2,
+      "notes_ru": "Усиленный заряд: 1,1×урон, дальность и ST; безопасная навеска требует проверки. При превышении лимита опасное разрушение оружия."
+    },
+    {
+      "id": "firearm_improvised_projectile",
+      "name": "Improvised stone/coin projectile",
+      "source_ref": "LT 95",
+      "applies_to": [
+        "black_powder_firearm"
+      ],
+      "accuracy_delta": -1,
+      "damage_multiplier": 0.5,
+      "range_multiplier": 0.5,
+      "malfunction_modifier": -2,
+      "notes_ru": "Подручные камни/монеты: –1 Acc, урон и дальность вдвое, Malf –2."
+    },
+    {
+      "id": "serpentine_powder",
+      "name": "Serpentine (early black powder)",
+      "source_ref": "LT 85",
+      "applies_to": [
+        "black_powder_firearm",
+        "black_powder_cannonball"
+      ],
+      "min_tl": 3,
+      "cost_usd_per_lb": 10,
+      "notes_ru": "Ранний порох. Книга задаёт половину стоимости зернёного пороха: исходная цена $20/фунт, CF –0,5. Это отдельный компонент, не новый калибр."
+    },
+    {
+      "id": "corned_powder",
+      "name": "Corned black powder",
+      "source_ref": "LT 85",
+      "applies_to": [
+        "black_powder_firearm",
+        "black_powder_cannonball"
+      ],
+      "min_tl": 4,
+      "cost_usd_per_lb": 20,
+      "notes_ru": "Зернёный порох $20/фунт. Вес заряда конкретного оружия не следует угадывать."
+    }
+  ],
+  "excluded_candidates": [
+    {
+      "source_equipment_id": "Ed-oz5AKkZTV0Io1X",
+      "name": "Puckle Gun Cylinder",
+      "reason": "ammo loader/cylinder, not a projectile",
+      "source_ref": "LT93"
+    }
+  ],
+  "compatibility_engine_contract": {
+    "require_source": "LT",
+    "require_exact_weapon_mode_id_match": true,
+    "join_path": "weapon_catalog equipment[].modes[].lt_ammo_item_ids <-> ammo_items[].weapon_mode_ids",
+    "match_by_weapon_name_only": false,
+    "match_by_caliber_only": false,
+    "weapon_tl_skill_does_not_filter": true,
+    "mode_modifications_are_effects_overlay_not_gga_edit": true,
+    "deny_unsafe_unresolved": true,
+    "crossbow_shaft_length_fit": "GM must verify size/stiffness; giant artillery bolts are never hand-crossbow bolts",
+    "source_on_every_effect": true
+  },
+  "effect_hint_contract": {
+    "display_after": "GGA native chat attack message",
+    "collapsed_by_default": true,
+    "heading_format": "Урон: <calculated attack damage> / Эффект: <effect name>",
+    "details_source": "projectile_options[].notes_ru + source_ref",
+    "do_not_automatically_roll_poison_HT": true,
+    "do_not_automatically_apply_effects": true,
+    "do_not_double_apply_weapon_attack_modifiers": true,
+    "poison_follow_up": "Apply only if projectile penetrates DR; poison type/effect must be selected by GM (LT 78 n.1; LT 128-130)",
+    "flaming_arrow_basic_set": "Refer B410 for rules not supplied by LT73"
+  },
+  "other_referenced_options": [
+    {
+      "id": "blowpipe_poison",
+      "source_ref": "LT 78 note 1",
+      "rule": "Follow-up poison/drug only if projectile penetrates DR; substance determines effect; do not invent HT thresholds."
+    },
+    {
+      "id": "unshaped_projectile",
+      "source_ref": "LT 78 note 3",
+      "rule": "Stones/rocks found for free; -1 to hit compared with shaped stones."
+    },
+    {
+      "id": "firearm_powder_ball_separate",
+      "source_ref": "LT 87",
+      "rule": "TL3-4 firearms use separately measured propellant and shot; do not represent a modern fixed cartridge."
+    },
+    {
+      "id": "bombard_stone_vs_metal",
+      "source_ref": "LT 87",
+      "rule": "Stone ammunition has half normal metal damage and range; source weapon table already accounts for this; do not apply half again to stone-shooting mode."
+    },
+    {
+      "id": "flamethrower_fuel",
+      "source_ref": "LT 84-86",
+      "rule": "Fuel is a consumable with specific liquid/projector rules, not interchangeable with normal arrow/ball."
+    }
+  ],
+  "audit": {
+    "raw_lt_ammunition_candidates": 113,
+    "excluded_non_projectile_candidates": 1,
+    "mapped_source_ammunition_items": 112,
+    "additional_book_grounded_items": 22,
+    "all_ammo_items": 134,
+    "ammo_families_count": 121,
+    "source_projectile_options": 38,
+    "linked_lt_weapon_modes": 140,
+    "unresolved_or_special_ranged_modes": [],
+    "known_source_issues": [
+      "GCS candidate Saker Cannonball reference LT897 appears erroneous (book page 89); raw GCS reference retained.",
+      "GCS includes Puckle Gun Cylinder under Ammunition; excluded from projectile catalog.",
+      "Arrowhead variant adaption to hand crossbows is GM option: LT73 only specifies arrows.",
+      "Several source candidates have implicit model-specific projectile mass, not a universal interchangeability specification."
+    ],
+    "source_reliability": "LT book rules for listed modifiers; GCS v5.2 supplies equipment IDs. No internet-derived rule overrides."
+  },
+  "weapon_catalog_link": {
+    "catalog_kind": "olegurps-weapon-reference-catalog-v5",
+    "catalog_filename": "olegurps_weapon_reference_catalog_v5_5.json",
+    "join_key": "weapon_mode_id",
+    "previous_version": "v5.2",
+    "original_weapon_characteristics_unchanged": true,
+    "original_ut_mappings_unchanged": true
+  },
+  "previous_revision": "1.0",
+  "revision_notes": [
+    "Only weapon_catalog_link.catalog_filename changed to v5.4; LT ammunition contents are unchanged."
+  ]
+}

@@ -130,6 +130,8 @@ function normalizeSession(session) {
     ammoConsumed: ammoSpent,
     ammoSpent,
     ammoEverSpent: session?.ammoEverSpent === true || ammoSpent,
+    ...(session?.ammunitionProfile ? { ammunitionProfile: copy(session.ammunitionProfile) } : {}),
+    ...(session?.ammunitionReceipt ? { ammunitionReceipt: copy(session.ammunitionReceipt) } : {}),
     createdAt: Number(session?.createdAt) || now(),
     updatedAt: Number(session?.updatedAt) || now()
   };
@@ -397,6 +399,8 @@ export class SuppressionFireSessionService {
         [`flags.${MODULE_ID}.ammoSpent`]: session.ammoSpent,
         [`flags.${MODULE_ID}.ammoEverSpent`]: session.ammoEverSpent,
         [`flags.${MODULE_ID}.ammoConsumed`]: session.ammoConsumed,
+        ...(session.ammunitionProfile ? { [`flags.${MODULE_ID}.ammunitionProfile`]: copy(session.ammunitionProfile) } : {}),
+        ...(session.ammunitionReceipt ? { [`flags.${MODULE_ID}.ammunitionReceipt`]: copy(session.ammunitionReceipt) } : {}),
         [`flags.${MODULE_ID}.combatId`]: session.combatId,
         [`flags.${MODULE_ID}.combatantId`]: session.combatantId,
         [`flags.${MODULE_ID}.startingRound`]: session.startingRound,
@@ -608,10 +612,12 @@ export class SuppressionFireSessionService {
     return this.activate({ ...options, mode: "automatic" });
   }
 
-  async markAmmoConsumed() {
+  async markAmmoConsumed({ profile = null, receipt = null } = {}) {
     if (!this.session) throw new Error("Suppression Fire session was not found.");
     return this._save({
       ...this.session,
+      ...(profile ? { ammunitionProfile: profile } : {}),
+      ...(receipt ? { ammunitionReceipt: receipt } : {}),
       state: "active",
       active: true,
       ammoConsumed: true,

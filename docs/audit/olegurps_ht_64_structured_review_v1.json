@@ -1,0 +1,1379 @@
+{
+  "review_version": 1,
+  "input": "olegurps_ht_ammunition_catalog_v1_2.json",
+  "output": "olegurps_ht_ammunition_catalog_v1_3.json",
+  "total": 64,
+  "groups": {
+    "cartridge_upgrades": 6,
+    "projectile_options": 51,
+    "projectile_upgrades": 4,
+    "case_construction_options": 3
+  },
+  "fields_only": true,
+  "records": [
+    {
+      "group": "cartridge_upgrades",
+      "id": "ht_plus_p",
+      "name": "Extra-Powerful (+P)",
+      "source_ref": "HT 165",
+      "original_applies_to": "suitable powder-and-shot or fixed ammunition after firearm pressure safety check",
+      "conditions": {
+        "munition_classes_any": [
+          "fixed_round",
+          "powder_and_shot"
+        ]
+      },
+      "required_evidence": [
+        "weapon_pressure_rating_verified"
+      ],
+      "review_note": "Pressure safety is weapon-specific; early TL/cheap guns and automatic action may carry Malf consequence.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "cartridge_upgrades",
+      "id": "ht_match_grade",
+      "name": "Match-Grade",
+      "source_ref": "HT 165",
+      "original_applies_to": "non-automatic weapons firing Solid/HP/AP/APHC bullets",
+      "conditions": {
+        "projectile_classes_any": [
+          "solid",
+          "hollow_point",
+          "ap",
+          "aphc"
+        ],
+        "weapon_actions_any": [
+          "manual",
+          "single_shot",
+          "revolver",
+          "bolt_action"
+        ],
+        "forbidden_classes": [
+          "automatic_weapon"
+        ]
+      },
+      "required_evidence": [
+        "factory_match_grade_for_this_ammunition"
+      ],
+      "review_note": "No automatic weapon; factory round is not the individually matched handload.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "cartridge_upgrades",
+      "id": "ht_match_handloaded",
+      "name": "Personally matched handloads",
+      "source_ref": "HT 174",
+      "original_applies_to": "handloaded cased rounds matched to one specified gun, non-automatic",
+      "conditions": {
+        "munition_classes_any": [
+          "cased_round"
+        ],
+        "projectile_classes_any": [
+          "solid",
+          "hollow_point",
+          "ap",
+          "aphc"
+        ],
+        "weapon_actions_any": [
+          "manual",
+          "single_shot",
+          "revolver",
+          "bolt_action"
+        ]
+      },
+      "required_evidence": [
+        "matched_to_this_individual_weapon",
+        "armoury_and_iq_guns_success",
+        "handloaded_batch"
+      ],
+      "review_note": "HT174 handloaded match is an individual-weapon match; never assume from factory match grade.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "cartridge_upgrades",
+      "id": "ht_subsonic_pistol",
+      "name": "Subsonic pistol ammo",
+      "source_ref": "HT 165",
+      "original_applies_to": "fixed supersonic pistol rounds; no change for naturally subsonic rounds",
+      "conditions": {
+        "munition_classes_any": [
+          "fixed_round"
+        ]
+      },
+      "required_evidence": [
+        "cartridge_pistol_class_verified",
+        "original_load_supersonic"
+      ],
+      "review_note": "Naturally subsonic cartridges do not gain another downgrade.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "cartridge_upgrades",
+      "id": "ht_subsonic_rifle",
+      "name": "Subsonic PDW/rifle ammo",
+      "source_ref": "HT 165",
+      "original_applies_to": "fixed supersonic PDW/rifle rounds only",
+      "conditions": {
+        "munition_classes_any": [
+          "fixed_round"
+        ]
+      },
+      "required_evidence": [
+        "cartridge_rifle_or_pdw_class_verified",
+        "original_load_supersonic"
+      ],
+      "review_note": "Pistol and rifle/PDW ballistic changes differ.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "cartridge_upgrades",
+      "id": "ht_silent",
+      "name": "Silent captive-piston",
+      "source_ref": "HT 165",
+      "original_applies_to": "cased ammunition with a specially designed weapon or a documented compatible design",
+      "conditions": {
+        "munition_classes_any": [
+          "cased_round"
+        ]
+      },
+      "required_evidence": [
+        "silent_ammunition_design_confirmed_for_weapon"
+      ],
+      "review_note": "Conventional chambering alone is not evidence of compatible captive-piston ammunition.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_solid",
+      "name": "Solid/FMJ",
+      "source_ref": "HT 166",
+      "original_applies_to": "standard solid bullets and most cannon solid shot",
+      "conditions": {
+        "munition_classes_any": [
+          "kinetic_round"
+        ]
+      },
+      "required_evidence": [
+        "native_projectile_baseline_verified"
+      ],
+      "review_note": "Most native weapon attacks already represent solid/FMJ; no second transform.",
+      "native_effect_guard": "do-not-apply-if-native-projectile-baseline",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_rifled_slug",
+      "name": "Rifled Slug",
+      "source_ref": "HT 166",
+      "original_applies_to": "shotgun shotshell platform",
+      "conditions": {
+        "weapon_platforms_any": [
+          "shotgun"
+        ],
+        "munition_classes_any": [
+          "shotgun_shotshell"
+        ]
+      },
+      "required_evidence": [
+        "slug_load_compatible_with_chamber"
+      ],
+      "review_note": "Convert from buckshot; remove pellet RoF multiplier before further overlays.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_hollow_point",
+      "name": "Hollow-Point (HP)",
+      "source_ref": "HT 166-167",
+      "original_applies_to": "piercing solid bullet compatible with HP construction",
+      "conditions": {
+        "projectile_classes_any": [
+          "solid",
+          "fmj",
+          "kinetic_bullet"
+        ]
+      },
+      "required_evidence": [
+        "expanding_bullet_suitable_for_this_cartridge"
+      ],
+      "review_note": "At low muzzle velocities HT167 allows optional failed expansion; malfunctions may apply to TL5–7 automatics.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_poison",
+      "name": "Poison/Hollow Bullet",
+      "source_ref": "HT 167",
+      "original_applies_to": "handloaded hollow-point compatible bullet",
+      "conditions": {
+        "projectile_classes_any": [
+          "hollow_point"
+        ],
+        "requires_base_variant_id": "ht_hollow_point"
+      },
+      "required_evidence": [
+        "handloaded_round",
+        "blood_or_contact_agent_selected",
+        "payload_dose_confirmed"
+      ],
+      "review_note": "Follow-up poison dosage must be selected; do not produce a free second wound.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_ap",
+      "name": "Armor-Piercing (AP)",
+      "source_ref": "HT 167",
+      "original_applies_to": "kinetic solid bullets",
+      "conditions": {
+        "projectile_classes_any": [
+          "kinetic_bullet",
+          "solid",
+          "kinetic_solid_shot"
+        ]
+      },
+      "required_evidence": [
+        "hardened_ap_construction_available"
+      ],
+      "review_note": "Caliber modifies wound type only after candidate ammo/platform validated.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_aphc",
+      "name": "Armor-Piercing Hardcore (APHC)",
+      "source_ref": "HT 167",
+      "original_applies_to": "kinetic solid projectiles",
+      "conditions": {
+        "projectile_classes_any": [
+          "kinetic_bullet",
+          "solid",
+          "kinetic_solid_shot"
+        ]
+      },
+      "required_evidence": [
+        "hardcore_penetrator_construction_available"
+      ],
+      "review_note": "APHC is alternative projectile design, not an additional AP overlay.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_frangible",
+      "name": "Frangible",
+      "source_ref": "HT 167",
+      "original_applies_to": "kinetic solid projectile or converted rifled slug",
+      "conditions": {
+        "projectile_classes_any": [
+          "kinetic_bullet",
+          "solid",
+          "rifled_slug"
+        ]
+      },
+      "required_evidence": [
+        "frangible_construction_confirmed"
+      ],
+      "review_note": "Shotgun breaching load is a suitable slug subtype; avoid generic buckshot conversion.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_apds",
+      "name": "APDS",
+      "source_ref": "HT 167",
+      "original_applies_to": "cannon and autocannon; small arms rifle/MG with proven cartridge, not pistol rounds",
+      "conditions": {
+        "weapon_platforms_any": [
+          "tank_gun",
+          "autocannon",
+          "rifle",
+          "machine_gun"
+        ],
+        "projectile_classes_any": [
+          "kinetic_bullet",
+          "kinetic_solid_shot"
+        ],
+        "forbidden_classes": [
+          "pistol_cartridge"
+        ]
+      },
+      "required_evidence": [
+        "apds_round_for_this_chamber_confirmed"
+      ],
+      "review_note": "HT167 explicitly prohibits pistol calibers; even rifle/SMG size does not prove suitable design.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_apfsds",
+      "name": "APFSDS",
+      "source_ref": "HT 167",
+      "original_applies_to": "tank guns; suitable autocannon and some anti-materiel rifles at TL8",
+      "conditions": {
+        "weapon_platforms_any": [
+          "tank_gun",
+          "autocannon",
+          "anti_materiel_rifle"
+        ]
+      },
+      "required_evidence": [
+        "apfsds_round_for_this_chamber_confirmed"
+      ],
+      "review_note": "Special AMR examples are TL8; tank weapon family alone does not prove a sabot load.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_baton",
+      "name": "Baton",
+      "source_ref": "HT 168",
+      "original_applies_to": "shotgun and grenade launchers with supported caliber",
+      "conditions": {
+        "weapon_platforms_any": [
+          "shotgun",
+          "grenade_launcher"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "dedicated_baton_round_design_confirmed"
+      ],
+      "review_note": "Shotgun starting values must be from the rifled slug, not buckshot.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_beanbag",
+      "name": "Beanbag",
+      "source_ref": "HT 168",
+      "original_applies_to": "suitable shotguns, launcher rounds, selected revolvers",
+      "conditions": {
+        "weapon_platforms_any": [
+          "shotgun",
+          "grenade_launcher",
+          "source_verified_revolver"
+        ],
+        "minimum_caliber_mm": 9
+      },
+      "required_evidence": [
+        "beanbag_round_design_confirmed"
+      ],
+      "review_note": "Revolver class is possible only for documented designs; shotgun values start at slug.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_sapfsds",
+      "name": "SAPFSDS",
+      "source_ref": "HT 168",
+      "original_applies_to": "rifle and special flechette weapons, not generic cannon",
+      "conditions": {
+        "weapon_platforms_any": [
+          "rifle",
+          "special_flechette_small_arm"
+        ],
+        "maximum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "flechette_load_design_confirmed"
+      ],
+      "review_note": "Explicitly small-arms fin-stabilized type, not general tank APFSDS.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_underwater_dart",
+      "name": "Underwater Dart (UD)",
+      "source_ref": "HT 169",
+      "original_applies_to": "dedicated smoothbore underwater weapons only",
+      "conditions": {
+        "weapon_platforms_any": [
+          "purpose_built_underwater_smoothbore"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_underwater_dart_platform"
+      ],
+      "review_note": "Dedicated underwater small arm only; ordinary smoothbore does not qualify.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_apdu",
+      "name": "AP Depleted Uranium (APDU)",
+      "source_ref": "HT 169",
+      "original_applies_to": "primarily autocannon; source-confirmed compatible projectiles",
+      "conditions": {
+        "weapon_platforms_any": [
+          "autocannon",
+          "source_verified_other_platform"
+        ]
+      },
+      "required_evidence": [
+        "du_penetrator_round_design_confirmed"
+      ],
+      "review_note": "Principally autocannon; no broad small-arm permission.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_apdsdu",
+      "name": "APDS Depleted Uranium (APDSDU)",
+      "source_ref": "HT 169",
+      "original_applies_to": "primarily suitable autocannon",
+      "conditions": {
+        "weapon_platforms_any": [
+          "autocannon",
+          "source_verified_other_platform"
+        ]
+      },
+      "required_evidence": [
+        "apdsdu_round_design_confirmed"
+      ],
+      "review_note": "Primarily autocannon; avoid treating generic APDS as DU.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_apfsdsdu",
+      "name": "APFSDS Depleted Uranium",
+      "source_ref": "HT 169",
+      "original_applies_to": "tank guns and selected autocannon",
+      "conditions": {
+        "weapon_platforms_any": [
+          "tank_gun",
+          "autocannon"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "apfsdsdu_round_design_confirmed"
+      ],
+      "review_note": "Only documented designs, with minimum size.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_le",
+      "name": "Low Explosive (LE)",
+      "source_ref": "HT 169",
+      "original_applies_to": "suitable shells, not automatically small arms",
+      "conditions": {
+        "munition_classes_any": [
+          "explosive_shell"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_shell_design",
+        "published_explosive_payload"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_saple",
+      "name": "Semi-AP Low Explosive (SAPLE)",
+      "source_ref": "HT 169",
+      "original_applies_to": "suitable purpose-built exploding shells",
+      "conditions": {
+        "munition_classes_any": [
+          "explosive_shell"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_shell_design",
+        "published_follow_up_explosion"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-follow-up",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_apex",
+      "name": "Armor-Piercing Explosive (APEX)",
+      "source_ref": "HT 169",
+      "original_applies_to": "suitable armor-piercing explosive shell",
+      "conditions": {
+        "munition_classes_any": [
+          "ap_explosive_shell"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_shell_design",
+        "published_follow_up_explosion"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-follow-up",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_he",
+      "name": "High Explosive (HE)",
+      "source_ref": "HT 169",
+      "original_applies_to": "high explosive shells with explicit source effect",
+      "conditions": {
+        "munition_classes_any": [
+          "explosive_shell"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_he_payload",
+        "published_explosive_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_saphe",
+      "name": "Semi-AP High Explosive (SAPHE)",
+      "source_ref": "HT 169",
+      "original_applies_to": "suitable bursting shell",
+      "conditions": {
+        "munition_classes_any": [
+          "explosive_shell"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_saphe_design",
+        "published_explosive_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-follow-up",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_saphec",
+      "name": "Semi-AP High Explosive Concussion (SAPHEC)",
+      "source_ref": "HT 169",
+      "original_applies_to": "suitable bursting shell",
+      "conditions": {
+        "munition_classes_any": [
+          "explosive_shell"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_saphec_design",
+        "published_explosive_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-follow-up",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_aphex",
+      "name": "Armor-Piercing Hardcore Explosive (APHEX)",
+      "source_ref": "HT 170",
+      "original_applies_to": "heavy machine guns and suitable autocannon",
+      "conditions": {
+        "weapon_platforms_any": [
+          "heavy_machine_gun",
+          "autocannon"
+        ],
+        "munition_classes_any": [
+          "explosive_shell"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_aphex_design",
+        "published_explosive_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-follow-up",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_efp",
+      "name": "Explosively Formed Projectile (EFP/SEFOP)",
+      "source_ref": "HT 170",
+      "original_applies_to": "shaped-charge munition designed for EFP",
+      "conditions": {
+        "munition_classes_any": [
+          "purpose_built_efp_munition"
+        ],
+        "minimum_caliber_mm": 50
+      },
+      "required_evidence": [
+        "source_confirmed_efp_design",
+        "published_efp_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_heat",
+      "name": "HEAT",
+      "source_ref": "HT 170",
+      "original_applies_to": "shaped-charge grenade/rocket/cannon payload, caliber gate necessary but not sufficient",
+      "conditions": {
+        "weapon_platforms_any": [
+          "grenade_launcher",
+          "rocket_launcher",
+          "tank_gun",
+          "recoilless_rifle",
+          "missile_launcher",
+          "other_source_verified_launcher"
+        ],
+        "munition_classes_any": [
+          "purpose_built_shaped_charge"
+        ],
+        "minimum_caliber_mm": 20
+      },
+      "required_evidence": [
+        "source_confirmed_heat_warhead",
+        "published_heat_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_hedp",
+      "name": "HEDP",
+      "source_ref": "HT 170",
+      "original_applies_to": "compatible multipurpose grenade/rocket shell",
+      "conditions": {
+        "munition_classes_any": [
+          "purpose_built_hedp_shell"
+        ],
+        "minimum_caliber_mm": 20
+      },
+      "required_evidence": [
+        "source_confirmed_hedp_design",
+        "published_explosive_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_hesh",
+      "name": "HESH/HEP",
+      "source_ref": "HT 170",
+      "original_applies_to": "tank guns and recoilless rifles only",
+      "conditions": {
+        "weapon_platforms_any": [
+          "tank_gun",
+          "recoilless_rifle"
+        ],
+        "munition_classes_any": [
+          "purpose_built_hesh_shell"
+        ],
+        "minimum_caliber_mm": 50
+      },
+      "required_evidence": [
+        "source_confirmed_hesh_design",
+        "published_explosive_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_ms_heat",
+      "name": "Multi-Stage HEAT (tandem)",
+      "source_ref": "HT 170",
+      "original_applies_to": "designed tandem-charge tank/rocket/missile payload",
+      "conditions": {
+        "munition_classes_any": [
+          "purpose_built_tandem_shaped_charge"
+        ],
+        "minimum_caliber_mm": 50
+      },
+      "required_evidence": [
+        "source_confirmed_tandem_warhead",
+        "published_precursor_and_main_charges"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_thermobaric",
+      "name": "Thermobaric",
+      "source_ref": "HT 170",
+      "original_applies_to": "designed thermobaric grenade/rocket payload",
+      "conditions": {
+        "munition_classes_any": [
+          "purpose_built_thermobaric_grenade",
+          "purpose_built_thermobaric_rocket"
+        ],
+        "minimum_caliber_mm": 20
+      },
+      "required_evidence": [
+        "source_confirmed_thermobaric_design",
+        "published_explosive_damage"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_illumination",
+      "name": "Illumination shell",
+      "source_ref": "HT 171",
+      "original_applies_to": "flare-bearing shell and launchers",
+      "conditions": {
+        "weapon_platforms_any": [
+          "flare_launcher",
+          "artillery",
+          "source_verified_cartridge_launcher"
+        ],
+        "munition_classes_any": [
+          "flare_cargo_shell"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_flare_cartridge"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_signal_flare",
+      "name": "Signal flare",
+      "source_ref": "HT 171",
+      "original_applies_to": "signal-pistol and flare compatible launchers",
+      "conditions": {
+        "weapon_platforms_any": [
+          "signal_pistol",
+          "flare_launcher",
+          "source_verified_cartridge_launcher"
+        ],
+        "munition_classes_any": [
+          "signal_flare_round"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_flare_cartridge"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_smoke",
+      "name": "Screening smoke",
+      "source_ref": "HT 171",
+      "original_applies_to": "designed smoke shells and low-velocity canisters",
+      "conditions": {
+        "munition_classes_any": [
+          "smoke_shell",
+          "smoke_canister"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_smoke_munition",
+        "smoke_payload_specified"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-cloud-effect",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_colored_smoke",
+      "name": "Colored smoke",
+      "source_ref": "HT 171",
+      "original_applies_to": "designed smoke shells",
+      "conditions": {
+        "munition_classes_any": [
+          "smoke_shell"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_colored_smoke"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-cloud-effect",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_hot_smoke",
+      "name": "Hot smoke",
+      "source_ref": "HT 171",
+      "original_applies_to": "designed smoke shells",
+      "conditions": {
+        "munition_classes_any": [
+          "smoke_shell"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_hot_smoke"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-cloud-effect",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_prism_smoke",
+      "name": "Prism smoke",
+      "source_ref": "HT 171",
+      "original_applies_to": "designed smoke shells",
+      "conditions": {
+        "munition_classes_any": [
+          "smoke_shell"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_prism_smoke"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-cloud-effect",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_em_smoke",
+      "name": "Electromagnetic smoke",
+      "source_ref": "HT 171",
+      "original_applies_to": "designed smoke shells",
+      "conditions": {
+        "munition_classes_any": [
+          "smoke_shell"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_em_smoke"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-cloud-effect",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_tear_gas",
+      "name": "Tear gas",
+      "source_ref": "HT 171",
+      "original_applies_to": "compatible teargas shells, vapor must reach target",
+      "conditions": {
+        "munition_classes_any": [
+          "irritant_cargo_shell"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_tear_gas_shell",
+        "chemical_filler_selected"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-affliction",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_tear_gas_vomit",
+      "name": "Tear gas with vomiting agent",
+      "source_ref": "HT 171",
+      "original_applies_to": "compatible teargas shells with selected vomiting agent",
+      "conditions": {
+        "munition_classes_any": [
+          "irritant_cargo_shell"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_tear_gas_shell",
+        "vomiting_agent_selected"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-affliction",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_liquid",
+      "name": "Liquid-filled projectile",
+      "source_ref": "HT 171-172",
+      "original_applies_to": "low-power smoothbores only (muzzle velocity below 500 fps)",
+      "conditions": {
+        "weapon_platforms_any": [
+          "low_power_smoothbore",
+          "paintball_gun",
+          "source_verified_low_velocity_launcher"
+        ],
+        "munition_classes_any": [
+          "liquid_cargo_pellet"
+        ]
+      },
+      "required_evidence": [
+        "muzzle_velocity_below_500_fps_confirmed",
+        "liquid_filler_selected"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-liquid-effect",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_poison_gas",
+      "name": "Bursting poison-gas shell",
+      "source_ref": "HT 172",
+      "original_applies_to": "purpose-made artillery/launchers",
+      "conditions": {
+        "weapon_platforms_any": [
+          "purpose_built_artillery",
+          "purpose_built_grenade_launcher"
+        ],
+        "munition_classes_any": [
+          "gas_cargo_shell"
+        ],
+        "minimum_caliber_mm": 20
+      },
+      "required_evidence": [
+        "source_confirmed_poison_gas_shell",
+        "chemical_filler_selected"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-affliction",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_white_phosphorus",
+      "name": "White phosphorus (WP)",
+      "source_ref": "HT 172",
+      "original_applies_to": "purpose-made WP shells, not generic firearm ammunition",
+      "conditions": {
+        "munition_classes_any": [
+          "purpose_built_wp_shell"
+        ],
+        "minimum_caliber_mm": 20
+      },
+      "required_evidence": [
+        "source_confirmed_wp_shell"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-linked-effects",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_canister",
+      "name": "Canister/Grapeshot",
+      "source_ref": "HT 172-173",
+      "original_applies_to": "artillery with compatible canister load",
+      "conditions": {
+        "weapon_platforms_any": [
+          "artillery"
+        ],
+        "munition_classes_any": [
+          "canister_shell"
+        ],
+        "minimum_caliber_mm": 20
+      },
+      "required_evidence": [
+        "specific_canister_load_published",
+        "pellet_size_and_count_verified"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_shotshell",
+      "name": "Shotshell pellets",
+      "source_ref": "HT 173",
+      "original_applies_to": "compatible shotgun and selected smoothbore/handgun chamberings",
+      "conditions": {
+        "weapon_platforms_any": [
+          "shotgun",
+          "source_verified_smoothbore",
+          "source_verified_handgun",
+          "source_verified_grenade_launcher"
+        ],
+        "munition_classes_any": [
+          "shotload"
+        ],
+        "minimum_caliber_mm": 5
+      },
+      "required_evidence": [
+        "chambering_accepts_shotshell",
+        "pellet_size_and_count_verified"
+      ],
+      "review_note": "Shot loads for rifle cartridge are scarce and must be source-backed; 5 mm gate alone never suffices.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_buck_and_ball",
+      "name": "Buck-and-ball",
+      "source_ref": "HT 173",
+      "original_applies_to": "smoothbore musket or shotgun",
+      "conditions": {
+        "weapon_platforms_any": [
+          "smoothbore_musket",
+          "shotgun"
+        ],
+        "munition_classes_any": [
+          "buck_and_ball_load"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_buck_and_ball_load"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_shrapnel",
+      "name": "Directional shrapnel",
+      "source_ref": "HT 173",
+      "original_applies_to": "specific artillery with published shrapnel round",
+      "conditions": {
+        "weapon_platforms_any": [
+          "artillery"
+        ],
+        "munition_classes_any": [
+          "published_shrapnel_round"
+        ]
+      },
+      "required_evidence": [
+        "weapon_specific_shrapnel_spec"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-fragmentation",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_duplex",
+      "name": "Multi-ball duplex",
+      "source_ref": "HT 173",
+      "original_applies_to": "compatible revolver/bolt-action rifle (TL6+) or automatic rifle (TL7+)",
+      "conditions": {
+        "weapon_platforms_any": [
+          "revolver",
+          "bolt_action_rifle",
+          "automatic_rifle",
+          "machine_gun"
+        ],
+        "munition_classes_any": [
+          "documented_multi_ball_load"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_duplex_chambering"
+      ],
+      "review_note": "Revolver or bolt-action at TL6+, rifle automatic and MG at TL7+; weapon action must be trusted.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_triplex",
+      "name": "Multi-ball triplex",
+      "source_ref": "HT 173",
+      "original_applies_to": "compatible revolver/bolt-action rifle (TL6+) or automatic rifle (TL7+)",
+      "conditions": {
+        "weapon_platforms_any": [
+          "revolver",
+          "bolt_action_rifle",
+          "automatic_rifle",
+          "machine_gun"
+        ],
+        "munition_classes_any": [
+          "documented_multi_ball_load"
+        ]
+      },
+      "required_evidence": [
+        "source_confirmed_triplex_chambering"
+      ],
+      "review_note": "Revolver or bolt-action at TL6+, rifle automatic and MG at TL7+; weapon action must be trusted.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_beehive",
+      "name": "Beehive flechette",
+      "source_ref": "HT 173",
+      "original_applies_to": "specific tank/recoilless/light artillery weapon with beehive load",
+      "conditions": {
+        "weapon_platforms_any": [
+          "tank_gun",
+          "recoilless_rifle",
+          "light_artillery"
+        ],
+        "munition_classes_any": [
+          "published_beehive_round"
+        ]
+      },
+      "required_evidence": [
+        "weapon_specific_beehive_spec"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-fragmentation",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_multi_flechette",
+      "name": "Multi-Flechette (MF)",
+      "source_ref": "HT 174",
+      "original_applies_to": "low-powered large-bore shotgun/grenade launcher",
+      "conditions": {
+        "weapon_platforms_any": [
+          "low_power_shotgun",
+          "low_power_grenade_launcher"
+        ],
+        "munition_classes_any": [
+          "multi_flechette_load"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "low_power_platform_confirmed",
+        "flechette_size_and_count_verified"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_rubber_shot",
+      "name": "Rubber Shot",
+      "source_ref": "HT 174",
+      "original_applies_to": "suitable shotgun and riot rounds",
+      "conditions": {
+        "weapon_platforms_any": [
+          "shotgun",
+          "source_verified_riot_launcher"
+        ],
+        "munition_classes_any": [
+          "rubber_shot_load"
+        ],
+        "minimum_caliber_mm": 10
+      },
+      "required_evidence": [
+        "source_confirmed_rubber_shot_round",
+        "rubber_ball_size_and_count_verified"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_options",
+      "id": "ht_abf",
+      "name": "Annular Blast Fragmentation (ABF)",
+      "source_ref": "HT 174",
+      "original_applies_to": "published aircraft missile/autocannon payload",
+      "conditions": {
+        "weapon_platforms_any": [
+          "aircraft_missile_launcher",
+          "autocannon"
+        ],
+        "munition_classes_any": [
+          "published_abf_round"
+        ]
+      },
+      "required_evidence": [
+        "weapon_specific_abf_spec"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-fragmentation",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_upgrades",
+      "id": "ht_airburst",
+      "name": "Airburst fuse",
+      "source_ref": "HT 174-175",
+      "original_applies_to": "compatible explosive projectile/fuse",
+      "conditions": {
+        "munition_classes_any": [
+          "explosive_round_with_airburst_fuse"
+        ],
+        "forbidden_classes": [
+          "already_airburst_shrapnel",
+          "already_airburst_beehive",
+          "already_airburst_abf"
+        ]
+      },
+      "required_evidence": [
+        "compatible_fuse_and_round_verified"
+      ],
+      "review_note": null,
+      "native_effect_guard": "do-not-duplicate-native-airburst",
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_upgrades",
+      "id": "ht_incendiary",
+      "name": "Incendiary (I)",
+      "source_ref": "HT 175",
+      "original_applies_to": "solid or source-confirmed AP/APHC projectiles",
+      "conditions": {
+        "projectile_classes_any": [
+          "solid",
+          "source_confirmed_ap",
+          "source_confirmed_aphc"
+        ]
+      },
+      "required_evidence": [
+        "incendiary_cavity_or_combination_confirmed"
+      ],
+      "review_note": "Before TL7 broad handgun incendiary availability is not established.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_upgrades",
+      "id": "ht_self_destruct",
+      "name": "Self-Destruct (SD)",
+      "source_ref": "HT 175",
+      "original_applies_to": "explosive projectiles with fuse, late TL6+",
+      "conditions": {
+        "munition_classes_any": [
+          "explosive_round_with_fuse"
+        ],
+        "minimum_availability_tl": 6
+      },
+      "required_evidence": [
+        "self_destruct_fuse_design_confirmed"
+      ],
+      "review_note": "Late TL6 or later; requires an explosive projectile and fuse.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "projectile_upgrades",
+      "id": "ht_tracer",
+      "name": "Tracer (T)",
+      "source_ref": "HT 175",
+      "original_applies_to": "most bullets and even multiple-projectile loads with tracer component",
+      "conditions": {
+        "projectile_classes_any": [
+          "bullet",
+          "source_confirmed_multi_projectile"
+        ]
+      },
+      "required_evidence": [
+        "tracer_component_for_this_round_confirmed"
+      ],
+      "review_note": "Special dim/dark tracer variants require distinct confirmed design.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "case_construction_options",
+      "id": "ht_light_case",
+      "name": "Light cased",
+      "source_ref": "HT 164",
+      "original_applies_to": "most cased small-arms cartridges by mid-TL8",
+      "conditions": {
+        "munition_classes_any": [
+          "cased_round"
+        ]
+      },
+      "required_evidence": [
+        "light_case_compatible_with_pressure_and_manufacture"
+      ],
+      "review_note": "Source allows shotshells already at late TL5, but general small arms at mid TL8; original min_tl=8 describes broad small-arms use, do not turn TL5 into general compatibility.",
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "case_construction_options",
+      "id": "ht_caseless",
+      "name": "Caseless",
+      "source_ref": "HT 164-165",
+      "original_applies_to": "only expressly caseless-designed guns",
+      "conditions": {
+        "munition_classes_any": [
+          "caseless_round"
+        ],
+        "case_types_any": [
+          "caseless"
+        ]
+      },
+      "required_evidence": [
+        "weapon_explicitly_designed_for_caseless_ammo"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    },
+    {
+      "group": "case_construction_options",
+      "id": "ht_consumable_case",
+      "name": "Consumable/Semi-consumable case",
+      "source_ref": "HT 164",
+      "original_applies_to": "designated rifle or cannon only",
+      "conditions": {
+        "weapon_platforms_any": [
+          "purpose_built_consumable_case_rifle",
+          "purpose_built_consumable_case_cannon"
+        ],
+        "munition_classes_any": [
+          "consumable_cased_round"
+        ],
+        "case_types_any": [
+          "consumable",
+          "semi_consumable"
+        ]
+      },
+      "required_evidence": [
+        "weapon_explicitly_designed_for_consumable_case"
+      ],
+      "review_note": null,
+      "native_effect_guard": null,
+      "outcome_without_evidence": "undetermined"
+    }
+  ]
+}

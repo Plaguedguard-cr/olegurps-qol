@@ -20,10 +20,12 @@ export async function executeMeleeAttackSnapshot(snapshot) {
     captureMessage: true,
     maneuver: snapshot.maneuver,
     deceptiveDefensePenalty: snapshot.deceptiveDefensePenalty,
-    telegraphicCriticalBonus: snapshot.telegraphicCriticalBonus
+    telegraphicCriticalBonus: snapshot.telegraphicCriticalBonus,
+    damageOptions: snapshot.damageOptions, combatCalculation: snapshot.combatCalculation,
+    skillCap: snapshot.skillCap
   });
   const result = snapshot.clearTargets ? await withClearedFoundryTargets(roll) : await roll();
-  if (result.success && snapshot.randomLocation) {
+  if (result.success && result.hit !== false && snapshot.randomLocation) {
     try {
       const random = await snapshot.targetingService.resolveRandomHitLocation();
       const html = buildRandomHitLocationsHtml([random], {

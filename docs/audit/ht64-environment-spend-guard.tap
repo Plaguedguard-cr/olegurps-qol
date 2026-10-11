@@ -1,0 +1,112 @@
+TAP version 13
+# Subtest: partial and full unloads return the same type and permit a new type only when empty
+ok 1 - partial and full unloads return the same type and permit a new type only when empty
+  ---
+  duration_ms: 2.4162
+  type: 'test'
+  ...
+# Subtest: deleting a filled or installed magazine returns contents without changing other IDs or total
+ok 2 - deleting a filled or installed magazine returns contents without changing other IDs or total
+  ---
+  duration_ms: 0.4335
+  type: 'test'
+  ...
+# Subtest: a sequence of stock, load, unload, replace, shoot and delete operations conserves rounds
+ok 3 - a sequence of stock, load, unload, replace, shoot and delete operations conserves rounds
+  ---
+  duration_ms: 0.4133
+  type: 'test'
+  ...
+# Subtest: a Fire Control snapshot from before migration consumes the authoritative new inventory
+ok 4 - a Fire Control snapshot from before migration consumes the authoritative new inventory
+  ---
+  duration_ms: 3.3564
+  type: 'test'
+  ...
+# Subtest: archived rounds unload and return on magazine deletion before explicit stock removal
+ok 5 - archived rounds unload and return on magazine deletion before explicit stock removal
+  ---
+  duration_ms: 0.9972
+  type: 'test'
+  ...
+# Subtest: different actors and modes keep independent IDs, profiles and receipts
+ok 6 - different actors and modes keep independent IDs, profiles and receipts
+  ---
+  duration_ms: 7.7206
+  type: 'test'
+  ...
+# Subtest: simultaneous duplicate execution and persisted replay never roll or charge twice
+ok 7 - simultaneous duplicate execution and persisted replay never roll or charge twice
+  ---
+  duration_ms: 10.8736
+  type: 'test'
+  ...
+# Subtest: install waits for native execution and only the initial magazine is charged
+ok 8 - install waits for native execution and only the initial magazine is charged
+  ---
+  duration_ms: 3.3605
+  type: 'test'
+  ...
+# Subtest: insufficient rounds, preparation cancellation and native canRoll cancellation do not charge
+ok 9 - insufficient rounds, preparation cancellation and native canRoll cancellation do not charge
+  ---
+  duration_ms: 1.6907
+  type: 'test'
+  ...
+# Subtest: rapid bursts consume physical cartridges, not the number of projectiles
+ok 10 - rapid bursts consume physical cartridges, not the number of projectiles
+  ---
+  duration_ms: 0.8553
+  type: 'test'
+  ...
+# Subtest: no physical magazine preserves unmanaged execution without manufacturing cartridges
+ok 11 - no physical magazine preserves unmanaged execution without manufacturing cartridges
+  ---
+  duration_ms: 0.7698
+  type: 'test'
+  ...
+# Subtest: stale settings save preserves resource receipts and committed magazine counts
+ok 12 - stale settings save preserves resource receipts and committed magazine counts
+  ---
+  duration_ms: 1.0348
+  type: 'test'
+  ...
+# Subtest: Suppression saved-session normalization retains prepaid profile and receipt on reopening
+ok 13 - Suppression saved-session normalization retains prepaid profile and receipt on reopening
+  ---
+  duration_ms: 2.6218
+  type: 'test'
+  ...
+# Subtest: legacy Spraying retries failed cleanup without spending twice or migrating the inventory
+ok 14 - legacy Spraying retries failed cleanup without spending twice or migrating the inventory
+  ---
+  duration_ms: 2.5358
+  type: 'test'
+  ...
+# Subtest: WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+ok 15 - WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+  ---
+  duration_ms: 9.3705
+  type: 'test'
+  ...
+# Subtest: source WP selected as base refuses incomplete payload before a roll or ammunition spending
+ok 16 - source WP selected as base refuses incomplete payload before a roll or ammunition spending
+  ---
+  duration_ms: 2.5786
+  type: 'test'
+  ...
+# Subtest: one composite shot spends one physical round, repeat Damage and execution do not spend again
+ok 17 - one composite shot spends one physical round, repeat Damage and execution do not spend again
+  ---
+  duration_ms: 8.9436
+  type: 'test'
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 271.1282

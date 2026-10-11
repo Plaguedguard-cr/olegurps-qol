@@ -1,0 +1,124 @@
+{
+  "scope": "P6 only; existing active HT ammo-to-mode bindings",
+  "variants": {
+    "ht_airburst": {
+      "complete": 0,
+      "incomplete": 508,
+      "incompatible": 3,
+      "pairs": [],
+      "excludedPairs": [
+        {
+          "modeId": "WdzSSShGT_yv4ctOi",
+          "ammoId": "ht_42_caplock_lemat",
+          "name": "Girard LeMat, .42 Caplock",
+          "rawCompatibility": "incompatible",
+          "reasons": [
+            "P6ConstructionMissing"
+          ]
+        },
+        {
+          "modeId": "WQymu6IvqV_kTwiqz",
+          "ammoId": "ht_specific_aim9l_abf",
+          "name": "Ford AIM-9L Sidewinder, 127mm",
+          "rawCompatibility": "undetermined",
+          "reasons": [
+            "P6NativeAirburstAlready"
+          ]
+        },
+        {
+          "modeId": "WjD-b9M0j2HJAcxyy",
+          "ammoId": "ht_specific_hydra_70mm_beehive",
+          "name": "M260, 70mm",
+          "rawCompatibility": "undetermined",
+          "reasons": [
+            "P6NativeAirburstAlready"
+          ]
+        }
+      ],
+      "reasons": {
+        "P6ConstructionMissing": 509,
+        "P6NativeAirburstAlready": 2
+      }
+    },
+    "ht_incendiary": {
+      "complete": 1,
+      "incomplete": 509,
+      "incompatible": 1,
+      "pairs": [
+        {
+          "modeId": "WK6cr08HEjTSsvYNS",
+          "ammoId": "ht_14_5x114mm",
+          "name": "ZiD KPV, 14.5x114mm",
+          "rawCompatibility": "undetermined",
+          "authority": "reference",
+          "nativePreserved": true
+        }
+      ],
+      "excludedPairs": [
+        {
+          "modeId": "WdzSSShGT_yv4ctOi",
+          "ammoId": "ht_42_caplock_lemat",
+          "name": "Girard LeMat, .42 Caplock",
+          "rawCompatibility": "incompatible",
+          "reasons": [
+            "P6ConstructionMissing"
+          ]
+        }
+      ],
+      "reasons": {
+        "P6ConstructionMissing": 510
+      }
+    },
+    "ht_self_destruct": {
+      "complete": 0,
+      "incomplete": 510,
+      "incompatible": 1,
+      "pairs": [],
+      "excludedPairs": [
+        {
+          "modeId": "WdzSSShGT_yv4ctOi",
+          "ammoId": "ht_42_caplock_lemat",
+          "name": "Girard LeMat, .42 Caplock",
+          "rawCompatibility": "incompatible",
+          "reasons": [
+            "P6ConstructionMissing"
+          ]
+        }
+      ],
+      "reasons": {
+        "P6ConstructionMissing": 511
+      }
+    },
+    "ht_tracer": {
+      "complete": 1,
+      "incomplete": 509,
+      "incompatible": 1,
+      "pairs": [
+        {
+          "modeId": "WK6cr08HEjTSsvYNS",
+          "ammoId": "ht_14_5x114mm",
+          "name": "ZiD KPV, 14.5x114mm",
+          "rawCompatibility": "undetermined",
+          "authority": "reference",
+          "nativePreserved": true
+        }
+      ],
+      "excludedPairs": [
+        {
+          "modeId": "WdzSSShGT_yv4ctOi",
+          "ammoId": "ht_42_caplock_lemat",
+          "name": "Girard LeMat, .42 Caplock",
+          "rawCompatibility": "incompatible",
+          "reasons": [
+            "P6ConstructionMissing"
+          ]
+        }
+      ],
+      "reasons": {
+        "P6ConstructionMissing": 510
+      }
+    }
+  },
+  "physicalReadyPairs": 1,
+  "note": "I and T are two profiles of the same confirmed KPV APHCI-T cartridge, not two fabricated factory rounds."
+}

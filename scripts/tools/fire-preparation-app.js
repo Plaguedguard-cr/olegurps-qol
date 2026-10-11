@@ -1,17 +1,26 @@
+import { isWeaponBondActive } from "./weapon-bond-service.js";
+import { projectAmmoInventory } from "./ammo-inventory.js";
 import { createStandaloneAttack, getTokenFireRangeContext, measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
 import { normalizeVisibility, visibilityRules } from "./limited-visibility.js";
 import { selectBlindFireHex } from "./blind-fire-hex-selection.js";
 import { getSafeTargetName, clearFoundryTargets, replaceFoundryTargets } from "./foundry-targets.js";
 import { getFireSkillPreview, skillProbabilityColor } from "./fire-skill-preview.js";
-import { calculateEffectiveDistance, findRangeBandForDistance, resolveElevationRange } from "./fire-range-service.js";
+import { calculateEffectiveDistance, findRangeBandForDistance, resolveElevationRange, resolveEffectiveRange } from "./fire-range-service.js";
 import { TargetingService } from "./targeting-service.js";
-import { createTargetedAttackContext } from "./targeted-attack-service.js";
+import { createRangedTargetedAttackContext as createTargetedAttackContext } from "./ranged-governing-skill-service.js";
 import { listRangedGoverningSkills, resolveRangedGoverningSkill,
   bindingForGoverningSkill } from "./ranged-governing-skill-service.js";
+import { weaponText } from "./weapon-configuration.js";
 import { getAimStatusSeconds } from "./aim-status-effects.js";
 import { getRangedRapidStrikeSpecialties, resolveRangedRapidStrike, validateRangedRapidStrikeSplit } from "./ranged-rapid-strike-service.js";
 import { findCloseHipShooting, resolveCloseHipShooting } from "./close-hip-shooting-service.js";
 import { RangedTechniquesApp } from "./ranged-techniques-app.js";
+import { standaloneSkillDescription } from "./standalone-skill-service.js";
+import { readStandaloneAttack } from "./standalone-attack-service.js";
+import { withRuntimeAmmoStats } from "./attack-profile-runtime.js";
+import { parseRateOfFire } from "./fire-service.js";
+import { ammunitionConditionTexts } from "./damage-shot-link.js";
+import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
@@ -995,6 +1004,22 @@ export class FirePreparationApp extends ApplicationV2 {
   _onActorUpdate(updated) {
     if (updated?.id !== this.actor?.id) return;
     this._captureFields();
+    if (this.attack?.standaloneRef) {
+      const ref = this.attack.standaloneRef;
+      const current = this.actor.getFlag("world", "gurpsAmmoManager")?.weapons?.find(w => w.id === this.weapon?.id);
+      if (current) this.weapon = structuredClone(current);
+      const fresh = readStandaloneAttack(this.actor, ref.weaponId, current?.standaloneModeId ?? ref.modeId);
+      if (fresh) { this.attack = withRuntimeAmmoStats(fresh, this.actor);
+        this.rateOfFireProfile = parseRateOfFire(this.attack.rof); }
+      else { this.attack = { ...this.attack, level: null, readinessReason: "Автономный режим удалён." }; }
+    }
+    if (this.mode === "weapon") {
+      const current = this.actor.getFlag("world", "gurpsAmmoManager")?.weapons?.find(entry => entry.id === this.weapon.id);
+      if (current?.ammunitionInventory) {
+        this.weapon = structuredClone(current);
+        projectAmmoInventory(this.weapon);
+      }
+    }
     this.targetedAttackContext = createTargetedAttackContext({ actor: this.actor, attack: this.attack });
     this.render({ force: true });
   }
@@ -1073,12 +1098,15 @@ export class FirePreparationApp extends ApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
     this.fireState.shots = root.querySelector('[name="shots"]')?.value ?? "";
+    this.fireState.attackEnvironment = root.querySelector('[name="attackEnvironment"]')?.value ?? "air";
+    this.fireState.depthFeet = root.querySelector('[name="depthFeet"]')?.value ?? "";
     const rrsField = root.querySelector('[name="rangedRapidStrike"]');
     if (rrsField) this.fireState.rangedRapidStrike = !!rrsField.checked;
     this.fireState.rofMode = root.querySelector('[name="rofMode"]')?.value ?? this.fireState.rofMode;
     this.fireState.governingSkillKey = root.querySelector('[name="governingSkillKey"]')?.value ??
       this.fireState.governingSkillKey;
     this.fireState.manualModifier = root.querySelector('[name="manualModifier"]')?.value ?? "";
+    this.fireState.airburstTarget = root.querySelector('[name="airburstTarget"]')?.value ?? "point";
     const hearingField = root.querySelector('[name="manualHearing"]');
     if (hearingField) this.manualHearingLevel = hearingField.value;
     this.fireState.aimSeconds = root.querySelector('[name="aimSeconds"]')?.value ?? "";
@@ -1116,6 +1144,12 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   getShotOptions() {
+    // Refresh only the perk toggle; keep the GGA skill and all other attack values.
+    if (this.mode === "weapon" && this.weapon && this.attack) {
+      const stored = this.actor?.getFlag?.("world", "gurpsAmmoManager");
+      const weapon = stored?.weapons?.find(entry => entry.id === this.weapon.id) ?? this.weapon;
+      this.attack.weaponBond = isWeaponBondActive(this.actor, weapon.weaponBond);
+    }
     const visibility = this.visibility
       ? { ...normalizeVisibility(this.visibility), partialPenalty: this.visibility.partialPenalty } : null;
     const rules = visibilityRules(visibility);
@@ -1141,6 +1175,9 @@ export class FirePreparationApp extends ApplicationV2 {
       laserSight: rules?.random ? false : this.fireState.laserSight,
       visibility,
       targetDistanceOverride: targetDistance,
+      attackEnvironment: this.fireState.attackEnvironment ?? "air",
+      airburstTarget: this.fireState.airburstTarget ?? "point",
+      depthFeet: this.fireState.depthFeet ?? "",
       moveAndAttack: this.fireState.moveAndAttack,
       allOutAttack: this.fireState.allOutAttack,
       height: this.fireState.height,
@@ -1206,6 +1243,7 @@ export class FirePreparationApp extends ApplicationV2 {
       selectedRangeIndex: this.fireState.selectedRangeIndex,
       manualRangeSelected: this.fireState.manualRangeSelected,
       height: this.fireState.height,
+      attackEnvironment: this.fireState.attackEnvironment ?? "air", depthFeet: this.fireState.depthFeet ?? "",
       elevationDirection: this.fireState.elevationDirection,
       targetId: targets.length === 1 ? targets[0].id : null,
       distance: this.recommendation?.distance ?? null,
@@ -1249,6 +1287,8 @@ export class FirePreparationApp extends ApplicationV2 {
     this.fireState.manualRangeSelected = slot.manualRangeSelected;
     this.fireState.height = slot.height;
     this.fireState.elevationDirection = slot.elevationDirection;
+    this.fireState.attackEnvironment = slot.attackEnvironment ?? "air";
+    this.fireState.depthFeet = slot.depthFeet ?? "";
     this.visibility = slot.visibility ? { ...slot.visibility } : null;
   }
 
@@ -1289,6 +1329,7 @@ export class FirePreparationApp extends ApplicationV2 {
       hitRegionId: slot.hitLocation.regionId, rangeIndex: slot.selectedRangeIndex,
       manualRangeSelected: slot.manualRangeSelected, height: slot.height,
       elevationDirection: slot.elevationDirection, targetDistanceOverride: slot.distance,
+      attackEnvironment: slot.attackEnvironment ?? "air", depthFeet: slot.depthFeet ?? "",
       visibility: slot.visibility, targetTokenId: slot.targetId,
       rangedRapidStrike: true, rangedRapidStrikePart: true,
       contextLabel: "Attack " + (index + 1)
@@ -1428,13 +1469,14 @@ export class FirePreparationApp extends ApplicationV2 {
   _getAttackStatsText(displayedRoF, displayedAcc = this._getDisplayedAcc()) {
     return [
       this.weapon.ammoType,
-      `магазин ${this.weapon.magazines[this.weapon.loadedIndex]}/${this.weapon.capacity}`,
+      ...(this.attack?.standaloneRef && this.weapon.ammoUnconfigured && !this.weapon.magazines.length ?
+        ["Без учёта боезапаса"] : [`магазин ${this.weapon.magazines[this.weapon.loadedIndex]}/${this.weapon.capacity}`]),
       `RoF ${displayedRoF}`,
       `Acc ${displayedAcc}`,
       `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(this.attack?.scopeBonus) || 0))}`,
       `Bulk ${formatAttackStat(this.attack?.data?.bulk ?? this.attack?.bulk)}`,
       `Rcl ${formatAttackStat(this.attack?.rcl ?? this.attack?.data?.rcl)}`
-    ].join(" · ");
+    ].filter(Boolean).join(" · ");
   }
 
   _getRapidFireState(fireState = this.fireState) {
@@ -1452,6 +1494,8 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _updateAttackStats(fireMode = this._getRapidFireState()) {
+    const conditions = this.element?.querySelector("[data-ammunition-conditions]");
+    if (conditions) conditions.innerHTML = this._ammunitionConditionsHTML(fireMode);
     if (this.mode === "standalone") {
       this._updateStandaloneHints();
       return;
@@ -1473,6 +1517,49 @@ export class FirePreparationApp extends ApplicationV2 {
     this._updateAttackStats(fireMode);
   }
 
+  _environmentRange() {
+    const values = this.getShotOptions();
+    return resolveEffectiveRange({ rangeBands: this.rangeBands, rangeIndex: values.rangeIndex,
+      distance: values.manualRangeSelected ? null : values.targetDistanceOverride,
+      height: values.height, elevationDirection: values.elevationDirection,
+      environmentCapability: this.attack?.ammunitionEnvironment, attackEnvironment: values.attackEnvironment,
+      depthFeet: values.depthFeet, weaponRange: this.attack?.data?.range }).environment;
+  }
+  _environmentHint() {
+    const env = this._environmentRange(), lang = game.i18n.lang;
+    if (!env) return "";
+    return env.error ? automaticAmmoText(env.error, lang) :
+      automaticAmmoText("EnvironmentDistance", lang, { actual: env.actualDistance, multiplier: env.multiplier, effective: env.effectiveDistance }) +
+      (env.rangeDistance != null ? " " + automaticAmmoText("EnvironmentElevationDistance", lang, { distance: env.rangeDistance }) : "") +
+      (env.environment === "underwater" ? " " + automaticAmmoText("UnderwaterMalfGM", lang, { modifier: -2 }) : "") +
+      (env.beyondHalfDamage ? " " + automaticAmmoText("EnvironmentHalfDamageGM", lang) : "");
+  }
+  _buildFuzeTracerContent(fireState) {
+    if (this.attack?.ammunitionFuzeTracer?.definition?.variantId !== "ht_airburst") return "";
+    return `<label class="gam-fire-environment">${escapeHTML(automaticAmmoText("P6AirburstTarget"))}
+      <select name="airburstTarget">${["point", "area", "air"].map(value =>
+        `<option value="${value}"${(fireState.airburstTarget ?? "point") === value ? " selected" : ""}>${escapeHTML(automaticAmmoText("P6Target" + value))}</option>`).join("")}</select></label>`;
+  }
+
+  _buildEnvironmentContent(fireState) {
+    if (!this.attack?.ammunitionEnvironment) return "";
+    const t = key => automaticAmmoText(key, game.i18n.lang), medium = fireState.attackEnvironment ?? "air";
+    return `<div class="gam-fire-environment" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 0">
+      <label>${escapeHTML(t("Environment"))} <select name="attackEnvironment">${["air", "underwater", "air-water"].map(id=>
+        `<option value="${id}" ${medium === id ? "selected" : ""}>${escapeHTML(t({air:"EnvironmentAir",underwater:"EnvironmentWater","air-water":"EnvironmentTransition"}[id]))}</option>`).join("")}</select></label>
+      ${medium === "underwater" ? `<label>${escapeHTML(t("EnvironmentDepth"))} <input name="depthFeet" type="number" min="0" max="130" step="any" value="${escapeHTML(fireState.depthFeet ?? "")}" style="width:70px"></label>` : ""}
+      <small data-environment-hint style="flex-basis:100%">${escapeHTML(this._environmentHint())}</small></div>`;
+  }
+  _ammunitionConditionsHTML(fireMode) {
+    const language = globalThis.game?.i18n?.lang ?? "ru";
+    const lines = ammunitionConditionTexts(this.attack?.ammunitionConditions, language);
+    if (String(this.attack?.rcl ?? "").includes("/") && !this.attack?.ammunitionProjectileKind)
+      lines.push(automaticAmmoText("ProjectileRclRequired", language));
+    if (fireMode?.extremelyClose) lines.push(automaticAmmoText("ShotgunCloseGM", language,
+      { pellets: fireMode.profile.projectileMultiplier, factor: fireMode.closeDamageMultiplier }));
+    return lines.map(text => `<p class="hint">${escapeHTML(text)}</p>`).join("");
+  }
+
   _updateSkillPreview() {
     if (this._submitting) return;
     const preview = this.element?.querySelector("[data-skill-preview]");
@@ -1482,6 +1569,8 @@ export class FirePreparationApp extends ApplicationV2 {
     preview.style.color = skillProbabilityColor(probability);
     const total = this.element?.querySelector("[data-total-modifier]");
     if (total) total.textContent = this._getModifierTotalText();
+    const environmentHint = this.element?.querySelector("[data-environment-hint]");
+    if (environmentHint) environmentHint.textContent = this._environmentHint();
     this._updateRrsPreview();
     const breakdown = this.element?.querySelector("[data-visibility-breakdown]");
     if (breakdown && this.visibility) breakdown.innerHTML = this._buildVisibilityBreakdown();
@@ -1703,6 +1792,12 @@ export class FirePreparationApp extends ApplicationV2 {
   async _onInput(event) {
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
+    if (["attackEnvironment", "depthFeet"].includes(field.name)) {
+      this._captureFields();
+      if (field.name === "attackEnvironment" && event.type === "change") await this.render({ force: true });
+      this._updateSkillPreview();
+      return;
+    }
     if (field.name === "rangedRapidStrike") {
       if (event.type !== "change") return;
       this._captureFields();
@@ -1776,7 +1871,7 @@ export class FirePreparationApp extends ApplicationV2 {
       if (this.fireState.closeHipShooting && !findCloseHipShooting({ actor: this.actor, governingSkill: skill }))
         this.fireState.closeHipShooting = false;
       const source = this.element?.querySelector("[data-source-skill]");
-      if (source) source.textContent = "\u0417\u043d\u0430\u0447\u0435\u043d\u0438\u0435 \u0443\u043c\u0435\u043d\u0438\u044f: Ranged Weapon Level " + (this.attack?.level ?? "");
+      if (source) source.textContent = this._getSourceSkillText();
       this._updateTargetedAttackPreview();
       if (changed) this._persistGoverningSpecialty(field.value);
     }
@@ -1803,6 +1898,7 @@ export class FirePreparationApp extends ApplicationV2 {
         if (moveAndAttack) moveAndAttack.checked = false;
       }
     }
+    else if (field.name === "airburstTarget") this.fireState.airburstTarget = field.value;
     else if (field.name === "height") {
       const numericHeight = Number(String(field.value).replace(",", "."));
       if (field.value !== "" && Number.isFinite(numericHeight) && numericHeight < 0) field.value = "0";
@@ -2067,16 +2163,11 @@ export class FirePreparationApp extends ApplicationV2 {
     }
   }
 
-  _buildGoverningSkillSelector(fireState) {
-    if (this.mode !== "weapon") return "";
-    const options = listRangedGoverningSkills(this.actor).map(skill =>
-      '<option value="' + escapeHTML(skill.key) + '"' +
-      (fireState.governingSkillKey === skill.key ? ' selected' : '') + '>' +
-      escapeHTML(skill.name) + ': ' + skill.level + '</option>'
-    ).join("");
-    return '<label class="gam-fire-governing-skill"><span>Governing skill (techniques):</span>' +
-      '<select name="governingSkillKey" aria-label="Governing Skill">' +
-      '<option value="">Select Skill</option>' + options + '</select></label>';
+  _getSourceSkillText(language = "ru") {
+    const text = name => weaponText(name, { game: { i18n: { lang: language } } });
+    const skill = this._getGoverningSkill();
+    if (this.attack?.standaloneRef) return standaloneSkillDescription(skill);
+    return text("SkillSummary") + ": " + (skill ? `${skill.name} \u2014 ${skill.level}` : text("SelectSkill"));
   }
 
   _getHitLocationMarkers(zoneId, regionId = null, _fireState = this.fireState) {
@@ -2366,8 +2457,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const shotsMax = Number.isFinite(shotLimits.maxShots) ? ` max="${shotLimits.maxShots}"` : "";
     const rofContent = this._buildRofContent(fireState);
     const skillPreview = this._getSkillPreview();
-    const sourceSkill = Number(this.attack?.level);
-    const sourceSkillText = "Ranged Weapon Level " + (Number.isFinite(sourceSkill) ? Math.trunc(sourceSkill) : "?");
+    const sourceSkillText = this._getSourceSkillText();
     const attackStats = this.mode === "standalone" ? "" : this._getAttackStatsText(displayedRoF, displayedAcc);
     const elevation = this._getElevationCalculation(fireState);
     const recommendationText = this._formatTargetRecommendation();
@@ -2399,19 +2489,21 @@ export class FirePreparationApp extends ApplicationV2 {
     }).join("");
 
     return `
-      <div class="gam-fire-preparation">
+      <div class="gam-fire-preparation ${this.attack?.standaloneRef ? "gam-standalone-attack" : ""}">
         <div class="gam-fire-summary">
           <div class="gam-fire-summary-main">
             <h3>${escapeHTML(this.mode === "standalone" ? "Fire Control" : this.weapon.name)}</h3>
             ${this.mode === "standalone" ? this._buildStandaloneStats(fireState) : `<p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>`}
-            ${this._buildGoverningSkillSelector(fireState)}
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
             <strong class="gam-fire-skill-value" data-skill-preview style="color: ${skillProbabilityColor(skillPreview.probability)}">${skillPreview.level} (${skillPreview.chance}%)</strong>
-            ${this.mode === "standalone" ? `<label class="gam-fire-source-skill">Значение умения: <input type="number" name="skillLevel" value="${escapeHTML(fireState.skillLevel)}" placeholder="0" min="1" step="1" required autofocus></label>` : `<span class="gam-fire-source-skill" data-source-skill>Значение умения: ${escapeHTML(sourceSkillText)}</span>`}
+            ${this.mode === "standalone" ? `<label class="gam-fire-source-skill">Значение умения: <input type="number" name="skillLevel" value="${escapeHTML(fireState.skillLevel)}" placeholder="0" min="1" step="1" required autofocus></label>` : `<span class="gam-fire-source-skill" data-source-skill>${escapeHTML(sourceSkillText)}</span>`}
           </div>
         </div>
+        <div data-ammunition-conditions>${this._ammunitionConditionsHTML(this._getRapidFireState())}</div>
+        ${this._buildEnvironmentContent(fireState)}
+        ${this._buildFuzeTracerContent(fireState)}
         ${this._buildVisibilityContent()}
         <div class="gam-fire-layout">
           <div class="gam-fire-left">

@@ -1,0 +1,1660 @@
+TAP version 13
+# Subtest: v9 migration preserves exact loose stock, counts, individual magazines and installed position
+ok 1 - v9 migration preserves exact loose stock, counts, individual magazines and installed position
+  ---
+  duration_ms: 4.6046
+  type: 'test'
+  ...
+# Subtest: migration is idempotent and reopening retains permanent IDs without extra resources
+ok 2 - migration is idempotent and reopening retains permanent IDs without extra resources
+  ---
+  duration_ms: 3.8272
+  type: 'test'
+  ...
+# Subtest: new unconfigured weapon never acquires a fictional magazine or stock
+ok 3 - new unconfigured weapon never acquires a fictional magazine or stock
+  ---
+  duration_ms: 0.2336
+  type: 'test'
+  ...
+# Subtest: ambiguous, fractional, excessive and inconsistent legacy data are preserved for review
+ok 4 - ambiguous, fractional, excessive and inconsistent legacy data are preserved for review
+  ---
+  duration_ms: 3.8803
+  type: 'test'
+  ...
+# Subtest: bulk creation creates separate empty magazines with mixed capacities and stable ownership IDs
+ok 5 - bulk creation creates separate empty magazines with mixed capacities and stable ownership IDs
+  ---
+  duration_ms: 0.6568
+  type: 'test'
+  ...
+# Subtest: partial and full loads move only matching free stock without changing total
+ok 6 - partial and full loads move only matching free stock without changing total
+  ---
+  duration_ms: 0.4329
+  type: 'test'
+  ...
+# Subtest: partial and full unloads return the same type and permit a new type only when empty
+ok 7 - partial and full unloads return the same type and permit a new type only when empty
+  ---
+  duration_ms: 0.733
+  type: 'test'
+  ...
+# Subtest: stock removal never takes rounds out of magazines and cannot exceed free stock
+ok 8 - stock removal never takes rounds out of magazines and cannot exceed free stock
+  ---
+  duration_ms: 0.462
+  type: 'test'
+  ...
+# Subtest: all invalid quantities, capacity overflow and stock shortages leave the ledger unchanged
+ok 9 - all invalid quantities, capacity overflow and stock shortages leave the ledger unchanged
+  ---
+  duration_ms: 0.9465
+  type: 'test'
+  ...
+# Subtest: install, replace and eject preserve all rounds and project the installed magazine's own capacity
+ok 10 - install, replace and eject preserve all rounds and project the installed magazine's own capacity
+  ---
+  duration_ms: 0.6501
+  type: 'test'
+  ...
+# Subtest: deleting a filled or installed magazine returns contents without changing other IDs or total
+ok 11 - deleting a filled or installed magazine returns contents without changing other IDs or total
+  ---
+  duration_ms: 0.3191
+  type: 'test'
+  ...
+# Subtest: a sequence of stock, load, unload, replace, shoot and delete operations conserves rounds
+ok 12 - a sequence of stock, load, unload, replace, shoot and delete operations conserves rounds
+  ---
+  duration_ms: 0.4092
+  type: 'test'
+  ...
+# Subtest: live service consumption decrements installed rounds once, retains stock and other magazines
+ok 13 - live service consumption decrements installed rounds once, retains stock and other magazines
+  ---
+  duration_ms: 1.9355
+  type: 'test'
+  ...
+# Subtest: a Fire Control snapshot from before migration consumes the authoritative new inventory
+ok 14 - a Fire Control snapshot from before migration consumes the authoritative new inventory
+  ---
+  duration_ms: 0.9839
+  type: 'test'
+  ...
+# Subtest: serialized transactions reread latest stocks and reject concurrent overdraw without partial writes
+ok 15 - serialized transactions reread latest stocks and reject concurrent overdraw without partial writes
+  ---
+  duration_ms: 1.6578
+  type: 'test'
+  ...
+# Subtest: a failed persistence write leaves caller and saved inventory unchanged
+ok 16 - a failed persistence write leaves caller and saved inventory unchanged
+  ---
+  duration_ms: 0.5203
+  type: 'test'
+  ...
+# Subtest: stale configuration saves preserve the latest inventory, overrides, custom settings and GGA system
+ok 17 - stale configuration saves preserve the latest inventory, overrides, custom settings and GGA system
+  ---
+  duration_ms: 0.9599
+  type: 'test'
+  ...
+# Subtest: one dropdown and one detail panel keep 1, 10, 30 and 50 magazines compact
+ok 18 - one dropdown and one detail panel keep 1, 10, 30 and 50 magazines compact
+  ---
+  duration_ms: 2.0843
+  type: 'test'
+  ...
+# Subtest: changing dropdown selection targets a stable ID and displays only that magazine
+ok 19 - changing dropdown selection targets a stable ID and displays only that magazine
+  ---
+  duration_ms: 0.7323
+  type: 'test'
+  ...
+# Subtest: fill bar uses continuous red-yellow-green hue and exact accessible counts
+ok 20 - fill bar uses continuous red-yellow-green hue and exact accessible counts
+  ---
+  duration_ms: 0.3012
+  type: 'test'
+  ...
+# Subtest: retired saved ammunition cannot be created or loaded, even with old GM flags and caller options
+ok 21 - retired saved ammunition cannot be created or loaded, even with old GM flags and caller options
+  ---
+  duration_ms: 3.8967
+  type: 'test'
+  ...
+# Subtest: archived rounds unload and return on magazine deletion before explicit stock removal
+ok 22 - archived rounds unload and return on magazine deletion before explicit stock removal
+  ---
+  duration_ms: 1.1392
+  type: 'test'
+  ...
+# Subtest: catalog choices use confirmed compatibility only
+ok 23 - catalog choices use confirmed compatibility only
+  ---
+  duration_ms: 0.9905
+  type: 'test'
+  ...
+# Subtest: window Actor and approval-policy subscriptions refresh current content and are removed on close
+ok 24 - window Actor and approval-policy subscriptions refresh current content and are removed on close
+  ---
+  duration_ms: 0.63
+  type: 'test'
+  ...
+# Subtest: window reopening reads saved selection candidates, quantities and permanent magazine IDs
+ok 25 - window reopening reads saved selection candidates, quantities and permanent magazine IDs
+  ---
+  duration_ms: 1.2859
+  type: 'test'
+  ...
+# Subtest: RU/EN management keeps ammunition operations without installation, test controls or removed messages
+ok 26 - RU/EN management keeps ammunition operations without installation, test controls or removed messages
+  ---
+  duration_ms: 0.8323
+  type: 'test'
+  ...
+# Subtest: external installation refreshes the open window without transferring or consuming rounds
+ok 27 - external installation refreshes the open window without transferring or consuming rounds
+  ---
+  duration_ms: 1.3895
+  type: 'test'
+  ...
+# Subtest: successful management is silent while errors remain visible and notify
+ok 28 - successful management is silent while errors remain visible and notify
+  ---
+  duration_ms: 0.6807
+  type: 'test'
+  ...
+# Subtest: RU/EN translations load, match and omit retired cartridge keys
+ok 29 - RU/EN translations load, match and omit retired cartridge keys
+  ---
+  duration_ms: 8.7314
+  type: 'test'
+  ...
+# Subtest: invalid inventory cannot install two magazines or change another weapon's ownership
+ok 30 - invalid inventory cannot install two magazines or change another weapon's ownership
+  ---
+  duration_ms: 0.2981
+  type: 'test'
+  ...
+# Subtest: Spraying Fire retries failed session cleanup without consuming new-format ammo twice
+ok 31 - Spraying Fire retries failed session cleanup without consuming new-format ammo twice
+  ---
+  duration_ms: 20.5952
+  type: 'test'
+  ...
+# Subtest: Fire Control Actor refresh projects new capacity and remaining rounds without modifying GGA
+ok 32 - Fire Control Actor refresh projects new capacity and remaining rounds without modifying GGA
+  ---
+  duration_ms: 93.4161
+  type: 'test'
+  ...
+# Subtest: AK47 control ordinary
+ok 33 - AK47 control ordinary
+  ---
+  duration_ms: 4.8578
+  type: 'test'
+  ...
+# Subtest: AK47 control ht_ap
+ok 34 - AK47 control ht_ap
+  ---
+  duration_ms: 3.8443
+  type: 'test'
+  ...
+# Subtest: AK47 control ht_aphc
+ok 35 - AK47 control ht_aphc
+  ---
+  duration_ms: 0.9896
+  type: 'test'
+  ...
+# Subtest: AK47 control ht_hollow_point
+ok 36 - AK47 control ht_hollow_point
+  ---
+  duration_ms: 0.9472
+  type: 'test'
+  ...
+# Subtest: reviewed class rules authorize an exact family; caliber/caller claims cannot change the cartridge
+ok 37 - reviewed class rules authorize an exact family; caliber/caller claims cannot change the cartridge
+  ---
+  duration_ms: 1.9872
+  type: 'test'
+  ...
+# Subtest: AK47 explosive constructions remain unavailable with independent compatibility and missing source facts
+ok 38 - AK47 explosive constructions remain unavailable with independent compatibility and missing source facts
+  ---
+  duration_ms: 1.8368
+  type: 'test'
+  ...
+# Subtest: isolated explosive model ht_apex
+ok 39 - isolated explosive model ht_apex
+  ---
+  duration_ms: 0.3083
+  type: 'test'
+  ...
+# Subtest: isolated explosive model ht_aphex
+ok 40 - isolated explosive model ht_aphex
+  ---
+  duration_ms: 0.2235
+  type: 'test'
+  ...
+# Subtest: known secondary formulas still require a conditional native adapter, never Linked or automatic hits
+ok 41 - known secondary formulas still require a conditional native adapter, never Linked or automatic hits
+  ---
+  duration_ms: 0.4029
+  type: 'test'
+  ...
+# Subtest: HT166 bands including adds, fractions, negative adds, multiplier, >12d and exact boundaries
+ok 42 - HT166 bands including adds, fractions, negative adds, multiplier, >12d and exact boundaries
+  ---
+  duration_ms: 0.4999
+  type: 'test'
+  ...
+# Subtest: existing divisor and compound/native components cannot be silently transformed again
+ok 43 - existing divisor and compound/native components cannot be silently transformed again
+  ---
+  duration_ms: 5.4522
+  type: 'test'
+  ...
+# Subtest: journal proves ordering/source/reason; duplicate application is rejected
+ok 44 - journal proves ordering/source/reason; duplicate application is rejected
+  ---
+  duration_ms: 1.8867
+  type: 'test'
+  ...
+# Subtest: HP caps pi++, preserves dice/modifiers and delegates DR0 rule; conditional Malf/expansion never silently skipped
+ok 45 - HP caps pi++, preserves dice/modifiers and delegates DR0 rule; conditional Malf/expansion never silently skipped
+  ---
+  duration_ms: 0.4978
+  type: 'test'
+  ...
+# Subtest: invalid/stacked recipes and unconfirmed bindings stay raw
+ok 46 - invalid/stacked recipes and unconfirmed bindings stay raw
+  ---
+  duration_ms: 0.4662
+  type: 'test'
+  ...
+# Subtest: normal load window exposes separate AP/APHC/HP stocks and blocks incomplete APEX/APHEX loading in RU/EN
+ok 47 - normal load window exposes separate AP/APHC/HP stocks and blocks incomplete APEX/APHEX loading in RU/EN
+  ---
+  duration_ms: 154.6504
+  type: 'test'
+  ...
+# Subtest: physical recipe magazines keep separate ledgers; switching and deleting never destroy/swap types
+ok 48 - physical recipe magazines keep separate ledgers; switching and deleting never destroy/swap types
+  ---
+  duration_ms: 1.6523
+  type: 'test'
+  ...
+# Subtest: GGA contract diagnostics pass present API and refuse missing or changed signatures/results without rolling
+ok 49 - GGA contract diagnostics pass present API and refuse missing or changed signatures/results without rolling
+  ---
+  duration_ms: 0.8706
+  type: 'test'
+  ...
+# Subtest: one understandable GM diagnostic per session; localization uses both actual loaded bundles
+ok 50 - one understandable GM diagnostic per session; localization uses both actual loaded bundles
+  ---
+  duration_ms: 21.8892
+  type: 'test'
+  ...
+# Subtest: cached Foundry manifest loads new ammunition translations for both languages without changing user language
+ok 51 - cached Foundry manifest loads new ammunition translations for both languages without changing user language
+  ---
+  duration_ms: 5.5891
+  type: 'test'
+  ...
+# Subtest: AmmoService reads the installed construction, snapshots each shot, persists receipts and spends once
+ok 52 - AmmoService reads the installed construction, snapshots each shot, persists receipts and spends once
+  ---
+  duration_ms: 12.3005
+  type: 'test'
+  ...
+# Subtest: P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+ok 53 - P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+  ---
+  duration_ms: 19.0712
+  type: 'test'
+  ...
+# Subtest: DU historical native Damage survives reload and current design/weapon changes without ignition dice
+ok 54 - DU historical native Damage survives reload and current design/weapon changes without ignition dice
+  ---
+  duration_ms: 3.0085
+  type: 'test'
+  ...
+# Subtest: historical LeMat .42 central snapshot retains native Damage after physical identity correction
+ok 55 - historical LeMat .42 central snapshot retains native Damage after physical identity correction
+  ---
+  duration_ms: 1.2294
+  type: 'test'
+  ...
+# Subtest: embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+ok 56 - embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+  ---
+  duration_ms: 1.2326
+  type: 'test'
+  ...
+# Subtest: P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+ok 57 - P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+  ---
+  duration_ms: 3.1372
+  type: 'test'
+  ...
+# Subtest: A and B Damage in reverse order use their own shots after magazine and last-roll changes
+ok 58 - A and B Damage in reverse order use their own shots after magazine and last-roll changes
+  ---
+  duration_ms: 2.3785
+  type: 'test'
+  ...
+# Subtest: repeat Damage creates independent events for the same source, including a reused event object
+ok 59 - repeat Damage creates independent events for the same source, including a reused event object
+  ---
+  duration_ms: 2.2267
+  type: 'test'
+  ...
+# Subtest: interleaved native awaits keep two actors and modes independent and use the clicked Actor
+ok 60 - interleaved native awaits keep two actors and modes independent and use the clicked Actor
+  ---
+  duration_ms: 1.3388
+  type: 'test'
+  ...
+# Subtest: native multiple/combine dialog captures source before its first await and DOM event cleanup
+ok 61 - native multiple/combine dialog captures source before its first await and DOM event cleanup
+  ---
+  duration_ms: 1.1695
+  type: 'test'
+  ...
+# Subtest: two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+ok 62 - two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+  ---
+  duration_ms: 1.8574
+  type: 'test'
+  ...
+# Subtest: pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+ok 63 - pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+  ---
+  duration_ms: 1.3342
+  type: 'test'
+  ...
+# Subtest: deleting the source during async dispatch creates unlinked native damage without guessing
+ok 64 - deleting the source during async dispatch creates unlinked native damage without guessing
+  ---
+  duration_ms: 0.5216
+  type: 'test'
+  ...
+# Subtest: marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+ok 65 - marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+  ---
+  duration_ms: 2.351
+  type: 'test'
+  ...
+# Subtest: public, GM, blind, self and custom whisper settings keep native audience and content
+ok 66 - public, GM, blind, self and custom whisper settings keep native audience and content
+  ---
+  duration_ms: 2.5466
+  type: 'test'
+  ...
+# Subtest: private source uses a permission-checked reference and never copies its snapshot to public flags
+ok 67 - private source uses a permission-checked reference and never copies its snapshot to public flags
+  ---
+  duration_ms: 1.1321
+  type: 'test'
+  ...
+# Subtest: inaccessible source, Actor permission and cancellation preserve native restrictions
+ok 68 - inaccessible source, Actor permission and cancellation preserve native restrictions
+  ---
+  duration_ms: 0.6111
+  type: 'test'
+  ...
+# Subtest: unrelated messages with identical formula and Actor cannot acquire an in-flight link
+ok 69 - unrelated messages with identical formula and Actor cannot acquire an in-flight link
+  ---
+  duration_ms: 0.6757
+  type: 'test'
+  ...
+# Subtest: native creation failure is not retried; metadata failure never changes the damage result
+ok 70 - native creation failure is not retried; metadata failure never changes the damage result
+  ---
+  duration_ms: 2.2217
+  type: 'test'
+  ...
+# Subtest: install is idempotent and uninstall preserves other wrappers
+ok 71 - install is idempotent and uninstall preserves other wrappers
+  ---
+  duration_ms: 0.3453
+  type: 'test'
+  ...
+# Subtest: adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+ok 72 - adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+  ---
+  duration_ms: 18.2141
+  type: 'test'
+  ...
+# Subtest: effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+ok 73 - effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+  ---
+  duration_ms: 1.882
+  type: 'test'
+  ...
+# Subtest: private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+ok 74 - private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+  ---
+  duration_ms: 1.1867
+  type: 'test'
+  ...
+# Subtest: two Actors and modes keep different transformed native damage through overlapping dispatch
+ok 75 - two Actors and modes keep different transformed native damage through overlapping dispatch
+  ---
+  duration_ms: 2.5074
+  type: 'test'
+  ...
+# Subtest: adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+ok 76 - adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+  ---
+  duration_ms: 3.8677
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot ordinary without changing action or mechanics
+ok 77 - native Damage label uses completed shot ordinary without changing action or mechanics
+  ---
+  duration_ms: 2.6963
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot AP without changing action or mechanics
+ok 78 - native Damage label uses completed shot AP without changing action or mechanics
+  ---
+  duration_ms: 1.8893
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot APHC without changing action or mechanics
+ok 79 - native Damage label uses completed shot APHC without changing action or mechanics
+  ---
+  duration_ms: 1.4008
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot HP without changing action or mechanics
+ok 80 - native Damage label uses completed shot HP without changing action or mechanics
+  ---
+  duration_ms: 1.9231
+  type: 'test'
+  ...
+# Subtest: Damage labels survive magazine changes, chat reopening and serialized reload independently
+ok 81 - Damage labels survive magazine changes, chat reopening and serialized reload independently
+  ---
+  duration_ms: 2.6329
+  type: 'test'
+  ...
+# Subtest: legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+ok 82 - legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+  ---
+  duration_ms: 3.907
+  type: 'test'
+  ...
+# Subtest: blind and whisper label visibility follows current source permissions
+ok 83 - blind and whisper label visibility follows current source permissions
+  ---
+  duration_ms: 0.7299
+  type: 'test'
+  ...
+# Subtest: Damage label is plain text and foreign actions retain their native labels
+ok 84 - Damage label is plain text and foreign actions retain their native labels
+  ---
+  duration_ms: 1.5481
+  type: 'test'
+  ...
+# Subtest: ht_apex has three independent native Damage paths with source identity and no auto effects
+ok 85 - ht_apex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 7.4375
+  type: 'test'
+  ...
+# Subtest: ht_aphex has three independent native Damage paths with source identity and no auto effects
+ok 86 - ht_aphex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 3.5743
+  type: 'test'
+  ...
+# Subtest: secondary B/A/repeat stay immutable after magazine changes and use source permissions
+ok 87 - secondary B/A/repeat stay immutable after magazine changes and use source permissions
+  ---
+  duration_ms: 4.6444
+  type: 'test'
+  ...
+# Subtest: incomplete explosive snapshots block every component instead of silently rolling baseline
+ok 88 - incomplete explosive snapshots block every component instead of silently rolling baseline
+  ---
+  duration_ms: 2.1141
+  type: 'test'
+  ...
+# Subtest: private explosive components keep source-only metadata and reject unauthorized access
+ok 89 - private explosive components keep source-only metadata and reject unauthorized access
+  ---
+  duration_ms: 3.9376
+  type: 'test'
+  ...
+# Subtest: standalone D uses completed shot after source weapon removal and never needs an Actor attack
+ok 90 - standalone D uses completed shot after source weapon removal and never needs an Actor attack
+  ---
+  duration_ms: 0.8878
+  type: 'test'
+  ...
+# Subtest: standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+ok 91 - standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+  ---
+  duration_ms: 1.5756
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: W5biN11nvUhQ00ewl
+ok 92 - reviewed native +P preserves exact projectile: W5biN11nvUhQ00ewl
+  ---
+  duration_ms: 12.405
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WApJkhMAYa4wlXViK
+ok 93 - reviewed native +P preserves exact projectile: WApJkhMAYa4wlXViK
+  ---
+  duration_ms: 3.7642
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WTrwxX4jwWz6xKiPz
+ok 94 - reviewed native +P preserves exact projectile: WTrwxX4jwWz6xKiPz
+  ---
+  duration_ms: 2.8342
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WYmXQkUoq1luUajT-
+ok 95 - reviewed native +P preserves exact projectile: WYmXQkUoq1luUajT-
+  ---
+  duration_ms: 2.9045
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WecVKS0hiwdjXu_uS
+ok 96 - reviewed native +P preserves exact projectile: WecVKS0hiwdjXu_uS
+  ---
+  duration_ms: 3.3622
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WgOt4XUnNzTOpdiAO
+ok 97 - reviewed native +P preserves exact projectile: WgOt4XUnNzTOpdiAO
+  ---
+  duration_ms: 2.9182
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WHsI3V0zdU2TUI6w7
+ok 98 - reviewed native +P preserves exact projectile: WHsI3V0zdU2TUI6w7
+  ---
+  duration_ms: 2.9727
+  type: 'test'
+  ...
+# Subtest: native APHC/HP cannot be deduced from divisor or applied a second time
+ok 99 - native APHC/HP cannot be deduced from divisor or applied a second time
+  ---
+  duration_ms: 3.8475
+  type: 'test'
+  ...
+# Subtest: native HP keeps zero-DR and optional expansion; AS Val retains suppressor without invented subsonic velocity
+ok 100 - native HP keeps zero-DR and optional expansion; AS Val retains suppressor without invented subsonic velocity
+  ---
+  duration_ms: 3.3066
+  type: 'test'
+  ...
+# Subtest: shared cartridge FN pistol and P90 preserve independent immutable snapshots after reload
+ok 101 - shared cartridge FN pistol and P90 preserve independent immutable snapshots after reload
+  ---
+  duration_ms: 29.0696
+  type: 'test'
+  ...
+# Subtest: KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+ok 102 - KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+  ---
+  duration_ms: 3.0001
+  type: 'test'
+  ...
+# Subtest: APS numerical profile is complete but world policy does not confirm individual construction
+ok 103 - APS numerical profile is complete but world policy does not confirm individual construction
+  ---
+  duration_ms: 2.3016
+  type: 'test'
+  ...
+# Subtest: Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge
+ok 104 - Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge
+  ---
+  duration_ms: 0.3841
+  type: 'test'
+  ...
+# Subtest: LeMat shot barrel uses corrected source-backed identity; historical .42 cannot prepare +P
+ok 105 - LeMat shot barrel uses corrected source-backed identity; historical .42 cannot prepare +P
+  ---
+  duration_ms: 1.7081
+  type: 'test'
+  ...
+# Subtest: new G diagnostics resolve in RU and EN locale files
+ok 106 - new G diagnostics resolve in RU and EN locale files
+  ---
+  duration_ms: 14.0007
+  type: 'test'
+  ...
+# Subtest: native G shot consumes one physical round once; changing magazine preserves old shot
+ok 107 - native G shot consumes one physical round once; changing magazine preserves old shot
+  ---
+  duration_ms: 5.8284
+  type: 'test'
+  ...
+# Subtest: 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+ok 108 - 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+  ---
+  duration_ms: 606.5719
+  type: 'test'
+  ...
+# Subtest: restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass
+ok 109 - restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass
+  ---
+  duration_ms: 76.3399
+  type: 'test'
+  ...
+# Subtest: old byte baseline remains valid with both historical HT pointer hashes
+ok 110 - old byte baseline remains valid with both historical HT pointer hashes
+  ---
+  duration_ms: 169.4729
+  type: 'test'
+  ...
+# Subtest: new byte baseline admits exactly the FN BAR Magnum revision 1 correction
+ok 111 - new byte baseline admits exactly the FN BAR Magnum revision 1 correction
+  ---
+  duration_ms: 405.9353
+  type: 'test'
+  ...
+# Subtest: revision 2 admits only HAFLA Acc zero in addition to the approved revision 1
+ok 112 - revision 2 admits only HAFLA Acc zero in addition to the approved revision 1
+  ---
+  duration_ms: 579.3428
+  type: 'test'
+  ...
+# Subtest: old baseline rejects errata bytes and new baseline rejects uncorrected bytes
+ok 113 - old baseline rejects errata bytes and new baseline rejects uncorrected bytes
+  ---
+  duration_ms: 60.6818
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared another original stat
+ok 114 - both contracts reject undeclared another original stat
+  ---
+  duration_ms: 173.3701
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared approved mode other stat
+ok 115 - both contracts reject undeclared approved mode other stat
+  ---
+  duration_ms: 156.5114
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared unapproved Range
+ok 116 - both contracts reject undeclared unapproved Range
+  ---
+  duration_ms: 155.6913
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared equipment ID
+ok 117 - both contracts reject undeclared equipment ID
+  ---
+  duration_ms: 184.3764
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared mode ID
+ok 118 - both contracts reject undeclared mode ID
+  ---
+  duration_ms: 146.9477
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared deleted record
+ok 119 - both contracts reject undeclared deleted record
+  ---
+  duration_ms: 160.6137
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared source GCS hash
+ok 120 - both contracts reject undeclared source GCS hash
+  ---
+  duration_ms: 187.1813
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT filename
+ok 121 - both contracts reject undeclared HT filename
+  ---
+  duration_ms: 151.3673
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT revision
+ok 122 - both contracts reject undeclared HT revision
+  ---
+  duration_ms: 160.4739
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT join key
+ok 123 - both contracts reject undeclared HT join key
+  ---
+  duration_ms: 143.0941
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared errata revision
+ok 124 - both contracts reject undeclared errata revision
+  ---
+  duration_ms: 136.3094
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HAFLA unapproved Acc
+ok 125 - both contracts reject undeclared HAFLA unapproved Acc
+  ---
+  duration_ms: 171.0019
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared extra errata permission
+ok 126 - both contracts reject undeclared extra errata permission
+  ---
+  duration_ms: 182.3539
+  type: 'test'
+  ...
+# Subtest: frozen HT audit files retain their original byte hashes
+ok 127 - frozen HT audit files retain their original byte hashes
+  ---
+  duration_ms: 11.0928
+  type: 'test'
+  ...
+# Subtest: P5 scope matches thirteen audited variants and the structured source review
+ok 128 - P5 scope matches thirteen audited variants and the structured source review
+  ---
+  duration_ms: 14.1037
+  type: 'test'
+  ...
+# Subtest: ht_poison exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 129 - ht_poison exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 3.5704
+  type: 'test'
+  ...
+# Subtest: ht_illumination exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 130 - ht_illumination exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.8756
+  type: 'test'
+  ...
+# Subtest: ht_signal_flare exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 131 - ht_signal_flare exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.577
+  type: 'test'
+  ...
+# Subtest: ht_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 132 - ht_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.679
+  type: 'test'
+  ...
+# Subtest: ht_colored_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 133 - ht_colored_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.3997
+  type: 'test'
+  ...
+# Subtest: ht_hot_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 134 - ht_hot_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.6264
+  type: 'test'
+  ...
+# Subtest: ht_prism_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 135 - ht_prism_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.6137
+  type: 'test'
+  ...
+# Subtest: ht_em_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 136 - ht_em_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.6358
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 137 - ht_tear_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 1.0496
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas_vomit exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 138 - ht_tear_gas_vomit exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 1.4827
+  type: 'test'
+  ...
+# Subtest: ht_liquid exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 139 - ht_liquid exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.9306
+  type: 'test'
+  ...
+# Subtest: ht_poison_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 140 - ht_poison_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 1.22
+  type: 'test'
+  ...
+# Subtest: ht_white_phosphorus exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 141 - ht_white_phosphorus exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.4681
+  type: 'test'
+  ...
+# Subtest: liquid halves damage, quarters range and requires strictly below 500 fps
+ok 142 - liquid halves damage, quarters range and requires strictly below 500 fps
+  ---
+  duration_ms: 0.5186
+  type: 'test'
+  ...
+# Subtest: poison retains common HP conditions, selected dose, cost and prohibits generic automatic-affliction
+ok 143 - poison retains common HP conditions, selected dose, cost and prohibits generic automatic-affliction
+  ---
+  duration_ms: 0.6401
+  type: 'test'
+  ...
+# Subtest: five smokes retain distinct vision and sensor rules with no invented cloud radius
+ok 144 - five smokes retain distinct vision and sensor rules with no invented cloud radius
+  ---
+  duration_ms: 0.7184
+  type: 'test'
+  ...
+# Subtest: illumination and signal are distinct; gas resistances and aftermath use known numbers only
+ok 145 - illumination and signal are distinct; gas resistances and aftermath use known numbers only
+  ---
+  duration_ms: 0.9743
+  type: 'test'
+  ...
+# Subtest: source WP ready under strict policy preserves native blast, fragments, range and source price
+ok 146 - source WP ready under strict policy preserves native blast, fragments, range and source price
+  ---
+  duration_ms: 10.1398
+  type: 'test'
+  ...
+# Subtest: base WP derives immutable shot only; saved recipes reload, switch and native secondary Damage remain stable/private
+ok 147 - base WP derives immutable shot only; saved recipes reload, switch and native secondary Damage remain stable/private
+  ---
+  duration_ms: 5.5854
+  type: 'test'
+  ...
+# Subtest: no bore/TL-only permissions and original excluded grenades/sprays remain excluded
+ok 148 - no bore/TL-only permissions and original excluded grenades/sprays remain excluded
+  ---
+  duration_ms: 29.9109
+  type: 'test'
+  ...
+# Subtest: UI uses localized RU/EN labels; saved WP stock never restores an English-only new label
+ok 149 - UI uses localized RU/EN labels; saved WP stock never restores an English-only new label
+  ---
+  duration_ms: 86.9476
+  type: 'test'
+  ...
+# Subtest: actual locale loader fetches P5 even when prior package translations are cached
+ok 150 - actual locale loader fetches P5 even when prior package translations are cached
+  ---
+  duration_ms: 11.7271
+  type: 'test'
+  ...
+# Subtest: WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+ok 151 - WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+  ---
+  duration_ms: 5.9109
+  type: 'test'
+  ...
+# Subtest: contact burning schedules cap at ten seconds or sixty seconds without automatic Rolls
+ok 152 - contact burning schedules cap at ten seconds or sixty seconds without automatic Rolls
+  ---
+  duration_ms: 0.2211
+  type: 'test'
+  ...
+# Subtest: source WP selected as base refuses incomplete payload before a roll or ammunition spending
+ok 153 - source WP selected as base refuses incomplete payload before a roll or ammunition spending
+  ---
+  duration_ms: 3.7002
+  type: 'test'
+  ...
+# Subtest: liquid supports confirmed solid crushing baseline and refuses existing native divisors/compound effects
+ok 154 - liquid supports confirmed solid crushing baseline and refuses existing native divisors/compound effects
+  ---
+  duration_ms: 1.6401
+  type: 'test'
+  ...
+# Subtest: P4 contains exactly the thirteen audited IDs without changing the other packages
+ok 155 - P4 contains exactly the thirteen audited IDs without changing the other packages
+  ---
+  duration_ms: 7.2907
+  type: 'test'
+  ...
+# Subtest: ht_le numerical contract, TL/caliber, exact payload and no invented construction
+ok 156 - ht_le numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 5.3955
+  type: 'test'
+  ...
+# Subtest: ht_saple numerical contract, TL/caliber, exact payload and no invented construction
+ok 157 - ht_saple numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 1.571
+  type: 'test'
+  ...
+# Subtest: ht_apex numerical contract, TL/caliber, exact payload and no invented construction
+ok 158 - ht_apex numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 1.2759
+  type: 'test'
+  ...
+# Subtest: ht_he numerical contract, TL/caliber, exact payload and no invented construction
+ok 159 - ht_he numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.7514
+  type: 'test'
+  ...
+# Subtest: ht_saphe numerical contract, TL/caliber, exact payload and no invented construction
+ok 160 - ht_saphe numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.6698
+  type: 'test'
+  ...
+# Subtest: ht_saphec numerical contract, TL/caliber, exact payload and no invented construction
+ok 161 - ht_saphec numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.9149
+  type: 'test'
+  ...
+# Subtest: ht_aphex numerical contract, TL/caliber, exact payload and no invented construction
+ok 162 - ht_aphex numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.901
+  type: 'test'
+  ...
+# Subtest: ht_efp numerical contract, TL/caliber, exact payload and no invented construction
+ok 163 - ht_efp numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 1.3934
+  type: 'test'
+  ...
+# Subtest: ht_heat numerical contract, TL/caliber, exact payload and no invented construction
+ok 164 - ht_heat numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 1.1651
+  type: 'test'
+  ...
+# Subtest: ht_hedp numerical contract, TL/caliber, exact payload and no invented construction
+ok 165 - ht_hedp numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.7828
+  type: 'test'
+  ...
+# Subtest: ht_hesh numerical contract, TL/caliber, exact payload and no invented construction
+ok 166 - ht_hesh numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.7178
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat numerical contract, TL/caliber, exact payload and no invented construction
+ok 167 - ht_ms_heat numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.952
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric numerical contract, TL/caliber, exact payload and no invented construction
+ok 168 - ht_thermobaric numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.5907
+  type: 'test'
+  ...
+# Subtest: ht_he actual published round is available under strict policy with immutable native components
+ok 169 - ht_he actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 90.2306
+  type: 'test'
+  ...
+# Subtest: ht_heat actual published round is available under strict policy with immutable native components
+ok 170 - ht_heat actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 132.2376
+  type: 'test'
+  ...
+# Subtest: ht_hedp actual published round is available under strict policy with immutable native components
+ok 171 - ht_hedp actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 111.8803
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat actual published round is available under strict policy with immutable native components
+ok 172 - ht_ms_heat actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 72.1848
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric actual published round is available under strict policy with immutable native components
+ok 173 - ht_thermobaric actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 31.7602
+  type: 'test'
+  ...
+# Subtest: base selections of published complete rounds use their own composite payload without rewriting stocks
+ok 174 - base selections of published complete rounds use their own composite payload without rewriting stocks
+  ---
+  duration_ms: 13.5033
+  type: 'test'
+  ...
+# Subtest: HEDP owns a separate linked blast and fragments; tandem never inherits the base rocket blast
+ok 175 - HEDP owns a separate linked blast and fragments; tandem never inherits the base rocket blast
+  ---
+  duration_ms: 3.0847
+  type: 'test'
+  ...
+# Subtest: published .50 APHEX needs no extra GM approval; prior house recipes retain their identity and policy
+ok 176 - published .50 APHEX needs no extra GM approval; prior house recipes retain their identity and policy
+  ---
+  duration_ms: 2.0894
+  type: 'test'
+  ...
+# Subtest: unsupported named alternates and ordinary bullets cannot turn into arbitrary explosive loads
+ok 177 - unsupported named alternates and ordinary bullets cannot turn into arbitrary explosive loads
+  ---
+  duration_ms: 2.0426
+  type: 'test'
+  ...
+# Subtest: HESH requires known DR and laminated armor; no unsupported armor assumption
+ok 178 - HESH requires known DR and laminated armor; no unsupported armor assumption
+  ---
+  duration_ms: 0.2359
+  type: 'test'
+  ...
+# Subtest: legacy APEX APHEX prices use verified base cost without changing their saved recipe identities
+ok 179 - legacy APEX APHEX prices use verified base cost without changing their saved recipe identities
+  ---
+  duration_ms: 2.8622
+  type: 'test'
+  ...
+# Subtest: SAPLE preserves TL5-6 natural 1d reliability as an explicit GM condition
+ok 180 - SAPLE preserves TL5-6 natural 1d reliability as an explicit GM condition
+  ---
+  duration_ms: 0.6006
+  type: 'test'
+  ...
+# Subtest: unknown cost, contradictory payload relations and known TL cannot be silently resolved
+ok 181 - unknown cost, contradictory payload relations and known TL cannot be silently resolved
+  ---
+  duration_ms: 1.7712
+  type: 'test'
+  ...
+# Subtest: thermobaric falloff uses two distances and cannot assume contact distance; ERA needs explicit data
+ok 182 - thermobaric falloff uses two distances and cannot assume contact distance; ERA needs explicit data
+  ---
+  duration_ms: 0.3202
+  type: 'test'
+  ...
+# Subtest: component buttons use the completed snapshot, maintain privacy, and survive serialization
+ok 183 - component buttons use the completed snapshot, maintain privacy, and survive serialization
+  ---
+  duration_ms: 2.435
+  type: 'test'
+  ...
+# Subtest: one composite shot spends one physical round, repeat Damage and execution do not spend again
+ok 184 - one composite shot spends one physical round, repeat Damage and execution do not spend again
+  ---
+  duration_ms: 5.0894
+  type: 'test'
+  ...
+# Subtest: new P4 RU EN translations load through the loader and every option has a localized label
+ok 185 - new P4 RU EN translations load through the loader and every option has a localized label
+  ---
+  duration_ms: 13.5212
+  type: 'test'
+  ...
+# Subtest: the previous narrow plus P diagnosis remains intact without running auditHTCoverage
+ok 186 - the previous narrow plus P diagnosis remains intact without running auditHTCoverage
+  ---
+  duration_ms: 8.2096
+  type: 'test'
+  ...
+# Subtest: HAFLA source, draft snapshot and ordinary standalone attack preserve known Acc zero
+ok 187 - HAFLA source, draft snapshot and ordinary standalone attack preserve known Acc zero
+  ---
+  duration_ms: 4.6134
+  type: 'test'
+  ...
+# Subtest: Acc zero Aim 0/1/2/3 uses the shared fire service and effective skill pipeline
+ok 188 - Acc zero Aim 0/1/2/3 uses the shared fire service and effective skill pipeline
+  ---
+  duration_ms: 4.4953
+  type: 'test'
+  ...
+# Subtest: unknown Acc remains unknown and positive Acc/caps/Move and Attack remain unchanged
+ok 189 - unknown Acc remains unknown and positive Acc/caps/Move and Attack remain unchanged
+  ---
+  duration_ms: 0.2685
+  type: 'test'
+  ...
+# Subtest: source errata is exactly HAFLA null to zero; all other weapon stats/IDs/hashes stay unchanged
+ok 190 - source errata is exactly HAFLA null to zero; all other weapon stats/IDs/hashes stay unchanged
+  ---
+  duration_ms: 757.8026
+  type: 'test'
+  ...
+# Subtest: WP recipe identity, native Damage/range and existing GM hints are untouched by accuracy errata
+ok 191 - WP recipe identity, native Damage/range and existing GM hints are untouched by accuracy errata
+  ---
+  duration_ms: 9.0599
+  type: 'test'
+  ...
+# Subtest: batch contains exactly the twelve reviewed P2 IDs; pure DU predicates match catalog contracts
+ok 192 - batch contains exactly the twelve reviewed P2 IDs; pure DU predicates match catalog contracts
+  ---
+  duration_ms: 9.4646
+  type: 'test'
+  ...
+# Subtest: ht_hollow_point uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 193 - ht_hollow_point uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 1.6886
+  type: 'test'
+  ...
+# Subtest: ht_ap uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 194 - ht_ap uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.4632
+  type: 'test'
+  ...
+# Subtest: ht_aphc uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 195 - ht_aphc uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.178
+  type: 'test'
+  ...
+# Subtest: ht_frangible uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 196 - ht_frangible uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.4515
+  type: 'test'
+  ...
+# Subtest: ht_apds uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 197 - ht_apds uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.2927
+  type: 'test'
+  ...
+# Subtest: ht_apfsds uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 198 - ht_apfsds uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.2155
+  type: 'test'
+  ...
+# Subtest: ht_sapfsds uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 199 - ht_sapfsds uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.1904
+  type: 'test'
+  ...
+# Subtest: ht_apdu uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 200 - ht_apdu uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 1.3343
+  type: 'test'
+  ...
+# Subtest: ht_apdsdu uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 201 - ht_apdsdu uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.8794
+  type: 'test'
+  ...
+# Subtest: ht_apfsdsdu uses HT166 bands, exact divisor/piercing, both ranges and CPS
+ok 202 - ht_apfsdsdu uses HT166 bands, exact divisor/piercing, both ranges and CPS
+  ---
+  duration_ms: 0.2942
+  type: 'test'
+  ...
+# Subtest: ht_solid preserves the actual native formula, divisor, costs and compound effects without a second transform
+ok 203 - ht_solid preserves the actual native formula, divisor, costs and compound effects without a second transform
+  ---
+  duration_ms: 0.2005
+  type: 'test'
+  ...
+# Subtest: ht_underwater_dart preserves the exact APS native projectile and multiplies underwater distance only
+ok 204 - ht_underwater_dart preserves the exact APS native projectile and multiplies underwater distance only
+  ---
+  duration_ms: 2.7131
+  type: 'test'
+  ...
+# Subtest: DU caliber boundaries and APFSDSDU piercing differ from ordinary APFSDS
+ok 205 - DU caliber boundaries and APFSDSDU piercing differ from ordinary APFSDS
+  ---
+  duration_ms: 23.2491
+  type: 'test'
+  ...
+# Subtest: DU availability TL, separate design evidence and platforms remain real predicates
+ok 206 - DU availability TL, separate design evidence and platforms remain real predicates
+  ---
+  duration_ms: 0.8179
+  type: 'test'
+  ...
+# Subtest: DU guards reject native divisors, inc, effects, journals and mixed projectile layers
+ok 207 - DU guards reject native divisors, inc, effects, journals and mixed projectile layers
+  ---
+  duration_ms: 1.5926
+  type: 'test'
+  ...
+# Subtest: DU ignition distinguishes original DR 9/10/11, flexible armor and proven penetration without inc dice
+ok 208 - DU ignition distinguishes original DR 9/10/11, flexible armor and proven penetration without inc dice
+  ---
+  duration_ms: 0.4686
+  type: 'test'
+  ...
+# Subtest: scoped DU GM proof admits only the attested physical design; world policy cannot supply it
+ok 209 - scoped DU GM proof admits only the attested physical design; world policy cannot supply it
+  ---
+  duration_ms: 23.1875
+  type: 'test'
+  ...
+# Subtest: existing GM approval service validates and persists DU evidence, rejects non-GM and source conflicts
+ok 210 - existing GM approval service validates and persists DU evidence, rejects non-GM and source conflicts
+  ---
+  duration_ms: 2.9258
+  type: 'test'
+  ...
+# Subtest: DU stock, separate magazine, immutable snapshot, one spend and reload use existing AmmoService
+ok 211 - DU stock, separate magazine, immutable snapshot, one spend and reload use existing AmmoService
+  ---
+  duration_ms: 7.1579
+  type: 'test'
+  ...
+# Subtest: existing APDS recipe identity remains valid after adding CPS support
+ok 212 - existing APDS recipe identity remains valid after adding CPS support
+  ---
+  duration_ms: 1.6571
+  type: 'test'
+  ...
+# Subtest: DU UI describes refusals and GM conditions in RU/EN without presenting service keys
+ok 213 - DU UI describes refusals and GM conditions in RU/EN without presenting service keys
+  ---
+  duration_ms: 11.4368
+  type: 'test'
+  ...
+# Subtest: real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+ok 214 - real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+  ---
+  duration_ms: 168.2762
+  type: 'test'
+  ...
+# Subtest: DU attestation cannot overcome explicit prohibition, native effects or contradictory platform
+ok 215 - DU attestation cannot overcome explicit prohibition, native effects or contradictory platform
+  ---
+  duration_ms: 0.9704
+  type: 'test'
+  ...
+# Subtest: unknown CPS stays unknown and supplied price is multiplied only in the immutable result
+ok 216 - unknown CPS stays unknown and supplied price is multiplied only in the immutable result
+  ---
+  duration_ms: 0.4899
+  type: 'test'
+  ...
+# Subtest: P3 contains all thirteen source-reviewed IDs and no other package
+ok 217 - P3 contains all thirteen source-reviewed IDs and no other package
+  ---
+  duration_ms: 13.2872
+  type: 'test'
+  ...
+# Subtest: ht_rifled_slug requires an exact design, suitable platform, TL and matching chamber
+ok 218 - ht_rifled_slug requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 4.4314
+  type: 'test'
+  ...
+# Subtest: ht_baton requires an exact design, suitable platform, TL and matching chamber
+ok 219 - ht_baton requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.9506
+  type: 'test'
+  ...
+# Subtest: ht_beanbag requires an exact design, suitable platform, TL and matching chamber
+ok 220 - ht_beanbag requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 1.0829
+  type: 'test'
+  ...
+# Subtest: ht_canister requires an exact design, suitable platform, TL and matching chamber
+ok 221 - ht_canister requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 1.0448
+  type: 'test'
+  ...
+# Subtest: ht_shotshell requires an exact design, suitable platform, TL and matching chamber
+ok 222 - ht_shotshell requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.8418
+  type: 'test'
+  ...
+# Subtest: ht_buck_and_ball requires an exact design, suitable platform, TL and matching chamber
+ok 223 - ht_buck_and_ball requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.5284
+  type: 'test'
+  ...
+# Subtest: ht_shrapnel requires an exact design, suitable platform, TL and matching chamber
+ok 224 - ht_shrapnel requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.4761
+  type: 'test'
+  ...
+# Subtest: ht_duplex requires an exact design, suitable platform, TL and matching chamber
+ok 225 - ht_duplex requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.7285
+  type: 'test'
+  ...
+# Subtest: ht_triplex requires an exact design, suitable platform, TL and matching chamber
+ok 226 - ht_triplex requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.8705
+  type: 'test'
+  ...
+# Subtest: ht_beehive requires an exact design, suitable platform, TL and matching chamber
+ok 227 - ht_beehive requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.4978
+  type: 'test'
+  ...
+# Subtest: ht_multi_flechette requires an exact design, suitable platform, TL and matching chamber
+ok 228 - ht_multi_flechette requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.456
+  type: 'test'
+  ...
+# Subtest: ht_rubber_shot requires an exact design, suitable platform, TL and matching chamber
+ok 229 - ht_rubber_shot requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.4208
+  type: 'test'
+  ...
+# Subtest: ht_abf requires an exact design, suitable platform, TL and matching chamber
+ok 230 - ht_abf requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.318
+  type: 'test'
+  ...
+# Subtest: slug converts the exact buckshot source, keeps confirmed recoil and removes pellets
+ok 231 - slug converts the exact buckshot source, keeps confirmed recoil and removes pellets
+  ---
+  duration_ms: 3.54
+  type: 'test'
+  ...
+# Subtest: exact source Condor native slug is preserved and a different weapon cannot inherit its data
+ok 232 - exact source Condor native slug is preserved and a different weapon cannot inherit its data
+  ---
+  duration_ms: 7.6163
+  type: 'test'
+  ...
+# Subtest: ht_baton starts with slug, uses HT166 and exact Acc/knockback threshold
+ok 233 - ht_baton starts with slug, uses HT166 and exact Acc/knockback threshold
+  ---
+  duration_ms: 1.3459
+  type: 'test'
+  ...
+# Subtest: ht_beanbag starts with slug, uses HT166 and exact Acc/knockback threshold
+ok 234 - ht_beanbag starts with slug, uses HT166 and exact Acc/knockback threshold
+  ---
+  duration_ms: 1.2224
+  type: 'test'
+  ...
+# Subtest: ht_duplex separates element RoF from physical rounds and never applies B409
+ok 235 - ht_duplex separates element RoF from physical rounds and never applies B409
+  ---
+  duration_ms: 0.6659
+  type: 'test'
+  ...
+# Subtest: ht_triplex separates element RoF from physical rounds and never applies B409
+ok 236 - ht_triplex separates element RoF from physical rounds and never applies B409
+  ---
+  duration_ms: 0.4152
+  type: 'test'
+  ...
+# Subtest: ht_shotshell shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 237 - ht_shotshell shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 1.6647
+  type: 'test'
+  ...
+# Subtest: ht_canister shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 238 - ht_canister shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 1.222
+  type: 'test'
+  ...
+# Subtest: ht_multi_flechette shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 239 - ht_multi_flechette shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 1.102
+  type: 'test'
+  ...
+# Subtest: ht_rubber_shot shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 240 - ht_rubber_shot shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 1.1768
+  type: 'test'
+  ...
+# Subtest: shotshell table distinguishes buckshot/birdshot/smallshot and never fills unlisted diameter gaps
+ok 241 - shotshell table distinguishes buckshot/birdshot/smallshot and never fills unlisted diameter gaps
+  ---
+  duration_ms: 1.0944
+  type: 'test'
+  ...
+# Subtest: buck-and-ball keeps unequal components, first ball/later pellets and manual allocation
+ok 242 - buck-and-ball keeps unequal components, first ball/later pellets and manual allocation
+  ---
+  duration_ms: 0.6355
+  type: 'test'
+  ...
+# Subtest: ht_shrapnel preserves only an attested published native effect and explicit GM burst
+ok 243 - ht_shrapnel preserves only an attested published native effect and explicit GM burst
+  ---
+  duration_ms: 1.0017
+  type: 'test'
+  ...
+# Subtest: ht_beehive preserves only an attested published native effect and explicit GM burst
+ok 244 - ht_beehive preserves only an attested published native effect and explicit GM burst
+  ---
+  duration_ms: 0.7649
+  type: 'test'
+  ...
+# Subtest: ht_abf preserves only an attested published native effect and explicit GM burst
+ok 245 - ht_abf preserves only an attested published native effect and explicit GM burst
+  ---
+  duration_ms: 0.6346
+  type: 'test'
+  ...
+# Subtest: B409 strict fractional boundary uses current half-D and only eligible shot; native DR scaling once
+ok 246 - B409 strict fractional boundary uses current half-D and only eligible shot; native DR scaling once
+  ---
+  duration_ms: 0.4282
+  type: 'test'
+  ...
+# Subtest: scoped GM load is admitted without changing official undetermined or allowing world policy to invent it
+ok 247 - scoped GM load is admitted without changing official undetermined or allowing world policy to invent it
+  ---
+  duration_ms: 11.0593
+  type: 'test'
+  ...
+# Subtest: GM recipe identity separates NP, dimensions and burst data; old stock and immutable snapshot survive reload
+ok 248 - GM recipe identity separates NP, dimensions and burst data; old stock and immutable snapshot survive reload
+  ---
+  duration_ms: 6.4102
+  type: 'test'
+  ...
+# Subtest: existing GM approval service validates the individual definition and revokes without altering stock
+ok 249 - existing GM approval service validates the individual definition and revokes without altering stock
+  ---
+  duration_ms: 2.5616
+  type: 'test'
+  ...
+# Subtest: new RU/EN controls actually load, show all thirteen labels and keep GM conditions closed
+ok 250 - new RU/EN controls actually load, show all thirteen labels and keep GM conditions closed
+  ---
+  duration_ms: 20.3293
+  type: 'test'
+  ...
+# Subtest: native load guards validate count, type, divisor, recoil and beanbag Acc without a second transformation
+ok 251 - native load guards validate count, type, divisor, recoil and beanbag Acc without a second transformation
+  ---
+  duration_ms: 3.7136
+  type: 'test'
+  ...
+# Subtest: non-shotgun baton and beanbag use confirmed solid impact, not explosive or arbitrary native source
+ok 252 - non-shotgun baton and beanbag use confirmed solid impact, not explosive or arbitrary native source
+  ---
+  duration_ms: 1.1747
+  type: 'test'
+  ...
+# Subtest: solid impact is selectable in the existing GM control and native dkb is never doubled again
+ok 253 - solid impact is selectable in the existing GM control and native dkb is never doubled again
+  ---
+  duration_ms: 0.9899
+  type: 'test'
+  ...
+# Subtest: approved rubber load is available through the existing window; NP recipes remain distinct and known caliber cannot change
+ok 254 - approved rubber load is available through the existing window; NP recipes remain distinct and known caliber cannot change
+  ---
+  duration_ms: 88.1783
+  type: 'test'
+  ...
+# Subtest: bounded plus-P evidence proves the 86 additions, preserves old 284 and does not call the general audit
+ok 255 - bounded plus-P evidence proves the 86 additions, preserves old 284 and does not call the general audit
+  ---
+  duration_ms: 5.4979
+  type: 'test'
+  ...
+# Subtest: saved compound native load remains unavailable and explains the actual reason in RU and EN
+ok 256 - saved compound native load remains unavailable and explains the actual reason in RU and EN
+  ---
+  duration_ms: 65.3814
+  type: 'test'
+  ...
+# Subtest: precise skill parsing preserves family, specialization, TL and LAW alias
+ok 257 - precise skill parsing preserves family, specialization, TL and LAW alias
+  ---
+  duration_ms: 2.0439
+  type: 'test'
+  ...
+# Subtest: exact learned catalog skill wins; imported skill level is refreshed on every read
+ok 258 - exact learned catalog skill wins; imported skill level is refreshed on every read
+  ---
+  duration_ms: 4.8231
+  type: 'test'
+  ...
+# Subtest: Rifle/TL8 14 defaults to LAW/TL8 10 using the exact LAW mode, not Artillery
+ok 259 - Rifle/TL8 14 defaults to LAW/TL8 10 using the exact LAW mode, not Artillery
+  ---
+  duration_ms: 1.1514
+  type: 'test'
+  ...
+# Subtest: best of all directed learned defaults and attribute default is selected without capping learned skill at 20
+ok 260 - best of all directed learned defaults and attribute default is selected without capping learned skill at 20
+  ---
+  duration_ms: 1.0424
+  type: 'test'
+  ...
+# Subtest: attribute defaults obey Rule of 20 and never fabricate an absent attribute
+ok 261 - attribute defaults obey Rule of 20 and never fabricate an absent attribute
+  ---
+  duration_ms: 1.0796
+  type: 'test'
+  ...
+# Subtest: zero-point skills and default chains are not learned default sources
+ok 262 - zero-point skills and default chains are not learned default sources
+  ---
+  duration_ms: 1.1741
+  type: 'test'
+  ...
+# Subtest: different families and unknown TL do not produce guessed transitions
+ok 263 - different families and unknown TL do not produce guessed transitions
+  ---
+  duration_ms: 0.8804
+  type: 'test'
+  ...
+# Subtest: cross-TL DX defaults use B168 penalty; no skill or weapon is blocked by TL
+ok 264 - cross-TL DX defaults use B168 penalty; no skill or weapon is blocked by TL
+  ---
+  duration_ms: 0.8401
+  type: 'test'
+  ...
+# Subtest: directed IQ-based Artillery defaults retain distinct higher and lower TL penalties
+ok 265 - directed IQ-based Artillery defaults retain distinct higher and lower TL penalties
+  ---
+  duration_ms: 0.6177
+  type: 'test'
+  ...
+# Subtest: manual unknown skill can use only exact learned identity; unknown defaults remain unresolved
+ok 266 - manual unknown skill can use only exact learned identity; unknown defaults remain unresolved
+  ---
+  duration_ms: 0.6558
+  type: 'test'
+  ...
+# Subtest: melee modes use their own governing skill and directed defaults; no magazines are involved
+ok 267 - melee modes use their own governing skill and directed defaults; no magazines are involved
+  ---
+  duration_ms: 3.0103
+  type: 'test'
+  ...
+# Subtest: learned technique improvements are rejected centrally but default combat actions remain
+ok 268 - learned technique improvements are rejected centrally but default combat actions remain
+  ---
+  duration_ms: 1.0314
+  type: 'test'
+  ...
+# Subtest: Quick-Shot, Close-Hip and Targeted Attack do not transfer to unlearned target skill
+ok 269 - Quick-Shot, Close-Hip and Targeted Attack do not transfer to unlearned target skill
+  ---
+  duration_ms: 2.6854
+  type: 'test'
+  ...
+# Subtest: module-owned profiles are immutable and native Damage does not need Actor ranged/melee entries
+ok 270 - module-owned profiles are immutable and native Damage does not need Actor ranged/melee entries
+  ---
+  duration_ms: 27.8116
+  type: 'test'
+  ...
+# Subtest: catalog binding verifies model/mode relation; absent catalogs are not falsely confirmed
+ok 271 - catalog binding verifies model/mode relation; absent catalogs are not falsely confirmed
+  ---
+  duration_ms: 0.8588
+  type: 'test'
+  ...
+# Subtest: unmanaged real attacks produce receipts and completed snapshots without inventing or consuming rounds
+ok 272 - unmanaged real attacks produce receipts and completed snapshots without inventing or consuming rounds
+  ---
+  duration_ms: 2.7131
+  type: 'test'
+  ...
+# Subtest: native damage readiness accepts one supported formula and blocks unresolved or compound damage
+ok 273 - native damage readiness accepts one supported formula and blocks unresolved or compound damage
+  ---
+  duration_ms: 1.2267
+  type: 'test'
+  ...
+# Subtest: shared melee prepared adapter keeps native template, bucket modifiers, telegraphic critical limit and privacy
+ok 274 - shared melee prepared adapter keeps native template, bucket modifiers, telegraphic critical limit and privacy
+  ---
+  duration_ms: 2.6204
+  type: 'test'
+  ...
+# Subtest: standalone physical shot spends once; switching AP magazines preserves totals and immutable baseline damage
+ok 275 - standalone physical shot spends once; switching AP magazines preserves totals and immutable baseline damage
+  ---
+  duration_ms: 11.0643
+  type: 'test'
+  ...
+1..275
+# tests 275
+# suites 0
+# pass 275
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3653.4711

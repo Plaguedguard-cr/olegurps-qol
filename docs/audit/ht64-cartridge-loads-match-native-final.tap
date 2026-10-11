@@ -1,0 +1,130 @@
+TAP version 13
+# Subtest: Match confirmed factory family on Wxm8TWSvu5UFTAaDn
+ok 1 - Match confirmed factory family on Wxm8TWSvu5UFTAaDn
+  ---
+  duration_ms: 6.4978
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on WUUPXVnYQI61MZ71z
+ok 2 - Match confirmed factory family on WUUPXVnYQI61MZ71z
+  ---
+  duration_ms: 1.4909
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on Wn6vWZmf30XK2i2l6
+ok 3 - Match confirmed factory family on Wn6vWZmf30XK2i2l6
+  ---
+  duration_ms: 1.0848
+  type: 'test'
+  ...
+# Subtest: Match floor, maximum +1, scope preserved, and bonus only through existing Aim
+ok 4 - Match floor, maximum +1, scope preserved, and bonus only through existing Aim
+  ---
+  duration_ms: 0.4534
+  type: 'test'
+  ...
+# Subtest: Match automatic, +P and unsuitable projectiles prohibited; unknown factory or handload proof stays unknown
+ok 5 - Match automatic, +P and unsuitable projectiles prohibited; unknown factory or handload proof stays unknown
+  ---
+  duration_ms: 0.7524
+  type: 'test'
+  ...
+# Subtest: Match guard preserves raw source, rejects unknown Acc and tampered saved rule, and applies once
+ok 6 - Match guard preserves raw source, rejects unknown Acc and tampered saved rule, and applies once
+  ---
+  duration_ms: 4.3538
+  type: 'test'
+  ...
+# Subtest: Match stock, Fire Control Acc, reload and repeated native Damage use historical snapshot without double spend
+ok 7 - Match stock, Fire Control Acc, reload and repeated native Damage use historical snapshot without double spend
+  ---
+  duration_ms: 64.7034
+  type: 'test'
+  ...
+# Subtest: P1 all six catalogue contracts and source mechanics remain unchanged
+ok 8 - P1 all six catalogue contracts and source mechanics remain unchanged
+  ---
+  duration_ms: 0.8043
+  type: 'test'
+  ...
+# Subtest: handloaded arithmetic floor/cap two preserves scope and original damage; factory Match remains cap one
+ok 9 - handloaded arithmetic floor/cap two preserves scope and original damage; factory Match remains cap one
+  ---
+  duration_ms: 6.7323
+  type: 'test'
+  ...
+# Subtest: handload cannot cross identical-model gun, actor, mode or ammo identities
+ok 10 - handload cannot cross identical-model gun, actor, mode or ammo identities
+  ---
+  duration_ms: 0.3471
+  type: 'test'
+  ...
+# Subtest: handload requires both actually confirmed successful skill checks and real batch evidence
+ok 11 - handload requires both actually confirmed successful skill checks and real batch evidence
+  ---
+  duration_ms: 0.2434
+  type: 'test'
+  ...
+# Subtest: handload native accuracy and immutable journal cannot apply the personal bonus twice
+ok 12 - handload native accuracy and immutable journal cannot apply the personal bonus twice
+  ---
+  duration_ms: 0.2342
+  type: 'test'
+  ...
+# Subtest: Match general manual/single-shot/revolver/bolt actions and HP/AP/APHC preserve native Damage without reapplication
+ok 13 - Match general manual/single-shot/revolver/bolt actions and HP/AP/APHC preserve native Damage without reapplication
+  ---
+  duration_ms: 0.7753
+  type: 'test'
+  ...
+# Subtest: Silent confirmed captive-piston fixture preserves source ballistic stats; exact Hearing table not universal modifier
+ok 14 - Silent confirmed captive-piston fixture preserves source ballistic stats; exact Hearing table not universal modifier
+  ---
+  duration_ms: 0.2727
+  type: 'test'
+  ...
+# Subtest: no real handloaded or Silent batch is fabricated from factory Match or permissive policy
+ok 15 - no real handloaded or Silent batch is fabricated from factory Match or permissive policy
+  ---
+  duration_ms: 1.7849
+  type: 'test'
+  ...
+# Subtest: legacy +P policy list is frozen; neither GM approval nor policy admits a new unproven pair
+ok 16 - legacy +P policy list is frozen; neither GM approval nor policy admits a new unproven pair
+  ---
+  duration_ms: 4.2152
+  type: 'test'
+  ...
+# Subtest: saved +P recipe and source stats stay unchanged; Subsonic classes/native exclusions and snapshot survive reload
+ok 17 - saved +P recipe and source stats stay unchanged; Subsonic classes/native exclusions and snapshot survive reload
+  ---
+  duration_ms: 6.115
+  type: 'test'
+  ...
+# Subtest: new +P source combination cannot roll from copied legacy recipe or old GM approval without pressure proof
+ok 18 - new +P source combination cannot roll from copied legacy recipe or old GM approval without pressure proof
+  ---
+  duration_ms: 2.3124
+  type: 'test'
+  ...
+# Subtest: P1 shared AmmoService spends once and repeat attack/reload retain old snapshot
+ok 19 - P1 shared AmmoService spends once and repeat attack/reload retain old snapshot
+  ---
+  duration_ms: 3.6912
+  type: 'test'
+  ...
+# Subtest: P1 new labels and reason keys have exact RU/EN parity and real unavailable UI choices
+ok 20 - P1 new labels and reason keys have exact RU/EN parity and real unavailable UI choices
+  ---
+  duration_ms: 57.8805
+  type: 'test'
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 330.8731

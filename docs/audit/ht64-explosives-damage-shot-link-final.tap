@@ -1,0 +1,244 @@
+TAP version 13
+# Subtest: P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+ok 1 - P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+  ---
+  duration_ms: 6.9838
+  type: 'test'
+  ...
+# Subtest: DU historical native Damage survives reload and current design/weapon changes without ignition dice
+ok 2 - DU historical native Damage survives reload and current design/weapon changes without ignition dice
+  ---
+  duration_ms: 1.282
+  type: 'test'
+  ...
+# Subtest: historical LeMat .42 central snapshot retains native Damage after physical identity correction
+ok 3 - historical LeMat .42 central snapshot retains native Damage after physical identity correction
+  ---
+  duration_ms: 0.5876
+  type: 'test'
+  ...
+# Subtest: embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+ok 4 - embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+  ---
+  duration_ms: 0.4994
+  type: 'test'
+  ...
+# Subtest: P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+ok 5 - P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+  ---
+  duration_ms: 1.6426
+  type: 'test'
+  ...
+# Subtest: A and B Damage in reverse order use their own shots after magazine and last-roll changes
+ok 6 - A and B Damage in reverse order use their own shots after magazine and last-roll changes
+  ---
+  duration_ms: 1.5643
+  type: 'test'
+  ...
+# Subtest: repeat Damage creates independent events for the same source, including a reused event object
+ok 7 - repeat Damage creates independent events for the same source, including a reused event object
+  ---
+  duration_ms: 0.9738
+  type: 'test'
+  ...
+# Subtest: interleaved native awaits keep two actors and modes independent and use the clicked Actor
+ok 8 - interleaved native awaits keep two actors and modes independent and use the clicked Actor
+  ---
+  duration_ms: 0.8672
+  type: 'test'
+  ...
+# Subtest: native multiple/combine dialog captures source before its first await and DOM event cleanup
+ok 9 - native multiple/combine dialog captures source before its first await and DOM event cleanup
+  ---
+  duration_ms: 0.7411
+  type: 'test'
+  ...
+# Subtest: two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+ok 10 - two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+  ---
+  duration_ms: 0.942
+  type: 'test'
+  ...
+# Subtest: pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+ok 11 - pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+  ---
+  duration_ms: 0.7572
+  type: 'test'
+  ...
+# Subtest: deleting the source during async dispatch creates unlinked native damage without guessing
+ok 12 - deleting the source during async dispatch creates unlinked native damage without guessing
+  ---
+  duration_ms: 0.297
+  type: 'test'
+  ...
+# Subtest: marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+ok 13 - marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+  ---
+  duration_ms: 0.9168
+  type: 'test'
+  ...
+# Subtest: public, GM, blind, self and custom whisper settings keep native audience and content
+ok 14 - public, GM, blind, self and custom whisper settings keep native audience and content
+  ---
+  duration_ms: 1.2453
+  type: 'test'
+  ...
+# Subtest: private source uses a permission-checked reference and never copies its snapshot to public flags
+ok 15 - private source uses a permission-checked reference and never copies its snapshot to public flags
+  ---
+  duration_ms: 0.5962
+  type: 'test'
+  ...
+# Subtest: inaccessible source, Actor permission and cancellation preserve native restrictions
+ok 16 - inaccessible source, Actor permission and cancellation preserve native restrictions
+  ---
+  duration_ms: 0.3088
+  type: 'test'
+  ...
+# Subtest: unrelated messages with identical formula and Actor cannot acquire an in-flight link
+ok 17 - unrelated messages with identical formula and Actor cannot acquire an in-flight link
+  ---
+  duration_ms: 0.3602
+  type: 'test'
+  ...
+# Subtest: native creation failure is not retried; metadata failure never changes the damage result
+ok 18 - native creation failure is not retried; metadata failure never changes the damage result
+  ---
+  duration_ms: 0.7982
+  type: 'test'
+  ...
+# Subtest: install is idempotent and uninstall preserves other wrappers
+ok 19 - install is idempotent and uninstall preserves other wrappers
+  ---
+  duration_ms: 0.1377
+  type: 'test'
+  ...
+# Subtest: adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+ok 20 - adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+  ---
+  duration_ms: 7.4578
+  type: 'test'
+  ...
+# Subtest: effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+ok 21 - effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+  ---
+  duration_ms: 0.9884
+  type: 'test'
+  ...
+# Subtest: private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+ok 22 - private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+  ---
+  duration_ms: 0.4602
+  type: 'test'
+  ...
+# Subtest: two Actors and modes keep different transformed native damage through overlapping dispatch
+ok 23 - two Actors and modes keep different transformed native damage through overlapping dispatch
+  ---
+  duration_ms: 0.8567
+  type: 'test'
+  ...
+# Subtest: adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+ok 24 - adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+  ---
+  duration_ms: 0.7687
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot ordinary without changing action or mechanics
+ok 25 - native Damage label uses completed shot ordinary without changing action or mechanics
+  ---
+  duration_ms: 0.6002
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot AP without changing action or mechanics
+ok 26 - native Damage label uses completed shot AP without changing action or mechanics
+  ---
+  duration_ms: 0.4735
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot APHC without changing action or mechanics
+ok 27 - native Damage label uses completed shot APHC without changing action or mechanics
+  ---
+  duration_ms: 0.4317
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot HP without changing action or mechanics
+ok 28 - native Damage label uses completed shot HP without changing action or mechanics
+  ---
+  duration_ms: 0.7411
+  type: 'test'
+  ...
+# Subtest: Damage labels survive magazine changes, chat reopening and serialized reload independently
+ok 29 - Damage labels survive magazine changes, chat reopening and serialized reload independently
+  ---
+  duration_ms: 1.1374
+  type: 'test'
+  ...
+# Subtest: legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+ok 30 - legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+  ---
+  duration_ms: 2.6543
+  type: 'test'
+  ...
+# Subtest: blind and whisper label visibility follows current source permissions
+ok 31 - blind and whisper label visibility follows current source permissions
+  ---
+  duration_ms: 0.7527
+  type: 'test'
+  ...
+# Subtest: Damage label is plain text and foreign actions retain their native labels
+ok 32 - Damage label is plain text and foreign actions retain their native labels
+  ---
+  duration_ms: 0.6601
+  type: 'test'
+  ...
+# Subtest: ht_apex has three independent native Damage paths with source identity and no auto effects
+ok 33 - ht_apex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 2.1953
+  type: 'test'
+  ...
+# Subtest: ht_aphex has three independent native Damage paths with source identity and no auto effects
+ok 34 - ht_aphex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 2.6114
+  type: 'test'
+  ...
+# Subtest: secondary B/A/repeat stay immutable after magazine changes and use source permissions
+ok 35 - secondary B/A/repeat stay immutable after magazine changes and use source permissions
+  ---
+  duration_ms: 1.125
+  type: 'test'
+  ...
+# Subtest: incomplete explosive snapshots block every component instead of silently rolling baseline
+ok 36 - incomplete explosive snapshots block every component instead of silently rolling baseline
+  ---
+  duration_ms: 0.5712
+  type: 'test'
+  ...
+# Subtest: private explosive components keep source-only metadata and reject unauthorized access
+ok 37 - private explosive components keep source-only metadata and reject unauthorized access
+  ---
+  duration_ms: 0.9072
+  type: 'test'
+  ...
+# Subtest: standalone D uses completed shot after source weapon removal and never needs an Actor attack
+ok 38 - standalone D uses completed shot after source weapon removal and never needs an Actor attack
+  ---
+  duration_ms: 0.4103
+  type: 'test'
+  ...
+# Subtest: standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+ok 39 - standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+  ---
+  duration_ms: 0.7581
+  type: 'test'
+  ...
+1..39
+# tests 39
+# suites 0
+# pass 39
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 129.5008

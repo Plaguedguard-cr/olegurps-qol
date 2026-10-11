@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: DU historical native Damage survives reload and current design/weapon changes without ignition dice
+ok 1 - DU historical native Damage survives reload and current design/weapon changes without ignition dice
+  ---
+  duration_ms: 6.4757
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 90.9176

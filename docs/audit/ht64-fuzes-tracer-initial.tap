@@ -1,0 +1,144 @@
+TAP version 13
+# Subtest: P6 scope matches all four source-reviewed IDs and unchanged mechanics/eligibility
+ok 1 - P6 scope matches all four source-reviewed IDs and unchanged mechanics/eligibility
+  ---
+  duration_ms: 8.325
+  type: 'test'
+  ...
+# Subtest: ht_airburst general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 2 - ht_airburst general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 2.7081
+  type: 'test'
+  ...
+# Subtest: ht_incendiary general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 3 - ht_incendiary general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 0.7044
+  type: 'test'
+  ...
+# Subtest: ht_self_destruct general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 4 - ht_self_destruct general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 0.4428
+  type: 'test'
+  ...
+# Subtest: ht_tracer general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 5 - ht_tracer general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 0.2841
+  type: 'test'
+  ...
+# Subtest: Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 area +4 only
+ok 6 - Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 area +4 only
+  ---
+  duration_ms: 1.4756
+  type: 'test'
+  ...
+# Subtest: Airburst native Shrapnel/Beehive/ABF cannot be upgraded again
+ok 7 - Airburst native Shrapnel/Beehive/ABF cannot be upgraded again
+  ---
+  duration_ms: 0.2703
+  type: 'test'
+  ...
+# Subtest: Airburst shared Fire Control channel adds bonus once and point choice removes it
+not ok 8 - Airburst shared Fire Control channel adds bonus once and point choice removes it
+  ---
+  duration_ms: 4.4151
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-fuzes-tracer-batch.test.mjs:72:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    0 !== 1
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-fuzes-tracer-batch.test.mjs:80:49)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Airburst completed miss stores MoF squared only for applicable attack, preserves primary/fragments
+ok 9 - Airburst completed miss stores MoF squared only for applicable attack, preserves primary/fragments
+  ---
+  duration_ms: 1.0533
+  type: 'test'
+  ...
+# Subtest: Incendiary adds inc once, no extra damage component or auto ignition
+ok 10 - Incendiary adds inc once, no extra damage component or auto ignition
+  ---
+  duration_ms: 0.6907
+  type: 'test'
+  ...
+# Subtest: Self-Destruct requires TL6 and design, stores exact source distance without guessing half damage
+ok 11 - Self-Destruct requires TL6 and design, stores exact source distance without guessing half damage
+  ---
+  duration_ms: 0.5982
+  type: 'test'
+  ...
+# Subtest: Tracer inc uses this shot's half-damage boundary; no single shot/permanent next-turn bonus
+ok 12 - Tracer inc uses this shot's half-damage boundary; no single shot/permanent next-turn bonus
+  ---
+  duration_ms: 0.8486
+  type: 'test'
+  ...
+# Subtest: KPV APHCI-T ht_incendiary source-confirmed admission, native inc/cost/saved recipe unchanged
+ok 13 - KPV APHCI-T ht_incendiary source-confirmed admission, native inc/cost/saved recipe unchanged
+  ---
+  duration_ms: 5.4867
+  type: 'test'
+  ...
+# Subtest: KPV APHCI-T ht_tracer source-confirmed admission, native inc/cost/saved recipe unchanged
+ok 14 - KPV APHCI-T ht_tracer source-confirmed admission, native inc/cost/saved recipe unchanged
+  ---
+  duration_ms: 1.992
+  type: 'test'
+  ...
+# Subtest: native base APHCI-T derives immutable tracer metadata without rewriting stock
+ok 15 - native base APHCI-T derives immutable tracer metadata without rewriting stock
+  ---
+  duration_ms: 1.1781
+  type: 'test'
+  ...
+# Subtest: no guessed real cartridge; world policy/approval cannot invent any missing P6 design
+ok 16 - no guessed real cartridge; world policy/approval cannot invent any missing P6 design
+  ---
+  duration_ms: 1.2111
+  type: 'test'
+  ...
+# Subtest: ht_incendiary AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+ok 17 - ht_incendiary AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+  ---
+  duration_ms: 3.0188
+  type: 'test'
+  ...
+# Subtest: ht_tracer AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+ok 18 - ht_tracer AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+  ---
+  duration_ms: 1.6849
+  type: 'test'
+  ...
+# Subtest: P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry translation load
+ok 19 - P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry translation load
+  ---
+  duration_ms: 61.3966
+  type: 'test'
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 18
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 556.2645

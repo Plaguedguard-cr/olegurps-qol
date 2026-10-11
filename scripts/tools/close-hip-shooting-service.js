@@ -21,6 +21,7 @@ function techniqueSpecialty(entry) {
 }
 
 export function findCloseHipShooting({ actor, governingSkill } = {}) {
+  if (governingSkill?.learned === false) return null;
   if (governingSkill?.family !== "guns" || !governingSkill.specialty ||
       !Number.isFinite(governingSkill.level)) return null;
   let best = null;

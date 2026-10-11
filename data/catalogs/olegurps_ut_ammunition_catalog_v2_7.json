@@ -1,0 +1,4409 @@
+{
+  "schema_version": 2,
+  "catalog_kind": "olegurps-ut-ammunition-catalog-v2",
+  "source": {
+    "book": "GURPS Ultra-Tech, Fourth Edition",
+    "scope": "TL9+ projectile weapons, ammunition, warheads and launchers",
+    "rules_pages": [
+      "UT 76",
+      "UT 82-83",
+      "UT 135-146",
+      "UT 152-159"
+    ]
+  },
+  "module_policy": {
+    "ut_only": true,
+    "weapon_must_be_from_source": "Ultra-Tech",
+    "weapon_min_tl": 9,
+    "do_not_match_high_tech_by_caliber": true,
+    "description": "OleGURPS may offer this catalog only to weapons identified by the weapon catalog as Ultra-Tech weapons of TL9 or higher. Matching caliber alone is never sufficient. A High-Tech or other-source weapon does not gain UT ammunition merely because its caliber matches.",
+    "grenades_active_platform": false,
+    "grenade_note": "Hand grenades and mines are intentionally not active OleGURPS weapon platforms. Warhead definitions preserve source compatibility data, but the module must not expose them through the normal firearm ammunition selector for grenades/mines.",
+    "ice_gun_exotic_warhead_exception": true,
+    "ice_gun_note": "Ultra-Tech states that guns and launchers except ice guns may fire exotic warheads. Ice Gun instead uses its own ice-needle / drugged-ice load options.",
+    "notional_warhead_sizes": true,
+    "notional_size_policy": "UT warhead sizes are notional. OleGURPS must not infer a warhead class from a numeric caliber alone. The weapon catalog should assign an explicit UT warheadClass/ammoFamily; only then may notional size mapping be used.",
+    "weapon_catalog_required_kind": "olegurps-weapon-reference-catalog-v5",
+    "native_weapon_tl_is_minimum_gate_not_ammo_ceiling": true,
+    "warhead_tl_uses_availability_context": true,
+    "warhead_tl_policy": "A linked weapon must itself be an Ultra-Tech TL9+ weapon. The minTL of a particular ammunition/warhead is checked against the current availability/campaign TL (or explicit GM availability), not against the weapon's native TL. Thus an older UT weapon may use a later compatible UT round if that ammunition exists in the setting.",
+    "actor_tl_is_not_ammunition_availability_tl": true,
+    "guns_skill_tl_is_not_ammunition_availability_tl": true,
+    "missing_character_tl_policy": "An unset or default TL (such as TL3) on the Actor or a Guns/TL3 skill must never cause an ammunition compatibility error. Do not use either value as the ammunition availability/campaign TL. Attack rolls and Guns/TL skills remain managed by GGA.",
+    "ammo_availability_tl_policy": "Use explicit campaign/GM ammunition availability TL, or the TL of an explicitly user-authorized load. If availability TL is unspecified, do not silently substitute Actor TL, Guns/TL, or TL3; ask for it only when a TL-dependent warhead actually needs it. Continue to offer ordinary explicitly linked ammunition without a TL error."
+  },
+  "notes_policy": {
+    "free_text_notes_supported": true,
+    "catalog_does_not_enumerate_fillers": true,
+    "description": "For payloads whose exact contents are open-ended (biochemical aerosol/liquid, drugged darts, swarm payloads, etc.), the catalog stores the mechanical carrier/warhead only. The concrete filling is entered as free-text Notes on the specific ammunition load or magazine. Damage remains 'spec.' where the UT table uses 'spec.'.",
+    "examples": [
+      {
+        "warhead": "biochemical_aerosol",
+        "damage": "spec.",
+        "notes": "Sleep Gas"
+      },
+      {
+        "warhead": "biochemical_aerosol",
+        "damage": "spec.",
+        "notes": "Riot Gas; green marking dye"
+      },
+      {
+        "load": "drugged_dart",
+        "notes": "Sleep Poison"
+      }
+    ]
+  },
+  "ammo_families": [
+    {
+      "id": "7_5mm_clp",
+      "name": "7.5mmCLP",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 7.5,
+      "warhead_class": null,
+      "wps_lb": 0.006,
+      "cps_usd": 0.12,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "exFH5B3e4deifd5CC",
+          "weapon_mode_id": "WngbnzWRwLntvaRbR",
+          "weapon_name": "Holdout Pistol, 7.5mmCLP",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eEszHGWcbIfvKntSo",
+          "weapon_mode_id": "WlqvLkGz-INk0A-_o",
+          "weapon_name": "Medium Pistol, 7.5mmCLP",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "10mm_clp",
+      "name": "10mmCLP",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 10,
+      "warhead_class": "10mm",
+      "wps_lb": 0.014,
+      "cps_usd": 0.28,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eQMcVy89jDzIvotgM",
+          "weapon_mode_id": "W9chB7ydzOWTAxQP0",
+          "weapon_name": "Heavy Pistol, 10mmCLP",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eY1oUl_-JTrzPuaef",
+          "weapon_mode_id": "W5_0Tkbdr1S4b4Hlv",
+          "weapon_name": "Machine Pistol, 10mmCLP",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "e7kJ2J_LAaFiOu8Ky",
+          "weapon_mode_id": "WtM51JNSpOUIy3Eo1",
+          "weapon_name": "Urban Assault Weapon",
+          "usage": "SMG barrel, 10mmCLP",
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 3
+    },
+    {
+      "id": "15mm_clp",
+      "name": "15mmCLP",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 15,
+      "warhead_class": "15mm",
+      "wps_lb": 0.06,
+      "cps_usd": 1.2,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "erwRuJ-BeqXozI3Au",
+          "weapon_mode_id": "WIAo1otMCstnbi4Dv",
+          "weapon_name": "Magnum Pistol, 15mmCLP",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "5_7mm_cl",
+      "name": "5.7mmCL",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 5.7,
+      "warhead_class": null,
+      "wps_lb": 0.013,
+      "cps_usd": 0.26,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "ekA58uZJAgfz7-90F",
+          "weapon_mode_id": "WYYJ_58OEKOTk38wi",
+          "weapon_name": "Gatling Carbine, 5.7mmCL",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "e-HhIZJ0Q12j9PwXh",
+          "weapon_mode_id": "WoLIvHFqsiusWgmXF",
+          "weapon_name": "Personal Defense Weapon, 5.7mmCL",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "7mm_cl",
+      "name": "7mmCL",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 7,
+      "warhead_class": null,
+      "wps_lb": 0.027,
+      "cps_usd": 0.54,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "exJ5J38LbzhzYcBPF",
+          "weapon_mode_id": "WFc8O-LgWxenUseNy",
+          "weapon_name": "Assault Carbine, 7mmCL",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eKwKiss_URdY0fp-B",
+          "weapon_mode_id": "WeFF7cHxefAAGmowq",
+          "weapon_name": "Hunting Rifle, 7mmCL",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "e84vcCeW9093NHfjW",
+          "weapon_mode_id": "W5_HQQYf_zjoG9A7J",
+          "weapon_name": "Light Support Weapon, 7mmCL",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eaAQIHq6m3MxBlV5D",
+          "weapon_mode_id": "W6-C_sQqk0Ak_c-8_",
+          "weapon_name": "Minigun, 7mmCL",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 4
+    },
+    {
+      "id": "10mm_cl",
+      "name": "10mmCL",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 10,
+      "warhead_class": "10mm",
+      "wps_lb": 0.04,
+      "cps_usd": 0.8,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eWe57Mr7MD87Sh5T0",
+          "weapon_mode_id": "W30vD5BH3t_VdkWUZ",
+          "weapon_name": "Storm Carbine, 10mmCL",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "10mm_clr",
+      "name": "10mmCLR",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 10,
+      "warhead_class": "10mm",
+      "wps_lb": 0.06,
+      "cps_usd": 1.2,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "evrv2eyOqOxeQIir8",
+          "weapon_mode_id": "WmyROTLk0gs7lrYCE",
+          "weapon_name": "Storm Chaingun, 10mmCLR",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eE5kO-aISuGU4e8Gn",
+          "weapon_mode_id": "W3Ggl5bTeg_44b_rU",
+          "weapon_name": "Storm Rifle, 10mmCLR",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "15mm_cl",
+      "name": "15mmCL",
+      "category": "conventional",
+      "tl": 9,
+      "caliber_mm": 15,
+      "warhead_class": "15mm",
+      "wps_lb": 0.2,
+      "cps_usd": 4,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "evFxy___NEOVaZdNF",
+          "weapon_mode_id": "WlstnlxI_Mm-2UJf0",
+          "weapon_name": "Anti-Materiel Rifle, 15mmCL",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ewfslGwVGRSTsdrDa",
+          "weapon_mode_id": "W6bX3WBkGZdZfoeMu",
+          "weapon_name": "Heavy Chaingun, 15mmCL",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "18_5mm_pc",
+      "name": "18.5mmPC",
+      "category": "conventional_shotgun",
+      "tl": 9,
+      "caliber_mm": 18.5,
+      "warhead_class": "18.5mm",
+      "wps_lb": 0.092,
+      "cps_usd": 1.8,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eucdZQe0-xyT_0s-B",
+          "weapon_mode_id": "W8mzf5YoC9fFjAhO2",
+          "weapon_name": "Civilian Shotgun, 18.5mmPC",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ebK94VrDqUsmVU0_A",
+          "weapon_mode_id": "WwK7xKN4sLQXIuQ64",
+          "weapon_name": "Close Assault Weapon, 18.5mmPC",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ell_9wkmtkppvSQtM",
+          "weapon_mode_id": "Wap9nUEQPwuDkUEUp",
+          "weapon_name": "Shotgun Pistol, 18.5mmPC",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "euFAYN0ssxmBW31H3",
+          "weapon_mode_id": "WkudgdqO3lymAYks5",
+          "weapon_name": "Underbarrel Shotgun, 18.5mmPC",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "e7kJ2J_LAaFiOu8Ky",
+          "weapon_mode_id": "WRvS5pz3LMCzqQyiZ",
+          "weapon_name": "Urban Assault Weapon",
+          "usage": "Shotgun barrel, 18.5mmPC",
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 5
+    },
+    {
+      "id": "25mm_cl",
+      "name": "25mmCL",
+      "category": "payload_rifle_cannon",
+      "tl": 9,
+      "caliber_mm": 25,
+      "warhead_class": "25mm",
+      "wps_lb": 1.0,
+      "cps_usd": 20,
+      "lc": 2,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eeU4YilV3A-QJueUg",
+          "weapon_mode_id": "WgqAB3QGTUZrgtdES",
+          "weapon_name": "Assault Cannon, 25mmCL",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ejkJip2_81OpUEPGJ",
+          "weapon_mode_id": "WdUnAFzFvv59Smhhk",
+          "weapon_name": "Payload Rifle, 25mmCL",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "100mm_cl",
+      "name": "100mmCL",
+      "category": "payload_rifle_cannon",
+      "tl": 9,
+      "caliber_mm": 100,
+      "warhead_class": "100mm",
+      "wps_lb": 40.0,
+      "cps_usd": 400,
+      "lc": 1,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eTlww764zedDomkOh",
+          "weapon_mode_id": "WOMuCBSS_c_nIstvm",
+          "weapon_name": "Tank Cannon, 100mmCL",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "15mm_plb",
+      "name": "15mmPLB",
+      "category": "splat_gun",
+      "tl": 9,
+      "caliber_mm": 15,
+      "warhead_class": "15mm",
+      "wps_lb": 0.27,
+      "cps_usd": 7,
+      "lc": 2,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "ef9L7tPyvQNaX6KEh",
+          "weapon_mode_id": "WIijXG9uGZ52T0eW2",
+          "weapon_name": "Splat Gun, 15mmPLB",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "25mm_pc",
+      "name": "25mmPC",
+      "category": "grenade_launcher_mortar",
+      "tl": 9,
+      "caliber_mm": 25,
+      "warhead_class": "25mm",
+      "wps_lb": 0.22,
+      "cps_usd": 4.4,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eRiAk8n6saO5wMnrR",
+          "weapon_mode_id": "W5BEH4zTOtg2ds7is",
+          "weapon_name": "Underbarrel Grenade Launcher, 25mmPC",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "40mm_plb",
+      "name": "40mmPLB",
+      "category": "grenade_launcher_mortar",
+      "tl": 9,
+      "caliber_mm": 40,
+      "warhead_class": "40mm",
+      "wps_lb": 0.4,
+      "cps_usd": 10,
+      "lc": 3,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "erwk9Fs82GTzfv1rx",
+          "weapon_mode_id": "W_eUqH082RrEoTPPP",
+          "weapon_name": "Mortar Box, 40mmPLB",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eJtzLwj5mE8CZuFNj",
+          "weapon_mode_id": "WATP5TU7jVQnEpqB0",
+          "weapon_name": "Underbarrel Grenade Launcher, 40mmPLB",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "64mm_plb",
+      "name": "64mmPLB",
+      "category": "grenade_launcher_mortar",
+      "tl": 9,
+      "caliber_mm": 64,
+      "warhead_class": "64mm",
+      "wps_lb": 2.0,
+      "cps_usd": 40,
+      "lc": 2,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "e5bjENSnMI58luL2O",
+          "weapon_mode_id": "WYpXdcsWIyhNVC6x3",
+          "weapon_name": "Mortar Box, 64mmPLB",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "3mm_n",
+      "name": "3mmN",
+      "category": "air_gun",
+      "tl": 9,
+      "caliber_mm": 3,
+      "warhead_class": null,
+      "wps_lb": 0.005,
+      "cps_usd": 0.1,
+      "lc": 4,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eyNQNtpJuKZjq7XKJ",
+          "weapon_mode_id": "WfcQvWVcsBWPUShFm",
+          "weapon_name": "Needle Rifle, 3mmN",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eaKKqA3JDOSwqXunj",
+          "weapon_mode_id": "WRsVDXjeX3ABpRPVp",
+          "weapon_name": "Needler, 3mmN",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ekZha7uYdpjrLUN_r",
+          "weapon_mode_id": "WTVT6tvGqOqE1N6e6",
+          "weapon_name": "Partisan Needler, 3mmN",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eZIgsL6BKq0KLALZe",
+          "weapon_mode_id": "WGRshSOWjRXli8vBQ",
+          "weapon_name": "Wrist Needler, 3mmN",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 4
+    },
+    {
+      "id": "15mm_air",
+      "name": "15mm Air Gun",
+      "category": "air_gun",
+      "tl": 9,
+      "caliber_mm": 15,
+      "warhead_class": "15mm",
+      "wps_lb": 0.025,
+      "cps_usd": 0.5,
+      "lc": 4,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eRELs7fsg3GPD9j4s",
+          "weapon_mode_id": "Wg_f0E5hqv6o1C0Uj",
+          "weapon_name": "Paint Carbine, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ezQVq8VFK4g0wBsKF",
+          "weapon_mode_id": "W5Xb6neoqVfdlbqiS",
+          "weapon_name": "Paint Pistol, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "25mm_t",
+      "name": "25mmT",
+      "category": "air_gun",
+      "tl": 9,
+      "caliber_mm": 25,
+      "warhead_class": "25mm",
+      "wps_lb": 0.12,
+      "cps_usd": 2.4,
+      "lc": 4,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eNN963yHxCyybcE5x",
+          "weapon_mode_id": "WPa4KUGJ6449MaPL9",
+          "weapon_name": "Tangler Pistol, 25mmT",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "e6PTpjLcE6yJSK95_",
+          "weapon_mode_id": "WSv_Zh3pW3Tl-tCf5",
+          "weapon_name": "Tangler, 25mmT",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "3mm_em",
+      "name": "3mm EM",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 3,
+      "warhead_class": null,
+      "wps_lb": 0.004,
+      "cps_usd": 0.04,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eB9Bq0xHRY0y5RJCm",
+          "weapon_mode_id": "WQgMjnVvLnZiHzMnk",
+          "weapon_name": "Gauss Minineedler, 3mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "eSKjVLIsTZyAlU9ZS",
+          "weapon_mode_id": "WjHw1alZr-q5nItrB",
+          "weapon_name": "Gauss Needle Rifle, 3mm",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "4mm_em",
+      "name": "4mm EM",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 4,
+      "warhead_class": null,
+      "wps_lb": 0.006,
+      "cps_usd": 0.06,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "ea-CKWZJ14ZIR5N0k",
+          "weapon_mode_id": "WUVbnxIkj1gtEBekV",
+          "weapon_name": "Gauss LSW, 4mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "eCOQaE4DsVSKPPPGQ",
+          "weapon_mode_id": "WmiUP8hzgsvbFNy4_",
+          "weapon_name": "Gauss Machine Pistol, 4mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "eGi5FRaXaRoxrtEcr",
+          "weapon_mode_id": "WJstukbcBFPxQFtJE",
+          "weapon_name": "Gauss Minigun, 4mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "ea__kqP7i_MP6eWbb",
+          "weapon_mode_id": "Wd5PTxwpIa1Irq42i",
+          "weapon_name": "Gauss Pistol, 4mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "e2hU5T9XCUTYsADES",
+          "weapon_mode_id": "WegCPnwG-HS41cU29",
+          "weapon_name": "Gauss Rifle, 4mm",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 5
+    },
+    {
+      "id": "7mm_em",
+      "name": "7mm EM",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 7,
+      "warhead_class": null,
+      "wps_lb": 0.024,
+      "cps_usd": 0.24,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "elsxkyUIf5Hn_1JMi",
+          "weapon_mode_id": "WbvkCgoaLuWViWyKK",
+          "weapon_name": "Gauss HMG, 7mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "e4DLG9pdSubCKHXdg",
+          "weapon_mode_id": "WkhAN9tcmB9eEkmY6",
+          "weapon_name": "Sniper Railgun, 7mm",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2,
+      "user_authorized_weapon_tl_exception": {
+        "weapon_mode_id": "WkhAN9tcmB9eEkmY6",
+        "equipment_id": "e4DLG9pdSubCKHXdg",
+        "native_weapon_tl": 9,
+        "ammo_family_tl": 10,
+        "selection_required": true,
+        "selection_counts_as_user_opt_in": true,
+        "effective_weapon_tl_for_this_family_only": 10,
+        "does_not_modify_character_or_guns_skill_tl": true,
+        "provenance": "OleGURPS optional interpretation; UT 142 vs UT 143 TL mismatch is unresolved."
+      }
+    },
+    {
+      "id": "10mm_g",
+      "name": "10mmG",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 10,
+      "warhead_class": "10mm",
+      "wps_lb": 0.08,
+      "cps_usd": 0.8,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "esKRf2-PkNWiSQ67U",
+          "weapon_mode_id": "WdZSw5CqcSq_d3eSV",
+          "weapon_name": "Portable Railgun, 10mm",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "18_5mm_em",
+      "name": "18.5mm EM",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 18.5,
+      "warhead_class": "18.5mm",
+      "wps_lb": 0.037,
+      "cps_usd": 0.37,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "e542MtHbEYYYvA7kv",
+          "weapon_mode_id": "WD2iXlhuCPJV64Nt7",
+          "weapon_name": "Gauss CAW, 18.5mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "eBu_s_Q0wEp7tLnEU",
+          "weapon_mode_id": "WibFBUhe4qzQPgxpB",
+          "weapon_name": "Gauss Shotgun Pistol, 18.5mm",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "25mm_g",
+      "name": "25mmG",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 25,
+      "warhead_class": "25mm",
+      "wps_lb": 0.09,
+      "cps_usd": 0.9,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "e9d3i8np7Xfe4oKxf",
+          "weapon_mode_id": "Wq7SXzV-qosc5iY1q",
+          "weapon_name": "Underbarrel EMGL, 25mmG",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "40mm_g",
+      "name": "40mmG",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 40,
+      "warhead_class": "40mm",
+      "wps_lb": 0.33,
+      "cps_usd": 5,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eKmwh51WAGthe1whO",
+          "weapon_mode_id": "WdI9_2mws5U3wSQl-",
+          "weapon_name": "Auto EMGL, 40mmG",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "effVkvaHa0Uo5KEgb",
+          "weapon_mode_id": "Wcll8hDIppP48GXcD",
+          "weapon_name": "EMGL, 40mmG",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "40mm_em_heavy",
+      "name": "40mm EM Heavy",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 40,
+      "warhead_class": "40mm",
+      "wps_lb": 6.0,
+      "cps_usd": 60,
+      "lc": 2,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eVZB_NdIt0pp7Dh3P",
+          "weapon_mode_id": "WdV0VzMAch5j8pxdy",
+          "weapon_name": "Railgun, 40mm",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "64mm_em",
+      "name": "64mm EM",
+      "category": "electromagnetic",
+      "tl": 10,
+      "caliber_mm": 64,
+      "warhead_class": "64mm",
+      "wps_lb": 2.0,
+      "cps_usd": 20,
+      "lc": 2,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "e38b1aEmydaBWtTNs",
+          "weapon_mode_id": "W__0RKAth-4yvVBSl",
+          "weapon_name": "Electromag Mortar, 64mm",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "15mm_gyroc",
+      "name": "15mm gyroc",
+      "category": "gyroc",
+      "tl": 9,
+      "caliber_mm": 15,
+      "warhead_class": "15mm",
+      "wps_lb": 0.1,
+      "cps_usd": 5,
+      "lc": 3,
+      "source_ref": "UT 145",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eI3Q0zjULTNcT00ZN",
+          "weapon_mode_id": "WnaTVcm1lDzdUBdwA",
+          "weapon_name": "Gyroc Carbine, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "emY0Nm8yc93sLfoZJ",
+          "weapon_mode_id": "WqtpFn_3ogNM9oiHv",
+          "weapon_name": "Gyroc LSW, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ekBY23H_nDia71IRM",
+          "weapon_mode_id": "WBP_BamKPzdsBHOnI",
+          "weapon_name": "Gyroc Launch Pistol, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eJ8xSpwlE6exVNNz4",
+          "weapon_mode_id": "W7iIk_4lnXIP5JOOu",
+          "weapon_name": "Gyroc Pistol, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "evik07ShWozm6tugt",
+          "weapon_mode_id": "WC9xrdk8qWqC3tsHh",
+          "weapon_name": "Holdout Gyroc, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "e3_Drm7n_RBGLIjJk",
+          "weapon_mode_id": "WX57fdTm6ELTN3VdA",
+          "weapon_name": "Underbarrel Gyroc, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 6
+    },
+    {
+      "id": "15mm_micromissile",
+      "name": "15mm micromissile",
+      "category": "gyroc_homing",
+      "tl": 9,
+      "caliber_mm": 15,
+      "warhead_class": "15mm",
+      "wps_lb": 0.1,
+      "cps_usd": 50,
+      "lc": 3,
+      "source_ref": "UT 145",
+      "homing": true,
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eI3Q0zjULTNcT00ZN",
+          "weapon_mode_id": "WnaTVcm1lDzdUBdwA",
+          "weapon_name": "Gyroc Carbine, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "emY0Nm8yc93sLfoZJ",
+          "weapon_mode_id": "WqtpFn_3ogNM9oiHv",
+          "weapon_name": "Gyroc LSW, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "ekBY23H_nDia71IRM",
+          "weapon_mode_id": "WBP_BamKPzdsBHOnI",
+          "weapon_name": "Gyroc Launch Pistol, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "eJ8xSpwlE6exVNNz4",
+          "weapon_mode_id": "W7iIk_4lnXIP5JOOu",
+          "weapon_name": "Gyroc Pistol, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "evik07ShWozm6tugt",
+          "weapon_mode_id": "WC9xrdk8qWqC3tsHh",
+          "weapon_name": "Holdout Gyroc, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "e3_Drm7n_RBGLIjJk",
+          "weapon_mode_id": "WX57fdTm6ELTN3VdA",
+          "weapon_name": "Underbarrel Gyroc, 15mm",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 6
+    },
+    {
+      "id": "64mm_missile",
+      "name": "64mm missile/rocket",
+      "category": "missile",
+      "tl": 9,
+      "caliber_mm": 64,
+      "warhead_class": "64mm",
+      "wps_lb": null,
+      "cps_usd": null,
+      "lc": 1,
+      "source_ref": "UT 145-146",
+      "notes": "Carrier for IML/MLAWS; base missile and warhead are priced separately in UT.",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eskcPn3LNmM0tJom4",
+          "weapon_mode_id": "WuZRkhqwMzX3gyVWL",
+          "weapon_name": "IML, 64mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "e-q5loJqqU9wDZQzJ",
+          "weapon_mode_id": "WInB0nYjRLMJm5Ha-",
+          "weapon_name": "IML, 64mm",
+          "usage": null,
+          "native_tl": "9"
+        },
+        {
+          "equipment_id": "enpedPMhDr_Y1fIin",
+          "weapon_mode_id": "W7v0_whpuR9MtD4tH",
+          "weapon_name": "MLAWS, 64mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "ecskO6ZiDAiMBHNIM",
+          "weapon_mode_id": "WHv4EWlz3Tg6-cvQn",
+          "weapon_name": "MLAWS, 64mm",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 4
+    },
+    {
+      "id": "100mm_missile",
+      "name": "100mm missile/rocket",
+      "category": "missile",
+      "tl": 9,
+      "caliber_mm": 100,
+      "warhead_class": "100mm",
+      "wps_lb": null,
+      "cps_usd": null,
+      "lc": 1,
+      "source_ref": "UT 145-146",
+      "notes": "Carrier for TML; base missile and warhead are priced separately in UT.",
+      "supports_exotic_warheads": true,
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "e4vFn8UBsS3F1ESb-",
+          "weapon_mode_id": "WNK4gk21iQ4le2Lxr",
+          "weapon_name": "TML, 100mm",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "ebvdDxUdPQseCIEq-",
+          "weapon_mode_id": "WpvG7-bGWCtwNOPFf",
+          "weapon_name": "TML, 100mm",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 2
+    },
+    {
+      "id": "3mm_ice",
+      "name": "3mm ice needle",
+      "category": "ice_gun",
+      "tl": 10,
+      "caliber_mm": 3,
+      "warhead_class": null,
+      "wps_lb": null,
+      "cps_usd": null,
+      "lc": 2,
+      "source_ref": "UT 140",
+      "supports_exotic_warheads": false,
+      "notes": "Ice Gun is the explicit exception to the general exotic-warhead rule; use ice_needle/drugged_ice_sliver special loads.",
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "edINZumToAELOPNRc",
+          "weapon_mode_id": "WPP4GGv21sVx2-CHg",
+          "weapon_name": "Ice Gun, 3mm ice",
+          "usage": null,
+          "native_tl": "10"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "grav_needler_round",
+      "name": "Grav Needler Round",
+      "category": "grav_gun",
+      "tl": 11,
+      "caliber_mm": null,
+      "warhead_class": null,
+      "wps_lb": 0.001,
+      "cps_usd": 0.01,
+      "lc": 3,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": "conditional-unresolved-size",
+      "notes": "UT gives a named ammunition family but no projectile diameter/warhead class. Do not guess size-dependent warhead compatibility.",
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eweMBFsNUgBRDkzC3",
+          "weapon_mode_id": "W3frf9fpZ88nsGZgZ",
+          "weapon_name": "Grav Minineedler",
+          "usage": null,
+          "native_tl": "11^"
+        },
+        {
+          "equipment_id": "ebHQUsAn03woUW7De",
+          "weapon_mode_id": "WeWDVUcj3u60GEyCq",
+          "weapon_name": "Grav Needle Rifle",
+          "usage": null,
+          "native_tl": "11^"
+        },
+        {
+          "equipment_id": "eiqhK4fMSSfhzcC0H",
+          "weapon_mode_id": "WjwsSLtRhcz7RDQ3v",
+          "weapon_name": "Grav Needler",
+          "usage": null,
+          "native_tl": "11^"
+        },
+        {
+          "equipment_id": "eYfjG1bepxV6LDXA8",
+          "weapon_mode_id": "WzBIC0pLImzKfM4Q2",
+          "weapon_name": "Heavy Grav Needler",
+          "usage": null,
+          "native_tl": "11^"
+        },
+        {
+          "equipment_id": "ereAvfk4SYfVSH5XX",
+          "weapon_mode_id": "W8jY2Gu52B-HxBKPY",
+          "weapon_name": "Sniper Grav Gun",
+          "usage": null,
+          "native_tl": "11^"
+        }
+      ],
+      "linked_weapon_mode_count": 5
+    },
+    {
+      "id": "grav_railgun_round",
+      "name": "Grav Railgun Round",
+      "category": "grav_gun",
+      "tl": 11,
+      "caliber_mm": null,
+      "warhead_class": null,
+      "wps_lb": 0.3,
+      "cps_usd": 30,
+      "lc": 2,
+      "source_ref": "UT 143",
+      "supports_exotic_warheads": "conditional-unresolved-size",
+      "notes": "UT gives a named ammunition family but no projectile diameter/warhead class. Do not guess size-dependent warhead compatibility.",
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eUxasb3wBFxXQVc9O",
+          "weapon_mode_id": "WsRUP0bIp6--JRDZE",
+          "weapon_name": "Gravitic Railgun",
+          "usage": null,
+          "native_tl": "11^"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    },
+    {
+      "id": "construction_nail",
+      "name": "Construction Nail",
+      "category": "tool_projectile",
+      "tl": 9,
+      "caliber_mm": null,
+      "warhead_class": null,
+      "wps_lb": 0.01,
+      "cps_usd": null,
+      "lc": 4,
+      "source_ref": "UT 82-83",
+      "supports_exotic_warheads": false,
+      "notes": "Smart/Gauss Nail Guns use 50 nails weighing 0.5 lb total; WPS is derived as 0.01 lb. This is not a Warheads and Ammunition carrier.",
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "ehnB7DHWdbXWN-AwQ",
+          "weapon_mode_id": "WWkrDTQ7VS2Qucb0-",
+          "weapon_name": "Gauss Nail Gun",
+          "usage": null,
+          "native_tl": "10"
+        },
+        {
+          "equipment_id": "eTTrfZDvcc_xE5mCh",
+          "weapon_mode_id": "W0SxgGEVdQ84ypsCw",
+          "weapon_name": "Gauss Nail Gun",
+          "usage": null,
+          "native_tl": "11"
+        },
+        {
+          "equipment_id": "elAcfPnfO02mKxN48",
+          "weapon_mode_id": "W7FIiW8jX03PnOzxz",
+          "weapon_name": "Gauss Nail Gun",
+          "usage": null,
+          "native_tl": "12"
+        },
+        {
+          "equipment_id": "enPvtuR8bFcZ0yNHt",
+          "weapon_mode_id": "WFtIwbACoVY8yF8RG",
+          "weapon_name": "Smart Nail Gun",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 4
+    },
+    {
+      "id": "rocket_piton_reload",
+      "name": "Rocket Piton Reload",
+      "category": "special_projectile",
+      "tl": 9,
+      "caliber_mm": null,
+      "warhead_class": null,
+      "wps_lb": 0.5,
+      "cps_usd": 1,
+      "lc": 4,
+      "source_ref": "UT 76",
+      "supports_exotic_warheads": false,
+      "notes": "Dedicated explosive-set piton reload; not part of the interchangeable warhead system.",
+      "linked_weapon_modes": [
+        {
+          "equipment_id": "eZF_4Gjp1NN1xcSrP",
+          "weapon_mode_id": "W1UaufVF-cxg4YngS",
+          "weapon_name": "Rocket Piton",
+          "usage": null,
+          "native_tl": "9"
+        }
+      ],
+      "linked_weapon_mode_count": 1
+    }
+  ],
+  "special_loads": [
+    {
+      "id": "drugged_dart",
+      "name": "Drugged Dart",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "needler",
+        "needle_rifle",
+        "wrist_needler"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "follow_up": "user-defined injectable drug/poison",
+      "notes_required": true,
+      "notes_hint": "Enter drug/poison name and any extra text.",
+      "source_ref": "UT 139, 161"
+    },
+    {
+      "id": "drugged_ice_sliver",
+      "name": "Drugged Ice Sliver",
+      "min_tl": 10,
+      "platform_tags_any": [
+        "ice_gun"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "follow_up": "user-defined hypo-injected drug/poison if projectile penetrates",
+      "notes_required": true,
+      "notes_hint": "Enter drug/poison name and any extra text.",
+      "source_ref": "UT 140"
+    },
+    {
+      "id": "paint_pellet",
+      "name": "Paint Pellet",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "paint_pistol",
+        "paint_carbine"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "notes_allowed": true,
+      "notes_hint": "Optional paint color/marking text.",
+      "source_ref": "UT 139"
+    },
+    {
+      "id": "biochemical_liquid_pellet",
+      "name": "Biochemical Liquid Pellet",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "paint_pistol",
+        "paint_carbine"
+      ],
+      "warhead_ref": "biochemical_liquid",
+      "damage_behavior": "use_warhead_spec",
+      "notes_required": true,
+      "notes_hint": "Enter the liquid/foam name and any extra text.",
+      "source_ref": "UT 139, 153"
+    },
+    {
+      "id": "ice_needle",
+      "name": "Ice Needle",
+      "min_tl": 10,
+      "platform_tags_any": [
+        "ice_gun"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "source_ref": "UT 140"
+    },
+    {
+      "id": "solid_slug_25mm_tangler_gun",
+      "name": "25mm Solid Metal Slug",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "tangler_25mm",
+        "tangler_pistol_25mm"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "source_ref": "UT 139"
+    }
+  ],
+  "warheads": [
+    {
+      "id": "standard_inert",
+      "name": "Standard / Inert Projectile",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": null
+      },
+      "damage_behavior": "inherit_weapon_damage",
+      "damage_table": null,
+      "rules": [
+        "Default warhead for guns and missiles is an inert metal projectile."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 152",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "inherit_weapon_damage",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Обычный кинетический снаряд: используйте исходный урон оружия."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 152"
+        }
+      }
+    },
+    {
+      "id": "aphc",
+      "name": "Armor-Piercing Hard Core (APHC)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [
+          "electromagnetic",
+          "gauss",
+          "railgun"
+        ],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 2
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Armor divisor becomes (2).",
+        "If caliber is below 20mm: pi++→pi+, pi+→pi, pi→pi-, no change to pi-.",
+        "Unavailable for hand grenades or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 152",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Бронеделитель (2); для калибра менее 20 мм понизьте категорию пробивающего урона на одну ступень."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 152"
+        }
+      }
+    },
+    {
+      "id": "apds",
+      "name": "Armor-Piercing Discarding-Sabot (APDS)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [
+          "electromagnetic-unspecified",
+          "railgun"
+        ],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 1
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Works like APHC for penetration/damage class.",
+        "Range ×1.5.",
+        "Add +1 damage per die.",
+        "Unavailable for hand grenades or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 152",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Бронебойный подкалиберный снаряд: правила APHC, дальность ×1,5 и +1 к урону за кубик.",
+            "Для Railgun недоступен."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 152"
+        }
+      }
+    },
+    {
+      "id": "apep",
+      "name": "Armor-Piercing Enhanced Penetrator (APEP)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [
+          "electromagnetic",
+          "gauss",
+          "railgun"
+        ],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 1
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Range ×2.",
+        "Armor divisor becomes (3).",
+        "If caliber is below 20mm, reduce piercing class one step, minimum pi-.",
+        "Unavailable for hand grenades or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 152",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Дальность ×2, бронеделитель (3); категория пробивающего урона уменьшается для калибра менее 20 мм."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 152"
+        }
+      }
+    },
+    {
+      "id": "aphex",
+      "name": "Armor-Piercing Hardcore Explosive (APHEX)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": null,
+        "lc": null
+      },
+      "damage_behavior": "base_plus_followup",
+      "damage_table": {
+        "10mm": {
+          "followup": "1d-4 cr ex",
+          "fragmentation": "1d-2 cut"
+        },
+        "15mm": {
+          "followup": "1d-2 cr ex",
+          "fragmentation": "1d-1 cut"
+        },
+        "18.5mm": {
+          "followup": "1d-1 cr ex",
+          "fragmentation": "1d cut"
+        },
+        "25mm": {
+          "followup": "1d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "followup": "2d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "followup": "4d cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "followup": "8d cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "rules": [
+        "Base projectile keeps normal piercing damage but uses armor divisor (2).",
+        "Explosion is a follow-up attack; add +1 per die to crushing explosive damage at TL10-12.",
+        "Gauss/electromagnetic normal armor divisor is downgraded to (2) with APHEX.",
+        "Unavailable for hand grenades or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 152-153",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "base_plus_followup",
+        "component_relations": [
+          {
+            "field": "followup",
+            "relation": "follow_up"
+          },
+          {
+            "field": "fragmentation",
+            "relation": "fragmentation"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Обычный проникающий урон с бронеделителем (2), затем последующий взрыв и осколки.",
+            "Взрывной урон TL10–12: +1 за кубик."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 152-153"
+        }
+      }
+    },
+    {
+      "id": "biochemical_aerosol",
+      "name": "Biochemical Aerosol",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": null
+      },
+      "damage_behavior": "replace_with_spec",
+      "damage_table": {
+        "10mm": {
+          "damage": "spec.",
+          "delivery": "face-only",
+          "doses": 1
+        },
+        "15mm": {
+          "damage": "spec.",
+          "radius_yards": 1,
+          "doses": 3
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "radius_yards": 1.5,
+          "doses": 5
+        },
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "doses": 10
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "doses": 40
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 7,
+          "doses": 150
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 10,
+          "doses": 300
+        }
+      },
+      "rules": [
+        "Guns/launchers replace normal piercing damage with spec effect.",
+        "Exact agent effect is not enumerated by OleGURPS; use Notes."
+      ],
+      "notes_required": true,
+      "notes_hint": "Enter gas/cloud agent name and any extra description.",
+      "source_ref": "UT 153",
+      "combat_effect": {
+        "kind": "area_special",
+        "damage_behavior": "replace_with_spec",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "15mm": 1,
+            "18.5mm": 1.5,
+            "25mm": 2,
+            "40mm": 4,
+            "64mm": 7,
+            "100mm": 10
+          }
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Поражающее вещество определяется содержимым боеголовки; имя вещества и его эффекты берите из Notes.",
+            "Обычный пробивающий урон заменяется эффектом вещества. Для 10 мм требуется попадание в лицо."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 153"
+        }
+      }
+    },
+    {
+      "id": "biochemical_liquid",
+      "name": "Biochemical Liquid",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": null
+      },
+      "damage_behavior": "replace_with_spec",
+      "damage_table": {
+        "15mm": {
+          "damage": "spec.",
+          "radius_yards": 1,
+          "doses": 1
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "radius_yards": 1.5,
+          "doses": 2
+        },
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "doses": 4
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "doses": 16
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 9,
+          "doses": 8
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 18,
+          "doses": 16
+        }
+      },
+      "rules": [
+        "Ground-covering heavier-than-air liquid/foam; usually persistent.",
+        "Exact liquid/foam effect is not enumerated by OleGURPS; use Notes."
+      ],
+      "notes_required": true,
+      "notes_hint": "Enter liquid/foam agent name and any extra description.",
+      "source_ref": "UT 153",
+      "combat_effect": {
+        "kind": "area_special",
+        "damage_behavior": "replace_with_spec",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "15mm": 1,
+            "18.5mm": 1.5,
+            "25mm": 2,
+            "40mm": 4,
+            "64mm": 9,
+            "100mm": 18
+          }
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Жидкость или пена заполняет указанную область; конкретный состав и его эффект смотрите в Notes.",
+            "Обычный пробивающий урон заменяется эффектом вещества."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 153"
+        }
+      }
+    },
+    {
+      "id": "flare",
+      "name": "Flare",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 4
+      },
+      "damage_behavior": "replace_with_spec",
+      "damage_table": {
+        "15mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 150
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 185
+        },
+        "25mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 250
+        },
+        "40mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 400
+        },
+        "64mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 600
+        },
+        "100mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 1000
+        }
+      },
+      "rules": [
+        "Direct hit does 1d burn.",
+        "Vision-based HT roll for observers within 1% of illumination radius; HT-3 if set off in darkness.",
+        "Burns for five minutes."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 153",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_with_spec",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": null,
+        "resistance": {
+          "attribute": "HT",
+          "modifier": null,
+          "armor_divisor": null,
+          "delivery": "vision_proximity",
+          "per_variant": false
+        },
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Прямое попадание: 1d burn. Боеголовка освещает указанную область на пять минут.",
+            "В пределах 1% радиуса освещения предусмотрена проверка HT по правилам Flare (в темноте HT-3)."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 153"
+        }
+      }
+    },
+    {
+      "id": "he",
+      "name": "High Explosive (HE)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 2
+      },
+      "damage_behavior": "base_plus_followup_or_proximity",
+      "damage_table": {
+        "10mm": {
+          "explosion": "1d cr ex",
+          "fragmentation": "1d-2 cut"
+        },
+        "15mm": {
+          "explosion": "2d cr ex",
+          "fragmentation": "1d-1 cut"
+        },
+        "18.5mm": {
+          "explosion": "2d+2 cr ex",
+          "fragmentation": "1d cut"
+        },
+        "25mm": {
+          "explosion": "4d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "explosion": "8d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "explosion": "8d×2 cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "explosion": "6d×5 cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "rules": [
+        "Impact: normal piercing damage with armor divisor (0.5), plus listed explosive/fragmentation follow-up.",
+        "At TL10-12 add +1 per die to crushing explosive damage.",
+        "TL9 projectiles support impact or proximity fuse; proximity mode requires target at least 40 yards away.",
+        "Proximity mode uses area attack at +4 and inflicts only fragmentation damage, typically in a cone."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 153-154",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "base_plus_followup_or_proximity",
+        "component_relations": [
+          {
+            "field": "explosion",
+            "relation": "follow_up_explosion"
+          },
+          {
+            "field": "fragmentation",
+            "relation": "fragmentation"
+          }
+        ],
+        "geometry": {
+          "type": "impact_or_proximity",
+          "mode_selection_required": true,
+          "note": "Proximity fragmentation uses a cone; size/geometry must be determined by the rules, not guessed from caliber."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Ударный взрыватель: пробивающий урон оружия с бронеделителем (0,5), затем последующий взрыв и осколки.",
+            "Дистанционный взрыватель: бросок по области с +4, только осколки; цель должна находиться не ближе 40 ярдов.",
+            "Не считать дистанционный подрыв отдельным попаданием обычной пулей."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 153-154"
+        }
+      }
+    },
+    {
+      "id": "hec",
+      "name": "High Explosive Concussion (HEC)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 2
+      },
+      "damage_behavior": "base_plus_linked",
+      "damage_table": {
+        "10mm": {
+          "linked": "1d cr ex"
+        },
+        "15mm": {
+          "linked": "2d cr ex"
+        },
+        "18.5mm": {
+          "linked": "2d+2 cr ex"
+        },
+        "25mm": {
+          "linked": "4d cr ex"
+        },
+        "40mm": {
+          "linked": "8d cr ex"
+        },
+        "64mm": {
+          "linked": "8d×2 cr ex"
+        },
+        "100mm": {
+          "linked": "6d×5 cr ex"
+        }
+      },
+      "rules": [
+        "Normal piercing damage gets armor divisor (0.5), except electromagnetic guns do not get this divisor.",
+        "Listed concussion damage is linked.",
+        "At TL10-12 add +1 per die to concussion damage."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 154",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "base_plus_linked",
+        "component_relations": [
+          {
+            "field": "linked",
+            "relation": "linked"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Обычный пробивающий урон (обычно с бронеделителем 0,5) и отдельный связанный ударный взрыв.",
+            "Для электромагнитного оружия бронеделитель 0,5 к пробивающему урону не добавляется."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 154"
+        }
+      }
+    },
+    {
+      "id": "hp",
+      "name": "Hollow-Point (HP)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": 15,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 4
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Damage type: pi-→pi, pi→pi+, pi+→pi++.",
+        "Armor divisor becomes (0.5).",
+        "Unavailable for weapons of 15mm+ caliber, grenades, or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 154",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Тип пробивающего урона увеличивается на одну ступень; бронеделитель (0,5)."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 154"
+        }
+      }
+    },
+    {
+      "id": "shaped_charge",
+      "name": "Shaped Charge",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 1
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "25mm": {
+          "primary": "5d×3(10) cr inc",
+          "linked": "2d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "primary": "6d×4(10) cr inc",
+          "linked": "4d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "primary": "6d×7(10) cr inc",
+          "linked": "8d cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "primary": "6d×10(10) cr inc",
+          "linked": "8d×2 cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "rules": [
+        "Replaces normal piercing damage.",
+        "At TL10-12 add +1 per die to primary crushing incendiary damage."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 154",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "primary",
+            "relation": "primary"
+          },
+          {
+            "field": "linked",
+            "relation": "linked"
+          },
+          {
+            "field": "fragmentation",
+            "relation": "fragmentation"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Кумулятивный первичный урон и связанный взрыв с осколками.",
+            "Обычный пробивающий урон оружия заменяется эффектом боеголовки."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 154"
+        }
+      }
+    },
+    {
+      "id": "memory_baton",
+      "name": "Memory Baton",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 4
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Change damage to crushing.",
+        "Armor divisor becomes (0.25).",
+        "Double knockback.",
+        "Range ×0.2.",
+        "Unavailable for grenades or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 154",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Урон становится crushing с бронеделителем (0,25).",
+            "Отбрасывание ×2, дальность ×0,2."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 154"
+        }
+      }
+    },
+    {
+      "id": "monochain",
+      "name": "Monochain",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Damage ×0.5 and Range ×0.5.",
+        "+1 to hit.",
+        "Against neck, face, skull, extremity, limb, or any target of SM -2 or less: cutting damage with armor divisor (10).",
+        "Unavailable for mines or hand grenades."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 154",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Урон и дальность уменьшаются вдвое; +1 к попаданию.",
+            "По определённым зонам тела и малым целям — cutting (10); остальные условия см. UT 154."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 154"
+        }
+      }
+    },
+    {
+      "id": "shotshell",
+      "name": "Shotshell",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": [
+          "grenade_launcher",
+          "shotgun",
+          "gauss_shotgun",
+          "gyroc"
+        ],
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 4
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Damage ÷4.",
+        "Damage type Pi++→Pi.",
+        "Range ×0.5.",
+        "RoF ×9.",
+        "Rcl becomes 1."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 154",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Урон ÷4; тип Pi++ меняется на Pi; дальность вдвое меньше; RoF ×9 и Rcl 1."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 154"
+        }
+      }
+    },
+    {
+      "id": "sefop",
+      "name": "Smart Explosively Forged Projectile (SEFOP)",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": true
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "15mm": {
+          "damage": "4d(2) imp inc"
+        },
+        "18.5mm": {
+          "damage": "5d(2) imp inc"
+        },
+        "25mm": {
+          "damage": "5d×3(3) cr inc"
+        },
+        "40mm": {
+          "damage": "6d×4(3) cr inc"
+        },
+        "64mm": {
+          "damage": "6d×7(3) cr inc"
+        },
+        "100mm": {
+          "damage": "6d×10(3) cr inc"
+        }
+      },
+      "rules": [
+        "Only for homing projectiles.",
+        "May attack side or top; top attack ignores posture penalties and cover not protecting from above.",
+        "At TL10+ may be programmed before firing to function as APHEX.",
+        "At TL10-12 add +1 per die to listed damage."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 154",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Только самонаводящийся снаряд. Можно поразить боковую или верхнюю сторону цели.",
+            "При атаке сверху игнорируются соответствующие штрафы положения и укрытие, не защищающее сверху.",
+            "На TL10+ возможна заранее запрограммированная замена эффекта на APHEX."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 154"
+        }
+      }
+    },
+    {
+      "id": "tangler",
+      "name": "Tangler",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 4
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "25mm": {
+          "damage": "ST 15",
+          "layer_bonus": "+1 ST per additional layer"
+        },
+        "40mm": {
+          "damage": "ST 24",
+          "layer_bonus": "+2 ST per additional layer"
+        },
+        "64mm": {
+          "damage": "ST 36",
+          "layer_bonus": "+2 ST per additional layer",
+          "radius_yards": 1
+        },
+        "100mm": {
+          "damage": "ST 60",
+          "layer_bonus": "+3 ST per additional layer",
+          "radius_yards": 1
+        }
+      },
+      "rules": [
+        "Victim is grappled/rooted, cannot Move/Change Posture/change facing, and is at -4 DX until freed.",
+        "Tanglestrands DR = ST/3 (round down); each point of damage reduces ST by 1."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 155",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "64mm": 1,
+            "100mm": 1
+          }
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "При попадании цель опутана и закреплена на месте, DX -4.",
+            "Освобождение: Quick Contest ST или Escape против ST пут; DR пут = ST/3 (округлить вниз).",
+            "Каждый следующий слой усиливает удержание согласно выбранному калибру."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 155"
+        }
+      }
+    },
+    {
+      "id": "thermobaric",
+      "name": "Thermobaric",
+      "min_tl": 9,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 1
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "25mm": {
+          "damage": "8d cr ex inc"
+        },
+        "40mm": {
+          "damage": "8d×2 cr ex inc"
+        },
+        "64mm": {
+          "damage": "6d×5 cr ex inc"
+        },
+        "100mm": {
+          "damage": "6d×10 cr ex inc"
+        }
+      },
+      "rules": [
+        "At TL10-12 add +1 per die.",
+        "Damage ÷4 in trace/vacuum; ÷2 in very thin atmosphere."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 155",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Взрывной зажигательный урон; в разреженной среде и вакууме уменьшается по правилам."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 155"
+        }
+      }
+    },
+    {
+      "id": "burrow_darts",
+      "name": "Burrow Darts",
+      "min_tl": 10,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": 10,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false,
+        "base_damage_types_any": [
+          "pi-",
+          "pi"
+        ]
+      },
+      "economics": {
+        "cost_multiplier": 3,
+        "lc": 2
+      },
+      "damage_behavior": "modify_base_plus_cyclic",
+      "damage_table": null,
+      "rules": [
+        "Source restricts these to small pi-/pi projectile rounds (under 10mm in the supplied UT text).",
+        "Armor divisor becomes (0.5).",
+        "If attack inflicts at least 1 HP injury: 1 HP cyclic injury per second, up to a number of seconds equal to caliber in mm, unless removed.",
+        "Removal requires a sharp tool and First Aid; the supplied source text gives cumulative penalties as drilling continues."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 155",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base_plus_cyclic",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "При ранении не менее 1 HP снаряд наносит циклический дополнительный урон каждую секунду в пределах правил UT.",
+            "Проверить условия остановки эффекта и допустимый калибр."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 155"
+        }
+      }
+    },
+    {
+      "id": "hemp",
+      "name": "High Explosive Multi-Purpose (HEMP)",
+      "min_tl": 10,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 1
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "10mm": {
+          "primary": "8d(5) imp inc",
+          "linked": "1d-2 cr ex",
+          "fragmentation": "1d-2 cut"
+        },
+        "15mm": {
+          "primary": "5d×2(5) imp inc",
+          "linked": "1d cr ex",
+          "fragmentation": "1d-1 cut"
+        },
+        "18.5mm": {
+          "primary": "6d×2(5) imp inc",
+          "linked": "1d+1 cr ex",
+          "fragmentation": "1d cut"
+        },
+        "25mm": {
+          "primary": "6d×3(10) cr inc",
+          "linked": "2d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "primary": "6d×5(10) cr inc",
+          "linked": "4d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "primary": "6d×8(10) cr inc",
+          "linked": "8d cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "primary": "6d×12(10) cr inc",
+          "linked": "8d×2 cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "rules": [
+        "Replaces normal piercing damage.",
+        "At TL11-12 add +1 per die to primary incendiary damage."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 155",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "primary",
+            "relation": "primary"
+          },
+          {
+            "field": "linked",
+            "relation": "linked"
+          },
+          {
+            "field": "fragmentation",
+            "relation": "fragmentation"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Основное пробивное или кумулятивное воздействие, связанный взрыв и осколки.",
+            "На TL11–12 к основному incendiary-урону добавляется +1 за кубик."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 155"
+        }
+      }
+    },
+    {
+      "id": "stingray",
+      "name": "Stingray",
+      "min_tl": 10,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "damage_behavior": "modify_base_plus_linked",
+      "damage_table": {
+        "10mm": {
+          "linked": "1d-3 burn sur"
+        },
+        "15mm": {
+          "linked": "1d-1 burn sur"
+        },
+        "18.5mm": {
+          "linked": "1d burn sur"
+        },
+        "25mm": {
+          "linked": "1d+1 burn sur"
+        },
+        "40mm": {
+          "linked": "2d burn sur"
+        },
+        "64mm": {
+          "linked": "3d burn sur"
+        },
+        "100mm": {
+          "linked": "5d burn sur"
+        }
+      },
+      "rules": [
+        "Base piercing damage ×0.5 and armor divisor becomes (0.25).",
+        "Listed lethal electrical damage is linked.",
+        "Unavailable for hand grenades or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 155-156",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base_plus_linked",
+        "component_relations": [
+          {
+            "field": "linked",
+            "relation": "linked"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Пробивающий урон уменьшается вдвое с бронеделителем (0,25).",
+            "Параллельно наносится указанный связанный электрический burn sur."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 155-156"
+        }
+      }
+    },
+    {
+      "id": "swarm",
+      "name": "Swarm",
+      "min_tl": 10,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": null
+      },
+      "damage_behavior": "replace_with_spec",
+      "damage_table": {
+        "40mm": {
+          "damage": "spec.",
+          "capacity": "1 square-yard swarm"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "capacity": "4 square-yard swarms"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "capacity": "16 square-yard swarms"
+        }
+      },
+      "rules": [
+        "Releases swarmbots; exact swarm effect is user-defined in Notes.",
+        "Cost is ×5 normal plus swarm cost."
+      ],
+      "notes_required": true,
+      "notes_hint": "Enter swarmbot type and any extra text.",
+      "source_ref": "UT 156",
+      "combat_effect": {
+        "kind": "area_special",
+        "damage_behavior": "replace_with_spec",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Выпускает рой роботов; число роёв/площадь зависит от размера.",
+            "Конкретный вид роботов и эффект должны быть указаны в Notes; не подменять их вымышленным уроном."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 156"
+        }
+      }
+    },
+    {
+      "id": "aphd",
+      "name": "Armor-Piercing Hyperdense Dart (APHD)",
+      "min_tl": 11,
+      "category": "conventional",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 1
+      },
+      "damage_behavior": "modify_base",
+      "damage_table": null,
+      "rules": [
+        "Armor divisor becomes (5).",
+        "Range ×2.",
+        "Reduce piercing class one step, minimum pi-, unless caliber is 20mm+.",
+        "Unavailable for hand grenades or mines."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 156",
+      "source_grenade_mine_allowed": false,
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "modify_base",
+        "component_relations": [],
+        "geometry": null,
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Бронеделитель (5), дальность ×2; уменьшение категории пробивающего урона для калибра менее 20 мм."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 156"
+        }
+      }
+    },
+    {
+      "id": "mininuke",
+      "name": "Mininuke",
+      "min_tl": 9,
+      "category": "nuclear_antimatter",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false,
+        "min_size_mm_by_tl": {
+          "9": 100,
+          "10": 64,
+          "11": 40,
+          "12": 25
+        }
+      },
+      "economics": {
+        "cost_multiplier": 1000,
+        "lc": 0
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "0.01kt": {
+          "primary": "6d×200 cr ex",
+          "linked": "4d×200 burn ex rad sur"
+        },
+        "0.1kt": {
+          "primary": "6d×600 cr ex",
+          "linked": "6d×400 burn ex rad sur"
+        },
+        "1kt": {
+          "primary": "6d×2,000 cr ex",
+          "linked": "4d×2,000 burn ex rad sur"
+        }
+      },
+      "rules": [
+        "Dial-a-yield 0.01 to 1 kiloton; setting yield takes a Ready maneuver.",
+        "Minimum warhead size depends on TL: TL9 100mm, TL10 64mm, TL11 40mm, TL12 25mm.",
+        "Linked burning explosion damage uses the source's special distance divisor."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 156",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "primary",
+            "relation": "primary"
+          },
+          {
+            "field": "linked",
+            "relation": "linked"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Сначала взрыв cr ex, отдельно связанный burn ex rad sur.",
+            "Тепловой/радиационный компонент использует особый делитель расстояния, указанный в UT 156.",
+            "Перед выстрелом требуется выбрать мощность (0,01 / 0,1 / 1 кт); изменение — манёвр Ready."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 156"
+        }
+      }
+    },
+    {
+      "id": "micro_antimatter",
+      "name": "Micro-Antimatter",
+      "min_tl": 10,
+      "category": "nuclear_antimatter",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false,
+        "min_size_mm_by_tl": {
+          "10": 100,
+          "11": 40,
+          "12": 10
+        }
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 0
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "0.1ug": {
+          "primary": "6d×4 burn ex sur",
+          "linked": "6d×10,000 tox rad"
+        },
+        "1ug": {
+          "primary": "6d×12 burn ex sur",
+          "linked": "6d×100,000 tox rad"
+        },
+        "10ug": {
+          "primary": "6d×40 burn ex sur",
+          "linked": "6d×1,000,000 tox rad"
+        }
+      },
+      "rules": [
+        "Not dial-a-yield.",
+        "Minimum size by TL: TL10 100mm, TL11 40mm, TL12 10mm.",
+        "Primary damage uses source special distance divisor; toxic radiation is divided by square of distance.",
+        "Cost is ×10 normal plus antimatter cost."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 156-157",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "primary",
+            "relation": "primary"
+          },
+          {
+            "field": "linked",
+            "relation": "linked"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Взрыв burn ex sur плюс связанное токсическое радиационное поражение.",
+            "Для основного и радиационного компонентов используются разные делители расстояния по UT 157.",
+            "Мощность выбирается по размеру антиматерийного заряда, это не dial-a-yield."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 156-157"
+        }
+      }
+    },
+    {
+      "id": "emp",
+      "name": "EMP",
+      "min_tl": 9,
+      "category": "energy",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 2
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "15mm": {
+          "damage": "spec. + 1d-4 cr ex",
+          "radius_yards": 1,
+          "resist": "HT-8 (2) for electrical targets"
+        },
+        "18.5mm": {
+          "damage": "spec. + 1d-3 cr ex",
+          "radius_yards": 1,
+          "resist": "HT-8 (2)"
+        },
+        "25mm": {
+          "damage": "spec. + 1d-2 cr ex",
+          "radius_yards": 2,
+          "resist": "HT-8 (2)"
+        },
+        "40mm": {
+          "damage": "spec. + 1d cr ex",
+          "radius_yards": 4,
+          "resist": "HT-8 (2)"
+        },
+        "64mm": {
+          "damage": "spec. + 2d cr ex",
+          "radius_yards": 8,
+          "resist": "HT-8 (2)"
+        },
+        "100mm": {
+          "damage": "spec. + 4d cr ex",
+          "radius_yards": 16,
+          "resist": "HT-8 (2)"
+        }
+      },
+      "rules": [
+        "Electrical targets/characters with Electrical disadvantage resist HT-8 (2); failure disables for seconds equal to margin."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 157",
+      "combat_effect": {
+        "kind": "affliction",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "15mm": 1,
+            "18.5mm": 1,
+            "25mm": 2,
+            "40mm": 4,
+            "64mm": 8,
+            "100mm": 16
+          }
+        },
+        "resistance": {
+          "attribute": "HT",
+          "modifier": -8,
+          "armor_divisor": 2,
+          "delivery": "Electrical",
+          "per_variant": false
+        },
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Только электрическое оборудование и цели с недостатком Electrical проходят HT-8 (2).",
+            "При провале устройство отключается на число секунд, равное величине провала; роботы теряют сознание, полные киборги испытывают Seizure.",
+            "Кроме эффекта EMP присутствует взрывной урон cr ex, зависящий от калибра."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 157"
+        }
+      }
+    },
+    {
+      "id": "expendable_jammer",
+      "name": "Expendable Jammer",
+      "min_tl": 9,
+      "category": "energy",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 3
+      },
+      "damage_behavior": "replace_with_spec",
+      "damage_table": {
+        "10mm": {
+          "damage": "spec.",
+          "radius_yards": 10
+        },
+        "15mm": {
+          "damage": "spec.",
+          "radius_yards": 15
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "radius_yards": 20
+        },
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 25,
+          "source_status": "OleGURPS house rule (inferred; 25mm absent from published UT 157 table)",
+          "official_radius": false
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 40
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 60
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 100
+        }
+      },
+      "rules": [
+        "Within radius: -10 to Electronics Operation (Comm) for radio/radar operation.",
+        "Digital timer included.",
+        "OleGURPS house rule: for 25mm, use a 25-yard radius inferred from nearby values; the published UT 157 Jammer Warhead Table omits 25mm. Do not label this radius official."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 157",
+      "combat_effect": {
+        "kind": "area_special",
+        "damage_behavior": "replace_with_spec",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "10mm": 10,
+            "15mm": 15,
+            "18.5mm": 20,
+            "25mm": 25,
+            "40mm": 40,
+            "64mm": 60,
+            "100mm": 100
+          }
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Помехи радиосвязи и радарам: -10 к Electronics Operation (Comm) в пределах радиуса.",
+            "Таймер запуска устанавливается отдельно. Радиус 25 мм = 25 ярдов — правило OleGURPS, не официальное значение книги."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 157"
+        }
+      }
+    },
+    {
+      "id": "strobe",
+      "name": "Strobe",
+      "min_tl": 9,
+      "category": "energy",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 4,
+        "lc": 3
+      },
+      "damage_behavior": "replace_with_affliction",
+      "damage_table": {
+        "25mm": {
+          "damage": "HT-3 aff",
+          "radius_yards": 3
+        },
+        "40mm": {
+          "damage": "HT-4 aff",
+          "radius_yards": 4
+        },
+        "64mm": {
+          "damage": "HT-6 aff",
+          "radius_yards": 6
+        },
+        "100mm": {
+          "damage": "HT-10 aff",
+          "radius_yards": 10
+        }
+      },
+      "rules": [
+        "Vision-based affliction; failure causes stun and Blindness for seconds equal to margin; failure by 5+ causes seizure for minutes equal to margin.",
+        "Resistance improves by +1 HT per yard from center."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 157",
+      "combat_effect": {
+        "kind": "affliction",
+        "damage_behavior": "replace_with_affliction",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "25mm": 3,
+            "40mm": 4,
+            "64mm": 6,
+            "100mm": 10
+          }
+        },
+        "resistance": {
+          "attribute": "HT",
+          "modifier": null,
+          "armor_divisor": null,
+          "delivery": "vision",
+          "per_variant": true,
+          "by_variant": {
+            "25mm": "HT-3 aff",
+            "40mm": "HT-4 aff",
+            "64mm": "HT-6 aff",
+            "100mm": "HT-10 aff"
+          }
+        },
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Зрительная Affliction действует на тех, кто смотрит на вспышку.",
+            "При провале HT: оглушение и Blindness на число секунд, равное величине провала.",
+            "При провале на 5+ либо любом провале у персонажа с Epilepsy: Seizure на число минут, равное величине провала.",
+            "За каждый ярд от центра эффекта +1 к HT на сопротивление."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 157"
+        }
+      }
+    },
+    {
+      "id": "warbler",
+      "name": "Warbler",
+      "min_tl": 9,
+      "category": "energy",
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 4,
+        "lc": 3
+      },
+      "damage_behavior": "replace_with_affliction",
+      "damage_table": {
+        "25mm": {
+          "damage": "HT-3 aff",
+          "radius_yards": 3
+        },
+        "40mm": {
+          "damage": "HT-4 aff",
+          "radius_yards": 4
+        },
+        "64mm": {
+          "damage": "HT-6 aff",
+          "radius_yards": 6
+        },
+        "100mm": {
+          "damage": "HT-10 aff",
+          "radius_yards": 10
+        }
+      },
+      "rules": [
+        "Hearing-based affliction; failure causes Deafness and moderate pain for minutes equal to margin.",
+        "Failure by 5+ causes lingering hearing loss.",
+        "Effect can persist up to 10 seconds; resistance improves by +1 HT per yard from center."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 157",
+      "combat_effect": {
+        "kind": "affliction",
+        "damage_behavior": "replace_with_affliction",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "25mm": 3,
+            "40mm": 4,
+            "64mm": 6,
+            "100mm": 10
+          }
+        },
+        "resistance": {
+          "attribute": "HT",
+          "modifier": null,
+          "armor_divisor": null,
+          "delivery": "hearing",
+          "per_variant": true,
+          "by_variant": {
+            "25mm": "HT-3 aff",
+            "40mm": "HT-4 aff",
+            "64mm": "HT-6 aff",
+            "100mm": "HT-10 aff"
+          }
+        },
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Слуховая Affliction; требуется возможность слышать.",
+            "При провале HT: Deafness и Moderate Pain на число минут, равное величине провала.",
+            "При провале на 5+ наступает длительная потеря слуха, как калечащее ранение.",
+            "Каждый ярд от центра даёт +1 к сопротивлению. Эффект длится до 10 секунд; при нахождении в зоне возможны повторные проверки.",
+            "Штраф к Hearing: -10 внутри зоны, -5 в пределах двух радиусов, -2 в пределах пяти радиусов."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 157"
+        }
+      }
+    },
+    {
+      "id": "force",
+      "name": "Force",
+      "min_tl": 10,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "15mm": {
+          "damage": "2d cr dkb ex"
+        },
+        "18.5mm": {
+          "damage": "2d+2 cr dkb ex"
+        },
+        "25mm": {
+          "damage": "4d cr dkb ex"
+        },
+        "40mm": {
+          "damage": "8d cr dkb ex"
+        },
+        "64mm": {
+          "damage": "8d×2 cr dkb ex"
+        },
+        "100mm": {
+          "damage": "6d×5 cr dkb ex"
+        }
+      },
+      "rules": [
+        "Crushing explosive damage with double knockback; no fragmentation."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 157-158",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Взрывной crushing-урон с двойным отбрасыванием (dkb); без осколков."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 157-158"
+        }
+      }
+    },
+    {
+      "id": "plasma",
+      "name": "Plasma",
+      "min_tl": 10,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 1
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "10mm": {
+          "damage": "1d+2 burn ex sur"
+        },
+        "15mm": {
+          "damage": "3d burn ex sur"
+        },
+        "18.5mm": {
+          "damage": "3d+2 burn ex sur"
+        },
+        "25mm": {
+          "damage": "6d burn ex sur"
+        },
+        "40mm": {
+          "damage": "6d×2 burn ex sur"
+        },
+        "64mm": {
+          "damage": "6d×4 burn ex sur"
+        },
+        "100mm": {
+          "damage": "6d×10 burn ex sur"
+        }
+      },
+      "rules": [],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 158",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Взрывной burning-урон с surge; обычный пробивающий урон заменяется эффектом боеголовки."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 158"
+        }
+      }
+    },
+    {
+      "id": "implosion",
+      "name": "Implosion",
+      "min_tl": 11,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 0
+      },
+      "damage_behavior": "replace_base",
+      "damage_table": {
+        "40mm": {
+          "primary": "6d×25 cr dkb ex",
+          "linked": "6d×40 tox rad ex"
+        },
+        "64mm": {
+          "primary": "6d×50 cr dkb ex",
+          "linked": "6d×60 tox rad ex"
+        },
+        "100mm": {
+          "primary": "6d×100 cr dkb ex",
+          "linked": "6d×100 tox rad ex"
+        }
+      },
+      "rules": [
+        "Knockback pulls victims toward blast center.",
+        "Toxic damage uses the source's special distance divisor."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 158",
+      "combat_effect": {
+        "kind": "damage_or_special",
+        "damage_behavior": "replace_base",
+        "component_relations": [
+          {
+            "field": "primary",
+            "relation": "primary"
+          },
+          {
+            "field": "linked",
+            "relation": "linked"
+          }
+        ],
+        "geometry": {
+          "type": "explosion_or_special",
+          "radius_by_variant_yards": null,
+          "note": "Do not invent a radius; derive explosive range from GURPS rules."
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Связанные crushing dkb ex и tox rad ex; отбрасывание направлено к центру.",
+            "Токсический радиационный компонент использует специальный делитель расстояния."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 158"
+        }
+      }
+    },
+    {
+      "id": "psi_bomb",
+      "name": "Psi-Bomb",
+      "min_tl": 12,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 2
+      },
+      "damage_behavior": "replace_with_affliction",
+      "damage_table": {
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "resist": "Will-5"
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "resist": "Will-5"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 8,
+          "resist": "Will-5"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 16,
+          "resist": "Will-5"
+        }
+      },
+      "rules": [
+        "No effect on Digital Mind or IQ 0.",
+        "Failure stuns; recovery rolls are at -5; failure by 5+ causes unconsciousness for minutes equal to margin and erases last two seconds of short-term memory."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 158",
+      "combat_effect": {
+        "kind": "affliction",
+        "damage_behavior": "replace_with_affliction",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "25mm": 2,
+            "40mm": 4,
+            "64mm": 8,
+            "100mm": 16
+          }
+        },
+        "resistance": {
+          "attribute": "Will",
+          "modifier": -5,
+          "armor_divisor": null,
+          "delivery": "mind",
+          "per_variant": false
+        },
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Все цели в области проверяют Will-5; обычная DR не действует, Mind Shield даёт бонус.",
+            "При провале: оглушение, восстановление при -5 и потеря памяти о последних двух секундах.",
+            "При провале на 5+: потеря сознания на число минут, равное величине провала.",
+            "Не действует на Digital Mind и IQ 0."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 158"
+        }
+      }
+    },
+    {
+      "id": "message_psi_bomb",
+      "name": "Message Psi-Bomb",
+      "min_tl": 12,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 3
+      },
+      "damage_behavior": "replace_with_affliction",
+      "damage_table": {
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "resist": "Will-2"
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "resist": "Will-2"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 8,
+          "resist": "Will-2"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 16,
+          "resist": "Will-2"
+        }
+      },
+      "rules": [
+        "Variant of Psi-Bomb using Will-2; does not cause unconsciousness.",
+        "Exact psychic message is free-text Notes."
+      ],
+      "notes_required": true,
+      "notes_hint": "Enter the psychic message/image/emotion and any extra text.",
+      "source_ref": "UT 158",
+      "combat_effect": {
+        "kind": "affliction",
+        "damage_behavior": "replace_with_affliction",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "25mm": 2,
+            "40mm": 4,
+            "64mm": 8,
+            "100mm": 16
+          }
+        },
+        "resistance": {
+          "attribute": "Will",
+          "modifier": -2,
+          "armor_divisor": null,
+          "delivery": "mind",
+          "per_variant": false
+        },
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Проверка Will-2, Mind Shield помогает; вместо шума передаётся сообщение из Notes.",
+            "По общему правилу Psi-Bomb оглушает, но не вызывает потерю сознания.",
+            "При провале на 5+: после восстановления остаётся «эхо» сообщения (Moderate Pain) на число минут, равное величине провала.",
+            "Не действует на Digital Mind и IQ 0."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 158"
+        }
+      }
+    },
+    {
+      "id": "terror_psi_bomb",
+      "name": "Terror Psi-Bomb",
+      "min_tl": 12,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 2
+      },
+      "damage_behavior": "replace_with_affliction",
+      "damage_table": {
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "resist": "Fright Check -5"
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "resist": "Fright Check -5"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 8,
+          "resist": "Fright Check -5"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 16,
+          "resist": "Fright Check -5"
+        }
+      },
+      "rules": [
+        "Variant of Psi-Bomb; targets make Fright Check at -5. Mind Shield applies normally."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 158",
+      "combat_effect": {
+        "kind": "fright_check",
+        "damage_behavior": "replace_with_affliction",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "25mm": 2,
+            "40mm": 4,
+            "64mm": 8,
+            "100mm": 16
+          }
+        },
+        "resistance": {
+          "attribute": "Fright Check",
+          "modifier": -5,
+          "armor_divisor": null,
+          "delivery": "mind",
+          "per_variant": false
+        },
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Все цели в области проходят Fright Check с -5; Mind Shield помогает.",
+            "При провале применяются обычные последствия Fright Check; это не бросок HT и не обычный Affliction.",
+            "Не действует на Digital Mind и IQ 0."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 158"
+        }
+      }
+    },
+    {
+      "id": "stasis",
+      "name": "Stasis",
+      "min_tl": 12,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 500,
+        "lc": 0
+      },
+      "damage_behavior": "replace_with_spec",
+      "damage_table": {
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 2
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 3
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 5
+        }
+      },
+      "rules": [
+        "Creates a stasis bubble; duration is set before use."
+      ],
+      "notes_required": true,
+      "notes_hint": "Optional: record programmed stasis duration or other load notes.",
+      "source_ref": "UT 158-159",
+      "combat_effect": {
+        "kind": "area_special",
+        "damage_behavior": "replace_with_spec",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "40mm": 2,
+            "64mm": 3,
+            "100mm": 5
+          }
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "Сфера стазиса захватывает всё незащищённое в пределах радиуса.",
+            "Продолжительность задаётся до выстрела; соответствующие силовые поля защищают."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 158-159"
+        }
+      }
+    },
+    {
+      "id": "vortex",
+      "name": "Vortex",
+      "min_tl": 12,
+      "category": "energy",
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "economics": {
+        "cost_multiplier": 1000,
+        "lc": 0
+      },
+      "damage_behavior": "replace_with_spec",
+      "damage_table": {
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 2
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 3
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 5
+        }
+      },
+      "rules": [
+        "Within atmosphere/gravity field, sends objects fitting within radius into hyperspace or through a wormhole to a random location."
+      ],
+      "notes_required": false,
+      "notes_hint": null,
+      "source_ref": "UT 159",
+      "combat_effect": {
+        "kind": "area_special",
+        "damage_behavior": "replace_with_spec",
+        "component_relations": [
+          {
+            "field": "damage",
+            "relation": "damage_or_effect"
+          }
+        ],
+        "geometry": {
+          "type": "area",
+          "radius_by_variant_yards": {
+            "40mm": 2,
+            "64mm": 3,
+            "100mm": 5
+          }
+        },
+        "resistance": null,
+        "hint": {
+          "locale": "ru",
+          "collapsed_label_template": "Урон: {resolved_damage_or_resistance}",
+          "details_ru": [
+            "В атмосфере и поле тяжести предметы, помещающиеся в сферу, уносятся в гиперпространство/червоточину.",
+            "Место назначения и возможность возвращения определяет ведущий."
+          ],
+          "show_after": "native_attack_roll",
+          "default_collapsed": true,
+          "resolution": "informational_only",
+          "source_ref": "UT 159"
+        }
+      }
+    }
+  ],
+  "compatibility_engine_contract": {
+    "required_weapon_checks": [
+      "weapon.source == 'UT' / weapon.book == 'Ultra-Tech'",
+      "numeric part of weapon.tech_level >= 9",
+      "weapon mode is explicitly linked to this ammunition catalog by stable ammo family id",
+      "weapon mode has explicit ammoFamily and, where needed, warheadClass/platform tags assigned by the weapon catalog",
+      "warhead minTL is available in the current campaign/availability context; do not compare it as a hard ceiling to native weapon TL",
+      "warhead platform exclusions/requirements pass",
+      "warhead size/class restrictions pass",
+      "for TL-dependent nuclear/antimatter warheads, require explicit warheadClass and apply compatibility.min_size_mm_by_tl using campaign/availability TL (fail closed on missing inputs)",
+      "Do not use actor/character TL or Guns/TL specialization to gate ammunition compatibility or infer warhead availability TL; a default TL3 must not cause a compatibility error."
+    ],
+    "forbidden_shortcut": "Never grant UT ammunition to a non-UT weapon merely because numeric caliber matches.",
+    "damage_resolution": {
+      "inherit_weapon_damage": "Use the weapon attack's existing damage.",
+      "modify_base": "Transform the existing damage/range/RoF/Rcl according to the warhead rules.",
+      "base_plus_followup": "Keep base attack and add follow-up.",
+      "base_plus_linked": "Keep base attack and add linked effect.",
+      "replace_base": "Replace the weapon's base piercing damage with the warhead table entry.",
+      "replace_with_spec": "Display 'spec.' plus structured radius/capacity metadata; concrete filling/effect goes in Notes when applicable.",
+      "replace_with_affliction": "Use the listed HT/Will/Fright Check affliction instead of piercing damage."
+    },
+    "notes_storage": "Notes belong to the concrete ammunition load/magazine instance, not globally to the warhead definition. This allows two loads of the same warhead with different user-defined fillers/descriptions.",
+    "strict_unknown_policy": "If a warhead rule depends on a weapon subtype that the source does not identify, OleGURPS does not guess; that warhead remains unavailable until the subtype is explicitly resolved.",
+    "tl_dependent_warhead_min_size_rule": {
+      "field": "warheads[].compatibility.min_size_mm_by_tl",
+      "tl_basis": "Campaign/GM explicitly selected availability TL or explicitly user-authorized technology of the chosen special load. Never character tech level and never Guns/TL skill specialization.",
+      "lookup": "Use the highest integer threshold key not exceeding current availability TL; TL12+ uses TL12 threshold until a later rule explicitly supersedes it.",
+      "allow_only_if": "warhead min_tl <= availability TL AND the explicitly assigned warhead_class numerical size is >= the looked-up minimum in millimeters",
+      "unknown_tl_or_warhead_class": "Do not infer TL3, raise a global weapon/ammunition error, or change the weapon. Withhold only this TL-dependent special warhead until TL and explicit class are provided; other ammo stays available.",
+      "notional_class": "Use explicitly catalog-assigned weapon.ammunition_profile.warhead_class; do not guess based on caliber alone."
+    },
+    "actor_tl_independence": {
+      "actor_tech_level_required": false,
+      "guns_tl_skill_required_for_ammo_selection": false,
+      "fallback_to_actor_tl": false,
+      "fallback_to_guns_skill_tl": false,
+      "missing_availability_tl": "No error for ordinary linked ammo; for TL-dependent special warheads prompt for TL or hide that one choice until supplied.",
+      "attack_roll_responsibility": "GGA; do not change or fabricate skills or apply technique defaults in the ammo catalog."
+    },
+    "user_authorized_ammo_tl_exception_rule": {
+      "weapon_mode_id": "WkhAN9tcmB9eEkmY6",
+      "ammo_family_id": "7mm_em",
+      "user_action": "Explicit selection/loading of named 7mm EM TL10 ammo authorizes the exception; do not silently auto-apply it.",
+      "on_authorization": "For this family and mode only, treat native TL9 weapon as TL10 during weapon/ammunition-TL comparison and allow installing/using TL10 7mm EM rounds.",
+      "no_effect_on": [
+        "actor TL",
+        "Guns/TL skill",
+        "GGA attacks/defaults",
+        "source weapon tech_level",
+        "other ammunition/warheads",
+        "campaign-wide TL"
+      ],
+      "source_status": "OleGURPS optional interpretation; no official errata."
+    }
+  },
+  "indexes": {
+    "warhead_ids_by_min_tl": {
+      "9": [
+        "standard_inert",
+        "aphc",
+        "apds",
+        "apep",
+        "aphex",
+        "biochemical_aerosol",
+        "biochemical_liquid",
+        "flare",
+        "he",
+        "hec",
+        "hp",
+        "shaped_charge",
+        "memory_baton",
+        "monochain",
+        "shotshell",
+        "sefop",
+        "tangler",
+        "thermobaric",
+        "mininuke",
+        "emp",
+        "expendable_jammer",
+        "strobe",
+        "warbler"
+      ],
+      "10": [
+        "burrow_darts",
+        "hemp",
+        "stingray",
+        "swarm",
+        "micro_antimatter",
+        "force",
+        "plasma"
+      ],
+      "11": [
+        "aphd",
+        "implosion"
+      ],
+      "12": [
+        "psi_bomb",
+        "message_psi_bomb",
+        "terror_psi_bomb",
+        "stasis",
+        "vortex"
+      ]
+    },
+    "warhead_ids_requiring_notes": [
+      "biochemical_aerosol",
+      "biochemical_liquid",
+      "swarm",
+      "message_psi_bomb",
+      "stasis"
+    ],
+    "ammo_family_ids": [
+      "7_5mm_clp",
+      "10mm_clp",
+      "15mm_clp",
+      "5_7mm_cl",
+      "7mm_cl",
+      "10mm_cl",
+      "10mm_clr",
+      "15mm_cl",
+      "18_5mm_pc",
+      "25mm_cl",
+      "100mm_cl",
+      "15mm_plb",
+      "25mm_pc",
+      "40mm_plb",
+      "64mm_plb",
+      "3mm_n",
+      "15mm_air",
+      "25mm_t",
+      "3mm_em",
+      "4mm_em",
+      "7mm_em",
+      "10mm_g",
+      "18_5mm_em",
+      "25mm_g",
+      "40mm_g",
+      "40mm_em_heavy",
+      "64mm_em",
+      "15mm_gyroc",
+      "15mm_micromissile",
+      "64mm_missile",
+      "100mm_missile",
+      "3mm_ice",
+      "grav_needler_round",
+      "grav_railgun_round",
+      "construction_nail",
+      "rocket_piton_reload"
+    ],
+    "ammo_family_ids_with_linked_weapons": [
+      "7_5mm_clp",
+      "10mm_clp",
+      "15mm_clp",
+      "5_7mm_cl",
+      "7mm_cl",
+      "10mm_cl",
+      "10mm_clr",
+      "15mm_cl",
+      "18_5mm_pc",
+      "25mm_cl",
+      "100mm_cl",
+      "15mm_plb",
+      "25mm_pc",
+      "40mm_plb",
+      "64mm_plb",
+      "3mm_n",
+      "15mm_air",
+      "25mm_t",
+      "3mm_em",
+      "4mm_em",
+      "7mm_em",
+      "10mm_g",
+      "18_5mm_em",
+      "25mm_g",
+      "40mm_g",
+      "40mm_em_heavy",
+      "64mm_em",
+      "15mm_gyroc",
+      "15mm_micromissile",
+      "64mm_missile",
+      "100mm_missile",
+      "3mm_ice",
+      "grav_needler_round",
+      "grav_railgun_round",
+      "construction_nail",
+      "rocket_piton_reload"
+    ]
+  },
+  "weapon_catalog_link": {
+    "catalog_kind": "olegurps-weapon-reference-catalog-v5",
+    "catalog_filename": "olegurps_weapon_reference_catalog_v5_6.json",
+    "join_key": "weapon mode ammunition_profile.primary_ammo_family_id / alternate_ammo_family_ids -> ammo_families[].id",
+    "reverse_index_embedded": true
+  },
+  "revision": "2.7",
+  "revision_notes": [
+    "Retains v2.1 TL-dependent minimum size rules for Mininuke and Micro-Antimatter.",
+    "Jammer 25mm: explicit OleGURPS house rule radius 25 yards, not official UT 157 table text.",
+    "Sniper Railgun: user-opt-in TL10 7mm EM ammunition exception scoped to one linked mode/family; preserve weapon TL9, ammunition TL10, and GGA skill/TL.",
+    "Actor TL/Guns/TL skill is never substituted for availability TL; missing character TL is not an ammo error.",
+    "Nonbreaking schema and catalog_kind remain v2 for weapon profile links.",
+    "v2.3: audited structured attack effect components, geometry, resistance and Russian collapsible-chat hints for all 37 UT warhead definitions. This is informational post-GGA; no automatic resistance/status/damage rolls.",
+    "Compatibility-only revision: reverse weapon catalog filename now points at v5.3; all 36 ammo families and 37 warheads unchanged.",
+    "Only weapon_catalog_link.catalog_filename changed to v5.4; UT ammunition rules and definitions unchanged.",
+    "v2.7: UT139 source-verified Paint Gun platform tags added to both linked weapon mode profiles in weapon catalog v5.6; special_loads restrictions remain unchanged."
+  ],
+  "chat_effect_hint_contract": {
+    "display_after": "GGA native attack roll message",
+    "ui_html": "<details><summary>Урон: …</summary>…</details>",
+    "initially_collapsed": true,
+    "display_of_effect": "Always show effect hint when attack made, without assuming hit/success; GM resolves hit and resist separately.",
+    "use_concrete_ammunition": true,
+    "variant_requirements": "Select actual ammo family and warhead type, caliber class, yield/charge/mode, and load Notes. Do not display all unrelated variants.",
+    "notes_source": "specific actor ammo load/magazine Notes",
+    "no_automatic_checks": [
+      "HT",
+      "Will",
+      "Fright Check",
+      "Affliction",
+      "statuses",
+      "linked damage",
+      "follow-up damage"
+    ],
+    "no_damage_duplicating": "GGA remains sole roller; Linked and Follow-Up are different relations; do not create a separate damaging attack just by expanding hint.",
+    "full_text": "Details come from combat_effect.hint.details_ru and row-specific damage_table; do not infer unsupported effect from spec.",
+    "escape_untrusted_text": true,
+    "native_actor_tl_is_not_availability_tl": true,
+    "source_book": "Ultra-Tech, pp. 152-159"
+  },
+  "compatibility_pointer_source_sha256": "cc4d4286bce5eba3936081da60d77a62dee781630c0803cb73fa982fc7723933",
+  "data_rule_review_v2_7": {
+    "authority": "GURPS Ultra-Tech, Fourth Edition, p. 139 (Paint Pistol/Carbine), p. 153 (Biochemical Liquid)",
+    "linked_weapon_catalog": "olegurps_weapon_reference_catalog_v5_6.json",
+    "source_verified_profile_tag_additions": {
+      "Wg_f0E5hqv6o1C0Uj": "paint_carbine",
+      "W5Xb6neoqVfdlbqiS": "paint_pistol"
+    },
+    "unchanged_special_load_ids": [
+      "paint_pellet",
+      "biochemical_liquid_pellet"
+    ],
+    "expected_resolved_pairs": 4,
+    "notes": "Do not broadly replace paint_pistol/paint_carbine predicates with paint_gun or add automatic name-derived aliases."
+  }
+}

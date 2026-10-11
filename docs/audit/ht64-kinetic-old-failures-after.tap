@@ -1,0 +1,54 @@
+TAP version 13
+# Subtest: every HT option exposes its exact structured predicates and missing evidence
+not ok 1 - every HT option exposes its exact structured predicates and missing evidence
+  ---
+  duration_ms: 48.5028
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ammunition-compatibility-service.test.mjs:154:1'
+  failureType: 'testCodeFailure'
+  error: 'ht_ap'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'compatible'
+  actual: 'compatible'
+  operator: 'notStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ammunition-compatibility-service.test.mjs:162:19)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: current catalog byte hashes match the verified upgrade checkpoint
+ok 2 - current catalog byte hashes match the verified upgrade checkpoint
+  ---
+  duration_ms: 135.5233
+  type: 'test'
+  ...
+# Subtest: main exposes the same reference service on all existing module API aliases
+ok 3 - main exposes the same reference service on all existing module API aliases
+  ---
+  duration_ms: 1.8026
+  type: 'test'
+  ...
+# Subtest: main init starts loading without blocking ready or changing existing tool APIs
+ok 4 - main init starts loading without blocking ready or changing existing tool APIs
+  ---
+  duration_ms: 15.3088
+  type: 'test'
+  ...
+# Subtest: current catalog bytes match the verified SHA-256 values
+ok 5 - current catalog bytes match the verified SHA-256 values
+  ---
+  duration_ms: 175.2103
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 4
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 499.2286

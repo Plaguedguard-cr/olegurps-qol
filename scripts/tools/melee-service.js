@@ -1,5 +1,7 @@
 import { createGgaDamageWithEasterEgg } from "./damage-result-easter-egg.js";
-import { buildAttackModifierBreakdownHtml, buildCompactAttackModifiers, executeWithCapturedRollMessage } from "./prepared-gga-roll.js";
+import { buildAttackModifierBreakdownHtml, buildCompactAttackModifiers, executeWithCapturedRollMessage, executePreparedGgaRoll } from "./prepared-gga-roll.js";
+import { resolveRuntimeAttackProfile, newAttackId } from "./attack-profile-runtime.js";
+import { createShotSnapshot } from "./attack-profile-resolver.js";
 import { resolveCombatCalculation } from "./combat-calculation-engine.js";
 import { getCombatRules } from "./combat-technique-registry.js";
 import { isWeaponBondActive } from "./weapon-bond-service.js";
@@ -21,6 +23,7 @@ export function getAllOutAttackSkillBonus(allOutAttack, mode) {
 }
 
 function resolveMeleePass(options, deceptivePenalty = 0) {
+  if (options.baseSkill === null || options.baseSkill === undefined) return null;
   const baseSkill = Number(options.baseSkill);
   if (!Number.isFinite(baseSkill)) return null;
   const hitLocationBase = Number(options.hitLocationBasePenalty ?? options.hitLocationPenalty ?? 0);
@@ -232,7 +235,25 @@ async function performMeleeActionWithoutConfirmation(callback) {
   }
 }
 
-export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0 } = {}) {
+export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0, damageOptions = {}, combatCalculation = null, skillCap = null } = {}) {
+  if (sourceAttack?.standaloneRef) {
+    if (!actor?.isOwner || sourceAttack.readinessReason) throw new Error(sourceAttack.readinessReason ?? "Нет прав на атаку.");
+    const preparedDamage = await prepareEffectiveMeleeDamage({ ...damageOptions, actor, attack: sourceAttack });
+    if (!preparedDamage) throw new Error("Формула автономной атаки не распознана GGA.");
+    const attack = { ...sourceAttack, data: { ...sourceAttack.data, damage: preparedDamage.formula } };
+    const profile = resolveRuntimeAttackProfile({ actor, attack, ammunition: null,
+      context: { kind: "melee", effectiveSkill, deceptiveDefensePenalty, telegraphicCriticalBonus } });
+    const attackId = newAttackId();
+    const result = await executePreparedGgaRoll({ actor, attack, attackProfile: profile,
+      shotSnapshot: createShotSnapshot(profile, { attackId }), baseSkill: sourceAttack.level,
+      baseSkillName: sourceAttack.skillDescription, effectiveSkill, physicalShots: 1, effectiveRoF: 1, rcl: 1,
+      combatType: "melee", maneuver, telegraphicCriticalBonus, combatCalculation, skillCap,
+      deceptiveDefensePenalty, attackContextHtml: overrideText || locationText });
+    if (result.rolled) await result.message.setFlag("olegurps-qol", "shotSnapshot",
+      structuredClone(createShotSnapshot(profile, { attackId, messageId: result.message.id })));
+    return { success: result.rolled, hit: result.rollData ? !result.rollData.failure : false,
+      message: result.message, rollData: result.rollData };
+  }
   if (typeof globalThis.GURPS?.performAction !== "function") throw new Error("GGA performAction недоступен.");
   const originalLevel = Number(sourceAttack?.level ?? sourceAttack?.import);
   if (!Number.isFinite(originalLevel) || !Number.isFinite(Number(effectiveSkill))) {

@@ -1,3 +1,5 @@
+import { calculateHitsFromMargin } from "./prepared-gga-roll.js";
+
 export const SUPPRESSION_FIRE_MINIMUM_SHOTS = 5;
 
 const integer = value => {
@@ -47,11 +49,8 @@ export function calculateSuppressionFireSkill({
   };
 }
 
-export function calculateSuppressionFireHits({ remainingShots, rcl, margin } = {}) {
+export function calculateSuppressionFireHits({ remainingShots, rcl, margin, rollData } = {}) {
   const remaining = Math.max(0, integer(remainingShots));
   const recoil = Math.max(1, integer(rcl));
-  const successMargin = Number(margin);
-  if (!Number.isInteger(successMargin)) return null;
-  if (successMargin < 0 || remaining === 0) return 0;
-  return Math.min(remaining, 1 + Math.floor(successMargin / recoil));
+  return calculateHitsFromMargin(remaining, recoil, Number(margin), rollData);
 }

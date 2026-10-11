@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: magazine switch clears stale fuze preview metadata instead of carrying a previous bonus
+ok 1 - magazine switch clears stale fuze preview metadata instead of carrying a previous bonus
+  ---
+  duration_ms: 3.2504
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 268.7077

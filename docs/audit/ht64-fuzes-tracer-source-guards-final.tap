@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: existing source ABF/Beehive reject a second Airburst without changing catalogue status
+ok 1 - existing source ABF/Beehive reject a second Airburst without changing catalogue status
+  ---
+  duration_ms: 4.5896
+  type: 'test'
+  ...
+# Subtest: all four generic source profiles require exact cartridge/mode/equipment; no per-Actor recipes
+ok 2 - all four generic source profiles require exact cartridge/mode/equipment; no per-Actor recipes
+  ---
+  duration_ms: 3.1775
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 372.598

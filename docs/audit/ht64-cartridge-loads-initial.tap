@@ -1,0 +1,820 @@
+TAP version 13
+# Subtest: APS exact native imp +P preserves source type, both ranges, ST, cost, RoF, Rcl and folding stock
+not ok 1 - APS exact native imp +P preserves source type, both ranges, ST, cost, RoF, Rcl and folding stock
+  ---
+  duration_ms: 1.7366
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\aps-environment-plus-p.test.mjs:24:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/aps-environment-plus-p.test.mjs:26:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots
+not ok 2 - APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots
+  ---
+  duration_ms: 0.2101
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\aps-environment-plus-p.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/aps-environment-plus-p.test.mjs:39:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+# Subtest: APS list explains individual manufacturing/safety approval in RU and EN
+not ok 3 - APS list explains individual manufacturing/safety approval in RU and EN
+  ---
+  duration_ms: 49.4635
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\aps-environment-plus-p.test.mjs:45:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'Для нового сочетания +P нужно подтверждение допустимого давления именно этого оружия; старое разрешение GM его не заменяет.'
+    - 'APS +P: требуется индивидуальное подтверждение GM конструкции, изготовления и безопасности усиленной Underwater Dart.'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'APS +P: требуется индивидуальное подтверждение GM конструкции, изготовления и безопасности усиленной Underwater Dart.'
+  actual: 'Для нового сочетания +P нужно подтверждение допустимого давления именно этого оружия; старое разрешение GM его не заменяет.'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/aps-environment-plus-p.test.mjs:48:48)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: APS uses air x1 and underwater x25 exactly once, never x1000
+ok 4 - APS uses air x1 and underwater x25 exactly once, never x1000
+  ---
+  duration_ms: 2.7006
+  type: 'test'
+  ...
+# Subtest: APS validates 130ft depth, unknown depth, air-water transition and exact identity
+ok 5 - APS validates 130ft depth, unknown depth, air-water transition and exact identity
+  ---
+  duration_ms: 0.4998
+  type: 'test'
+  ...
+# Subtest: APS compares effective distance to half-D and maximum at precise boundaries
+ok 6 - APS compares effective distance to half-D and maximum at precise boundaries
+  ---
+  duration_ms: 1.9869
+  type: 'test'
+  ...
+# Subtest: shared range selection applies underwater penalty once and leaves ordinary weapons unchanged
+ok 7 - shared range selection applies underwater penalty once and leaves ordinary weapons unchanged
+  ---
+  duration_ms: 0.5258
+  type: 'test'
+  ...
+# Subtest: environment snapshot retains physical distance separately from existing elevation adjustment
+ok 8 - environment snapshot retains physical distance separately from existing elevation adjustment
+  ---
+  duration_ms: 1.1952
+  type: 'test'
+  ...
+# Subtest: underwater Malf stays separate from +P and half-D uses the native application control
+not ok 9 - underwater Malf stays separate from +P and half-D uses the native application control
+  ---
+  duration_ms: 1.14
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\aps-environment-plus-p.test.mjs:93:1'
+  failureType: 'testCodeFailure'
+  error: "Cannot read properties of undefined (reading 'manual')"
+  code: 'ERR_TEST_FAILURE'
+  name: 'TypeError'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/aps-environment-plus-p.test.mjs:96:36)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: old shot environment, admission and native Damage remain immutable after settings, magazine and reload
+not ok 10 - old shot environment, admission and native Damage remain immutable after settings, magazine and reload
+  ---
+  duration_ms: 3.0706
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\aps-environment-plus-p.test.mjs:100:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + '5d imp'
+    - '5d+2 imp'
+         ^
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: '5d+2 imp'
+  actual: '5d imp'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/aps-environment-plus-p.test.mjs:104:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: APS actual physical round consumption persists once across repeated attacks and magazine switch
+not ok 11 - APS actual physical round consumption persists once across repeated attacks and magazine switch
+  ---
+  duration_ms: 2.8677
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\aps-environment-plus-p.test.mjs:107:1'
+  failureType: 'testCodeFailure'
+  error: 'IncompleteAmmunitionProfile'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/scripts/tools/ammo-service.js:400:74
+  ...
+# Subtest: Derringer baseline avoids normalization; HT166 1.0/1.1 confirms discrete edge without house ruling
+ok 12 - Derringer baseline avoids normalization; HT166 1.0/1.1 confirms discrete edge without house ruling
+  ---
+  duration_ms: 0.4044
+  type: 'test'
+  ...
+# Subtest: environment reasons and labels have actual RU/EN locale entries
+ok 13 - environment reasons and labels have actual RU/EN locale entries
+  ---
+  duration_ms: 12.2816
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on Wxm8TWSvu5UFTAaDn
+ok 14 - Match confirmed factory family on Wxm8TWSvu5UFTAaDn
+  ---
+  duration_ms: 9.6379
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on WUUPXVnYQI61MZ71z
+ok 15 - Match confirmed factory family on WUUPXVnYQI61MZ71z
+  ---
+  duration_ms: 2.3067
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on Wn6vWZmf30XK2i2l6
+ok 16 - Match confirmed factory family on Wn6vWZmf30XK2i2l6
+  ---
+  duration_ms: 1.4466
+  type: 'test'
+  ...
+# Subtest: Match floor, maximum +1, scope preserved, and bonus only through existing Aim
+ok 17 - Match floor, maximum +1, scope preserved, and bonus only through existing Aim
+  ---
+  duration_ms: 0.817
+  type: 'test'
+  ...
+# Subtest: Match automatic, +P and unsuitable projectiles prohibited; unknown factory or handload proof stays unknown
+ok 18 - Match automatic, +P and unsuitable projectiles prohibited; unknown factory or handload proof stays unknown
+  ---
+  duration_ms: 1.0818
+  type: 'test'
+  ...
+# Subtest: Match guard preserves raw source, rejects unknown Acc and tampered saved rule, and applies once
+ok 19 - Match guard preserves raw source, rejects unknown Acc and tampered saved rule, and applies once
+  ---
+  duration_ms: 7.2504
+  type: 'test'
+  ...
+# Subtest: Match stock, Fire Control Acc, reload and repeated native Damage use historical snapshot without double spend
+ok 20 - Match stock, Fire Control Acc, reload and repeated native Damage use historical snapshot without double spend
+  ---
+  duration_ms: 104.0486
+  type: 'test'
+  ...
+# Subtest: B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted
+not ok 21 - B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted
+  ---
+  duration_ms: 1.0867
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht-plus-p-category-b.test.mjs:23:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    363 !== 390
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 390
+  actual: 363
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht-plus-p-category-b.test.mjs:26:68)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: Vickers native 10! is ready, HT166 damage/ranges/ST are computed without pressure or caliber
+ok 22 - Vickers native 10! is ready, HT166 damage/ranges/ST are computed without pressure or caliber
+  ---
+  duration_ms: 0.968
+  type: 'test'
+  ...
+# Subtest: physical and pellet RoF remain separate for six patterns and all native delimiters
+ok 23 - physical and pellet RoF remain separate for six patterns and all native delimiters
+  ---
+  duration_ms: 0.7866
+  type: 'test'
+  ...
+# Subtest: HT79 composite Rcl follows confirmed shot/slug identity, never range or a fraction
+ok 24 - HT79 composite Rcl follows confirmed shot/slug identity, never range or a fraction
+  ---
+  duration_ms: 0.2549
+  type: 'test'
+  ...
+# Subtest: B409 boundary is strict and uses current +P HalfD; pellets remain independent hits
+ok 25 - B409 boundary is strict and uses current +P HalfD; pellets remain independent hits
+  ---
+  duration_ms: 0.3118
+  type: 'test'
+  ...
+# Subtest: common native execution rejects unresolved composite Rcl before rolls and resource writes
+ok 26 - common native execution rejects unresolved composite Rcl before rolls and resource writes
+  ---
+  duration_ms: 0.7596
+  type: 'test'
+  ...
+# Subtest: B409 calculation report uses completed +P Damage, preserving raw and native per-pellet damage
+ok 27 - B409 calculation report uses completed +P Damage, preserving raw and native per-pellet damage
+  ---
+  duration_ms: 5.5853
+  type: 'test'
+  ...
+# Subtest: GM physical RoF decision preserves pellets and !/\#, without changing Rcl
+ok 28 - GM physical RoF decision preserves pellets and !/\#, without changing Rcl
+  ---
+  duration_ms: 0.4323
+  type: 'test'
+  ...
+# Subtest: powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot
+not ok 29 - powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot
+  ---
+  duration_ms: 3.0141
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht-plus-p-category-b.test.mjs:92:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'P1PressureProofRequired'
+    - 'plus-p-loading-check-required'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'plus-p-loading-check-required'
+  actual: 'P1PressureProofRequired'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht-plus-p-category-b.test.mjs:97:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ordinary conventional-case legacy stock remains distinct and unload/deletion returns its own rounds with ready +P
+ok 30 - ordinary conventional-case legacy stock remains distinct and unload/deletion returns its own rounds with ready +P
+  ---
+  duration_ms: 3.1564
+  type: 'test'
+  ...
+# Subtest: shotgun stock/spend once per physical shell, magazine switch/reload preserve old Damage and identity
+ok 31 - shotgun stock/spend once per physical shell, magazine switch/reload preserve old Damage and identity
+  ---
+  duration_ms: 9.6156
+  type: 'test'
+  ...
+# Subtest: missing Acc and Bulk remain precise standalone-only blockers; composite Rcl is accepted
+ok 32 - missing Acc and Bulk remain precise standalone-only blockers; composite Rcl is accepted
+  ---
+  duration_ms: 8.2568
+  type: 'test'
+  ...
+# Subtest: Malf and native B409 GM operation appear before the attack; no damage/DR double scaling
+ok 33 - Malf and native B409 GM operation appear before the attack; no damage/DR double scaling
+  ---
+  duration_ms: 7.6958
+  type: 'test'
+  ...
+# Subtest: new diagnostics load RU/EN even with cached older keys, without changing language
+ok 34 - new diagnostics load RU/EN even with cached older keys, without changing language
+  ---
+  duration_ms: 2.916
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: W5biN11nvUhQ00ewl
+ok 35 - reviewed native +P preserves exact projectile: W5biN11nvUhQ00ewl
+  ---
+  duration_ms: 9.7294
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WApJkhMAYa4wlXViK
+ok 36 - reviewed native +P preserves exact projectile: WApJkhMAYa4wlXViK
+  ---
+  duration_ms: 2.9992
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WTrwxX4jwWz6xKiPz
+ok 37 - reviewed native +P preserves exact projectile: WTrwxX4jwWz6xKiPz
+  ---
+  duration_ms: 2.7112
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WYmXQkUoq1luUajT-
+ok 38 - reviewed native +P preserves exact projectile: WYmXQkUoq1luUajT-
+  ---
+  duration_ms: 3.1472
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WecVKS0hiwdjXu_uS
+ok 39 - reviewed native +P preserves exact projectile: WecVKS0hiwdjXu_uS
+  ---
+  duration_ms: 2.8049
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WgOt4XUnNzTOpdiAO
+ok 40 - reviewed native +P preserves exact projectile: WgOt4XUnNzTOpdiAO
+  ---
+  duration_ms: 2.3789
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WHsI3V0zdU2TUI6w7
+ok 41 - reviewed native +P preserves exact projectile: WHsI3V0zdU2TUI6w7
+  ---
+  duration_ms: 2.7923
+  type: 'test'
+  ...
+# Subtest: native APHC/HP cannot be deduced from divisor or applied a second time
+ok 42 - native APHC/HP cannot be deduced from divisor or applied a second time
+  ---
+  duration_ms: 5.3429
+  type: 'test'
+  ...
+# Subtest: native HP keeps zero-DR and optional expansion; AS Val retains suppressor without invented subsonic velocity
+ok 43 - native HP keeps zero-DR and optional expansion; AS Val retains suppressor without invented subsonic velocity
+  ---
+  duration_ms: 2.7948
+  type: 'test'
+  ...
+# Subtest: shared cartridge FN pistol and P90 preserve independent immutable snapshots after reload
+ok 44 - shared cartridge FN pistol and P90 preserve independent immutable snapshots after reload
+  ---
+  duration_ms: 5.7419
+  type: 'test'
+  ...
+# Subtest: KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+not ok 45 - KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+  ---
+  duration_ms: 2.9037
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht-plus-p-category-g.test.mjs:75:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht-plus-p-category-g.test.mjs:82:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: APS numerical profile is complete but world policy does not confirm individual construction
+not ok 46 - APS numerical profile is complete but world policy does not confirm individual construction
+  ---
+  duration_ms: 0.6437
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht-plus-p-category-g.test.mjs:89:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht-plus-p-category-g.test.mjs:94:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge
+ok 47 - Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge
+  ---
+  duration_ms: 0.9977
+  type: 'test'
+  ...
+# Subtest: LeMat shot barrel uses corrected source-backed identity; historical .42 cannot prepare +P
+ok 48 - LeMat shot barrel uses corrected source-backed identity; historical .42 cannot prepare +P
+  ---
+  duration_ms: 1.7594
+  type: 'test'
+  ...
+# Subtest: new G diagnostics resolve in RU and EN locale files
+ok 49 - new G diagnostics resolve in RU and EN locale files
+  ---
+  duration_ms: 11.7853
+  type: 'test'
+  ...
+# Subtest: native G shot consumes one physical round once; changing magazine preserves old shot
+ok 50 - native G shot consumes one physical round once; changing magazine preserves old shot
+  ---
+  duration_ms: 5.3479
+  type: 'test'
+  ...
+# Subtest: 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+not ok 51 - 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+  ---
+  duration_ms: 469.7026
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht-plus-p-category-g.test.mjs:134:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht-plus-p-category-g.test.mjs:139:59)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass
+ok 52 - restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass
+  ---
+  duration_ms: 46.1771
+  type: 'test'
+  ...
+# Subtest: +P calculation needs no numeric pressure; admission never changes unknown platform safety
+ok 53 - +P calculation needs no numeric pressure; admission never changes unknown platform safety
+  ---
+  duration_ms: 6.9313
+  type: 'test'
+  ...
+# Subtest: +P explicit contraindication and Match conflict remain prohibited
+ok 54 - +P explicit contraindication and Match conflict remain prohibited
+  ---
+  duration_ms: 0.9121
+  type: 'test'
+  ...
+# Subtest: +P HT165/166 applies Damage, both ranges, required ST and cost from immutable raw data
+ok 55 - +P HT165/166 applies Damage, both ranges, required ST and cost from immutable raw data
+  ---
+  duration_ms: 1.9149
+  type: 'test'
+  ...
+# Subtest: +P required ST rounds to nearest, preserves operating suffixes and uses the shared skill channel
+ok 56 - +P required ST rounds to nearest, preserves operating suffixes and uses the shared skill channel
+  ---
+  duration_ms: 0.3616
+  type: 'test'
+  ...
+# Subtest: +P missing quality is not cheap; automatic RoF is unresolved, and a loading skill check is not a shot penalty
+ok 57 - +P missing quality is not cheap; automatic RoF is unresolved, and a loading skill check is not a shot penalty
+  ---
+  duration_ms: 0.5957
+  type: 'test'
+  ...
+# Subtest: +P stock, magazine, Hit, history and reload work under permissive admission; unresolved legacy recipe cannot spend
+ok 58 - +P stock, magazine, Hit, history and reload work under permissive admission; unresolved legacy recipe cannot spend
+  ---
+  duration_ms: 100.9057
+  type: 'test'
+  ...
+# Subtest: +P GM decisions persist by exact mode/recipe, allow strict use and revoke future shots only
+ok 59 - +P GM decisions persist by exact mode/recipe, allow strict use and revoke future shots only
+  ---
+  duration_ms: 6.529
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations W1doZcasYO-1Xw3Lf
+ok 60 - Subsonic source calculations W1doZcasYO-1Xw3Lf
+  ---
+  duration_ms: 9.2244
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations Ww9qXLufPV8uXb5rB
+ok 61 - Subsonic source calculations Ww9qXLufPV8uXb5rB
+  ---
+  duration_ms: 2.1686
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations W1miyD-ozfViISq7K
+ok 62 - Subsonic source calculations W1miyD-ozfViISq7K
+  ---
+  duration_ms: 2.1092
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations W27s4Lm8QlkKVKUPn
+ok 63 - Subsonic source calculations W27s4Lm8QlkKVKUPn
+  ---
+  duration_ms: 1.8384
+  type: 'test'
+  ...
+# Subtest: already subsonic families and native suppressed modes reject a second conversion
+ok 64 - already subsonic families and native suppressed modes reject a second conversion
+  ---
+  duration_ms: 3.9922
+  type: 'test'
+  ...
+# Subtest: classification follows the cartridge, unknown velocity remains undetermined
+ok 65 - classification follows the cartridge, unknown velocity remains undetermined
+  ---
+  duration_ms: 1.6802
+  type: 'test'
+  ...
+# Subtest: raw guard, existing native effects, divisor and journal prevent duplicate Subsonic
+ok 66 - raw guard, existing native effects, divisor and journal prevent duplicate Subsonic
+  ---
+  duration_ms: 7.8673
+  type: 'test'
+  ...
+# Subtest: Subsonic preview updates Range and 1/2D once, without Actor writes
+ok 67 - Subsonic preview updates Range and 1/2D once, without Actor writes
+  ---
+  duration_ms: 5.4037
+  type: 'test'
+  ...
+# Subtest: standalone preview finds its physical carrier by saved weapon and mode IDs
+ok 68 - standalone preview finds its physical carrier by saved weapon and mode IDs
+  ---
+  duration_ms: 6.1468
+  type: 'test'
+  ...
+# Subtest: Subsonic stock, one spend, magazine switch, reload, historical repeated Damage and RU/EN
+ok 69 - Subsonic stock, one spend, magazine switch, reload, historical repeated Damage and RU/EN
+  ---
+  duration_ms: 92.007
+  type: 'test'
+  ...
+# Subtest: P1 all six catalogue contracts and source mechanics remain unchanged
+ok 70 - P1 all six catalogue contracts and source mechanics remain unchanged
+  ---
+  duration_ms: 1.0027
+  type: 'test'
+  ...
+# Subtest: handloaded arithmetic floor/cap two preserves scope and original damage; factory Match remains cap one
+ok 71 - handloaded arithmetic floor/cap two preserves scope and original damage; factory Match remains cap one
+  ---
+  duration_ms: 7.879
+  type: 'test'
+  ...
+# Subtest: handload cannot cross identical-model gun, actor, mode or ammo identities
+ok 72 - handload cannot cross identical-model gun, actor, mode or ammo identities
+  ---
+  duration_ms: 0.3147
+  type: 'test'
+  ...
+# Subtest: handload requires both actually confirmed successful skill checks and real batch evidence
+ok 73 - handload requires both actually confirmed successful skill checks and real batch evidence
+  ---
+  duration_ms: 0.2627
+  type: 'test'
+  ...
+# Subtest: handload native accuracy and immutable journal cannot apply the personal bonus twice
+ok 74 - handload native accuracy and immutable journal cannot apply the personal bonus twice
+  ---
+  duration_ms: 0.3362
+  type: 'test'
+  ...
+# Subtest: Silent confirmed captive-piston fixture preserves source ballistic stats; exact Hearing table not universal modifier
+ok 75 - Silent confirmed captive-piston fixture preserves source ballistic stats; exact Hearing table not universal modifier
+  ---
+  duration_ms: 0.5284
+  type: 'test'
+  ...
+# Subtest: no real handloaded or Silent batch is fabricated from factory Match or permissive policy
+ok 76 - no real handloaded or Silent batch is fabricated from factory Match or permissive policy
+  ---
+  duration_ms: 2.5951
+  type: 'test'
+  ...
+# Subtest: legacy +P policy list is frozen; neither GM approval nor policy admits a new unproven pair
+ok 77 - legacy +P policy list is frozen; neither GM approval nor policy admits a new unproven pair
+  ---
+  duration_ms: 1.263
+  type: 'test'
+  ...
+# Subtest: saved +P recipe and source stats stay unchanged; Subsonic classes/native exclusions and snapshot survive reload
+ok 78 - saved +P recipe and source stats stay unchanged; Subsonic classes/native exclusions and snapshot survive reload
+  ---
+  duration_ms: 9.0718
+  type: 'test'
+  ...
+# Subtest: P1 shared AmmoService spends once and repeat attack/reload retain old snapshot
+ok 79 - P1 shared AmmoService spends once and repeat attack/reload retain old snapshot
+  ---
+  duration_ms: 6.6515
+  type: 'test'
+  ...
+# Subtest: P1 new labels and reason keys have exact RU/EN parity and real unavailable UI choices
+ok 80 - P1 new labels and reason keys have exact RU/EN parity and real unavailable UI choices
+  ---
+  duration_ms: 93.8556
+  type: 'test'
+  ...
+# Subtest: runtime correction preserves source catalogs and .42 economics while removing central reverse link
+ok 81 - runtime correction preserves source catalogs and .42 economics while removing central reverse link
+  ---
+  duration_ms: 1.4354
+  type: 'test'
+  ...
+# Subtest: revolver .42 and central 18G are bidirectionally exclusive, including family bypass
+ok 82 - revolver .42 and central 18G are bidirectionally exclusive, including family bypass
+  ---
+  duration_ms: 0.9458
+  type: 'test'
+  ...
+# Subtest: ordinary shot preserves damage, 11 projectiles, divisor, ST and independent identity without requiring economics
+ok 83 - ordinary shot preserves damage, 11 projectiles, divisor, ST and independent identity without requiring economics
+  ---
+  duration_ms: 2.5727
+  type: 'test'
+  ...
+# Subtest: +P preserves 1d(0.5) pi-, transforms both ranges/ST once, no fake price
+not ok 84 - +P preserves 1d(0.5) pi-, transforms both ranges/ST once, no fake price
+  ---
+  duration_ms: 2.3364
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\lemat-physical-ammunition.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/lemat-physical-ammunition.test.mjs:48:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: LeMat B409 is strictly below current 10% half-D and counts 11 pellets as one charge
+ok 85 - LeMat B409 is strictly below current 10% half-D and counts 11 pellets as one charge
+  ---
+  duration_ms: 0.5404
+  type: 'test'
+  ...
+# Subtest: +P needs both scoped GM safety and prior loading check; revoke affects future use
+not ok 86 - +P needs both scoped GM safety and prior loading check; revoke affects future use
+  ---
+  duration_ms: 2.9361
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\lemat-physical-ammunition.test.mjs:60:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'P1PressureProofRequired'
+    - 'plus-p-loading-check-required'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'plus-p-loading-check-required'
+  actual: 'P1PressureProofRequired'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/lemat-physical-ammunition.test.mjs:63:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: one instance owns distinct 9 and 1 carriers without retagging old stock or IDs
+ok 87 - one instance owns distinct 9 and 1 carriers without retagging old stock or IDs
+  ---
+  duration_ms: 0.5876
+  type: 'test'
+  ...
+# Subtest: each barrel spends one physical charge, duplicate attack is idempotent and other feed unchanged
+ok 88 - each barrel spends one physical charge, duplicate attack is idempotent and other feed unchanged
+  ---
+  duration_ms: 3.6649
+  type: 'test'
+  ...
+# Subtest: service blocks wrong identities/capacities even with caller-provided permissive type list
+ok 89 - service blocks wrong identities/capacities even with caller-provided permissive type list
+  ---
+  duration_ms: 1.8238
+  type: 'test'
+  ...
+# Subtest: old incorrect recipe is retained, visibly review-required, cannot fire; unload safely returns its original type
+ok 90 - old incorrect recipe is retained, visibly review-required, cannot fire; unload safely returns its original type
+  ---
+  duration_ms: 97.7462
+  type: 'test'
+  ...
+# Subtest: old snapshot does not re-resolve identity, barrel, approval or Damage after reload
+ok 91 - old snapshot does not re-resolve identity, barrel, approval or Damage after reload
+  ---
+  duration_ms: 3.8286
+  type: 'test'
+  ...
+# Subtest: new Ready, economics and identity messages resolve RU/EN from actual locale files
+ok 92 - new Ready, economics and identity messages resolve RU/EN from actual locale files
+  ---
+  duration_ms: 10.685
+  type: 'test'
+  ...
+# Subtest: other 510 native +P pairs retain identities and weapon source records
+ok 93 - other 510 native +P pairs retain identities and weapon source records
+  ---
+  duration_ms: 4.174
+  type: 'test'
+  ...
+# Subtest: charge editor defaults to the actual barrel capacity without invented mass/price inputs
+ok 94 - charge editor defaults to the actual barrel capacity without invented mass/price inputs
+  ---
+  duration_ms: 0.383
+  type: 'test'
+  ...
+# Subtest: cached older translations still load actual new LeMat keys in RU/EN without changing user language
+ok 95 - cached older translations still load actual new LeMat keys in RU/EN without changing user language
+  ---
+  duration_ms: 4.3105
+  type: 'test'
+  ...
+1..95
+# tests 95
+# suites 0
+# pass 82
+# fail 13
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 959.3275

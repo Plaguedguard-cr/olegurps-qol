@@ -1,0 +1,544 @@
+TAP version 13
+# Subtest: HT eligibility loads and checks ht_plus_p
+ok 1 - HT eligibility loads and checks ht_plus_p
+  ---
+  duration_ms: 3.2855
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_match_grade
+ok 2 - HT eligibility loads and checks ht_match_grade
+  ---
+  duration_ms: 0.3725
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_match_handloaded
+ok 3 - HT eligibility loads and checks ht_match_handloaded
+  ---
+  duration_ms: 0.1906
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_subsonic_pistol
+ok 4 - HT eligibility loads and checks ht_subsonic_pistol
+  ---
+  duration_ms: 0.1878
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_subsonic_rifle
+ok 5 - HT eligibility loads and checks ht_subsonic_rifle
+  ---
+  duration_ms: 0.2651
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_silent
+ok 6 - HT eligibility loads and checks ht_silent
+  ---
+  duration_ms: 0.2396
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_solid
+ok 7 - HT eligibility loads and checks ht_solid
+  ---
+  duration_ms: 0.1676
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_rifled_slug
+ok 8 - HT eligibility loads and checks ht_rifled_slug
+  ---
+  duration_ms: 0.1456
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hollow_point
+ok 9 - HT eligibility loads and checks ht_hollow_point
+  ---
+  duration_ms: 0.52
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_poison
+ok 10 - HT eligibility loads and checks ht_poison
+  ---
+  duration_ms: 0.3814
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_ap
+ok 11 - HT eligibility loads and checks ht_ap
+  ---
+  duration_ms: 0.1815
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_aphc
+ok 12 - HT eligibility loads and checks ht_aphc
+  ---
+  duration_ms: 0.1154
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_frangible
+ok 13 - HT eligibility loads and checks ht_frangible
+  ---
+  duration_ms: 0.1132
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apds
+ok 14 - HT eligibility loads and checks ht_apds
+  ---
+  duration_ms: 0.1257
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apfsds
+ok 15 - HT eligibility loads and checks ht_apfsds
+  ---
+  duration_ms: 0.1079
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_baton
+ok 16 - HT eligibility loads and checks ht_baton
+  ---
+  duration_ms: 0.1303
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_beanbag
+ok 17 - HT eligibility loads and checks ht_beanbag
+  ---
+  duration_ms: 0.1457
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_sapfsds
+ok 18 - HT eligibility loads and checks ht_sapfsds
+  ---
+  duration_ms: 0.1089
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_underwater_dart
+ok 19 - HT eligibility loads and checks ht_underwater_dart
+  ---
+  duration_ms: 0.1027
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apdu
+ok 20 - HT eligibility loads and checks ht_apdu
+  ---
+  duration_ms: 0.1022
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apdsdu
+ok 21 - HT eligibility loads and checks ht_apdsdu
+  ---
+  duration_ms: 0.0979
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apfsdsdu
+ok 22 - HT eligibility loads and checks ht_apfsdsdu
+  ---
+  duration_ms: 0.1205
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_le
+ok 23 - HT eligibility loads and checks ht_le
+  ---
+  duration_ms: 0.1189
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_saple
+ok 24 - HT eligibility loads and checks ht_saple
+  ---
+  duration_ms: 0.1075
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apex
+ok 25 - HT eligibility loads and checks ht_apex
+  ---
+  duration_ms: 0.1038
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_he
+ok 26 - HT eligibility loads and checks ht_he
+  ---
+  duration_ms: 0.1241
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_saphe
+ok 27 - HT eligibility loads and checks ht_saphe
+  ---
+  duration_ms: 0.1055
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_saphec
+ok 28 - HT eligibility loads and checks ht_saphec
+  ---
+  duration_ms: 0.1044
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_aphex
+ok 29 - HT eligibility loads and checks ht_aphex
+  ---
+  duration_ms: 0.1387
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_efp
+ok 30 - HT eligibility loads and checks ht_efp
+  ---
+  duration_ms: 0.1576
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_heat
+ok 31 - HT eligibility loads and checks ht_heat
+  ---
+  duration_ms: 0.1186
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hedp
+ok 32 - HT eligibility loads and checks ht_hedp
+  ---
+  duration_ms: 0.1003
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hesh
+ok 33 - HT eligibility loads and checks ht_hesh
+  ---
+  duration_ms: 0.1509
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_ms_heat
+ok 34 - HT eligibility loads and checks ht_ms_heat
+  ---
+  duration_ms: 0.1041
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_thermobaric
+ok 35 - HT eligibility loads and checks ht_thermobaric
+  ---
+  duration_ms: 0.1159
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_illumination
+ok 36 - HT eligibility loads and checks ht_illumination
+  ---
+  duration_ms: 0.116
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_signal_flare
+ok 37 - HT eligibility loads and checks ht_signal_flare
+  ---
+  duration_ms: 0.1082
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_smoke
+ok 38 - HT eligibility loads and checks ht_smoke
+  ---
+  duration_ms: 0.1021
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_colored_smoke
+ok 39 - HT eligibility loads and checks ht_colored_smoke
+  ---
+  duration_ms: 0.0933
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hot_smoke
+ok 40 - HT eligibility loads and checks ht_hot_smoke
+  ---
+  duration_ms: 0.0929
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_prism_smoke
+ok 41 - HT eligibility loads and checks ht_prism_smoke
+  ---
+  duration_ms: 0.0937
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_em_smoke
+ok 42 - HT eligibility loads and checks ht_em_smoke
+  ---
+  duration_ms: 0.0979
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_tear_gas
+ok 43 - HT eligibility loads and checks ht_tear_gas
+  ---
+  duration_ms: 0.1007
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_tear_gas_vomit
+ok 44 - HT eligibility loads and checks ht_tear_gas_vomit
+  ---
+  duration_ms: 0.1011
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_liquid
+ok 45 - HT eligibility loads and checks ht_liquid
+  ---
+  duration_ms: 0.0978
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_poison_gas
+ok 46 - HT eligibility loads and checks ht_poison_gas
+  ---
+  duration_ms: 0.0984
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_white_phosphorus
+ok 47 - HT eligibility loads and checks ht_white_phosphorus
+  ---
+  duration_ms: 0.0936
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_canister
+ok 48 - HT eligibility loads and checks ht_canister
+  ---
+  duration_ms: 0.1203
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_shotshell
+ok 49 - HT eligibility loads and checks ht_shotshell
+  ---
+  duration_ms: 0.099
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_buck_and_ball
+ok 50 - HT eligibility loads and checks ht_buck_and_ball
+  ---
+  duration_ms: 0.094
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_shrapnel
+ok 51 - HT eligibility loads and checks ht_shrapnel
+  ---
+  duration_ms: 0.101
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_duplex
+ok 52 - HT eligibility loads and checks ht_duplex
+  ---
+  duration_ms: 0.0954
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_triplex
+ok 53 - HT eligibility loads and checks ht_triplex
+  ---
+  duration_ms: 0.0919
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_beehive
+ok 54 - HT eligibility loads and checks ht_beehive
+  ---
+  duration_ms: 0.097
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_multi_flechette
+ok 55 - HT eligibility loads and checks ht_multi_flechette
+  ---
+  duration_ms: 0.0987
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_rubber_shot
+ok 56 - HT eligibility loads and checks ht_rubber_shot
+  ---
+  duration_ms: 0.0966
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_abf
+ok 57 - HT eligibility loads and checks ht_abf
+  ---
+  duration_ms: 0.0913
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_airburst
+ok 58 - HT eligibility loads and checks ht_airburst
+  ---
+  duration_ms: 0.1027
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_incendiary
+ok 59 - HT eligibility loads and checks ht_incendiary
+  ---
+  duration_ms: 0.0878
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_self_destruct
+ok 60 - HT eligibility loads and checks ht_self_destruct
+  ---
+  duration_ms: 0.0951
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_tracer
+ok 61 - HT eligibility loads and checks ht_tracer
+  ---
+  duration_ms: 0.0988
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_light_case
+ok 62 - HT eligibility loads and checks ht_light_case
+  ---
+  duration_ms: 0.091
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_caseless
+ok 63 - HT eligibility loads and checks ht_caseless
+  ---
+  duration_ms: 0.0939
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_consumable_case
+ok 64 - HT eligibility loads and checks ht_consumable_case
+  ---
+  duration_ms: 0.0995
+  type: 'test'
+  ...
+# Subtest: all 64 contracts and review IDs match; four current catalogs ready
+ok 65 - all 64 contracts and review IDs match; four current catalogs ready
+  ---
+  duration_ms: 16.3099
+  type: 'test'
+  ...
+# Subtest: all original HT fields, mechanics, HT178 and rocket data retained
+ok 66 - all original HT fields, mechanics, HT178 and rocket data retained
+  ---
+  duration_ms: 10.6064
+  type: 'test'
+  ...
+# Subtest: matching type/TL cannot replace pressure proof
+ok 67 - matching type/TL cannot replace pressure proof
+  ---
+  duration_ms: 0.2869
+  type: 'test'
+  ...
+# Subtest: caller claims of verification and guessed caliber cannot bypass catalog evidence
+ok 68 - caller claims of verification and guessed caliber cannot bypass catalog evidence
+  ---
+  duration_ms: 0.1415
+  type: 'test'
+  ...
+# Subtest: confirmed action prohibits manual-only match load
+ok 69 - confirmed action prohibits manual-only match load
+  ---
+  duration_ms: 0.3615
+  type: 'test'
+  ...
+# Subtest: known cased round prohibits caseless option, absent class is not denial
+ok 70 - known cased round prohibits caseless option, absent class is not denial
+  ---
+  duration_ms: 0.207
+  type: 'test'
+  ...
+# Subtest: minimum and maximum caliber bounds distinguish unknown/confirmed/prohibited
+ok 71 - minimum and maximum caliber bounds distinguish unknown/confirmed/prohibited
+  ---
+  duration_ms: 0.1499
+  type: 'test'
+  ...
+# Subtest: caliber_hint and numeric text in names are never numeric caliber evidence
+ok 72 - caliber_hint and numeric text in names are never numeric caliber evidence
+  ---
+  duration_ms: 0.2421
+  type: 'test'
+  ...
+# Subtest: required base variant and explicit exclusions are respected
+ok 73 - required base variant and explicit exclusions are respected
+  ---
+  duration_ms: 0.3535
+  type: 'test'
+  ...
+# Subtest: exclusive projectile layers reject AP plus APHC instead of stacking
+ok 74 - exclusive projectile layers reject AP plus APHC instead of stacking
+  ---
+  duration_ms: 0.1195
+  type: 'test'
+  ...
+# Subtest: unknown proposed options/context stay undetermined
+ok 75 - unknown proposed options/context stay undetermined
+  ---
+  duration_ms: 0.1628
+  type: 'test'
+  ...
+# Subtest: minimum availability TL is separate from native weapon TL
+ok 76 - minimum availability TL is separate from native weapon TL
+  ---
+  duration_ms: 0.1864
+  type: 'test'
+  ...
+# Subtest: light shotshell case at TL5-7 is not rejected by broad small-arms TL8
+ok 77 - light shotshell case at TL5-7 is not rejected by broad small-arms TL8
+  ---
+  duration_ms: 0.2385
+  type: 'test'
+  ...
+# Subtest: actual native Linked effect prevents adding the guarded transform again
+ok 78 - actual native Linked effect prevents adding the guarded transform again
+  ---
+  duration_ms: 0.1666
+  type: 'test'
+  ...
+# Subtest: native overlap absence cannot be inferred; confirmed overlap is prohibition
+ok 79 - native overlap absence cannot be inferred; confirmed overlap is prohibition
+  ---
+  duration_ms: 0.1063
+  type: 'test'
+  ...
+# Subtest: pure evaluator compatible only after ALL source-backed facts confirmed (test facts)
+ok 80 - pure evaluator compatible only after ALL source-backed facts confirmed (test facts)
+  ---
+  duration_ms: 0.0797
+  type: 'test'
+  ...
+# Subtest: unsupported future predicate remains undetermined
+ok 81 - unsupported future predicate remains undetermined
+  ---
+  duration_ms: 0.0889
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: contract
+ok 82 - invalid eligibility isolated to HT: contract
+  ---
+  duration_ms: 105.9868
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: on_missing_evidence
+ok 83 - invalid eligibility isolated to HT: on_missing_evidence
+  ---
+  duration_ms: 108.221
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: bounds
+ok 84 - invalid eligibility isolated to HT: bounds
+  ---
+  duration_ms: 103.8571
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: evidence-array
+ok 85 - invalid eligibility isolated to HT: evidence-array
+  ---
+  duration_ms: 105.8507
+  type: 'test'
+  ...
+# Subtest: eligibility snapshots cannot change cached records
+ok 86 - eligibility snapshots cannot change cached records
+  ---
+  duration_ms: 2.4178
+  type: 'test'
+  ...
+# Subtest: audit bytes and weapon reference outside HT pointer preserved
+ok 87 - audit bytes and weapon reference outside HT pointer preserved
+  ---
+  duration_ms: 315.097
+  type: 'test'
+  ...
+# Subtest: confirmed directed HT178 ammo can provide variant context without authorizing an option
+ok 88 - confirmed directed HT178 ammo can provide variant context without authorizing an option
+  ---
+  duration_ms: 0.6513
+  type: 'test'
+  ...
+# Subtest: known incompatible ammo context rejects but unknown pair remains undetermined
+ok 89 - known incompatible ammo context rejects but unknown pair remains undetermined
+  ---
+  duration_ms: 0.4271
+  type: 'test'
+  ...
+1..89
+# tests 89
+# suites 0
+# pass 89
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1022.9256

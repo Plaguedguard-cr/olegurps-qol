@@ -1,0 +1,110 @@
+[
+  {
+    "file": "scripts/tools/environment-ammunition.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/automatic-ammunition-profiles.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/ammunition-recipes.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/ht-kinetic-rules.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/ammunition-effects.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/attack-profile-resolver.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/damage-shot-link.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/ammo-management-app.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/automatic-ammunition-localization.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "scripts/tools/ammo-service.js",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "tests/ht64-environment-batch.test.mjs",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "tests/automatic-ammunition-profiles.test.mjs",
+    "utf8": true,
+    "bom": false,
+    "syntax": true
+  },
+  {
+    "file": "lang/ru.json",
+    "utf8": true,
+    "bom": false,
+    "json": true
+  },
+  {
+    "file": "lang/en.json",
+    "utf8": true,
+    "bom": false,
+    "json": true
+  },
+  {
+    "file": "data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",
+    "sha256": "6d9aabb0292efbe25d3f302e682eb8120b5fe385788f07ef8d3c8acc0ba6f4d0",
+    "preserved": true
+  },
+  {
+    "file": "data/catalogs/olegurps_ht_ammunition_catalog_v1_3.json",
+    "sha256": "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385",
+    "preserved": true
+  },
+  {
+    "file": "docs/audit/ht-plus-p-blockers.json",
+    "sha256": "28b6dc691d3245ff44afe72a0bf07a838e4ffd545bbbcc5c1ca19edd0b2f7d7b",
+    "preserved": true
+  },
+  {
+    "p5LocaleKeys": 20,
+    "parity": true
+  },
+  {
+    "auditArtifacts": 17,
+    "strictUtf8": true,
+    "jsonParsing": true
+  }
+]

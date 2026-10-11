@@ -1,0 +1,1533 @@
+TAP version 13
+# Subtest: AK47 control ordinary
+ok 1 - AK47 control ordinary
+  ---
+  duration_ms: 5.7417
+  type: 'test'
+  ...
+# Subtest: AK47 control ht_ap
+ok 2 - AK47 control ht_ap
+  ---
+  duration_ms: 4.3089
+  type: 'test'
+  ...
+# Subtest: AK47 control ht_aphc
+ok 3 - AK47 control ht_aphc
+  ---
+  duration_ms: 1.2847
+  type: 'test'
+  ...
+# Subtest: AK47 control ht_hollow_point
+ok 4 - AK47 control ht_hollow_point
+  ---
+  duration_ms: 1.2168
+  type: 'test'
+  ...
+# Subtest: reviewed class rules authorize an exact family; caliber/caller claims cannot change the cartridge
+ok 5 - reviewed class rules authorize an exact family; caliber/caller claims cannot change the cartridge
+  ---
+  duration_ms: 2.3932
+  type: 'test'
+  ...
+# Subtest: AK47 explosive constructions remain unavailable with independent compatibility and missing source facts
+ok 6 - AK47 explosive constructions remain unavailable with independent compatibility and missing source facts
+  ---
+  duration_ms: 2.3476
+  type: 'test'
+  ...
+# Subtest: isolated explosive model ht_apex
+ok 7 - isolated explosive model ht_apex
+  ---
+  duration_ms: 0.2991
+  type: 'test'
+  ...
+# Subtest: isolated explosive model ht_aphex
+ok 8 - isolated explosive model ht_aphex
+  ---
+  duration_ms: 0.1211
+  type: 'test'
+  ...
+# Subtest: known secondary formulas still require a conditional native adapter, never Linked or automatic hits
+ok 9 - known secondary formulas still require a conditional native adapter, never Linked or automatic hits
+  ---
+  duration_ms: 0.5599
+  type: 'test'
+  ...
+# Subtest: HT166 bands including adds, fractions, negative adds, multiplier, >12d and exact boundaries
+ok 10 - HT166 bands including adds, fractions, negative adds, multiplier, >12d and exact boundaries
+  ---
+  duration_ms: 0.8422
+  type: 'test'
+  ...
+# Subtest: existing divisor and compound/native components cannot be silently transformed again
+ok 11 - existing divisor and compound/native components cannot be silently transformed again
+  ---
+  duration_ms: 11.2405
+  type: 'test'
+  ...
+# Subtest: journal proves ordering/source/reason; duplicate application is rejected
+ok 12 - journal proves ordering/source/reason; duplicate application is rejected
+  ---
+  duration_ms: 3.6924
+  type: 'test'
+  ...
+# Subtest: HP caps pi++, preserves dice/modifiers and delegates DR0 rule; conditional Malf/expansion never silently skipped
+ok 13 - HP caps pi++, preserves dice/modifiers and delegates DR0 rule; conditional Malf/expansion never silently skipped
+  ---
+  duration_ms: 0.9327
+  type: 'test'
+  ...
+# Subtest: invalid/stacked recipes and unconfirmed bindings stay raw
+ok 14 - invalid/stacked recipes and unconfirmed bindings stay raw
+  ---
+  duration_ms: 1.0197
+  type: 'test'
+  ...
+# Subtest: normal load window exposes separate AP/APHC/HP stocks and blocks incomplete APEX/APHEX loading in RU/EN
+ok 15 - normal load window exposes separate AP/APHC/HP stocks and blocks incomplete APEX/APHEX loading in RU/EN
+  ---
+  duration_ms: 69.7551
+  type: 'test'
+  ...
+# Subtest: physical recipe magazines keep separate ledgers; switching and deleting never destroy/swap types
+ok 16 - physical recipe magazines keep separate ledgers; switching and deleting never destroy/swap types
+  ---
+  duration_ms: 1.6934
+  type: 'test'
+  ...
+# Subtest: GGA contract diagnostics pass present API and refuse missing or changed signatures/results without rolling
+ok 17 - GGA contract diagnostics pass present API and refuse missing or changed signatures/results without rolling
+  ---
+  duration_ms: 0.9158
+  type: 'test'
+  ...
+# Subtest: one understandable GM diagnostic per session; localization uses both actual loaded bundles
+not ok 18 - one understandable GM diagnostic per session; localization uses both actual loaded bundles
+  ---
+  duration_ms: 17.3074
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ammunition-effects.test.mjs:156:1'
+  failureType: 'testCodeFailure'
+  error: 'ru missing plus-p-individual-handload-required'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ammunition-effects.test.mjs:167:14)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: cached Foundry manifest loads new ammunition translations for both languages without changing user language
+ok 19 - cached Foundry manifest loads new ammunition translations for both languages without changing user language
+  ---
+  duration_ms: 10.4971
+  type: 'test'
+  ...
+# Subtest: AmmoService reads the installed construction, snapshots each shot, persists receipts and spends once
+ok 20 - AmmoService reads the installed construction, snapshots each shot, persists receipts and spends once
+  ---
+  duration_ms: 13.4514
+  type: 'test'
+  ...
+# Subtest: embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+ok 21 - embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+  ---
+  duration_ms: 6.8012
+  type: 'test'
+  ...
+# Subtest: A and B Damage in reverse order use their own shots after magazine and last-roll changes
+ok 22 - A and B Damage in reverse order use their own shots after magazine and last-roll changes
+  ---
+  duration_ms: 5.3827
+  type: 'test'
+  ...
+# Subtest: repeat Damage creates independent events for the same source, including a reused event object
+ok 23 - repeat Damage creates independent events for the same source, including a reused event object
+  ---
+  duration_ms: 1.8413
+  type: 'test'
+  ...
+# Subtest: interleaved native awaits keep two actors and modes independent and use the clicked Actor
+ok 24 - interleaved native awaits keep two actors and modes independent and use the clicked Actor
+  ---
+  duration_ms: 1.933
+  type: 'test'
+  ...
+# Subtest: native multiple/combine dialog captures source before its first await and DOM event cleanup
+ok 25 - native multiple/combine dialog captures source before its first await and DOM event cleanup
+  ---
+  duration_ms: 2.1453
+  type: 'test'
+  ...
+# Subtest: two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+ok 26 - two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+  ---
+  duration_ms: 3.1767
+  type: 'test'
+  ...
+# Subtest: pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+ok 27 - pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+  ---
+  duration_ms: 4.0884
+  type: 'test'
+  ...
+# Subtest: deleting the source during async dispatch creates unlinked native damage without guessing
+ok 28 - deleting the source during async dispatch creates unlinked native damage without guessing
+  ---
+  duration_ms: 5.8167
+  type: 'test'
+  ...
+# Subtest: marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+ok 29 - marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+  ---
+  duration_ms: 4.5549
+  type: 'test'
+  ...
+# Subtest: public, GM, blind, self and custom whisper settings keep native audience and content
+ok 30 - public, GM, blind, self and custom whisper settings keep native audience and content
+  ---
+  duration_ms: 4.1443
+  type: 'test'
+  ...
+# Subtest: private source uses a permission-checked reference and never copies its snapshot to public flags
+ok 31 - private source uses a permission-checked reference and never copies its snapshot to public flags
+  ---
+  duration_ms: 1.9075
+  type: 'test'
+  ...
+# Subtest: inaccessible source, Actor permission and cancellation preserve native restrictions
+ok 32 - inaccessible source, Actor permission and cancellation preserve native restrictions
+  ---
+  duration_ms: 0.7855
+  type: 'test'
+  ...
+# Subtest: unrelated messages with identical formula and Actor cannot acquire an in-flight link
+ok 33 - unrelated messages with identical formula and Actor cannot acquire an in-flight link
+  ---
+  duration_ms: 1.1984
+  type: 'test'
+  ...
+# Subtest: native creation failure is not retried; metadata failure never changes the damage result
+ok 34 - native creation failure is not retried; metadata failure never changes the damage result
+  ---
+  duration_ms: 1.8322
+  type: 'test'
+  ...
+# Subtest: install is idempotent and uninstall preserves other wrappers
+ok 35 - install is idempotent and uninstall preserves other wrappers
+  ---
+  duration_ms: 0.3
+  type: 'test'
+  ...
+# Subtest: adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+ok 36 - adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+  ---
+  duration_ms: 47.8354
+  type: 'test'
+  ...
+# Subtest: effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+ok 37 - effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+  ---
+  duration_ms: 9.944
+  type: 'test'
+  ...
+# Subtest: private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+ok 38 - private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+  ---
+  duration_ms: 3.6147
+  type: 'test'
+  ...
+# Subtest: two Actors and modes keep different transformed native damage through overlapping dispatch
+ok 39 - two Actors and modes keep different transformed native damage through overlapping dispatch
+  ---
+  duration_ms: 5.009
+  type: 'test'
+  ...
+# Subtest: adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+ok 40 - adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+  ---
+  duration_ms: 7.2895
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot ordinary without changing action or mechanics
+ok 41 - native Damage label uses completed shot ordinary without changing action or mechanics
+  ---
+  duration_ms: 4.1339
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot AP without changing action or mechanics
+ok 42 - native Damage label uses completed shot AP without changing action or mechanics
+  ---
+  duration_ms: 7.258
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot APHC without changing action or mechanics
+ok 43 - native Damage label uses completed shot APHC without changing action or mechanics
+  ---
+  duration_ms: 3.5408
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot HP without changing action or mechanics
+ok 44 - native Damage label uses completed shot HP without changing action or mechanics
+  ---
+  duration_ms: 2.8544
+  type: 'test'
+  ...
+# Subtest: Damage labels survive magazine changes, chat reopening and serialized reload independently
+ok 45 - Damage labels survive magazine changes, chat reopening and serialized reload independently
+  ---
+  duration_ms: 2.6122
+  type: 'test'
+  ...
+# Subtest: legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+ok 46 - legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+  ---
+  duration_ms: 13.3726
+  type: 'test'
+  ...
+# Subtest: blind and whisper label visibility follows current source permissions
+ok 47 - blind and whisper label visibility follows current source permissions
+  ---
+  duration_ms: 6.8691
+  type: 'test'
+  ...
+# Subtest: Damage label is plain text and foreign actions retain their native labels
+ok 48 - Damage label is plain text and foreign actions retain their native labels
+  ---
+  duration_ms: 1.5545
+  type: 'test'
+  ...
+# Subtest: ht_apex has three independent native Damage paths with source identity and no auto effects
+ok 49 - ht_apex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 8.2668
+  type: 'test'
+  ...
+# Subtest: ht_aphex has three independent native Damage paths with source identity and no auto effects
+ok 50 - ht_aphex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 5.1236
+  type: 'test'
+  ...
+# Subtest: secondary B/A/repeat stay immutable after magazine changes and use source permissions
+ok 51 - secondary B/A/repeat stay immutable after magazine changes and use source permissions
+  ---
+  duration_ms: 11.0747
+  type: 'test'
+  ...
+# Subtest: incomplete explosive snapshots block every component instead of silently rolling baseline
+ok 52 - incomplete explosive snapshots block every component instead of silently rolling baseline
+  ---
+  duration_ms: 0.9262
+  type: 'test'
+  ...
+# Subtest: private explosive components keep source-only metadata and reject unauthorized access
+ok 53 - private explosive components keep source-only metadata and reject unauthorized access
+  ---
+  duration_ms: 4.199
+  type: 'test'
+  ...
+# Subtest: standalone D uses completed shot after source weapon removal and never needs an Actor attack
+ok 54 - standalone D uses completed shot after source weapon removal and never needs an Actor attack
+  ---
+  duration_ms: 1.6923
+  type: 'test'
+  ...
+# Subtest: standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+ok 55 - standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+  ---
+  duration_ms: 2.6758
+  type: 'test'
+  ...
+# Subtest: HT176-177 confirmed case constructions retain exact source rows, IDs, WPS/CPS and footnotes
+ok 56 - HT176-177 confirmed case constructions retain exact source rows, IDs, WPS/CPS and footnotes
+  ---
+  duration_ms: 2.3779
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: W19ooSM10ivSwlXSP Winchester Model 1897, 12G 2.75"
+ok 57 - conventional-case +P: W19ooSM10ivSwlXSP Winchester Model 1897, 12G 2.75"
+  ---
+  duration_ms: 80.1832
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: W2EHajHoWWSlF8B6z Daewoo USAS-12, 12G 2.75"
+ok 58 - conventional-case +P: W2EHajHoWWSlF8B6z Daewoo USAS-12, 12G 2.75"
+  ---
+  duration_ms: 43.0413
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: W8gU1gCeSF_EHefLt Remington Model 11, 12G 2.75" sawed-off
+ok 59 - conventional-case +P: W8gU1gCeSF_EHefLt Remington Model 11, 12G 2.75" sawed-off
+  ---
+  duration_ms: 39.4106
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: W9ki0p3eZ0dV761l1 C-More M26 MASS, 12G 2.75"
+ok 60 - conventional-case +P: W9ki0p3eZ0dV761l1 C-More M26 MASS, 12G 2.75"
+  ---
+  duration_ms: 24.129
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WG5D9pES9jpedWQBK Reutech Protecta Bulldog, 12G 2.75"
+ok 61 - conventional-case +P: WG5D9pES9jpedWQBK Reutech Protecta Bulldog, 12G 2.75"
+  ---
+  duration_ms: 24.5539
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WGhQ3o1Zo4QfXJRmy Franchi SPAS-12, 12G 2.75"
+ok 62 - conventional-case +P: WGhQ3o1Zo4QfXJRmy Franchi SPAS-12, 12G 2.75"
+  ---
+  duration_ms: 24.4358
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WHlBefAVM5F3s_Fhx KAC Masterkey, 12G 2.75"
+ok 63 - conventional-case +P: WHlBefAVM5F3s_Fhx KAC Masterkey, 12G 2.75"
+  ---
+  duration_ms: 23.2636
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WIKNLT8GtI6laTFbn FN-Browning Auto-5, 12G, 2.75"
+ok 64 - conventional-case +P: WIKNLT8GtI6laTFbn FN-Browning Auto-5, 12G, 2.75"
+  ---
+  duration_ms: 21.1023
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WSu2puv__x3S7ILvR Ithaca Model 37 Stakeout, 12G 2.75"
+ok 65 - conventional-case +P: WSu2puv__x3S7ILvR Ithaca Model 37 Stakeout, 12G 2.75"
+  ---
+  duration_ms: 21.2173
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WUVxWN3HdmeKHmjv1 Remington Model 870P, 12G 2.75"
+ok 66 - conventional-case +P: WUVxWN3HdmeKHmjv1 Remington Model 870P, 12G 2.75"
+  ---
+  duration_ms: 24.2965
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WVWyvqKW9KEoQ0dnM Remington Model 870, 12G 2.75"
+ok 67 - conventional-case +P: WVWyvqKW9KEoQ0dnM Remington Model 870, 12G 2.75"
+  ---
+  duration_ms: 25.5094
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WWpYkEgZSXCKAroUP Armsel Striker, 12G 2.75"
+ok 68 - conventional-case +P: WWpYkEgZSXCKAroUP Armsel Striker, 12G 2.75"
+  ---
+  duration_ms: 19.4615
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WedfHYdjmjQy4JdzJ Reutech Protecta 12", 12G 2.75"
+ok 69 - conventional-case +P: WedfHYdjmjQy4JdzJ Reutech Protecta 12", 12G 2.75"
+  ---
+  duration_ms: 20.6386
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WepHIL4DWLPsoO8HC Ithaca Model 37 M&P, 12G 2.75"
+ok 70 - conventional-case +P: WepHIL4DWLPsoO8HC Ithaca Model 37 M&P, 12G 2.75"
+  ---
+  duration_ms: 22.9551
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: Wku81Y3GfqPAjHV-Y Reutech Protecta 18", 12G 2.75"
+ok 71 - conventional-case +P: Wku81Y3GfqPAjHV-Y Reutech Protecta 18", 12G 2.75"
+  ---
+  duration_ms: 25.218
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WkzlenFdgtlwesK-q Condor AM-402, 12G 2.75" (slug)
+ok 72 - conventional-case +P: WkzlenFdgtlwesK-q Condor AM-402, 12G 2.75" (slug)
+  ---
+  duration_ms: 21.7932
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WmJ_QjDBYJH7Tmona Armsel Street Sweeper, 12G 2.75"
+ok 73 - conventional-case +P: WmJ_QjDBYJH7Tmona Armsel Street Sweeper, 12G 2.75"
+  ---
+  duration_ms: 18.1276
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WsrbLU9pLyDPhDI5- Remington Model 11, 12G 2.75"
+ok 74 - conventional-case +P: WsrbLU9pLyDPhDI5- Remington Model 11, 12G 2.75"
+  ---
+  duration_ms: 19.1486
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: Wu7wxc-g32vPxG2B- Remington Model 870P cruiser, 12G 2.75"
+ok 75 - conventional-case +P: Wu7wxc-g32vPxG2B- Remington Model 870P cruiser, 12G 2.75"
+  ---
+  duration_ms: 26.6027
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: WvUFCokYczEuOg49b Ithaca Model 37 Featherlight, 12G 2.75"
+ok 76 - conventional-case +P: WvUFCokYczEuOg49b Ithaca Model 37 Featherlight, 12G 2.75"
+  ---
+  duration_ms: 22.6718
+  type: 'test'
+  ...
+# Subtest: conventional-case +P: Wx10NaVSr1cp1bwKv Condor AM-402, 12G 2.75" (shot)
+ok 77 - conventional-case +P: Wx10NaVSr1cp1bwKv Condor AM-402, 12G 2.75" (shot)
+  ---
+  duration_ms: 22.3004
+  type: 'test'
+  ...
+# Subtest: Winchester takes exact native fields once; cases retain mass and independent base costs
+ok 78 - Winchester takes exact native fields once; cases retain mass and independent base costs
+  ---
+  duration_ms: 4.0621
+  type: 'test'
+  ...
+# Subtest: Condor shot and slug preserve distinct original damage, Rcl and projectile counts
+ok 79 - Condor shot and slug preserve distinct original damage, Rcl and projectile counts
+  ---
+  duration_ms: 3.8492
+  type: 'test'
+  ...
+# Subtest: M26 and Masterkey numeric native profiles do not fabricate autonomous Bulk
+ok 80 - M26 and Masterkey numeric native profiles do not fabricate autonomous Bulk
+  ---
+  duration_ms: 3.1804
+  type: 'test'
+  ...
+# Subtest: both case labels localize without changing keys, saved names or recipes
+ok 81 - both case labels localize without changing keys, saved names or recipes
+  ---
+  duration_ms: 15.3233
+  type: 'test'
+  ...
+# Subtest: independent legacy ledgers, old recipes and snapshot survive switch, reload and GM revocation without repeat spend
+ok 82 - independent legacy ledgers, old recipes and snapshot survive switch, reload and GM revocation without repeat spend
+  ---
+  duration_ms: 8.3008
+  type: 'test'
+  ...
+# Subtest: unverified source row refuses the correction rather than interpreting the heavy legacy name
+ok 83 - unverified source row refuses the correction rather than interpreting the heavy legacy name
+  ---
+  duration_ms: 1.193
+  type: 'test'
+  ...
+# Subtest: unchanged source catalogs and historical audits retain exact byte hashes
+ok 84 - unchanged source catalogs and historical audits retain exact byte hashes
+  ---
+  duration_ms: 13.8408
+  type: 'test'
+  ...
+# Subtest: shared Bulk parser preserves stock capability without inventing stock position or zero
+ok 85 - shared Bulk parser preserves stock capability without inventing stock position or zero
+  ---
+  duration_ms: 3.1794
+  type: 'test'
+  ...
+# Subtest: every actual catalog stock-marked Bulk parses without changing the catalog
+ok 86 - every actual catalog stock-marked Bulk parses without changing the catalog
+  ---
+  duration_ms: 94.8539
+  type: 'test'
+  ...
+# Subtest: editor and persisted mode overrides accept stock notation and reject an empty Bulk
+ok 87 - editor and persisted mode overrides accept stock notation and reject an empty Bulk
+  ---
+  duration_ms: 1.0002
+  type: 'test'
+  ...
+# Subtest: actual MP7 standalone attack is ready, preserves raw Bulk and adds no folded-stock modifiers
+ok 88 - actual MP7 standalone attack is ready, preserves raw Bulk and adds no folded-stock modifiers
+  ---
+  duration_ms: 17.9219
+  type: 'test'
+  ...
+# Subtest: FN BAR exact HT120 correction scales both ranges once and never substitutes incomplete GGA data
+ok 89 - FN BAR exact HT120 correction scales both ranges once and never substitutes incomplete GGA data
+  ---
+  duration_ms: 16.8573
+  type: 'test'
+  ...
+# Subtest: incomplete GGA Range diagnostics really load in RU and EN, including a cached prior translation
+ok 90 - incomplete GGA Range diagnostics really load in RU and EN, including a cached prior translation
+  ---
+  duration_ms: 10.9588
+  type: 'test'
+  ...
+# Subtest: FN range factors restore exactly +P, APDS and SAPFSDS from the corrected source
+ok 91 - FN range factors restore exactly +P, APDS and SAPFSDS from the corrected source
+  ---
+  duration_ms: 16.6557
+  type: 'test'
+  ...
+# Subtest: HT120 erratum preserves previously saved definitions, recipe identity and old shot data
+ok 92 - HT120 erratum preserves previously saved definitions, recipe identity and old shot data
+  ---
+  duration_ms: 8.8624
+  type: 'test'
+  ...
+# Subtest: historical 227 +P restrictions stay intact; current B review preserves every E/F/G blocker
+ok 93 - historical 227 +P restrictions stay intact; current B review preserves every E/F/G blocker
+  ---
+  duration_ms: 605.719
+  type: 'test'
+  ...
+# Subtest: Frangible source-backed construction adjusts divisor, piercing and range; Damage dice unchanged
+ok 94 - Frangible source-backed construction adjusts divisor, piercing and range; Damage dice unchanged
+  ---
+  duration_ms: 20.2839
+  type: 'test'
+  ...
+# Subtest: Frangible all four piercing steps cap at pi++, existing divisors are never replaced blindly
+ok 95 - Frangible all four piercing steps cap at pi++, existing divisors are never replaced blindly
+  ---
+  duration_ms: 4.1016
+  type: 'test'
+  ...
+# Subtest: Frangible unreviewed construction stays undetermined; explicit projectile incompatibility stays prohibited
+ok 96 - Frangible unreviewed construction stays undetermined; explicit projectile incompatibility stays prohibited
+  ---
+  duration_ms: 3.8893
+  type: 'test'
+  ...
+# Subtest: Frangible unchanged stocks on switch; immutable conditions and historical Damage survive reload
+ok 97 - Frangible unchanged stocks on switch; immutable conditions and historical Damage survive reload
+  ---
+  duration_ms: 69.3307
+  type: 'test'
+  ...
+# Subtest: Frangible transformation journal prevents repeating numerical or special effects
+ok 98 - Frangible transformation journal prevents repeating numerical or special effects
+  ---
+  duration_ms: 2.122
+  type: 'test'
+  ...
+# Subtest: Frangible conditions belong to native Damage identity copies or permitted references after reload
+ok 99 - Frangible conditions belong to native Damage identity copies or permitted references after reload
+  ---
+  duration_ms: 2.7705
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on Wxm8TWSvu5UFTAaDn
+ok 100 - Match confirmed factory family on Wxm8TWSvu5UFTAaDn
+  ---
+  duration_ms: 12.9845
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on WUUPXVnYQI61MZ71z
+ok 101 - Match confirmed factory family on WUUPXVnYQI61MZ71z
+  ---
+  duration_ms: 3.516
+  type: 'test'
+  ...
+# Subtest: Match confirmed factory family on Wn6vWZmf30XK2i2l6
+ok 102 - Match confirmed factory family on Wn6vWZmf30XK2i2l6
+  ---
+  duration_ms: 3.0132
+  type: 'test'
+  ...
+# Subtest: Match floor, maximum +1, scope preserved, and bonus only through existing Aim
+ok 103 - Match floor, maximum +1, scope preserved, and bonus only through existing Aim
+  ---
+  duration_ms: 1.0975
+  type: 'test'
+  ...
+# Subtest: Match automatic, +P and unsuitable projectiles prohibited; unknown factory or handload proof stays unknown
+ok 104 - Match automatic, +P and unsuitable projectiles prohibited; unknown factory or handload proof stays unknown
+  ---
+  duration_ms: 1.6525
+  type: 'test'
+  ...
+# Subtest: Match guard preserves raw source, rejects unknown Acc and tampered saved rule, and applies once
+ok 105 - Match guard preserves raw source, rejects unknown Acc and tampered saved rule, and applies once
+  ---
+  duration_ms: 6.5327
+  type: 'test'
+  ...
+# Subtest: Match stock, Fire Control Acc, reload and repeated native Damage use historical snapshot without double spend
+ok 106 - Match stock, Fire Control Acc, reload and repeated native Damage use historical snapshot without double spend
+  ---
+  duration_ms: 95.4351
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_plus_p
+ok 107 - HT eligibility loads and checks ht_plus_p
+  ---
+  duration_ms: 7.6989
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_match_grade
+ok 108 - HT eligibility loads and checks ht_match_grade
+  ---
+  duration_ms: 1.5235
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_match_handloaded
+ok 109 - HT eligibility loads and checks ht_match_handloaded
+  ---
+  duration_ms: 0.494
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_subsonic_pistol
+ok 110 - HT eligibility loads and checks ht_subsonic_pistol
+  ---
+  duration_ms: 0.4367
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_subsonic_rifle
+ok 111 - HT eligibility loads and checks ht_subsonic_rifle
+  ---
+  duration_ms: 0.5153
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_silent
+ok 112 - HT eligibility loads and checks ht_silent
+  ---
+  duration_ms: 1.2645
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_solid
+ok 113 - HT eligibility loads and checks ht_solid
+  ---
+  duration_ms: 0.347
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_rifled_slug
+ok 114 - HT eligibility loads and checks ht_rifled_slug
+  ---
+  duration_ms: 0.2948
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hollow_point
+ok 115 - HT eligibility loads and checks ht_hollow_point
+  ---
+  duration_ms: 0.916
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_poison
+ok 116 - HT eligibility loads and checks ht_poison
+  ---
+  duration_ms: 0.7714
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_ap
+ok 117 - HT eligibility loads and checks ht_ap
+  ---
+  duration_ms: 1.3372
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_aphc
+ok 118 - HT eligibility loads and checks ht_aphc
+  ---
+  duration_ms: 1.4036
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_frangible
+ok 119 - HT eligibility loads and checks ht_frangible
+  ---
+  duration_ms: 2.511
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apds
+ok 120 - HT eligibility loads and checks ht_apds
+  ---
+  duration_ms: 0.9153
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apfsds
+ok 121 - HT eligibility loads and checks ht_apfsds
+  ---
+  duration_ms: 0.631
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_baton
+ok 122 - HT eligibility loads and checks ht_baton
+  ---
+  duration_ms: 0.5341
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_beanbag
+ok 123 - HT eligibility loads and checks ht_beanbag
+  ---
+  duration_ms: 0.5134
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_sapfsds
+ok 124 - HT eligibility loads and checks ht_sapfsds
+  ---
+  duration_ms: 1.8809
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_underwater_dart
+ok 125 - HT eligibility loads and checks ht_underwater_dart
+  ---
+  duration_ms: 1.4605
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apdu
+ok 126 - HT eligibility loads and checks ht_apdu
+  ---
+  duration_ms: 0.48
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apdsdu
+ok 127 - HT eligibility loads and checks ht_apdsdu
+  ---
+  duration_ms: 0.5558
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apfsdsdu
+ok 128 - HT eligibility loads and checks ht_apfsdsdu
+  ---
+  duration_ms: 0.2795
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_le
+ok 129 - HT eligibility loads and checks ht_le
+  ---
+  duration_ms: 0.2359
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_saple
+ok 130 - HT eligibility loads and checks ht_saple
+  ---
+  duration_ms: 0.1975
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_apex
+ok 131 - HT eligibility loads and checks ht_apex
+  ---
+  duration_ms: 0.1859
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_he
+ok 132 - HT eligibility loads and checks ht_he
+  ---
+  duration_ms: 0.2653
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_saphe
+ok 133 - HT eligibility loads and checks ht_saphe
+  ---
+  duration_ms: 0.1756
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_saphec
+ok 134 - HT eligibility loads and checks ht_saphec
+  ---
+  duration_ms: 0.2415
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_aphex
+ok 135 - HT eligibility loads and checks ht_aphex
+  ---
+  duration_ms: 0.4092
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_efp
+ok 136 - HT eligibility loads and checks ht_efp
+  ---
+  duration_ms: 0.5185
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_heat
+ok 137 - HT eligibility loads and checks ht_heat
+  ---
+  duration_ms: 0.5834
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hedp
+ok 138 - HT eligibility loads and checks ht_hedp
+  ---
+  duration_ms: 0.2158
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hesh
+ok 139 - HT eligibility loads and checks ht_hesh
+  ---
+  duration_ms: 0.2604
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_ms_heat
+ok 140 - HT eligibility loads and checks ht_ms_heat
+  ---
+  duration_ms: 0.2103
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_thermobaric
+ok 141 - HT eligibility loads and checks ht_thermobaric
+  ---
+  duration_ms: 0.5295
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_illumination
+ok 142 - HT eligibility loads and checks ht_illumination
+  ---
+  duration_ms: 0.2635
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_signal_flare
+ok 143 - HT eligibility loads and checks ht_signal_flare
+  ---
+  duration_ms: 0.355
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_smoke
+ok 144 - HT eligibility loads and checks ht_smoke
+  ---
+  duration_ms: 0.2605
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_colored_smoke
+ok 145 - HT eligibility loads and checks ht_colored_smoke
+  ---
+  duration_ms: 0.1906
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_hot_smoke
+ok 146 - HT eligibility loads and checks ht_hot_smoke
+  ---
+  duration_ms: 0.2077
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_prism_smoke
+ok 147 - HT eligibility loads and checks ht_prism_smoke
+  ---
+  duration_ms: 0.3085
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_em_smoke
+ok 148 - HT eligibility loads and checks ht_em_smoke
+  ---
+  duration_ms: 0.2138
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_tear_gas
+ok 149 - HT eligibility loads and checks ht_tear_gas
+  ---
+  duration_ms: 0.198
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_tear_gas_vomit
+ok 150 - HT eligibility loads and checks ht_tear_gas_vomit
+  ---
+  duration_ms: 0.2396
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_liquid
+ok 151 - HT eligibility loads and checks ht_liquid
+  ---
+  duration_ms: 0.2825
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_poison_gas
+ok 152 - HT eligibility loads and checks ht_poison_gas
+  ---
+  duration_ms: 0.3528
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_white_phosphorus
+ok 153 - HT eligibility loads and checks ht_white_phosphorus
+  ---
+  duration_ms: 0.195
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_canister
+ok 154 - HT eligibility loads and checks ht_canister
+  ---
+  duration_ms: 0.2416
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_shotshell
+ok 155 - HT eligibility loads and checks ht_shotshell
+  ---
+  duration_ms: 0.2059
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_buck_and_ball
+ok 156 - HT eligibility loads and checks ht_buck_and_ball
+  ---
+  duration_ms: 0.1948
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_shrapnel
+ok 157 - HT eligibility loads and checks ht_shrapnel
+  ---
+  duration_ms: 0.2015
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_duplex
+ok 158 - HT eligibility loads and checks ht_duplex
+  ---
+  duration_ms: 0.1765
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_triplex
+ok 159 - HT eligibility loads and checks ht_triplex
+  ---
+  duration_ms: 0.2164
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_beehive
+ok 160 - HT eligibility loads and checks ht_beehive
+  ---
+  duration_ms: 0.2352
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_multi_flechette
+ok 161 - HT eligibility loads and checks ht_multi_flechette
+  ---
+  duration_ms: 0.2174
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_rubber_shot
+ok 162 - HT eligibility loads and checks ht_rubber_shot
+  ---
+  duration_ms: 0.4001
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_abf
+ok 163 - HT eligibility loads and checks ht_abf
+  ---
+  duration_ms: 0.417
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_airburst
+ok 164 - HT eligibility loads and checks ht_airburst
+  ---
+  duration_ms: 0.4301
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_incendiary
+ok 165 - HT eligibility loads and checks ht_incendiary
+  ---
+  duration_ms: 0.2288
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_self_destruct
+ok 166 - HT eligibility loads and checks ht_self_destruct
+  ---
+  duration_ms: 0.1945
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_tracer
+ok 167 - HT eligibility loads and checks ht_tracer
+  ---
+  duration_ms: 0.1666
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_light_case
+ok 168 - HT eligibility loads and checks ht_light_case
+  ---
+  duration_ms: 0.164
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_caseless
+ok 169 - HT eligibility loads and checks ht_caseless
+  ---
+  duration_ms: 0.1836
+  type: 'test'
+  ...
+# Subtest: HT eligibility loads and checks ht_consumable_case
+ok 170 - HT eligibility loads and checks ht_consumable_case
+  ---
+  duration_ms: 0.2182
+  type: 'test'
+  ...
+# Subtest: all 64 contracts and review IDs match; four current catalogs ready
+ok 171 - all 64 contracts and review IDs match; four current catalogs ready
+  ---
+  duration_ms: 36.4819
+  type: 'test'
+  ...
+# Subtest: all original HT fields, mechanics, HT178 and rocket data retained
+ok 172 - all original HT fields, mechanics, HT178 and rocket data retained
+  ---
+  duration_ms: 11.2486
+  type: 'test'
+  ...
+# Subtest: matching type/TL cannot replace pressure proof
+ok 173 - matching type/TL cannot replace pressure proof
+  ---
+  duration_ms: 0.5408
+  type: 'test'
+  ...
+# Subtest: caller claims of verification and guessed caliber cannot bypass catalog evidence
+ok 174 - caller claims of verification and guessed caliber cannot bypass catalog evidence
+  ---
+  duration_ms: 0.2547
+  type: 'test'
+  ...
+# Subtest: confirmed action prohibits manual-only match load
+ok 175 - confirmed action prohibits manual-only match load
+  ---
+  duration_ms: 0.711
+  type: 'test'
+  ...
+# Subtest: known cased round prohibits caseless option, absent class is not denial
+ok 176 - known cased round prohibits caseless option, absent class is not denial
+  ---
+  duration_ms: 0.5046
+  type: 'test'
+  ...
+# Subtest: minimum and maximum caliber bounds distinguish unknown/confirmed/prohibited
+ok 177 - minimum and maximum caliber bounds distinguish unknown/confirmed/prohibited
+  ---
+  duration_ms: 0.2833
+  type: 'test'
+  ...
+# Subtest: caliber_hint and numeric text in names are never numeric caliber evidence
+ok 178 - caliber_hint and numeric text in names are never numeric caliber evidence
+  ---
+  duration_ms: 0.414
+  type: 'test'
+  ...
+# Subtest: required base variant and explicit exclusions are respected
+ok 179 - required base variant and explicit exclusions are respected
+  ---
+  duration_ms: 0.9919
+  type: 'test'
+  ...
+# Subtest: exclusive projectile layers reject AP plus APHC instead of stacking
+ok 180 - exclusive projectile layers reject AP plus APHC instead of stacking
+  ---
+  duration_ms: 0.2426
+  type: 'test'
+  ...
+# Subtest: unknown proposed options/context stay undetermined
+ok 181 - unknown proposed options/context stay undetermined
+  ---
+  duration_ms: 0.3042
+  type: 'test'
+  ...
+# Subtest: minimum availability TL is separate from native weapon TL
+ok 182 - minimum availability TL is separate from native weapon TL
+  ---
+  duration_ms: 0.3411
+  type: 'test'
+  ...
+# Subtest: light shotshell case at TL5-7 is not rejected by broad small-arms TL8
+ok 183 - light shotshell case at TL5-7 is not rejected by broad small-arms TL8
+  ---
+  duration_ms: 0.3971
+  type: 'test'
+  ...
+# Subtest: actual native Linked effect prevents adding the guarded transform again
+ok 184 - actual native Linked effect prevents adding the guarded transform again
+  ---
+  duration_ms: 0.3356
+  type: 'test'
+  ...
+# Subtest: native overlap absence cannot be inferred; confirmed overlap is prohibition
+ok 185 - native overlap absence cannot be inferred; confirmed overlap is prohibition
+  ---
+  duration_ms: 0.2083
+  type: 'test'
+  ...
+# Subtest: pure evaluator compatible only after ALL source-backed facts confirmed (test facts)
+ok 186 - pure evaluator compatible only after ALL source-backed facts confirmed (test facts)
+  ---
+  duration_ms: 0.2939
+  type: 'test'
+  ...
+# Subtest: unsupported future predicate remains undetermined
+ok 187 - unsupported future predicate remains undetermined
+  ---
+  duration_ms: 0.1517
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: contract
+ok 188 - invalid eligibility isolated to HT: contract
+  ---
+  duration_ms: 196.3113
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: on_missing_evidence
+ok 189 - invalid eligibility isolated to HT: on_missing_evidence
+  ---
+  duration_ms: 186.2626
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: bounds
+ok 190 - invalid eligibility isolated to HT: bounds
+  ---
+  duration_ms: 181.262
+  type: 'test'
+  ...
+# Subtest: invalid eligibility isolated to HT: evidence-array
+ok 191 - invalid eligibility isolated to HT: evidence-array
+  ---
+  duration_ms: 164.4097
+  type: 'test'
+  ...
+# Subtest: eligibility snapshots cannot change cached records
+ok 192 - eligibility snapshots cannot change cached records
+  ---
+  duration_ms: 0.8954
+  type: 'test'
+  ...
+# Subtest: audit bytes and weapon reference outside HT pointer preserved
+ok 193 - audit bytes and weapon reference outside HT pointer preserved
+  ---
+  duration_ms: 208.6839
+  type: 'test'
+  ...
+# Subtest: confirmed directed HT178 ammo can provide variant context without authorizing an option
+ok 194 - confirmed directed HT178 ammo can provide variant context without authorizing an option
+  ---
+  duration_ms: 1.1815
+  type: 'test'
+  ...
+# Subtest: known incompatible ammo context rejects but unknown pair remains undetermined
+ok 195 - known incompatible ammo context rejects but unknown pair remains undetermined
+  ---
+  duration_ms: 0.7754
+  type: 'test'
+  ...
+# Subtest: B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted
+ok 196 - B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted
+  ---
+  duration_ms: 2.772
+  type: 'test'
+  ...
+# Subtest: Vickers native 10! is ready, HT166 damage/ranges/ST are computed without pressure or caliber
+ok 197 - Vickers native 10! is ready, HT166 damage/ranges/ST are computed without pressure or caliber
+  ---
+  duration_ms: 1.5569
+  type: 'test'
+  ...
+# Subtest: physical and pellet RoF remain separate for six patterns and all native delimiters
+ok 198 - physical and pellet RoF remain separate for six patterns and all native delimiters
+  ---
+  duration_ms: 1.0282
+  type: 'test'
+  ...
+# Subtest: HT79 composite Rcl follows confirmed shot/slug identity, never range or a fraction
+ok 199 - HT79 composite Rcl follows confirmed shot/slug identity, never range or a fraction
+  ---
+  duration_ms: 0.4854
+  type: 'test'
+  ...
+# Subtest: B409 boundary is strict and uses current +P HalfD; pellets remain independent hits
+ok 200 - B409 boundary is strict and uses current +P HalfD; pellets remain independent hits
+  ---
+  duration_ms: 0.3573
+  type: 'test'
+  ...
+# Subtest: common native execution rejects unresolved composite Rcl before rolls and resource writes
+ok 201 - common native execution rejects unresolved composite Rcl before rolls and resource writes
+  ---
+  duration_ms: 1.1697
+  type: 'test'
+  ...
+# Subtest: B409 calculation report uses completed +P Damage, preserving raw and native per-pellet damage
+ok 202 - B409 calculation report uses completed +P Damage, preserving raw and native per-pellet damage
+  ---
+  duration_ms: 7.1628
+  type: 'test'
+  ...
+# Subtest: GM physical RoF decision preserves pellets and !/\#, without changing Rcl
+ok 203 - GM physical RoF decision preserves pellets and !/\#, without changing Rcl
+  ---
+  duration_ms: 0.4803
+  type: 'test'
+  ...
+# Subtest: powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot
+ok 204 - powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot
+  ---
+  duration_ms: 31.1256
+  type: 'test'
+  ...
+# Subtest: ordinary conventional-case legacy stock remains distinct and unload/deletion returns its own rounds with ready +P
+ok 205 - ordinary conventional-case legacy stock remains distinct and unload/deletion returns its own rounds with ready +P
+  ---
+  duration_ms: 4.1428
+  type: 'test'
+  ...
+# Subtest: shotgun stock/spend once per physical shell, magazine switch/reload preserve old Damage and identity
+ok 206 - shotgun stock/spend once per physical shell, magazine switch/reload preserve old Damage and identity
+  ---
+  duration_ms: 11.2024
+  type: 'test'
+  ...
+# Subtest: missing Acc and Bulk remain precise standalone-only blockers; composite Rcl is accepted
+ok 207 - missing Acc and Bulk remain precise standalone-only blockers; composite Rcl is accepted
+  ---
+  duration_ms: 9.1819
+  type: 'test'
+  ...
+# Subtest: Malf and native B409 GM operation appear before the attack; no damage/DR double scaling
+ok 208 - Malf and native B409 GM operation appear before the attack; no damage/DR double scaling
+  ---
+  duration_ms: 4.1431
+  type: 'test'
+  ...
+# Subtest: new diagnostics load RU/EN even with cached older keys, without changing language
+ok 209 - new diagnostics load RU/EN even with cached older keys, without changing language
+  ---
+  duration_ms: 3.5175
+  type: 'test'
+  ...
+# Subtest: +P calculation needs no numeric pressure; admission never changes unknown platform safety
+ok 210 - +P calculation needs no numeric pressure; admission never changes unknown platform safety
+  ---
+  duration_ms: 13.2086
+  type: 'test'
+  ...
+# Subtest: +P explicit contraindication and Match conflict remain prohibited
+ok 211 - +P explicit contraindication and Match conflict remain prohibited
+  ---
+  duration_ms: 1.0433
+  type: 'test'
+  ...
+# Subtest: +P HT165/166 applies Damage, both ranges, required ST and cost from immutable raw data
+ok 212 - +P HT165/166 applies Damage, both ranges, required ST and cost from immutable raw data
+  ---
+  duration_ms: 3.3856
+  type: 'test'
+  ...
+# Subtest: +P required ST rounds to nearest, preserves operating suffixes and uses the shared skill channel
+ok 213 - +P required ST rounds to nearest, preserves operating suffixes and uses the shared skill channel
+  ---
+  duration_ms: 0.711
+  type: 'test'
+  ...
+# Subtest: +P missing quality is not cheap; automatic RoF is unresolved, and a loading skill check is not a shot penalty
+ok 214 - +P missing quality is not cheap; automatic RoF is unresolved, and a loading skill check is not a shot penalty
+  ---
+  duration_ms: 0.7439
+  type: 'test'
+  ...
+# Subtest: +P stock, magazine, Hit, history and reload work under permissive admission; unresolved legacy recipe cannot spend
+ok 215 - +P stock, magazine, Hit, history and reload work under permissive admission; unresolved legacy recipe cannot spend
+  ---
+  duration_ms: 69.3952
+  type: 'test'
+  ...
+# Subtest: +P GM decisions persist by exact mode/recipe, allow strict use and revoke future shots only
+ok 216 - +P GM decisions persist by exact mode/recipe, allow strict use and revoke future shots only
+  ---
+  duration_ms: 7.5439
+  type: 'test'
+  ...
+# Subtest: old byte baseline remains valid with both historical HT pointer hashes
+ok 217 - old byte baseline remains valid with both historical HT pointer hashes
+  ---
+  duration_ms: 199.9951
+  type: 'test'
+  ...
+# Subtest: new byte baseline admits exactly the FN BAR Magnum revision 1 correction
+ok 218 - new byte baseline admits exactly the FN BAR Magnum revision 1 correction
+  ---
+  duration_ms: 342.1473
+  type: 'test'
+  ...
+# Subtest: old baseline rejects errata bytes and new baseline rejects uncorrected bytes
+ok 219 - old baseline rejects errata bytes and new baseline rejects uncorrected bytes
+  ---
+  duration_ms: 43.0454
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared another original stat
+ok 220 - both contracts reject undeclared another original stat
+  ---
+  duration_ms: 195.2145
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared approved mode other stat
+ok 221 - both contracts reject undeclared approved mode other stat
+  ---
+  duration_ms: 182.3454
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared unapproved Range
+ok 222 - both contracts reject undeclared unapproved Range
+  ---
+  duration_ms: 168.1085
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared equipment ID
+ok 223 - both contracts reject undeclared equipment ID
+  ---
+  duration_ms: 179.7627
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared mode ID
+ok 224 - both contracts reject undeclared mode ID
+  ---
+  duration_ms: 166.6717
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared deleted record
+ok 225 - both contracts reject undeclared deleted record
+  ---
+  duration_ms: 154.6186
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared source GCS hash
+ok 226 - both contracts reject undeclared source GCS hash
+  ---
+  duration_ms: 180.008
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT filename
+ok 227 - both contracts reject undeclared HT filename
+  ---
+  duration_ms: 155.2844
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT revision
+ok 228 - both contracts reject undeclared HT revision
+  ---
+  duration_ms: 164.0987
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT join key
+ok 229 - both contracts reject undeclared HT join key
+  ---
+  duration_ms: 152.4151
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared errata revision
+ok 230 - both contracts reject undeclared errata revision
+  ---
+  duration_ms: 148.7183
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared extra errata permission
+ok 231 - both contracts reject undeclared extra errata permission
+  ---
+  duration_ms: 169.1914
+  type: 'test'
+  ...
+# Subtest: frozen HT audit files retain their original byte hashes
+ok 232 - frozen HT audit files retain their original byte hashes
+  ---
+  duration_ms: 9.4753
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations W1doZcasYO-1Xw3Lf
+ok 233 - Subsonic source calculations W1doZcasYO-1Xw3Lf
+  ---
+  duration_ms: 16.7209
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations Ww9qXLufPV8uXb5rB
+ok 234 - Subsonic source calculations Ww9qXLufPV8uXb5rB
+  ---
+  duration_ms: 3.0373
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations W1miyD-ozfViISq7K
+ok 235 - Subsonic source calculations W1miyD-ozfViISq7K
+  ---
+  duration_ms: 3.8442
+  type: 'test'
+  ...
+# Subtest: Subsonic source calculations W27s4Lm8QlkKVKUPn
+ok 236 - Subsonic source calculations W27s4Lm8QlkKVKUPn
+  ---
+  duration_ms: 2.4591
+  type: 'test'
+  ...
+# Subtest: already subsonic families and native suppressed modes reject a second conversion
+ok 237 - already subsonic families and native suppressed modes reject a second conversion
+  ---
+  duration_ms: 2.1122
+  type: 'test'
+  ...
+# Subtest: classification follows the cartridge, unknown velocity remains undetermined
+ok 238 - classification follows the cartridge, unknown velocity remains undetermined
+  ---
+  duration_ms: 1.7226
+  type: 'test'
+  ...
+# Subtest: raw guard, existing native effects, divisor and journal prevent duplicate Subsonic
+ok 239 - raw guard, existing native effects, divisor and journal prevent duplicate Subsonic
+  ---
+  duration_ms: 11.9084
+  type: 'test'
+  ...
+# Subtest: Subsonic preview updates Range and 1/2D once, without Actor writes
+ok 240 - Subsonic preview updates Range and 1/2D once, without Actor writes
+  ---
+  duration_ms: 6.9006
+  type: 'test'
+  ...
+# Subtest: standalone preview finds its physical carrier by saved weapon and mode IDs
+ok 241 - standalone preview finds its physical carrier by saved weapon and mode IDs
+  ---
+  duration_ms: 11.6028
+  type: 'test'
+  ...
+# Subtest: Subsonic stock, one spend, magazine switch, reload, historical repeated Damage and RU/EN
+ok 242 - Subsonic stock, one spend, magazine switch, reload, historical repeated Damage and RU/EN
+  ---
+  duration_ms: 76.1834
+  type: 'test'
+  ...
+# Subtest: SMG defaults from Rifle without mandatory TA specialty or transferred Rifle improvement
+ok 243 - SMG defaults from Rifle without mandatory TA specialty or transferred Rifle improvement
+  ---
+  duration_ms: 20.5091
+  type: 'test'
+  ...
+# Subtest: exact learned SMG TA replaces its location channel once and ignores better Rifle TA
+ok 244 - exact learned SMG TA replaces its location channel once and ignores better Rifle TA
+  ---
+  duration_ms: 6.4334
+  type: 'test'
+  ...
+# Subtest: no studied TA and a lawful attribute default retain ordinary hit locations
+ok 245 - no studied TA and a lawful attribute default retain ordinary hit locations
+  ---
+  duration_ms: 6.4709
+  type: 'test'
+  ...
+# Subtest: unresolved skill still blocks standalone readiness; TA never manufactures a default
+ok 246 - unresolved skill still blocks standalone readiness; TA never manufactures a default
+  ---
+  duration_ms: 1.6261
+  type: 'test'
+  ...
+# Subtest: TL policy changes only resolved base and never transfers Rifle TA to SMG or another TL
+ok 247 - TL policy changes only resolved base and never transfers Rifle TA to SMG or another TL
+  ---
+  duration_ms: 8.326
+  type: 'test'
+  ...
+# Subtest: native GGA base is retained while matching bound TA uses the learned governing level
+ok 248 - native GGA base is retained while matching bound TA uses the learned governing level
+  ---
+  duration_ms: 9.7902
+  type: 'test'
+  ...
+# Subtest: legacy native required skill is never replaced by default source metadata or a foreign binding
+ok 249 - legacy native required skill is never replaced by default source metadata or a foreign binding
+  ---
+  duration_ms: 1.4956
+  type: 'test'
+  ...
+# Subtest: explicit TA TL cannot transfer; missing legacy TL is used only with a unique parent
+ok 250 - explicit TA TL cannot transfer; missing legacy TL is used only with a unique parent
+  ---
+  duration_ms: 1.7739
+  type: 'test'
+  ...
+# Subtest: unlearned zero-point TA gives no improvement; legacy choices contain only real TA parents
+ok 251 - unlearned zero-point TA gives no improvement; legacy choices contain only real TA parents
+  ---
+  duration_ms: 0.4466
+  type: 'test'
+  ...
+# Subtest: shared UI preview displays ordinary Face -5 for a default, and TA replacement only for studied SMG
+ok 252 - shared UI preview displays ordinary Face -5 for a default, and TA replacement only for studied SMG
+  ---
+  duration_ms: 5.1812
+  type: 'test'
+  ...
+1..252
+# tests 252
+# suites 0
+# pass 251
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3060.1644

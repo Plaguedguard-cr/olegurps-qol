@@ -1,0 +1,49 @@
+{
+  "syntaxChecked": 20,
+  "jsonParsed": 5,
+  "utf8Scanned": 25,
+  "errors": [],
+  "hashes": {
+    "data/catalogs/olegurps_weapon_reference_catalog_v5_6.json": "6d9aabb0292efbe25d3f302e682eb8120b5fe385788f07ef8d3c8acc0ba6f4d0",
+    "data/catalogs/olegurps_ht_ammunition_catalog_v1_3.json": "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385",
+    "docs/audit/ht-plus-p-category-g.json": "d9b0a0439d665ae21b11acd1147fadcc1f1903088a5a622249852501942d3755",
+    "docs/audit/ht-plus-p-blockers.json": "28b6dc691d3245ff44afe72a0bf07a838e4ffd545bbbcc5c1ca19edd0b2f7d7b"
+  },
+  "taps": {
+    "lemat-boundary.tap": [
+      "# tests 1",
+      "# pass 1",
+      "# fail 0"
+    ],
+    "lemat-correction-ui.tap": [
+      "# tests 3",
+      "# pass 3",
+      "# fail 0"
+    ],
+    "lemat-damage-shot-link-selected.tap": [
+      "# tests 1",
+      "# pass 1",
+      "# fail 0"
+    ],
+    "lemat-focused.tap": [
+      "# tests 12",
+      "# pass 11",
+      "# fail 1"
+    ],
+    "lemat-ht-plus-p-category-b-selected.tap": [
+      "# tests 1",
+      "# pass 1",
+      "# fail 0"
+    ],
+    "lemat-locale-loader.tap": [
+      "# tests 1",
+      "# pass 1",
+      "# fail 0"
+    ],
+    "lemat-regressions.tap": [
+      "# tests 453",
+      "# pass 448",
+      "# fail 5"
+    ]
+  }
+}

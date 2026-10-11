@@ -8,7 +8,7 @@ import { SpecialFireMenuApp } from "./special-fire-menu-app.js";
 import { TrademarkMoveEditorApp } from "./trademark-move-editor-app.js";
 import { TrademarkMoveExecutionApp } from "./trademark-move-execution-app.js";
 import { RangedAttackExecutionApp } from "./ranged-attack-execution-app.js";
-import { hasWeaponBondPerk, isWeaponBondActive, weaponBondCheckbox } from "./weapon-bond-service.js";
+import { hasWeaponBondPerk, isWeaponBondActive } from "./weapon-bond-service.js";
 import { TRADEMARK_MOVE_FLAG, hasTrademarkMovePerk, normalizeTrademarkMove, normalizeTrademarkMoveStep, applyTrademarkMoveBonus, getTrademarkMoveSkillPreview } from "./trademark-move-model.js";
 import { getRangedRapidStrikeSpecialties, resolveRangedRapidStrike, validateRangedRapidStrikeSplit } from "./ranged-rapid-strike-service.js";
 import { SprayingFireApp } from "./spraying-fire-app.js";
@@ -20,9 +20,12 @@ import { getSuppressionFireCapacity } from "./suppression-fire-service.js";
 import { SuppressionFireSessionService } from "./suppression-fire-session-service.js";
 import { FireService } from "./fire-service.js";
 import { AmmoService } from "./ammo-service.js";
+import { parseWeaponBulk } from "./weapon-bulk.js";
+import { resolveRuntimeAttackProfile, newAttackId, attackProfileError, withRuntimeAmmoStats } from "./attack-profile-runtime.js";
+import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 import { TargetingService } from "./targeting-service.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
-import { createTargetedAttackContext } from "./targeted-attack-service.js";
+import { createRangedTargetedAttackContext as createTargetedAttackContext } from "./ranged-governing-skill-service.js";
 import { listRangedGoverningSkills, resolveRangedGoverningSkill,
   bindingForGoverningSkill, getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
 import {
@@ -31,12 +34,17 @@ import {
   resolveEffectiveRange
 } from "./fire-range-service.js";
 import { openWeaponAttackEditor } from "./weapon-attack-editor.js";
+import { openAmmoManagement } from "./ammo-management-app.js";
+import { installedMagazine, magazineFill } from "./ammo-inventory.js";
+import { ammoText, ammoWindowText, ammoDisplayName } from "./ammo-management-localization.js";
+import { WeaponConfigurationDraft, weaponConfigurationHTML, bindWeaponConfiguration, weaponText } from "./weapon-configuration.js";
+import { standaloneText, StandaloneWeaponService } from "./standalone-weapon-service.js";
+import { lematBarrel } from "../ht-physical-ammunition-evidence.js";
+import { readStandaloneAttack, standaloneAvailableRounds } from "./standalone-attack-service.js";
 import {
   applyAttackOverride,
-  clearAttackOverride,
   getAttackOverrideKey,
-  parseAccuracyComponents,
-  setAttackOverride
+  parseAccuracyComponents
 } from "./weapon-attack-overrides.js";
 
 const OPEN_ASSISTANTS = new Map();
@@ -242,31 +250,6 @@ export async function openAmmoManager() {
       overflow-wrap: anywhere;
     }
 
-    .gam-loaded {
-      display: block !important;
-      flex: 0 0 auto !important;
-      min-width: 72px !important;
-      margin: 0 !important;
-      padding: 5px 8px !important;
-      border-radius: 5px;
-      text-align: center !important;
-      white-space: nowrap !important;
-      font-size: 1.16em !important;
-      font-weight: 700 !important;
-      color: #fff;
-      background-color: hsl(var(--gam-loaded-hue, 0) 72% 23%);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85);
-      transition: background-color 160ms ease;
-    }
-
-    .gam-mag.low {
-      background: rgba(210, 150, 40, 0.2);
-    }
-
-    .gam-mag.empty {
-      background: rgba(190, 60, 60, 0.18);
-    }
-
     .gam-magazines {
       display: flex !important;
       flex-direction: row !important;
@@ -289,24 +272,40 @@ export async function openAmmoManager() {
       height: auto !important;
       margin: 0 !important;
       padding: 3px 7px !important;
-      border: 1px solid rgba(128, 128, 128, 0.34);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid hsl(var(--gam-mag-hue, 0) 78% 43%);
       border-radius: 999px;
-      color: inherit;
-      background: rgba(255, 255, 255, 0.025);
+      color: #fff;
+      background: #19191d;
+      font-weight: 600;
+      text-shadow: 0 1px 2px #000;
       white-space: nowrap !important;
       line-height: 1.2 !important;
       cursor: pointer;
     }
 
+    .gam-mag::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: var(--gam-mag-fill, 0%);
+      background: hsl(var(--gam-mag-hue, 0) 78% 43% / .42);
+      transition: width 160ms ease, background-color 160ms ease;
+      pointer-events: none;
+    }
+
+    .gam-mag-label { position: relative; z-index: 1; }
+
     .gam-mag:hover,
     .gam-mag:focus-visible {
-      border-color: rgba(220, 210, 190, 0.72);
-      background: rgba(255, 255, 255, 0.09);
+      outline: 1px solid #fff;
+      outline-offset: 2px;
     }
 
     .gam-mag.loaded {
-      border-color: var(--color-border-highlight, #ff6400);
-      box-shadow: inset 0 0 0 1px var(--color-border-highlight, #ff6400);
+      outline: 2px solid #fff;
+      outline-offset: 2px;
       cursor: default;
     }
 
@@ -392,9 +391,6 @@ export async function openAmmoManager() {
         flex-direction: column !important;
       }
 
-      .gam-loaded {
-        align-self: flex-start !important;
-      }
     }
   `;
 
@@ -472,7 +468,7 @@ export async function openAmmoManager() {
       const mode = String(attack.mode ?? "").trim();
       const accuracy = parseAccuracyComponents(attack.acc);
 
-      result.push(applyAttackOverride({
+      result.push(withRuntimeAmmoStats(applyAttackOverride({
         path,
         uuid: String(attack.uuid ?? ""),
         name,
@@ -484,10 +480,11 @@ export async function openAmmoManager() {
         acc: accuracy.acc,
         scopeBonus: accuracy.scopeBonus,
         bulk: fireService.normalizeBulk(attack.bulk),
+        bulkMetadata: parseWeaponBulk(attack.bulk),
         rcl: String(attack.rcl ?? "").trim(),
         label: mode ? `${name} — ${mode}` : name,
         data: attack
-      }, state));
+      }, state), actor, state));
     });
 
     return result.sort((a, b) => a.label.localeCompare(b.label, "ru"));
@@ -565,9 +562,12 @@ export async function openAmmoManager() {
     }
 
     normalizeWeaponShape(weapon);
+    if (weapon.ammunitionReview) throw new Error(ammoText("Review"));
     return {
       weapon,
-      attack: withWeaponBond(resolveAttack(weapon.attackRef, getRangedAttacks(state)), weapon)
+      attack: withWeaponBond(weapon.standaloneWeaponId ?
+        withRuntimeAmmoStats(readStandaloneAttack(actor, weapon.standaloneWeaponId, weapon.standaloneModeId), actor, state) :
+        resolveAttack(weapon.attackRef, getRangedAttacks(state)), weapon)
     };
   }
 
@@ -596,11 +596,11 @@ export async function openAmmoManager() {
     return formulas.length === 1 ? formulas[0] : "";
   }
 
-  function getCloseDamageReport(attack, fireMode) {
+  function getCloseDamageReport(attack, fireMode, profile = null) {
     if (!fireMode?.extremelyClose || !Number.isInteger(fireMode.closeDamageMultiplier) || fireMode.closeDamageMultiplier < 1) {
       return null;
     }
-    const source = getAttackDamageFormula(attack);
+    const source = profile?.damage?.nativeSafe ? profile.damage.formula : getAttackDamageFormula(attack);
     const formula = fireService.multiplyBasicDamageFormula(source, fireMode.closeDamageMultiplier);
     return {
       source,
@@ -616,8 +616,8 @@ export async function openAmmoManager() {
   function extractMarginFromRoll(rollData) {
     return fireService.extractMarginFromRoll(rollData);
   }
-  function calculateHitsFromMargin(shots, rcl, margin) {
-    return fireService.calculateHitsFromMargin(shots, rcl, margin);
+  function calculateHitsFromMargin(shots, rcl, margin, rollData) {
+    return fireService.calculateHitsFromMargin(shots, rcl, margin, rollData);
   }
   function parseShotOptions(weapon, attack, values, rangeBands, targetingService, effectRangePenalty = null) {
     const visibility = normalizeVisibility(values.visibility);
@@ -626,7 +626,7 @@ export async function openAmmoManager() {
       values = { ...values, aimSeconds: 0, braced: false, laserSight: false,
         hitLocationId: "silhouette", hitRegionId: null };
     }
-    const loaded = weapon.magazines[weapon.loadedIndex];
+    const loaded = standaloneAvailableRounds(weapon);
     const shotLimits = getShotLimits(attack, loaded, values.rofMode);
     if (values.rangedRapidStrikePart) shotLimits.minShots = 1;
     const shotsText = String(values.shots ?? "").trim();
@@ -658,13 +658,14 @@ export async function openAmmoManager() {
     const elevationHeight = parseElevationHeight(values.height);
     const elevationDirection = values.elevationDirection ?? "level";
     const beamWeapon = isBeamWeapon(attack);
-    const { effectiveRange, elevation } = resolveEffectiveRange({
+    const { effectiveRange, elevation, environment } = resolveEffectiveRange({
       rangeBands,
       rangeIndex,
       distance: values.manualRangeSelected ? null : values.targetDistanceOverride,
       height: values.height,
       elevationDirection,
-      beamWeapon
+      beamWeapon, environmentCapability: attack?.ammunitionEnvironment, attackEnvironment: values.attackEnvironment,
+      depthFeet: values.depthFeet, weaponRange: attack?.data?.range
     });
     const hitLocation = targetingService?.getSelection(values.hitLocationId, values.hitRegionId);
     const targetedAttackContext = TARGETED_ATTACK_CONTEXTS.get(targetingService) ?? null;
@@ -680,6 +681,7 @@ export async function openAmmoManager() {
       ? resolveRangedRapidStrike({ actor, attack, governingSkill,
         governingSpecialty: governingSkill?.specialty ?? values.governingSpecialty }) : null;
     const errors = [];
+    if (environment?.error) errors.push(automaticAmmoText(environment.error));
 
     if (shotsText === "" || !Number.isInteger(shots) || shots < shotLimits.minShots || shots > shotLimits.maxShots) {
       const allowedShots = shotLimits.minShots === shotLimits.maxShots
@@ -705,10 +707,6 @@ export async function openAmmoManager() {
         !quickSpecialties.some(option => option.value === values.governingSpecialty)) {
       errors.push("Select Governing Skill for Quick-Shot.");
     }
-    if (!visibilityRule?.random && targetedAttackContext?.requiresSelection &&
-      !targetedAttackContext.specialtyOptions.some(option => option.value === values.governingSpecialty)) {
-      errors.push("выберите governing Guns specialty");
-    }
     if (visibility?.mode === "partial" &&
         (!Number.isInteger(Number(values.visibility?.partialPenalty)) ||
          Number(values.visibility.partialPenalty) < -9 || Number(values.visibility.partialPenalty) > -1)) {
@@ -730,7 +728,11 @@ export async function openAmmoManager() {
     const skillDetails = calculateEffectiveFireSkillDetails(
       attack, values, rangeBands, targetingService, targetedAttackContext);
     const effectiveSkill = skillDetails?.effectiveSkill ?? null;
-    const rcl = fireService.parseAttackRcl(attack, { extremelyClose: fireMode.extremelyClose });
+    const rcl = fireService.parseAttackRcl(attack);
+    if (rcl === null) {
+      ui.notifications.warn(automaticAmmoText("ProjectileRclRequired"));
+      return null;
+    }
     return {
       shots,
       physicalShots: shots,
@@ -745,6 +747,8 @@ export async function openAmmoManager() {
       rapidFireBonus: calculateRapidFireBonus(fireMode.effectiveRoF),
       effectiveSkill,
       combatCalculation: skillDetails?.combatCalculation ?? null,
+      airburstTarget: values.airburstTarget ?? "point",
+      environment: environment ?? null,
       baseSkill: skillDetails?.baseSkill ?? Number(attack?.level),
       baseSkillName: skillDetails?.baseSkillName ?? "Ranged Weapon Level",
       visibilityPenalty: visibilityRule?.penalty ?? 0,
@@ -773,7 +777,7 @@ export async function openAmmoManager() {
       height: elevationHeight,
       elevationDirection,
       beamWeapon,
-      effectiveDistance: elevation?.effectiveDistance ?? null,
+      effectiveDistance: environment?.effectiveDistance ?? elevation?.effectiveDistance ?? null,
       rangePenalty: (effectiveRange ?? rangeEntry).penalty,
       rangeLabel: (effectiveRange ?? rangeEntry).label,
       effectRangePenalty: Number.isFinite(effectRangePenalty) ? effectRangePenalty : null,
@@ -791,7 +795,7 @@ export async function openAmmoManager() {
   function buildFireChatBody(state, payload) {
     const lines = [];
 
-    if (shouldReportField(state, "ammoType")) {
+    if (payload.ammoType && shouldReportField(state, "ammoType")) {
       lines.push(
         `Тип боеприпасов: <strong>${escapeHTML(payload.ammoType)}</strong>`
       );
@@ -831,17 +835,17 @@ export async function openAmmoManager() {
       lines.push(`Зона попадания: <strong>${escapeHTML(payload.hitLocationText)}</strong>`);
     }
 
-    if (shouldReportField(state, "loadedMagazine")) {
+    if (payload.loadedAfter !== undefined && shouldReportField(state, "loadedMagazine")) {
       lines.push(
         `Установленный магазин: <strong>${payload.loadedAfter}/${payload.capacity}</strong>`
       );
     }
 
-    if (shouldReportField(state, "totalAmmo")) {
+    if (payload.loadedAfter !== undefined && shouldReportField(state, "totalAmmo")) {
       lines.push(`Общий боезапас: <strong>${payload.totalAmmo}</strong>`);
     }
 
-    return lines.join(".<br><br>");
+    return `<div class="olegurps-fire-chat-body">${lines.map(line => `<div>${line}</div>`).join("")}</div>`;
   }
 
   async function fireAndRoll(state, weaponId, rawShotOptions, targetingService, trademarkMove = false, preparedSnapshot = null, expectedEffectiveSkill = null) {
@@ -871,42 +875,57 @@ export async function openAmmoManager() {
       if (!Number.isFinite(distance)) throw new Error("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0438\u0437\u043c\u0435\u0440\u0438\u0442\u044c \u0434\u0438\u0441\u0442\u0430\u043d\u0446\u0438\u044e \u0434\u043e \u0433\u0435\u043a\u0441\u0430.");
       rawShotOptions = { ...rawShotOptions, targetDistanceOverride: distance };
     }
-    await repairState(state, false);
-
-    const { weapon, attack } = getWeaponContext(state, weaponId);
-    if (!attack) {
-      throw new Error(
-        `Для «${weapon.name}» больше не найдена связанная дистанционная атака.`
-      );
-    }
-
-    const loaded = weapon.magazines[weapon.loadedIndex];
-    if (loaded <= 0 || weapon.totalAmmo <= 0) {
-      ui.notifications.warn(`«${weapon.name}»: установленный магазин пуст.`);
-      return false;
-    }
-
+    let weapon, rollAttack, shotOptions;
     const rangeBands = getRangeBands();
     const effectRangePenalty = getTaggedModifierSettings()?.autoAdd && visibility?.mode !== "unseen" && !visibility?.hex
       ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
       : null;
-    let shotOptions = preparedSnapshot?.shotOptions ??
-      parseShotOptions(weapon, attack, rawShotOptions, rangeBands, targetingService, effectRangePenalty);
-    if (!shotOptions) return false;
-    if (preparedSnapshot && (loaded < shotOptions.physicalShots || weapon.totalAmmo < shotOptions.physicalShots)) {
-      ui.notifications.warn("Ranged Rapid Strike: insufficient ammunition for this attack.");
-      return false;
+    const attackId = newAttackId();
+    let result;
+    try {
+      result = await ammoService.executeShot({ weaponId, attackId,
+        prepare: ({ state: current, ammunition }) => {
+          const context = getWeaponContext(current, weaponId);
+          weapon = context.weapon;
+          if (!context.attack) throw new Error(attackProfileError("AttackMissing"));
+          if (context.attack.readinessReason) throw new Error(context.attack.readinessReason);
+          if (ammunition && Math.min(ammunition.available, ammunition.total) <= 0)
+            throw new Error("InsufficientRounds");
+          shotOptions = preparedSnapshot?.shotOptions ??
+            parseShotOptions(weapon, context.attack, rawShotOptions, rangeBands, targetingService, effectRangePenalty);
+          if (!shotOptions) return null;
+          if (trademarkMove) shotOptions = applyTrademarkMoveBonus(shotOptions);
+          if (trademarkMove && Number.isFinite(expectedEffectiveSkill) && shotOptions.effectiveSkill !== expectedEffectiveSkill)
+            throw new Error("Effective skill changed. Review the updated preview before rolling.");
+          rollAttack = preparedSnapshot?.attack ?? context.attack;
+          const profile = resolveRuntimeAttackProfile({ actor, attack: rollAttack, weaponId,
+            state: current, ammunition, context: { kind: preparedSnapshot ? "ranged-rapid-strike" : "normal",
+              tokenId: token.id, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
+              effectiveRoF: shotOptions.effectiveRoF, rcl: shotOptions.rcl,
+              airburstTarget: shotOptions.airburstTarget ?? "point",
+              ...(shotOptions.environment ? { environment: shotOptions.environment } : {}),
+              shotgun: { rawRoF: shotOptions.rofProfile?.source ?? rollAttack.rof, physicalShotsMax: shotOptions.rofProfile?.baseRoF ?? null,
+                projectilesPerShot: shotOptions.rofProfile?.projectileMultiplier ?? 1,
+                projectileKind: rollAttack.ammunitionProjectileKind ?? null, physicalDistance: shotOptions.physicalDistance,
+                halfDamageRange: shotOptions.halfDamageRange, extremelyClose: shotOptions.extremelyClose,
+                closeDamageMultiplier: shotOptions.closeDamageMultiplier, damageApplication: "native-GGA-GM-selection" } } });
+          return { profile, amount: shotOptions.physicalShots };
+        },
+        execute: ({ profile }) => {
+          const options = { ...shotOptions, attackProfile: profile, attackId, resourceTiming: "after-attack" };
+          return visibility?.mode === "unseen" && visibility.blindFireHex ||
+            visibility?.mode === "blind" && !visibility.knownLocation
+            ? withClearedFoundryTargets(() => executeRangedAttack(rollAttack, options))
+            : executeRangedAttack(rollAttack, options);
+        }
+      });
+    } catch (error) {
+      if (["IncompatibleAmmunition", "InsufficientRounds", "Review", "AmmunitionChangedDuringAttack", "IncompleteShotAccounting", "IncompleteExplosiveRecipe", "IncompleteAmmunitionProfile"].includes(error.message)) {
+        ui.notifications.warn(attackProfileError(error.message));
+        return false;
+      }
+      throw error;
     }
-    if (trademarkMove) shotOptions = applyTrademarkMoveBonus(shotOptions);
-    if (trademarkMove && Number.isFinite(expectedEffectiveSkill) &&
-        shotOptions.effectiveSkill !== expectedEffectiveSkill)
-      throw new Error("Effective skill changed. Review the updated preview before rolling.");
-
-    const rollAttack = preparedSnapshot?.attack ?? attack;
-    const result = visibility?.mode === "unseen" && visibility.blindFireHex ||
-      visibility?.mode === "blind" && !visibility.knownLocation
-      ? await withClearedFoundryTargets(() => executeRangedAttack(rollAttack, shotOptions))
-      : await executeRangedAttack(rollAttack, shotOptions);
     if (!result.rolled) {
       ui.notifications.warn(
         "Бросок атаки не был выполнен. Патроны не списаны."
@@ -914,15 +933,15 @@ export async function openAmmoManager() {
       return false;
     }
 
-    const fired = Math.min(shotOptions.physicalShots, loaded, weapon.totalAmmo);
-    weapon.magazines[weapon.loadedIndex] -= fired;
-    weapon.totalAmmo -= fired;
-    await saveState(state);
+    Object.assign(state, result.state);
+    weapon = result.weapon;
+    const fired = result.profile.resource.kind === "unmanaged" ? shotOptions.physicalShots : result.spent;
+    const firedAmmoType = result.profile.resource.kind === "unmanaged" ? null : ammoDisplayName(result.profile.ammunition) ?? weapon.ammoType;
 
     const rcl = shotOptions.rcl;
     const margin = extractMarginFromRoll(result.rollData);
-    const hits = calculateHitsFromMargin(shotOptions.effectiveRoF, rcl, margin);
-    const closeDamage = getCloseDamageReport(rollAttack, shotOptions);
+    const hits = calculateHitsFromMargin(shotOptions.effectiveRoF, rcl, margin, result.rollData);
+    const closeDamage = getCloseDamageReport(rollAttack, shotOptions, result.profile);
     let hitLocationText = shotOptions.hitLocationLabel;
     let randomHitLocations = [];
     if (shotOptions.randomHitLocation && hits > 0) {
@@ -936,7 +955,7 @@ export async function openAmmoManager() {
     }
 
     const body = buildFireChatBody(state, {
-      ammoType: weapon.ammoType,
+      ammoType: firedAmmoType,
       fired,
       hits,
       margin,
@@ -965,7 +984,7 @@ export async function openAmmoManager() {
   async function spendWithoutRoll(state, weaponId) {
     await repairState(state, false);
     const { weapon } = getWeaponContext(state, weaponId);
-    const loaded = weapon.magazines[weapon.loadedIndex];
+    const loaded = weapon.magazines[weapon.loadedIndex] ?? 0;
 
     if (loaded <= 0) {
       ui.notifications.warn("Установленный магазин пуст.");
@@ -1016,9 +1035,7 @@ export async function openAmmoManager() {
     }
 
     const fired = Math.min(requested, loaded, weapon.totalAmmo);
-    weapon.magazines[weapon.loadedIndex] -= fired;
-    weapon.totalAmmo -= fired;
-    await saveState(state);
+    if (!await ammoService.consumeLoadedRounds(state, weapon, fired)) return false;
 
     await reportToChat(
       state,
@@ -1044,8 +1061,14 @@ export async function openAmmoManager() {
     if (newIndex === weapon.loadedIndex) return false;
 
     const oldIndex = weapon.loadedIndex;
-    weapon.loadedIndex = newIndex;
-    await saveState(state);
+    if (weapon.ammunitionInventory) {
+      const next = await ammoService.inventoryTransaction(weapon.id, "install", { magazineId: weapon.ammunitionInventory.magazines[newIndex].id });
+      Object.assign(weapon, next.weapons.find(entry => entry.id === weapon.id));
+      Object.assign(state, next);
+    } else {
+      weapon.loadedIndex = newIndex;
+      await saveState(state);
+    }
 
     await reportToChat(
       state,
@@ -1059,345 +1082,6 @@ export async function openAmmoManager() {
     return true;
   }
 
-  function renderTopUpTargetOptions(weapon) {
-    return [
-      '<option value="all">Все магазины</option>',
-      ...weapon.magazines.map((rounds, index) => {
-        const loadedText = index === weapon.loadedIndex ? " — установлен" : "";
-        return `<option value="${index}">Магазин ${index + 1}: ${rounds}/${weapon.capacity}${loadedText}</option>`;
-      })
-    ].join("");
-  }
-
-  async function topUpMagazines(state, weaponId, selectedTarget = null) {
-    await repairState(state, false);
-    const { weapon } = getWeaponContext(state, weaponId);
-    const loose = looseAmmo(weapon);
-
-    if (loose <= 0) {
-      ui.notifications.warn(`Для «${weapon.ammoType}» нет свободных патронов вне магазинов.`);
-      return false;
-    }
-
-    let target = selectedTarget === null ? null : String(selectedTarget);
-    if (target === null) {
-      const data = await DialogV2.input({
-        window: { title: `Снаряжение магазинов: ${weapon.name}` },
-        position: { width: 540 },
-        content: `
-          <div class="standard-form">
-            <div class="form-group">
-              <label><strong>Какие магазины снарядить</strong></label>
-              <div class="form-fields">
-                <select name="target">${renderTopUpTargetOptions(weapon)}</select>
-              </div>
-            </div>
-            <p class="hint">Свободный запас: ${loose}. Общий боезапас не изменится.</p>
-          </div>
-        `,
-        ok: { label: "Снарядить", icon: "fa-solid fa-box-open" },
-        rejectClose: false,
-        modal: true
-      });
-      if (!data) return false;
-      const values = data.object ?? data;
-      target = String(values.target ?? "all");
-    }
-    let remaining = loose;
-    let moved = 0;
-
-    const fillIndex = index => {
-      if (remaining <= 0) return;
-      const need = Math.max(0, weapon.capacity - weapon.magazines[index]);
-      const amount = Math.min(need, remaining);
-      weapon.magazines[index] += amount;
-      remaining -= amount;
-      moved += amount;
-    };
-
-    if (target === "all") {
-      fillIndex(weapon.loadedIndex);
-      weapon.magazines.forEach((_rounds, index) => {
-        if (index !== weapon.loadedIndex) fillIndex(index);
-      });
-    } else {
-      fillIndex(clampInteger(target, 0, weapon.magazines.length - 1));
-    }
-
-    if (moved <= 0) {
-      ui.notifications.warn("Выбранные магазины уже заполнены.");
-      return false;
-    }
-
-    await saveState(state);
-
-    await reportToChat(
-      state,
-      "topUp",
-      weapon.name,
-      `
-        В магазины распределено патронов: <strong>${moved}</strong>.<br>
-        Свободный запас: <strong>${remaining}</strong>
-      `
-    );
-
-    return true;
-  }
-
-  async function unloadCurrentMagazine(state, weaponId) {
-    const { weapon } = getWeaponContext(state, weaponId);
-    const rounds = weapon.magazines[weapon.loadedIndex];
-
-    if (rounds <= 0) {
-      ui.notifications.warn("Установленный магазин уже пуст.");
-      return false;
-    }
-
-    weapon.magazines[weapon.loadedIndex] = 0;
-    await saveState(state);
-
-    await reportToChat(
-      state,
-      "unload",
-      weapon.name,
-      `
-        Из установленного магазина выгружено патронов: <strong>${rounds}</strong>.<br>
-        Они возвращены в свободный запас
-      `
-    );
-
-    return true;
-  }
-
-  async function manageMagazineLoad(state, weaponId) {
-    const { weapon } = getWeaponContext(state, weaponId);
-    const canTopUp = looseAmmo(weapon) > 0;
-    const canUnload = weapon.magazines[weapon.loadedIndex] > 0;
-    if (!canTopUp && !canUnload) {
-      ui.notifications.warn("Нет доступных действий для снаряжения или разряжания.");
-      return false;
-    }
-
-    const readTarget = button => button.form?.elements?.target?.value ?? "all";
-    const buttons = [
-      canTopUp ? {
-        action: "top-up",
-        label: "Снарядить",
-        icon: "fa-solid fa-box-open",
-        default: true,
-        callback: (_event, button) => ({ operation: "top-up", target: readTarget(button) })
-      } : null,
-      canUnload ? {
-        action: "unload",
-        label: "Разрядить",
-        icon: "fa-solid fa-arrow-down",
-        default: !canTopUp,
-        callback: () => ({ operation: "unload" })
-      } : null
-    ].filter(Boolean);
-    const decision = await DialogV2.wait({
-      window: { title: `Снарядить / разрядить: ${weapon.name}` },
-      position: { width: 540 },
-      content: `
-        <div class="standard-form">
-          ${canTopUp ? `
-            <div class="form-group">
-              <label><strong>Какие магазины снарядить</strong></label>
-              <div class="form-fields">
-                <select name="target">${renderTopUpTargetOptions(weapon)}</select>
-              </div>
-            </div>
-            <p class="hint">Свободный запас: ${looseAmmo(weapon)}. Общий боезапас не изменится.</p>
-          ` : '<p class="hint">Свободных патронов для снаряжения нет.</p>'}
-        </div>
-      `,
-      buttons,
-      rejectClose: false,
-      modal: true
-    });
-    if (!decision) return false;
-
-    return decision.operation === "unload"
-      ? unloadCurrentMagazine(state, weaponId)
-      : topUpMagazines(state, weaponId, decision.target);
-  }
-
-  async function editAmmoStock(state, weaponId) {
-    const { weapon } = getWeaponContext(state, weaponId);
-
-    const data = await DialogV2.input({
-      window: { title: `Боезапас: ${weapon.name}` },
-      position: { width: 560 },
-      content: `
-        <style>
-          .gam-stock-form { font-size: 0.92em; }
-          .gam-stock-row {
-            padding: 9px 2px;
-            border-bottom: 1px solid rgba(128,128,128,0.28);
-          }
-          .gam-stock-row:first-child {
-            border-top: 1px solid rgba(128,128,128,0.28);
-          }
-          .gam-stock-line {
-            display: grid;
-            grid-template-columns: minmax(210px, 1fr) minmax(180px, 250px);
-            align-items: center;
-            gap: 8px 14px;
-          }
-          .gam-stock-line input { width: 100%; margin: 0; }
-          .gam-stock-row .hint { margin: 4px 0 0; }
-        </style>
-
-        <div class="standard-form gam-stock-form">
-          <div class="gam-stock-row">
-            <div class="gam-stock-line">
-              <label><strong>Тип боеприпасов</strong></label>
-              <input type="text" name="ammoType" value="${escapeHTML(weapon.ammoType)}" required autofocus>
-            </div>
-          </div>
-
-          <div class="gam-stock-row">
-            <div class="gam-stock-line">
-              <label><strong>Общее количество патронов</strong></label>
-              <input type="number" name="totalAmmo" value="${weapon.totalAmmo}" min="0" step="1" required>
-            </div>
-            <p class="hint">
-              Это все патроны вместе: в магазинах и в свободном запасе
-              Сейчас в магазинах: ${sumMagazines(weapon)}
-              Свободно: ${looseAmmo(weapon)}
-            </p>
-          </div>
-        </div>
-      `,
-      ok: { label: "Сохранить", icon: "fa-solid fa-floppy-disk" },
-      rejectClose: false,
-      modal: true
-    });
-
-    if (!data) return false;
-    const values = data.object ?? data;
-    const ammoType = String(values.ammoType ?? "").trim();
-    const totalText = String(values.totalAmmo ?? "").trim();
-    const totalAmmo = Number(totalText.replace(",", "."));
-
-    if (!ammoType) {
-      ui.notifications.error("Укажите тип боеприпасов.");
-      return false;
-    }
-
-    if (totalText === "" || !Number.isInteger(totalAmmo) || totalAmmo < 0) {
-      ui.notifications.error(
-        "Общее количество патронов должно быть целым числом не меньше 0."
-      );
-      return false;
-    }
-
-    const oldTotal = weapon.totalAmmo;
-    const oldType = weapon.ammoType;
-    weapon.ammoType = ammoType;
-    weapon.totalAmmo = totalAmmo;
-
-    const removed = repairWeaponAmmo(weapon);
-    await saveState(state);
-
-    if (removed > 0) {
-      ui.notifications.warn(
-        `Из магазинов убрано ${removed} патронов, потому что общий боезапас был уменьшен.`
-      );
-    }
-
-    await reportToChat(
-      state,
-      "stock",
-      weapon.name,
-      `
-        Боезапас изменён: ${escapeHTML(oldType)} ${oldTotal} → <strong>${escapeHTML(weapon.ammoType)} ${weapon.totalAmmo}</strong>
-      `
-    );
-
-    return true;
-  }
-
-  async function editMagazines(state, weaponId) {
-    const { weapon } = getWeaponContext(state, weaponId);
-
-    const rows = weapon.magazines
-      .map((rounds, index) => {
-        return `
-          <div class="gam-mag-edit-row">
-            <label for="gam-mag-${index}"><strong>Магазин ${index + 1}</strong></label>
-            <input id="gam-mag-${index}" type="number" name="mag-${index}" value="${rounds}" min="0" max="${weapon.capacity}" step="1" required>
-            <label class="gam-loaded-choice">
-              <input type="radio" name="loadedIndex" value="${index}" ${index === weapon.loadedIndex ? "checked" : ""}>
-              Установлен
-            </label>
-          </div>
-        `;
-      })
-      .join("");
-
-    const data = await DialogV2.input({
-      window: { title: `Магазины: ${weapon.name}` },
-      position: { width: 600 },
-      content: `
-        <style>
-          .gam-mag-edit {
-            max-height: 65vh;
-            overflow-y: auto;
-            font-size: 0.9em;
-          }
-          .gam-mag-edit-row {
-            display: grid;
-            grid-template-columns: 1fr 110px 125px;
-            align-items: center;
-            gap: 8px 12px;
-            padding: 8px 2px;
-            border-bottom: 1px solid rgba(128,128,128,0.28);
-          }
-          .gam-mag-edit-row:first-child {
-            border-top: 1px solid rgba(128,128,128,0.28);
-          }
-          .gam-mag-edit-row input[type="number"] { width: 100%; margin: 0; }
-          .gam-loaded-choice {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin: 0;
-          }
-          .gam-loaded-choice input { width: auto; margin: 0; }
-          .gam-mag-edit .hint { margin: 6px 2px 0; }
-        </style>
-        <div class="standard-form gam-mag-edit">
-          ${rows}
-          <p class="hint">
-            Сумма патронов в магазинах не может превышать общий боезапас ${weapon.totalAmmo}
-          </p>
-        </div>
-      `,
-      ok: { label: "Сохранить", icon: "fa-solid fa-floppy-disk" },
-      rejectClose: false,
-      modal: true
-    });
-
-    if (!data) return false;
-    const values = data.object ?? data;
-    const magazines = weapon.magazines.map((_rounds, index) => {
-      return clampInteger(values[`mag-${index}`], 0, weapon.capacity);
-    });
-
-    const allocated = magazines.reduce((sum, rounds) => sum + rounds, 0);
-    if (allocated > weapon.totalAmmo) {
-      ui.notifications.error(
-        `В магазинах указано ${allocated} патронов, но общий боезапас равен ${weapon.totalAmmo}.`
-      );
-      return false;
-    }
-
-    weapon.magazines = magazines;
-    weapon.loadedIndex = clampInteger(values.loadedIndex, 0, magazines.length - 1);
-    await saveState(state);
-    return true;
-  }
 
   async function refreshAttackOverrideConsumers(state, reference) {
     const referenceKey = getAttackOverrideKey(reference);
@@ -1407,9 +1091,10 @@ export async function openAmmoManager() {
     for (const preparation of OPEN_FIRE_PREPARATIONS.values()) {
       if (preparation.token?.actor?.id !== actor.id) continue;
       if (getAttackOverrideKey(preparation.weapon?.attackRef) !== referenceKey) continue;
+      preparation.weapon = state.weapons.find(weapon => weapon.id === preparation.weapon.id) ?? preparation.weapon;
       const effectiveAttack = withWeaponBond(resolveAttack(preparation.weapon.attackRef, effectiveAttacks), preparation.weapon);
       if (!effectiveAttack) continue;
-      const loaded = preparation.weapon.magazines[preparation.weapon.loadedIndex];
+      const loaded = preparation.weapon.magazines[preparation.weapon.loadedIndex] ?? 0;
       await preparation.updateWeaponAttack(effectiveAttack, {
         rateOfFireProfile: fireService.parseRateOfFire(effectiveAttack.rof),
         maximumShots: getMaximumShots(effectiveAttack, loaded)
@@ -1423,350 +1108,47 @@ export async function openAmmoManager() {
     }
   }
 
-  async function editAttackParameters(state, attack) {
-    const result = await openWeaponAttackEditor({
-      DialogV2,
-      attack,
-      escapeHTML,
-      parseRateOfFire: value => fireService.parseRateOfFire(value)
-    });
-    if (!result) return false;
-
-    let changed = false;
-    if (result.action === "reset") {
-      changed = clearAttackOverride(state, attack);
-      if (!changed) {
-        ui.notifications.info("\u0414\u043b\u044f \u044d\u0442\u043e\u0439 \u0430\u0442\u0430\u043a\u0438 \u043d\u0435\u0442 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0439 OleGURPS QOL.");
-        return false;
-      }
-    } else if (result.action === "save") {
-      changed = setAttackOverride(state, attack, result.value);
-    }
-    if (!changed) return false;
-
-    await saveState(state);
-    await refreshAttackOverrideConsumers(state, attack);
-    ui.notifications.info(result.action === "reset"
-      ? "\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b GGA \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u043e\u0432\u043b\u0435\u043d\u044b."
-      : "\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u043e\u0440\u0443\u0436\u0438\u044f \u0441\u043e\u0445\u0440\u0430\u043d\u0435\u043d\u044b.");
-    return true;
-  }
   async function configureWeapon(state, existingId = null) {
     const attacks = getRangedAttacks(state);
-    const existing = existingId
-      ? state.weapons.find(weapon => weapon.id === existingId)
-      : null;
-
-    if (attacks.length === 0) {
-      ui.notifications.warn(
-        "На листе выбранного токена не найдено дистанционных атак."
-      );
-      return false;
-    }
-
-    const currentAttack = existing
-      ? resolveAttack(existing.attackRef, attacks) ?? attacks[0]
-      : attacks[0];
-
-    const attackOptions = attacks
-      .map(attack => {
-        const selected = currentAttack?.path === attack.path ? "selected" : "";
-        const details = [
-          attack.level > 0 ? `навык ${attack.level}` : "",
-          attack.rof ? `RoF ${attack.rof}` : "",
-          attack.shots ? `Shots ${attack.shots}` : "",
-          attack.rcl ? `Rcl ${attack.rcl}` : ""
-        ]
-          .filter(Boolean)
-          .join(", ");
-
-        return `
-          <option value="${escapeHTML(attack.path)}" ${selected}>
-            ${escapeHTML(attack.label)}${details ? ` — ${escapeHTML(details)}` : ""}
-          </option>
-        `;
-      })
-      .join("");
-
-    const weaponBondAvailable = hasWeaponBondPerk(actor);
-    const ammoTypeValue = existing ? escapeHTML(existing.ammoType) : "";
-    const totalAmmoValue = existing ? String(existing.totalAmmo) : "";
-    const capacityValue = existing ? String(existing.capacity) : "";
-    const magazineCountValue = existing ? String(existing.magazines.length) : "";
-
+    const existing = existingId ? state.weapons.find(weapon => weapon.id === existingId) : null;
+    const api = globalThis.OleGURPSQOL;
+    // Catalog loading/failure never prevents the existing GGA configuration path.
+    try { await api?.catalogs?.load(); } catch (error) { console.warn("OleGURPS QOL: catalog unavailable", error); }
+    const draft = new WeaponConfigurationDraft({ actor, state, attacks, existing,
+      catalogs: api?.catalogs, bindings: api?.weaponCatalogBindings, ammunition: api?.ammunitionCompatibility });
     const data = await DialogV2.input({
-      window: {
-        title: existing ? `Настройка: ${existing.name}` : "Добавить оружие"
-      },
+      window: { title: existing ? `${weaponText("Configure")}: ${existing.name}` : weaponText("Add") },
       position: { width: 720 },
-      content: `
-        <style>
-          .gam-config {
-            max-height: 72vh;
-            overflow-y: auto;
-            padding: 0 8px 0 2px;
-            font-size: 0.9em;
-          }
-          .gam-config-row {
-            padding: 9px 3px;
-            border-bottom: 1px solid rgba(128,128,128,0.3);
-          }
-          .gam-config-row:first-child {
-            border-top: 1px solid rgba(128,128,128,0.3);
-          }
-          .gam-config-line {
-            display: grid;
-            grid-template-columns: minmax(225px, 1fr) minmax(280px, 360px);
-            align-items: center;
-            gap: 8px 14px;
-          }
-          .gam-config-label {
-            margin: 0;
-            font-weight: 700;
-            line-height: 1.2;
-          }
-          .gam-config select,
-          .gam-config input[type="text"],
-          .gam-config input[type="number"] {
-            width: 100%;
-            margin: 0;
-          }
-          .gam-config-hint {
-            margin: 4px 0 0;
-            line-height: 1.22;
-            opacity: 0.78;
-          }
-          .gam-config-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0;
-            cursor: pointer;
-            font-weight: 700;
-            line-height: 1.2;
-          }
-          .gam-config-checkbox input {
-            flex: 0 0 auto;
-            width: auto;
-            margin: 0;
-          }
-          @media (max-width: 680px) {
-            .gam-config-line { grid-template-columns: 1fr; }
-          }
-        </style>
-
-        <div class="standard-form gam-config">
-          <div class="gam-config-row">
-            <div class="gam-config-line">
-              <label class="gam-config-label" for="gam-attack-path">Дистанционная атака</label>
-              <select id="gam-attack-path" name="attackPath">${attackOptions}</select>
-            </div>
-            <div class="gam-config-attack-actions">
-              <button type="button" class="gam-config-edit-attack" data-edit-attack-parameters>
-                <i class="fa-solid fa-sliders" aria-hidden="true"></i>
-                \u0420\u0435\u0434\u0430\u043a\u0442\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u043e\u0440\u0443\u0436\u0438\u044f
-              </button>
-            </div>
-          </div>
-
-          <div class="gam-config-row">
-            <div class="gam-config-line">
-              <label class="gam-config-label" for="gam-ammo-type">Тип боеприпасов</label>
-              <input id="gam-ammo-type" type="text" name="ammoType" value="${ammoTypeValue}" placeholder="Например: 9×19 мм" required>
-            </div>
-          </div>
-
-          <div class="gam-config-row">
-            <div class="gam-config-line">
-              <label class="gam-config-label" for="gam-total-ammo">Общее количество патронов</label>
-              <input id="gam-total-ammo" type="number" name="totalAmmo" value="${totalAmmoValue}" placeholder="Например: 60" min="0" step="1" required>
-            </div>
-            <p class="gam-config-hint">
-              Все патроны вместе: в магазинах и в свободном запасе
-              Инвентарь персонажа не используется
-            </p>
-          </div>
-
-          <div class="gam-config-row">
-            <div class="gam-config-line">
-              <label class="gam-config-label" for="gam-capacity">Ёмкость магазина</label>
-              <input id="gam-capacity" type="number" name="capacity" value="${capacityValue}" placeholder="Например: 15" min="1" step="1" required>
-            </div>
-          </div>
-
-          <div class="gam-config-row">
-            <div class="gam-config-line">
-              <label class="gam-config-label" for="gam-magazine-count">Магазинов всего</label>
-              <input id="gam-magazine-count" type="number" name="magazineCount" value="${magazineCountValue}" placeholder="Например: 4" min="1" step="1" required>
-            </div>
-            <p class="gam-config-hint">
-              Первый магазин считается установленным
-              Остальные — запасными
-            </p>
-          </div>
-
-          <div class="gam-config-row">
-            ${weaponBondCheckbox({ available: weaponBondAvailable, checked: existing?.weaponBond === true })}
-          </div>
-
-          <div class="gam-config-row">
-            <label class="gam-config-checkbox">
-              <input type="checkbox" name="fillAvailable" ${existing ? "" : "checked"}>
-              <span>Заполнить магазины доступными патронами</span>
-            </label>
-          </div>
-        </div>
-      `,
-      render: (_event, dialog) => {
-        const root = dialog.element;
-        const select = root?.querySelector('[name="attackPath"]');
-        const editButton = root?.querySelector("[data-edit-attack-parameters]");
-        if (!select || !editButton) return;
-        const updateButton = () => {
-          editButton.disabled = !attacks.some(entry => entry.path === select.value);
-        };
-        select.addEventListener("change", updateButton);
-        editButton.addEventListener("click", async event => {
-          event.preventDefault();
-          const selectedAttack = attacks.find(entry => entry.path === select.value);
-          if (!selectedAttack) return;
-          editButton.disabled = true;
-          try {
-            const changed = await editAttackParameters(state, selectedAttack);
-            if (changed) {
-              const refreshed = resolveAttack(makeAttackRef(selectedAttack), getRangedAttacks(state));
-              if (refreshed) Object.assign(selectedAttack, refreshed);
-            }
-          } finally {
-            updateButton();
-          }
-        });
-        updateButton();
-      },
-      ok: { label: "Сохранить", icon: "fa-solid fa-floppy-disk" },
+      content: weaponConfigurationHTML(draft),
+      render: (_event, dialog) => bindWeaponConfiguration(dialog.element, draft, async (attack, mode) => {
+        const effective = mode.override?.action === "reset" ?
+          resolveAttack(makeAttackRef(attack), getRangedAttacks()) : mode.override?.action === "save" ?
+            applyAttackOverride(attack, { attackOverrides: { [getAttackOverrideKey(attack)]: mode.override.value } }) : attack;
+        return openWeaponAttackEditor({ DialogV2, attack: effective, escapeHTML,
+          parseRateOfFire: value => fireService.parseRateOfFire(value),
+          configuration: { catalogs: api?.catalogs, target: mode.target,
+            candidates: mode.analysis?.automatic?.candidates ?? [] } });
+      }),
+      ok: { label: weaponText("Save"), icon: "fa-solid fa-floppy-disk" },
       rejectClose: false,
-      modal: true
+      modal: false
     });
-
     if (!data) return false;
     const values = data.object ?? data;
-
-    const attack = attacks.find(
-      entry => entry.path === String(values.attackPath)
-    );
-
-    if (!attack) {
-      throw new Error("Не удалось определить выбранную дистанционную атаку.");
-    }
-
-    const rawAmmoType = String(values.ammoType ?? "").trim();
-    const rawTotalAmmo = String(values.totalAmmo ?? "").trim();
-    const rawCapacity = String(values.capacity ?? "").trim();
-    const rawMagazineCount = String(values.magazineCount ?? "").trim();
-
-    const parsedTotalAmmo = Number(rawTotalAmmo.replace(",", "."));
-    const parsedCapacity = Number(rawCapacity.replace(",", "."));
-    const parsedMagazineCount = Number(rawMagazineCount.replace(",", "."));
-
-    const errors = [];
-
-    if (!rawAmmoType) errors.push("укажите тип боеприпасов");
-    if (
-      rawTotalAmmo === "" ||
-      !Number.isInteger(parsedTotalAmmo) ||
-      parsedTotalAmmo < 0
-    ) {
-      errors.push(
-        "общее количество патронов должно быть целым числом не меньше 0"
-      );
-    }
-
-    if (
-      rawCapacity === "" ||
-      !Number.isInteger(parsedCapacity) ||
-      parsedCapacity < 1
-    ) {
-      errors.push("ёмкость магазина должна быть целым числом не меньше 1");
-    }
-
-    if (
-      rawMagazineCount === "" ||
-      !Number.isInteger(parsedMagazineCount) ||
-      parsedMagazineCount < 1
-    ) {
-      errors.push(
-        "количество магазинов должно быть целым числом не меньше 1"
-      );
-    }
-
-    if (errors.length > 0) {
-      ui.notifications.error(`Ошибка заполнения: ${errors.join("; ")}.`);
+    draft.selectAttack(String(values.attackPath ?? draft.path));
+    if (!draft.standalone && !draft.attack) {
+      ui.notifications.error(weaponText("SelectAttack"));
       return false;
     }
-
-    const newCapacity = clampInteger(parsedCapacity, 1, 100000);
-    const newMagazineCount = clampInteger(parsedMagazineCount, 1, 1000);
-    const newTotalAmmo = clampInteger(parsedTotalAmmo, 0);
-    const newAmmoType = rawAmmoType;
-    const fillAvailable = parseBoolean(values.fillAvailable);
-    const weaponBond = weaponBondAvailable && parseBoolean(values.weaponBond);
-
-    let weapon = existing;
-
-    if (!weapon) {
-      weapon = {
-        id: randomId(),
-        weaponBond,
-        name: attack.label,
-        attackRef: makeAttackRef(attack),
-        ammoType: newAmmoType,
-        totalAmmo: newTotalAmmo,
-        capacity: newCapacity,
-        magazines: Array(newMagazineCount).fill(0),
-        loadedIndex: 0
-      };
-      state.weapons.push(weapon);
-    } else {
-      weapon.name = attack.label;
-      weapon.weaponBond = weaponBond;
-      weapon.attackRef = makeAttackRef(attack);
-      weapon.ammoType = newAmmoType;
-      weapon.totalAmmo = newTotalAmmo;
-      weapon.capacity = newCapacity;
-      weapon.magazines = weapon.magazines
-        .slice(0, newMagazineCount)
-        .map(rounds => Math.min(newCapacity, clampInteger(rounds, 0)));
-
-      while (weapon.magazines.length < newMagazineCount) {
-        weapon.magazines.push(0);
-      }
-
-      weapon.loadedIndex = Math.min(
-        weapon.loadedIndex,
-        weapon.magazines.length - 1
-      );
+    const result = await draft.commit({ id: randomId() });
+    await saveState(result.state);
+    for (const key of Object.keys(state)) if (!Object.hasOwn(result.state, key)) delete state[key];
+    Object.assign(state, result.state);
+    // Existing Fire Control windows consume the same per-mode skill and override state.
+    for (const attack of attacks) {
+      if (!draft.modes.has(attack.path)) continue;
+      await refreshAttackOverrideConsumers(state, attack);
     }
-
-    normalizeWeaponShape(weapon);
-    repairWeaponAmmo(weapon);
-
-    if (fillAvailable) {
-      let loose = looseAmmo(weapon);
-      const fill = index => {
-        if (loose <= 0) return;
-        const need = weapon.capacity - weapon.magazines[index];
-        const amount = Math.min(need, loose);
-        weapon.magazines[index] += amount;
-        loose -= amount;
-      };
-
-      fill(weapon.loadedIndex);
-      weapon.magazines.forEach((_rounds, index) => {
-        if (index !== weapon.loadedIndex) fill(index);
-      });
-    }
-
-    await saveState(state);
     return true;
   }
 
@@ -1791,6 +1173,12 @@ export async function openAmmoManager() {
     });
 
     if (!confirmed) return false;
+
+    if (weapon.standaloneWeaponId) {
+      const next = await ammoService.removeStandaloneWeapon(weaponId);
+      Object.assign(state, next);
+      return true;
+    }
 
     state.weapons = state.weapons.filter(entry => entry.id !== weaponId);
     await saveState(state);
@@ -1926,10 +1314,17 @@ export async function openAmmoManager() {
   }
 
   function renderMagazineBadges(weapon) {
+    if (weapon.ammunitionReview) return "";
     return weapon.magazines
       .map((rounds, index) => {
         const loaded = index === weapon.loadedIndex;
-        const ratio = weapon.capacity > 0 ? rounds / weapon.capacity : 0;
+        const capacity = weapon.ammunitionInventory?.magazines[index]?.capacity ?? weapon.capacity;
+        const fill = magazineFill(rounds, capacity);
+        const magazine = weapon.ammunitionInventory?.magazines[index];
+        const ammunition = weapon.ammunitionInventory?.stocks.find(stock => stock.key === magazine?.ammoKey)?.type;
+        const ammoName = rounds === 0 ? ammoWindowText("Empty")
+          : ammoDisplayName(ammunition, "ru") || weapon.ammoType || ammoWindowText("Empty");
+        const ratio = capacity > 0 ? rounds / capacity : 0;
         const className =
           rounds === 0 ? "empty" : ratio <= 0.25 ? "low" : "";
 
@@ -1937,25 +1332,19 @@ export async function openAmmoManager() {
           <button
             type="button"
             class="gam-mag ${className} ${loaded ? "loaded" : ""}"
+            style="--gam-mag-fill:${fill.percent}%;--gam-mag-hue:${fill.hue}"
             data-ammo-action="select-magazine"
             data-weapon-id="${weapon.id}"
             data-magazine-index="${index}"
             aria-pressed="${loaded}"
-            aria-label="${loaded ? "Установленный" : "Установить"} магазин ${index + 1}: ${rounds} из ${weapon.capacity}"
-            title="${loaded ? "Установленный магазин" : `Установить магазин ${index + 1}`}"
+            aria-label="${loaded ? "Установленный" : "Установить"} магазин ${index + 1}: ${rounds} из ${capacity}"
+            title="${escapeHTML(ammoName)}"
           >
-            ${loaded ? "● " : ""}${index + 1}: ${rounds}/${weapon.capacity}
+            <span class="gam-mag-label">${loaded ? "● " : ""}${index + 1}: ${rounds}/${capacity}</span>
           </button>
         `;
       })
       .join("");
-  }
-
-  function magazineLoadHue(currentAmmo, capacity) {
-    const ratio = capacity > 0
-      ? Math.min(1, Math.max(0, Number(currentAmmo) / Number(capacity)))
-      : 0;
-    return (ratio * 120).toFixed(2);
   }
 
   async function openFirePreparation(state, weaponId, managerApp, initialVisibility = null) {
@@ -1965,8 +1354,9 @@ export async function openAmmoManager() {
       throw new Error(`Для «${weapon.name}» больше не найдена связанная дистанционная атака.`);
     }
 
-    const loaded = weapon.magazines[weapon.loadedIndex];
-    if (loaded <= 0 || weapon.totalAmmo <= 0) {
+    if (attack.readinessReason) throw new Error(attack.readinessReason);
+    const loaded = standaloneAvailableRounds(weapon);
+    if (loaded <= 0 || loaded !== Infinity && weapon.totalAmmo <= 0) {
       ui.notifications.warn(`«${weapon.name}»: установленный магазин пуст.`);
       return null;
     }
@@ -2009,7 +1399,8 @@ export async function openAmmoManager() {
       initialGoverningSpecialty: weapon.governingSpecialty,
       maximumShots: getMaximumShots(attack, loaded),
       rateOfFireProfile,
-      calculateShotLimits: modeIndex => getShotLimits(currentAttack(), loaded, modeIndex),
+      calculateShotLimits: modeIndex => getShotLimits(currentAttack(),
+        standaloneAvailableRounds(preparation?.weapon ?? weapon), modeIndex),
       calculateRapidFireBonus,
       calculateAimBonus: (aimSeconds, moveAndAttack, braced, laserSight) => {
         const bonuses = fireService.resolveAimedFireBonuses({
@@ -2036,6 +1427,7 @@ export async function openAmmoManager() {
         LAST_FIRE_BODYPLANS.set(targetSelectionKey, currentTargetingService.bodyplan);
       },
       onGoverningSpecialtyChange: async skillKey => {
+        if (weapon.standaloneWeaponId) return;
         const skill = listRangedGoverningSkills(actor).find(entry => entry.key === skillKey);
         const attackKey = getRangedGoverningAttackKey(weapon.attackRef);
         state.governingSkills ??= {};
@@ -2108,8 +1500,10 @@ export async function openAmmoManager() {
           return true;
         }
         TARGETED_ATTACK_CONTEXTS.set(currentTargetingService, preparation?.targetedAttackContext ?? targetedAttackContext);
-        const changed = await fireAndRoll(state, weaponId, rawShotOptions, currentTargetingService);
+        const latest = await loadState();
+        const changed = await fireAndRoll(latest, weaponId, rawShotOptions, currentTargetingService);
         if (!changed) return false;
+        Object.assign(state, latest);
         if (managerApp?.rendered) {
           managerApp.setManagerState(state);
           managerApp.setResult("Бросок выполнен, боезапас обновлён.");
@@ -2192,7 +1586,25 @@ export async function openAmmoManager() {
       getEffectRangePenalty: () => getTaggedModifierSettings()?.autoAdd
         ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
         : null,
-      consumeAmmo: amount => ammoService.consumeLoadedRounds(state, weapon, amount),
+      consumeAmmo: async amount => {
+        const result = await ammoService.executeShot({ weaponId: weapon.id,
+          attackId: "suppression:" + sessionService.session.sessionId, resourceTiming: "suppression-activation",
+          prepare: ({ state: current, ammunition }) => {
+            const actual = getWeaponContext(current, weapon.id);
+            return { amount, profile: resolveRuntimeAttackProfile({ actor, attack: actual.attack,
+              weaponId: weapon.id, state: current, ammunition,
+              context: { kind: "suppression", sessionId: sessionService.session.sessionId, physicalShots: amount } }) };
+          },
+          execute: async () => ({ rolled: true })
+        }).catch(error => { throw new Error(attackProfileError(error.message)); });
+        if (result.duplicate) {
+          const savedProfile = result.receipt.profile ?? sessionService.session.ammunitionProfile;
+          return { receipt: result.receipt, profile: savedProfile };
+        }
+        Object.assign(state, result.state);
+        Object.assign(weapon, result.weapon);
+        return result;
+      },
       onGoverningSkillChange: async specialty => {
         if (specialty) weapon.governingSpecialty = specialty;
         else delete weapon.governingSpecialty;
@@ -2362,16 +1774,12 @@ export async function openAmmoManager() {
       const targeting = await TargetingService.create({ attack: current.attack, bodyplan: step.bodyplanId });
       if (!targeting.getSelection(step.hitLocationId, step.hitRegionId))
         throw new Error("Trademark Move attack " + (index + 1) + ": Hit Location is unavailable.");
-      const targeted = createTargetedAttackContext({ actor, attack: current.attack });
       const quickSpecialties = step.rangedRapidStrike
         ? getRangedRapidStrikeSpecialties({ actor, attack: current.attack }) : [];
       if (!resolveRangedGoverningSkill({ actor, binding: current.attack.governingSkillBinding }) &&
           step.rangedRapidStrike && quickSpecialties.length > 1 &&
           !quickSpecialties.some(entry => entry.value === step.governingSpecialty))
         throw new Error("Trademark Move attack " + (index + 1) + ": select Governing Skill for Quick-Shot.");
-      if (!resolveRangedGoverningSkill({ actor, binding: current.attack.governingSkillBinding }) &&
-          targeted.requiresSelection && !targeted.specialtyOptions.some(entry => entry.value === step.governingSpecialty))
-        throw new Error("Trademark Move attack " + (index + 1) + ": select Governing Skill.");
     }
   }
 
@@ -2597,11 +2005,10 @@ export async function openAmmoManager() {
       ? state.weapons
           .map(weapon => {
             normalizeWeaponShape(weapon);
-            const attack = resolveAttack(weapon.attackRef, attacks);
-            const loaded = weapon.magazines[weapon.loadedIndex];
+            const attack = weapon.standaloneWeaponId ? readStandaloneAttack(actor, weapon.standaloneWeaponId, weapon.standaloneModeId) : resolveAttack(weapon.attackRef, attacks);
+            const loaded = weapon.ammunitionReview ? 0 : weapon.magazines[weapon.loadedIndex] ?? 0;
             const loose = looseAmmo(weapon);
             const broken = !attack;
-            const loadedHue = magazineLoadHue(loaded, weapon.capacity);
 
             const levelText = attack?.level > 0 ? `Навык ${attack.level}` : "Навык не указан";
             const rofText = attack?.rof ? `RoF ${escapeHTML(attack.rof)}` : "RoF не указан";
@@ -2609,7 +2016,7 @@ export async function openAmmoManager() {
             const accText = Number.isFinite(Number(attack?.acc)) ? `Acc ${attack.acc}` : "Acc \u2014";
             const scopeText = `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(attack?.scopeBonus) || 0))}`;
             const bulkValue = attack?.data?.bulk ?? attack?.bulk;
-            const bulkText = Number.isFinite(Number(bulkValue)) ? `Bulk ${bulkValue}` : "Bulk \u2014";
+            const bulkText = parseWeaponBulk(bulkValue) ? `Bulk ${bulkValue}` : "Bulk \u2014";
 
             return `
               <section class="gam-card ${broken ? "broken" : ""}" data-weapon-card="${weapon.id}">
@@ -2617,27 +2024,25 @@ export async function openAmmoManager() {
                   <div class="gam-card-info">
                     <h3>${escapeHTML(weapon.name)}</h3>
                     <div class="gam-sub">
-                      ${broken ? "Связанная дистанционная атака не найдена" : [levelText, rofText, accText, scopeText, bulkText, rclText].join(" \u00b7 ")}
+                      ${weapon.standaloneWeaponId ? escapeHTML(attack?.readinessReason ?? attack?.skillDescription ?? standaloneText("Pending")) : broken ? "Связанная дистанционная атака не найдена" : [levelText, rofText, accText, scopeText, bulkText, rclText].join(" \u00b7 ")}
                     </div>
                     <div class="gam-sub">
                       <strong>${escapeHTML(weapon.ammoType)}</strong>: всего ${weapon.totalAmmo}, свободно ${loose}
                     </div>
                   </div>
 
-                  <div class="gam-loaded" style="--gam-loaded-hue:${loadedHue}">
-                    ${loaded}/${weapon.capacity}
-                  </div>
                 </div>
 
                 <div class="gam-magazines">${renderMagazineBadges(weapon)}</div>
 
                 <div class="gam-actions">
-                  <button type="button" data-ammo-action="fire-roll" data-weapon-id="${weapon.id}" ${broken || loaded <= 0 ? "disabled" : ""}>
+                  ${weapon.standaloneWeaponId && lematBarrel(weapon.standaloneModeId) ? `<strong>${escapeHTML(attack?.data?.mode ?? "")}</strong><p class="hint">${escapeHTML(automaticAmmoText("BarrelSwitchReadyGM", globalThis.game?.i18n?.lang))}</p>` : weapon.standaloneWeaponId ? `<select data-standalone-mode="${escapeHTML(weapon.id)}" aria-label="Режим атаки">${new StandaloneWeaponService(actor).get(weapon.standaloneWeaponId)?.modes.map(m => `<option value="${escapeHTML(m.modeId)}" ${m.modeId === weapon.standaloneModeId ? "selected" : ""}>${escapeHTML(m.snapshot.usage ?? "Основной режим")}</option>`).join("") ?? ""}</select>` : ""}
+                  <button type="button" data-ammo-action="fire-roll" data-weapon-id="${weapon.id}" ${broken || attack?.readinessReason || standaloneAvailableRounds(weapon) <= 0 ? "disabled" : ""}>
                     <i class="fa-solid fa-crosshairs"></i>
                     Огонь
                   </button>
 
-                  <button type="button" data-ammo-action="special-fire-modes" data-weapon-id="${weapon.id}">
+                  <button type="button" data-ammo-action="special-fire-modes" data-weapon-id="${weapon.id}" ${weapon.standaloneWeaponId && standaloneAvailableRounds(weapon) === Infinity ? "disabled" : ""}>
                     <i class="fa-solid fa-burst"></i>
                     \u0420\u0435\u0436\u0438\u043c\u044b \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b
                   </button>
@@ -2647,9 +2052,9 @@ export async function openAmmoManager() {
                     Списать
                   </button>
 
-                  <button type="button" data-ammo-action="manage-load" data-weapon-id="${weapon.id}" ${loose <= 0 && loaded <= 0 ? "disabled" : ""}>
+                  <button type="button" data-ammo-action="manage-load" data-weapon-id="${weapon.id}">
                     <i class="fa-solid fa-box-open"></i>
-                    Снарядить / Разрядить
+                    ${escapeHTML(ammoWindowText("Title"))}
                   </button>
 
                   <button type="button" data-ammo-action="edit" data-weapon-id="${weapon.id}">
@@ -2730,14 +2135,24 @@ export async function openAmmoManager() {
       refresh: "Данные обновлены."
     };
 
+    let actorHook = null;
     const app = new WeaponAssistantApp({
       token,
       managerState: persistentState,
       title: `Патроны — ${token.name}`,
       styles: MANAGER_CSS,
       buildContent: buildManagerContent,
-      onClose: () => OPEN_ASSISTANTS.delete(assistantKey),
+      onClose: () => {
+        OPEN_ASSISTANTS.delete(assistantKey);
+        if (actorHook !== null) { Hooks.off("updateActor", actorHook); actorHook = null; }
+      },
       handleAction: async ({ action, weaponId, magazineIndex, app: managerApp }) => {
+        const configured = persistentState.weapons.find(weapon => weapon.id === weaponId);
+        const configurationOnly = configured?.ammoUnconfigured === true;
+        if (configurationOnly && !(configured?.standaloneWeaponId && action === "fire-roll") && ["fire-roll", "special-fire-modes", "spend", "select-magazine", "top-up", "unload"].includes(action)) {
+          ui.notifications.warn(weaponText("NoMagazines"));
+          return { changed: false, managerState: persistentState, message: "" };
+        }
         if (action === "fire-roll") {
           await openFirePreparation(persistentState, weaponId, managerApp);
           return { changed: false, managerState: persistentState, message: "" };
@@ -2752,11 +2167,17 @@ export async function openAmmoManager() {
         else if (action === "remove") changed = await removeWeapon(persistentState, weaponId);
         else if (action === "spend") changed = await spendWithoutRoll(persistentState, weaponId);
         else if (action === "select-magazine") changed = await switchMagazine(persistentState, weaponId, magazineIndex);
-        else if (action === "manage-load") changed = await manageMagazineLoad(persistentState, weaponId);
-        else if (action === "top-up") changed = await topUpMagazines(persistentState, weaponId);
-        else if (action === "unload") changed = await unloadCurrentMagazine(persistentState, weaponId);
-        else if (action === "stock") changed = await editAmmoStock(persistentState, weaponId);
-        else if (action === "magazines") changed = await editMagazines(persistentState, weaponId);
+        else if (["manage-load", "top-up", "unload", "stock", "magazines"].includes(action)) {
+          await openAmmoManagement({ actor, weaponId, onUpdate: async () => {
+            persistentState = await loadState();
+            if (managerApp.rendered) {
+              managerApp.setManagerState(persistentState);
+              await managerApp.refreshContent();
+            }
+            const attack = resolveAttack(persistentState.weapons.find(entry => entry.id === weaponId)?.attackRef, getRangedAttacks(persistentState));
+            if (attack) await refreshAttackOverrideConsumers(persistentState, attack);
+          } });
+        }
         else if (action === "chat-settings") changed = await openChatSettings(persistentState);
         else if (action === "refresh") {
           persistentState = await loadState();
@@ -2773,6 +2194,27 @@ export async function openAmmoManager() {
 
     OPEN_ASSISTANTS.set(assistantKey, app);
     await app.render({ force: true });
+    app.element.addEventListener("change", async event => {
+      const id = event.target?.dataset?.standaloneMode;
+      if (!id) return;
+      const current = await loadState(), weapon = current.weapons.find(w => w.id === id);
+      if (lematBarrel(weapon?.standaloneModeId)) return;
+      if (!weapon || !readStandaloneAttack(actor, weapon.standaloneWeaponId, event.target.value)) return;
+      weapon.standaloneModeId = event.target.value;
+      await saveState(current);
+      persistentState = current;
+      app.setManagerState(current);
+      await app.refreshContent();
+    });
+    actorHook = Hooks.on("updateActor", async updatedActor => {
+      if (updatedActor.id !== actor.id || !app.rendered) return;
+      try {
+        persistentState = await loadState();
+        if (!app.rendered) return;
+        app.setManagerState(persistentState);
+        await app.refreshContent();
+      } catch (error) { console.error("OleGURPS ammunition indicators refresh", error); }
+    });
     return app;
   }
 

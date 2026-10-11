@@ -1,0 +1,304 @@
+TAP version 13
+# Subtest: P3 contains all thirteen source-reviewed IDs and no other package
+ok 1 - P3 contains all thirteen source-reviewed IDs and no other package
+  ---
+  duration_ms: 4.8354
+  type: 'test'
+  ...
+# Subtest: ht_rifled_slug requires an exact design, suitable platform, TL and matching chamber
+ok 2 - ht_rifled_slug requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 2.2501
+  type: 'test'
+  ...
+# Subtest: ht_baton requires an exact design, suitable platform, TL and matching chamber
+ok 3 - ht_baton requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.4673
+  type: 'test'
+  ...
+# Subtest: ht_beanbag requires an exact design, suitable platform, TL and matching chamber
+ok 4 - ht_beanbag requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.4762
+  type: 'test'
+  ...
+# Subtest: ht_canister requires an exact design, suitable platform, TL and matching chamber
+ok 5 - ht_canister requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.4133
+  type: 'test'
+  ...
+# Subtest: ht_shotshell requires an exact design, suitable platform, TL and matching chamber
+ok 6 - ht_shotshell requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.3785
+  type: 'test'
+  ...
+# Subtest: ht_buck_and_ball requires an exact design, suitable platform, TL and matching chamber
+ok 7 - ht_buck_and_ball requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.2728
+  type: 'test'
+  ...
+# Subtest: ht_shrapnel requires an exact design, suitable platform, TL and matching chamber
+ok 8 - ht_shrapnel requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.2506
+  type: 'test'
+  ...
+# Subtest: ht_duplex requires an exact design, suitable platform, TL and matching chamber
+ok 9 - ht_duplex requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.4526
+  type: 'test'
+  ...
+# Subtest: ht_triplex requires an exact design, suitable platform, TL and matching chamber
+ok 10 - ht_triplex requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.521
+  type: 'test'
+  ...
+# Subtest: ht_beehive requires an exact design, suitable platform, TL and matching chamber
+ok 11 - ht_beehive requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.3206
+  type: 'test'
+  ...
+# Subtest: ht_multi_flechette requires an exact design, suitable platform, TL and matching chamber
+ok 12 - ht_multi_flechette requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.2802
+  type: 'test'
+  ...
+# Subtest: ht_rubber_shot requires an exact design, suitable platform, TL and matching chamber
+ok 13 - ht_rubber_shot requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.2413
+  type: 'test'
+  ...
+# Subtest: ht_abf requires an exact design, suitable platform, TL and matching chamber
+ok 14 - ht_abf requires an exact design, suitable platform, TL and matching chamber
+  ---
+  duration_ms: 0.2189
+  type: 'test'
+  ...
+# Subtest: slug converts the exact buckshot source, keeps confirmed recoil and removes pellets
+ok 15 - slug converts the exact buckshot source, keeps confirmed recoil and removes pellets
+  ---
+  duration_ms: 1.7311
+  type: 'test'
+  ...
+# Subtest: exact source Condor native slug is preserved and a different weapon cannot inherit its data
+ok 16 - exact source Condor native slug is preserved and a different weapon cannot inherit its data
+  ---
+  duration_ms: 4.0518
+  type: 'test'
+  ...
+# Subtest: ht_baton starts with slug, uses HT166 and exact Acc/knockback threshold
+ok 17 - ht_baton starts with slug, uses HT166 and exact Acc/knockback threshold
+  ---
+  duration_ms: 0.6408
+  type: 'test'
+  ...
+# Subtest: ht_beanbag starts with slug, uses HT166 and exact Acc/knockback threshold
+ok 18 - ht_beanbag starts with slug, uses HT166 and exact Acc/knockback threshold
+  ---
+  duration_ms: 0.608
+  type: 'test'
+  ...
+# Subtest: ht_duplex separates element RoF from physical rounds and never applies B409
+not ok 19 - ht_duplex separates element RoF from physical rounds and never applies B409
+  ---
+  duration_ms: 0.9312
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:64:69'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'undetermined'
+    - 'incompatible'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'incompatible'
+  actual: 'undetermined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-multishot-batch.test.mjs:68:76)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ht_triplex separates element RoF from physical rounds and never applies B409
+not ok 20 - ht_triplex separates element RoF from physical rounds and never applies B409
+  ---
+  duration_ms: 0.3443
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:64:69'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'undetermined'
+    - 'incompatible'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'incompatible'
+  actual: 'undetermined'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-multishot-batch.test.mjs:68:76)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: ht_shotshell shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 21 - ht_shotshell shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 0.7221
+  type: 'test'
+  ...
+# Subtest: ht_canister shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 22 - ht_canister shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 0.537
+  type: 'test'
+  ...
+# Subtest: ht_multi_flechette shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 23 - ht_multi_flechette shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 0.5211
+  type: 'test'
+  ...
+# Subtest: ht_rubber_shot shares 1/sqrt(NP), size ranges, element RoF and source costs
+ok 24 - ht_rubber_shot shares 1/sqrt(NP), size ranges, element RoF and source costs
+  ---
+  duration_ms: 0.5172
+  type: 'test'
+  ...
+# Subtest: shotshell table distinguishes buckshot/birdshot/smallshot and never fills unlisted diameter gaps
+ok 25 - shotshell table distinguishes buckshot/birdshot/smallshot and never fills unlisted diameter gaps
+  ---
+  duration_ms: 0.5468
+  type: 'test'
+  ...
+# Subtest: buck-and-ball keeps unequal components, first ball/later pellets and manual allocation
+ok 26 - buck-and-ball keeps unequal components, first ball/later pellets and manual allocation
+  ---
+  duration_ms: 0.3211
+  type: 'test'
+  ...
+# Subtest: ht_shrapnel preserves only an attested published native effect and explicit GM burst
+ok 27 - ht_shrapnel preserves only an attested published native effect and explicit GM burst
+  ---
+  duration_ms: 0.4435
+  type: 'test'
+  ...
+# Subtest: ht_beehive preserves only an attested published native effect and explicit GM burst
+ok 28 - ht_beehive preserves only an attested published native effect and explicit GM burst
+  ---
+  duration_ms: 0.3563
+  type: 'test'
+  ...
+# Subtest: ht_abf preserves only an attested published native effect and explicit GM burst
+ok 29 - ht_abf preserves only an attested published native effect and explicit GM burst
+  ---
+  duration_ms: 0.3039
+  type: 'test'
+  ...
+# Subtest: B409 strict fractional boundary uses current half-D and only eligible shot; native DR scaling once
+ok 30 - B409 strict fractional boundary uses current half-D and only eligible shot; native DR scaling once
+  ---
+  duration_ms: 0.2463
+  type: 'test'
+  ...
+# Subtest: scoped GM load is admitted without changing official undetermined or allowing world policy to invent it
+not ok 31 - scoped GM load is admitted without changing official undetermined or allowing world policy to invent it
+  ---
+  duration_ms: 0.9977
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:102:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'incompatible'
+    - 'undetermined'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'undetermined'
+  actual: 'incompatible'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-multishot-batch.test.mjs:103:26)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: GM recipe identity separates NP, dimensions and burst data; old stock and immutable snapshot survive reload
+not ok 32 - GM recipe identity separates NP, dimensions and burst data; old stock and immutable snapshot survive reload
+  ---
+  duration_ms: 2.3787
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:109:1'
+  failureType: 'testCodeFailure'
+  error: 'TypeUnavailable'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    fail (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/scripts/tools/ammo-inventory.js:83:31)
+    available (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/scripts/tools/ammo-inventory.js:89:113)
+    applyInventoryOperation (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/scripts/tools/ammo-inventory.js:112:5)
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-multishot-batch.test.mjs:117:22)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: existing GM approval service validates the individual definition and revokes without altering stock
+not ok 33 - existing GM approval service validates the individual definition and revokes without altering stock
+  ---
+  duration_ms: 0.7929
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:127:1'
+  failureType: 'testCodeFailure'
+  error: 'ApprovalCannotOverrideProhibition'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/scripts/tools/ammunition-approval-service.js:43:130
+    async TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-multishot-batch.test.mjs:130:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: new RU/EN controls actually load, show all thirteen labels and keep GM conditions closed
+ok 34 - new RU/EN controls actually load, show all thirteen labels and keep GM conditions closed
+  ---
+  duration_ms: 8.6471
+  type: 'test'
+  ...
+1..34
+# tests 34
+# suites 0
+# pass 29
+# fail 5
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 392.1869

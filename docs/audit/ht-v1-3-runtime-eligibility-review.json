@@ -1,0 +1,998 @@
+{
+  "scope": "Native visible primary HT modes x 64 variants; no external evidence or availabilityTL",
+  "modes": 478,
+  "variants": 64,
+  "pairs": 30592,
+  "statuses": {
+    "compatible": 0,
+    "incompatible": 1260,
+    "undetermined": 29332
+  },
+  "predicateChecks": {
+    "confirmed": 2428,
+    "incompatible": 1372,
+    "undetermined": 143112
+  },
+  "variantStatuses": [
+    {
+      "id": "ht_plus_p",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "weapon_pressure_rating_verified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_match_grade",
+      "conditions": [
+        "projectile_classes_any",
+        "weapon_actions_any",
+        "forbidden_classes"
+      ],
+      "requiredEvidence": [
+        "factory_match_grade_for_this_ammunition"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 214,
+        "undetermined": 264
+      }
+    },
+    {
+      "id": "ht_match_handloaded",
+      "conditions": [
+        "munition_classes_any",
+        "projectile_classes_any",
+        "weapon_actions_any"
+      ],
+      "requiredEvidence": [
+        "matched_to_this_individual_weapon",
+        "armoury_and_iq_guns_success",
+        "handloaded_batch"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 214,
+        "undetermined": 264
+      }
+    },
+    {
+      "id": "ht_subsonic_pistol",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "cartridge_pistol_class_verified",
+        "original_load_supersonic"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_subsonic_rifle",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "cartridge_rifle_or_pdw_class_verified",
+        "original_load_supersonic"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_silent",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "silent_ammunition_design_confirmed_for_weapon"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_solid",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "native_projectile_baseline_verified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_rifled_slug",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "slug_load_compatible_with_chamber"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_hollow_point",
+      "conditions": [
+        "projectile_classes_any"
+      ],
+      "requiredEvidence": [
+        "expanding_bullet_suitable_for_this_cartridge"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_poison",
+      "conditions": [
+        "projectile_classes_any",
+        "requires_base_variant_id"
+      ],
+      "requiredEvidence": [
+        "handloaded_round",
+        "blood_or_contact_agent_selected",
+        "payload_dose_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_ap",
+      "conditions": [
+        "projectile_classes_any"
+      ],
+      "requiredEvidence": [
+        "hardened_ap_construction_available"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_aphc",
+      "conditions": [
+        "projectile_classes_any"
+      ],
+      "requiredEvidence": [
+        "hardcore_penetrator_construction_available"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_frangible",
+      "conditions": [
+        "projectile_classes_any"
+      ],
+      "requiredEvidence": [
+        "frangible_construction_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_apds",
+      "conditions": [
+        "weapon_platforms_any",
+        "projectile_classes_any",
+        "forbidden_classes"
+      ],
+      "requiredEvidence": [
+        "apds_round_for_this_chamber_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_apfsds",
+      "conditions": [
+        "weapon_platforms_any"
+      ],
+      "requiredEvidence": [
+        "apfsds_round_for_this_chamber_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_baton",
+      "conditions": [
+        "weapon_platforms_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "dedicated_baton_round_design_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_beanbag",
+      "conditions": [
+        "weapon_platforms_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "beanbag_round_design_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_sapfsds",
+      "conditions": [
+        "weapon_platforms_any",
+        "maximum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "flechette_load_design_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_underwater_dart",
+      "conditions": [
+        "weapon_platforms_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_underwater_dart_platform"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_apdu",
+      "conditions": [
+        "weapon_platforms_any"
+      ],
+      "requiredEvidence": [
+        "du_penetrator_round_design_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_apdsdu",
+      "conditions": [
+        "weapon_platforms_any"
+      ],
+      "requiredEvidence": [
+        "apdsdu_round_design_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_apfsdsdu",
+      "conditions": [
+        "weapon_platforms_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "apfsdsdu_round_design_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_le",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_shell_design",
+        "published_explosive_payload"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_saple",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_shell_design",
+        "published_follow_up_explosion"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_apex",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_shell_design",
+        "published_follow_up_explosion"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_he",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_he_payload",
+        "published_explosive_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_saphe",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_saphe_design",
+        "published_explosive_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_saphec",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_saphec_design",
+        "published_explosive_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_aphex",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_aphex_design",
+        "published_explosive_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_efp",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_efp_design",
+        "published_efp_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_heat",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_heat_warhead",
+        "published_heat_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_hedp",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_hedp_design",
+        "published_explosive_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_hesh",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_hesh_design",
+        "published_explosive_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_ms_heat",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_tandem_warhead",
+        "published_precursor_and_main_charges"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_thermobaric",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_thermobaric_design",
+        "published_explosive_damage"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_illumination",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_flare_cartridge"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_signal_flare",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_flare_cartridge"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_smoke",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_smoke_munition",
+        "smoke_payload_specified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_colored_smoke",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_colored_smoke"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_hot_smoke",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_hot_smoke"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_prism_smoke",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_prism_smoke"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_em_smoke",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_em_smoke"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_tear_gas",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_tear_gas_shell",
+        "chemical_filler_selected"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_tear_gas_vomit",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_tear_gas_shell",
+        "vomiting_agent_selected"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_liquid",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "muzzle_velocity_below_500_fps_confirmed",
+        "liquid_filler_selected"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_poison_gas",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_poison_gas_shell",
+        "chemical_filler_selected"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_white_phosphorus",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_wp_shell"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 12,
+        "undetermined": 466
+      }
+    },
+    {
+      "id": "ht_canister",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "specific_canister_load_published",
+        "pellet_size_and_count_verified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_shotshell",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "chambering_accepts_shotshell",
+        "pellet_size_and_count_verified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_buck_and_ball",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_buck_and_ball_load"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_shrapnel",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "weapon_specific_shrapnel_spec"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_duplex",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_duplex_chambering"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_triplex",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_triplex_chambering"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_beehive",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "weapon_specific_beehive_spec"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_multi_flechette",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "low_power_platform_confirmed",
+        "flechette_size_and_count_verified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_rubber_shot",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "minimum_caliber_mm"
+      ],
+      "requiredEvidence": [
+        "source_confirmed_rubber_shot_round",
+        "rubber_ball_size_and_count_verified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_abf",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "weapon_specific_abf_spec"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_airburst",
+      "conditions": [
+        "munition_classes_any",
+        "forbidden_classes"
+      ],
+      "requiredEvidence": [
+        "compatible_fuse_and_round_verified"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_incendiary",
+      "conditions": [
+        "projectile_classes_any"
+      ],
+      "requiredEvidence": [
+        "incendiary_cavity_or_combination_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_self_destruct",
+      "conditions": [
+        "munition_classes_any",
+        "minimum_availability_tl"
+      ],
+      "requiredEvidence": [
+        "self_destruct_fuse_design_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_tracer",
+      "conditions": [
+        "projectile_classes_any"
+      ],
+      "requiredEvidence": [
+        "tracer_component_for_this_round_confirmed"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_light_case",
+      "conditions": [
+        "munition_classes_any"
+      ],
+      "requiredEvidence": [
+        "light_case_compatible_with_pressure_and_manufacture"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 0,
+        "undetermined": 478
+      }
+    },
+    {
+      "id": "ht_caseless",
+      "conditions": [
+        "munition_classes_any",
+        "case_types_any"
+      ],
+      "requiredEvidence": [
+        "weapon_explicitly_designed_for_caseless_ammo"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 361,
+        "undetermined": 117
+      }
+    },
+    {
+      "id": "ht_consumable_case",
+      "conditions": [
+        "weapon_platforms_any",
+        "munition_classes_any",
+        "case_types_any"
+      ],
+      "requiredEvidence": [
+        "weapon_explicitly_designed_for_consumable_case"
+      ],
+      "statuses": {
+        "compatible": 0,
+        "incompatible": 363,
+        "undetermined": 115
+      }
+    }
+  ]
+}

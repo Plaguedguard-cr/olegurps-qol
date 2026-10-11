@@ -1,4 +1,5 @@
 import { normalizeAccuracy, normalizeBulk } from "./fire-service.js";
+import { parseWeaponBulk } from "./weapon-bulk.js";
 import { visibilityRules } from "./limited-visibility.js";
 import { resolveRangedRapidStrike } from "./ranged-rapid-strike-service.js";
 import { resolveCloseQuartersBattle } from "./close-quarters-battle-service.js";
@@ -8,6 +9,8 @@ import { resolveCombatCalculation } from "./combat-calculation-engine.js";
 import { isWeaponBondActive } from "./weapon-bond-service.js";
 import { getCombatRules } from "./combat-technique-registry.js";
 import { findRangeBandForDistance, getRangeBandDistance, isBeamWeapon, resolveEffectiveRange } from "./fire-range-service.js";
+import { automaticAmmoText } from "./automatic-ammunition-localization.js";
+import { airburstAttackBonus } from "./fuze-tracer-ammunition.js";
 
 function sceneDistanceToYards(value, runtime = globalThis) {
   const number = Number(value);
@@ -135,6 +138,7 @@ export function createStandaloneAttack(values) {
     acc: normalizeAccuracy(values.acc),
     rof,
     rcl: String(values.rcl ?? "").trim(),
+    bulkMetadata: parseWeaponBulk(values.bulk),
     data: { bulk: normalizeBulk(values.bulk), halfd: values.halfd }
   };
 }
@@ -257,10 +261,11 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const halfDamageRange = fireService.parseHalfDamageRange(attack?.data?.halfd) ??
       fireService.parseHalfDamageRange(attack?.data?.range);
     return fireService.resolveMultipleProjectileFire({
-      rof: attack?.rof,
+      rof: attack?.ammunitionProjectileKind === "slug" ? fireService.parseRateOfFire(attack?.rof).baseRoF : attack?.rof,
       physicalShots: values?.shots,
       physicalDistance,
-      halfDamageRange
+      halfDamageRange,
+      b409Eligible: attack?.ammunitionB409Eligible !== false
     });
   }
 
@@ -327,19 +332,23 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const governingSkill = mode === "weapon" ? resolveRangedGoverningSkill({
       actor: token?.actor, binding: attack?.governingSkillBinding
     }) : null;
-    const baseLevel = Number(attack?.level);
+    const baseLevel = attack?.standaloneRef ? governingSkill?.level ?? NaN : Number(attack?.level);
     if (!Number.isFinite(baseLevel) || baseLevel <= 0) return null;
+    if ((parseBoolean(values?.moveAndAttack) || parseBoolean(values?.closeCombat) || values?.closeHipShooting) &&
+        normalizeBulk(attack?.data?.bulk ?? attack?.bulk) === null) return null;
 
     const selectedIndex = values?.rangeIndex === null || values?.rangeIndex === ""
       ? Number.NaN
       : Number(values?.rangeIndex);
-    const { effectiveRange } = resolveEffectiveRange({
+    const { effectiveRange, environment } = resolveEffectiveRange({
       rangeBands,
       rangeIndex: selectedIndex,
       distance: values?.manualRangeSelected ? null : values?.targetDistanceOverride,
       height: values?.height,
       elevationDirection: values?.elevationDirection ?? "level",
-      beamWeapon: isBeamWeapon(attack)
+      beamWeapon: isBeamWeapon(attack),
+      environmentCapability: attack?.ammunitionEnvironment, attackEnvironment: values?.attackEnvironment,
+      depthFeet: values?.depthFeet, weaponRange: attack?.data?.range
     });
     const configuredPreview = values?.configuredPreview === true;
     const settings = getTaggedModifierSettings();
@@ -367,6 +376,8 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     );
     const fireMode = getFireModeState(attack, values, rangeBands);
     const rapidFireBonus = getRapidFireBonus(attack, fireMode.effectiveRoF);
+    const fuzeBonus = attack?.ammunitionFuzeTracer ? airburstAttackBonus(
+      attack.ammunitionFuzeTracer.definition, attack.ammunitionFuzeTracer.mechanics, values?.airburstTarget) : 0;
     const visibility = visibilityRules(values?.visibility);
     const hitLocation = targetingService?.getSelection(
       visibility?.random ? "silhouette" : values?.hitLocationId,
@@ -395,7 +406,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       ? `${closeQuartersBattle.governingSkillName}: ${closeQuartersBattle.governingSkillLevel}; ${closeQuartersBattle.label}: ${closeQuartersBattle.techniqueLevel}; weapon technique: ${closeQuartersBattle.weaponTechniqueLevel}; Move and Attack / Bulk: ${closeQuartersBattle.movePenalty}; CQB base: ${closeQuartersBattle.cqbBase}`
       : "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0438 \u0430\u0442\u0430\u043a\u0430";
     const closeCombatBulkBase = closeHipShooting || values?.closeCombat === true
-      ? normalizeBulk(attack?.data?.bulk ?? attack?.bulk) ?? 0 : 0;
+      ? normalizeBulk(attack?.data?.bulk ?? attack?.bulk) : 0;
     const calculation = resolveCombatCalculation({
       combatType: "ranged", actor: token?.actor, attack, baseAttackLevel: baseLevel,
       governingSkill, attackSlot: values?.contextLabel ?? null,
@@ -405,6 +416,8 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         closeHipShooting, closeHipLabel, moveAttackBase: moveAttackPenalty,
         closeCombatBulkBase },
       channels: [
+        ...(fuzeBonus ? [{ id: "ammunitionAirburst", value: fuzeBonus, label: automaticAmmoText("P6ht_airburst") }] : []),
+        { id: "requiredStrength", value: weaponStrengthPenalty(attack, token?.actor), label: automaticAmmoText("MinimumSTPenalty") },
         { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
         { id: "modifierBucket", value: bucketModifier, label: "Modifier Bucket", roll: false },
         { id: "ggaEffects", value: effectModifier, label: "\u042d\u0444\u0444\u0435\u043a\u0442\u044b GGA", roll: false },
@@ -428,10 +441,11 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     });
     const movementChannel = calculation.channels.find(channel => channel.id === "moveAndAttack");
     return { effectiveSkill: calculation.effectiveSkill, calculatedSkill: calculation.uncappedSkill,
+      environment: environment ?? null,
       modifiers: calculation.modifiers, combatCalculation: calculation,
       closeQuartersBattle, closeHipShooting, rapidStrike,
       moveAttackPenalty: movementChannel?.resolvedValue ?? moveAttackPenalty,
-      baseSkill: baseLevel, governingSkill, baseSkillName: "Ranged Weapon Level" };
+      baseSkill: baseLevel, governingSkill, baseSkillName: attack?.standaloneRef ? governingSkill?.name : "Ranged Weapon Level" };
   }
 
   function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext = null) {
@@ -443,4 +457,12 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
   return { getRangeBands, getGgaTargetRangeRecommendation, getTargetRangeRecommendation, getFireModeState,
     getTaggedModifierSettings, getApplicableEffectModifierTotal, calculateEffectiveFireSkill, calculateEffectiveFireSkillDetails,
     getFireBonuses, getRapidFireBonus };
+}
+
+/** Use the ordinary combat channel; support-dependent minimum ST remains a GM decision. */
+export function weaponStrengthPenalty(attack, actor) {
+  const required = attack?.ammunitionRequiredStrength;
+  const actorST = Number(actor?.system?.attributes?.ST?.value);
+  if (required?.application !== "existing-fire-skill-channels" || !Number.isFinite(actorST)) return 0;
+  return -Math.max(0, required.value - actorST);
 }

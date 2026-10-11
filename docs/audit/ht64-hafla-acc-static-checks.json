@@ -1,0 +1,109 @@
+{
+  "encoding": [
+    {
+      "path": "data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "scripts/tools/fire-service.js",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "tests/fixtures/ht-preservation-contract.mjs",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "docs/audit/ht-v1-3-preservation.json",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "tests/ht-preservation.test.mjs",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "tests/ht-catalog-bulk-defects.test.mjs",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "tests/ht64-hafla-acc.test.mjs",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "docs/audit/ht64-hafla-acc-cleanup.json",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "docs/audit/ht64-hafla-acc-fix-report.md",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "docs/audit/ht64-hafla-acc-live.json",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "docs/audit/ht64-hafla-acc-test-files.json",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    },
+    {
+      "path": "docs/audit/ht64-hafla-acc-test-results.json",
+      "strictUtf8": true,
+      "bom": false,
+      "mojibakeSignatures": 0
+    }
+  ],
+  "syntax": [
+    {
+      "path": "scripts/tools/fire-service.js",
+      "status": "PASS"
+    },
+    {
+      "path": "tests/fixtures/ht-preservation-contract.mjs",
+      "status": "PASS"
+    },
+    {
+      "path": "tests/ht-preservation.test.mjs",
+      "status": "PASS"
+    },
+    {
+      "path": "tests/ht-catalog-bulk-defects.test.mjs",
+      "status": "PASS"
+    },
+    {
+      "path": "tests/ht64-hafla-acc.test.mjs",
+      "status": "PASS"
+    }
+  ],
+  "diffCheck": "PASS",
+  "protectedFiles": [
+    {
+      "path": "data/catalogs/olegurps_ht_ammunition_catalog_v1_3.json",
+      "sha256": "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385"
+    },
+    {
+      "path": "docs/audit/ht-plus-p-blockers.json",
+      "sha256": "28b6dc691d3245ff44afe72a0bf07a838e4ffd545bbbcc5c1ca19edd0b2f7d7b"
+    }
+  ]
+}

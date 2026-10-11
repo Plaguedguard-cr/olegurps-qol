@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: four-catalog audit is read-only and distinguishes complete data from unknown rules
+not ok 1 - four-catalog audit is read-only and distinguishes complete data from unknown rules
+  ---
+  duration_ms: 110.8622
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\automatic-ammunition-profiles.test.mjs:37:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+
+      {
+        combinations: 1022,
+        complete: 10,
+    +   incompatible: 2,
+    +   incomplete: 1010,
+    -   incompatible: 0,
+    -   incomplete: 1012,
+        rules: {
+    +     incompatible: 2,
+    +     undetermined: 1020
+    -     undetermined: 1022
+        }
+      }
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    combinations: 1022
+    complete: 10
+    incomplete: 1012
+    incompatible: 0
+    rules:
+      undetermined: 1022
+  actual:
+    combinations: 1022
+    complete: 10
+    incomplete: 1010
+    incompatible: 2
+    rules:
+      undetermined: 1020
+      incompatible: 2
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/automatic-ammunition-profiles.test.mjs:39:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 320.2631

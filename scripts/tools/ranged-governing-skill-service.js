@@ -1,5 +1,7 @@
-import { finiteLevel, normalizeGunsSpecialty } from "./targeted-attack-service.js";
+import { createTargetedAttackContext, finiteLevel, normalizeGunsSpecialty } from "./targeted-attack-service.js";
 import { getAttackOverrideKey } from "./weapon-attack-overrides.js";
+import { StandaloneWeaponService } from "./standalone-weapon-service.js";
+import { resolveStandaloneSkill } from "./standalone-skill-service.js";
 
 const FAMILIES = new Set(["guns", "beam weapons", "gunner", "bow", "crossbow",
   "sling", "blowpipe", "thrown weapon", "throwing", "innate attack",
@@ -43,6 +45,12 @@ export function bindingForGoverningSkill(skill) {
 
 export function resolveRangedGoverningSkill({ actor, binding, legacySpecialty,
   allowAutomatic = false } = {}) {
+  if (binding?.kind === "standalone") {
+    const record = new StandaloneWeaponService(actor).get(binding.weaponId);
+    const mode = record?.modes.find(m => m.modeId === binding.modeId);
+    const skill = mode && resolveStandaloneSkill({ actor, record, mode });
+    return skill?.resolved ? skill : null;
+  }
   const skills = listRangedGoverningSkills(actor);
   const selectedKey = String(binding?.key ?? "").trim();
   const selectedName = String(binding?.name ?? "").trim().toLowerCase();
@@ -63,4 +71,9 @@ export function resolveRangedGoverningSkill({ actor, binding, legacySpecialty,
 export function getRangedGoverningAttackKey(reference) {
   const raw = getAttackOverrideKey(reference);
   return raw ? encodeURIComponent(raw).replaceAll(".", "%2E") : "";
+}
+
+export function createRangedTargetedAttackContext({ actor, attack } = {}) {
+  return createTargetedAttackContext({ actor, attack,
+    governingSkill: resolveRangedGoverningSkill({ actor, binding: attack?.governingSkillBinding }) });
 }

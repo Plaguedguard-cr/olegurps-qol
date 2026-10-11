@@ -1,0 +1,34 @@
+TAP version 13
+# Subtest: DU guards reject native divisors, inc, effects, journals and mixed projectile layers
+ok 1 - DU guards reject native divisors, inc, effects, journals and mixed projectile layers
+  ---
+  duration_ms: 2.9475
+  type: 'test'
+  ...
+# Subtest: real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+ok 2 - real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+  ---
+  duration_ms: 45.9185
+  type: 'test'
+  ...
+# Subtest: DU attestation cannot overcome explicit prohibition, native effects or contradictory platform
+ok 3 - DU attestation cannot overcome explicit prohibition, native effects or contradictory platform
+  ---
+  duration_ms: 1.2964
+  type: 'test'
+  ...
+# Subtest: unknown CPS stays unknown and supplied price is multiplied only in the immutable result
+ok 4 - unknown CPS stays unknown and supplied price is multiplied only in the immutable result
+  ---
+  duration_ms: 0.3006
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 261.959

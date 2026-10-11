@@ -1,4 +1,6 @@
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
+import { immutableCopy } from "./attack-profile-resolver.js";
+import { resolveRuntimeAttackProfile } from "./attack-profile-runtime.js";
 import { getTokenFireRangeContext } from "./fire-control-context.js";
 import { SuppressionFireRegionService } from "./suppression-fire-region-service.js";
 import { getFireSkillPreview, skillProbabilityColor } from "./fire-skill-preview.js";
@@ -964,13 +966,28 @@ export class SuppressionFireApp extends ApplicationV2 {
         consumeAction,
         targetContext
       });
+      const session = this.sessionService.session;
+      if (session?.ammunitionProfile) {
+        options.attackProfile = immutableCopy({ ...session.ammunitionProfile,
+          context: { ...session.ammunitionProfile.context, zoneIndex: request.zoneIndex,
+            physicalShots: options.physicalShots, effectiveSkill: options.effectiveSkill,
+            effectiveRoF: options.effectiveRoF, rcl: options.rcl } });
+        options.resourceTiming = "suppression-prepaid";
+        options.resourceReceiptId = session.ammunitionReceipt?.attackId ?? null;
+      } else {
+        // Old active sessions already spent their ammunition. Never attribute them to today's magazine.
+        options.attackProfile = resolveRuntimeAttackProfile({ actor: this.actor, attack: this.attack,
+          weaponId: this.weapon?.id, ammunition: null, context: { kind: "suppression-legacy", sessionId: session?.sessionId } });
+        options.resourceTiming = "suppression-legacy-prepaid";
+      }
       const result = await this.fireService.executeRangedAttack(this.attack, options);
       if (!result.rolled) return result;
       const margin = this.fireService.extractMarginFromRoll(result.rollData);
       const calculatedHits = calculateSuppressionFireHits({
         remainingShots: zone.hitsRemaining,
         rcl: options.rcl,
-        margin
+        margin,
+        rollData: result.rollData
       });
       if (Number.isInteger(calculatedHits)) {
         const recorded = await this.sessionService.recordHits(
@@ -1200,7 +1217,7 @@ export class SuppressionFireApp extends ApplicationV2 {
         throw new Error("\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0441\u043f\u0438\u0441\u0430\u0442\u044c \u0440\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0451\u043d\u043d\u044b\u0435 \u043f\u0430\u0442\u0440\u043e\u043d\u044b.");
       }
       ammoConsumed = true;
-      await this.sessionService.markAmmoConsumed();
+      await this.sessionService.markAmmoConsumed(consumed?.profile ? consumed : {});
       await this._createSummary(validation.allocation.shots.map((shots, index) => ({
         index,
         shots,

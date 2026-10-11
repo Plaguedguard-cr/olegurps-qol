@@ -1,0 +1,15 @@
+[
+  "tests/ht64-hafla-acc.test.mjs",
+  "tests/ht-preservation.test.mjs",
+  "tests/ht64-kinetic-batch.test.mjs",
+  "tests/ht64-multishot-batch.test.mjs",
+  "tests/ht64-explosives-batch.test.mjs",
+  "tests/ht64-environment-batch.test.mjs",
+  "tests/ht64-fuzes-tracer-batch.test.mjs",
+  "tests/ammo-inventory.test.mjs",
+  "tests/damage-shot-link.test.mjs",
+  "tests/attack-profile.test.mjs",
+  "tests/ammo-ui-presentation.test.mjs",
+  "tests/limited-visibility.test.mjs",
+  "tests/automatic-ammunition-profiles.test.mjs"
+]

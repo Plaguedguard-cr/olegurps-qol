@@ -1,0 +1,106 @@
+TAP version 13
+# Subtest: P7 all three case IDs use case-option and the shared recipe pipeline
+ok 1 - P7 all three case IDs use case-option and the shared recipe pipeline
+  ---
+  duration_ms: 0.7958
+  type: 'test'
+  ...
+# Subtest: P7 sourced native pair automatic in strict policy: W2D6hUo_3AxfdzWRL
+ok 2 - P7 sourced native pair automatic in strict policy: W2D6hUo_3AxfdzWRL
+  ---
+  duration_ms: 8.097
+  type: 'test'
+  ...
+# Subtest: P7 physical consumption, magazine switch, deletion and persisted snapshot: W2D6hUo_3AxfdzWRL
+ok 3 - P7 physical consumption, magazine switch, deletion and persisted snapshot: W2D6hUo_3AxfdzWRL
+  ---
+  duration_ms: 4.3515
+  type: 'test'
+  ...
+# Subtest: P7 sourced native pair automatic in strict policy: WO9XZem8u8ze77NNs
+ok 4 - P7 sourced native pair automatic in strict policy: WO9XZem8u8ze77NNs
+  ---
+  duration_ms: 2.5637
+  type: 'test'
+  ...
+# Subtest: P7 physical consumption, magazine switch, deletion and persisted snapshot: WO9XZem8u8ze77NNs
+ok 5 - P7 physical consumption, magazine switch, deletion and persisted snapshot: WO9XZem8u8ze77NNs
+  ---
+  duration_ms: 1.8547
+  type: 'test'
+  ...
+# Subtest: P7 sourced native pair automatic in strict policy: W4x4K44HSiDnu5oLc
+ok 6 - P7 sourced native pair automatic in strict policy: W4x4K44HSiDnu5oLc
+  ---
+  duration_ms: 2.613
+  type: 'test'
+  ...
+# Subtest: P7 physical consumption, magazine switch, deletion and persisted snapshot: W4x4K44HSiDnu5oLc
+ok 7 - P7 physical consumption, magazine switch, deletion and persisted snapshot: W4x4K44HSiDnu5oLc
+  ---
+  duration_ms: 2.2361
+  type: 'test'
+  ...
+# Subtest: P7 sourced native pair automatic in strict policy: Wx10NaVSr1cp1bwKv
+ok 8 - P7 sourced native pair automatic in strict policy: Wx10NaVSr1cp1bwKv
+  ---
+  duration_ms: 2.0261
+  type: 'test'
+  ...
+# Subtest: P7 physical consumption, magazine switch, deletion and persisted snapshot: Wx10NaVSr1cp1bwKv
+ok 9 - P7 physical consumption, magazine switch, deletion and persisted snapshot: Wx10NaVSr1cp1bwKv
+  ---
+  duration_ms: 1.7323
+  type: 'test'
+  ...
+# Subtest: P7 generic Light Case complete-round WPS/cost math, identity, source guards and journal
+ok 10 - P7 generic Light Case complete-round WPS/cost math, identity, source guards and journal
+  ---
+  duration_ms: 1.4751
+  type: 'test'
+  ...
+# Subtest: P7 Consumable and Semi-consumable are distinct, never Caseless or generic cannon permission
+ok 11 - P7 Consumable and Semi-consumable are distinct, never Caseless or generic cannon permission
+  ---
+  duration_ms: 0.6751
+  type: 'test'
+  ...
+# Subtest: P7 missing factory design proof never falls back to ordinary base ammunition
+ok 12 - P7 missing factory design proof never falls back to ordinary base ammunition
+  ---
+  duration_ms: 73.3663
+  type: 'test'
+  ...
+# Subtest: P7 unknown/mismatched designs reject world policy, GM approval and unscoped handcrafted recipes
+ok 13 - P7 unknown/mismatched designs reject world policy, GM approval and unscoped handcrafted recipes
+  ---
+  duration_ms: 1.8237
+  type: 'test'
+  ...
+# Subtest: P7 12G corrected native economics remain separate; loading never changes aggregate mass/cost
+ok 14 - P7 12G corrected native economics remain separate; loading never changes aggregate mass/cost
+  ---
+  duration_ms: 44.8771
+  type: 'test'
+  ...
+# Subtest: P7 source identities, ordinary ammo, legacy +P and other variants retain mechanics; unproved stacking is denied
+ok 15 - P7 source identities, ordinary ammo, legacy +P and other variants retain mechanics; unproved stacking is denied
+  ---
+  duration_ms: 13.5213
+  type: 'test'
+  ...
+# Subtest: P7 new RU/EN strings load into actual translation map even with older cached P1/P6 keys
+ok 16 - P7 new RU/EN strings load into actual translation map even with older cached P1/P6 keys
+  ---
+  duration_ms: 46.2594
+  type: 'test'
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 459.7149

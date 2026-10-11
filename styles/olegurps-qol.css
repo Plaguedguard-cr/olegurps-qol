@@ -1,3 +1,13 @@
+.olegurps-fire-chat-body {
+  display: grid;
+  row-gap: 1.25em;
+}
+
+.olegurps-fire-chat-body > div,
+.olegurps-fire-chat-body > div > details {
+  margin: 0;
+}
+
 .oq-damage {
   display: grid;
   gap: 10px;
@@ -103,10 +113,134 @@
   font-size: 0.9em;
 }
 
+.gam-weapon-config {
+  gap: 12px;
+  max-height: 72vh;
+  overflow-y: auto;
+  font-size: 0.9em;
+}
+.gam-weapon-config [data-weapon-mode-fields] {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.gam-weapon-config [data-gga-configuration],
+.gam-standalone-config { display: grid; gap: 12px; min-width: 0; }
+.gam-standalone-attack .gam-fire-skill { flex: 0 1 340px; min-width: 0; white-space: normal; }
+.gam-standalone-attack .gam-fire-source-skill { white-space: normal; overflow-wrap: anywhere; }
+.gam-standalone-attack .gam-fire-summary-main { flex: 1 1 200px; }
+.gam-standalone-skill { white-space: normal; overflow-wrap: anywhere; margin: 5px 0; }
+.gam-standalone-actions { flex-wrap: wrap; }
+.gam-weapon-config [hidden] { display: none; }
+.gam-standalone-config label { display: grid; gap: 4px; min-width: 0; }
+.gam-standalone-config input, .gam-standalone-config select { width: 100%; min-width: 0; }
+.gam-standalone-mode { margin: 0; padding: 10px; min-width: 0; border: 1px solid var(--color-border-light-primary); }
+.gam-standalone-mode legend { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+.gam-standalone-mode legend label { display: flex; align-items: center; gap: 6px; }
+.gam-standalone-mode input[type="checkbox"] { width: auto; }
+.gam-standalone-mode p { margin: 4px 0 8px; overflow-wrap: anywhere; }
+.gam-standalone-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+.gam-standalone-actions { display: flex; gap: 8px; }
+.gam-standalone-library { max-height: 65vh; overflow-y: auto; }
+.gam-weapon-config label, .gam-attack-editor label { min-width: 0; }
+.gam-weapon-config select, .gam-attack-editor select {
+  width: 100%;
+  min-width: 0;
+  text-overflow: ellipsis;
+}
+.gam-catalog-select { display: flex; align-items: center; gap: 6px; }
+.gam-catalog-select select { flex: 1; }
+.gam-catalog-select button { flex: 0 0 30px; width: 30px; padding: 0; }
+.gam-catalog-status { margin: 4px 0; }
+.gam-catalog-comparison { display: flex; flex-wrap: wrap; gap: 3px 9px; font-size: 0.85em; overflow-wrap: anywhere; }
+.gam-catalog-match { color: #288345; }
+.gam-catalog-difference { color: #b53737; }
+.gam-fire-governing-skill strong { min-width: 0; overflow-wrap: anywhere; }
 .gam-attack-editor {
   display: grid;
   gap: 9px;
 }
+.gam-attack-editor .gam-catalog-search-status {
+  margin: 0;
+  min-height: 1.35em;
+  line-height: 1.35;
+}
+.gam-attack-editor .gam-catalog-search-status:empty { display: block; visibility: hidden; }
+
+.gam-attack-editor h4 { margin: 0; }
+
+.gam-ammo-inventory { display: grid; gap: 8px; max-height: calc(100vh - 140px); overflow-y: auto; }
+.gam-ammo-inventory [data-recipe-editor] > .gam-inventory-add { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px 10px; }
+.gam-ammo-inventory [data-recipe-editor] label { display: grid; gap: 3px; align-content: start; }
+.gam-ammo-inventory [data-recipe-preview] { margin: 6px 0; }
+.gam-ammo-inventory h3 { margin: 0; font-family: inherit; font-size: 1.1em; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gam-ammo-inventory:has(> [data-published-explosive]) { grid-auto-rows: max-content; align-content: start; }
+.gam-ammo-inventory p, .gam-ammo-inventory hr { margin: 0; }
+.gam-ammo-inventory label, .gam-ammo-inventory select { min-width: 0; width: 100%; }
+.oq-crit { font-size: .94em; }
+.oq-crit .oq-crit-row { margin: 0; padding: 10px 2px; border: 0; border-top: 1px solid rgba(128,128,128,.28); border-bottom: 1px solid rgba(128,128,128,.28); }
+.oq-crit-row legend { font-weight: 700; }
+.oq-crit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.oq-crit .oq-crit-choice { position: relative; display: flex; align-items: center; gap: 10px; padding: 12px; min-height: 82px; margin: 0; border: 1px solid rgba(128,128,128,.42); border-radius: 6px; background: rgba(255,255,255,.025); cursor: pointer; }
+.oq-crit-choice input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.oq-crit-choice i { flex: 0 0 24px; text-align: center; font-size: 1.35em; }
+.oq-crit-choice span { min-width: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.3; font-weight: 600; }
+.oq-crit .oq-crit-choice:hover { background: rgba(255,255,255,.08); }
+.oq-crit .oq-crit-choice:has(input:checked) { border-color: var(--color-border-highlight, #ff6400); background: rgba(255,100,0,.16); box-shadow: inset 0 0 0 1px var(--color-border-highlight, #ff6400); }
+.oq-crit-choice:focus-within { outline: 2px solid var(--color-border-highlight, #ff6400); outline-offset: 2px; }
+
+/* Keep the module's long settings labels and controls on separate full-width rows. */
+.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]),
+.form-group:has(button[data-key="olegurps-qol.developer-mode"]) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 8px;
+}
+.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) > label,
+.form-group:has(button[data-key="olegurps-qol.developer-mode"]) > label,
+.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) > .form-fields,
+.form-group:has(button[data-key="olegurps-qol.developer-mode"]) > .form-fields {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) > .hint,
+.form-group:has(button[data-key="olegurps-qol.developer-mode"]) > .hint {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) label,
+.form-group:has(button[data-key="olegurps-qol.developer-mode"]) button {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+.form-group select[name="olegurps-qol.preparedAmmoPolicy"] {
+  width: 100%;
+  min-width: 0;
+}
+
+.gam-inventory-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gam-inventory-detail { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 16px; align-items: start; }
+.gam-inventory-parameters, .gam-inventory-controls { display: grid; gap: 8px; min-width: 0; }
+.gam-inventory-parameters { overflow-wrap: anywhere; }
+.gam-inventory-controls label { display: grid; grid-template-columns: auto minmax(60px, 1fr); gap: 8px; align-items: center; }
+.gam-inventory-controls .gam-inventory-actions { display: grid; grid-template-columns: 1fr 1fr; }
+.gam-ammo-inventory > label:has(.gam-inventory-stock) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px; align-items: center; }
+@media (max-width: 620px) { .gam-inventory-detail { grid-template-columns: 1fr; } }
+.gam-inventory-stock, .gam-inventory-actions { display: flex; gap: 6px; }
+.gam-inventory-stock input { width: 85px; flex: 0 1 85px; }
+.gam-inventory-stock button, .gam-inventory-actions button { flex: 1; min-width: 0; }
+.gam-inventory-add { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 8px; }
+.gam-inventory-add button { grid-column: 1 / -1; }
+.gam-inventory-bar { height: 12px; overflow: hidden; border-radius: 5px; background: rgba(128,128,128,.2); }
+.gam-inventory-bar span { display: block; height: 100%; }
+.gam-ammo-inventory [data-inventory-status] { display: block; min-height: 1.35em; line-height: 1.35; }
+.gam-ammo-inventory [data-inventory-status]:empty { display: block; visibility: hidden; }
 
 .gam-attack-editor .gam-attack-editor-row {
   display: grid;
@@ -671,3 +805,53 @@ dialog.gam-roll-confirmation {
 .olegurps-qol.ranged-attack-execution .rrs-execution-list { display: grid; grid-auto-rows: max-content; gap: 8px; padding: 8px; max-height: 60vh; overflow-y: auto; }
 .olegurps-qol.ranged-attack-execution .rrs-execution-list button { display: flex; flex-direction: column; align-items: stretch; gap: 3px; width: 100%; height: auto; min-height: 0; min-width: 0; padding: 10px; text-align: left; white-space: normal; overflow-wrap: anywhere; }
 .olegurps-qol.ranged-attack-execution .rrs-execution-list button small { opacity: .75; }
+.olegurps-qol .gam-inventory-du-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+.olegurps-qol .gam-inventory-du-fields > label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.olegurps-qol .gam-inventory-du-fields > .gam-inventory-du-confirmation {
+  flex-direction: row;
+  align-items: flex-start;
+}
+.olegurps-qol .gam-inventory-du-confirmation input { flex: 0 0 auto; }
+.olegurps-qol .gam-inventory-du-wide { grid-column: 1 / -1; }
+[data-olegurps-special-effects] .olegurps-f2-local {
+  margin-top: 0.5rem;
+}
+[data-olegurps-special-effects] .olegurps-f2-local > select {
+  width: 100%;
+}
+[data-olegurps-special-effects] .olegurps-f2-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-block: 0.4rem;
+}
+[data-olegurps-special-effects] .olegurps-f2-fields label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.15rem;
+  overflow-wrap: anywhere;
+}
+[data-olegurps-special-effects] .olegurps-f2-fields .olegurps-f2-wide {
+  grid-column: 1 / -1;
+}
+[data-olegurps-special-effects] .olegurps-f2-fields input,
+[data-olegurps-special-effects] .olegurps-f2-fields select {
+  width: 100%;
+  min-width: 0;
+}
+[data-olegurps-special-effects] .olegurps-f2-local > button {
+  display: inline-flex;
+  justify-content: center;
+  width: calc(50% - 0.25rem);
+  margin-inline: 0.1rem;
+}

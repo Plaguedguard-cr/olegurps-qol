@@ -1,3 +1,4 @@
+import { parseWeaponBulk } from "./weapon-bulk.js";
 const asText = value => String(value ?? "").trim();
 const asInteger = value => {
   const number = Number(String(value ?? "").trim().replace(",", "."));
@@ -32,12 +33,15 @@ export function normalizeAttackOverride(value) {
   const skillLevel = asInteger(value.skillLevel);
   const acc = asInteger(value.acc);
   const scopeBonus = asInteger(value.scopeBonus);
-  const bulk = asInteger(value.bulk);
+  const parsedBulk = parseWeaponBulk(value.bulk);
+  const bulk = parsedBulk?.numericBulk ?? null;
+  const bulkMetadata = parseWeaponBulk(value.bulkMetadata?.rawBulk ?? value.bulk);
   const rof = asText(value.rof);
   const rcl = asText(value.rcl);
   if (skillLevel === null || skillLevel < 0 || acc === null || acc < 0 ||
       scopeBonus === null || scopeBonus < 0 || bulk === null || !rof || !rcl) return null;
-  return { skillLevel, rof, acc, scopeBonus, bulk, rcl };
+  return { skillLevel, rof, acc, scopeBonus, bulk, rcl,
+    ...(bulkMetadata?.hasFoldingStock && bulkMetadata.numericBulk === bulk ? { bulkMetadata } : {}) };
 }
 
 export function normalizeAttackOverrides(value) {
@@ -66,6 +70,8 @@ export function applyAttackOverride(attack, state) {
     acc: override.acc,
     scopeBonus: override.scopeBonus,
     bulk: override.bulk,
+    bulkMetadata: override.bulkMetadata ?? parseWeaponBulk(override.bulk),
+    sourceBulkMetadata: attack.sourceBulkMetadata ?? attack.bulkMetadata ?? parseWeaponBulk(attack.data?.bulk ?? attack.bulk),
     rcl: override.rcl,
     data: {
       ...attack.data,

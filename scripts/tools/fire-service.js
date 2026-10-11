@@ -1,4 +1,8 @@
-import { executePreparedGgaRoll } from "./prepared-gga-roll.js";
+import { calculateHitsFromMargin, executePreparedGgaRoll } from "./prepared-gga-roll.js";
+import { resolveRuntimeAttackProfile, newAttackId, pendingShotSnapshot, attackProfileError } from "./attack-profile-runtime.js";
+import { createShotSnapshot } from "./attack-profile-resolver.js";
+import { parseWeaponBulk } from "./weapon-bulk.js";
+import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 
 export function parseRateOfFire(value) {
   const text = String(value ?? "").trim();
@@ -95,7 +99,8 @@ export function calculateAimBonus(accuracy, seconds) {
   const normalizedSeconds = normalizeAimSeconds(seconds);
   if (normalizedAccuracy === null || normalizedSeconds === 0) return 0;
   const uncappedBonus = normalizedAccuracy + Math.min(normalizedSeconds - 1, 2);
-  return Math.min(uncappedBonus, normalizedAccuracy * 2);
+  // Known Acc 0 still gains +1/+2 for the second/third second of Aim (B364).
+  return Math.min(uncappedBonus, normalizedAccuracy === 0 ? 2 : normalizedAccuracy * 2);
 }
 
 export function calculateBracingBonus(braced, aimSeconds) {
@@ -105,10 +110,7 @@ export function calculateBracingBonus(braced, aimSeconds) {
 }
 
 export function normalizeBulk(value) {
-  const match = String(value ?? "").trim().match(/^[+-]?\d+/);
-  if (!match) return null;
-  const bulk = Number(match[0]);
-  return Number.isFinite(bulk) ? Math.trunc(bulk) : null;
+  return parseWeaponBulk(value)?.numericBulk ?? null;
 }
 
 export function calculateMoveAttackPenalty(bulk, moveAndAttack) {
@@ -153,7 +155,7 @@ export function resolveAimedFireBonuses({
     };
   }
 
-  const aimedFireCap = normalizedAccuracy * 2;
+  const aimedFireCap = normalizedAccuracy === 0 ? 2 : normalizedAccuracy * 2;
   let remaining = aimedFireCap;
   const baseAimBonus = Math.min(normalizedAccuracy, remaining);
   remaining -= baseAimBonus;
@@ -176,12 +178,12 @@ export function parseHalfDamageRange(value) {
   const range = Number(match[1].replace(",", "."));
   return Number.isFinite(range) && range > 0 ? range : null;
 }
-export function parseRecoil(value, { extremelyClose = false } = {}) {
-  const match = String(value ?? "").trim().match(/^(\d+)(?:\s*\/\s*(\d+))?/);
-  if (!match) return 1;
+export function parseRecoil(value, { projectileKind = null } = {}) {
+  const match = String(value ?? "").trim().match(/^([1-9]\d*)(?:\s*\/\s*([1-9]\d*))?$/);
+  if (!match) return null;
   const ordinary = Math.max(1, Number(match[1]));
-  const close = match[2] ? Math.max(1, Number(match[2])) : ordinary;
-  return extremelyClose ? close : ordinary;
+  if (!match[2]) return ordinary;
+  return projectileKind === "shot" ? ordinary : projectileKind === "slug" ? Number(match[2]) : null;
 }
 
 export function resolvePhysicalFireDistance({ selectedDistance, targetDistance, manualRangeSelected = false } = {}) {
@@ -196,7 +198,7 @@ export function resolvePhysicalFireDistance({ selectedDistance, targetDistance, 
   return Number.isFinite(selected) && selected >= 0 ? selected : null;
 }
 
-export function resolveMultipleProjectileFire({ rof, physicalShots, physicalDistance, halfDamageRange } = {}) {
+export function resolveMultipleProjectileFire({ rof, physicalShots, physicalDistance, halfDamageRange, b409Eligible = true } = {}) {
   const profile = typeof rof === "object" && rof?.type ? rof : parseRateOfFire(rof);
   const shots = Math.max(1, Math.trunc(Number(physicalShots) || 1));
   const distance = physicalDistance === null || physicalDistance === undefined || physicalDistance === ""
@@ -205,14 +207,17 @@ export function resolveMultipleProjectileFire({ rof, physicalShots, physicalDist
   const halfDamage = halfDamageRange === null || halfDamageRange === undefined || halfDamageRange === ""
     ? Number.NaN
     : Number(halfDamageRange);
-  const extremelyClose = profile.type === "multiple-projectile" &&
+  const extremelyClose = b409Eligible && profile.type === "multiple-projectile" &&
     Number.isFinite(distance) && distance >= 0 &&
     Number.isFinite(halfDamage) && halfDamage > 0 &&
-    distance <= halfDamage * 0.1;
+    distance < halfDamage / 10;
   const effectiveRoF = extremelyClose ? shots : shots * profile.projectileMultiplier;
 
   return {
     profile,
+    rawRoF: profile.source,
+    physicalShotsMax: profile.baseRoF,
+    projectilesPerShot: profile.projectileMultiplier,
     physicalShots: shots,
     physicalDistance: Number.isFinite(distance) && distance >= 0 ? distance : null,
     halfDamageRange: Number.isFinite(halfDamage) && halfDamage > 0 ? halfDamage : null,
@@ -249,7 +254,7 @@ export class FireService {
   }
 
   parseAttackRcl(attack, options = {}) {
-    return parseRecoil(attack?.rcl, options);
+    return parseRecoil(attack?.rcl, { projectileKind: attack?.ammunitionProjectileKind, ...options });
   }
 
   calculateRapidFireBonus(shots) {
@@ -321,12 +326,8 @@ export class FireService {
     return multiplyBasicDamageFormula(value, multiplier);
   }
 
-  calculateHitsFromMargin(shots, rcl, margin) {
-    const safeShots = Math.max(0, Math.trunc(Number(shots) || 0));
-    const safeRcl = Math.max(1, Math.trunc(Number(rcl) || 1));
-    if (!Number.isInteger(margin)) return null;
-    if (margin < 0) return 0;
-    return Math.min(safeShots, 1 + Math.floor(margin / safeRcl));
+  calculateHitsFromMargin(shots, rcl, margin, rollData = null) {
+    return calculateHitsFromMargin(shots, rcl, margin, rollData);
   }
 
   extractMarginFromRoll(rollData) {
@@ -388,6 +389,24 @@ export class FireService {
   }
 
   async executeRangedAttack(attack, options) {
+    const attackProfile = options.attackProfile ?? resolveRuntimeAttackProfile({
+      actor: this.actor, attack, context: { kind: options.contextLabel || "ranged",
+        tokenId: this.token?.id ?? null, physicalShots: options.physicalShots,
+        effectiveSkill: options.effectiveSkill, effectiveRoF: options.effectiveRoF, rcl: options.rcl,
+        airburstTarget: options.airburstTarget ?? "point",
+        ...(options.environment ? { environment: options.environment } : {}),
+        shotgun: { rawRoF: options.rofProfile?.source ?? attack?.rof, physicalShotsMax: options.rofProfile?.baseRoF ?? null,
+          projectilesPerShot: options.rofProfile?.projectileMultiplier ?? 1, projectileKind: attack?.ammunitionProjectileKind ?? null,
+          physicalDistance: options.physicalDistance ?? null, halfDamageRange: options.halfDamageRange ?? null,
+          extremelyClose: options.extremelyClose === true, closeDamageMultiplier: options.closeDamageMultiplier ?? null,
+          damageApplication: "native-GGA-GM-selection" } } });
+    if (attackProfile.compatibility.status === "incompatible") throw new Error(attackProfileError("IncompatibleAmmunition"));
+    if (String(attackProfile.effective.rcl ?? "").includes("/") &&
+        parseRecoil(attackProfile.effective.rcl, { projectileKind: attackProfile.effective.ammunitionProjectileKind }) === null)
+      throw new Error(attackProfileError("ProjectileRclRequired"));
+    const attackId = options.attackId ?? newAttackId();
+    const shotSnapshot = options.shotSnapshot ?? pendingShotSnapshot(attackProfile, attackId,
+      { resourceTiming: options.resourceTiming ?? "external", resourceReceiptId: options.resourceReceiptId ?? null });
     const modifierSnapshot = this.getModifierSnapshot();
     const appliedModifiers = [];
     let result = { rolled: false, rollData: null };
@@ -400,6 +419,11 @@ export class FireService {
           appliedModifiers.push(`${modifier.label} ${modifier.value}`);
         }
       } else {
+      const fuzeBonus = attackProfile.damage.rules.fuzeTracer?.bonus ?? 0;
+      if (fuzeBonus) {
+        GURPS.ModifierBucket.addModifier(fuzeBonus, automaticAmmoText("P6ht_airburst"));
+        appliedModifiers.push(`Airburst +${fuzeBonus}`);
+      }
       const hasEffectRangePenalty = options.effectRangePenalty !== null &&
         options.effectRangePenalty !== "" &&
         Number.isFinite(Number(options.effectRangePenalty));
@@ -486,6 +510,8 @@ export class FireService {
         actor: this.actor,
         token: this.token,
         attack,
+        attackProfile,
+        shotSnapshot,
         baseSkill: options.baseSkill,
         baseSkillName: options.baseSkillName,
         combatCalculation: options.combatCalculation ?? null,
@@ -518,6 +544,13 @@ export class FireService {
       }
     }
 
+    if (result.rolled && result.message?.setFlag && !["after-attack", "spraying-completion"].includes(shotSnapshot.resourceTiming)) {
+      const finalSnapshot = createShotSnapshot(attackProfile, { attackId, spent: 0,
+        resourceTiming: shotSnapshot.resourceTiming, resourceReceiptId: shotSnapshot.resourceReceiptId,
+        messageId: result.message.id, outcome: result.rollData });
+      try { await result.message.setFlag("olegurps-qol", "shotSnapshot", structuredClone(finalSnapshot)); }
+      catch (error) { console.error("OleGURPS QOL | Shot metadata persistence:", error); }
+    }
     return { ...result, appliedModifiers };
   }
 }

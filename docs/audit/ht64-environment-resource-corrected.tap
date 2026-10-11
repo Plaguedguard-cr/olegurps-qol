@@ -1,0 +1,31 @@
+TAP version 13
+# Subtest: WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+not ok 1 - WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+  ---
+  duration_ms: 8.7648
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-environment-batch.test.mjs:136:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    undefined !== 4
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 4
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-environment-batch.test.mjs:149:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:296:3)
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 226.9026

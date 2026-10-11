@@ -1,0 +1,460 @@
+TAP version 13
+# Subtest: P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+ok 1 - P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+  ---
+  duration_ms: 7.3472
+  type: 'test'
+  ...
+# Subtest: DU historical native Damage survives reload and current design/weapon changes without ignition dice
+ok 2 - DU historical native Damage survives reload and current design/weapon changes without ignition dice
+  ---
+  duration_ms: 1.8761
+  type: 'test'
+  ...
+# Subtest: historical LeMat .42 central snapshot retains native Damage after physical identity correction
+ok 3 - historical LeMat .42 central snapshot retains native Damage after physical identity correction
+  ---
+  duration_ms: 0.5527
+  type: 'test'
+  ...
+# Subtest: embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+ok 4 - embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+  ---
+  duration_ms: 0.5727
+  type: 'test'
+  ...
+# Subtest: P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+ok 5 - P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+  ---
+  duration_ms: 2.4454
+  type: 'test'
+  ...
+# Subtest: A and B Damage in reverse order use their own shots after magazine and last-roll changes
+ok 6 - A and B Damage in reverse order use their own shots after magazine and last-roll changes
+  ---
+  duration_ms: 1.3225
+  type: 'test'
+  ...
+# Subtest: repeat Damage creates independent events for the same source, including a reused event object
+ok 7 - repeat Damage creates independent events for the same source, including a reused event object
+  ---
+  duration_ms: 0.7961
+  type: 'test'
+  ...
+# Subtest: interleaved native awaits keep two actors and modes independent and use the clicked Actor
+ok 8 - interleaved native awaits keep two actors and modes independent and use the clicked Actor
+  ---
+  duration_ms: 0.8034
+  type: 'test'
+  ...
+# Subtest: native multiple/combine dialog captures source before its first await and DOM event cleanup
+ok 9 - native multiple/combine dialog captures source before its first await and DOM event cleanup
+  ---
+  duration_ms: 0.7993
+  type: 'test'
+  ...
+# Subtest: two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+ok 10 - two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+  ---
+  duration_ms: 1.0684
+  type: 'test'
+  ...
+# Subtest: pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+ok 11 - pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+  ---
+  duration_ms: 1.0649
+  type: 'test'
+  ...
+# Subtest: deleting the source during async dispatch creates unlinked native damage without guessing
+ok 12 - deleting the source during async dispatch creates unlinked native damage without guessing
+  ---
+  duration_ms: 0.57
+  type: 'test'
+  ...
+# Subtest: marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+ok 13 - marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+  ---
+  duration_ms: 1.7114
+  type: 'test'
+  ...
+# Subtest: public, GM, blind, self and custom whisper settings keep native audience and content
+ok 14 - public, GM, blind, self and custom whisper settings keep native audience and content
+  ---
+  duration_ms: 1.3419
+  type: 'test'
+  ...
+# Subtest: private source uses a permission-checked reference and never copies its snapshot to public flags
+ok 15 - private source uses a permission-checked reference and never copies its snapshot to public flags
+  ---
+  duration_ms: 0.7423
+  type: 'test'
+  ...
+# Subtest: inaccessible source, Actor permission and cancellation preserve native restrictions
+ok 16 - inaccessible source, Actor permission and cancellation preserve native restrictions
+  ---
+  duration_ms: 0.3741
+  type: 'test'
+  ...
+# Subtest: unrelated messages with identical formula and Actor cannot acquire an in-flight link
+ok 17 - unrelated messages with identical formula and Actor cannot acquire an in-flight link
+  ---
+  duration_ms: 0.4157
+  type: 'test'
+  ...
+# Subtest: native creation failure is not retried; metadata failure never changes the damage result
+ok 18 - native creation failure is not retried; metadata failure never changes the damage result
+  ---
+  duration_ms: 1.3461
+  type: 'test'
+  ...
+# Subtest: install is idempotent and uninstall preserves other wrappers
+ok 19 - install is idempotent and uninstall preserves other wrappers
+  ---
+  duration_ms: 0.1661
+  type: 'test'
+  ...
+# Subtest: adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+ok 20 - adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+  ---
+  duration_ms: 7.9462
+  type: 'test'
+  ...
+# Subtest: effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+ok 21 - effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+  ---
+  duration_ms: 1.1047
+  type: 'test'
+  ...
+# Subtest: private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+ok 22 - private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+  ---
+  duration_ms: 0.4877
+  type: 'test'
+  ...
+# Subtest: two Actors and modes keep different transformed native damage through overlapping dispatch
+ok 23 - two Actors and modes keep different transformed native damage through overlapping dispatch
+  ---
+  duration_ms: 1.0812
+  type: 'test'
+  ...
+# Subtest: adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+ok 24 - adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+  ---
+  duration_ms: 0.8526
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot ordinary without changing action or mechanics
+ok 25 - native Damage label uses completed shot ordinary without changing action or mechanics
+  ---
+  duration_ms: 0.5843
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot AP without changing action or mechanics
+ok 26 - native Damage label uses completed shot AP without changing action or mechanics
+  ---
+  duration_ms: 0.5944
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot APHC without changing action or mechanics
+ok 27 - native Damage label uses completed shot APHC without changing action or mechanics
+  ---
+  duration_ms: 0.6124
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot HP without changing action or mechanics
+ok 28 - native Damage label uses completed shot HP without changing action or mechanics
+  ---
+  duration_ms: 1.1078
+  type: 'test'
+  ...
+# Subtest: Damage labels survive magazine changes, chat reopening and serialized reload independently
+ok 29 - Damage labels survive magazine changes, chat reopening and serialized reload independently
+  ---
+  duration_ms: 1.7236
+  type: 'test'
+  ...
+# Subtest: legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+ok 30 - legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+  ---
+  duration_ms: 1.5292
+  type: 'test'
+  ...
+# Subtest: blind and whisper label visibility follows current source permissions
+ok 31 - blind and whisper label visibility follows current source permissions
+  ---
+  duration_ms: 0.5131
+  type: 'test'
+  ...
+# Subtest: Damage label is plain text and foreign actions retain their native labels
+ok 32 - Damage label is plain text and foreign actions retain their native labels
+  ---
+  duration_ms: 0.2794
+  type: 'test'
+  ...
+# Subtest: ht_apex has three independent native Damage paths with source identity and no auto effects
+ok 33 - ht_apex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 1.9578
+  type: 'test'
+  ...
+# Subtest: ht_aphex has three independent native Damage paths with source identity and no auto effects
+ok 34 - ht_aphex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 1.1846
+  type: 'test'
+  ...
+# Subtest: secondary B/A/repeat stay immutable after magazine changes and use source permissions
+ok 35 - secondary B/A/repeat stay immutable after magazine changes and use source permissions
+  ---
+  duration_ms: 1.3161
+  type: 'test'
+  ...
+# Subtest: incomplete explosive snapshots block every component instead of silently rolling baseline
+ok 36 - incomplete explosive snapshots block every component instead of silently rolling baseline
+  ---
+  duration_ms: 0.5326
+  type: 'test'
+  ...
+# Subtest: private explosive components keep source-only metadata and reject unauthorized access
+ok 37 - private explosive components keep source-only metadata and reject unauthorized access
+  ---
+  duration_ms: 0.9005
+  type: 'test'
+  ...
+# Subtest: standalone D uses completed shot after source weapon removal and never needs an Actor attack
+ok 38 - standalone D uses completed shot after source weapon removal and never needs an Actor attack
+  ---
+  duration_ms: 0.4432
+  type: 'test'
+  ...
+# Subtest: standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+ok 39 - standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+  ---
+  duration_ms: 0.7995
+  type: 'test'
+  ...
+# Subtest: approved matrix contracts: exactly 23 F1 and five NO_CODE IDs
+ok 40 - approved matrix contracts: exactly 23 F1 and five NO_CODE IDs
+  ---
+  duration_ms: 1.4925
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_frangible:overpenetration
+ok 41 - saved conditions: ht_frangible:overpenetration
+  ---
+  duration_ms: 0.6102
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apdu:ignition
+ok 42 - saved conditions: ht_apdu:ignition
+  ---
+  duration_ms: 0.1569
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apdsdu:ignition
+ok 43 - saved conditions: ht_apdsdu:ignition
+  ---
+  duration_ms: 0.1748
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apfsdsdu:ignition
+ok 44 - saved conditions: ht_apfsdsdu:ignition
+  ---
+  duration_ms: 0.1045
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_underwater_dart:environment
+ok 45 - saved conditions: ht_underwater_dart:environment
+  ---
+  duration_ms: 0.2583
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_baton:injury
+ok 46 - saved conditions: ht_baton:injury
+  ---
+  duration_ms: 0.1598
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beanbag:injury
+ok 47 - saved conditions: ht_beanbag:injury
+  ---
+  duration_ms: 0.0806
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_shrapnel:burst
+ok 48 - saved conditions: ht_shrapnel:burst
+  ---
+  duration_ms: 0.3012
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beehive:burst
+ok 49 - saved conditions: ht_beehive:burst
+  ---
+  duration_ms: 0.2676
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_abf:burst
+ok 50 - saved conditions: ht_abf:burst
+  ---
+  duration_ms: 0.1251
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_liquid:delivery
+ok 51 - saved conditions: ht_liquid:delivery
+  ---
+  duration_ms: 0.0653
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tear_gas:resistance
+ok 52 - saved conditions: ht_tear_gas:resistance
+  ---
+  duration_ms: 0.0494
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tear_gas_vomit:resistance
+ok 53 - saved conditions: ht_tear_gas_vomit:resistance
+  ---
+  duration_ms: 0.0473
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_white_phosphorus:removal
+ok 54 - saved conditions: ht_white_phosphorus:removal
+  ---
+  duration_ms: 0.6565
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_airburst:bonus-scatter
+ok 55 - saved conditions: ht_airburst:bonus-scatter
+  ---
+  duration_ms: 0.0873
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_airburst:geometry
+ok 56 - saved conditions: ht_airburst:geometry
+  ---
+  duration_ms: 0.0627
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_incendiary:inc-ignition
+ok 57 - saved conditions: ht_incendiary:inc-ignition
+  ---
+  duration_ms: 0.0566
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tracer:inc-ignition
+ok 58 - saved conditions: ht_tracer:inc-ignition
+  ---
+  duration_ms: 0.0537
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tracer:visibility
+ok 59 - saved conditions: ht_tracer:visibility
+  ---
+  duration_ms: 0.052
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_heat:era
+ok 60 - saved conditions: ht_heat:era
+  ---
+  duration_ms: 0.0516
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_hedp:era
+ok 61 - saved conditions: ht_hedp:era
+  ---
+  duration_ms: 0.0579
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_aphex:incendiary-info
+ok 62 - saved conditions: ht_aphex:incendiary-info
+  ---
+  duration_ms: 0.0533
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_white_phosphorus:hafla-smoke-manual
+ok 63 - saved conditions: ht_white_phosphorus:hafla-smoke-manual
+  ---
+  duration_ms: 0.0706
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_hollow_point:zero-dr
+ok 64 - saved conditions: ht_hollow_point:zero-dr
+  ---
+  duration_ms: 0.0639
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_frangible:zero-dr
+ok 65 - saved conditions: ht_frangible:zero-dr
+  ---
+  duration_ms: 0.0554
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_baton:knockback
+ok 66 - saved conditions: ht_baton:knockback
+  ---
+  duration_ms: 0.0585
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beanbag:knockback
+ok 67 - saved conditions: ht_beanbag:knockback
+  ---
+  duration_ms: 0.0526
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_shotshell:b409
+ok 68 - saved conditions: ht_shotshell:b409
+  ---
+  duration_ms: 0.0582
+  type: 'test'
+  ...
+# Subtest: ordinary and unresolved shots have no empty conditions section; NO_CODE needs saved native context
+ok 69 - ordinary and unresolved shots have no empty conditions section; NO_CODE needs saved native context
+  ---
+  duration_ms: 0.2668
+  type: 'test'
+  ...
+# Subtest: HAFLA smoke numbers never propagate to other WP, names, identities, unresolved or guessed recipes
+ok 70 - HAFLA smoke numbers never propagate to other WP, names, identities, unresolved or guessed recipes
+  ---
+  duration_ms: 0.1786
+  type: 'test'
+  ...
+# Subtest: overlapping instructions deduplicate without removing distinct conditions
+ok 71 - overlapping instructions deduplicate without removing distinct conditions
+  ---
+  duration_ms: 0.3122
+  type: 'test'
+  ...
+# Subtest: public/whisper/blind permissions precede even flags, for GM and players
+ok 72 - public/whisper/blind permissions precede even flags, for GM and players
+  ---
+  duration_ms: 0.4105
+  type: 'test'
+  ...
+# Subtest: linked Damage uses exact readable original shot, never identity-copy, latest attack or magazine
+ok 73 - linked Damage uses exact readable original shot, never identity-copy, latest attack or magazine
+  ---
+  duration_ms: 0.2994
+  type: 'test'
+  ...
+# Subtest: no target facts, secret checks, arbitrary IDs, calculations or resource reads in instructions
+ok 74 - no target facts, secret checks, arbitrary IDs, calculations or resource reads in instructions
+  ---
+  duration_ms: 0.2447
+  type: 'test'
+  ...
+# Subtest: RU/EN new keys load through actual translation loader including stale cache
+ok 75 - RU/EN new keys load through actual translation loader including stale cache
+  ---
+  duration_ms: 11.8565
+  type: 'test'
+  ...
+1..75
+# tests 75
+# suites 0
+# pass 75
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 159.6303

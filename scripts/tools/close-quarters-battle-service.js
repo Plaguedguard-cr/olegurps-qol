@@ -64,7 +64,7 @@ export function resolveCloseQuartersBattle({ actor, attack, governingSpecialty, 
   const governing = governingSkill?.family === "guns" ? governingSkill
     : governingSkill ? null : matchingSkills.length === 1 ? matchingSkills[0] : null;
   const baseLevel = Number(attack?.level);
-  if (!governing || !Number.isFinite(baseLevel) || baseLevel <= 0 ||
+  if (!governing || governing.learned === false || !Number.isFinite(baseLevel) || baseLevel <= 0 ||
       !Number.isFinite(movePenalty) || movePenalty > 0) return null;
   let best = null;
   for (const entry of flattenEntries(actor?.system?.skills)) {

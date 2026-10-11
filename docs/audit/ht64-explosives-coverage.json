@@ -1,0 +1,1166 @@
+{
+  "scope": "Only 13 P4 variants and current explicitly bound ranged HT ammo pairs; no global HT audit",
+  "pairs": 511,
+  "variants": {
+    "ht_le": {
+      "automaticReference": 0,
+      "calculatedPermissive": 0,
+      "incomplete": 496,
+      "incompatibleExcluded": 15,
+      "reasons": {
+        "P4ConstructionMissing": 511
+      },
+      "ready": [],
+      "potential": 496
+    },
+    "ht_saple": {
+      "automaticReference": 0,
+      "calculatedPermissive": 0,
+      "incomplete": 510,
+      "incompatibleExcluded": 1,
+      "reasons": {
+        "P4ConstructionMissing": 511
+      },
+      "ready": [],
+      "potential": 510
+    },
+    "ht_apex": {
+      "automaticReference": 0,
+      "calculatedPermissive": 4,
+      "incomplete": 506,
+      "incompatibleExcluded": 1,
+      "reasons": {
+        "AutomaticInputsMissing": 506,
+        "ProfileCompatibilityRequired": 1
+      },
+      "ready": [
+        {
+          "modeId": "W27s4Lm8QlkKVKUPn",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "Izhmash AK-47, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "4d-1(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-2 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        },
+        {
+          "modeId": "Wb8SIGKOZA3jt1MCn",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "Izhmash AKMS, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "4d-1(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-2 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        },
+        {
+          "modeId": "WbR0ilzM6RVDHmuhO",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "TOZ SKS-45, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "4d-1(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-2 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        },
+        {
+          "modeId": "W-G5nSih4b8lXCgaa",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "ZiD RPD, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "4d+1(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-2 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        }
+      ],
+      "potential": 510
+    },
+    "ht_he": {
+      "automaticReference": 5,
+      "calculatedPermissive": 0,
+      "incomplete": 491,
+      "incompatibleExcluded": 15,
+      "reasons": {
+        "P4ConstructionMissing": 504,
+        "P4TLRequired": 1,
+        "P4PayloadMissing": 1
+      },
+      "ready": [
+        {
+          "modeId": "W-eXi2wwaUlJ18L9n",
+          "ammoId": "ht_specific_katyusha_m13_he",
+          "weapon": "BM-13-16, 132mm",
+          "name": "M-13 132mm artillery rocket",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx3 cr ex",
+              "relation": "linked-blast-primary"
+            },
+            {
+              "role": "fragmentation",
+              "formula": "6d+2 cut",
+              "relation": "fragmentation"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 150-151; explicit named HT round ht_specific_katyusha_m13_he"
+          }
+        },
+        {
+          "modeId": "W5KdhhEf7mZ29gKhz",
+          "ammoId": "ht_specific_rpg7_40mm_he",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 40mm HE round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "5dx2 cr ex",
+              "relation": "linked-blast-primary"
+            },
+            {
+              "role": "fragmentation",
+              "formula": "2d cut",
+              "relation": "fragmentation"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_40mm_he"
+          }
+        },
+        {
+          "modeId": "Wddtb03yTIO9BFQVe",
+          "ammoId": "ht_specific_m10_m8_he",
+          "weapon": "M10, 4.5\"",
+          "name": "M8 4.5-inch aircraft rocket",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "5dx5 cr ex",
+              "relation": "linked-blast-primary"
+            },
+            {
+              "role": "fragmentation",
+              "formula": "6d-1 cut",
+              "relation": "fragmentation"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 150-151; explicit named HT round ht_specific_m10_m8_he"
+          }
+        },
+        {
+          "modeId": "WjD-b9M0j2HJAcxyy",
+          "ammoId": "ht_specific_hydra_70mm_heavy_he",
+          "weapon": "M260, 70mm",
+          "name": "Hydra 70mm heavy HE rocket",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx5 cr ex",
+              "relation": "linked-blast-primary"
+            },
+            {
+              "role": "fragmentation",
+              "formula": "3d+2 cut",
+              "relation": "fragmentation"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 150; explicit named HT round ht_specific_hydra_70mm_heavy_he"
+          }
+        },
+        {
+          "modeId": "WjD-b9M0j2HJAcxyy",
+          "ammoId": "ht_specific_hydra_mk66_he",
+          "weapon": "M260, 70mm",
+          "name": "MK 66 Hydra 70mm HE rocket",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "7dx3 cr ex",
+              "relation": "linked-blast-primary"
+            },
+            {
+              "role": "fragmentation",
+              "formula": "3d+2 cut",
+              "relation": "fragmentation"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 150-151; explicit named HT round ht_specific_hydra_mk66_he"
+          }
+        }
+      ],
+      "potential": 496
+    },
+    "ht_saphe": {
+      "automaticReference": 0,
+      "calculatedPermissive": 0,
+      "incomplete": 510,
+      "incompatibleExcluded": 1,
+      "reasons": {
+        "P4ConstructionMissing": 511
+      },
+      "ready": [],
+      "potential": 510
+    },
+    "ht_saphec": {
+      "automaticReference": 0,
+      "calculatedPermissive": 0,
+      "incomplete": 510,
+      "incompatibleExcluded": 1,
+      "reasons": {
+        "P4ConstructionMissing": 511
+      },
+      "ready": [],
+      "potential": 510
+    },
+    "ht_aphex": {
+      "automaticReference": 2,
+      "calculatedPermissive": 4,
+      "incomplete": 504,
+      "incompatibleExcluded": 1,
+      "reasons": {
+        "AutomaticInputsMissing": 504,
+        "ProfileCompatibilityRequired": 1
+      },
+      "ready": [
+        {
+          "modeId": "W4EbC4v3uPyORRhTC",
+          "ammoId": "ht_50_browning_12_7x99mm",
+          "weapon": "Barrett M82A1, .50 Browning",
+          "name": ".50 Browning (12.7x99mm)",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx2(2) pi",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-2 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-2 cut",
+              "relation": null
+            },
+            {
+              "role": "incendiary",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "High-Tech: Barrett M82A1 and Browning M2HB APHEX descriptions; published 1d-2 [1d-2] cr ex follow-up",
+            "url": "https://gametable.pbworks.com/f/GURPS%2B-%2B4th%2BEdition%2B-%2BHigh-Tech.pdf",
+            "pdfPages": [
+              119,
+              134
+            ]
+          }
+        },
+        {
+          "modeId": "WR0KjQaYwU2kPV2uB",
+          "ammoId": "ht_50_browning_12_7x99mm",
+          "weapon": "Browning M2HB, .50 Browning",
+          "name": ".50 Browning (12.7x99mm)",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "7dx2(2) pi",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-2 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-2 cut",
+              "relation": null
+            },
+            {
+              "role": "incendiary",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "High-Tech: Barrett M82A1 and Browning M2HB APHEX descriptions; published 1d-2 [1d-2] cr ex follow-up",
+            "url": "https://gametable.pbworks.com/f/GURPS%2B-%2B4th%2BEdition%2B-%2BHigh-Tech.pdf",
+            "pdfPages": [
+              119,
+              134
+            ]
+          }
+        },
+        {
+          "modeId": "W27s4Lm8QlkKVKUPn",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "Izhmash AK-47, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "5d+1(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-1 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            },
+            {
+              "role": "incendiary",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        },
+        {
+          "modeId": "Wb8SIGKOZA3jt1MCn",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "Izhmash AKMS, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "5d+1(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-1 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            },
+            {
+              "role": "incendiary",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        },
+        {
+          "modeId": "WbR0ilzM6RVDHmuhO",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "TOZ SKS-45, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "5d+1(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-1 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            },
+            {
+              "role": "incendiary",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        },
+        {
+          "modeId": "W-G5nSih4b8lXCgaa",
+          "ammoId": "ht_7_62x39mm",
+          "weapon": "ZiD RPD, 7.62x39mm",
+          "name": "7.62x39mm",
+          "authority": "world-policy",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6d(2) pi-",
+              "relation": null
+            },
+            {
+              "role": "follow-up",
+              "formula": "1d-1 cr ex",
+              "relation": null
+            },
+            {
+              "role": "fragmentation",
+              "formula": "1d-3 cut",
+              "relation": null
+            },
+            {
+              "role": "incendiary",
+              "relation": null
+            }
+          ],
+          "source": {
+            "kind": "gm",
+            "note": "User-approved OleGURPS 7.62x39mm house-model assumptions (2026-10-10); not historical factory cartridge data"
+          }
+        }
+      ],
+      "potential": 510
+    },
+    "ht_efp": {
+      "automaticReference": 0,
+      "calculatedPermissive": 0,
+      "incomplete": 212,
+      "incompatibleExcluded": 299,
+      "reasons": {
+        "P4ConstructionMissing": 511
+      },
+      "ready": [],
+      "potential": 212
+    },
+    "ht_heat": {
+      "automaticReference": 15,
+      "calculatedPermissive": 0,
+      "incomplete": 211,
+      "incompatibleExcluded": 285,
+      "reasons": {
+        "P4ConstructionMissing": 496
+      },
+      "ready": [
+        {
+          "modeId": "WLtxCaJ16zBNXOM6B",
+          "ammoId": "ht_specific_ss11_heat",
+          "weapon": "Aérospatiale SS.11, 164mm",
+          "name": "SS.11 164mm wire-guided HEAT missile",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx8(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx6 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 150-152; explicit named HT round ht_specific_ss11_heat"
+          }
+        },
+        {
+          "modeId": "WGykc_h_j4Ojyn6fu",
+          "ammoId": "ht_specific_pzf3_110mm_heat",
+          "weapon": "Dynamit-Nobel PZF3, 60mm",
+          "name": "Panzerfaust 3 110mm HEAT launch tube/shot",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx9(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx4 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_pzf3_110mm_heat"
+          }
+        },
+        {
+          "modeId": "WYtq-OBcCaZp7ShJJ",
+          "ammoId": "ht_specific_milan_103_heat",
+          "weapon": "Euromissile MILAN, 103mm",
+          "name": "MILAN 103mm wire-guided HEAT missile",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx8(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx4 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 151-152; explicit named HT round ht_specific_milan_103_heat"
+          }
+        },
+        {
+          "modeId": "W-KvhNTS2RaLIZvSw",
+          "ammoId": "ht_specific_at4_84mm_heat",
+          "weapon": "FFV AT4, 84mm",
+          "name": "AT4 84mm HEAT launcher+rocket",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx6(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "7dx2 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_at4_84mm_heat"
+          }
+        },
+        {
+          "modeId": "WbiMQvLGw4VhGQmTc",
+          "ammoId": "ht_specific_pf30_150mm_heat",
+          "weapon": "HASAG Panzerfaust 30, 44mm",
+          "name": "Panzerfaust 30 150mm over-caliber HEAT round",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx3(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "5dx2 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 147-148; explicit named HT round ht_specific_pf30_150mm_heat"
+          }
+        },
+        {
+          "modeId": "WCN9YaUpioje5KB5t",
+          "ammoId": "ht_specific_m72a2_66mm_heat",
+          "weapon": "HEC M72A2, 66mm",
+          "name": "M72A2 LAW 66mm HEAT launcher+rocket",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx3(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx2 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_m72a2_66mm_heat"
+          }
+        },
+        {
+          "modeId": "WmG_jTzAKmvFs5myW",
+          "ammoId": "ht_specific_tow_bgm71a_heat",
+          "weapon": "Hughes BGM-71A TOW, 127mm",
+          "name": "BGM-71A TOW wire-guided HEAT missile",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx8(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "7dx5 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 151-152; explicit named HT round ht_specific_tow_bgm71a_heat"
+          }
+        },
+        {
+          "modeId": "Wm1zVlIxEdhIN7Bdc",
+          "ammoId": "ht_specific_rpg2_82mm_heat",
+          "weapon": "KMZ RPG-2, 40mm",
+          "name": "RPG-2 82mm over-caliber HEAT projectile",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "7dx2(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx2 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg2_82mm_heat"
+          }
+        },
+        {
+          "modeId": "W61HbVOrJ-DAQGkHW",
+          "ammoId": "ht_specific_rpg7_85mm_heat",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 85mm HEAT round",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx4(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "7dx2 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_85mm_heat"
+          }
+        },
+        {
+          "modeId": "W61HbVOrJ-DAQGkHW",
+          "ammoId": "ht_specific_rpg7_93mm_heat",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 93mm HEAT round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx8(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx3 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_93mm_heat"
+          }
+        },
+        {
+          "modeId": "W5KdhhEf7mZ29gKhz",
+          "ammoId": "ht_specific_rpg7_93mm_heat",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 93mm HEAT round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx8(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx3 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_93mm_heat"
+          }
+        },
+        {
+          "modeId": "WeXQmnN9negUgW4dp",
+          "ammoId": "ht_specific_malyutka_m_heat",
+          "weapon": "Kolomna 9M17M Malyutka-M, 125mm",
+          "name": "9M14M Malyutka-M 125mm wire-guided HEAT missile",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx7(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "7dx5 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 151-152; explicit named HT round ht_specific_malyutka_m_heat"
+          }
+        },
+        {
+          "modeId": "WhyC2rpq5gO7kJvPq",
+          "ammoId": "ht_specific_m20_89mm_heat",
+          "weapon": "M20 Super Bazooka 3.5\"",
+          "name": "M20 Super Bazooka 89mm HEAT rocket",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "7dx3(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "5dx4 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 147; explicit named HT round ht_specific_m20_89mm_heat"
+          }
+        },
+        {
+          "modeId": "WWhhyDtXaDfdAFrfB",
+          "ammoId": "ht_specific_armbrust_67mm_heat",
+          "weapon": "MBB Armbrust, 67mm",
+          "name": "Armbrust 67mm HEAT launcher+rocket",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx4(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx2 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_armbrust_67mm_heat"
+          }
+        },
+        {
+          "modeId": "WfQbQ4kVYxR2_9Ji1",
+          "ammoId": "ht_specific_dragon_127_heat",
+          "weapon": "McDonnell FGM-77A Dragon, 127mm",
+          "name": "FGM-77A Dragon wire-guided HEAT missile",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx8(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "7dx4 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 152; explicit named HT round ht_specific_dragon_127_heat"
+          }
+        }
+      ],
+      "potential": 226
+    },
+    "ht_hedp": {
+      "automaticReference": 1,
+      "calculatedPermissive": 0,
+      "incomplete": 212,
+      "incompatibleExcluded": 298,
+      "reasons": {
+        "P4ConstructionMissing": 510
+      },
+      "ready": [
+        {
+          "modeId": "WjD-b9M0j2HJAcxyy",
+          "ammoId": "ht_specific_hydra_70mm_hedp",
+          "weapon": "M260, 70mm",
+          "name": "Hydra 70mm HEDP rocket",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx3(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "linked",
+              "formula": "5dx4 cr ex",
+              "relation": "linked"
+            },
+            {
+              "role": "fragmentation",
+              "formula": "3d+2 cut",
+              "relation": "fragmentation"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 150; explicit named HT round ht_specific_hydra_70mm_hedp"
+          }
+        }
+      ],
+      "potential": 213
+    },
+    "ht_hesh": {
+      "automaticReference": 0,
+      "calculatedPermissive": 0,
+      "incomplete": 212,
+      "incompatibleExcluded": 299,
+      "reasons": {
+        "P4ConstructionMissing": 511
+      },
+      "ready": [],
+      "potential": 212
+    },
+    "ht_ms_heat": {
+      "automaticReference": 4,
+      "calculatedPermissive": 0,
+      "incomplete": 209,
+      "incompatibleExcluded": 298,
+      "reasons": {
+        "P4ConstructionMissing": 507
+      },
+      "ready": [
+        {
+          "modeId": "WGykc_h_j4Ojyn6fu",
+          "ammoId": "ht_specific_pzf3_110mm_tandem",
+          "weapon": "Dynamit-Nobel PZF3, 60mm",
+          "name": "Panzerfaust 3 110mm MS-HEAT round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx4(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "main-charge",
+              "formula": "6dx9(10) cr ex",
+              "relation": "follow_up"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx4 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 149; explicit named HT round ht_specific_pzf3_110mm_tandem"
+          }
+        },
+        {
+          "modeId": "W61HbVOrJ-DAQGkHW",
+          "ammoId": "ht_specific_rpg7_105mm_msheat",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 105mm tandem MS-HEAT round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx2(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "main-charge",
+              "formula": "6dx7(10) cr ex",
+              "relation": "follow_up"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx3 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_105mm_msheat"
+          }
+        },
+        {
+          "modeId": "W5KdhhEf7mZ29gKhz",
+          "ammoId": "ht_specific_rpg7_105mm_msheat",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 105mm tandem MS-HEAT round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx2(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "main-charge",
+              "formula": "6dx7(10) cr ex",
+              "relation": "follow_up"
+            },
+            {
+              "role": "linked",
+              "formula": "6dx3 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_105mm_msheat"
+          }
+        },
+        {
+          "modeId": "W0nH5aEN5CsOLWS2t",
+          "ammoId": "ht_specific_javelin_fgm148a_mseat",
+          "weapon": "RLM FGM-148A Javelin, 127mm",
+          "name": "FGM-148A Javelin imaging-IR MS-HEAT missile",
+          "authority": "reference",
+          "rulesStatus": "incompatible",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx3(10) cr ex",
+              "relation": "primary"
+            },
+            {
+              "role": "main-charge",
+              "formula": "6dx11(10) cr ex",
+              "relation": "follow_up"
+            },
+            {
+              "role": "linked",
+              "formula": "7dx4 cr ex",
+              "relation": "linked"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 152-153; explicit named HT round ht_specific_javelin_fgm148a_mseat"
+          }
+        }
+      ],
+      "potential": 213
+    },
+    "ht_thermobaric": {
+      "automaticReference": 3,
+      "calculatedPermissive": 0,
+      "incomplete": 210,
+      "incompatibleExcluded": 298,
+      "reasons": {
+        "P4ConstructionMissing": 508
+      },
+      "ready": [
+        {
+          "modeId": "WVY4ygmbFY_RiJbQz",
+          "ammoId": "ht_specific_rpoa_93mm_thermobaric",
+          "weapon": "KBP RPO-A, 93mm",
+          "name": "RPO-A Shmel 93mm thermobaric launcher+rocket",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx9 cr ex",
+              "relation": "linked-blast-primary"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpoa_93mm_thermobaric"
+          }
+        },
+        {
+          "modeId": "W61HbVOrJ-DAQGkHW",
+          "ammoId": "ht_specific_rpg7_93mm_thermobaric",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 93mm thermobaric round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx9 cr ex",
+              "relation": "linked-blast-primary"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_93mm_thermobaric"
+          }
+        },
+        {
+          "modeId": "W5KdhhEf7mZ29gKhz",
+          "ammoId": "ht_specific_rpg7_93mm_thermobaric",
+          "weapon": "KMZ RPG-7, 40mm",
+          "name": "RPG-7 93mm thermobaric round",
+          "authority": "reference",
+          "rulesStatus": "undetermined",
+          "components": [
+            {
+              "role": "kinetic",
+              "formula": "6dx9 cr ex",
+              "relation": "linked-blast-primary"
+            }
+          ],
+          "source": {
+            "kind": "reference",
+            "note": "HT 148-149; explicit named HT round ht_specific_rpg7_93mm_thermobaric"
+          }
+        }
+      ],
+      "potential": 213
+    }
+  }
+}

@@ -1,0 +1,118 @@
+TAP version 13
+# Subtest: reviewed native +P preserves exact projectile: W5biN11nvUhQ00ewl
+ok 1 - reviewed native +P preserves exact projectile: W5biN11nvUhQ00ewl
+  ---
+  duration_ms: 10.2797
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WApJkhMAYa4wlXViK
+ok 2 - reviewed native +P preserves exact projectile: WApJkhMAYa4wlXViK
+  ---
+  duration_ms: 3.3593
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WTrwxX4jwWz6xKiPz
+ok 3 - reviewed native +P preserves exact projectile: WTrwxX4jwWz6xKiPz
+  ---
+  duration_ms: 2.4999
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WYmXQkUoq1luUajT-
+ok 4 - reviewed native +P preserves exact projectile: WYmXQkUoq1luUajT-
+  ---
+  duration_ms: 2.5717
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WecVKS0hiwdjXu_uS
+ok 5 - reviewed native +P preserves exact projectile: WecVKS0hiwdjXu_uS
+  ---
+  duration_ms: 2.9518
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WgOt4XUnNzTOpdiAO
+ok 6 - reviewed native +P preserves exact projectile: WgOt4XUnNzTOpdiAO
+  ---
+  duration_ms: 2.4075
+  type: 'test'
+  ...
+# Subtest: reviewed native +P preserves exact projectile: WHsI3V0zdU2TUI6w7
+ok 7 - reviewed native +P preserves exact projectile: WHsI3V0zdU2TUI6w7
+  ---
+  duration_ms: 2.0746
+  type: 'test'
+  ...
+# Subtest: native APHC/HP cannot be deduced from divisor or applied a second time
+ok 8 - native APHC/HP cannot be deduced from divisor or applied a second time
+  ---
+  duration_ms: 2.4904
+  type: 'test'
+  ...
+# Subtest: native HP keeps zero-DR and optional expansion; AS Val retains suppressor without invented subsonic velocity
+ok 9 - native HP keeps zero-DR and optional expansion; AS Val retains suppressor without invented subsonic velocity
+  ---
+  duration_ms: 1.8458
+  type: 'test'
+  ...
+# Subtest: shared cartridge FN pistol and P90 preserve independent immutable snapshots after reload
+ok 10 - shared cartridge FN pistol and P90 preserve independent immutable snapshots after reload
+  ---
+  duration_ms: 4.2428
+  type: 'test'
+  ...
+# Subtest: KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+ok 11 - KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+  ---
+  duration_ms: 2.9349
+  type: 'test'
+  ...
+# Subtest: APS arithmetic is possible but underwater distance and individual construction are not falsely automated
+ok 12 - APS arithmetic is possible but underwater distance and individual construction are not falsely automated
+  ---
+  duration_ms: 0.3621
+  type: 'test'
+  ...
+# Subtest: Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge
+ok 13 - Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge
+  ---
+  duration_ms: 0.2163
+  type: 'test'
+  ...
+# Subtest: LeMat shot barrel never prepares +P using revolver ammo; no invented 18G identity
+ok 14 - LeMat shot barrel never prepares +P using revolver ammo; no invented 18G identity
+  ---
+  duration_ms: 0.5328
+  type: 'test'
+  ...
+# Subtest: new G diagnostics resolve in RU and EN locale files
+ok 15 - new G diagnostics resolve in RU and EN locale files
+  ---
+  duration_ms: 7.9703
+  type: 'test'
+  ...
+# Subtest: native G shot consumes one physical round once; changing magazine preserves old shot
+ok 16 - native G shot consumes one physical round once; changing magazine preserves old shot
+  ---
+  duration_ms: 4.307
+  type: 'test'
+  ...
+# Subtest: 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+ok 17 - 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+  ---
+  duration_ms: 526.7855
+  type: 'test'
+  ...
+# Subtest: restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass
+ok 18 - restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass
+  ---
+  duration_ms: 93.229
+  type: 'test'
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 950.3462

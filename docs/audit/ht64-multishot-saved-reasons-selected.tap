@@ -1,0 +1,22 @@
+TAP version 13
+# Subtest: approved rubber load is available through the existing window; NP recipes remain distinct and known caliber cannot change
+ok 1 - approved rubber load is available through the existing window; NP recipes remain distinct and known caliber cannot change
+  ---
+  duration_ms: 65.381
+  type: 'test'
+  ...
+# Subtest: saved compound native load remains unavailable and explains the actual reason in RU and EN
+ok 2 - saved compound native load remains unavailable and explains the actual reason in RU and EN
+  ---
+  duration_ms: 51.1779
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 416.8984

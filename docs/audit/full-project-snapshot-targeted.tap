@@ -1,0 +1,1402 @@
+TAP version 13
+# Subtest: HT178 explicit Wxi1b6NRfsJxqbotx / ht_44_russian_11x25mmr
+ok 1 - HT178 explicit Wxi1b6NRfsJxqbotx / ht_44_russian_11x25mmr
+  ---
+  duration_ms: 2.1118
+  type: 'test'
+  ...
+# Subtest: HT178 explicit Wxi1b6NRfsJxqbotx / ht_44_american_11x23mmr
+ok 2 - HT178 explicit Wxi1b6NRfsJxqbotx / ht_44_american_11x23mmr
+  ---
+  duration_ms: 0.2375
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WzaEgR-kwdhso6lo2 / ht_44_russian_11x25mmr
+ok 3 - HT178 explicit WzaEgR-kwdhso6lo2 / ht_44_russian_11x25mmr
+  ---
+  duration_ms: 0.1254
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WzaEgR-kwdhso6lo2 / ht_44_american_11x23mmr
+ok 4 - HT178 explicit WzaEgR-kwdhso6lo2 / ht_44_american_11x23mmr
+  ---
+  duration_ms: 0.1481
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WDr3xbILdqBzbwDka / ht_45_s_w_11_43x28mmr
+ok 5 - HT178 explicit WDr3xbILdqBzbwDka / ht_45_s_w_11_43x28mmr
+  ---
+  duration_ms: 0.1199
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WIoIaMUXecXYsSkUS / ht_45_s_w_11_43x28mmr
+ok 6 - HT178 explicit WIoIaMUXecXYsSkUS / ht_45_s_w_11_43x28mmr
+  ---
+  duration_ms: 0.1017
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WbDlTUNcqJkmW6KLu / ht_45_s_w_11_43x28mmr
+ok 7 - HT178 explicit WbDlTUNcqJkmW6KLu / ht_45_s_w_11_43x28mmr
+  ---
+  duration_ms: 0.092
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WoELTMe_KWWK4grLz / ht_45_s_w_11_43x28mmr
+ok 8 - HT178 explicit WoELTMe_KWWK4grLz / ht_45_s_w_11_43x28mmr
+  ---
+  duration_ms: 0.1389
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W09RarXVw2-ZAi-dC / ht_22_short_5_6x11mmr
+ok 9 - HT178 explicit W09RarXVw2-ZAi-dC / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.4068
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W6bfzGQAngvdHu-iw / ht_22_short_5_6x11mmr
+ok 10 - HT178 explicit W6bfzGQAngvdHu-iw / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.3199
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W6dgs1HSukosk0BM2 / ht_22_short_5_6x11mmr
+ok 11 - HT178 explicit W6dgs1HSukosk0BM2 / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.146
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WK4QvDEDBTOGUOZ9D / ht_22_short_5_6x11mmr
+ok 12 - HT178 explicit WK4QvDEDBTOGUOZ9D / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.0859
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WL0SlLUJxX2V_3KVh / ht_22_short_5_6x11mmr
+ok 13 - HT178 explicit WL0SlLUJxX2V_3KVh / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.0718
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WM8_OFbrJKJFziyfC / ht_22_short_5_6x11mmr
+ok 14 - HT178 explicit WM8_OFbrJKJFziyfC / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.0682
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WXXqZ-u9AGxWAhfph / ht_22_short_5_6x11mmr
+ok 15 - HT178 explicit WXXqZ-u9AGxWAhfph / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.0693
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WlalvGJfGaAfR_YFJ / ht_22_short_5_6x11mmr
+ok 16 - HT178 explicit WlalvGJfGaAfR_YFJ / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.0654
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WmGJcfhuw4OrotOVu / ht_22_short_5_6x11mmr
+ok 17 - HT178 explicit WmGJcfhuw4OrotOVu / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.0655
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WwlfY-FYthqkLvByK / ht_22_short_5_6x11mmr
+ok 18 - HT178 explicit WwlfY-FYthqkLvByK / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.077
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WxsT21EBYb72XKYe_ / ht_22_short_5_6x11mmr
+ok 19 - HT178 explicit WxsT21EBYb72XKYe_ / ht_22_short_5_6x11mmr
+  ---
+  duration_ms: 0.0633
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WQTnqCZPMYRO8JrrL / ht_20_gauge_2_5_15_56x63mmr
+ok 20 - HT178 explicit WQTnqCZPMYRO8JrrL / ht_20_gauge_2_5_15_56x63mmr
+  ---
+  duration_ms: 0.0651
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WZvZ89iM4Kxz6xpoN / ht_20_gauge_2_5_15_56x63mmr
+ok 21 - HT178 explicit WZvZ89iM4Kxz6xpoN / ht_20_gauge_2_5_15_56x63mmr
+  ---
+  duration_ms: 0.0608
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WsR6R-QL06g6aAm50 / ht_20_gauge_2_5_15_56x63mmr
+ok 22 - HT178 explicit WsR6R-QL06g6aAm50 / ht_20_gauge_2_5_15_56x63mmr
+  ---
+  duration_ms: 0.0639
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WziWTyBAQ6_3yc8fX / ht_20_gauge_2_5_15_56x63mmr
+ok 23 - HT178 explicit WziWTyBAQ6_3yc8fX / ht_20_gauge_2_5_15_56x63mmr
+  ---
+  duration_ms: 0.0655
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W6LVJ8YGACnNB5h-S / ht_12_gauge_2_75_18_5x70mmr
+ok 24 - HT178 explicit W6LVJ8YGACnNB5h-S / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.1021
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W6LVJ8YGACnNB5h-S / ht_12_gauge_2_5_18_5x63mmr
+ok 25 - HT178 explicit W6LVJ8YGACnNB5h-S / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0667
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W6LVJ8YGACnNB5h-S / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 26 - HT178 explicit W6LVJ8YGACnNB5h-S / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.0816
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W9LBQ9LeKd3uB9nSZ / ht_12_gauge_2_75_18_5x70mmr
+ok 27 - HT178 explicit W9LBQ9LeKd3uB9nSZ / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.087
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W9LBQ9LeKd3uB9nSZ / ht_12_gauge_2_5_18_5x63mmr
+ok 28 - HT178 explicit W9LBQ9LeKd3uB9nSZ / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0615
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W9LBQ9LeKd3uB9nSZ / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 29 - HT178 explicit W9LBQ9LeKd3uB9nSZ / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.0678
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WH-pkGPARCbK4CP4h / ht_12_gauge_2_75_18_5x70mmr
+ok 30 - HT178 explicit WH-pkGPARCbK4CP4h / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.1022
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WH-pkGPARCbK4CP4h / ht_12_gauge_2_5_18_5x63mmr
+ok 31 - HT178 explicit WH-pkGPARCbK4CP4h / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0733
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WH-pkGPARCbK4CP4h / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 32 - HT178 explicit WH-pkGPARCbK4CP4h / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.0693
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WLp8euYFMi9Oikpjp / ht_12_gauge_2_75_18_5x70mmr
+ok 33 - HT178 explicit WLp8euYFMi9Oikpjp / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.0655
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WLp8euYFMi9Oikpjp / ht_12_gauge_2_5_18_5x63mmr
+ok 34 - HT178 explicit WLp8euYFMi9Oikpjp / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0589
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WLp8euYFMi9Oikpjp / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 35 - HT178 explicit WLp8euYFMi9Oikpjp / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.0653
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WT-PUA77JBHLiLTPo / ht_12_gauge_2_75_18_5x70mmr
+ok 36 - HT178 explicit WT-PUA77JBHLiLTPo / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.0892
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WT-PUA77JBHLiLTPo / ht_12_gauge_2_5_18_5x63mmr
+ok 37 - HT178 explicit WT-PUA77JBHLiLTPo / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0638
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WT-PUA77JBHLiLTPo / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 38 - HT178 explicit WT-PUA77JBHLiLTPo / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.0789
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WaPnC1R8aLAvhe3rt / ht_12_gauge_2_75_18_5x70mmr
+ok 39 - HT178 explicit WaPnC1R8aLAvhe3rt / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.0689
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WaPnC1R8aLAvhe3rt / ht_12_gauge_2_5_18_5x63mmr
+ok 40 - HT178 explicit WaPnC1R8aLAvhe3rt / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0572
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WaPnC1R8aLAvhe3rt / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 41 - HT178 explicit WaPnC1R8aLAvhe3rt / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.0789
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WcLG_XsJVbZ6CIT4p / ht_12_gauge_2_75_18_5x70mmr
+ok 42 - HT178 explicit WcLG_XsJVbZ6CIT4p / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.0683
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WcLG_XsJVbZ6CIT4p / ht_12_gauge_2_5_18_5x63mmr
+ok 43 - HT178 explicit WcLG_XsJVbZ6CIT4p / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0559
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WcLG_XsJVbZ6CIT4p / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 44 - HT178 explicit WcLG_XsJVbZ6CIT4p / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.066
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WmeBcFEjqKNri5FAm / ht_12_gauge_2_75_18_5x70mmr
+ok 45 - HT178 explicit WmeBcFEjqKNri5FAm / ht_12_gauge_2_75_18_5x70mmr
+  ---
+  duration_ms: 0.0655
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WmeBcFEjqKNri5FAm / ht_12_gauge_2_5_18_5x63mmr
+ok 46 - HT178 explicit WmeBcFEjqKNri5FAm / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0536
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WmeBcFEjqKNri5FAm / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+ok 47 - HT178 explicit WmeBcFEjqKNri5FAm / ht_12_gauge_2_75_18_5x70mmr_heavy_load
+  ---
+  duration_ms: 0.0667
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W19ooSM10ivSwlXSP / ht_12_gauge_2_5_18_5x63mmr
+ok 48 - HT178 explicit W19ooSM10ivSwlXSP / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.074
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W2EHajHoWWSlF8B6z / ht_12_gauge_2_5_18_5x63mmr
+ok 49 - HT178 explicit W2EHajHoWWSlF8B6z / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0607
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W8gU1gCeSF_EHefLt / ht_12_gauge_2_5_18_5x63mmr
+ok 50 - HT178 explicit W8gU1gCeSF_EHefLt / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0564
+  type: 'test'
+  ...
+# Subtest: HT178 explicit W9ki0p3eZ0dV761l1 / ht_12_gauge_2_5_18_5x63mmr
+ok 51 - HT178 explicit W9ki0p3eZ0dV761l1 / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0548
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WG5D9pES9jpedWQBK / ht_12_gauge_2_5_18_5x63mmr
+ok 52 - HT178 explicit WG5D9pES9jpedWQBK / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0603
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WGhQ3o1Zo4QfXJRmy / ht_12_gauge_2_5_18_5x63mmr
+ok 53 - HT178 explicit WGhQ3o1Zo4QfXJRmy / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0553
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WHlBefAVM5F3s_Fhx / ht_12_gauge_2_5_18_5x63mmr
+ok 54 - HT178 explicit WHlBefAVM5F3s_Fhx / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0566
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WIKNLT8GtI6laTFbn / ht_12_gauge_2_5_18_5x63mmr
+ok 55 - HT178 explicit WIKNLT8GtI6laTFbn / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0554
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WSu2puv__x3S7ILvR / ht_12_gauge_2_5_18_5x63mmr
+ok 56 - HT178 explicit WSu2puv__x3S7ILvR / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0576
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WUVxWN3HdmeKHmjv1 / ht_12_gauge_2_5_18_5x63mmr
+ok 57 - HT178 explicit WUVxWN3HdmeKHmjv1 / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0579
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WVWyvqKW9KEoQ0dnM / ht_12_gauge_2_5_18_5x63mmr
+ok 58 - HT178 explicit WVWyvqKW9KEoQ0dnM / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0561
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WWpYkEgZSXCKAroUP / ht_12_gauge_2_5_18_5x63mmr
+ok 59 - HT178 explicit WWpYkEgZSXCKAroUP / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0782
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WedfHYdjmjQy4JdzJ / ht_12_gauge_2_5_18_5x63mmr
+ok 60 - HT178 explicit WedfHYdjmjQy4JdzJ / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0599
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WepHIL4DWLPsoO8HC / ht_12_gauge_2_5_18_5x63mmr
+ok 61 - HT178 explicit WepHIL4DWLPsoO8HC / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0622
+  type: 'test'
+  ...
+# Subtest: HT178 explicit Wku81Y3GfqPAjHV-Y / ht_12_gauge_2_5_18_5x63mmr
+ok 62 - HT178 explicit Wku81Y3GfqPAjHV-Y / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0714
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WkzlenFdgtlwesK-q / ht_12_gauge_2_5_18_5x63mmr
+ok 63 - HT178 explicit WkzlenFdgtlwesK-q / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0953
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WmJ_QjDBYJH7Tmona / ht_12_gauge_2_5_18_5x63mmr
+ok 64 - HT178 explicit WmJ_QjDBYJH7Tmona / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.1214
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WsrbLU9pLyDPhDI5- / ht_12_gauge_2_5_18_5x63mmr
+ok 65 - HT178 explicit WsrbLU9pLyDPhDI5- / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.096
+  type: 'test'
+  ...
+# Subtest: HT178 explicit Wu7wxc-g32vPxG2B- / ht_12_gauge_2_5_18_5x63mmr
+ok 66 - HT178 explicit Wu7wxc-g32vPxG2B- / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0672
+  type: 'test'
+  ...
+# Subtest: HT178 explicit WvUFCokYczEuOg49b / ht_12_gauge_2_5_18_5x63mmr
+ok 67 - HT178 explicit WvUFCokYczEuOg49b / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0611
+  type: 'test'
+  ...
+# Subtest: HT178 explicit Wx10NaVSr1cp1bwKv / ht_12_gauge_2_5_18_5x63mmr
+ok 68 - HT178 explicit Wx10NaVSr1cp1bwKv / ht_12_gauge_2_5_18_5x63mmr
+  ---
+  duration_ms: 0.0563
+  type: 'test'
+  ...
+# Subtest: 68 pairs are the independent audit set: 33 firing confirmed, 35 undetermined
+ok 69 - 68 pairs are the independent audit set: 33 firing confirmed, 35 undetermined
+  ---
+  duration_ms: 2.6671
+  type: 'test'
+  ...
+# Subtest: current catalog revisions ready; audit is never a fifth runtime catalog
+ok 70 - current catalog revisions ready; audit is never a fifth runtime catalog
+  ---
+  duration_ms: 0.7149
+  type: 'test'
+  ...
+# Subtest: all prior equipment IDs, modes and attack data preserved except declared tags and exact HT120 range / HT145 HAFLA Acc errata
+ok 71 - all prior equipment IDs, modes and attack data preserved except declared tags and exact HT120 range / HT145 HAFLA Acc errata
+  ---
+  duration_ms: 60.2284
+  type: 'test'
+  ...
+# Subtest: LT unchanged and new catalog bytes match verified hashes
+ok 72 - LT unchanged and new catalog bytes match verified hashes
+  ---
+  duration_ms: 27.4012
+  type: 'test'
+  ...
+# Subtest: heavy 12G load remains undetermined outside its native confirmed links
+ok 73 - heavy 12G load remains undetermined outside its native confirmed links
+  ---
+  duration_ms: 0.7142
+  type: 'test'
+  ...
+# Subtest: structured direction never generates reverse or transitive permission
+ok 74 - structured direction never generates reverse or transitive permission
+  ---
+  duration_ms: 0.186
+  type: 'test'
+  ...
+# Subtest: removing explicit assessment never falls back to text approval
+ok 75 - removing explicit assessment never falls back to text approval
+  ---
+  duration_ms: 111.7815
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: missing-ammo-id
+ok 76 - damaged structured rule is isolated: missing-ammo-id
+  ---
+  duration_ms: 108.0846
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: missing-mode-id
+ok 77 - damaged structured rule is isolated: missing-mode-id
+  ---
+  duration_ms: 106.5771
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: wrong-equipment
+ok 78 - damaged structured rule is isolated: wrong-equipment
+  ---
+  duration_ms: 111.4033
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: invalid-direction
+ok 79 - damaged structured rule is isolated: invalid-direction
+  ---
+  duration_ms: 109.772
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: wrong-action
+ok 80 - damaged structured rule is isolated: wrong-action
+  ---
+  duration_ms: 110.2205
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: not-exact
+ok 81 - damaged structured rule is isolated: not-exact
+  ---
+  duration_ms: 111.5994
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: duplicate-pair
+ok 82 - damaged structured rule is isolated: duplicate-pair
+  ---
+  duration_ms: 108.4609
+  type: 'test'
+  ...
+# Subtest: damaged structured rule is isolated: unknown-status
+ok 83 - damaged structured rule is isolated: unknown-status
+  ---
+  duration_ms: 105.1571
+  type: 'test'
+  ...
+# Subtest: runtime loader paths never refer to removed files
+ok 84 - runtime loader paths never refer to removed files
+  ---
+  duration_ms: 0.1223
+  type: 'test'
+  ...
+# Subtest: catalog directory contains exactly the four current runtime JSON files
+ok 85 - catalog directory contains exactly the four current runtime JSON files
+  ---
+  duration_ms: 1.5876
+  type: 'test'
+  ...
+# Subtest: audit moved unchanged; active code/docs contain no obsolete JSON paths
+ok 86 - audit moved unchanged; active code/docs contain no obsolete JSON paths
+  ---
+  duration_ms: 3.0467
+  type: 'test'
+  ...
+# Subtest: ru provides exactly four exclusive choices with unchanged table values
+ok 87 - ru provides exactly four exclusive choices with unchanged table values
+  ---
+  duration_ms: 1.9835
+  type: 'test'
+  ...
+# Subtest: en provides exactly four exclusive choices with unchanged table values
+ok 88 - en provides exactly four exclusive choices with unchanged table values
+  ---
+  duration_ms: 0.2539
+  type: 'test'
+  ...
+# Subtest: hit rolls only after confirmation and posts the original table result
+ok 89 - hit rolls only after confirmation and posts the original table result
+  ---
+  duration_ms: 1.1712
+  type: 'test'
+  ...
+# Subtest: head rolls only after confirmation and posts the original table result
+ok 90 - head rolls only after confirmation and posts the original table result
+  ---
+  duration_ms: 0.4643
+  type: 'test'
+  ...
+# Subtest: miss rolls only after confirmation and posts the original table result
+ok 91 - miss rolls only after confirmation and posts the original table result
+  ---
+  duration_ms: 0.2403
+  type: 'test'
+  ...
+# Subtest: unarmed rolls only after confirmation and posts the original table result
+ok 92 - unarmed rolls only after confirmation and posts the original table result
+  ---
+  duration_ms: 0.2013
+  type: 'test'
+  ...
+# Subtest: cancel and missing selection preserve the existing no-roll behavior
+ok 93 - cancel and missing selection preserve the existing no-roll behavior
+  ---
+  duration_ms: 0.2692
+  type: 'test'
+  ...
+# Subtest: old byte baseline remains valid with both historical HT pointer hashes
+ok 94 - old byte baseline remains valid with both historical HT pointer hashes
+  ---
+  duration_ms: 88.8139
+  type: 'test'
+  ...
+# Subtest: new byte baseline admits exactly the FN BAR Magnum revision 1 correction
+ok 95 - new byte baseline admits exactly the FN BAR Magnum revision 1 correction
+  ---
+  duration_ms: 209.7438
+  type: 'test'
+  ...
+# Subtest: revision 2 admits only HAFLA Acc zero in addition to the approved revision 1
+ok 96 - revision 2 admits only HAFLA Acc zero in addition to the approved revision 1
+  ---
+  duration_ms: 393.6258
+  type: 'test'
+  ...
+# Subtest: old baseline rejects errata bytes and new baseline rejects uncorrected bytes
+ok 97 - old baseline rejects errata bytes and new baseline rejects uncorrected bytes
+  ---
+  duration_ms: 42.5705
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared another original stat
+ok 98 - both contracts reject undeclared another original stat
+  ---
+  duration_ms: 114.935
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared approved mode other stat
+ok 99 - both contracts reject undeclared approved mode other stat
+  ---
+  duration_ms: 117.9308
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared unapproved Range
+ok 100 - both contracts reject undeclared unapproved Range
+  ---
+  duration_ms: 116.3813
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared equipment ID
+ok 101 - both contracts reject undeclared equipment ID
+  ---
+  duration_ms: 137.36
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared mode ID
+ok 102 - both contracts reject undeclared mode ID
+  ---
+  duration_ms: 114.1525
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared deleted record
+ok 103 - both contracts reject undeclared deleted record
+  ---
+  duration_ms: 113.4386
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared source GCS hash
+ok 104 - both contracts reject undeclared source GCS hash
+  ---
+  duration_ms: 132.075
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT filename
+ok 105 - both contracts reject undeclared HT filename
+  ---
+  duration_ms: 112.6433
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT revision
+ok 106 - both contracts reject undeclared HT revision
+  ---
+  duration_ms: 114.6018
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HT join key
+ok 107 - both contracts reject undeclared HT join key
+  ---
+  duration_ms: 112.8891
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared errata revision
+ok 108 - both contracts reject undeclared errata revision
+  ---
+  duration_ms: 108.8594
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared HAFLA unapproved Acc
+ok 109 - both contracts reject undeclared HAFLA unapproved Acc
+  ---
+  duration_ms: 136.5672
+  type: 'test'
+  ...
+# Subtest: both contracts reject undeclared extra errata permission
+ok 110 - both contracts reject undeclared extra errata permission
+  ---
+  duration_ms: 109.272
+  type: 'test'
+  ...
+# Subtest: frozen HT audit files retain their original byte hashes
+ok 111 - frozen HT audit files retain their original byte hashes
+  ---
+  duration_ms: 5.1526
+  type: 'test'
+  ...
+# Subtest: approved matrix contracts: exactly 23 F1 and five NO_CODE IDs
+ok 112 - approved matrix contracts: exactly 23 F1 and five NO_CODE IDs
+  ---
+  duration_ms: 1.0957
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_frangible:overpenetration
+ok 113 - saved conditions: ht_frangible:overpenetration
+  ---
+  duration_ms: 0.735
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apdu:ignition
+ok 114 - saved conditions: ht_apdu:ignition
+  ---
+  duration_ms: 0.1987
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apdsdu:ignition
+ok 115 - saved conditions: ht_apdsdu:ignition
+  ---
+  duration_ms: 0.1802
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apfsdsdu:ignition
+ok 116 - saved conditions: ht_apfsdsdu:ignition
+  ---
+  duration_ms: 0.1221
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_underwater_dart:environment
+ok 117 - saved conditions: ht_underwater_dart:environment
+  ---
+  duration_ms: 0.2873
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_baton:injury
+ok 118 - saved conditions: ht_baton:injury
+  ---
+  duration_ms: 0.1178
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beanbag:injury
+ok 119 - saved conditions: ht_beanbag:injury
+  ---
+  duration_ms: 0.1065
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_shrapnel:burst
+ok 120 - saved conditions: ht_shrapnel:burst
+  ---
+  duration_ms: 0.308
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beehive:burst
+ok 121 - saved conditions: ht_beehive:burst
+  ---
+  duration_ms: 0.3505
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_abf:burst
+ok 122 - saved conditions: ht_abf:burst
+  ---
+  duration_ms: 0.1719
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_liquid:delivery
+ok 123 - saved conditions: ht_liquid:delivery
+  ---
+  duration_ms: 0.0985
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tear_gas:resistance
+ok 124 - saved conditions: ht_tear_gas:resistance
+  ---
+  duration_ms: 0.0799
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tear_gas_vomit:resistance
+ok 125 - saved conditions: ht_tear_gas_vomit:resistance
+  ---
+  duration_ms: 0.0817
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_white_phosphorus:removal
+ok 126 - saved conditions: ht_white_phosphorus:removal
+  ---
+  duration_ms: 0.0796
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_airburst:bonus-scatter
+ok 127 - saved conditions: ht_airburst:bonus-scatter
+  ---
+  duration_ms: 0.079
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_airburst:geometry
+ok 128 - saved conditions: ht_airburst:geometry
+  ---
+  duration_ms: 0.076
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_incendiary:inc-ignition
+ok 129 - saved conditions: ht_incendiary:inc-ignition
+  ---
+  duration_ms: 0.0764
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tracer:inc-ignition
+ok 130 - saved conditions: ht_tracer:inc-ignition
+  ---
+  duration_ms: 0.075
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tracer:visibility
+ok 131 - saved conditions: ht_tracer:visibility
+  ---
+  duration_ms: 0.0746
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_heat:era
+ok 132 - saved conditions: ht_heat:era
+  ---
+  duration_ms: 0.073
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_hedp:era
+ok 133 - saved conditions: ht_hedp:era
+  ---
+  duration_ms: 0.0741
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_aphex:incendiary-info
+ok 134 - saved conditions: ht_aphex:incendiary-info
+  ---
+  duration_ms: 0.0759
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_white_phosphorus:hafla-smoke-manual
+ok 135 - saved conditions: ht_white_phosphorus:hafla-smoke-manual
+  ---
+  duration_ms: 0.1005
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_hollow_point:zero-dr
+ok 136 - saved conditions: ht_hollow_point:zero-dr
+  ---
+  duration_ms: 0.0942
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_frangible:zero-dr
+ok 137 - saved conditions: ht_frangible:zero-dr
+  ---
+  duration_ms: 0.0809
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_baton:knockback
+ok 138 - saved conditions: ht_baton:knockback
+  ---
+  duration_ms: 0.0854
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beanbag:knockback
+ok 139 - saved conditions: ht_beanbag:knockback
+  ---
+  duration_ms: 0.081
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_shotshell:b409
+ok 140 - saved conditions: ht_shotshell:b409
+  ---
+  duration_ms: 0.0906
+  type: 'test'
+  ...
+# Subtest: ordinary and unresolved shots have no empty conditions section; NO_CODE needs saved native context
+ok 141 - ordinary and unresolved shots have no empty conditions section; NO_CODE needs saved native context
+  ---
+  duration_ms: 0.2353
+  type: 'test'
+  ...
+# Subtest: HAFLA smoke numbers never propagate to other WP, names, identities, unresolved or guessed recipes
+ok 142 - HAFLA smoke numbers never propagate to other WP, names, identities, unresolved or guessed recipes
+  ---
+  duration_ms: 0.1709
+  type: 'test'
+  ...
+# Subtest: overlapping instructions deduplicate without removing distinct conditions
+ok 143 - overlapping instructions deduplicate without removing distinct conditions
+  ---
+  duration_ms: 0.2848
+  type: 'test'
+  ...
+# Subtest: public/whisper/blind permissions precede even flags, for GM and players
+ok 144 - public/whisper/blind permissions precede even flags, for GM and players
+  ---
+  duration_ms: 0.3556
+  type: 'test'
+  ...
+# Subtest: linked Damage uses exact readable original shot, never identity-copy, latest attack or magazine
+ok 145 - linked Damage uses exact readable original shot, never identity-copy, latest attack or magazine
+  ---
+  duration_ms: 0.2593
+  type: 'test'
+  ...
+# Subtest: no target facts, secret checks, arbitrary IDs, calculations or resource reads in instructions
+ok 146 - no target facts, secret checks, arbitrary IDs, calculations or resource reads in instructions
+  ---
+  duration_ms: 0.2299
+  type: 'test'
+  ...
+# Subtest: RU/EN new keys load through actual translation loader including stale cache
+ok 147 - RU/EN new keys load through actual translation loader including stale cache
+  ---
+  duration_ms: 11.9513
+  type: 'test'
+  ...
+# Subtest: exactly the 33 approved F2 IDs, no F1/F3/F4/DATA expansion
+ok 148 - exactly the 33 approved F2 IDs, no F1/F3/F4/DATA expansion
+  ---
+  duration_ms: 1.8786
+  type: 'test'
+  ...
+# Subtest: ht_rubber_shot:injury read-only adapter and missing-data gate
+ok 149 - ht_rubber_shot:injury read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.8968
+  type: 'test'
+  ...
+# Subtest: ht_canister:elements read-only adapter and missing-data gate
+ok 150 - ht_canister:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.183
+  type: 'test'
+  ...
+# Subtest: ht_shotshell:elements read-only adapter and missing-data gate
+ok 151 - ht_shotshell:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2609
+  type: 'test'
+  ...
+# Subtest: ht_multi_flechette:elements read-only adapter and missing-data gate
+ok 152 - ht_multi_flechette:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1762
+  type: 'test'
+  ...
+# Subtest: ht_duplex:elements read-only adapter and missing-data gate
+ok 153 - ht_duplex:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1636
+  type: 'test'
+  ...
+# Subtest: ht_triplex:elements read-only adapter and missing-data gate
+ok 154 - ht_triplex:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2224
+  type: 'test'
+  ...
+# Subtest: ht_buck_and_ball:allocation read-only adapter and missing-data gate
+ok 155 - ht_buck_and_ball:allocation read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.5593
+  type: 'test'
+  ...
+# Subtest: ht_le:linked read-only adapter and missing-data gate
+ok 156 - ht_le:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.3918
+  type: 'test'
+  ...
+# Subtest: ht_he:linked read-only adapter and missing-data gate
+ok 157 - ht_he:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.4457
+  type: 'test'
+  ...
+# Subtest: ht_efp:linked read-only adapter and missing-data gate
+ok 158 - ht_efp:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.249
+  type: 'test'
+  ...
+# Subtest: ht_heat:linked read-only adapter and missing-data gate
+ok 159 - ht_heat:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1404
+  type: 'test'
+  ...
+# Subtest: ht_hedp:linked read-only adapter and missing-data gate
+ok 160 - ht_hedp:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.122
+  type: 'test'
+  ...
+# Subtest: ht_hesh:linked read-only adapter and missing-data gate
+ok 161 - ht_hesh:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1133
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat:linked read-only adapter and missing-data gate
+ok 162 - ht_ms_heat:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1172
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric:linked read-only adapter and missing-data gate
+ok 163 - ht_thermobaric:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.11
+  type: 'test'
+  ...
+# Subtest: ht_saple:internal read-only adapter and missing-data gate
+ok 164 - ht_saple:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.195
+  type: 'test'
+  ...
+# Subtest: ht_apex:internal read-only adapter and missing-data gate
+ok 165 - ht_apex:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1328
+  type: 'test'
+  ...
+# Subtest: ht_saphe:internal read-only adapter and missing-data gate
+ok 166 - ht_saphe:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1318
+  type: 'test'
+  ...
+# Subtest: ht_saphec:internal read-only adapter and missing-data gate
+ok 167 - ht_saphec:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2422
+  type: 'test'
+  ...
+# Subtest: ht_aphex:internal read-only adapter and missing-data gate
+ok 168 - ht_aphex:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1488
+  type: 'test'
+  ...
+# Subtest: ht_le:fragment-hits read-only adapter and missing-data gate
+ok 169 - ht_le:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.7649
+  type: 'test'
+  ...
+# Subtest: ht_saple:fragment-hits read-only adapter and missing-data gate
+ok 170 - ht_saple:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1608
+  type: 'test'
+  ...
+# Subtest: ht_apex:fragment-hits read-only adapter and missing-data gate
+ok 171 - ht_apex:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1544
+  type: 'test'
+  ...
+# Subtest: ht_he:fragment-hits read-only adapter and missing-data gate
+ok 172 - ht_he:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1397
+  type: 'test'
+  ...
+# Subtest: ht_saphe:fragment-hits read-only adapter and missing-data gate
+ok 173 - ht_saphe:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1835
+  type: 'test'
+  ...
+# Subtest: ht_aphex:fragment-hits read-only adapter and missing-data gate
+ok 174 - ht_aphex:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1879
+  type: 'test'
+  ...
+# Subtest: ht_hedp:fragment-hits read-only adapter and missing-data gate
+ok 175 - ht_hedp:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1291
+  type: 'test'
+  ...
+# Subtest: ht_white_phosphorus:fragment-hits read-only adapter and missing-data gate
+ok 176 - ht_white_phosphorus:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1351
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat:tandem read-only adapter and missing-data gate
+ok 177 - ht_ms_heat:tandem read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1874
+  type: 'test'
+  ...
+# Subtest: ht_hesh:spall read-only adapter and missing-data gate
+ok 178 - ht_hesh:spall read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2061
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric:falloff read-only adapter and missing-data gate
+ok 179 - ht_thermobaric:falloff read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2193
+  type: 'test'
+  ...
+# Subtest: ht_saple:fuze-reliability read-only adapter and missing-data gate
+ok 180 - ht_saple:fuze-reliability read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2091
+  type: 'test'
+  ...
+# Subtest: ht_self_destruct:flight read-only adapter and missing-data gate
+ok 181 - ht_self_destruct:flight read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1764
+  type: 'test'
+  ...
+# Subtest: physical cartridges, NP elements, resolved hits, failures and close-range groups remain separate
+ok 182 - physical cartridges, NP elements, resolved hits, failures and close-range groups remain separate
+  ---
+  duration_ms: 0.5117
+  type: 'test'
+  ...
+# Subtest: Buck-and-Ball uses saved actual hits; never allocates multiple physical charges
+ok 183 - Buck-and-Ball uses saved actual hits; never allocates multiple physical charges
+  ---
+  duration_ms: 0.2201
+  type: 'test'
+  ...
+# Subtest: Follow-Up requires carrier hit AND confirmed penetration; Linked remains independent
+ok 184 - Follow-Up requires carrier hit AND confirmed penetration; Linked remains independent
+  ---
+  duration_ms: 0.2005
+  type: 'test'
+  ...
+# Subtest: fragmentation requires selected target geometry, posture, SM, cover and already confirmed native roll
+ok 185 - fragmentation requires selected target geometry, posture, SM, cover and already confirmed native roll
+  ---
+  duration_ms: 0.2969
+  type: 'test'
+  ...
+# Subtest: the separate fragmentation macro and F2 share range, posture, danger radius and skill arithmetic
+ok 186 - the separate fragmentation macro and F2 share range, posture, danger radius and skill arithmetic
+  ---
+  duration_ms: 0.2217
+  type: 'test'
+  ...
+# Subtest: ERA true/false/unknown: stages XOR total and independent Linked
+ok 187 - ERA true/false/unknown: stages XOR total and independent Linked
+  ---
+  duration_ms: 0.1407
+  type: 'test'
+  ...
+# Subtest: HESH gates nonpenetration and armor, derives maximum from saved formula, preserves fractional result
+ok 188 - HESH gates nonpenetration and armor, derives maximum from saved formula, preserves fractional result
+  ---
+  duration_ms: 0.1485
+  type: 'test'
+  ...
+# Subtest: Thermobaric /2r never /3r or both; zero/unknown and already reduced inputs blocked
+ok 189 - Thermobaric /2r never /3r or both; zero/unknown and already reduced inputs blocked
+  ---
+  duration_ms: 0.162
+  type: 'test'
+  ...
+# Subtest: SAPLE TL5/6/7, no new rolls, saved threshold cannot be bypassed
+ok 190 - SAPLE TL5/6/7, no new rolls, saved threshold cannot be bypassed
+  ---
+  duration_ms: 0.1915
+  type: 'test'
+  ...
+# Subtest: Self-Destruct uses source-confirmed fuse distance, actual path, never halfDamage or target distance
+ok 191 - Self-Destruct uses source-confirmed fuse distance, actual path, never halfDamage or target distance
+  ---
+  duration_ms: 0.117
+  type: 'test'
+  ...
+# Subtest: exact readable source and component, reload/current-magazine/neighbor independence
+ok 192 - exact readable source and component, reload/current-magazine/neighbor independence
+  ---
+  duration_ms: 0.3489
+  type: 'test'
+  ...
+# Subtest: public/whisper/blind checks precede flags and do not bypass visibility for GM
+ok 193 - public/whisper/blind checks precede flags and do not bypass visibility for GM
+  ---
+  duration_ms: 0.1201
+  type: 'test'
+  ...
+# Subtest: all new RU/EN keys pass the actual loader, including an older F1 cache
+ok 194 - all new RU/EN keys pass the actual loader, including an older F1 cache
+  ---
+  duration_ms: 16.6453
+  type: 'test'
+  ...
+# Subtest: GM local input never updates public HTML/flags; player render has no controls or secrets; revocation clears local UI
+ok 195 - GM local input never updates public HTML/flags; player render has no controls or secrets; revocation clears local UI
+  ---
+  duration_ms: 1.1456
+  type: 'test'
+  ...
+# Subtest: F2 adapters cannot create rolls, messages, mutations or read current Actors/settings/targets
+ok 196 - F2 adapters cannot create rolls, messages, mutations or read current Actors/settings/targets
+  ---
+  duration_ms: 0.8721
+  type: 'test'
+  ...
+# Subtest: exactly all 21 F3 IDs, no F4 DATA or unrelated effects
+ok 197 - exactly all 21 F3 IDs, no F4 DATA or unrelated effects
+  ---
+  duration_ms: 1.7608
+  type: 'test'
+  ...
+# Subtest: ht_poison:delivery explicit conditions, read-only arithmetic and missing-data gate
+ok 198 - ht_poison:delivery explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.8484
+  type: 'test'
+  ...
+# Subtest: ht_poison_gas:blast explicit conditions, read-only arithmetic and missing-data gate
+ok 199 - ht_poison_gas:blast explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.2465
+  type: 'test'
+  ...
+# Subtest: ht_illumination:vision explicit conditions, read-only arithmetic and missing-data gate
+ok 200 - ht_illumination:vision explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.2176
+  type: 'test'
+  ...
+# Subtest: ht_illumination:contact explicit conditions, read-only arithmetic and missing-data gate
+ok 201 - ht_illumination:contact explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.291
+  type: 'test'
+  ...
+# Subtest: ht_signal_flare:vision explicit conditions, read-only arithmetic and missing-data gate
+ok 202 - ht_signal_flare:vision explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.1412
+  type: 'test'
+  ...
+# Subtest: ht_signal_flare:contact explicit conditions, read-only arithmetic and missing-data gate
+ok 203 - ht_signal_flare:contact explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.2037
+  type: 'test'
+  ...
+# Subtest: ht_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+ok 204 - ht_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.2497
+  type: 'test'
+  ...
+# Subtest: ht_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+ok 205 - ht_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.3773
+  type: 'test'
+  ...
+# Subtest: ht_colored_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+ok 206 - ht_colored_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.5366
+  type: 'test'
+  ...
+# Subtest: ht_colored_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+ok 207 - ht_colored_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.1735
+  type: 'test'
+  ...
+# Subtest: ht_hot_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+ok 208 - ht_hot_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.146
+  type: 'test'
+  ...
+# Subtest: ht_hot_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+ok 209 - ht_hot_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0938
+  type: 'test'
+  ...
+# Subtest: ht_prism_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+ok 210 - ht_prism_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0651
+  type: 'test'
+  ...
+# Subtest: ht_prism_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+ok 211 - ht_prism_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0673
+  type: 'test'
+  ...
+# Subtest: ht_em_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+ok 212 - ht_em_smoke:cloud explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0585
+  type: 'test'
+  ...
+# Subtest: ht_em_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+ok 213 - ht_em_smoke:sensors explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0512
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas:duration explicit conditions, read-only arithmetic and missing-data gate
+ok 214 - ht_tear_gas:duration explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.122
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas:vision explicit conditions, read-only arithmetic and missing-data gate
+ok 215 - ht_tear_gas:vision explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0668
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas_vomit:duration explicit conditions, read-only arithmetic and missing-data gate
+ok 216 - ht_tear_gas_vomit:duration explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0763
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas_vomit:vision explicit conditions, read-only arithmetic and missing-data gate
+ok 217 - ht_tear_gas_vomit:vision explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0581
+  type: 'test'
+  ...
+# Subtest: ht_white_phosphorus:repeat-burn explicit conditions, read-only arithmetic and missing-data gate
+ok 218 - ht_white_phosphorus:repeat-burn explicit conditions, read-only arithmetic and missing-data gate
+  ---
+  duration_ms: 0.0843
+  type: 'test'
+  ...
+# Subtest: illumination -3 / signal -5, better darkness retained, area and active conditions explicit
+ok 219 - illumination -3 / signal -5, better darkness retained, area and active conditions explicit
+  ---
+  duration_ms: 0.2548
+  type: 'test'
+  ...
+# Subtest: flare contact full seconds 0/1/10/>10 and contact ending, no assumed light duration
+ok 220 - flare contact full seconds 0/1/10/>10 and contact ending, no assumed light duration
+  ---
+  duration_ms: 0.2762
+  type: 'test'
+  ...
+# Subtest: only ordinary smoke radius/5; no inherited timing or invented lifetimes
+ok 221 - only ordinary smoke radius/5; no inherited timing or invented lifetimes
+  ---
+  duration_ms: 0.2892
+  type: 'test'
+  ...
+# Subtest: Smoke -10 and Colored -7 only optical; Hot Prism EM distinct properties without numbers
+ok 222 - Smoke -10 and Colored -7 only optical; Hot Prism EM distinct properties without numbers
+  ---
+  duration_ms: 0.2514
+  type: 'test'
+  ...
+# Subtest: gas uses only path inside cloud: 0/1/2/>4 and -10 floor; unknown stays unknown
+ok 223 - gas uses only path inside cloud: 0/1/2/>4 and -10 floor; unknown stays unknown
+  ---
+  duration_ms: 0.2846
+  type: 'test'
+  ...
+# Subtest: one resistance at a time: MoF / 5MoF, success unknown and ongoing exposure
+ok 224 - one resistance at a time: MoF / 5MoF, success unknown and ongoing exposure
+  ---
+  duration_ms: 0.3198
+  type: 'test'
+  ...
+# Subtest: WP 0/9/10/59/60/61, max six, removal / extinguishing / unknown contact
+ok 225 - WP 0/9/10/59/60/61, max six, removal / extinguishing / unknown contact
+  ---
+  duration_ms: 0.3517
+  type: 'test'
+  ...
+# Subtest: poison never invents substance dose route or successful poisoning; gas components explicit
+ok 226 - poison never invents substance dose route or successful poisoning; gas components explicit
+  ---
+  duration_ms: 0.2246
+  type: 'test'
+  ...
+# Subtest: exact attack and linked component, switching current ammo/reload/repeated calculations cannot mutate saved state
+ok 227 - exact attack and linked component, switching current ammo/reload/repeated calculations cannot mutate saved state
+  ---
+  duration_ms: 0.4582
+  type: 'test'
+  ...
+# Subtest: public whisper blind permission checks precede any flags; inaccessible origin never replaced
+ok 228 - public whisper blind permission checks precede any flags; inaccessible origin never replaced
+  ---
+  duration_ms: 0.1472
+  type: 'test'
+  ...
+# Subtest: HAFLA F1 smoke knowledge retained only for exact saved confirmed identity
+ok 229 - HAFLA F1 smoke knowledge retained only for exact saved confirmed identity
+  ---
+  duration_ms: 0.1907
+  type: 'test'
+  ...
+# Subtest: actual RU EN translation loading refreshes F2 cache, key parity and interpolation
+ok 230 - actual RU EN translation loading refreshes F2 cache, key parity and interpolation
+  ---
+  duration_ms: 14.7919
+  type: 'test'
+  ...
+# Subtest: one existing closed section and F2 form shared with F3, private local properties, rerender clears and revocation removes controls
+ok 231 - one existing closed section and F2 form shared with F3, private local properties, rerender clears and revocation removes controls
+  ---
+  duration_ms: 2.6671
+  type: 'test'
+  ...
+# Subtest: F3 uses shared helpers and cannot create messages rolls timers scene effects or actor writes
+ok 232 - F3 uses shared helpers and cannot create messages rolls timers scene effects or actor writes
+  ---
+  duration_ms: 2.021
+  type: 'test'
+  ...
+1..232
+# tests 232
+# suites 0
+# pass 232
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2434.3394

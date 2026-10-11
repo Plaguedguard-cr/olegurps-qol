@@ -1,0 +1,173 @@
+TAP version 13
+# Subtest: APS exact native imp +P preserves source type, both ranges, ST, cost, RoF, Rcl and folding stock
+ok 1 - APS exact native imp +P preserves source type, both ranges, ST, cost, RoF, Rcl and folding stock
+  ---
+  duration_ms: 2.513
+  type: 'test'
+  ...
+# Subtest: APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots
+ok 2 - APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots
+  ---
+  duration_ms: 5.0745
+  type: 'test'
+  ...
+# Subtest: APS list explains individual manufacturing/safety approval in RU and EN
+ok 3 - APS list explains individual manufacturing/safety approval in RU and EN
+  ---
+  duration_ms: 66.5544
+  type: 'test'
+  ...
+# Subtest: underwater Malf stays separate from +P and half-D uses the native application control
+ok 4 - underwater Malf stays separate from +P and half-D uses the native application control
+  ---
+  duration_ms: 1.035
+  type: 'test'
+  ...
+# Subtest: old shot environment, admission and native Damage remain immutable after settings, magazine and reload
+ok 5 - old shot environment, admission and native Damage remain immutable after settings, magazine and reload
+  ---
+  duration_ms: 3.8104
+  type: 'test'
+  ...
+# Subtest: APS actual physical round consumption persists once across repeated attacks and magazine switch
+ok 6 - APS actual physical round consumption persists once across repeated attacks and magazine switch
+  ---
+  duration_ms: 4.391
+  type: 'test'
+  ...
+1..0
+# Subtest: tests\\ht-match.test.mjs
+ok 2 - tests\\ht-match.test.mjs
+  ---
+  duration_ms: 321.4574
+  type: 'test'
+  ...
+# Subtest: B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted
+ok 8 - B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted
+  ---
+  duration_ms: 1.7044
+  type: 'test'
+  ...
+# Subtest: powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot
+ok 9 - powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot
+  ---
+  duration_ms: 35.9137
+  type: 'test'
+  ...
+# Subtest: KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+ok 10 - KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision
+  ---
+  duration_ms: 10.8307
+  type: 'test'
+  ...
+# Subtest: APS numerical profile is complete but world policy does not confirm individual construction
+ok 11 - APS numerical profile is complete but world policy does not confirm individual construction
+  ---
+  duration_ms: 0.5797
+  type: 'test'
+  ...
+# Subtest: 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+not ok 12 - 511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact
+  ---
+  duration_ms: 431.7671
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht-plus-p-category-g.test.mjs:134:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    9 !== 10
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 10
+  actual: 9
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht-plus-p-category-g.test.mjs:140:93)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..0
+# Subtest: tests\\ht-plus-p.test.mjs
+ok 5 - tests\\ht-plus-p.test.mjs
+  ---
+  duration_ms: 339.764
+  type: 'test'
+  ...
+1..0
+# Subtest: tests\\ht-subsonic.test.mjs
+ok 6 - tests\\ht-subsonic.test.mjs
+  ---
+  duration_ms: 327.5261
+  type: 'test'
+  ...
+# Subtest: legacy +P policy list is frozen; neither GM approval nor policy admits a new unproven pair
+ok 15 - legacy +P policy list is frozen; neither GM approval nor policy admits a new unproven pair
+  ---
+  duration_ms: 4.846
+  type: 'test'
+  ...
+# Subtest: +P preserves 1d(0.5) pi-, transforms both ranges/ST once, no fake price
+not ok 16 - +P preserves 1d(0.5) pi-, transforms both ranges/ST once, no fake price
+  ---
+  duration_ms: 5.8627
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\lemat-physical-ammunition.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+
+    false !== true
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/lemat-physical-ammunition.test.mjs:48:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.start (node:internal/test_runner/test:944:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:296:17)
+  ...
+# Subtest: +P needs both scoped GM safety and prior loading check; revoke affects future use
+not ok 17 - +P needs both scoped GM safety and prior loading check; revoke affects future use
+  ---
+  duration_ms: 4.0327
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\lemat-physical-ammunition.test.mjs:60:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'P1PressureProofRequired'
+    - 'plus-p-loading-check-required'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'plus-p-loading-check-required'
+  actual: 'P1PressureProofRequired'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/lemat-physical-ammunition.test.mjs:63:10)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    node:internal/test_runner/test:981:31
+    node:internal/process/task_queues:151:7
+    AsyncResource.runInAsyncScope (node:async_hooks:214:14)
+    AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 14
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 782.5439

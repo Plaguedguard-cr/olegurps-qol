@@ -1,0 +1,4665 @@
+{
+  "version": 1,
+  "scope": "LeMat physical identity correction; 511 +P pairs only",
+  "full32704AuditRun": false,
+  "examined": 511,
+  "previousWorldReady": 363,
+  "existingReadyPreserved": true,
+  "existing27LoadingConfirmationsPreserved": true,
+  "excludedEFStillClosed": true,
+  "E": 12,
+  "F": 98,
+  "numericalG": 10,
+  "nativeGGAReadyAfterGM": 10,
+  "individualGMG": 3,
+  "incompleteG": 1,
+  "worldPolicyReady": 370,
+  "loadingGMRequired": 27,
+  "potentialAfterAllRequiredGMDecisions": 400,
+  "officialStatuses": {
+    "undetermined": 511
+  },
+  "rows": [
+    {
+      "modeId": "W10jqOZ0kjeSuoY3C",
+      "ammoId": "ht_5_66x39mm",
+      "name": "TsNIITochMash APS, 5.66x39mm",
+      "native": {
+        "name": "TsNIITochMash APS, 5.66x39mm",
+        "damage": "5d imp",
+        "range": "750/3,200",
+        "st": "9†",
+        "acc": "2",
+        "rof": "10",
+        "rcl": "3",
+        "bulk": "-5*"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": false,
+      "individualGMRequired": true,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash APS, 5.66x39mm",
+        "damage": "5d+2 imp",
+        "range": "825/3520",
+        "st": "10†",
+        "acc": "2",
+        "rof": "10",
+        "rcl": "3",
+        "bulk": "-5*"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_5_66x39mm",
+        "nativeDamage": "5d imp",
+        "construction": "underwater_dart",
+        "source": "HT85/117/169",
+        "projectileEffectsIncluded": true,
+        "individualGMRequired": true,
+        "underwaterDistanceMultiplier": 25,
+        "maximumDepthFeet": 130,
+        "automatic": true,
+        "modeId": "W10jqOZ0kjeSuoY3C"
+      }
+    },
+    {
+      "modeId": "W5biN11nvUhQ00ewl",
+      "ammoId": "ht_13x92mmsr_mauser",
+      "name": "Mauser T-Gew18, 13x92mmSR",
+      "native": {
+        "name": "Mauser T-Gew18, 13x92mmSR",
+        "damage": "5dx2(2) pi",
+        "range": "2,100/8,800",
+        "st": "16B†",
+        "acc": "5",
+        "rof": "1",
+        "rcl": "6",
+        "bulk": "-8"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": -1,
+          "application": "manual-GM"
+        },
+        {
+          "id": "MinimumSTSupport",
+          "st": "18B†",
+          "application": "manual-GM-existing-support-rules"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "Mauser T-Gew18, 13x92mmSR",
+        "damage": "11d(2) pi",
+        "range": "2310/9680",
+        "st": "18B†",
+        "acc": "5",
+        "rof": "1",
+        "rcl": "6",
+        "bulk": "-8"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_13x92mmsr_mauser",
+        "nativeDamage": "5dx2(2) pi",
+        "construction": "aphc",
+        "source": "HT112/120/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "W5biN11nvUhQ00ewl"
+      }
+    },
+    {
+      "modeId": "W7i4ZauQl8q2o5nTt",
+      "ammoId": "ht_410_3_10_4x76mmr",
+      "name": "American Derringer Model 1, .410-gauge 3\"",
+      "native": {
+        "name": "American Derringer Model 1, .410-gauge 3\"",
+        "damage": "1d-3(0.5) pi-",
+        "range": "60/650",
+        "st": "7",
+        "acc": null,
+        "rof": "2x65",
+        "rcl": "1",
+        "bulk": "-1"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": false,
+      "nativeGGAProfileSafeAfterGM": false,
+      "worldPolicyReady": false,
+      "individualGMRequired": false,
+      "manualGMConditions": [],
+      "incompleteReason": "plus-p-low-damage-roundtrip-unverified",
+      "effective": null,
+      "provenance": null
+    },
+    {
+      "modeId": "WApJkhMAYa4wlXViK",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "name": "FN Five-seveN, 5.7x28mm",
+      "native": {
+        "name": "FN Five-seveN, 5.7x28mm",
+        "damage": "2d+2(2) pi-",
+        "range": "170/1,700",
+        "st": "8",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "FN Five-seveN, 5.7x28mm",
+        "damage": "3d-1(2) pi-",
+        "range": "187/1870",
+        "st": "9",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_5_7x28mm_fabrique_nationale",
+        "nativeDamage": "2d+2(2) pi-",
+        "construction": "aphc",
+        "source": "HT101-102/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WApJkhMAYa4wlXViK"
+      }
+    },
+    {
+      "modeId": "WdzSSShGT_yv4ctOi",
+      "ammoId": "olegurps_lemat_18g_shot_charge",
+      "name": "Girard LeMat, .42 Caplock",
+      "native": {
+        "name": "Girard LeMat, .42 Caplock",
+        "damage": "1d(0.5) pi-",
+        "range": "30/600",
+        "st": "11",
+        "acc": "1",
+        "rof": "1x11",
+        "rcl": "1",
+        "bulk": "-3"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": false,
+      "individualGMRequired": true,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": -1,
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "Girard LeMat, .42 Caplock",
+        "damage": "1d(0.5) pi-",
+        "range": "33/660",
+        "st": "12",
+        "acc": "1",
+        "rof": "1x11",
+        "rcl": "1",
+        "bulk": "-3",
+        "ammunitionProjectileKind": "shot"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "olegurps_lemat_18g_shot_charge",
+        "nativeDamage": "1d(0.5) pi-",
+        "construction": "powder_shot",
+        "source": "HT94/165-166; OleGURPS physical identity correction v1",
+        "projectileEffectsIncluded": true,
+        "individualGMRequired": true,
+        "modeId": "WdzSSShGT_yv4ctOi"
+      }
+    },
+    {
+      "modeId": "WecVKS0hiwdjXu_uS",
+      "ammoId": "ht_9x21mm_gyurza",
+      "name": "TsNIITochMash SR-2 Veresk, 9x21mm",
+      "native": {
+        "name": "TsNIITochMash SR-2 Veresk, 9x21mm",
+        "damage": "3d-1(2) pi-",
+        "range": "170/1,800",
+        "st": "8†",
+        "acc": "3",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-4*"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash SR-2 Veresk, 9x21mm",
+        "damage": "3d(2) pi-",
+        "range": "187/1980",
+        "st": "9†",
+        "acc": "3",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-4*"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_9x21mm_gyurza",
+        "nativeDamage": "3d-1(2) pi-",
+        "construction": "aphc",
+        "source": "HT124/126/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WecVKS0hiwdjXu_uS"
+      }
+    },
+    {
+      "modeId": "WgOt4XUnNzTOpdiAO",
+      "ammoId": "ht_9x39mm",
+      "name": "TsNIITochMash AS Val, 9x39mm",
+      "native": {
+        "name": "TsNIITochMash AS Val, 9x39mm",
+        "damage": "3d(2) pi-",
+        "range": "400/1,700",
+        "st": "8†",
+        "acc": "4",
+        "rof": "13",
+        "rcl": "2",
+        "bulk": "-5*"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPSubsonicUnverified",
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash AS Val, 9x39mm",
+        "damage": "3d+1(2) pi-",
+        "range": "440/1870",
+        "st": "9†",
+        "acc": "4",
+        "rof": "13",
+        "rcl": "2",
+        "bulk": "-5*"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_9x39mm",
+        "nativeDamage": "3d(2) pi-",
+        "construction": "aphc",
+        "source": "HT118/120/167",
+        "projectileEffectsIncluded": true,
+        "originalSubsonic": true,
+        "modeId": "WgOt4XUnNzTOpdiAO"
+      }
+    },
+    {
+      "modeId": "WHsI3V0zdU2TUI6w7",
+      "ammoId": "ht_476_enfield_12_05x22mmr",
+      "name": "Lancaster Howdah, .476 Enfield",
+      "native": {
+        "name": "Lancaster Howdah, .476 Enfield",
+        "damage": "2d(0.5) pi++",
+        "range": "110/1,200",
+        "st": "10",
+        "acc": "1",
+        "rof": "3",
+        "rcl": "3",
+        "bulk": "-2"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": -1,
+          "application": "manual-GM"
+        },
+        {
+          "id": "ObjectWithoutDR",
+          "dr": 1,
+          "application": "manual-GM"
+        },
+        {
+          "id": "NativeHPExpansion",
+          "application": "optional-GM",
+          "source": "HT91/166-167"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "Lancaster Howdah, .476 Enfield",
+        "damage": "2d+1(0.5) pi++",
+        "range": "121/1320",
+        "st": "11",
+        "acc": "1",
+        "rof": "3",
+        "rcl": "3",
+        "bulk": "-2"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_476_enfield_12_05x22mmr",
+        "nativeDamage": "2d(0.5) pi++",
+        "construction": "hollow_point",
+        "source": "HT91/166-167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WHsI3V0zdU2TUI6w7"
+      }
+    },
+    {
+      "modeId": "WK6cr08HEjTSsvYNS",
+      "ammoId": "ht_14_5x114mm",
+      "name": "ZiD KPV, 14.5x114mm",
+      "native": {
+        "name": "ZiD KPV, 14.5x114mm",
+        "damage": "8dx2(2) pi inc",
+        "range": "2,100/8,800",
+        "st": "23M",
+        "acc": "6",
+        "rof": "10",
+        "rcl": "2",
+        "bulk": "-9"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": false,
+      "individualGMRequired": true,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "MinimumSTSupport",
+          "st": "25M",
+          "application": "manual-GM-existing-support-rules"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "ZiD KPV, 14.5x114mm",
+        "damage": "6dx3(2) pi inc",
+        "range": "2310/9680",
+        "st": "25M",
+        "acc": "6",
+        "rof": "10",
+        "rcl": "2",
+        "bulk": "-9"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_14_5x114mm",
+        "nativeDamage": "8dx2(2) pi inc",
+        "construction": "aphci_tracer",
+        "source": "HT134/137/167",
+        "projectileEffectsIncluded": true,
+        "individualGMRequired": true,
+        "modeId": "WK6cr08HEjTSsvYNS"
+      }
+    },
+    {
+      "modeId": "WTrwxX4jwWz6xKiPz",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "name": "FN P90, 5.7x28mm",
+      "native": {
+        "name": "FN P90, 5.7x28mm",
+        "damage": "3d-1(2) pi-",
+        "range": "180/1,900",
+        "st": "8†",
+        "acc": "4",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-3"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "FN P90, 5.7x28mm",
+        "damage": "3d(2) pi-",
+        "range": "198/2090",
+        "st": "9†",
+        "acc": "4",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-3"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_5_7x28mm_fabrique_nationale",
+        "nativeDamage": "3d-1(2) pi-",
+        "construction": "aphc",
+        "source": "HT124/126/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WTrwxX4jwWz6xKiPz"
+      }
+    },
+    {
+      "modeId": "WYmXQkUoq1luUajT-",
+      "ammoId": "ht_9x21mm_gyurza",
+      "name": "TsNIITochMash SPS, 9x21mm",
+      "native": {
+        "name": "TsNIITochMash SPS, 9x21mm",
+        "damage": "3d-2(2) pi-",
+        "range": "160/1,800",
+        "st": "9",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash SPS, 9x21mm",
+        "damage": "3d-1(2) pi-",
+        "range": "176/1980",
+        "st": "10",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_9x21mm_gyurza",
+        "nativeDamage": "3d-2(2) pi-",
+        "construction": "aphc",
+        "source": "HT101-102/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WYmXQkUoq1luUajT-"
+      }
+    }
+  ],
+  "all": [
+    {
+      "modeId": "W09RarXVw2-ZAi-dC",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6bfzGQAngvdHu-iw",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6dgs1HSukosk0BM2",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WK4QvDEDBTOGUOZ9D",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WL0SlLUJxX2V_3KVh",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WM8_OFbrJKJFziyfC",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXXqZ-u9AGxWAhfph",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WlalvGJfGaAfR_YFJ",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmGJcfhuw4OrotOVu",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WwlfY-FYthqkLvByK",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WxsT21EBYb72XKYe_",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXGgxRVtDYfcdD22K",
+      "ammoId": "ht_22_short_5_6x11mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W_qCz-4f9xBW5XqJh",
+      "ammoId": "ht_22_short_5_6x11mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WwLCyTO7UDlBX86vl",
+      "ammoId": "ht_22_short_5_6x11mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WybYM0GxT_py4tXcJ",
+      "ammoId": "ht_22_short_5_6x11mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-XOyXGVN7aug_D_r",
+      "ammoId": "ht_25_acp_6_35x16mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WBpX1soaGNjp-7TDQ",
+      "ammoId": "ht_25_acp_6_35x16mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHmfXni9O7QkIO36y",
+      "ammoId": "ht_25_acp_6_35x16mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUUPnRzYsh54XEY7W",
+      "ammoId": "ht_25_acp_6_35x16mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WaIDKb3cN40p-9pJu",
+      "ammoId": "ht_25_acp_6_35x16mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUa6q0U8DfLWW8IT1",
+      "ammoId": "ht_28_caplock_colt_number_1",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WREKsCxb6kpU4keCD",
+      "ammoId": "ht_30_m1_carbine_7_62x33mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WRo1BTu7pQk0WxgAn",
+      "ammoId": "ht_30_m1_carbine_7_62x33mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wo7dO-37A3CCJDwsA",
+      "ammoId": "ht_30_m1_carbine_7_62x33mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WqWiU1yxWLA1RKcU7",
+      "ammoId": "ht_30_m1_carbine_7_62x33mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WzMHqaLuLi0-V8wvH",
+      "ammoId": "ht_30_m1_carbine_7_62x33mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W--hm5sQd8NdWGMlU",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0Ws0K-qakQrD0pWU",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2DhzO12BUjBKhKOx",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WLefdaBCPNzoLCRyK",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WPI_3y08oT2uPiAtc",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQ0E0_YSCx7fv8d01",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WV8Hjb3lAhifueE6Z",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1mX6sbXxGI3rSSHZ",
+      "ammoId": "ht_30_30_winchester_7_62x51mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W3Hor3fRkS2w1RDZy",
+      "ammoId": "ht_30_30_winchester_7_62x51mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8ePHcBW1sdR_E43o",
+      "ammoId": "ht_30_40_krag_7_62x59mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wqipo2S6551e8pwD0",
+      "ammoId": "ht_30_40_krag_7_62x59mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHvh-K1SQx-2Dj-D1",
+      "ammoId": "ht_31_caplock_allen",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-yYnKJQASpYFgZ6d",
+      "ammoId": "ht_32_acp_7_65x17mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WMdhRij3ZnWvFkZ2H",
+      "ammoId": "ht_32_acp_7_65x17mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbPD4Hj3WBtIJkBk2",
+      "ammoId": "ht_32_acp_7_65x17mmsr_browning",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wa4MrXFBGkWYnx4_K",
+      "ammoId": "ht_32_long_rifle_7_92x24mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wngr1Pfad1JLOVHAq",
+      "ammoId": "ht_35_remington_8_9x49mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wp-vonDUa92J-YhcP",
+      "ammoId": "ht_36_caplock_colt_number_5",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WaLn8b6K0uZ4x_Pv4",
+      "ammoId": "ht_36_caplock_m1851_navy",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WYlHD3dssdpDzoReo",
+      "ammoId": "ht_38_acp_9x23mmsr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wt4TS3igH63ihWA-p",
+      "ammoId": "ht_38_long_colt",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W3hQZ8DOwAOjpCFiE",
+      "ammoId": "ht_38_s_w_9x20mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTxOUBfDLkJZPyxQ6",
+      "ammoId": "ht_38_s_w_9x20mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVkjHEWekH0FlQpNp",
+      "ammoId": "ht_38_s_w_9x20mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W3K__qTbXVLeeILny",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WFr2UvvYqJjacnF0J",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGzlhKJ9A_d-LrvCX",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHDjicfM33QKdP30o",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WW_U2Ut8vXGTamfId",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WX-0TcsD-0DYqMmX0",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WiXPUUQ_X8aGPv4Ma",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WyJR8eqMWOViNc5TJ",
+      "ammoId": "ht_38_special_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WML331j83c5TcrQJv",
+      "ammoId": "ht_38_super_auto_9x23mmsr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbC5c-WF26NfwrDly",
+      "ammoId": "ht_38_volcanic",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-YmLwkNyorv_bjIQ",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6cabkraqFJdhyq6e",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHiTyXQlj8i7zCCV0",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WNzuH5h1-8b19oero",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTO8eR0v6376ijQq0",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WV8whUX7kofEYjC8Z",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVMFl2tSMdMrfjc5f",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WX-K4MCjulZicdVjb",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WZ-Mf-C2Fq2ZrU-D6",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WaPRoajSzw8lR6ejK",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WgDZJ7Gu41b-dUMEa",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wh4arEH6Ws1GvuBnk",
+      "ammoId": "ht_40_s_w_10x21mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WCkWdl3YZOTZX7SwG",
+      "ammoId": "ht_41_short_remington_10x12mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbrBqEG-vOeKVREkf",
+      "ammoId": "ht_42_caplock_lemat",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WdzSSShGT_yv4ctOi",
+      "ammoId": "olegurps_lemat_18g_shot_charge",
+      "historicalAmmoId": "ht_42_caplock_lemat",
+      "ready": false,
+      "previousCategory": "G",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WCvO5jsfgCFg0frSn",
+      "ammoId": "ht_44_caplock_deringer",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WNyWKWygpNZeB7CMQ",
+      "ammoId": "ht_44_caplock_m1847_walker",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WieLLhfSXAHQaHEyK",
+      "ammoId": "ht_44_caplock_m1848_dragoon",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WxKbK_Eu9lPCj1K8X",
+      "ammoId": "ht_44_caplock_m1860_army",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WkW4j2qsHsKq1cdBy",
+      "ammoId": "ht_44_colt_11_25x28mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvWJr83p09uqR5RR0",
+      "ammoId": "ht_44_colt_11_25x28mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wgf9xZZEEIzXcTEbn",
+      "ammoId": "ht_44_henry_10_7x22mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WIr6tilwCeeJXBvcA",
+      "ammoId": "ht_44_magnum_10_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WM-hPtetvDsbsBjBd",
+      "ammoId": "ht_44_magnum_10_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTadZ47v0MD21lmVk",
+      "ammoId": "ht_44_magnum_10_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Ww5uVCQTmwaTVQ48Y",
+      "ammoId": "ht_44_magnum_10_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WwjKmfKLzJirbfwuk",
+      "ammoId": "ht_44_magnum_10_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W29grs_klgYt6bgoD",
+      "ammoId": "ht_44_russian_11x25mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wxi1b6NRfsJxqbotx",
+      "ammoId": "ht_44_special_10_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WzaEgR-kwdhso6lo2",
+      "ammoId": "ht_44_special_10_9x29mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6vZXA9dlJjpQDXFQ",
+      "ammoId": "ht_44_40_winchester_10_8x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WKjArsFQSUGLMvkGp",
+      "ammoId": "ht_44_40_winchester_10_8x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W15nd9-QW9etYb3K8",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2XK4tRkq_VMpDEWh",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W46pI6gRg589NlkDU",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WAccyzBly6OhDAmfe",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WJLbnGEQGJ5ouFB85",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WMdf_7Q_ulFE0JQTl",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WPEEpfwDCRgu6PlWp",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQ2903VV9IlRQmokU",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQpxF0E3QV_Ov_6PH",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WYheeWjkm9YieUNJm",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WaJ5pflm_f_Pfl85F",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wd-WP-qVnEffh2Miw",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wdy6D2i4F4lrckvQ-",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Weabg66VWNz5qUeh6",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WliIB9c1qqDRcjVLN",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmLLw2-i9bsAvV_9h",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WudV5n156oexJH2aF",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wz0dbWCNn-ZLDZhp6",
+      "ammoId": "ht_45_acp_11_43x23mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wv8XXYHOKVmG7Ut9V",
+      "ammoId": "ht_45_flintlock_kentucky",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wy8AXZVkgy2NT6Y8I",
+      "ammoId": "ht_45_flintlock_wogdon",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WywMyQVLtlhYFp0zg",
+      "ammoId": "ht_45_gap_11_43x19mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WDr3xbILdqBzbwDka",
+      "ammoId": "ht_45_long_colt",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WIoIaMUXecXYsSkUS",
+      "ammoId": "ht_45_long_colt",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbDlTUNcqJkmW6KLu",
+      "ammoId": "ht_45_long_colt",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WoELTMe_KWWK4grLz",
+      "ammoId": "ht_45_long_colt",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHhZNAISU1vzUf43d",
+      "ammoId": "ht_45_s_w_11_43x28mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXnYfPw4-NHFTzH_J",
+      "ammoId": "ht_45_s_w_11_43x28mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WJ05GMyv_cFqKDD43",
+      "ammoId": "ht_45_70_springfield_11_43x53mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WWp3zBONFoJvOmVoW",
+      "ammoId": "ht_45_70_springfield_11_43x53mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmsqDHop4SNBXwvF7",
+      "ammoId": "ht_45_70_springfield_11_43x53mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHPF1shJmA3paq7FP",
+      "ammoId": "ht_50_action_express_12_7x33mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W4EbC4v3uPyORRhTC",
+      "ammoId": "ht_50_browning_12_7x99mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WR0KjQaYwU2kPV2uB",
+      "ammoId": "ht_50_browning_12_7x99mm",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WdNlv4XvVH5vNfQoh",
+      "ammoId": "ht_50_browning_12_7x99mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WDWkkGBfWxF1q6IX-",
+      "ammoId": "ht_50_flintlock_collier",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WIS98HklUhOna8rxP",
+      "ammoId": "ht_50_flintlock_north_west",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wcqm7GckDXN5OU3ow",
+      "ammoId": "ht_50_90_sharps_12_9x64mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1RtCz7rsBdesoNIt",
+      "ammoId": "ht_54_caplock_elgin_cutlass",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHw1_oupiVfQhRQFT",
+      "ammoId": "ht_54_flintlock_hall_m1819",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WiFqR_zzeksR2S8TS",
+      "ammoId": "ht_56_flintlock_tower_sea_service",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WnWndTNgDebQ8O-Jh",
+      "ammoId": "ht_56_56_spencer_14x22mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGZlqJxbZOxd6FR4h",
+      "ammoId": "ht_68_fn",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WH5nCycr1PbQiptsh",
+      "ammoId": "ht_68_paintball",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WP5wVvAsOPTy2Nxcz",
+      "ammoId": "ht_75_flintlock_brown_bess",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WMj5eviUtsrGfgUyQ",
+      "ammoId": "ht_75_flintlock_rigby",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WW1fVT2VBDy4d6fe6",
+      "ammoId": "ht_175_bb",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGK9g3-H8Vl91frsr",
+      "ammoId": "ht_223_remington",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGYpwc2IP7FXKkMPk",
+      "ammoId": "ht_223_remington",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WU3ttrP4QxXLhA0qi",
+      "ammoId": "ht_223_remington",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbfyhnJ3SGLA4tyZL",
+      "ammoId": "ht_223_remington",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WxHPARGUxMlsQD_-t",
+      "ammoId": "ht_223_remington",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WRziobjV56cvaJtG2",
+      "ammoId": "ht_300_winchester_magnum_7_62x66mmb",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wn6vWZmf30XK2i2l6",
+      "ammoId": "ht_300_winchester_magnum_7_62x66mmb",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1h1yefMQlw39LdSu",
+      "ammoId": "ht_303_british_7_7x56mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WEfDDHbmPWR6jGqmA",
+      "ammoId": "ht_303_british_7_7x56mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WKravhw8VEUHZPhT6",
+      "ammoId": "ht_303_british_7_7x56mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wm2JBVVpOM0-nNwL_",
+      "ammoId": "ht_303_british_7_7x56mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUUPXVnYQI61MZ71z",
+      "ammoId": "ht_338_lapua_magnum_8_6x70mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1FMPB_-58qp_bH-M",
+      "ammoId": "ht_357_magnum_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WLOkLDu4hL8T0dc9X",
+      "ammoId": "ht_357_magnum_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUuX7pOltKw-dPK2s",
+      "ammoId": "ht_357_magnum_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Whg-Sn7a9O1c_bmod",
+      "ammoId": "ht_357_magnum_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsxVJoqaBh0FQiyRB",
+      "ammoId": "ht_357_magnum_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wui9dD8lrb7NYPvTj",
+      "ammoId": "ht_357_magnum_9x33mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2JbpFBgeF1ukHTpF",
+      "ammoId": "ht_357_sig_9x22mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W4yAuHhVoWgVvzHAY",
+      "ammoId": "ht_357_sig_9x22mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8YdttR7MaTcNnn5j",
+      "ammoId": "ht_357_sig_9x22mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WB1p0Uc3XjeRZsDXz",
+      "ammoId": "ht_380_acp_9x17mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTKjCFqIxBs6cOTKl",
+      "ammoId": "ht_380_acp_9x17mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WfG_n3m7PaLmFLqdW",
+      "ammoId": "ht_380_acp_9x17mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsB1KAsMbJBkVph0e",
+      "ammoId": "ht_380_acp_9x17mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WwxzrsmZpPRXuZiWh",
+      "ammoId": "ht_380_acp_9x17mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7i4ZauQl8q2o5nTt",
+      "ammoId": "ht_410_3_10_4x76mmr",
+      "ready": false,
+      "previousCategory": "G",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXHYTTiCc7fZFgPSf",
+      "ammoId": "ht_442_caplock_adams",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1es0mAsaYKDZsrQ4",
+      "ammoId": "ht_442_ric_11_2x17mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WDj98H35lyr2Xwxa1",
+      "ammoId": "ht_442_ric_11_2x17mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQZcdGPjCQc6E-hIZ",
+      "ammoId": "ht_442_ric_11_2x17mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WouXh18BfvLk7XExV",
+      "ammoId": "ht_442_ric_11_2x17mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6Dqot53hqUVuaULq",
+      "ammoId": "ht_444_marlin_10_9x57mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-PCYDdP__XMIsSDB",
+      "ammoId": "ht_450_adams_12_05x17mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W_41ZI6bmWao0lct_",
+      "ammoId": "ht_450_adams_12_05x17mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wqw9ynxoKTWKDc7tu",
+      "ammoId": "ht_450_adams_12_05x17mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W4uGW3dwS_SyWVDID",
+      "ammoId": "ht_450_martini_henry_11_43x59mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WSJuLiCx2Rx0G30ZM",
+      "ammoId": "ht_450_martini_henry_11_43x59mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wc-RW7eeAYdU4iDtv",
+      "ammoId": "ht_450_martini_henry_11_43x59mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WCrQxgOhkZ-WXpuUa",
+      "ammoId": "ht_454_casull_11_43x35mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W_pqfozrRCXgV2rQG",
+      "ammoId": "ht_454_casull_11_43x35mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W78KgLIxUW5hFs0sY",
+      "ammoId": "ht_455_webley_11_5x19mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WLpvH6aw1hZ_-ddUx",
+      "ammoId": "ht_455_webley_11_5x19mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsRKq-NgR2cuug6_y",
+      "ammoId": "ht_455_webley_11_5x19mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvuPESpNg2SCsbe6A",
+      "ammoId": "ht_455_webley_11_5x19mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHsI3V0zdU2TUI6w7",
+      "ammoId": "ht_476_enfield_12_05x22mmr",
+      "ready": true,
+      "previousCategory": "G",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wu7UWtwR8QzdVjgdK",
+      "ammoId": "ht_577_caplock_enfield",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W9A6TLlo4QDDlblin",
+      "ammoId": "ht_600_nitro_express_15_2x76mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WT4TakBghx3mdDSQi",
+      "ammoId": "ht_625_flintlock_baker",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1Bp03uJ4CF0eLAwH",
+      "ammoId": "ht_1_5_caplock_greener",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGBtuNvGU-MIglwDM",
+      "ammoId": "ht_1_5_caplock_greener",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W9aaejQdnPrtlwB0n",
+      "ammoId": "ht_2_2_25",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WzR7GE1ZY6PB7velA",
+      "ammoId": "ht_2_36_60mm_heat_rocket",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0SNlqCZsG2ELZcET",
+      "ammoId": "ht_2_5_caplock_screw_gun",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1sOR_4P7u68Tp7yn",
+      "ammoId": "ht_2_5_caplock_screw_gun",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1miyD-ozfViISq7K",
+      "ammoId": "ht_4_6x30mm_royal_ordnance",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2D6hUo_3AxfdzWRL",
+      "ammoId": "ht_4_73x33mm_dynamit_nobel",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wx5hG0xpMwMkJUVOE",
+      "ammoId": "ht_5_6x57mmb",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WO9XZem8u8ze77NNs",
+      "ammoId": "ht_5_7x26mm_usel",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WApJkhMAYa4wlXViK",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "ready": true,
+      "previousCategory": "G",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTrwxX4jwWz6xKiPz",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "ready": true,
+      "previousCategory": "G",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WCuGNpizvy_KMbwY1",
+      "ammoId": "ht_5_8x42mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WWRT5lCGsw9SBHOS1",
+      "ammoId": "ht_5_8x42mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wom2eGfmDBN32HdHG",
+      "ammoId": "ht_5_8x42mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1aiSW__wUVYjMdyC",
+      "ammoId": "ht_5_45x39mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-PivAjQkqhT550aS",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7VFPxmI09n3hIWSK",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W82oDY970UdeqLXTF",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8nyMh9wp0-YMrQgF",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WERYVPQjzYZysGpwB",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGJgRQusTscOtoLC9",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHiXUQOQL8v3zYBFj",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WLWzrupTqkO7AXHkX",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WRcHdC7105AdPEAbZ",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXQAtfVZ1zercQD4O",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WdCxvQ8MLsZV4yGuZ",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WdZcoNOwG2kMvylfC",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WiZhWI-pSbz2OtP0t",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjeoCP7w_RJo-1OdD",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjxcIRDrnsZQ8MCNP",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wk8ybQ3GYbu97bo_b",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wkvf5salwlKpkRx_c",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wlk1hvahF3JF9aBB8",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wme1S3pVFDxxhisGh",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wno30wU0-IPCLuepq",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WoVSeTRr9rqEFnHwC",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wph9E58RJJTiF9tSE",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Ws3ZrUwDs2DN0Z6ia",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsIRCKnjnsrR0DQ7X",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wt0IaqpNoXEr06fZx",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WupxN38vGTaXuFmbr",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WzmoO0I87foCYHbkb",
+      "ammoId": "ht_5_56x45mm_nato",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W10jqOZ0kjeSuoY3C",
+      "ammoId": "ht_5_66x39mm",
+      "ready": false,
+      "previousCategory": "G",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WYsPcSVrxbU7h17ty",
+      "ammoId": "ht_6_5x50mmsr_arisaka",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHjz6HhlYW7ilkb1b",
+      "ammoId": "ht_6x60mm_lee_236_navy",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WKPe4b1Soi40QAcNo",
+      "ammoId": "ht_7_62x25mm_tokarev",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WMYxMhqZN6OmsuQyQ",
+      "ammoId": "ht_7_62x25mm_tokarev",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-G5nSih4b8lXCgaa",
+      "ammoId": "ht_7_62x39mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W27s4Lm8QlkKVKUPn",
+      "ammoId": "ht_7_62x39mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wb8SIGKOZA3jt1MCn",
+      "ammoId": "ht_7_62x39mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbR0ilzM6RVDHmuhO",
+      "ammoId": "ht_7_62x39mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WxdYVcD_jgs5IadGI",
+      "ammoId": "ht_7_62x39mmr_nagant",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WygM0H43p8jHUByNj",
+      "ammoId": "ht_7_62x39mmr_nagant",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wr_7MnorYDlPSb2qW",
+      "ammoId": "ht_7_62x42mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0G73E-h5aj9OqIyw",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W3R5zAT7d7c4EI3PD",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W4ckQUYTEdP0YaU7G",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W51IPVW1VF65UgiM7",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7NbEcfFgXIANdsma",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WDrRkGAeByYLY-gav",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WDuLHeSESEHYP3l4F",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHJPQ0uIGzkde9L-h",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTaoOvZOeF60s8VYH",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WV3R9h_xsF40dTXLH",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WZqqz9x1jrGdNQIok",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WcvBBqBuNcmWhRRVE",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WhQTP2P4KY4yewyBD",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WiXxCd6nInqht8sYk",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wj3jJL9MMv0gR2ixs",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wj74C2b_fXo7MuveG",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvZ14MmBYRpaft4EB",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wxm8TWSvu5UFTAaDn",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WyE7nyHp-W1fNasb-",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WzpajmMegwEjhOBLp",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQgekTRLF7N0S2wfu",
+      "ammoId": "ht_7_62x54mmr_mosin_nagant",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXeKV09s2F9CHqR8X",
+      "ammoId": "ht_7_62x54mmr_mosin_nagant",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WeuH1omYvuaH-g8uD",
+      "ammoId": "ht_7_62x54mmr_mosin_nagant",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WwvM29AW3o6fFZBkI",
+      "ammoId": "ht_7_62x54mmr_mosin_nagant",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7kWIaYEyk3VPM3vf",
+      "ammoId": "ht_7_63x25mm_mauser",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUuyjkl_6dTsAlyzH",
+      "ammoId": "ht_7_63x25mm_mauser",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WKxB8NEFsciakZ4WT",
+      "ammoId": "ht_7_65x21mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WOAVv7Lzxnt8Igg5H",
+      "ammoId": "ht_7_65x21mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wu5Whx4wvt59CcQwz",
+      "ammoId": "ht_7_92x33mm_kurz",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0q5G7oCXQQa42en0",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7Pw1dkvqMbqu6Ek4",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WJF_WB-sGJ_QZMbYF",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVirGSQXwsYyoP-Yr",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wa5SFVHKjwkzv826J",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WlQsQ_9ixJsVqq-r_",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wuw3_j_sWP64AKYTH",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WuYm4833VWLPfe0u0",
+      "ammoId": "ht_8_bore_21_2x70mmr",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WKFPz-nzC4KhLohgj",
+      "ammoId": "ht_8x21mm_nambu",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7DXAyw1tueHsXZQY",
+      "ammoId": "ht_8x50mmr_lebel",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WK-GQxoayg8qh4aX_",
+      "ammoId": "ht_8x50mmr_lebel",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WW-e5DSNxCichNdb_",
+      "ammoId": "ht_8x58mmr_krag",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5-46vK8kU8reRK3R",
+      "ammoId": "ht_9x18mm_makarov",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WMsMPc-EZOe7YnMhY",
+      "ammoId": "ht_9x18mm_makarov",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WNiROwhIqVoYhtrJ4",
+      "ammoId": "ht_9x18mm_makarov",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WlIHeqw2f-west5fN",
+      "ammoId": "ht_9x18mm_makarov",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WoXnodKpTmgV0UqG3",
+      "ammoId": "ht_9x18mm_makarov",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0N36nb2ZKQPl6ndx",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0QWktb1ew78lPGkn",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0i0Fn4KqdUyUmlNY",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1doZcasYO-1Xw3Lf",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2VS8k6NwADvbkRto",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2Y8WZZXy8xg0UuUC",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2ZOaITMo9qSzDm_P",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W4VuUN_QriHCpdWS1",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5DbL5HxYhRy3RXoh",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5T9aOLRqhTEDEksY",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5fZ7_fysToYf8yqs",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WBtBhBxQfAna-k7Cs",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WCdFs--IBlhnpnilg",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGGxxw9Sx0f_sx0_1",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WI2W4a1s8A56kLD-l",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WIl1zs-QJtDk_sKvz",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WJsYRYGKch4nV4YGl",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WJvGoiGlxfVF-WCIZ",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WLDhiiLKolviLIIzC",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WMhedIcbIO-lNlOwj",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WNoqybFFGMyhg5yaZ",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WPFfmD0XKeR7yyASB",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQlSHRld58pe4tzD-",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTg7s_LzUNgvr_hgk",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUAYfRizmzUOnnbI_",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUSjSNU6CIj9N_fJ-",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUrtEybrN1tJ9zBY-",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVkEBs2gUJFYlFuUx",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVlsgC5OKlIaSLq2t",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXylGES5wDCIkJ_fD",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WZ4aI-IE9A1WBuY6M",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WZaXtKj2WZ1KPS-Iu",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wapl3E1_vfsL9VNHk",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbnE3daAhdcuS6uWh",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WcM2JnjvRU5MPufha",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WcuqCAfFgppiCdhxg",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wgj4Us8jMaPgd3wRM",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WheHdatdDdtKEbeXI",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjmRGEW1qZOs4gze4",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wk1qcvWesYxpYDoZr",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wnz51aV_OKNhZsy4v",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WpACBMVJjP4kIdUVH",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsJogsHOPPkuud8my",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WuRgdEoO2Y7hYOI0H",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvKQctidMRVYJO9En",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Ww9qXLufPV8uXb5rB",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WzrrfhCoFWsHNAQc5",
+      "ammoId": "ht_9x19mm_parabellum",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WYmXQkUoq1luUajT-",
+      "ammoId": "ht_9x21mm_gyurza",
+      "ready": true,
+      "previousCategory": "G",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WecVKS0hiwdjXu_uS",
+      "ammoId": "ht_9x21mm_gyurza",
+      "ready": true,
+      "previousCategory": "G",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7NtnojR74un6e1j2",
+      "ammoId": "ht_9x39mm",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WgOt4XUnNzTOpdiAO",
+      "ammoId": "ht_9x39mm",
+      "ready": true,
+      "previousCategory": "G",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5SODFegn4OMYs4UD",
+      "ammoId": "ht_10_gauge_2_875",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Www5W81knFu4hYYOx",
+      "ammoId": "ht_10_gauge_2_875",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6pp7LagtZqWGDuG2",
+      "ammoId": "ht_10x25mm_auto",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Ww5FF75SLFtGZljle",
+      "ammoId": "ht_10x25mm_auto",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WyG0aPhLA9dppEFQr",
+      "ammoId": "ht_10x25mm_auto",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wky8s05M39xyz5R9o",
+      "ammoId": "ht_11_gauge_flintlock",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1xGIbX_unsyx-KbP",
+      "ammoId": "ht_11_75mm_girandoni",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8jb0ohwbCzgsZNVb",
+      "ammoId": "ht_11_75mm_girandoni",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WKT9zNotvcDaP4IFZ",
+      "ammoId": "ht_11_75mm_girandoni",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WP540ispfeq9zdOvG",
+      "ammoId": "ht_11mm_syringe",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1Q8gBZKX8k1yM5-e",
+      "ammoId": "ht_12_gauge_2_5_18_5x63mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W19ooSM10ivSwlXSP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2EHajHoWWSlF8B6z",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8gU1gCeSF_EHefLt",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W9ki0p3eZ0dV761l1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WG5D9pES9jpedWQBK",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGhQ3o1Zo4QfXJRmy",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHlBefAVM5F3s_Fhx",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WIKNLT8GtI6laTFbn",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WSu2puv__x3S7ILvR",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUVxWN3HdmeKHmjv1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVWyvqKW9KEoQ0dnM",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WWpYkEgZSXCKAroUP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WedfHYdjmjQy4JdzJ",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WepHIL4DWLPsoO8HC",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wku81Y3GfqPAjHV-Y",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WkzlenFdgtlwesK-q",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmJ_QjDBYJH7Tmona",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsrbLU9pLyDPhDI5-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wu7wxc-g32vPxG2B-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvUFCokYczEuOg49b",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wx10NaVSr1cp1bwKv",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W19ooSM10ivSwlXSP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2EHajHoWWSlF8B6z",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8gU1gCeSF_EHefLt",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W9ki0p3eZ0dV761l1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WG5D9pES9jpedWQBK",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGhQ3o1Zo4QfXJRmy",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WHlBefAVM5F3s_Fhx",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WIKNLT8GtI6laTFbn",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WSu2puv__x3S7ILvR",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WUVxWN3HdmeKHmjv1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVWyvqKW9KEoQ0dnM",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WWpYkEgZSXCKAroUP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WedfHYdjmjQy4JdzJ",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WepHIL4DWLPsoO8HC",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wku81Y3GfqPAjHV-Y",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WkzlenFdgtlwesK-q",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmJ_QjDBYJH7Tmona",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsrbLU9pLyDPhDI5-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wu7wxc-g32vPxG2B-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvUFCokYczEuOg49b",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wx10NaVSr1cp1bwKv",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6LVJ8YGACnNB5h-S",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W9LBQ9LeKd3uB9nSZ",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WH-pkGPARCbK4CP4h",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WLp8euYFMi9Oikpjp",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WT-PUA77JBHLiLTPo",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WaPnC1R8aLAvhe3rt",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WcLG_XsJVbZ6CIT4p",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmeBcFEjqKNri5FAm",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WrL0yynp2-Mco1WYC",
+      "ammoId": "ht_12_pounder_cannonlock",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsqzzKPVwGadUU9QG",
+      "ammoId": "ht_12_pounder_cannonlock",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W45zOQxg0xXIp2hxb",
+      "ammoId": "ht_12_7x108mm",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wv21tKeFELEdfFze1",
+      "ammoId": "ht_12_7x108mm",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WIc4Ns-vv2VghSDqd",
+      "ammoId": "ht_12x16mm_lefaucheux",
+      "ready": true,
+      "previousCategory": null,
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WhGAE0Z1tyyGl34FX",
+      "ammoId": "ht_13x36mm_gyrojet",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5biN11nvUhQ00ewl",
+      "ammoId": "ht_13x92mmsr_mauser",
+      "ready": true,
+      "previousCategory": "G",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WK6cr08HEjTSsvYNS",
+      "ammoId": "ht_14_5x114mm",
+      "ready": false,
+      "previousCategory": "G",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W4x4K44HSiDnu5oLc",
+      "ammoId": "ht_15_43x54mm_dreyse",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjHbAzrvvWjrpEASy",
+      "ammoId": "ht_16_gauge_2_75_16_8x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WlcsjkTqAP3N05Ei4",
+      "ammoId": "ht_16_gauge_2_75_16_8x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WWkZF16jD0a5c-Dyz",
+      "ammoId": "ht_16_gauge_flintlock",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WeBGf99CjHVRnWDfQ",
+      "ammoId": "ht_17_1mm_flintlock_an_ix",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WOAL2ladqiRbTuvRU",
+      "ammoId": "ht_17_5mm_flintlock_mle_1777",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQA_T9dsgFXSWFQ23",
+      "ammoId": "ht_17_5mm_flintlock_mle_1777",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WqY83i5bO6LS6jWEk",
+      "ammoId": "ht_20_gauge_2_5_15_56x63mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQTnqCZPMYRO8JrrL",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WZvZ89iM4Kxz6xpoN",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsR6R-QL06g6aAm50",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WziWTyBAQ6_3yc8fX",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "ready": true,
+      "previousCategory": "B",
+      "reason": null,
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTib4vXWKSUmPWP6k",
+      "ammoId": "ht_20_gauge_caplock",
+      "ready": false,
+      "previousCategory": "B",
+      "reason": "plus-p-loading-check-required",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W3XKx2nmjyMR3f--t",
+      "ammoId": "ht_20x28mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvrpMRqf0Tnhusk6r",
+      "ammoId": "ht_20x82mm_mauser",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WA1zvEOOHkJ_26JoH",
+      "ammoId": "ht_20x102mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmNW9QyeeukNizlqb",
+      "ammoId": "ht_20x110mmrb_oerlikon",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8SnCoO5T--E1wBBc",
+      "ammoId": "ht_20x138mmb_solothurn",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQvihJXyzMcGr_AMx",
+      "ammoId": "ht_25_59mmb",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WEJ0YjDgppj47ztpy",
+      "ammoId": "ht_25x137mm_oerlikon",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WhcXEtCOb-yikzW5Z",
+      "ammoId": "ht_26_5x103mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W8NtWTppB7YCrgoHY",
+      "ammoId": "ht_30x28mmb",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WI9EWrbCRSJOCS_y4",
+      "ammoId": "ht_37x122mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5ue7mdQjYiq37-GU",
+      "ammoId": "ht_37x249mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WO9uok2PsuzLZEZiy",
+      "ammoId": "ht_37x249mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WV56lTDugarCzOy27",
+      "ammoId": "ht_40mm_vog_25",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W1M9lGdrsAfm7TxWb",
+      "ammoId": "ht_40x46mmsr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WBg7hpnW95SX83X-c",
+      "ammoId": "ht_40x46mmsr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WJQk1KpyOURTwDD-N",
+      "ammoId": "ht_40x46mmsr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WJXTfbxB1SZjSS7Au",
+      "ammoId": "ht_40x46mmsr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WRsTPkZGHcA3M7U89",
+      "ammoId": "ht_40x46mmsr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WfDPZYy7vM6ACz7CZ",
+      "ammoId": "ht_40x46mmsr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WfKVSTpyoKdcWDxWT",
+      "ammoId": "ht_40x53mmsr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WG8bjQC68EroOADcT",
+      "ammoId": "ht_52mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmOf6LQbx98JzSXvW",
+      "ammoId": "ht_57x305mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WK3vp0aO9wJv3YMCH",
+      "ammoId": "ht_60mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WyLYbojvuqJNxuHPr",
+      "ammoId": "ht_60mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WqrA6F34qCSB55zsB",
+      "ammoId": "ht_75x350mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WvY6ltvMRjfEF1Ong",
+      "ammoId": "ht_75x350mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGZxADvBCpHROAXBh",
+      "ammoId": "ht_75x495mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WnxBxOiZI72w-LPSP",
+      "ammoId": "ht_75x495mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WaKoI8cusvmvifpBt",
+      "ammoId": "ht_76_2x539mmr_3",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WiFrWigu8AFQjdKNb",
+      "ammoId": "ht_76_2x539mmr_3",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2jyNQVffyd763wOP",
+      "ammoId": "ht_81mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W08-SWxWsChhEpODr",
+      "ammoId": "ht_82mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WE-Z3LEEKio-zJrip",
+      "ammoId": "ht_84x250mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W2U2Ykv9f_Jlm5vWh",
+      "ammoId": "ht_87x94mmr_hotchkiss",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7s1SN0zW4F1jtY3P",
+      "ammoId": "ht_87x94mmr_hotchkiss",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WI-Eoje5ZQ1_l9Wfo",
+      "ammoId": "ht_87x94mmr_hotchkiss",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wu94ttcL6j1Ne6EYn",
+      "ammoId": "ht_87x94mmr_hotchkiss",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W6By-DiNQSjB5Bwyw",
+      "ammoId": "ht_105x371mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WTfjxk9pQS1aUPulq",
+      "ammoId": "ht_105x371mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wpd8TnU28Zdf_aUPF",
+      "ammoId": "ht_106x607mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wqz4fWoBhIMqYY_IY",
+      "ammoId": "ht_106x607mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WXjyIkZ69TeMij1fF",
+      "ammoId": "ht_120mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W7O-Gcku1u0PJ5ymg",
+      "ammoId": "ht_125x408mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WDIUbJ_aRPUMCZ10H",
+      "ammoId": "ht_125x408mmr",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WRwQrZzXYH77YFY74",
+      "ammoId": "ht_hk_p11_7_62x36mm_underwater_dart",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wrh0TvNTEz9NqfkEf",
+      "ammoId": "ht_specific_mas_an_xiii_17_1_flintlock",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WG9Di1O8YSHqyXEgE",
+      "ammoId": "ht_specific_north_cheney_1779_69_flintlock",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5xvN3zJ9M6eAwjhZ",
+      "ammoId": "ht_specific_remington_new_model_army_44_caplock",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WLtxCaJ16zBNXOM6B",
+      "ammoId": "ht_specific_ss11_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-eXi2wwaUlJ18L9n",
+      "ammoId": "ht_specific_katyusha_m13_he",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wr3VDL3Z6SR3KCz3K",
+      "ammoId": "ht_specific_hafla_dm34_35mm_wp",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGykc_h_j4Ojyn6fu",
+      "ammoId": "ht_specific_pzf3_110mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WYtq-OBcCaZp7ShJJ",
+      "ammoId": "ht_specific_milan_103_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W-KvhNTS2RaLIZvSw",
+      "ammoId": "ht_specific_at4_84mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WQymu6IvqV_kTwiqz",
+      "ammoId": "ht_specific_aim9l_abf",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WCjHOf4oONWBafSAa",
+      "ammoId": "ht_specific_stinger_fim92a_heab",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wx13jpOUxRC_YeDo6",
+      "ammoId": "ht_specific_hale_9pr_he",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WbiMQvLGw4VhGQmTc",
+      "ammoId": "ht_specific_pf30_150mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WCN9YaUpioje5KB5t",
+      "ammoId": "ht_specific_m72a2_66mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WmG_jTzAKmvFs5myW",
+      "ammoId": "ht_specific_tow_bgm71a_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WVY4ygmbFY_RiJbQz",
+      "ammoId": "ht_specific_rpoa_93mm_thermobaric",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wm1zVlIxEdhIN7Bdc",
+      "ammoId": "ht_specific_rpg2_82mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W61HbVOrJ-DAQGkHW",
+      "ammoId": "ht_specific_rpg7_85mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5KdhhEf7mZ29gKhz",
+      "ammoId": "ht_specific_rpg7_40mm_he",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WeXQmnN9negUgW4dp",
+      "ammoId": "ht_specific_malyutka_m_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wddtb03yTIO9BFQVe",
+      "ammoId": "ht_specific_m10_m8_he",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WhyC2rpq5gO7kJvPq",
+      "ammoId": "ht_specific_m20_89mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjD-b9M0j2HJAcxyy",
+      "ammoId": "ht_specific_hydra_mk66_he",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WWhhyDtXaDfdAFrfB",
+      "ammoId": "ht_specific_armbrust_67mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WfQbQ4kVYxR2_9Ji1",
+      "ammoId": "ht_specific_dragon_127_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W0nH5aEN5CsOLWS2t",
+      "ammoId": "ht_specific_javelin_fgm148a_mseat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W4PbNNnd3bbXT_tH2",
+      "ammoId": "ht_specific_dtat_mr60cs_60mm_gun_mortar_shell",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Weia0I-DWGGdsAJnA",
+      "ammoId": "ht_specific_dtat_mr60cs_60mm_gun_mortar_shell",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "Wd25u9Begix9h_smN",
+      "ammoId": "ht_specific_taser_mx_animal_taser",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WsRdm1ykv3AFJUMGr",
+      "ammoId": "ht_specific_taser_taser_m18",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WhZTKRbxWw3dUNLFi",
+      "ammoId": "ht_specific_taser_taser_m26",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5gRSZbBIrYN9XoUY",
+      "ammoId": "ht_specific_taser_taser_x26",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WBUF21Cjj4FcgwAM2",
+      "ammoId": "ht_specific_taser_tasertron_te_76",
+      "ready": false,
+      "previousCategory": "E",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5KdhhEf7mZ29gKhz",
+      "ammoId": "ht_specific_rpg7_93mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W61HbVOrJ-DAQGkHW",
+      "ammoId": "ht_specific_rpg7_93mm_heat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5KdhhEf7mZ29gKhz",
+      "ammoId": "ht_specific_rpg7_105mm_msheat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W61HbVOrJ-DAQGkHW",
+      "ammoId": "ht_specific_rpg7_105mm_msheat",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W5KdhhEf7mZ29gKhz",
+      "ammoId": "ht_specific_rpg7_93mm_thermobaric",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "W61HbVOrJ-DAQGkHW",
+      "ammoId": "ht_specific_rpg7_93mm_thermobaric",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WGykc_h_j4Ojyn6fu",
+      "ammoId": "ht_specific_pzf3_110mm_tandem",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjD-b9M0j2HJAcxyy",
+      "ammoId": "ht_specific_hydra_70mm_heavy_he",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjD-b9M0j2HJAcxyy",
+      "ammoId": "ht_specific_hydra_70mm_hedp",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjD-b9M0j2HJAcxyy",
+      "ammoId": "ht_specific_hydra_70mm_wp",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjD-b9M0j2HJAcxyy",
+      "ammoId": "ht_specific_hydra_70mm_beehive",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    },
+    {
+      "modeId": "WjD-b9M0j2HJAcxyy",
+      "ammoId": "ht_specific_hydra_laser_guided_70mm",
+      "ready": false,
+      "previousCategory": "F",
+      "reason": "unconfirmed-compatibility",
+      "rulesStatus": "undetermined"
+    }
+  ]
+}

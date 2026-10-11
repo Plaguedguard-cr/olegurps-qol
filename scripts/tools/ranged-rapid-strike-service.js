@@ -40,7 +40,7 @@ export function resolveRangedRapidStrike({ actor, attack, governingSpecialty, go
   const governing = governingSkill?.family === "guns" ? governingSkill
     : governingSkill ? null : matchingSkills.length === 1 ? matchingSkills[0] : null;
   let best = null;
-  if (governing) for (const entry of flattenEntries(actor?.system?.skills)) {
+  if (governing && governing.learned !== false) for (const entry of flattenEntries(actor?.system?.skills)) {
     if (![entry?.name, entry?.originalName].some(name => QUICK_SHOT_NAME.test(String(name ?? "")))) continue;
     if (techniqueSpecialty(entry) !== specialty) continue;
     const relative = relativeLevel(entry);

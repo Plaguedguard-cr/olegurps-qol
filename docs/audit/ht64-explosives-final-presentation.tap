@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: ht_he actual published round is available under strict policy with immutable native components
+ok 1 - ht_he actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 35.0977
+  type: 'test'
+  ...
+# Subtest: ht_heat actual published round is available under strict policy with immutable native components
+ok 2 - ht_heat actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 58.4622
+  type: 'test'
+  ...
+# Subtest: ht_hedp actual published round is available under strict policy with immutable native components
+ok 3 - ht_hedp actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 68.3182
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat actual published round is available under strict policy with immutable native components
+ok 4 - ht_ms_heat actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 47.8625
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric actual published round is available under strict policy with immutable native components
+ok 5 - ht_thermobaric actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 18.6663
+  type: 'test'
+  ...
+# Subtest: unknown cost, contradictory payload relations and known TL cannot be silently resolved
+ok 6 - unknown cost, contradictory payload relations and known TL cannot be silently resolved
+  ---
+  duration_ms: 1.6841
+  type: 'test'
+  ...
+# Subtest: new P4 RU EN translations load through the loader and every option has a localized label
+ok 7 - new P4 RU EN translations load through the loader and every option has a localized label
+  ---
+  duration_ms: 5.4097
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 463.5

@@ -1,0 +1,20 @@
+[
+  "ammunition-effects",
+  "ammunition-compatibility-service",
+  "catalog-service",
+  "ht-option-eligibility",
+  "ht-preservation",
+  "ht-plus-p-category-b",
+  "ht-plus-p-category-g",
+  "ht-match",
+  "ht-frangible",
+  "ht-subsonic",
+  "aps-environment-plus-p",
+  "lemat-physical-ammunition",
+  "ammo-inventory",
+  "attack-profile",
+  "damage-shot-link",
+  "targeted-attack-defaults",
+  "ranged-hit-result",
+  "ranged-rapid-strike"
+]

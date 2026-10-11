@@ -1,0 +1,1084 @@
+TAP version 13
+# Subtest: P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+ok 1 - P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads
+  ---
+  duration_ms: 7.5362
+  type: 'test'
+  ...
+# Subtest: DU historical native Damage survives reload and current design/weapon changes without ignition dice
+ok 2 - DU historical native Damage survives reload and current design/weapon changes without ignition dice
+  ---
+  duration_ms: 1.39
+  type: 'test'
+  ...
+# Subtest: historical LeMat .42 central snapshot retains native Damage after physical identity correction
+ok 3 - historical LeMat .42 central snapshot retains native Damage after physical identity correction
+  ---
+  duration_ms: 0.5769
+  type: 'test'
+  ...
+# Subtest: embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+ok 4 - embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage
+  ---
+  duration_ms: 0.5233
+  type: 'test'
+  ...
+# Subtest: P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+ok 5 - P4 linked and tandem stage Damage stays native, source-bound and resource-free after reload
+  ---
+  duration_ms: 1.7845
+  type: 'test'
+  ...
+# Subtest: A and B Damage in reverse order use their own shots after magazine and last-roll changes
+ok 6 - A and B Damage in reverse order use their own shots after magazine and last-roll changes
+  ---
+  duration_ms: 1.3742
+  type: 'test'
+  ...
+# Subtest: repeat Damage creates independent events for the same source, including a reused event object
+ok 7 - repeat Damage creates independent events for the same source, including a reused event object
+  ---
+  duration_ms: 0.9108
+  type: 'test'
+  ...
+# Subtest: interleaved native awaits keep two actors and modes independent and use the clicked Actor
+ok 8 - interleaved native awaits keep two actors and modes independent and use the clicked Actor
+  ---
+  duration_ms: 1.4685
+  type: 'test'
+  ...
+# Subtest: native multiple/combine dialog captures source before its first await and DOM event cleanup
+ok 9 - native multiple/combine dialog captures source before its first await and DOM event cleanup
+  ---
+  duration_ms: 0.7549
+  type: 'test'
+  ...
+# Subtest: two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+ok 10 - two modes of one weapon retain independent source IDs through close/reopen and serialized chat
+  ---
+  duration_ms: 0.9907
+  type: 'test'
+  ...
+# Subtest: pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+ok 11 - pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage
+  ---
+  duration_ms: 0.8321
+  type: 'test'
+  ...
+# Subtest: deleting the source during async dispatch creates unlinked native damage without guessing
+ok 12 - deleting the source during async dispatch creates unlinked native damage without guessing
+  ---
+  duration_ms: 0.3293
+  type: 'test'
+  ...
+# Subtest: marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+ok 13 - marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted
+  ---
+  duration_ms: 1.5135
+  type: 'test'
+  ...
+# Subtest: public, GM, blind, self and custom whisper settings keep native audience and content
+ok 14 - public, GM, blind, self and custom whisper settings keep native audience and content
+  ---
+  duration_ms: 1.7931
+  type: 'test'
+  ...
+# Subtest: private source uses a permission-checked reference and never copies its snapshot to public flags
+ok 15 - private source uses a permission-checked reference and never copies its snapshot to public flags
+  ---
+  duration_ms: 0.8003
+  type: 'test'
+  ...
+# Subtest: inaccessible source, Actor permission and cancellation preserve native restrictions
+ok 16 - inaccessible source, Actor permission and cancellation preserve native restrictions
+  ---
+  duration_ms: 0.3544
+  type: 'test'
+  ...
+# Subtest: unrelated messages with identical formula and Actor cannot acquire an in-flight link
+ok 17 - unrelated messages with identical formula and Actor cannot acquire an in-flight link
+  ---
+  duration_ms: 0.3902
+  type: 'test'
+  ...
+# Subtest: native creation failure is not retried; metadata failure never changes the damage result
+ok 18 - native creation failure is not retried; metadata failure never changes the damage result
+  ---
+  duration_ms: 0.9489
+  type: 'test'
+  ...
+# Subtest: install is idempotent and uninstall preserves other wrappers
+ok 19 - install is idempotent and uninstall preserves other wrappers
+  ---
+  duration_ms: 0.165
+  type: 'test'
+  ...
+# Subtest: adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+ok 20 - adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations
+  ---
+  duration_ms: 9.5863
+  type: 'test'
+  ...
+# Subtest: effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+ok 21 - effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines
+  ---
+  duration_ms: 1.4977
+  type: 'test'
+  ...
+# Subtest: private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+ok 22 - private HP snapshot keeps native audience and exact formula without copying private data to damage flags
+  ---
+  duration_ms: 0.4193
+  type: 'test'
+  ...
+# Subtest: two Actors and modes keep different transformed native damage through overlapping dispatch
+ok 23 - two Actors and modes keep different transformed native damage through overlapping dispatch
+  ---
+  duration_ms: 0.9769
+  type: 'test'
+  ...
+# Subtest: adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+ok 24 - adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup
+  ---
+  duration_ms: 0.7708
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot ordinary without changing action or mechanics
+ok 25 - native Damage label uses completed shot ordinary without changing action or mechanics
+  ---
+  duration_ms: 0.7026
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot AP without changing action or mechanics
+ok 26 - native Damage label uses completed shot AP without changing action or mechanics
+  ---
+  duration_ms: 0.5286
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot APHC without changing action or mechanics
+ok 27 - native Damage label uses completed shot APHC without changing action or mechanics
+  ---
+  duration_ms: 0.4416
+  type: 'test'
+  ...
+# Subtest: native Damage label uses completed shot HP without changing action or mechanics
+ok 28 - native Damage label uses completed shot HP without changing action or mechanics
+  ---
+  duration_ms: 0.6746
+  type: 'test'
+  ...
+# Subtest: Damage labels survive magazine changes, chat reopening and serialized reload independently
+ok 29 - Damage labels survive magazine changes, chat reopening and serialized reload independently
+  ---
+  duration_ms: 0.8066
+  type: 'test'
+  ...
+# Subtest: legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+ok 30 - legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label
+  ---
+  duration_ms: 1.7251
+  type: 'test'
+  ...
+# Subtest: blind and whisper label visibility follows current source permissions
+ok 31 - blind and whisper label visibility follows current source permissions
+  ---
+  duration_ms: 0.5812
+  type: 'test'
+  ...
+# Subtest: Damage label is plain text and foreign actions retain their native labels
+ok 32 - Damage label is plain text and foreign actions retain their native labels
+  ---
+  duration_ms: 0.3583
+  type: 'test'
+  ...
+# Subtest: ht_apex has three independent native Damage paths with source identity and no auto effects
+ok 33 - ht_apex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 1.7366
+  type: 'test'
+  ...
+# Subtest: ht_aphex has three independent native Damage paths with source identity and no auto effects
+ok 34 - ht_aphex has three independent native Damage paths with source identity and no auto effects
+  ---
+  duration_ms: 1.4122
+  type: 'test'
+  ...
+# Subtest: secondary B/A/repeat stay immutable after magazine changes and use source permissions
+ok 35 - secondary B/A/repeat stay immutable after magazine changes and use source permissions
+  ---
+  duration_ms: 1.4522
+  type: 'test'
+  ...
+# Subtest: incomplete explosive snapshots block every component instead of silently rolling baseline
+ok 36 - incomplete explosive snapshots block every component instead of silently rolling baseline
+  ---
+  duration_ms: 0.5291
+  type: 'test'
+  ...
+# Subtest: private explosive components keep source-only metadata and reject unauthorized access
+ok 37 - private explosive components keep source-only metadata and reject unauthorized access
+  ---
+  duration_ms: 1.7976
+  type: 'test'
+  ...
+# Subtest: standalone D uses completed shot after source weapon removal and never needs an Actor attack
+ok 38 - standalone D uses completed shot after source weapon removal and never needs an Actor attack
+  ---
+  duration_ms: 0.4285
+  type: 'test'
+  ...
+# Subtest: standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+ok 39 - standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks
+  ---
+  duration_ms: 0.7696
+  type: 'test'
+  ...
+# Subtest: approved matrix contracts: exactly 23 F1 and five NO_CODE IDs
+ok 40 - approved matrix contracts: exactly 23 F1 and five NO_CODE IDs
+  ---
+  duration_ms: 1.2519
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_frangible:overpenetration
+ok 41 - saved conditions: ht_frangible:overpenetration
+  ---
+  duration_ms: 0.6927
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apdu:ignition
+ok 42 - saved conditions: ht_apdu:ignition
+  ---
+  duration_ms: 0.1623
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apdsdu:ignition
+ok 43 - saved conditions: ht_apdsdu:ignition
+  ---
+  duration_ms: 0.2515
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_apfsdsdu:ignition
+ok 44 - saved conditions: ht_apfsdsdu:ignition
+  ---
+  duration_ms: 0.0994
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_underwater_dart:environment
+ok 45 - saved conditions: ht_underwater_dart:environment
+  ---
+  duration_ms: 0.2362
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_baton:injury
+ok 46 - saved conditions: ht_baton:injury
+  ---
+  duration_ms: 0.0903
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beanbag:injury
+ok 47 - saved conditions: ht_beanbag:injury
+  ---
+  duration_ms: 0.0715
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_shrapnel:burst
+ok 48 - saved conditions: ht_shrapnel:burst
+  ---
+  duration_ms: 0.2369
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beehive:burst
+ok 49 - saved conditions: ht_beehive:burst
+  ---
+  duration_ms: 0.7898
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_abf:burst
+ok 50 - saved conditions: ht_abf:burst
+  ---
+  duration_ms: 0.1402
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_liquid:delivery
+ok 51 - saved conditions: ht_liquid:delivery
+  ---
+  duration_ms: 0.0705
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tear_gas:resistance
+ok 52 - saved conditions: ht_tear_gas:resistance
+  ---
+  duration_ms: 0.0519
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tear_gas_vomit:resistance
+ok 53 - saved conditions: ht_tear_gas_vomit:resistance
+  ---
+  duration_ms: 0.0526
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_white_phosphorus:removal
+ok 54 - saved conditions: ht_white_phosphorus:removal
+  ---
+  duration_ms: 0.0521
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_airburst:bonus-scatter
+ok 55 - saved conditions: ht_airburst:bonus-scatter
+  ---
+  duration_ms: 0.0482
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_airburst:geometry
+ok 56 - saved conditions: ht_airburst:geometry
+  ---
+  duration_ms: 0.0569
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_incendiary:inc-ignition
+ok 57 - saved conditions: ht_incendiary:inc-ignition
+  ---
+  duration_ms: 0.0901
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tracer:inc-ignition
+ok 58 - saved conditions: ht_tracer:inc-ignition
+  ---
+  duration_ms: 0.0665
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_tracer:visibility
+ok 59 - saved conditions: ht_tracer:visibility
+  ---
+  duration_ms: 0.0581
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_heat:era
+ok 60 - saved conditions: ht_heat:era
+  ---
+  duration_ms: 0.0571
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_hedp:era
+ok 61 - saved conditions: ht_hedp:era
+  ---
+  duration_ms: 0.0553
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_aphex:incendiary-info
+ok 62 - saved conditions: ht_aphex:incendiary-info
+  ---
+  duration_ms: 0.0547
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_white_phosphorus:hafla-smoke-manual
+ok 63 - saved conditions: ht_white_phosphorus:hafla-smoke-manual
+  ---
+  duration_ms: 0.0764
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_hollow_point:zero-dr
+ok 64 - saved conditions: ht_hollow_point:zero-dr
+  ---
+  duration_ms: 0.0703
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_frangible:zero-dr
+ok 65 - saved conditions: ht_frangible:zero-dr
+  ---
+  duration_ms: 0.0583
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_baton:knockback
+ok 66 - saved conditions: ht_baton:knockback
+  ---
+  duration_ms: 0.0632
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_beanbag:knockback
+ok 67 - saved conditions: ht_beanbag:knockback
+  ---
+  duration_ms: 0.0574
+  type: 'test'
+  ...
+# Subtest: saved conditions: ht_shotshell:b409
+ok 68 - saved conditions: ht_shotshell:b409
+  ---
+  duration_ms: 0.07
+  type: 'test'
+  ...
+# Subtest: ordinary and unresolved shots have no empty conditions section; NO_CODE needs saved native context
+ok 69 - ordinary and unresolved shots have no empty conditions section; NO_CODE needs saved native context
+  ---
+  duration_ms: 0.1923
+  type: 'test'
+  ...
+# Subtest: HAFLA smoke numbers never propagate to other WP, names, identities, unresolved or guessed recipes
+ok 70 - HAFLA smoke numbers never propagate to other WP, names, identities, unresolved or guessed recipes
+  ---
+  duration_ms: 0.1397
+  type: 'test'
+  ...
+# Subtest: overlapping instructions deduplicate without removing distinct conditions
+ok 71 - overlapping instructions deduplicate without removing distinct conditions
+  ---
+  duration_ms: 0.1859
+  type: 'test'
+  ...
+# Subtest: public/whisper/blind permissions precede even flags, for GM and players
+ok 72 - public/whisper/blind permissions precede even flags, for GM and players
+  ---
+  duration_ms: 0.2748
+  type: 'test'
+  ...
+# Subtest: linked Damage uses exact readable original shot, never identity-copy, latest attack or magazine
+ok 73 - linked Damage uses exact readable original shot, never identity-copy, latest attack or magazine
+  ---
+  duration_ms: 0.2999
+  type: 'test'
+  ...
+# Subtest: no target facts, secret checks, arbitrary IDs, calculations or resource reads in instructions
+ok 74 - no target facts, secret checks, arbitrary IDs, calculations or resource reads in instructions
+  ---
+  duration_ms: 0.2076
+  type: 'test'
+  ...
+# Subtest: RU/EN new keys load through actual translation loader including stale cache
+ok 75 - RU/EN new keys load through actual translation loader including stale cache
+  ---
+  duration_ms: 12.3205
+  type: 'test'
+  ...
+# Subtest: exactly the 33 approved F2 IDs, no F1/F3/F4/DATA expansion
+ok 76 - exactly the 33 approved F2 IDs, no F1/F3/F4/DATA expansion
+  ---
+  duration_ms: 1.2064
+  type: 'test'
+  ...
+# Subtest: ht_rubber_shot:injury read-only adapter and missing-data gate
+ok 77 - ht_rubber_shot:injury read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.6088
+  type: 'test'
+  ...
+# Subtest: ht_canister:elements read-only adapter and missing-data gate
+ok 78 - ht_canister:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1135
+  type: 'test'
+  ...
+# Subtest: ht_shotshell:elements read-only adapter and missing-data gate
+ok 79 - ht_shotshell:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1476
+  type: 'test'
+  ...
+# Subtest: ht_multi_flechette:elements read-only adapter and missing-data gate
+ok 80 - ht_multi_flechette:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1037
+  type: 'test'
+  ...
+# Subtest: ht_duplex:elements read-only adapter and missing-data gate
+ok 81 - ht_duplex:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0859
+  type: 'test'
+  ...
+# Subtest: ht_triplex:elements read-only adapter and missing-data gate
+ok 82 - ht_triplex:elements read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.8261
+  type: 'test'
+  ...
+# Subtest: ht_buck_and_ball:allocation read-only adapter and missing-data gate
+ok 83 - ht_buck_and_ball:allocation read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.4516
+  type: 'test'
+  ...
+# Subtest: ht_le:linked read-only adapter and missing-data gate
+ok 84 - ht_le:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2549
+  type: 'test'
+  ...
+# Subtest: ht_he:linked read-only adapter and missing-data gate
+ok 85 - ht_he:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.3107
+  type: 'test'
+  ...
+# Subtest: ht_efp:linked read-only adapter and missing-data gate
+ok 86 - ht_efp:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1496
+  type: 'test'
+  ...
+# Subtest: ht_heat:linked read-only adapter and missing-data gate
+ok 87 - ht_heat:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0719
+  type: 'test'
+  ...
+# Subtest: ht_hedp:linked read-only adapter and missing-data gate
+ok 88 - ht_hedp:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0568
+  type: 'test'
+  ...
+# Subtest: ht_hesh:linked read-only adapter and missing-data gate
+ok 89 - ht_hesh:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0526
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat:linked read-only adapter and missing-data gate
+ok 90 - ht_ms_heat:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0584
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric:linked read-only adapter and missing-data gate
+ok 91 - ht_thermobaric:linked read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0649
+  type: 'test'
+  ...
+# Subtest: ht_saple:internal read-only adapter and missing-data gate
+ok 92 - ht_saple:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1224
+  type: 'test'
+  ...
+# Subtest: ht_apex:internal read-only adapter and missing-data gate
+ok 93 - ht_apex:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0755
+  type: 'test'
+  ...
+# Subtest: ht_saphe:internal read-only adapter and missing-data gate
+ok 94 - ht_saphe:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1631
+  type: 'test'
+  ...
+# Subtest: ht_saphec:internal read-only adapter and missing-data gate
+ok 95 - ht_saphec:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0834
+  type: 'test'
+  ...
+# Subtest: ht_aphex:internal read-only adapter and missing-data gate
+ok 96 - ht_aphex:internal read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0676
+  type: 'test'
+  ...
+# Subtest: ht_le:fragment-hits read-only adapter and missing-data gate
+ok 97 - ht_le:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.5006
+  type: 'test'
+  ...
+# Subtest: ht_saple:fragment-hits read-only adapter and missing-data gate
+ok 98 - ht_saple:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1239
+  type: 'test'
+  ...
+# Subtest: ht_apex:fragment-hits read-only adapter and missing-data gate
+ok 99 - ht_apex:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0937
+  type: 'test'
+  ...
+# Subtest: ht_he:fragment-hits read-only adapter and missing-data gate
+ok 100 - ht_he:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0858
+  type: 'test'
+  ...
+# Subtest: ht_saphe:fragment-hits read-only adapter and missing-data gate
+ok 101 - ht_saphe:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1284
+  type: 'test'
+  ...
+# Subtest: ht_aphex:fragment-hits read-only adapter and missing-data gate
+ok 102 - ht_aphex:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1234
+  type: 'test'
+  ...
+# Subtest: ht_hedp:fragment-hits read-only adapter and missing-data gate
+ok 103 - ht_hedp:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0849
+  type: 'test'
+  ...
+# Subtest: ht_white_phosphorus:fragment-hits read-only adapter and missing-data gate
+ok 104 - ht_white_phosphorus:fragment-hits read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.0715
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat:tandem read-only adapter and missing-data gate
+ok 105 - ht_ms_heat:tandem read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1331
+  type: 'test'
+  ...
+# Subtest: ht_hesh:spall read-only adapter and missing-data gate
+ok 106 - ht_hesh:spall read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1466
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric:falloff read-only adapter and missing-data gate
+ok 107 - ht_thermobaric:falloff read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.1668
+  type: 'test'
+  ...
+# Subtest: ht_saple:fuze-reliability read-only adapter and missing-data gate
+ok 108 - ht_saple:fuze-reliability read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.2199
+  type: 'test'
+  ...
+# Subtest: ht_self_destruct:flight read-only adapter and missing-data gate
+ok 109 - ht_self_destruct:flight read-only adapter and missing-data gate
+  ---
+  duration_ms: 0.17
+  type: 'test'
+  ...
+# Subtest: physical cartridges, NP elements, resolved hits, failures and close-range groups remain separate
+ok 110 - physical cartridges, NP elements, resolved hits, failures and close-range groups remain separate
+  ---
+  duration_ms: 0.2777
+  type: 'test'
+  ...
+# Subtest: Buck-and-Ball uses saved actual hits; never allocates multiple physical charges
+ok 111 - Buck-and-Ball uses saved actual hits; never allocates multiple physical charges
+  ---
+  duration_ms: 0.2124
+  type: 'test'
+  ...
+# Subtest: Follow-Up requires carrier hit AND confirmed penetration; Linked remains independent
+ok 112 - Follow-Up requires carrier hit AND confirmed penetration; Linked remains independent
+  ---
+  duration_ms: 0.2214
+  type: 'test'
+  ...
+# Subtest: fragmentation requires selected target geometry, posture, SM, cover and already confirmed native roll
+ok 113 - fragmentation requires selected target geometry, posture, SM, cover and already confirmed native roll
+  ---
+  duration_ms: 0.4883
+  type: 'test'
+  ...
+# Subtest: ERA true/false/unknown: stages XOR total and independent Linked
+ok 114 - ERA true/false/unknown: stages XOR total and independent Linked
+  ---
+  duration_ms: 0.2228
+  type: 'test'
+  ...
+# Subtest: HESH gates nonpenetration and armor, derives maximum from saved formula, preserves fractional result
+ok 115 - HESH gates nonpenetration and armor, derives maximum from saved formula, preserves fractional result
+  ---
+  duration_ms: 0.2445
+  type: 'test'
+  ...
+# Subtest: Thermobaric /2r never /3r or both; zero/unknown and already reduced inputs blocked
+ok 116 - Thermobaric /2r never /3r or both; zero/unknown and already reduced inputs blocked
+  ---
+  duration_ms: 0.2302
+  type: 'test'
+  ...
+# Subtest: SAPLE TL5/6/7, no new rolls, saved threshold cannot be bypassed
+ok 117 - SAPLE TL5/6/7, no new rolls, saved threshold cannot be bypassed
+  ---
+  duration_ms: 0.3043
+  type: 'test'
+  ...
+# Subtest: Self-Destruct uses source-confirmed fuse distance, actual path, never halfDamage or target distance
+ok 118 - Self-Destruct uses source-confirmed fuse distance, actual path, never halfDamage or target distance
+  ---
+  duration_ms: 0.1573
+  type: 'test'
+  ...
+# Subtest: exact readable source and component, reload/current-magazine/neighbor independence
+ok 119 - exact readable source and component, reload/current-magazine/neighbor independence
+  ---
+  duration_ms: 0.3812
+  type: 'test'
+  ...
+# Subtest: public/whisper/blind checks precede flags and do not bypass visibility for GM
+ok 120 - public/whisper/blind checks precede flags and do not bypass visibility for GM
+  ---
+  duration_ms: 0.1902
+  type: 'test'
+  ...
+# Subtest: all new RU/EN keys pass the actual loader, including an older F1 cache
+ok 121 - all new RU/EN keys pass the actual loader, including an older F1 cache
+  ---
+  duration_ms: 17.1254
+  type: 'test'
+  ...
+# Subtest: GM local input never updates public HTML/flags; player render has no controls or secrets; revocation clears local UI
+ok 122 - GM local input never updates public HTML/flags; player render has no controls or secrets; revocation clears local UI
+  ---
+  duration_ms: 0.9595
+  type: 'test'
+  ...
+# Subtest: F2 adapters cannot create rolls, messages, mutations or read current Actors/settings/targets
+ok 123 - F2 adapters cannot create rolls, messages, mutations or read current Actors/settings/targets
+  ---
+  duration_ms: 0.7107
+  type: 'test'
+  ...
+# Subtest: P4 contains exactly the thirteen audited IDs without changing the other packages
+ok 124 - P4 contains exactly the thirteen audited IDs without changing the other packages
+  ---
+  duration_ms: 6.3992
+  type: 'test'
+  ...
+# Subtest: ht_le numerical contract, TL/caliber, exact payload and no invented construction
+ok 125 - ht_le numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 2.7969
+  type: 'test'
+  ...
+# Subtest: ht_saple numerical contract, TL/caliber, exact payload and no invented construction
+ok 126 - ht_saple numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.7289
+  type: 'test'
+  ...
+# Subtest: ht_apex numerical contract, TL/caliber, exact payload and no invented construction
+ok 127 - ht_apex numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.6165
+  type: 'test'
+  ...
+# Subtest: ht_he numerical contract, TL/caliber, exact payload and no invented construction
+ok 128 - ht_he numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.3389
+  type: 'test'
+  ...
+# Subtest: ht_saphe numerical contract, TL/caliber, exact payload and no invented construction
+ok 129 - ht_saphe numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.3049
+  type: 'test'
+  ...
+# Subtest: ht_saphec numerical contract, TL/caliber, exact payload and no invented construction
+ok 130 - ht_saphec numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.4471
+  type: 'test'
+  ...
+# Subtest: ht_aphex numerical contract, TL/caliber, exact payload and no invented construction
+ok 131 - ht_aphex numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.4155
+  type: 'test'
+  ...
+# Subtest: ht_efp numerical contract, TL/caliber, exact payload and no invented construction
+ok 132 - ht_efp numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.848
+  type: 'test'
+  ...
+# Subtest: ht_heat numerical contract, TL/caliber, exact payload and no invented construction
+ok 133 - ht_heat numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.6901
+  type: 'test'
+  ...
+# Subtest: ht_hedp numerical contract, TL/caliber, exact payload and no invented construction
+ok 134 - ht_hedp numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.4305
+  type: 'test'
+  ...
+# Subtest: ht_hesh numerical contract, TL/caliber, exact payload and no invented construction
+ok 135 - ht_hesh numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.3371
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat numerical contract, TL/caliber, exact payload and no invented construction
+ok 136 - ht_ms_heat numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.35
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric numerical contract, TL/caliber, exact payload and no invented construction
+ok 137 - ht_thermobaric numerical contract, TL/caliber, exact payload and no invented construction
+  ---
+  duration_ms: 0.2818
+  type: 'test'
+  ...
+# Subtest: ht_he actual published round is available under strict policy with immutable native components
+ok 138 - ht_he actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 34.9632
+  type: 'test'
+  ...
+# Subtest: ht_heat actual published round is available under strict policy with immutable native components
+ok 139 - ht_heat actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 60.4185
+  type: 'test'
+  ...
+# Subtest: ht_hedp actual published round is available under strict policy with immutable native components
+ok 140 - ht_hedp actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 63.4773
+  type: 'test'
+  ...
+# Subtest: ht_ms_heat actual published round is available under strict policy with immutable native components
+ok 141 - ht_ms_heat actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 47.6679
+  type: 'test'
+  ...
+# Subtest: ht_thermobaric actual published round is available under strict policy with immutable native components
+ok 142 - ht_thermobaric actual published round is available under strict policy with immutable native components
+  ---
+  duration_ms: 17.2952
+  type: 'test'
+  ...
+# Subtest: base selections of published complete rounds use their own composite payload without rewriting stocks
+ok 143 - base selections of published complete rounds use their own composite payload without rewriting stocks
+  ---
+  duration_ms: 8.1472
+  type: 'test'
+  ...
+# Subtest: HEDP owns a separate linked blast and fragments; tandem never inherits the base rocket blast
+ok 144 - HEDP owns a separate linked blast and fragments; tandem never inherits the base rocket blast
+  ---
+  duration_ms: 1.6268
+  type: 'test'
+  ...
+# Subtest: published .50 APHEX needs no extra GM approval; prior house recipes retain their identity and policy
+ok 145 - published .50 APHEX needs no extra GM approval; prior house recipes retain their identity and policy
+  ---
+  duration_ms: 1.0679
+  type: 'test'
+  ...
+# Subtest: unsupported named alternates and ordinary bullets cannot turn into arbitrary explosive loads
+ok 146 - unsupported named alternates and ordinary bullets cannot turn into arbitrary explosive loads
+  ---
+  duration_ms: 1.2162
+  type: 'test'
+  ...
+# Subtest: HESH requires known DR and laminated armor; no unsupported armor assumption
+ok 147 - HESH requires known DR and laminated armor; no unsupported armor assumption
+  ---
+  duration_ms: 0.1218
+  type: 'test'
+  ...
+# Subtest: legacy APEX APHEX prices use verified base cost without changing their saved recipe identities
+ok 148 - legacy APEX APHEX prices use verified base cost without changing their saved recipe identities
+  ---
+  duration_ms: 1.5293
+  type: 'test'
+  ...
+# Subtest: SAPLE preserves TL5-6 natural 1d reliability as an explicit GM condition
+ok 149 - SAPLE preserves TL5-6 natural 1d reliability as an explicit GM condition
+  ---
+  duration_ms: 0.3834
+  type: 'test'
+  ...
+# Subtest: unknown cost, contradictory payload relations and known TL cannot be silently resolved
+ok 150 - unknown cost, contradictory payload relations and known TL cannot be silently resolved
+  ---
+  duration_ms: 1.0138
+  type: 'test'
+  ...
+# Subtest: thermobaric falloff uses two distances and cannot assume contact distance; ERA needs explicit data
+ok 151 - thermobaric falloff uses two distances and cannot assume contact distance; ERA needs explicit data
+  ---
+  duration_ms: 0.1338
+  type: 'test'
+  ...
+# Subtest: component buttons use the completed snapshot, maintain privacy, and survive serialization
+ok 152 - component buttons use the completed snapshot, maintain privacy, and survive serialization
+  ---
+  duration_ms: 1.6471
+  type: 'test'
+  ...
+# Subtest: one composite shot spends one physical round, repeat Damage and execution do not spend again
+ok 153 - one composite shot spends one physical round, repeat Damage and execution do not spend again
+  ---
+  duration_ms: 2.5055
+  type: 'test'
+  ...
+# Subtest: new P4 RU EN translations load through the loader and every option has a localized label
+ok 154 - new P4 RU EN translations load through the loader and every option has a localized label
+  ---
+  duration_ms: 6.9706
+  type: 'test'
+  ...
+# Subtest: the previous narrow plus P diagnosis remains intact without running auditHTCoverage
+ok 155 - the previous narrow plus P diagnosis remains intact without running auditHTCoverage
+  ---
+  duration_ms: 0.5612
+  type: 'test'
+  ...
+# Subtest: P6 scope matches all four source-reviewed IDs and unchanged mechanics/eligibility
+ok 156 - P6 scope matches all four source-reviewed IDs and unchanged mechanics/eligibility
+  ---
+  duration_ms: 5.8048
+  type: 'test'
+  ...
+# Subtest: ht_airburst general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 157 - ht_airburst general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 2.2754
+  type: 'test'
+  ...
+# Subtest: ht_incendiary general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 158 - ht_incendiary general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 0.5606
+  type: 'test'
+  ...
+# Subtest: ht_self_destruct general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 159 - ht_self_destruct general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 0.4164
+  type: 'test'
+  ...
+# Subtest: ht_tracer general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+ok 160 - ht_tracer general sourced calculation, evidence/TL/conflict gates and no repeated transformation
+  ---
+  duration_ms: 0.268
+  type: 'test'
+  ...
+# Subtest: Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 area +4 only
+ok 161 - Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 area +4 only
+  ---
+  duration_ms: 1.4926
+  type: 'test'
+  ...
+# Subtest: Airburst native Shrapnel/Beehive/ABF cannot be upgraded again
+ok 162 - Airburst native Shrapnel/Beehive/ABF cannot be upgraded again
+  ---
+  duration_ms: 0.2312
+  type: 'test'
+  ...
+# Subtest: Airburst shared Fire Control channel adds bonus once and point choice removes it
+ok 163 - Airburst shared Fire Control channel adds bonus once and point choice removes it
+  ---
+  duration_ms: 3.0289
+  type: 'test'
+  ...
+# Subtest: Airburst completed miss stores MoF squared only for applicable attack, preserves primary/fragments
+ok 164 - Airburst completed miss stores MoF squared only for applicable attack, preserves primary/fragments
+  ---
+  duration_ms: 0.6895
+  type: 'test'
+  ...
+# Subtest: P6 native Damage exposes only real source secondary components and preserves privacy
+ok 165 - P6 native Damage exposes only real source secondary components and preserves privacy
+  ---
+  duration_ms: 1.0753
+  type: 'test'
+  ...
+# Subtest: Incendiary adds inc once, no extra damage component or auto ignition
+ok 166 - Incendiary adds inc once, no extra damage component or auto ignition
+  ---
+  duration_ms: 0.471
+  type: 'test'
+  ...
+# Subtest: Self-Destruct requires TL6 and design, stores exact source distance without guessing half damage
+ok 167 - Self-Destruct requires TL6 and design, stores exact source distance without guessing half damage
+  ---
+  duration_ms: 0.3973
+  type: 'test'
+  ...
+# Subtest: Tracer inc uses this shot's half-damage boundary; no single shot/permanent next-turn bonus
+ok 168 - Tracer inc uses this shot's half-damage boundary; no single shot/permanent next-turn bonus
+  ---
+  duration_ms: 0.5517
+  type: 'test'
+  ...
+# Subtest: KPV APHCI-T ht_incendiary source-confirmed admission, native inc/cost/saved recipe unchanged
+ok 169 - KPV APHCI-T ht_incendiary source-confirmed admission, native inc/cost/saved recipe unchanged
+  ---
+  duration_ms: 4.5645
+  type: 'test'
+  ...
+# Subtest: KPV APHCI-T ht_tracer source-confirmed admission, native inc/cost/saved recipe unchanged
+ok 170 - KPV APHCI-T ht_tracer source-confirmed admission, native inc/cost/saved recipe unchanged
+  ---
+  duration_ms: 1.5152
+  type: 'test'
+  ...
+# Subtest: native base APHCI-T derives immutable tracer metadata without rewriting stock
+ok 171 - native base APHCI-T derives immutable tracer metadata without rewriting stock
+  ---
+  duration_ms: 1.0491
+  type: 'test'
+  ...
+# Subtest: magazine switch clears stale fuze preview metadata instead of carrying a previous bonus
+ok 172 - magazine switch clears stale fuze preview metadata instead of carrying a previous bonus
+  ---
+  duration_ms: 0.5087
+  type: 'test'
+  ...
+# Subtest: no guessed real cartridge; world policy/approval cannot invent any missing P6 design
+ok 173 - no guessed real cartridge; world policy/approval cannot invent any missing P6 design
+  ---
+  duration_ms: 1.1653
+  type: 'test'
+  ...
+# Subtest: known kinetic bullet satisfies only Tracer projectile class, never supplies missing component proof
+ok 174 - known kinetic bullet satisfies only Tracer projectile class, never supplies missing component proof
+  ---
+  duration_ms: 0.3475
+  type: 'test'
+  ...
+# Subtest: existing source ABF/Beehive reject a second Airburst without changing catalogue status
+ok 175 - existing source ABF/Beehive reject a second Airburst without changing catalogue status
+  ---
+  duration_ms: 0.3876
+  type: 'test'
+  ...
+# Subtest: all four generic source profiles require exact cartridge/mode/equipment; no per-Actor recipes
+ok 176 - all four generic source profiles require exact cartridge/mode/equipment; no per-Actor recipes
+  ---
+  duration_ms: 1.1159
+  type: 'test'
+  ...
+# Subtest: ht_incendiary AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+ok 177 - ht_incendiary AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+  ---
+  duration_ms: 2.6638
+  type: 'test'
+  ...
+# Subtest: ht_tracer AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+ok 178 - ht_tracer AmmoService consumes once, retry preserves receipt, snapshot/reload keep original inc
+  ---
+  duration_ms: 1.6142
+  type: 'test'
+  ...
+# Subtest: P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry translation load
+ok 179 - P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry translation load
+  ---
+  duration_ms: 56.0227
+  type: 'test'
+  ...
+1..179
+# tests 179
+# suites 0
+# pass 179
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 519.0785

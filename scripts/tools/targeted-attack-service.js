@@ -75,6 +75,11 @@ function parseGunsSkillString(value) {
   const specialty = normalizeGunsSpecialty(match[2]);
   return specialty ? { specialty, label: match[2].trim(), text } : null;
 }
+function gunsTL(value) {
+  if (value && typeof value === "object") return gunsTL(value.name ?? value.skillName ?? value.originalName);
+  const match = String(value ?? "").match(/\bGuns\s*\/\s*TL\s*(\d+)\s*\(/iu);
+  return match ? Number(match[1]) : null;
+}
 export function flattenEntries(tree, result = [], seen = new Set()) {
   if (!tree || typeof tree !== "object" || seen.has(tree)) return result;
   seen.add(tree);
@@ -185,7 +190,13 @@ function parseTechnique(entry) {
   const target = structuredTarget ?? fallback?.target ?? null;
   const specialty = structuredSpecialty ?? fallback?.specialty ?? null;
   if (!target || !specialty) return null;
+  const identities = [entry?.governingSkill, entry?.governingSkillName, entry?.skill,
+    entry?.skillName, entry?.default, entry?.defaults, entry?.prerequisite, entry?.prereq,
+    entry?.name, entry?.originalName];
+  const tls = [...new Set(identities.flatMap(value => flattenMeleeValues(value)).flatMap(value =>
+    [...String(value ?? "").matchAll(/\bGuns\s*\/\s*TL\s*(\d+)\s*\(/giu)].map(match => Number(match[1]))))];
   return { entry, target, specialty, relativeLevel: relativeLevel(entry), level: finiteLevel(entry),
+    tl: tls.length === 1 ? tls[0] : null, ambiguousTL: tls.length > 1,
     source: structuredTarget && structuredSpecialty ? "structured" : "name-fallback" };
 }
 function skillIdentityValues(skill) {
@@ -197,24 +208,26 @@ export function collectGunsSkills(actor) {
   for (const entry of flattenEntries(actor?.system?.skills)) {
     const parsed = parseGunsSkillString(entry?.name) ?? parseGunsSkillString(entry?.originalName);
     if (!parsed) continue;
-    result.push({ entry, specialty: parsed.specialty, label: parsed.label, level: finiteLevel(entry), identities: skillIdentityValues(entry) });
+    result.push({ entry, specialty: parsed.specialty, label: parsed.label, tl: gunsTL(parsed.text),
+      level: finiteLevel(entry), identities: skillIdentityValues(entry) });
   }
   return result;
 }
 function collectTechniques(actor) {
   return flattenEntries(actor?.system?.skills)
+    .filter(entry => entry?.points === undefined || Number(entry.points) > 0 || entry.learned === true)
     .filter(entry => aliasKey(entry?.type) === "technique" || /^(?:targeted\s+attack|ta|прицельная\s+атака)(?=\s|\(|$)/iu.test(String(entry?.name ?? "")))
     .map(parseTechnique).filter(Boolean);
 }
 function collectValues(source, keys) {
   return keys.map(key => source?.[key]).filter(value => value !== null && value !== undefined && value !== "");
 }
-export function explicitAttackSpecialties(attack, gunsSkills) {
+export function explicitAttackSpecialties(attack, gunsSkills, { includeDefaults = true } = {}) {
   const sources = [attack, attack?.data].filter(Boolean);
   const idKeys = ["skilluuid", "skillUuid", "skillid", "skillId", "governingSkillUuid", "governingSkillId",
-    "defaultSkillUuid", "defaultSkillId", "parentuuid"];
-  const nameKeys = ["governingSkill", "governingSkillName", "skill", "skillName", "default", "defaults",
-    "defaultSkill", "defaultSkillName", "prerequisite", "prereq"];
+    ...(includeDefaults ? ["defaultSkillUuid", "defaultSkillId"] : []), "parentuuid"];
+  const nameKeys = ["governingSkill", "governingSkillName", "skill", "skillName",
+    ...(includeDefaults ? ["default", "defaults", "defaultSkill", "defaultSkillName"] : []), "prerequisite", "prereq"];
   const matches = new Set();
   for (const source of sources) {
     for (const id of collectValues(source, idKeys).flat(Infinity)) {
@@ -222,7 +235,7 @@ export function explicitAttackSpecialties(attack, gunsSkills) {
     }
     for (const value of collectValues(source, nameKeys).flat(Infinity)) {
       const specialty = specialtyFromPrerequisite(value);
-      if (specialty && gunsSkills.some(skill => skill.specialty === specialty)) matches.add(specialty);
+      if (specialty && (!includeDefaults || gunsSkills.some(skill => skill.specialty === specialty))) matches.add(specialty);
     }
   }
   return [...matches];
@@ -235,14 +248,25 @@ export function clampTargetedAttackModifier(basePenalty, techniqueModifier) {
   const effective = Math.min(bestAllowed, Math.max(base, technique));
   return effective > base ? effective : null;
 }
-export function createTargetedAttackContext({ actor, attack, mode = "weapon" } = {}) {
+export function createTargetedAttackContext({ actor, attack, mode = "weapon",
+  governingSkill = attack?.standaloneRef?.governingSkill } = {}) {
   const gunsSkills = collectGunsSkills(actor);
   const techniques = collectTechniques(actor);
-  const explicit = explicitAttackSpecialties(attack, gunsSkills);
-  const actorSpecialties = [...new Set(gunsSkills.map(skill => skill.specialty))];
-  const candidateSpecialties = explicit.length > 0 ? explicit : actorSpecialties;
+  // TA uses the required skill; default source metadata does not identify the weapon specialty.
+  const explicit = explicitAttackSpecialties(attack, gunsSkills, { includeDefaults: false });
+  const requiredTLs = [...new Set([attack, attack?.data].filter(Boolean).flatMap(source =>
+    collectValues(source, ["governingSkill", "governingSkillName", "skill", "skillName", "prerequisite", "prereq"]))
+    .flat(Infinity).map(gunsTL).filter(tl => tl !== null))];
+  const actorSpecialties = [...new Set(gunsSkills.filter(skill =>
+    techniques.some(technique => technique.specialty === skill.specialty)).map(skill => skill.specialty))];
+  const candidateSpecialties = governingSkill
+    ? (governingSkill.family === "guns" && governingSkill.specialty ? [governingSkill.specialty] : [])
+    : (explicit.length > 0 ? explicit : actorSpecialties);
   const automaticSpecialty = candidateSpecialties.length === 1 ? candidateSpecialties[0] : null;
-  const enabled = mode === "weapon" && techniques.length > 0 && gunsSkills.length > 0;
+  const enabled = mode === "weapon" && governingSkill?.resolved !== false &&
+    governingSkill?.learned !== false && (!governingSkill || !explicit.length ||
+      explicit.includes(governingSkill.specialty)) && candidateSpecialties.some(specialty =>
+      techniques.some(technique => technique.specialty === specialty));
   const requiresSelection = enabled && !automaticSpecialty && candidateSpecialties.length > 1;
   const labels = new Map();
   for (const skill of gunsSkills) if (!labels.has(skill.specialty)) labels.set(skill.specialty, skill.label);
@@ -253,21 +277,29 @@ export function createTargetedAttackContext({ actor, attack, mode = "weapon" } =
     requiresSelection,
     specialtyOptions: enabled ? specialtyOptions : [],
     techniques,
-    resolve({ specialty, governingSkill, target, basePenalty } = {}) {
-      if (!enabled) return null;
+    resolve({ specialty, governingSkill: resolvedSkill = governingSkill, target, basePenalty } = {}) {
+      if (!enabled || resolvedSkill?.resolved === false || resolvedSkill?.learned === false) return null;
+      const governingSkill = resolvedSkill;
       const canonicalSpecialty = governingSkill
         ? (governingSkill.family === "guns" ? governingSkill.specialty : null)
         : normalizeGunsSpecialty(specialty) ?? automaticSpecialty;
       const targetValues = Array.isArray(target) ? target : [target];
       const canonicalTargets = [...new Set(targetValues.map(normalizeTargetedAttackLocation).filter(Boolean))];
-      if (!canonicalSpecialty || canonicalTargets.length === 0) return null;
+      if (!canonicalSpecialty || canonicalTargets.length === 0 ||
+          explicit.length && !explicit.includes(canonicalSpecialty)) return null;
       const matchingSkills = gunsSkills.filter(skill =>
         skill.specialty === canonicalSpecialty && Number.isFinite(skill.level));
       const governing = governingSkill ?? (matchingSkills.length === 1 ? matchingSkills[0] : null);
       if (!governing) return null;
+      const governingTL = governing.tl ?? gunsTL(governing.name ?? governing.entry?.name);
+      if (requiredTLs.length && (requiredTLs.length !== 1 || requiredTLs[0] !== governingTL)) return null;
       let best = null;
       for (const technique of techniques) {
         if (technique.specialty !== canonicalSpecialty || !canonicalTargets.includes(technique.target)) continue;
+        if (technique.ambiguousTL || technique.tl !== null && technique.tl !== governingTL) continue;
+        // A legacy TA without TL is safe only when its learned parent is unambiguous.
+        if (technique.tl === null && (matchingSkills.length !== 1 ||
+            matchingSkills[0].tl !== governingTL)) continue;
         const modifier = Number.isFinite(technique.relativeLevel) ? technique.relativeLevel
           : (Number.isFinite(technique.level) ? technique.level - governing.level : null);
         if (!Number.isFinite(modifier)) continue;
@@ -463,6 +495,15 @@ function meleeTechniqueMatches(technique, skill, attack) {
 }
 
 export function createMeleeTargetedAttackContext({ actor, attack } = {}) {
+  if (attack?.standaloneRef) {
+    const skill = attack.standaloneRef.governingSkill;
+    const context = createMeleeTargetedAttackContext({ actor, attack: { ...attack, standaloneRef: null } });
+    const exact = context.specialtyOptions.find(option => meleeIdentity(option.label) === meleeIdentity(skill?.name));
+    return { ...context, automaticSpecialty: skill?.key, requiresSelection: false,
+      specialtyOptions: skill?.resolved ? [{ value: skill.key, label: skill.name, level: skill.level }] : [],
+      getSkillLevel: () => skill?.resolved ? skill.level : null,
+      resolve: options => skill?.learned && exact ? context.resolve({ ...options, specialty: exact.value }) : null };
+  }
   const skills = collectMeleeGoverningSkills(actor);
   const techniques = collectMeleeTechniques(actor);
   const candidates = skills;

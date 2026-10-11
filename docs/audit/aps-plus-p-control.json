@@ -1,0 +1,549 @@
+{
+  "version": 1,
+  "scope": "APS correction: 511 +P pairs only; historical G files preserved",
+  "full32704AuditRun": false,
+  "examined": 511,
+  "previousWorldReady": 363,
+  "existingReadyPreserved": true,
+  "existing27LoadingConfirmationsPreserved": true,
+  "excludedEFStillClosed": true,
+  "E": 12,
+  "F": 98,
+  "numericalG": 9,
+  "nativeGGAReadyAfterGM": 9,
+  "individualGMG": 2,
+  "incompleteG": 2,
+  "worldPolicyReady": 370,
+  "loadingGMRequired": 27,
+  "potentialAfterAllRequiredGMDecisions": 399,
+  "officialStatuses": {
+    "undetermined": 511
+  },
+  "rows": [
+    {
+      "modeId": "W10jqOZ0kjeSuoY3C",
+      "ammoId": "ht_5_66x39mm",
+      "name": "TsNIITochMash APS, 5.66x39mm",
+      "native": {
+        "name": "TsNIITochMash APS, 5.66x39mm",
+        "damage": "5d imp",
+        "range": "750/3,200",
+        "st": "9†",
+        "acc": "2",
+        "rof": "10",
+        "rcl": "3",
+        "bulk": "-5*"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": false,
+      "individualGMRequired": true,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash APS, 5.66x39mm",
+        "damage": "5d+2 imp",
+        "range": "825/3520",
+        "st": "10†",
+        "acc": "2",
+        "rof": "10",
+        "rcl": "3",
+        "bulk": "-5*"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_5_66x39mm",
+        "nativeDamage": "5d imp",
+        "construction": "underwater_dart",
+        "source": "HT85/117/169",
+        "projectileEffectsIncluded": true,
+        "individualGMRequired": true,
+        "underwaterDistanceMultiplier": 25,
+        "maximumDepthFeet": 130,
+        "automatic": true,
+        "modeId": "W10jqOZ0kjeSuoY3C"
+      }
+    },
+    {
+      "modeId": "W5biN11nvUhQ00ewl",
+      "ammoId": "ht_13x92mmsr_mauser",
+      "name": "Mauser T-Gew18, 13x92mmSR",
+      "native": {
+        "name": "Mauser T-Gew18, 13x92mmSR",
+        "damage": "5dx2(2) pi",
+        "range": "2,100/8,800",
+        "st": "16B†",
+        "acc": "5",
+        "rof": "1",
+        "rcl": "6",
+        "bulk": "-8"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": -1,
+          "application": "manual-GM"
+        },
+        {
+          "id": "MinimumSTSupport",
+          "st": "18B†",
+          "application": "manual-GM-existing-support-rules"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "Mauser T-Gew18, 13x92mmSR",
+        "damage": "11d(2) pi",
+        "range": "2310/9680",
+        "st": "18B†",
+        "acc": "5",
+        "rof": "1",
+        "rcl": "6",
+        "bulk": "-8"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_13x92mmsr_mauser",
+        "nativeDamage": "5dx2(2) pi",
+        "construction": "aphc",
+        "source": "HT112/120/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "W5biN11nvUhQ00ewl"
+      }
+    },
+    {
+      "modeId": "W7i4ZauQl8q2o5nTt",
+      "ammoId": "ht_410_3_10_4x76mmr",
+      "name": "American Derringer Model 1, .410-gauge 3\"",
+      "native": {
+        "name": "American Derringer Model 1, .410-gauge 3\"",
+        "damage": "1d-3(0.5) pi-",
+        "range": "60/650",
+        "st": "7",
+        "acc": null,
+        "rof": "2x65",
+        "rcl": "1",
+        "bulk": "-1"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": false,
+      "nativeGGAProfileSafeAfterGM": false,
+      "worldPolicyReady": false,
+      "individualGMRequired": false,
+      "manualGMConditions": [],
+      "incompleteReason": "plus-p-low-damage-roundtrip-unverified",
+      "effective": null,
+      "provenance": null
+    },
+    {
+      "modeId": "WApJkhMAYa4wlXViK",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "name": "FN Five-seveN, 5.7x28mm",
+      "native": {
+        "name": "FN Five-seveN, 5.7x28mm",
+        "damage": "2d+2(2) pi-",
+        "range": "170/1,700",
+        "st": "8",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "FN Five-seveN, 5.7x28mm",
+        "damage": "3d-1(2) pi-",
+        "range": "187/1870",
+        "st": "9",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_5_7x28mm_fabrique_nationale",
+        "nativeDamage": "2d+2(2) pi-",
+        "construction": "aphc",
+        "source": "HT101-102/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WApJkhMAYa4wlXViK"
+      }
+    },
+    {
+      "modeId": "WdzSSShGT_yv4ctOi",
+      "ammoId": "ht_42_caplock_lemat",
+      "name": "Girard LeMat, .42 Caplock",
+      "native": {
+        "name": "Girard LeMat, .42 Caplock",
+        "damage": "1d(0.5) pi-",
+        "range": "30/600",
+        "st": "11",
+        "acc": "1",
+        "rof": "1x11",
+        "rcl": "1",
+        "bulk": "-3"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": false,
+      "nativeGGAProfileSafeAfterGM": false,
+      "worldPolicyReady": false,
+      "individualGMRequired": false,
+      "manualGMConditions": [],
+      "incompleteReason": "plus-p-18g-identity-unconfirmed",
+      "effective": null,
+      "provenance": null
+    },
+    {
+      "modeId": "WecVKS0hiwdjXu_uS",
+      "ammoId": "ht_9x21mm_gyurza",
+      "name": "TsNIITochMash SR-2 Veresk, 9x21mm",
+      "native": {
+        "name": "TsNIITochMash SR-2 Veresk, 9x21mm",
+        "damage": "3d-1(2) pi-",
+        "range": "170/1,800",
+        "st": "8†",
+        "acc": "3",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-4*"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash SR-2 Veresk, 9x21mm",
+        "damage": "3d(2) pi-",
+        "range": "187/1980",
+        "st": "9†",
+        "acc": "3",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-4*"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_9x21mm_gyurza",
+        "nativeDamage": "3d-1(2) pi-",
+        "construction": "aphc",
+        "source": "HT124/126/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WecVKS0hiwdjXu_uS"
+      }
+    },
+    {
+      "modeId": "WgOt4XUnNzTOpdiAO",
+      "ammoId": "ht_9x39mm",
+      "name": "TsNIITochMash AS Val, 9x39mm",
+      "native": {
+        "name": "TsNIITochMash AS Val, 9x39mm",
+        "damage": "3d(2) pi-",
+        "range": "400/1,700",
+        "st": "8†",
+        "acc": "4",
+        "rof": "13",
+        "rcl": "2",
+        "bulk": "-5*"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPSubsonicUnverified",
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash AS Val, 9x39mm",
+        "damage": "3d+1(2) pi-",
+        "range": "440/1870",
+        "st": "9†",
+        "acc": "4",
+        "rof": "13",
+        "rcl": "2",
+        "bulk": "-5*"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_9x39mm",
+        "nativeDamage": "3d(2) pi-",
+        "construction": "aphc",
+        "source": "HT118/120/167",
+        "projectileEffectsIncluded": true,
+        "originalSubsonic": true,
+        "modeId": "WgOt4XUnNzTOpdiAO"
+      }
+    },
+    {
+      "modeId": "WHsI3V0zdU2TUI6w7",
+      "ammoId": "ht_476_enfield_12_05x22mmr",
+      "name": "Lancaster Howdah, .476 Enfield",
+      "native": {
+        "name": "Lancaster Howdah, .476 Enfield",
+        "damage": "2d(0.5) pi++",
+        "range": "110/1,200",
+        "st": "10",
+        "acc": "1",
+        "rof": "3",
+        "rcl": "3",
+        "bulk": "-2"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": -1,
+          "application": "manual-GM"
+        },
+        {
+          "id": "ObjectWithoutDR",
+          "dr": 1,
+          "application": "manual-GM"
+        },
+        {
+          "id": "NativeHPExpansion",
+          "application": "optional-GM",
+          "source": "HT91/166-167"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "Lancaster Howdah, .476 Enfield",
+        "damage": "2d+1(0.5) pi++",
+        "range": "121/1320",
+        "st": "11",
+        "acc": "1",
+        "rof": "3",
+        "rcl": "3",
+        "bulk": "-2"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_476_enfield_12_05x22mmr",
+        "nativeDamage": "2d(0.5) pi++",
+        "construction": "hollow_point",
+        "source": "HT91/166-167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WHsI3V0zdU2TUI6w7"
+      }
+    },
+    {
+      "modeId": "WK6cr08HEjTSsvYNS",
+      "ammoId": "ht_14_5x114mm",
+      "name": "ZiD KPV, 14.5x114mm",
+      "native": {
+        "name": "ZiD KPV, 14.5x114mm",
+        "damage": "8dx2(2) pi inc",
+        "range": "2,100/8,800",
+        "st": "23M",
+        "acc": "6",
+        "rof": "10",
+        "rcl": "2",
+        "bulk": "-9"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": false,
+      "individualGMRequired": true,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "MinimumSTSupport",
+          "st": "25M",
+          "application": "manual-GM-existing-support-rules"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "ZiD KPV, 14.5x114mm",
+        "damage": "6dx3(2) pi inc",
+        "range": "2310/9680",
+        "st": "25M",
+        "acc": "6",
+        "rof": "10",
+        "rcl": "2",
+        "bulk": "-9"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_14_5x114mm",
+        "nativeDamage": "8dx2(2) pi inc",
+        "construction": "aphci_tracer",
+        "source": "HT134/137/167",
+        "projectileEffectsIncluded": true,
+        "individualGMRequired": true,
+        "modeId": "WK6cr08HEjTSsvYNS"
+      }
+    },
+    {
+      "modeId": "WTrwxX4jwWz6xKiPz",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "name": "FN P90, 5.7x28mm",
+      "native": {
+        "name": "FN P90, 5.7x28mm",
+        "damage": "3d-1(2) pi-",
+        "range": "180/1,900",
+        "st": "8†",
+        "acc": "4",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-3"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "FN P90, 5.7x28mm",
+        "damage": "3d(2) pi-",
+        "range": "198/2090",
+        "st": "9†",
+        "acc": "4",
+        "rof": "15",
+        "rcl": "2",
+        "bulk": "-3"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_5_7x28mm_fabrique_nationale",
+        "nativeDamage": "3d-1(2) pi-",
+        "construction": "aphc",
+        "source": "HT124/126/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WTrwxX4jwWz6xKiPz"
+      }
+    },
+    {
+      "modeId": "WYmXQkUoq1luUajT-",
+      "ammoId": "ht_9x21mm_gyurza",
+      "name": "TsNIITochMash SPS, 9x21mm",
+      "native": {
+        "name": "TsNIITochMash SPS, 9x21mm",
+        "damage": "3d-2(2) pi-",
+        "range": "160/1,800",
+        "st": "9",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "officialStatus": "undetermined",
+      "numericalProfileComplete": true,
+      "nativeGGAProfileSafeAfterGM": true,
+      "worldPolicyReady": true,
+      "individualGMRequired": false,
+      "manualGMConditions": [
+        {
+          "id": "PlusPReliability",
+          "modifier": null,
+          "application": "manual-GM"
+        },
+        {
+          "id": "PlusPAutomaticRoF",
+          "application": "manual-GM"
+        }
+      ],
+      "incompleteReason": null,
+      "effective": {
+        "name": "TsNIITochMash SPS, 9x21mm",
+        "damage": "3d-1(2) pi-",
+        "range": "176/1980",
+        "st": "10",
+        "acc": "2",
+        "rof": "3",
+        "rcl": "2",
+        "bulk": "-2"
+      },
+      "provenance": {
+        "version": 1,
+        "ammoId": "ht_9x21mm_gyurza",
+        "nativeDamage": "3d-2(2) pi-",
+        "construction": "aphc",
+        "source": "HT101-102/167",
+        "projectileEffectsIncluded": true,
+        "modeId": "WYmXQkUoq1luUajT-"
+      }
+    }
+  ]
+}

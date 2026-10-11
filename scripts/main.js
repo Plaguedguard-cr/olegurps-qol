@@ -1,3 +1,10 @@
+import { developerApi, registerDeveloperModeMenu } from "./tools/developer-mode-app.js";
+import { registerWeaponSkillSettings } from "./tools/weapon-skill-settings-app.js";
+import { loadWeaponSkillTLTranslations } from "./tools/weapon-skill-tl-policy.js";
+import { registerAmmunitionApprovals } from "./tools/ammunition-approval-service.js";
+import { loadExplosiveTranslations } from "./tools/explosive-ammunition-localization.js";
+import { AutomaticAmmunitionProfileService } from "./tools/automatic-ammunition-profiles.js";
+import { registerAutomaticAmmoPolicy, loadAutomaticAmmoTranslations } from "./tools/automatic-ammunition-localization.js";
 import { openFireControl } from "./tools/fire-control.js";
 import { openAmmoManager } from "./tools/ammo.js";
 import { openFrightCheck } from "./tools/fright.js";
@@ -14,10 +21,17 @@ import { registerSuppressionFireRuntimeHooks } from "./tools/suppression-fire-ru
 import { registerRollConfirmationProbability } from "./tools/roll-confirmation-probability.js";
 import { registerCustomStatusEffects } from "./tools/defense-status-effects.js";
 import { registerStatusEffectVisibilitySetting } from "./tools/status-effect-visibility.js";
-import { registerEvaluateStatusSetting } from "./tools/aim-status-effects.js";
 import { registerReelingTiredSetting, installReelingTiredCompatibility } from "./tools/reeling-tired-compat.js";
 import { installEquipmentContainerCompatibility } from "./tools/equipment-container-compat.js";
 import { installEncumbranceCompatibility } from "./tools/encumbrance-compat.js";
+
+import { CatalogService } from "./catalog-service.js";
+import { WeaponCatalogBindingService } from "./weapon-catalog-binding-service.js";
+import { AmmunitionCompatibilityService } from "./ammunition-compatibility-service.js";
+import { AttackProfileResolver } from "./tools/attack-profile-resolver.js";
+import { loadAttackProfileTranslations } from "./tools/attack-profile-runtime.js";
+import { installDamageShotLink, resolveDamageShotLink } from "./tools/damage-shot-link.js";
+import { diagnoseGgaDamageAdapters, warnGgaDamageCompatibility, loadAmmoEffectTranslations } from "./tools/gga-damage-compatibility.js";
 
 const MODULE_ID = "olegurps-qol";
 const STYLESHEET_PATH = `modules/${MODULE_ID}/styles/olegurps-qol.css`;
@@ -34,7 +48,18 @@ function ensureModuleStylesheet() {
   document.head.append(link);
 }
 
+const catalogs = new CatalogService();
+const weaponCatalogBindings = new WeaponCatalogBindingService(catalogs);
+const ammunitionCompatibility = new AmmunitionCompatibilityService(catalogs);
+const automaticAmmunitionProfiles = new AutomaticAmmunitionProfileService({ catalogs, compatibility: ammunitionCompatibility });
+
 const api = {
+  catalogs,
+  ammunitionCompatibility,
+  automaticAmmunitionProfiles,
+  attackProfiles: new AttackProfileResolver({ catalogs, compatibility: ammunitionCompatibility }),
+  damageShots: { resolve: resolveDamageShotLink, diagnose: diagnoseGgaDamageAdapters },
+  weaponCatalogBindings,
   ammo: { open: openAmmoManager },
   fireControl: { open: openFireControl },
   fright: { open: openFrightCheck },
@@ -47,18 +72,33 @@ const api = {
   melee: { open: openMeleeAssistant }
 };
 
+Object.defineProperty(api, "developer", { enumerable: true, get: () => globalThis.game?.user?.isGM ? developerApi : undefined });
+
 Hooks.once("init", () => {
+  registerAmmunitionApprovals();
+  registerAutomaticAmmoPolicy();
   ensureModuleStylesheet();
   registerSuppressionFireHooks();
   registerSuppressionFireRuntimeHooks();
   registerRollConfirmationProbability();
   registerStatusEffectVisibilitySetting();
-  registerEvaluateStatusSetting();
   registerReelingTiredSetting();
+  registerDeveloperModeMenu();
+  registerWeaponSkillSettings();
   globalThis.OleGURPSQOL = api;
+  void catalogs.load().catch(error =>
+    console.error("OleGURPS QOL: catalog initialization failed.", error));
 });
 
 Hooks.once("ready", async () => {
+  await loadWeaponSkillTLTranslations().catch(error => console.error("OleGURPS QOL | Weapon skill translations:", error));
+  await loadAmmoEffectTranslations().catch(error => console.error("OleGURPS QOL | Ammo effects translations:", error));
+  await loadExplosiveTranslations().catch(error => console.error("OleGURPS QOL | Explosive translations:", error));
+  await loadAutomaticAmmoTranslations().catch(error => console.error("OleGURPS QOL | Automatic ammo translations:", error));
+  warnGgaDamageCompatibility(diagnoseGgaDamageAdapters());
+  try { installDamageShotLink(); }
+  catch (error) { console.error("OleGURPS QOL | Native damage linkage unavailable:", error); }
+  await loadAttackProfileTranslations().catch(error => console.error("OleGURPS QOL | Attack profile translations:", error));
   try {
     await registerCustomStatusEffects();
     globalThis.setTimeout(() => {

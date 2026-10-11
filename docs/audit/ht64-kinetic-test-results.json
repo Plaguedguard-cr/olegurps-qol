@@ -1,0 +1,2562 @@
+{
+  "differentTests": 489,
+  "pass": 488,
+  "fail": 1,
+  "targeted": {
+    "tests": 488,
+    "pass": 488,
+    "fail": 0
+  },
+  "fullSuiteRun": false,
+  "accidentalWideMatrix": {
+    "ran": true,
+    "combinations": 32704,
+    "repeatRun": false,
+    "result": {
+      "name": "coverage is read-only, compares every native pair, and keeps unsupported/evidence/forbidden states separate",
+      "status": "FAIL",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    "expectedReady": 1222,
+    "actualReady": 1308
+  },
+  "runs": [
+    {
+      "artifact": "ht64-kinetic-old-failures-before.tap",
+      "tests": 5,
+      "pass": 0,
+      "fail": 5
+    },
+    {
+      "artifact": "ht64-kinetic-old-failures-after.tap",
+      "tests": 5,
+      "pass": 4,
+      "fail": 1
+    },
+    {
+      "artifact": "ht64-kinetic-tests.tap",
+      "tests": 22,
+      "pass": 19,
+      "fail": 3
+    },
+    {
+      "artifact": "ht64-kinetic-corrected-selected.tap",
+      "tests": 3,
+      "pass": 3,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-old-failures-final.tap",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-ui-selected.tap",
+      "tests": 4,
+      "pass": 4,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-regressions.tap",
+      "tests": 447,
+      "pass": 446,
+      "fail": 1
+    },
+    {
+      "artifact": "ht64-kinetic-localization-corrected.tap",
+      "tests": 2,
+      "pass": 2,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-existing-automation-selected.tap",
+      "tests": 16,
+      "pass": 15,
+      "fail": 1
+    },
+    {
+      "artifact": "ht64-kinetic-underwater-selected.tap",
+      "tests": 2,
+      "pass": 2,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-du-ui-final.tap",
+      "tests": 2,
+      "pass": 2,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-du-damage-reload.tap",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-scoped-final.tap",
+      "tests": 7,
+      "pass": 6,
+      "fail": 1
+    },
+    {
+      "artifact": "ht64-kinetic-du-refusals-final.tap",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    },
+    {
+      "artifact": "ht64-kinetic-numeric-evidence-final.tap",
+      "tests": 1,
+      "pass": 1,
+      "fail": 0
+    }
+  ],
+  "latestResults": [
+    {
+      "name": "every HT option exposes its exact structured predicates and missing evidence",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "current catalog byte hashes match the verified upgrade checkpoint",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "main exposes the same reference service on all existing module API aliases",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "main init starts loading without blocking ready or changing existing tool APIs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "current catalog bytes match the verified SHA-256 values",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "batch contains exactly the twelve reviewed P2 IDs; pure DU predicates match catalog contracts",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-scoped-final.tap"
+    },
+    {
+      "name": "ht_hollow_point uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_ap uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_aphc uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_frangible uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_apds uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-corrected-selected.tap"
+    },
+    {
+      "name": "ht_apfsds uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_sapfsds uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_apdu uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_apdsdu uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_apfsdsdu uses HT166 bands, exact divisor/piercing, both ranges and CPS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_solid preserves the actual native formula, divisor, costs and compound effects without a second transform",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "ht_underwater_dart preserves the exact APS native projectile and multiplies underwater distance only",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-underwater-selected.tap"
+    },
+    {
+      "name": "DU caliber boundaries and APFSDSDU piercing differ from ordinary APFSDS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "DU availability TL, separate design evidence and platforms remain real predicates",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-numeric-evidence-final.tap"
+    },
+    {
+      "name": "DU guards reject native divisors, inc, effects, journals and mixed projectile layers",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-ui-selected.tap"
+    },
+    {
+      "name": "DU ignition distinguishes original DR 9/10/11, flexible armor and proven penetration without inc dice",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "scoped DU GM proof admits only the attested physical design; world policy cannot supply it",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-scoped-final.tap"
+    },
+    {
+      "name": "existing GM approval service validates and persists DU evidence, rejects non-GM and source conflicts",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-scoped-final.tap"
+    },
+    {
+      "name": "DU stock, separate magazine, immutable snapshot, one spend and reload use existing AmmoService",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-scoped-final.tap"
+    },
+    {
+      "name": "existing APDS recipe identity remains valid after adding CPS support",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-tests.tap"
+    },
+    {
+      "name": "DU UI describes refusals and GM conditions in RU/EN without presenting service keys",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-scoped-final.tap"
+    },
+    {
+      "name": "real load-window choices remain blocked before scoped proof and admit only the approved DU recipe",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-du-refusals-final.tap"
+    },
+    {
+      "name": "DU attestation cannot overcome explicit prohibition, native effects or contradictory platform",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-scoped-final.tap"
+    },
+    {
+      "name": "unknown CPS stays unknown and supplied price is multiplied only in the immutable result",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-ui-selected.tap"
+    },
+    {
+      "name": "v9 migration preserves exact loose stock, counts, individual magazines and installed position",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "migration is idempotent and reopening retains permanent IDs without extra resources",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "new unconfigured weapon never acquires a fictional magazine or stock",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ambiguous, fractional, excessive and inconsistent legacy data are preserved for review",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "bulk creation creates separate empty magazines with mixed capacities and stable ownership IDs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "partial and full loads move only matching free stock without changing total",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "partial and full unloads return the same type and permit a new type only when empty",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "stock removal never takes rounds out of magazines and cannot exceed free stock",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "all invalid quantities, capacity overflow and stock shortages leave the ledger unchanged",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "install, replace and eject preserve all rounds and project the installed magazine's own capacity",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "deleting a filled or installed magazine returns contents without changing other IDs or total",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "a sequence of stock, load, unload, replace, shoot and delete operations conserves rounds",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "live service consumption decrements installed rounds once, retains stock and other magazines",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "a Fire Control snapshot from before migration consumes the authoritative new inventory",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "serialized transactions reread latest stocks and reject concurrent overdraw without partial writes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "a failed persistence write leaves caller and saved inventory unchanged",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "stale configuration saves preserve the latest inventory, overrides, custom settings and GGA system",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "one dropdown and one detail panel keep 1, 10, 30 and 50 magazines compact",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "changing dropdown selection targets a stable ID and displays only that magazine",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "fill bar uses continuous red-yellow-green hue and exact accessible counts",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "retired saved ammunition cannot be created or loaded, even with old GM flags and caller options",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "archived rounds unload and return on magazine deletion before explicit stock removal",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "catalog choices use confirmed compatibility only",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "window Actor and approval-policy subscriptions refresh current content and are removed on close",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "window reopening reads saved selection candidates, quantities and permanent magazine IDs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "RU/EN management keeps ammunition operations without installation, test controls or removed messages",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "external installation refreshes the open window without transferring or consuming rounds",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "successful management is silent while errors remain visible and notify",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "RU/EN translations load, match and omit retired cartridge keys",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "invalid inventory cannot install two magazines or change another weapon's ownership",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Spraying Fire retries failed session cleanup without consuming new-format ammo twice",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Fire Control Actor refresh projects new capacity and remaining rounds without modifying GGA",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "all catalogs load through CatalogService and compatibility exposes real native records",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "item/family shared HT IDs default to cartridge and permit explicit family lookup",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT178 confirms .357 revolver to .38 Special with source and direction",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT178 does not reverse .357 to .38 permission",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT178 rejects .44 derringer despite matching chambered cartridge",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT178 unknown mechanism does not confirm revolver exception",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT178 has no automatic transitive closure",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT structured shorter cartridge directions resolve former named rule ambiguity",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "LT projectile-class option does not make giant artillery bolts hand-crossbow ammunition",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "LT external rules are warnings distinct from compatibility errors",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "LT GM/accessory restrictions are not silently approved",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "LT options may be bound only to linked projectile IDs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT native rocket special payload is explicit ammo, not a generic HEAT modifier",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "all nonselectable HT rocket generations are excluded from base charge lists",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary linked modes are not ammunition selection targets",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "feed device is not a cartridge",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "UT concrete HE warhead and Needler drugged dart are confirmed with typed relationships",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "UT same 15mm caliber does not authorize Paint Gun-only special loads",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Paint explicit platform tags confirm Wg_f0E5hqv6o1C0Uj / paint_pellet",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Paint explicit platform tags confirm Wg_f0E5hqv6o1C0Uj / biochemical_liquid_pellet",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Paint explicit platform tags confirm W5Xb6neoqVfdlbqiS / paint_pellet",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Paint explicit platform tags confirm W5Xb6neoqVfdlbqiS / biochemical_liquid_pellet",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "missing concrete tags in TEST DATA preserve Paint fail-closed behavior",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "UT homing is not inferred from conditional capability",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "UT explicit size gate is necessary but not a caliber-based link",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "UT size-by-TL requires availability and explicit warhead class",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "UT ammo TL exception is not silently authorized",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "partial catalog availability: lt",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "partial catalog availability: ht",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "partial catalog availability: ut",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "partial catalog availability: weapons",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "broken mode reference disables only affected catalog and is diagnosed",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "damaged file shape has no false compatible pairs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "unknown IDs and missing mode data differ from known excluded pairs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "cross-source pairs need explicit permission, not names or TL",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "unknown future UT predicate is not ignored",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "repeat load, protected returns and catalogs are isolated from callers",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "every unresolved concrete HT178 pair has IDs and exact condition fields",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "AK47 control ordinary",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "AK47 control ht_ap",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "AK47 control ht_aphc",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "AK47 control ht_hollow_point",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed class rules authorize an exact family; caliber/caller claims cannot change the cartridge",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "AK47 explosive constructions remain unavailable with independent compatibility and missing source facts",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "isolated explosive model ht_apex",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "isolated explosive model ht_aphex",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "known secondary formulas still require a conditional native adapter, never Linked or automatic hits",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT166 bands including adds, fractions, negative adds, multiplier, >12d and exact boundaries",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "existing divisor and compound/native components cannot be silently transformed again",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "journal proves ordering/source/reason; duplicate application is rejected",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HP caps pi++, preserves dice/modifiers and delegates DR0 rule; conditional Malf/expansion never silently skipped",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "invalid/stacked recipes and unconfirmed bindings stay raw",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "normal load window exposes separate AP/APHC/HP stocks and blocks incomplete APEX/APHEX loading in RU/EN",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "physical recipe magazines keep separate ledgers; switching and deleting never destroy/swap types",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "GGA contract diagnostics pass present API and refuse missing or changed signatures/results without rolling",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "one understandable GM diagnostic per session; localization uses both actual loaded bundles",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-localization-corrected.tap"
+    },
+    {
+      "name": "cached Foundry manifest loads new ammunition translations for both languages without changing user language",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-localization-corrected.tap"
+    },
+    {
+      "name": "AmmoService reads the installed construction, snapshots each shot, persists receipts and spends once",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "APS exact native imp +P preserves source type, both ranges, ST, cost, RoF, Rcl and folding stock",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-underwater-selected.tap"
+    },
+    {
+      "name": "APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "APS list explains individual manufacturing/safety approval in RU and EN",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "APS uses air x1 and underwater x25 exactly once, never x1000",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "APS validates 130ft depth, unknown depth, air-water transition and exact identity",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "APS compares effective distance to half-D and maximum at precise boundaries",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "shared range selection applies underwater penalty once and leaves ordinary weapons unchanged",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "environment snapshot retains physical distance separately from existing elevation adjustment",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "underwater Malf stays separate from +P and half-D uses the native application control",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "old shot environment, admission and native Damage remain immutable after settings, magazine and reload",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "APS actual physical round consumption persists once across repeated attacks and magazine switch",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Derringer baseline avoids normalization; HT166 1.0/1.1 confirms discrete edge without house ruling",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "environment reasons and labels have actual RU/EN locale entries",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "basic installed cartridge is confirmed without catalog-stat substitution or mutations",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "GCS changes remain raw basis; overrides are recorded once and no HP/AP/HT64 effects are applied",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "item and family with the same ID remain separate identities",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "legacy label is never inferred or migrated by resolving or executing",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "archived saved ammunition remains unresolved even with forged catalog identity",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "missing catalogs, unresolved IDs and unconfirmed bindings stay distinct from compatibility",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "actual incompatible cartridge blocks before native roll and consumption",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "undetermined fallback may execute but is never reported as compatible",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "two attacks, magazine switch and reopened service preserve independent native-message snapshots",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "different actors and modes keep independent IDs, profiles and receipts",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "simultaneous duplicate execution and persisted replay never roll or charge twice",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "install waits for native execution and only the initial magazine is charged",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "insufficient rounds, preparation cancellation and native canRoll cancellation do not charge",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "rapid bursts consume physical cartridges, not the number of projectiles",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "no physical magazine preserves unmanaged execution without manufacturing cartridges",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "energy/rocket-like untracked modes never acquire a magazine via the runtime adapter",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "permissions and invalid inventories block before rolling without repair",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "stale settings save preserves resource receipts and committed magazine counts",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Spraying preserves delayed consumption, pins its magazine and finalizes per-attack snapshots once",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Spraying cancellation after a target preserves ammunition and finalizes zero consumption",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "new errors have both RU/EN translations and use the active Foundry dictionary",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native message visibility is unchanged by profile metadata for GM/blind/whisper",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression activation charges once; later zone attacks use the prepaid original magazine",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression saved-session normalization retains prepaid profile and receipt on reopening",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "cached server manifests load only new profile translations for RU/EN without changing user settings",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "legacy Spraying retries failed cleanup without spending twice or migrating the inventory",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "failed consumption persistence leaves counts intact and pending native message blocks replay after reload",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "incomplete explosive recipe prevents native attack and any resource write",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "all four real catalogs load with record-derived counts and symmetric links",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "lookups retain original IDs, scoped namespaces, and exact declared relationships",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "concurrent/repeated loads share one promise and fetch each file once",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "all public records, arrays, links, and diagnostics protect the detached cache",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "weapons: unsupported schema is isolated",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "weapons: missing HTTP file is isolated and its failure is cached",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "lt: unsupported schema is isolated",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "lt: missing HTTP file is isolated and its failure is cached",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ht: unsupported schema is isolated",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ht: missing HTTP file is isolated and its failure is cached",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ut: unsupported schema is isolated",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ut: missing HTTP file is isolated and its failure is cached",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "schema 5 alone is not evidence of Weapon Reference revision 5.6",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "lt: wrong revision is rejected",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ht: wrong revision is rejected",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ut: wrong revision is rejected",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "damaged JSON, rejected fetch, and all-files-unavailable produce diagnostics",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "a stalled file times out without preventing other catalogs from loading",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: wrong kind",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: missing equipment name",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: invalid mode ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate equipment ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate mode ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate item ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate family ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate variant ID across collections",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate UT special load ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate UT warhead ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: invalid required array",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: duplicate reverse reference",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: unknown family",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: missing family reverse item link",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: inconsistent family mode union",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: unknown projectile variant",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: unknown load warhead",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: unknown weapon forward item",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: missing weapon forward link",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: missing item reverse mode link",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: cross-book link",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: UT unknown primary family",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: UT unknown special load",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: UT unknown suggested warhead",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: UT wrong equipment backlink",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "validation: wrong catalog pointer",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT item and family IDs may legitimately match in different namespaces",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "incomplete rules are warnings, and textual compatibility never creates links",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "console failures cannot break successful catalog initialization",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "historical LeMat .42 central snapshot retains native Damage after physical identity correction",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "embedded shotgun chamber quote uses the exact native parser name without matching foreign Damage",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "A and B Damage in reverse order use their own shots after magazine and last-roll changes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "repeat Damage creates independent events for the same source, including a reused event object",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "interleaved native awaits keep two actors and modes independent and use the clicked Actor",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native multiple/combine dialog captures source before its first await and DOM event cleanup",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "two modes of one weapon retain independent source IDs through close/reopen and serialized chat",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "pending-only, missing and malformed snapshots stay explicitly unlinked and preserve native Damage",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "deleting the source during async dispatch creates unlinked native damage without guessing",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "marked deleted source after chat reopening stays unlinked; ordinary links are not intercepted",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "public, GM, blind, self and custom whisper settings keep native audience and content",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "private source uses a permission-checked reference and never copies its snapshot to public flags",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "inaccessible source, Actor permission and cancellation preserve native restrictions",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "unrelated messages with identical formula and Actor cannot acquire an in-flight link",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native creation failure is not retried; metadata failure never changes the damage result",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "install is idempotent and uninstall preserves other wrappers",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "adapter has no lastTargetedRoll correlation, ammo writes, formula edits or HT64 transformations",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "effective native formulas come from independent immutable shots B/A/repeat despite current GGA damage or magazines",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "private HP snapshot keeps native audience and exact formula without copying private data to damage flags",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "two Actors and modes keep different transformed native damage through overlapping dispatch",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "adapter incompatibility and post-install contract changes preserve native damage without current-ammo lookup",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native Damage label uses completed shot ordinary without changing action or mechanics",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native Damage label uses completed shot AP without changing action or mechanics",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native Damage label uses completed shot APHC without changing action or mechanics",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native Damage label uses completed shot HP without changing action or mechanics",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Damage labels survive magazine changes, chat reopening and serialized reload independently",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "legacy, unresolved, unnamed, pending or miscorrelated snapshots keep the native weapon label",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "blind and whisper label visibility follows current source permissions",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Damage label is plain text and foreign actions retain their native labels",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ht_apex has three independent native Damage paths with source identity and no auto effects",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ht_aphex has three independent native Damage paths with source identity and no auto effects",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary B/A/repeat stay immutable after magazine changes and use source permissions",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "incomplete explosive snapshots block every component instead of silently rolling baseline",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "private explosive components keep source-only metadata and reject unauthorized access",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "standalone D uses completed shot after source weapon removal and never needs an Actor attack",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "standalone D fails closed for inaccessible, incomplete or unsafe shots instead of calling missing GGA attacks",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Frangible source-backed construction adjusts divisor, piercing and range; Damage dice unchanged",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Frangible all four piercing steps cap at pi++, existing divisors are never replaced blindly",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Frangible unreviewed construction stays undetermined; explicit projectile incompatibility stays prohibited",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Frangible unchanged stocks on switch; immutable conditions and historical Damage survive reload",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Frangible transformation journal prevents repeating numerical or special effects",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Frangible conditions belong to native Damage identity copies or permitted references after reload",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Match confirmed factory family on Wxm8TWSvu5UFTAaDn",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Match confirmed factory family on WUUPXVnYQI61MZ71z",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Match confirmed factory family on Wn6vWZmf30XK2i2l6",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Match floor, maximum +1, scope preserved, and bonus only through existing Aim",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Match automatic, +P and unsuitable projectiles prohibited; unknown factory or handload proof stays unknown",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Match guard preserves raw source, rejects unknown Acc and tampered saved rule, and applies once",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Match stock, Fire Control Acc, reload and repeated native Damage use historical snapshot without double spend",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_plus_p",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_match_grade",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_match_handloaded",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_subsonic_pistol",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_subsonic_rifle",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_silent",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_solid",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_rifled_slug",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_hollow_point",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_poison",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_ap",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_aphc",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_frangible",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_apds",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_apfsds",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_baton",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_beanbag",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_sapfsds",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_underwater_dart",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_apdu",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_apdsdu",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_apfsdsdu",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_le",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_saple",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_apex",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_he",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_saphe",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_saphec",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_aphex",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_efp",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_heat",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_hedp",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_hesh",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_ms_heat",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_thermobaric",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_illumination",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_signal_flare",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_smoke",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_colored_smoke",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_hot_smoke",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_prism_smoke",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_em_smoke",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_tear_gas",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_tear_gas_vomit",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_liquid",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_poison_gas",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_white_phosphorus",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_canister",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_shotshell",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_buck_and_ball",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_shrapnel",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_duplex",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_triplex",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_beehive",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_multi_flechette",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_rubber_shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_abf",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_airburst",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_incendiary",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_self_destruct",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_tracer",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_light_case",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_caseless",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT eligibility loads and checks ht_consumable_case",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "all 64 contracts and review IDs match; four current catalogs ready",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "all original HT fields, mechanics, HT178 and rocket data retained",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "matching type/TL cannot replace pressure proof",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "caller claims of verification and guessed caliber cannot bypass catalog evidence",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "confirmed action prohibits manual-only match load",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "known cased round prohibits caseless option, absent class is not denial",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "minimum and maximum caliber bounds distinguish unknown/confirmed/prohibited",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "caliber_hint and numeric text in names are never numeric caliber evidence",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "required base variant and explicit exclusions are respected",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "exclusive projectile layers reject AP plus APHC instead of stacking",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "unknown proposed options/context stay undetermined",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "minimum availability TL is separate from native weapon TL",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "light shotshell case at TL5-7 is not rejected by broad small-arms TL8",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "actual native Linked effect prevents adding the guarded transform again",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native overlap absence cannot be inferred; confirmed overlap is prohibition",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "pure evaluator compatible only after ALL source-backed facts confirmed (test facts)",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "unsupported future predicate remains undetermined",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "invalid eligibility isolated to HT: contract",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "invalid eligibility isolated to HT: on_missing_evidence",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "invalid eligibility isolated to HT: bounds",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "invalid eligibility isolated to HT: evidence-array",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "eligibility snapshots cannot change cached records",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "audit bytes and weapon reference outside HT pointer preserved",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "confirmed directed HT178 ammo can provide variant context without authorizing an option",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "known incompatible ammo context rejects but unknown pair remains undetermined",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Vickers native 10! is ready, HT166 damage/ranges/ST are computed without pressure or caliber",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "physical and pellet RoF remain separate for six patterns and all native delimiters",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "HT79 composite Rcl follows confirmed shot/slug identity, never range or a fraction",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "B409 boundary is strict and uses current +P HalfD; pellets remain independent hits",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "common native execution rejects unresolved composite Rcl before rolls and resource writes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "B409 calculation report uses completed +P Damage, preserving raw and native per-pellet damage",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "GM physical RoF decision preserves pellets and !/\\#, without changing Rcl",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ordinary conventional-case legacy stock remains distinct and unload/deletion returns its own rounds with ready +P",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "shotgun stock/spend once per physical shell, magazine switch/reload preserve old Damage and identity",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "missing Acc and Bulk remain precise standalone-only blockers; composite Rcl is accepted",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Malf and native B409 GM operation appear before the attack; no damage/DR double scaling",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "new diagnostics load RU/EN even with cached older keys, without changing language",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed native +P preserves exact projectile: W5biN11nvUhQ00ewl",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed native +P preserves exact projectile: WApJkhMAYa4wlXViK",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed native +P preserves exact projectile: WTrwxX4jwWz6xKiPz",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed native +P preserves exact projectile: WYmXQkUoq1luUajT-",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed native +P preserves exact projectile: WecVKS0hiwdjXu_uS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed native +P preserves exact projectile: WgOt4XUnNzTOpdiAO",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "reviewed native +P preserves exact projectile: WHsI3V0zdU2TUI6w7",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native APHC/HP cannot be deduced from divisor or applied a second time",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native HP keeps zero-DR and optional expansion; AS Val retains suppressor without invented subsonic velocity",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "shared cartridge FN pistol and P90 preserve independent immutable snapshots after reload",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "APS numerical profile is complete but world policy does not confirm individual construction",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "LeMat shot barrel uses corrected source-backed identity; historical .42 cannot prepare +P",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "new G diagnostics resolve in RU and EN locale files",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native G shot consumes one physical round once; changing magazine preserves old shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "old byte baseline remains valid with both historical HT pointer hashes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "new byte baseline admits exactly the FN BAR Magnum revision 1 correction",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "old baseline rejects errata bytes and new baseline rejects uncorrected bytes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared another original stat",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared approved mode other stat",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared unapproved Range",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared equipment ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared mode ID",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared deleted record",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared source GCS hash",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared HT filename",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared HT revision",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared HT join key",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared errata revision",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "both contracts reject undeclared extra errata permission",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "frozen HT audit files retain their original byte hashes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Subsonic source calculations W1doZcasYO-1Xw3Lf",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Subsonic source calculations Ww9qXLufPV8uXb5rB",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Subsonic source calculations W1miyD-ozfViISq7K",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Subsonic source calculations W27s4Lm8QlkKVKUPn",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "already subsonic families and native suppressed modes reject a second conversion",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "classification follows the cartridge, unknown velocity remains undetermined",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "raw guard, existing native effects, divisor and journal prevent duplicate Subsonic",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Subsonic preview updates Range and 1/2D once, without Actor writes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "standalone preview finds its physical carrier by saved weapon and mode IDs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Subsonic stock, one spend, magazine switch, reload, historical repeated Damage and RU/EN",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "runtime correction preserves source catalogs and .42 economics while removing central reverse link",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "revolver .42 and central 18G are bidirectionally exclusive, including family bypass",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ordinary shot preserves damage, 11 projectiles, divisor, ST and independent identity without requiring economics",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "+P preserves 1d(0.5) pi-, transforms both ranges/ST once, no fake price",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "LeMat B409 is strictly below current 10% half-D and counts 11 pellets as one charge",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "+P needs both scoped GM safety and prior loading check; revoke affects future use",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "one instance owns distinct 9 and 1 carriers without retagging old stock or IDs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "each barrel spends one physical charge, duplicate attack is idempotent and other feed unchanged",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "service blocks wrong identities/capacities even with caller-provided permissive type list",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "old incorrect recipe is retained, visibly review-required, cannot fire; unload safely returns its original type",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "old snapshot does not re-resolve identity, barrel, approval or Damage after reload",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "new Ready, economics and identity messages resolve RU/EN from actual locale files",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "other 510 native +P pairs retain identities and weapon source records",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "charge editor defaults to the actual barrel capacity without invented mass/price inputs",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "cached older translations still load actual new LeMat keys in RU/EN without changing user language",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: A: skill 20, roll 17, single shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: A: skill 20, roll 17, single shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: B: skill 20, roll 18, single shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: B: skill 20, roll 18, single shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: C: skill 25, roll 17, RoF 20",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: C: skill 25, roll 17, RoF 20",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: D: skill 25, roll 18, RoF 20",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: D: skill 25, roll 18, RoF 20",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: E: ordinary rapid fire success",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: E: ordinary rapid fire success",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: F: ordinary negative-margin failure",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: F: ordinary negative-margin failure",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: G: critical success retains RoF/Rcl hits",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: G: critical success retains RoF/Rcl hits",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "prepared roll: H: critical failure below 17",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "secondary calculation: H: critical failure below 17",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "17 is critical only at the existing low-skill threshold",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "successful hit count respects RoF and the requested hit cap",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "explicit failure or success=false overrides positive or unavailable margin",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "automatic miss spends all 10 fired rounds and reports zero hits",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "cancelled shot does not spend ammo, resolve locations, or create reports",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "RRS prepared slots retain physical expenditure on 17 and 18 with zero hits",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: A: skill 20, roll 17, single shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: B: skill 20, roll 18, single shot",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: C: skill 25, roll 17, RoF 20",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: D: skill 25, roll 18, RoF 20",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: E: ordinary rapid fire success",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: F: ordinary negative-margin failure",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: G: critical success retains RoF/Rcl hits",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression hit calculation: H: critical failure below 17",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression manual forwards the failed roll to hit recording",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Suppression automatic forwards the failed roll to hit recording",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Spraying failures skip random locations and retain planned physical expenditure",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Quick-Shot uses matching Guns specialty and clamps the RRS penalty",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "structured Quick-Shot prerequisite overrides its name and relative level is clamped",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "High, Low, and Level elevation use measured distance and preserve beam range",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "token elevation selects High, Low, or Level only from available Token elevations",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "RoF 3 is split once between two RRS attacks",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Trademark Move stores RRS flag and recalculates Quick-Shot and TA from current actor",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "FireService keeps RRS, Quick-Shot, and Trademark Move as distinct modifiers",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "RRS slots keep independent targets, locations, shots, and recommendations",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "Modifiers display equals the shared ranged modifier sum as conditions change",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "RRS hit-location markers move with the selected zone immediately",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "SMG defaults from Rifle without mandatory TA specialty or transferred Rifle improvement",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "exact learned SMG TA replaces its location channel once and ignores better Rifle TA",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "no studied TA and a lawful attribute default retain ordinary hit locations",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "unresolved skill still blocks standalone readiness; TA never manufactures a default",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "TL policy changes only resolved base and never transfers Rifle TA to SMG or another TL",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "native GGA base is retained while matching bound TA uses the learned governing level",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "legacy native required skill is never replaced by default source metadata or a foreign binding",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "explicit TA TL cannot transfer; missing legacy TL is used only with a unique parent",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "unlearned zero-point TA gives no improvement; legacy choices contain only real TA parents",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "shared UI preview displays ordinary Face -5 for a default, and TA replacement only for studied SMG",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-regressions.tap"
+    },
+    {
+      "name": "ht_apds source rule on Wxm8TWSvu5UFTAaDn",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "ht_sapfsds source rule on Wxm8TWSvu5UFTAaDn",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "ht_apds source rule on W4EbC4v3uPyORRhTC",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "ht_apfsds source rule on W4EbC4v3uPyORRhTC",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "ht_sapfsds source rule on W27s4Lm8QlkKVKUPn",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "general AP/APHC family rules work across rifle, AMR and revolver without borrowing AK masses",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "HT167 piercing thresholds and HT168 forced type have distinct, accurate journals",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "forbidden classes need explicit exclusion evidence; absence or an unsourced claim never grants APDS",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "pistol cartridges, unconfirmed identities, invalid ranges and existing divisors cannot acquire a partial overlay",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "saved recipe revision integrity rejects a forged model and preserves exact historical snapshots",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "new types load without an editor, keep separate stocks and preserve contents on magazine selection",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "compatible but unresolved HP and already transformed attacks are blocked for new loading",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "ordinary owners can select ready source profiles, while nonowners cannot open or mutate inventory",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "Fire Control previews replace range from actual GGA source exactly once without Actor writes",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "an unresolved managed recipe cannot execute or consume a round",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "coverage is read-only, compares every native pair, and keeps unsupported/evidence/forbidden states separate",
+      "status": "FAIL",
+      "artifact": "ht64-kinetic-existing-automation-selected.tap"
+    },
+    {
+      "name": "DU historical native Damage survives reload and current design/weapon changes without ignition dice",
+      "status": "PASS",
+      "artifact": "ht64-kinetic-du-damage-reload.tap"
+    }
+  ]
+}

@@ -1,3 +1,135 @@
+import { explosiveText } from "./explosive-ammunition-localization.js";
+export function fragmentHitCount({ total, skill, inRange = true, followUp = false }) {
+  const success = inRange && Number.isFinite(total) && (total <= 4 || (total < 17 && total <= skill));
+  const ordinary = success ? 1 + Math.floor(Math.max(0, skill - total) / 3) : 0;
+  // The ordinary result already includes its first hit. Follow-Up guarantees that slot once.
+  return followUp ? Math.max(1, ordinary) : ordinary;
+}
+export function parseFragmentDamage(raw) {
+  let text = String(raw ?? "")
+    .trim()
+    .replace(/[\[\]]/g, "")
+    .replace(/\s+/g, "")
+    .replace(/[×*]/g, "x")
+    .toLowerCase()
+    .replace(/[кk]/g, "d");
+
+  if (!text) return null;
+
+  // Поддержка: d/к, 2d/2к, 2d6/2к6, 3d+1/3к+1, 4d-2, 6d×2 / 6к×2 / 6d*2 / 6к*2.
+  const match = text.match(/^(\d*)d(?:6)?([+-]\d+)?(?:x(\d+(?:[.,]\d+)?))?$/i);
+  if (!match) return null;
+
+  const dice = match[1] ? Number(match[1]) : 1;
+  const adds = match[2] ? Number(match[2]) : 0;
+  const multiplier = match[3]
+    ? Number(String(match[3]).replace(",", "."))
+    : 1;
+
+  if (
+    !Number.isInteger(dice) ||
+    dice <= 0 ||
+    !Number.isInteger(adds) ||
+    !Number.isFinite(multiplier) ||
+    multiplier <= 0
+  ) {
+    return null;
+  }
+
+  const baseFormula = `${dice}d6${adds > 0 ? `+${adds}` : adds < 0 ? adds : ""}`;
+  const formula = multiplier === 1
+    ? baseFormula
+    : `(${baseFormula})*${multiplier}`;
+
+  const pretty = `${dice}d${adds > 0 ? `+${adds}` : adds < 0 ? adds : ""}${
+    multiplier === 1 ? "" : `×${multiplier}`
+  }`;
+
+  return {
+    dice,
+    adds,
+    multiplier,
+    effectiveDice: dice * multiplier,
+    formula,
+    pretty
+  };
+}
+
+const RANGE_TABLE = [
+  [2, 0],
+  [3, -1],
+  [5, -2],
+  [7, -3],
+  [10, -4],
+  [15, -5],
+  [20, -6],
+  [30, -7],
+  [50, -8],
+  [70, -9],
+  [100, -10],
+  [150, -11],
+  [200, -12],
+  [300, -13],
+  [500, -14],
+  [700, -15],
+  [1000, -16],
+  [1500, -17],
+  [2000, -18],
+  [3000, -19],
+  [5000, -20],
+  [7000, -21],
+  [10000, -22],
+  [15000, -23],
+  [20000, -24],
+  [30000, -25],
+  [50000, -26],
+  [70000, -27],
+  [100000, -28]
+];
+
+export function fragmentRangeModifier(distance) {
+  const d = Math.max(0, Number(distance) || 0);
+  if (d <= 2) return 0;
+
+  for (const [maxDistance, modifier] of RANGE_TABLE) {
+    if (d <= maxDistance) return modifier;
+  }
+
+  // Продолжаем обычную последовательность 1-1.5-2-3-5-7 × 10^n.
+  // Для дистанций за пределами таблицы этого макроса — безопасная аппроксимация.
+  let threshold = 100000;
+  let modifier = -28;
+  const multipliers = [1.5, 2, 3, 5, 7, 10];
+  let decade = 10000;
+
+  while (threshold < d && modifier > -100) {
+    decade *= 10;
+    for (const factor of multipliers) {
+      threshold = decade * factor;
+      modifier -= 1;
+      if (d <= threshold) return modifier;
+    }
+  }
+
+  return modifier;
+}
+
+export const FRAGMENT_POSTURES = {
+  standing: { label: "Стоя", modifier: 0 },
+  crouching: { label: "Пригнувшись", modifier: -2 },
+  kneeling: { label: "На коленях", modifier: -2 },
+  crawling: { label: "Ползком", modifier: -2 },
+  sitting: { label: "Сидя", modifier: -2 },
+  lying: { label: "Лёжа", modifier: -2 }
+};
+
+export function fragmentTargetProfile({ damage, distance, sm, postureModifier, coverModifier = 0 }) {
+  const dangerRadius = 5 * damage.effectiveDice;
+  const rangeMod = fragmentRangeModifier(distance);
+  const effectiveSkill = 15 + rangeMod + postureModifier + sm + coverModifier;
+  return { dangerRadius, rangeMod, effectiveSkill };
+}
+
 export async function openExplosionFragmentation() {
   const DialogV2 = foundry?.applications?.api?.DialogV2;
 
@@ -37,124 +169,6 @@ export async function openExplosionFragmentation() {
     if (element?.[0] instanceof HTMLElement) return element[0];
     return null;
   }
-
-  function parseGurpsDamage(raw) {
-    let text = String(raw ?? "")
-      .trim()
-      .replace(/[\[\]]/g, "")
-      .replace(/\s+/g, "")
-      .replace(/[×*]/g, "x")
-      .toLowerCase()
-      .replace(/[кk]/g, "d");
-
-    if (!text) return null;
-
-    // Поддержка: d/к, 2d/2к, 2d6/2к6, 3d+1/3к+1, 4d-2, 6d×2 / 6к×2 / 6d*2 / 6к*2.
-    const match = text.match(/^(\d*)d(?:6)?([+-]\d+)?(?:x(\d+(?:[.,]\d+)?))?$/i);
-    if (!match) return null;
-
-    const dice = match[1] ? Number(match[1]) : 1;
-    const adds = match[2] ? Number(match[2]) : 0;
-    const multiplier = match[3]
-      ? Number(String(match[3]).replace(",", "."))
-      : 1;
-
-    if (
-      !Number.isInteger(dice) ||
-      dice <= 0 ||
-      !Number.isInteger(adds) ||
-      !Number.isFinite(multiplier) ||
-      multiplier <= 0
-    ) {
-      return null;
-    }
-
-    const baseFormula = `${dice}d6${adds > 0 ? `+${adds}` : adds < 0 ? adds : ""}`;
-    const formula = multiplier === 1
-      ? baseFormula
-      : `(${baseFormula})*${multiplier}`;
-
-    const pretty = `${dice}d${adds > 0 ? `+${adds}` : adds < 0 ? adds : ""}${
-      multiplier === 1 ? "" : `×${multiplier}`
-    }`;
-
-    return {
-      dice,
-      adds,
-      multiplier,
-      effectiveDice: dice * multiplier,
-      formula,
-      pretty
-    };
-  }
-
-  const RANGE_TABLE = [
-    [2, 0],
-    [3, -1],
-    [5, -2],
-    [7, -3],
-    [10, -4],
-    [15, -5],
-    [20, -6],
-    [30, -7],
-    [50, -8],
-    [70, -9],
-    [100, -10],
-    [150, -11],
-    [200, -12],
-    [300, -13],
-    [500, -14],
-    [700, -15],
-    [1000, -16],
-    [1500, -17],
-    [2000, -18],
-    [3000, -19],
-    [5000, -20],
-    [7000, -21],
-    [10000, -22],
-    [15000, -23],
-    [20000, -24],
-    [30000, -25],
-    [50000, -26],
-    [70000, -27],
-    [100000, -28]
-  ];
-
-  function rangeModifier(distance) {
-    const d = Math.max(0, Number(distance) || 0);
-    if (d <= 2) return 0;
-
-    for (const [maxDistance, modifier] of RANGE_TABLE) {
-      if (d <= maxDistance) return modifier;
-    }
-
-    // Продолжаем обычную последовательность 1-1.5-2-3-5-7 × 10^n.
-    // Для дистанций за пределами таблицы этого макроса — безопасная аппроксимация.
-    let threshold = 100000;
-    let modifier = -28;
-    const multipliers = [1.5, 2, 3, 5, 7, 10];
-    let decade = 10000;
-
-    while (threshold < d && modifier > -100) {
-      decade *= 10;
-      for (const factor of multipliers) {
-        threshold = decade * factor;
-        modifier -= 1;
-        if (d <= threshold) return modifier;
-      }
-    }
-
-    return modifier;
-  }
-
-  const POSTURES = {
-    standing: { label: "Стоя", modifier: 0 },
-    crouching: { label: "Пригнувшись", modifier: -2 },
-    kneeling: { label: "На коленях", modifier: -2 },
-    crawling: { label: "Ползком", modifier: -2 },
-    sitting: { label: "Сидя", modifier: -2 },
-    lying: { label: "Лёжа", modifier: -2 }
-  };
 
   function humanoidHitLocation(total, sideRoll = null) {
     switch (total) {
@@ -215,7 +229,7 @@ export async function openExplosionFragmentation() {
     const smRaw = parseNumber(root.querySelector('[name="sm"]')?.value, 0);
     const sm = Number.isFinite(smRaw) ? Math.trunc(smRaw) : 0;
     const postureKey = root.querySelector('[name="posture"]')?.value ?? "standing";
-    const posture = POSTURES[postureKey] ?? POSTURES.standing;
+    const posture = FRAGMENT_POSTURES[postureKey] ?? FRAGMENT_POSTURES.standing;
     const autoLocations = !!root.querySelector('[name="autoLocations"]')?.checked;
 
     return {
@@ -224,7 +238,8 @@ export async function openExplosionFragmentation() {
       distance,
       sm,
       posture,
-      autoLocations
+      autoLocations,
+      followUp: !!root.querySelector('[name="followUp"]')?.checked
     };
   }
 
@@ -237,7 +252,7 @@ export async function openExplosionFragmentation() {
   }
 
   async function resolveExplosion(values) {
-    const damage = parseGurpsDamage(values.explosionDamage);
+    const damage = parseFragmentDamage(values.explosionDamage);
     if (!damage) {
       ui.notifications.error(
         "Некорректный взрывной урон. Примеры: 6d, 6к, 3d+2, 3к+2, 6d×2, 6к*2."
@@ -295,7 +310,7 @@ export async function openExplosionFragmentation() {
   }
 
   async function resolveFragments(values) {
-    const damage = parseGurpsDamage(values.fragmentDamage);
+    const damage = parseFragmentDamage(values.fragmentDamage);
     if (!damage) {
       ui.notifications.error(
         "Некорректный урон осколков. Примеры: 2d, 2к, 3d+1, 3к+1."
@@ -305,9 +320,9 @@ export async function openExplosionFragmentation() {
 
     if (!validateDistance(values.distance)) return;
 
-    const dangerRadius = 5 * damage.effectiveDice;
-    const rangeMod = rangeModifier(values.distance);
-    const effectiveSkill = 15 + rangeMod + values.posture.modifier + values.sm;
+    const { dangerRadius, rangeMod, effectiveSkill } = fragmentTargetProfile({
+      damage, distance: values.distance, sm: values.sm, postureModifier: values.posture.modifier
+    });
 
     let attackRoll = null;
     let attackRollHTML = "";
@@ -320,15 +335,9 @@ export async function openExplosionFragmentation() {
       const attackTotal = Number(attackRoll.total);
       margin = effectiveSkill - attackTotal;
 
-      // Это обычный бросок атаки GURPS: 3-4 всегда попадают, 17-18 всегда промах.
-      const success =
-        attackTotal <= 4 ||
-        (attackTotal < 17 && attackTotal <= effectiveSkill);
-
-      if (success) {
-        hits = 1 + Math.floor(Math.max(0, margin) / 3);
-      }
+      hits = fragmentHitCount({ total: attackTotal, skill: effectiveSkill, followUp: values.followUp });
     }
+    if (values.followUp && values.distance > dangerRadius) hits = fragmentHitCount({ inRange: false, followUp: true });
 
     const locationRows = [];
 
@@ -360,7 +369,9 @@ export async function openExplosionFragmentation() {
       }
     }
 
-    const attackBlock = values.distance > dangerRadius
+    const attackBlock = values.distance > dangerRadius && values.followUp
+      ? `<div style="margin-top:6px;"><strong>${escapeHTML(explosiveText("Guaranteed"))}: ${hits}</strong></div>`
+      : values.distance > dangerRadius
       ? `<div style="margin-top:6px;"><strong>Цель вне радиуса разлёта осколков. Попало осколков: 0</strong></div>`
       : `
         <div style="margin-top:6px;">
@@ -370,6 +381,7 @@ export async function openExplosionFragmentation() {
         </div>
         <div style="margin-top:5px;"><strong>Бросок:</strong> ${escapeHTML(attackRoll.total)}; запас успеха: ${escapeHTML(margin)}</div>
         <div style="margin-top:5px;font-size:1.12em;"><strong>Попало осколков: ${hits}</strong></div>
+        ${values.followUp ? `<div>${escapeHTML(explosiveText("Guaranteed"))}</div>` : ""}
         <details style="margin-top:8px;">
           <summary style="cursor:pointer;">Показать бросок попадания осколков</summary>
           ${attackRollHTML}
@@ -491,6 +503,11 @@ export async function openExplosionFragmentation() {
         <input type="number" name="sm" value="0" step="1">
       </div>
 
+      <label class="gurps-exfrag-check">
+        <input type="checkbox" name="followUp">
+        <span>${escapeHTML(explosiveText("FollowUp"))}</span>
+      </label>
+      <div class="gurps-exfrag-hint">${escapeHTML(explosiveText("FollowUpHint"))}</div>
       <label class="gurps-exfrag-check">
         <input type="checkbox" name="autoLocations">
         <span>Автоматически определить случайную зону для каждого попавшего осколка</span>

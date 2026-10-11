@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: exact source Condor native slug is preserved and a different weapon cannot inherit its data
+ok 1 - exact source Condor native slug is preserved and a different weapon cannot inherit its data
+  ---
+  duration_ms: 8.0354
+  type: 'test'
+  ...
+# Subtest: ht_duplex separates element RoF from physical rounds and never applies B409
+ok 2 - ht_duplex separates element RoF from physical rounds and never applies B409
+  ---
+  duration_ms: 0.6843
+  type: 'test'
+  ...
+# Subtest: ht_triplex separates element RoF from physical rounds and never applies B409
+ok 3 - ht_triplex separates element RoF from physical rounds and never applies B409
+  ---
+  duration_ms: 0.2881
+  type: 'test'
+  ...
+# Subtest: scoped GM load is admitted without changing official undetermined or allowing world policy to invent it
+not ok 4 - scoped GM load is admitted without changing official undetermined or allowing world policy to invent it
+  ---
+  duration_ms: 2.2889
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:102:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'incompatible'
+    - 'undetermined'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'undetermined'
+  actual: 'incompatible'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-multishot-batch.test.mjs:103:26)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    node:internal/test_runner/test:981:31
+    node:internal/process/task_queues:151:7
+    AsyncResource.runInAsyncScope (node:async_hooks:214:14)
+    AsyncResource.runMicrotask (node:internal/process/task_queues:148:8)
+  ...
+# Subtest: GM recipe identity separates NP, dimensions and burst data; old stock and immutable snapshot survive reload
+not ok 5 - GM recipe identity separates NP, dimensions and burst data; old stock and immutable snapshot survive reload
+  ---
+  duration_ms: 3.0845
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:109:1'
+  failureType: 'testCodeFailure'
+  error: 'IncompatibleAmmunition'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/scripts/tools/ammo-service.js:396:66
+  ...
+# Subtest: existing GM approval service validates the individual definition and revokes without altering stock
+not ok 6 - existing GM approval service validates the individual definition and revokes without altering stock
+  ---
+  duration_ms: 0.8521
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-multishot-batch.test.mjs:128:1'
+  failureType: 'testCodeFailure'
+  error: 'ApprovalCannotOverrideProhibition'
+  code: 'ERR_TEST_FAILURE'
+  stack: |-
+    file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/scripts/tools/ammunition-approval-service.js:43:130
+    async TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-multishot-batch.test.mjs:131:10)
+    async Test.run (node:internal/test_runner/test:1054:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 3
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 224.4749

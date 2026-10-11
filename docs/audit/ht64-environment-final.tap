@@ -1,0 +1,160 @@
+TAP version 13
+# Subtest: P5 scope matches thirteen audited variants and the structured source review
+ok 1 - P5 scope matches thirteen audited variants and the structured source review
+  ---
+  duration_ms: 5.4817
+  type: 'test'
+  ...
+# Subtest: ht_poison exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 2 - ht_poison exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 2.4199
+  type: 'test'
+  ...
+# Subtest: ht_illumination exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 3 - ht_illumination exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.5349
+  type: 'test'
+  ...
+# Subtest: ht_signal_flare exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 4 - ht_signal_flare exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.3186
+  type: 'test'
+  ...
+# Subtest: ht_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 5 - ht_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.3812
+  type: 'test'
+  ...
+# Subtest: ht_colored_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 6 - ht_colored_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.2904
+  type: 'test'
+  ...
+# Subtest: ht_hot_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 7 - ht_hot_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.312
+  type: 'test'
+  ...
+# Subtest: ht_prism_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 8 - ht_prism_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.3275
+  type: 'test'
+  ...
+# Subtest: ht_em_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 9 - ht_em_smoke exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.3916
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 10 - ht_tear_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.5381
+  type: 'test'
+  ...
+# Subtest: ht_tear_gas_vomit exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 11 - ht_tear_gas_vomit exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.3591
+  type: 'test'
+  ...
+# Subtest: ht_liquid exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 12 - ht_liquid exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.4247
+  type: 'test'
+  ...
+# Subtest: ht_poison_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 13 - ht_poison_gas exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.6837
+  type: 'test'
+  ...
+# Subtest: ht_white_phosphorus exact mechanics, required evidence, TL/caliber/platform, no invented filler
+ok 14 - ht_white_phosphorus exact mechanics, required evidence, TL/caliber/platform, no invented filler
+  ---
+  duration_ms: 0.2436
+  type: 'test'
+  ...
+# Subtest: liquid halves damage, quarters range and requires strictly below 500 fps
+ok 15 - liquid halves damage, quarters range and requires strictly below 500 fps
+  ---
+  duration_ms: 0.3173
+  type: 'test'
+  ...
+# Subtest: poison retains common HP conditions, selected dose, cost and prohibits generic automatic-affliction
+ok 16 - poison retains common HP conditions, selected dose, cost and prohibits generic automatic-affliction
+  ---
+  duration_ms: 0.4517
+  type: 'test'
+  ...
+# Subtest: five smokes retain distinct vision and sensor rules with no invented cloud radius
+ok 17 - five smokes retain distinct vision and sensor rules with no invented cloud radius
+  ---
+  duration_ms: 0.4013
+  type: 'test'
+  ...
+# Subtest: illumination and signal are distinct; gas resistances and aftermath use known numbers only
+ok 18 - illumination and signal are distinct; gas resistances and aftermath use known numbers only
+  ---
+  duration_ms: 0.5118
+  type: 'test'
+  ...
+# Subtest: source WP ready under strict policy preserves native blast, fragments, range and source price
+ok 19 - source WP ready under strict policy preserves native blast, fragments, range and source price
+  ---
+  duration_ms: 4.2195
+  type: 'test'
+  ...
+# Subtest: base WP derives immutable shot only; saved recipes reload, switch and native secondary Damage remain stable/private
+ok 20 - base WP derives immutable shot only; saved recipes reload, switch and native secondary Damage remain stable/private
+  ---
+  duration_ms: 2.5521
+  type: 'test'
+  ...
+# Subtest: no bore/TL-only permissions and original excluded grenades/sprays remain excluded
+ok 21 - no bore/TL-only permissions and original excluded grenades/sprays remain excluded
+  ---
+  duration_ms: 3.495
+  type: 'test'
+  ...
+# Subtest: UI uses localized RU/EN labels; saved WP stock never restores an English-only new label
+ok 22 - UI uses localized RU/EN labels; saved WP stock never restores an English-only new label
+  ---
+  duration_ms: 42.0233
+  type: 'test'
+  ...
+# Subtest: actual locale loader fetches P5 even when prior package translations are cached
+ok 23 - actual locale loader fetches P5 even when prior package translations are cached
+  ---
+  duration_ms: 4.8691
+  type: 'test'
+  ...
+# Subtest: WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+ok 24 - WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds
+  ---
+  duration_ms: 3.0893
+  type: 'test'
+  ...
+# Subtest: contact burning schedules cap at ten seconds or sixty seconds without automatic Rolls
+ok 25 - contact burning schedules cap at ten seconds or sixty seconds without automatic Rolls
+  ---
+  duration_ms: 0.1144
+  type: 'test'
+  ...
+1..25
+# tests 25
+# suites 0
+# pass 25
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 282.5627

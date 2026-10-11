@@ -1,0 +1,12 @@
+<div class="olegurps-developer-mode">
+  <p>{{labels.Hint}}</p>
+  <label for="olegurps-developer-total">{{labels.Result}}</label>
+  <select id="olegurps-developer-total" name="total">
+    {{#each totals}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>{{/each}}
+  </select>
+  <button type="button" data-action="apply"><i class="fas fa-flask"></i> {{labels.Apply}}</button>
+  <p role="status">{{labels.Pending}}:
+    {{#if pending}}<strong>{{pending}}</strong>{{else}}{{labels.None}}{{/if}}
+  </p>
+  <button type="button" data-action="cancel"><i class="fas fa-ban"></i> {{labels.Cancel}}</button>
+</div>

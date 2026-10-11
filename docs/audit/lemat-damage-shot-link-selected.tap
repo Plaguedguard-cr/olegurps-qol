@@ -1,0 +1,16 @@
+TAP version 13
+# Subtest: historical LeMat .42 central snapshot retains native Damage after physical identity correction
+ok 1 - historical LeMat .42 central snapshot retains native Damage after physical identity correction
+  ---
+  duration_ms: 4.959
+  type: 'test'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 78.8166

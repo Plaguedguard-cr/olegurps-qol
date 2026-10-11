@@ -1,3 +1,4 @@
+import { evaluatePreparedCheck, testRollNotice } from "./developer-roll-service.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 
 function getRollMessages(result) {
@@ -92,6 +93,20 @@ export async function executeWithCapturedRollMessage({ ChatMessage = globalThis.
   return { result, message: session.messagePromise ? await session.messagePromise : null };
 }
 
+/**
+ * Count hits from RoF/Rcl using the already resolved attack outcome.
+ * Pass executor rollData for attack results; omitted data keeps the legacy
+ * arithmetic-only contract. Failure takes precedence even without a margin.
+ */
+export function calculateHitsFromMargin(shots, rcl, margin, rollData = null) {
+  if (rollData?.failure === true || rollData?.success === false) return 0;
+  const safeShots = Math.max(0, Math.trunc(Number(shots) || 0));
+  const safeRcl = Math.max(1, Math.trunc(Number(rcl) || 1));
+  if (!Number.isInteger(margin)) return null;
+  if (margin < 0) return 0;
+  return Math.min(safeShots, 1 + Math.floor(margin / safeRcl));
+}
+
 function getCriticalState(total, target) {
   return {
     isCritSuccess: total <= 4 || (total === 5 && target >= 15) || (total === 6 && target >= 16),
@@ -103,6 +118,8 @@ export async function executePreparedGgaRoll({
   actor,
   token,
   attack,
+  attackProfile = null,
+  shotSnapshot = null,
   baseSkill: preparedBaseSkill = null,
   baseSkillName = null,
   effectiveSkill,
@@ -114,6 +131,11 @@ export async function executePreparedGgaRoll({
   contextLabel = "",
   consumeAction = true,
   maneuver = null,
+  combatType = "ranged",
+  attackContextHtml = "",
+  deceptiveDefensePenalty = 0,
+  telegraphicCriticalBonus = 0,
+  skillCap = null,
   capLabel = undefined,
   visibilityPenalty = 0,
   visibilityCapAdjustment = 0,
@@ -139,14 +161,16 @@ export async function executePreparedGgaRoll({
   const exactName = attack?.mode ? `${cleanName} (${String(attack.mode).trim()})` : cleanName;
   const quotedName = exactName.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
   const actorPrefix = actor?.id ? `@${actor.id}@` : "";
-  const chatthing = `[${actorPrefix}R:"${quotedName}"]`;
+  const attackPrefix = combatType === "melee" ? "M" : "R";
+  const chatthing = `[${actorPrefix}${attackPrefix}:"${quotedName}"]`;
   const followon = `[${actorPrefix}D:"${quotedName}"]`;
   const action = {
     type: "attack",
     name: exactName,
-    orig: `R:"${quotedName}"`,
-    isMelee: false,
-    isRanged: true,
+    orig: `${attackPrefix}:"${quotedName}"`,
+    isMelee: combatType === "melee",
+    isRanged: combatType !== "melee",
+    ...(combatType === "melee" ? { deceptiveDefensePenalty: Math.trunc(Number(deceptiveDefensePenalty) || 0) } : {}),
     ...(maneuver ? { maneuver } : {})
   };
   const actionObject = attack?.data ?? attack;
@@ -177,17 +201,19 @@ export async function executePreparedGgaRoll({
   const baseSkill = Math.trunc(Number.isFinite(selectedBase) ? selectedBase : Number(attack?.level) || 0);
   const preparedSkill = Math.trunc(Number(effectiveSkill));
   let finaltarget = Number.isFinite(preparedSkill) ? preparedSkill : baseSkill + modifier;
+  if (combatType === "melee" && Number.isFinite(preparedSkill)) finaltarget += modifier;
+  if (skillCap !== null && Number.isFinite(Number(skillCap))) finaltarget = Math.min(finaltarget, Number(skillCap));
   if (Number.isFinite(maximumTarget)) finaltarget = Math.min(finaltarget, maximumTarget);
   finaltarget = Math.max(3, finaltarget);
 
   const formula = `3d6[${cleanName.replaceAll("[", "").replaceAll("]", "").trim()}]`;
-  const roll = Roll.create(formula);
-  await roll.evaluate();
+  const { roll, testRoll } = await evaluatePreparedCheck(formula, runtime, "prepared-attack");
   const total = Number(roll.total);
   const margin = finaltarget - total;
   const seventeen = total >= 17;
   const failure = seventeen || margin < 0;
-  const { isCritSuccess, isCritFailure } = getCriticalState(total, finaltarget);
+  const { isCritSuccess } = getCriticalState(total, finaltarget - Math.max(0, Number(telegraphicCriticalBonus) || 0));
+  const { isCritFailure } = getCriticalState(total, finaltarget);
   const rollValues = roll.dice?.[0]?.results?.map(entry => entry.result) ?? [];
   const speaker = ChatMessage.getSpeaker({ actor });
   const normalHitCap = Math.max(0, Math.trunc(Number(effectiveRoF) || 0));
@@ -197,14 +223,14 @@ export async function executePreparedGgaRoll({
     ? Math.min(normalHitCap, Math.max(0, Math.trunc(requestedHitCap)))
     : normalHitCap;
   const safeRcl = Math.max(1, Math.trunc(Number(rcl) || 1));
-  const potentialHits = margin >= 0 ? Math.min(hitCap, 1 + Math.floor(margin / safeRcl)) : 0;
+  const potentialHits = calculateHitsFromMargin(hitCap, safeRcl, margin, { failure });
   const displayRof = !extremelyClose && attack?.rof && String(attack.rof).match(/[xX\u00d7*]/u)
     ? `${physicalShots}\u00d7${Math.max(1, Math.trunc(hitCap / Math.max(1, physicalShots)))}`
     : String(effectiveRoF ?? physicalShots ?? 1);
 
   const chatdata = {
     prefix: "",
-    chatthing,
+    chatthing: attack?.standaloneRef ? escapeModifierHtml(exactName) : chatthing,
     thing: cleanName,
     origtarget: baseSkill,
     fromUser: game.user.id,
@@ -226,13 +252,13 @@ export async function executePreparedGgaRoll({
     followon,
     optlabel: "",
     isBlind: false,
-    rof: displayRof,
-    rcl: safeRcl,
-    rofrcl: concealTargetDetails ? null : potentialHits
+    rof: combatType === "melee" ? null : displayRof,
+    rcl: combatType === "melee" ? null : safeRcl,
+    rofrcl: combatType === "melee" || concealTargetDetails ? null : potentialHits
   };
   GURPS.setLastTargetedRoll?.(chatdata, speaker.actor, speaker.token, true);
 
-  let content = await renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", chatdata);
+  let content = testRollNotice(testRoll, runtime) + await renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", chatdata);
   if (contextLabel) {
     const safeContext = String(contextLabel).replace(/[&<>"']/g, character => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -256,6 +282,9 @@ export async function executePreparedGgaRoll({
       : targetmods, finaltarget - baseSkill, capLabel);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
   if (modifierBreakdown) content += modifierBreakdown;
+  if (combatType === "melee" && attackContextHtml && !concealTargetDetails) {
+    content += `<details class="olegurps-attack-context"><summary>Подробности атаки</summary><div>${attackContextHtml}</div></details>`;
+  }
   if (combatCalculation && !concealTargetDetails) {
     const transitions = combatCalculation.channels.filter(entry =>
       entry.resolver && entry.baseValue !== entry.resolvedValue)
@@ -265,12 +294,21 @@ export async function executePreparedGgaRoll({
       combatCalculation.baseSkillName)}: ${combatCalculation.baseSkill}</strong>` +
       (transitions.length ? `<br>${transitions.join("<br>")}` : "") + `</div></details>`;
   }
+  if (attack?.standaloneRef && !concealTargetDetails) {
+    const skill = attack.standaloneRef.governingSkill;
+    const detail = skill?.learned ? "Изученный навык" : "Навык не изучен; default от " + skill?.sourceName + " (" + skill?.penalty + ")";
+    content += `<details class="olegurps-standalone-skill"><summary>Навык автономной атаки</summary><div>${escapeModifierHtml(skill?.name)}: ${escapeModifierHtml(skill?.level)}<br>${escapeModifierHtml(detail)}</div></details>`;
+  }
   const messageData = {
     user: game.user.id,
     speaker,
     content,
     rolls: [roll],
-    sound: runtime.CONFIG?.sounds?.dice
+    sound: runtime.CONFIG?.sounds?.dice,
+    ...((testRoll || attackProfile || shotSnapshot) ? { flags: { "olegurps-qol": {
+      ...(testRoll ? { testRoll } : {}), ...(attackProfile ? { attackProfile: structuredClone(attackProfile) } : {}),
+      ...(shotSnapshot ? { [shotSnapshot.resourceTiming === "after-attack" || shotSnapshot.resourceTiming === "spraying-completion"
+        ? "pendingShotSnapshot" : "shotSnapshot"]: structuredClone(shotSnapshot) } : {}) } } } : {})
   };
   const rollMode = game.settings?.get?.("core", "rollMode");
   if (rollMode) ChatMessage.applyRollMode?.(messageData, rollMode);
@@ -295,8 +333,7 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   rcl = null, location, targetingService, closeMultiplier = null, modifierDetails = [], runtime = globalThis }) {
   if (!Number.isFinite(Number(effectiveSkill))) throw new Error("Не рассчитано Эффективное умение.");
   const finaltarget = Math.max(3, Math.trunc(Number(effectiveSkill)));
-  const roll = runtime.Roll.create("3d6[Fire Control]");
-  await roll.evaluate();
+  const { roll, testRoll } = await evaluatePreparedCheck("3d6[Fire Control]", runtime, "prepared-skill");
   const total = Number(roll.total);
   const margin = finaltarget - total;
   const failure = total >= 17 || margin < 0;
@@ -326,7 +363,7 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
     rof: hits === null ? null : String(effectiveRoF), rcl, rofrcl: hits
   };
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  let content = await runtime.renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", data);
+  let content = testRollNotice(testRoll, runtime) + await runtime.renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", data);
   const displayedModifiers = reconcileAttackModifierDetails(modifierDetails, finaltarget - baseSkill);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
   if (modifierBreakdown) content += modifierBreakdown;
@@ -341,7 +378,8 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   if (closeMultiplier) attackDetails.push(`Extremely Close: basic damage \u00d7${closeMultiplier}, DR \u00d7${closeMultiplier}`);
   if (attackDetails.length) content += `<details class="olegurps-attack-context"><summary style="cursor:pointer">Attack details</summary><div>${attackDetails.join("<br>")}</div></details>`;
   const message = { user: runtime.game.user.id, speaker: runtime.ChatMessage.getSpeaker(actor ? { actor } : {}),
-    content, rolls: [roll], sound: runtime.CONFIG?.sounds?.dice };
+    content, rolls: [roll], sound: runtime.CONFIG?.sounds?.dice,
+    ...(testRoll ? { flags: { "olegurps-qol": { testRoll } } } : {}) };
   const rollMode = runtime.game.settings?.get?.("core", "rollMode");
   if (rollMode) runtime.ChatMessage.applyRollMode?.(message, rollMode);
   const chatMessage = await createRollChatMessage(runtime.ChatMessage, message);

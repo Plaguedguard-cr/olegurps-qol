@@ -37,6 +37,7 @@ export function resolveCombatCalculation({ combatType, actor = null, attack = nu
   const combatContext = { ...context, combatType, actor, attack, baseAttackLevel: baseSkill,
     governingSkill, attackSlot };
   const applicable = rules.filter(rule => appliesTo(rule, combatType) &&
+    !(governingSkill?.learned === false && rule.kind === "learned-technique") &&
     (typeof rule.when !== "function" || rule.when(combatContext)));
   const ordered = [...applicable].sort((a, b) => number(b.priority) - number(a.priority) ||
     String(a.id).localeCompare(String(b.id)));

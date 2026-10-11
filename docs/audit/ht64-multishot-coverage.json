@@ -1,0 +1,261 @@
+{
+  "scope": "13 P3 variants only, 6643 pairs; no auditHTCoverage",
+  "groups": {
+    "ht_rifled_slug": {
+      "examined": 511,
+      "official": {
+        "compatible": 2,
+        "undetermined": 508,
+        "incompatible": 1
+      },
+      "ready": [
+        {
+          "modeId": "WkzlenFdgtlwesK-q",
+          "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+          "name": "Condor AM-402, 12G 2.75\" (slug)",
+          "formula": "4d pi+",
+          "effective": {
+            "damage": "4d pi+",
+            "acc": "2",
+            "rof": "1",
+            "rcl": "10",
+            "range": "52/1,750",
+            "st": "11",
+            "ammunitionProjectileKind": "slug",
+            "ammunitionB409Eligible": false
+          },
+          "manual": []
+        },
+        {
+          "modeId": "Wx10NaVSr1cp1bwKv",
+          "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+          "name": "Condor AM-402, 12G 2.75\" (shot)",
+          "formula": "4d pi+",
+          "effective": {
+            "damage": "4d pi+",
+            "acc": 2,
+            "rof": "1",
+            "rcl": "10",
+            "range": "87.5/1050",
+            "st": "11",
+            "halfd": 87.5,
+            "scopeBonus": 0,
+            "ammunitionProjectileKind": "slug",
+            "ammunitionB409Eligible": false
+          },
+          "manual": []
+        }
+      ],
+      "incomplete": 508
+    },
+    "ht_baton": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 305,
+        "incompatible": 206
+      },
+      "ready": [],
+      "incomplete": 305
+    },
+    "ht_beanbag": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 386,
+        "incompatible": 125
+      },
+      "ready": [],
+      "incomplete": 386
+    },
+    "ht_canister": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 226,
+        "incompatible": 285
+      },
+      "ready": [],
+      "incomplete": 226
+    },
+    "ht_shotshell": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 509,
+        "incompatible": 2
+      },
+      "ready": [],
+      "incomplete": 509
+    },
+    "ht_buck_and_ball": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 305,
+        "incompatible": 206
+      },
+      "ready": [],
+      "incomplete": 305
+    },
+    "ht_shrapnel": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 508,
+        "incompatible": 3
+      },
+      "ready": [],
+      "incomplete": 508
+    },
+    "ht_duplex": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 509,
+        "incompatible": 2
+      },
+      "ready": [],
+      "incomplete": 509
+    },
+    "ht_triplex": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 509,
+        "incompatible": 2
+      },
+      "ready": [],
+      "incomplete": 509
+    },
+    "ht_beehive": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 508,
+        "incompatible": 3
+      },
+      "ready": [],
+      "incomplete": 508
+    },
+    "ht_multi_flechette": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 303,
+        "incompatible": 208
+      },
+      "ready": [],
+      "incomplete": 303
+    },
+    "ht_rubber_shot": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 305,
+        "incompatible": 206
+      },
+      "ready": [],
+      "incomplete": 305
+    },
+    "ht_abf": {
+      "examined": 511,
+      "official": {
+        "compatible": 0,
+        "undetermined": 508,
+        "incompatible": 3
+      },
+      "ready": [],
+      "incomplete": 508
+    }
+  },
+  "sourceFactRecheck": {
+    "scope": "24 affected non-slug pairs only; source facts changed after first bounded P3 count",
+    "deltas": [
+      {
+        "variantId": "ht_canister",
+        "modeId": "Wx10NaVSr1cp1bwKv",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_canister",
+        "modeId": "WkzlenFdgtlwesK-q",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_shrapnel",
+        "modeId": "Wx10NaVSr1cp1bwKv",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_shrapnel",
+        "modeId": "WkzlenFdgtlwesK-q",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_duplex",
+        "modeId": "Wx10NaVSr1cp1bwKv",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_duplex",
+        "modeId": "WkzlenFdgtlwesK-q",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_triplex",
+        "modeId": "Wx10NaVSr1cp1bwKv",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_triplex",
+        "modeId": "WkzlenFdgtlwesK-q",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_beehive",
+        "modeId": "Wx10NaVSr1cp1bwKv",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_beehive",
+        "modeId": "WkzlenFdgtlwesK-q",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_multi_flechette",
+        "modeId": "Wx10NaVSr1cp1bwKv",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_multi_flechette",
+        "modeId": "WkzlenFdgtlwesK-q",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_abf",
+        "modeId": "Wx10NaVSr1cp1bwKv",
+        "from": "undetermined",
+        "to": "incompatible"
+      },
+      {
+        "variantId": "ht_abf",
+        "modeId": "WkzlenFdgtlwesK-q",
+        "from": "undetermined",
+        "to": "incompatible"
+      }
+    ]
+  }
+}

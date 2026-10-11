@@ -1,0 +1,311 @@
+{
+  "files": [
+    {
+      "file": "scripts/tools/fuze-tracer-ammunition.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/automatic-ammunition-profiles.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/ht-kinetic-rules.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/ammunition-recipes.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/ammunition-effects.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/attack-profile-resolver.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/ammo-service.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/fire-service.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/attack-profile-runtime.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/fire-control-context.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/fire-preparation-app.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/ammo.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/ammo-management-app.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/automatic-ammunition-localization.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/tools/damage-shot-link.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "scripts/ht-option-eligibility.js",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "tests/ht64-fuzes-tracer-batch.test.mjs",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "tests/automatic-ammunition-profiles.test.mjs",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "lang/ru.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    },
+    {
+      "file": "lang/en.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    },
+    {
+      "file": "docs/audit/ht64-fuzes-tracer-batch-report.md",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true
+    },
+    {
+      "file": "docs/audit/ht64-fuzes-tracer-cleanup.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    },
+    {
+      "file": "docs/audit/ht64-fuzes-tracer-coverage.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    },
+    {
+      "file": "docs/audit/ht64-fuzes-tracer-live.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    },
+    {
+      "file": "docs/audit/ht64-fuzes-tracer-profile-ui-files.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    },
+    {
+      "file": "docs/audit/ht64-fuzes-tracer-regression-files.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    },
+    {
+      "file": "docs/audit/ht64-fuzes-tracer-test-results.json",
+      "utf8": true,
+      "noBOM": true,
+      "noMojibake": true,
+      "noTrailingWhitespace": true,
+      "json": true
+    }
+  ],
+  "syntax": [
+    {
+      "file": "scripts/tools/fuze-tracer-ammunition.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/automatic-ammunition-profiles.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/ht-kinetic-rules.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/ammunition-recipes.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/ammunition-effects.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/attack-profile-resolver.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/ammo-service.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/fire-service.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/attack-profile-runtime.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/fire-control-context.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/fire-preparation-app.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/ammo.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/ammo-management-app.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/automatic-ammunition-localization.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/tools/damage-shot-link.js",
+      "pass": true
+    },
+    {
+      "file": "scripts/ht-option-eligibility.js",
+      "pass": true
+    },
+    {
+      "file": "tests/ht64-fuzes-tracer-batch.test.mjs",
+      "pass": true
+    },
+    {
+      "file": "tests/automatic-ammunition-profiles.test.mjs",
+      "pass": true
+    }
+  ],
+  "catalogs": [
+    {
+      "file": "data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",
+      "sha256": "f98687171a69b27ff46d89ab12d24b457375972de293fe482e881aceb63b5460",
+      "unchanged": true
+    },
+    {
+      "file": "data/catalogs/olegurps_ht_ammunition_catalog_v1_3.json",
+      "sha256": "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385",
+      "unchanged": true
+    }
+  ],
+  "sources": [
+    {
+      "file": "docs/audit/ht64-independent-audit.json",
+      "sha256": "d7967edda8913b0c9ca9f22c19604106e9fb279b971a55201106dd94d190c875",
+      "unchanged": true
+    },
+    {
+      "file": "docs/audit/ht64-independent-audit.md",
+      "sha256": "9cba246b8d5a9781d0f5e1aeaf6da68506297db66b41e316e2176405e5e6608f",
+      "unchanged": true
+    },
+    {
+      "file": "docs/audit/olegurps_ht_64_structured_review_v1.json",
+      "sha256": "f798ef64962490fc125bcc439fa06ecdcb8592d321b90ff83ec67c277142dcd3",
+      "unchanged": true
+    },
+    {
+      "file": "docs/audit/olegurps_ht64_source_review_v1.md",
+      "sha256": "3efa4745da92f5def6c1cd78d892a24cca5098164fccf5a8f2f28c6de82596b2",
+      "unchanged": true
+    }
+  ],
+  "gitDiffCheck": true,
+  "allPass": true
+}

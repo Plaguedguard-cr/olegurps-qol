@@ -1,0 +1,74 @@
+TAP version 13
+# Subtest: batch contains exactly the twelve reviewed P2 IDs; pure DU predicates match catalog contracts
+ok 1 - batch contains exactly the twelve reviewed P2 IDs; pure DU predicates match catalog contracts
+  ---
+  duration_ms: 3.2442
+  type: 'test'
+  ...
+# Subtest: scoped DU GM proof admits only the attested physical design; world policy cannot supply it
+ok 2 - scoped DU GM proof admits only the attested physical design; world policy cannot supply it
+  ---
+  duration_ms: 7.2102
+  type: 'test'
+  ...
+# Subtest: existing GM approval service validates and persists DU evidence, rejects non-GM and source conflicts
+ok 3 - existing GM approval service validates and persists DU evidence, rejects non-GM and source conflicts
+  ---
+  duration_ms: 1.2751
+  type: 'test'
+  ...
+# Subtest: DU stock, separate magazine, immutable snapshot, one spend and reload use existing AmmoService
+ok 4 - DU stock, separate magazine, immutable snapshot, one spend and reload use existing AmmoService
+  ---
+  duration_ms: 4.1536
+  type: 'test'
+  ...
+# Subtest: DU UI describes refusals and GM conditions in RU/EN without presenting service keys
+ok 5 - DU UI describes refusals and GM conditions in RU/EN without presenting service keys
+  ---
+  duration_ms: 2.8574
+  type: 'test'
+  ...
+# Subtest: real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+not ok 6 - real load-window choices remain blocked before scoped proof and admit only the approved DU recipe
+  ---
+  duration_ms: 44.7416
+  type: 'test'
+  location: 'A:\\Program Files\\FoundryVTT-R\\Data\\modules\\olegurps-qol\\tests\\ht64-kinetic-batch.test.mjs:146:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+
+    + 'Подтверждённая платформа не допускается для этой DU-конструкции. Политика мира и допуск GM не отменяют запрет.'
+    - 'APFSDSDU требует подтверждённый калибр не менее 10 мм. Допуск GM не отменяет этот предел.'
+
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'APFSDSDU требует подтверждённый калибр не менее 10 мм. Допуск GM не отменяет этот предел.'
+  actual: 'Подтверждённая платформа не допускается для этой DU-конструкции. Политика мира и допуск GM не отменяют запрет.'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///A:/Program%20Files/FoundryVTT-R/Data/modules/olegurps-qol/tests/ht64-kinetic-batch.test.mjs:154:162)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: DU attestation cannot overcome explicit prohibition, native effects or contradictory platform
+ok 7 - DU attestation cannot overcome explicit prohibition, native effects or contradictory platform
+  ---
+  duration_ms: 0.7031
+  type: 'test'
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 6
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 286.4302

@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: APS exact native imp +P preserves source type, both ranges, ST, cost, RoF, Rcl and folding stock
+ok 1 - APS exact native imp +P preserves source type, both ranges, ST, cost, RoF, Rcl and folding stock
+  ---
+  duration_ms: 1.3024
+  type: 'test'
+  ...
+# Subtest: APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots
+ok 2 - APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots
+  ---
+  duration_ms: 2.3765
+  type: 'test'
+  ...
+# Subtest: APS uses air x1 and underwater x25 exactly once, never x1000
+ok 3 - APS uses air x1 and underwater x25 exactly once, never x1000
+  ---
+  duration_ms: 1.9977
+  type: 'test'
+  ...
+# Subtest: APS validates 130ft depth, unknown depth, air-water transition and exact identity
+ok 4 - APS validates 130ft depth, unknown depth, air-water transition and exact identity
+  ---
+  duration_ms: 0.222
+  type: 'test'
+  ...
+# Subtest: APS compares effective distance to half-D and maximum at precise boundaries
+ok 5 - APS compares effective distance to half-D and maximum at precise boundaries
+  ---
+  duration_ms: 0.9942
+  type: 'test'
+  ...
+# Subtest: shared range selection applies underwater penalty once and leaves ordinary weapons unchanged
+ok 6 - shared range selection applies underwater penalty once and leaves ordinary weapons unchanged
+  ---
+  duration_ms: 0.2893
+  type: 'test'
+  ...
+# Subtest: environment snapshot retains physical distance separately from existing elevation adjustment
+ok 7 - environment snapshot retains physical distance separately from existing elevation adjustment
+  ---
+  duration_ms: 1.2794
+  type: 'test'
+  ...
+# Subtest: underwater Malf stays separate from +P and half-D uses the native application control
+ok 8 - underwater Malf stays separate from +P and half-D uses the native application control
+  ---
+  duration_ms: 0.3439
+  type: 'test'
+  ...
+# Subtest: old shot environment, admission and native Damage remain immutable after settings, magazine and reload
+ok 9 - old shot environment, admission and native Damage remain immutable after settings, magazine and reload
+  ---
+  duration_ms: 2.2698
+  type: 'test'
+  ...
+# Subtest: APS actual physical round consumption persists once across repeated attacks and magazine switch
+ok 10 - APS actual physical round consumption persists once across repeated attacks and magazine switch
+  ---
+  duration_ms: 3.0359
+  type: 'test'
+  ...
+# Subtest: Derringer baseline avoids normalization; HT166 1.0/1.1 confirms discrete edge without house ruling
+ok 11 - Derringer baseline avoids normalization; HT166 1.0/1.1 confirms discrete edge without house ruling
+  ---
+  duration_ms: 0.3151
+  type: 'test'
+  ...
+# Subtest: environment reasons and labels have actual RU/EN locale entries
+ok 12 - environment reasons and labels have actual RU/EN locale entries
+  ---
+  duration_ms: 4.9489
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 246.691

@@ -418,7 +418,7 @@ export class SprayingFireApp extends ApplicationV2 {
       const tagged = this.fireContext.getTaggedModifierSettings();
       const effectRangePenalty = tagged?.autoAdd
         ? this.fireContext.getGgaTargetRangeRecommendation(this.rangeBands)?.penalty ?? null : null;
-      const result = await this.fireService.executeRangedAttack(this.attack, {
+      const options = {
         shots: row.target.shots, physicalShots: row.target.shots,
         effectiveRoF: row.fireMode.effectiveRoF, extremelyClose: row.fireMode.extremelyClose,
         rcl: row.effectiveRcl, maximumHits: row.fireMode.effectiveRoF,
@@ -433,7 +433,9 @@ export class SprayingFireApp extends ApplicationV2 {
         manualModifier: Number(values.manualModifier) || 0,
         contextLabel: "Spraying Fire - " + row.target.name + " - " + (index + 1),
         consumeAction: index === this.session.targets.length - 1
-      });
+      };
+      const result = await this.sessionService.executeTarget(this.session, options,
+        actualOptions => this.fireService.executeRangedAttack(this.attack, actualOptions));
       if (!result.rolled) {
         ui.notifications.warn("\u0411\u0440\u043e\u0441\u043e\u043a \u0430\u0442\u0430\u043a\u0438 \u043d\u0435 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d");
         return;

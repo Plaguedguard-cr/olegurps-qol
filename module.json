@@ -13,6 +13,10 @@
   "esmodules": [
     "scripts/main.js"
   ],
+  "languages": [
+    { "lang": "en", "name": "English", "path": "lang/en.json" },
+    { "lang": "ru", "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439", "path": "lang/ru.json" }
+  ],
   "styles": [
     "styles/olegurps-qol.css"
   ],

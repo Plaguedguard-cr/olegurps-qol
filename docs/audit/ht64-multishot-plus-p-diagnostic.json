@@ -1,0 +1,538 @@
+{
+  "examined": 511,
+  "worldReady": 370,
+  "oldReadyPreserved": 284,
+  "newReady": [
+    {
+      "modeId": "WwlfY-FYthqkLvByK",
+      "ammoId": "ht_22_long_rifle_5_7x16mmr",
+      "category": "B",
+      "source": "HT92"
+    },
+    {
+      "modeId": "WLefdaBCPNzoLCRyK",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WPI_3y08oT2uPiAtc",
+      "ammoId": "ht_30_06_springfield_7_62x63mm",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "W8ePHcBW1sdR_E43o",
+      "ammoId": "ht_30_40_krag_7_62x59mmr",
+      "category": "B",
+      "source": "HT135"
+    },
+    {
+      "modeId": "Wqipo2S6551e8pwD0",
+      "ammoId": "ht_30_40_krag_7_62x59mmr",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WbC5c-WF26NfwrDly",
+      "ammoId": "ht_38_volcanic",
+      "category": "B",
+      "source": "HT120"
+    },
+    {
+      "modeId": "WJ05GMyv_cFqKDD43",
+      "ammoId": "ht_45_70_springfield_11_43x53mmr",
+      "category": "B",
+      "source": "HT128"
+    },
+    {
+      "modeId": "WWp3zBONFoJvOmVoW",
+      "ammoId": "ht_45_70_springfield_11_43x53mmr",
+      "category": "B",
+      "source": "HT120"
+    },
+    {
+      "modeId": "WR0KjQaYwU2kPV2uB",
+      "ammoId": "ht_50_browning_12_7x99mm",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "W1h1yefMQlw39LdSu",
+      "ammoId": "ht_303_british_7_7x56mmr",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "W4uGW3dwS_SyWVDID",
+      "ammoId": "ht_450_martini_henry_11_43x59mmr",
+      "category": "B",
+      "source": "HT128"
+    },
+    {
+      "modeId": "Wc-RW7eeAYdU4iDtv",
+      "ammoId": "ht_450_martini_henry_11_43x59mmr",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WHsI3V0zdU2TUI6w7",
+      "ammoId": "ht_476_enfield_12_05x22mmr",
+      "category": "G",
+      "source": "HT91"
+    },
+    {
+      "modeId": "WApJkhMAYa4wlXViK",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "category": "G",
+      "source": "HT101"
+    },
+    {
+      "modeId": "WTrwxX4jwWz6xKiPz",
+      "ammoId": "ht_5_7x28mm_fabrique_nationale",
+      "category": "G",
+      "source": "HT124"
+    },
+    {
+      "modeId": "WHjz6HhlYW7ilkb1b",
+      "ammoId": "ht_6x60mm_lee_236_navy",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WyE7nyHp-W1fNasb-",
+      "ammoId": "ht_7_62x51mm_nato_308_winchester",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WJF_WB-sGJ_QZMbYF",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WlQsQ_9ixJsVqq-r_",
+      "ammoId": "ht_7_92x57mm_mauser",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WK-GQxoayg8qh4aX_",
+      "ammoId": "ht_8x50mmr_lebel",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "WYmXQkUoq1luUajT-",
+      "ammoId": "ht_9x21mm_gyurza",
+      "category": "G",
+      "source": "HT101"
+    },
+    {
+      "modeId": "WecVKS0hiwdjXu_uS",
+      "ammoId": "ht_9x21mm_gyurza",
+      "category": "G",
+      "source": "HT124"
+    },
+    {
+      "modeId": "WgOt4XUnNzTOpdiAO",
+      "ammoId": "ht_9x39mm",
+      "category": "G",
+      "source": "HT120"
+    },
+    {
+      "modeId": "W5SODFegn4OMYs4UD",
+      "ammoId": "ht_10_gauge_2_875",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "Www5W81knFu4hYYOx",
+      "ammoId": "ht_10_gauge_2_875",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W1Q8gBZKX8k1yM5-e",
+      "ammoId": "ht_12_gauge_2_5_18_5x63mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W19ooSM10ivSwlXSP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W2EHajHoWWSlF8B6z",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W8gU1gCeSF_EHefLt",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W9ki0p3eZ0dV761l1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WG5D9pES9jpedWQBK",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WGhQ3o1Zo4QfXJRmy",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WHlBefAVM5F3s_Fhx",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WIKNLT8GtI6laTFbn",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WSu2puv__x3S7ILvR",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WUVxWN3HdmeKHmjv1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WVWyvqKW9KEoQ0dnM",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WWpYkEgZSXCKAroUP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WedfHYdjmjQy4JdzJ",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WepHIL4DWLPsoO8HC",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "Wku81Y3GfqPAjHV-Y",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WkzlenFdgtlwesK-q",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT91"
+    },
+    {
+      "modeId": "WmJ_QjDBYJH7Tmona",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WsrbLU9pLyDPhDI5-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "Wu7wxc-g32vPxG2B-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WvUFCokYczEuOg49b",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "Wx10NaVSr1cp1bwKv",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr",
+      "category": "B",
+      "source": "HT91"
+    },
+    {
+      "modeId": "W19ooSM10ivSwlXSP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W2EHajHoWWSlF8B6z",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W8gU1gCeSF_EHefLt",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W9ki0p3eZ0dV761l1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WG5D9pES9jpedWQBK",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WGhQ3o1Zo4QfXJRmy",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WHlBefAVM5F3s_Fhx",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WIKNLT8GtI6laTFbn",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WSu2puv__x3S7ILvR",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WUVxWN3HdmeKHmjv1",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WVWyvqKW9KEoQ0dnM",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WWpYkEgZSXCKAroUP",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WedfHYdjmjQy4JdzJ",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WepHIL4DWLPsoO8HC",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "Wku81Y3GfqPAjHV-Y",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WkzlenFdgtlwesK-q",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT91"
+    },
+    {
+      "modeId": "WmJ_QjDBYJH7Tmona",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WsrbLU9pLyDPhDI5-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "Wu7wxc-g32vPxG2B-",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WvUFCokYczEuOg49b",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "Wx10NaVSr1cp1bwKv",
+      "ammoId": "ht_12_gauge_2_75_18_5x70mmr_heavy_load",
+      "category": "B",
+      "source": "HT91"
+    },
+    {
+      "modeId": "W6LVJ8YGACnNB5h-S",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W9LBQ9LeKd3uB9nSZ",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WH-pkGPARCbK4CP4h",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WLp8euYFMi9Oikpjp",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WT-PUA77JBHLiLTPo",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WaPnC1R8aLAvhe3rt",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WcLG_XsJVbZ6CIT4p",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WmeBcFEjqKNri5FAm",
+      "ammoId": "ht_12_gauge_3_18_5x76mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "W45zOQxg0xXIp2hxb",
+      "ammoId": "ht_12_7x108mm",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "Wv21tKeFELEdfFze1",
+      "ammoId": "ht_12_7x108mm",
+      "category": "B",
+      "source": "HT137"
+    },
+    {
+      "modeId": "W5biN11nvUhQ00ewl",
+      "ammoId": "ht_13x92mmsr_mauser",
+      "category": "G",
+      "source": "HT120"
+    },
+    {
+      "modeId": "WjHbAzrvvWjrpEASy",
+      "ammoId": "ht_16_gauge_2_75_16_8x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WlcsjkTqAP3N05Ei4",
+      "ammoId": "ht_16_gauge_2_75_16_8x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WqY83i5bO6LS6jWEk",
+      "ammoId": "ht_20_gauge_2_5_15_56x63mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WQTnqCZPMYRO8JrrL",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WZvZ89iM4Kxz6xpoN",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WsR6R-QL06g6aAm50",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "category": "B",
+      "source": "HT104"
+    },
+    {
+      "modeId": "WziWTyBAQ6_3yc8fX",
+      "ammoId": "ht_20_gauge_2_75_15_56x70mmr",
+      "category": "B",
+      "source": "HT104"
+    }
+  ],
+  "lost": [],
+  "categories": {
+    "B": 79,
+    "G": 7
+  },
+  "baselineReady": 284,
+  "oldTestExpected": 1222,
+  "previousObserved": 1308,
+  "derivedAggregate": 1308,
+  "delta": 86,
+  "exactDelta86": true,
+  "categoryBOrigins": {
+    "categoryBImplementation": 58,
+    "reviewedHeavy12GCorrection": 21
+  }
+}
