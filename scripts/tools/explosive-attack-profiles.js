@@ -4,6 +4,13 @@ export const EXPLOSIVE_VARIANTS = Object.freeze({ht_le:"LE",ht_saple:"SAPLE",ht_
 export const isExplosiveVariant = id => Object.hasOwn(EXPLOSIVE_VARIANTS,id);
 const copy = value => structuredClone(value);
 const positive = n => Number.isFinite(n) && n>0;
+// HT150 explicitly publishes this TL5 HE rocket. Preserve that named load;
+// the generic HE availability rule still applies to all other constructions.
+const publishedTLException = (option, d) => option?.id === "ht_he" &&
+ d?.nativePreserved === true && d.source?.kind === "reference" &&
+ d.ammoId === "ht_specific_hale_9pr_he" && d.modeId === "Wx13jpOUxRC_YeDo6" &&
+ d.availabilityTL === 5 && d.weaponTL === 5 && d.sourceRawDamage === "6dx2 cr ex [3d cut]" &&
+ d.components?.length === 2 && d.components[0].formula === "6dx2 cr ex" && d.components[1].formula === "3d cut";
 // Exact named projectile diameters in the source-specific HT records. Launcher bore is not warhead diameter.
 const diameters = Object.freeze({ht_specific_ss11_heat:164,ht_specific_pzf3_110mm_heat:110,ht_specific_milan_103_heat:103,ht_specific_at4_84mm_heat:84,
  ht_specific_pf30_150mm_heat:150,ht_specific_m72a2_66mm_heat:66,ht_specific_tow_bgm71a_heat:127,ht_specific_rpoa_93mm_thermobaric:93,
@@ -11,7 +18,7 @@ const diameters = Object.freeze({ht_specific_ss11_heat:164,ht_specific_pzf3_110m
  ht_specific_armbrust_67mm_heat:67,ht_specific_dragon_127_heat:127,ht_specific_javelin_fgm148a_mseat:127,
  ht_specific_rpg7_93mm_heat:93,ht_specific_rpg7_105mm_msheat:105,ht_specific_rpg7_93mm_thermobaric:93,
  ht_specific_pzf3_110mm_tandem:110,ht_specific_hydra_70mm_hedp:70});
-const nativeTypes={HE:"ht_he",HEAT:"ht_heat",HEDP:"ht_hedp","MS-HEAT":"ht_ms_heat",thermobaric:"ht_thermobaric"};
+const nativeTypes={HE:"ht_he","HE-AB":"ht_he",HEAT:"ht_heat",HEDP:"ht_hedp","MS-HEAT":"ht_ms_heat",thermobaric:"ht_thermobaric"};
 export const sourceExplosiveVariant = ammo => nativeTypes[ammo?.warhead_type] ?? null;
 
 /** Parse scalar published GGA components, never infer a blast or fragment yield. */
@@ -21,7 +28,7 @@ export function publishedDamageComponents(text,{fragmentType=null}={}) {
  let main=s.replace(/\s*\[[^\]]+\]/g,"").trim(),fragmentation=null;
  const scalar=/^\d+d(?:6)?(?:[+-]\d+)?(?:x\d+)?(?:\(\d+(?:\.\d+)?\))? (?:pi\+\+|pi\+|pi-|pi|cr(?: ex)?|cut|imp|burn(?: ex)?)$/;
  if(!scalar.test(main))return null;
- if(fragments.length){let f=fragments[0][1].trim();if(/^\d+d(?:6)?(?:[+-]\d+)?(?:x\d+)?(?:\(\d+(?:\.\d+)?\))?$/.test(f)&&fragmentType==="cut")f+=" cut";if(!/ (?:cut|cr|imp|pi\+\+|pi\+|pi-|pi)$/.test(f))return null; if(!scalar.test(f))return null;fragmentation=f;}
+ if(fragments.length){let f=fragments[0][1].trim();if(/^\d+d(?:6)?(?:[+-]\d+)?(?:x\d+)?(?:\(\d+(?:\.\d+)?\))?$/.test(f)&&["cut","burn"].includes(fragmentType))f+=" "+fragmentType;if(!/ (?:cut|burn|cr|imp|pi\+\+|pi\+|pi-|pi)$/.test(f))return null; if(!scalar.test(f))return null;fragmentation=f;}
  return {main,fragmentation};
 }
 
@@ -30,7 +37,8 @@ export function reviewExplosiveDefinition(option,originalFacts,definition) {
  const facts=copy(originalFacts??{}),fail=reason=>({status:"unresolved",reason,facts});
  if(!isExplosiveVariant(option?.id)||definition?.verified!==true||!definition.source?.note?.trim()||
     !["reference","gm"].includes(definition.source.kind))return fail("P4ConstructionMissing");
- if(!Number.isInteger(definition.availabilityTL)||definition.availabilityTL<option.min_tl)return fail("P4TLRequired");
+ const nativeTL = publishedTLException(option, definition);
+ if(!Number.isInteger(definition.availabilityTL)||definition.availabilityTL<option.min_tl&&!nativeTL)return fail("P4TLRequired");
  if(facts.caliberMm!=null&&definition.caliberMm!=null&&facts.caliberMm!==definition.caliberMm)return fail("P4SourceConflict");
  if(!definition.nativePreserved&&facts.availabilityTL!=null&&facts.availabilityTL!==definition.availabilityTL)return fail("P4SourceConflict");
  facts.caliberMm??=definition.caliberMm;facts.availabilityTL=definition.availabilityTL;
@@ -41,7 +49,8 @@ export function reviewExplosiveDefinition(option,originalFacts,definition) {
  facts.munitionClasses={values:[...new Set([...(facts.munitionClasses?.values??[]),...(definition.munitionClasses??[])])],complete:true};
  facts.evidence??={};for(const key of option.eligibility_v1.explicit_evidence_required){if(facts.evidence[key]?.value===false&&facts.evidence[key].source)return fail("P4SourceConflict");facts.evidence[key]={value:true,source:definition.source.note};}
  const evaluation=evaluateHTOptionEligibility(option,facts);
- if(evaluation.checks.some(c=>c.status!=="confirmed"&&!(definition.nativePreserved===true&&c.field==="overlap_guard")))return fail("P4ConstructionMissing");
+ if(evaluation.checks.some(c=>c.status!=="confirmed"&&!(definition.nativePreserved===true&&c.field==="overlap_guard")&&
+    !(nativeTL&&c.field==="min_tl")))return fail("P4ConstructionMissing");
  const components=definition.components;
  if(!Array.isArray(components)||!components.length||components[0].role!=="kinetic"||components.some(c=>!publishedDamageComponents(c.formula)||publishedDamageComponents(c.formula).fragmentation))return fail("P4PayloadMissing");
  if(new Set(components.map(c=>c.role)).size!==components.length)return fail("P4SourceConflict");
@@ -131,7 +140,8 @@ export function resolveCompositeExplosiveEffects({raw,variantId,baseStatus,const
 export function heshSpall({maximumBlast,dr,laminated}) {
  if(!Number.isFinite(maximumBlast)||maximumBlast<0||!Number.isFinite(dr)||dr<0||typeof laminated!=="boolean")return {status:"unresolved",reason:"P4ArmorMissing"};
  if(laminated)return {status:"excluded",damage:0,effectiveDR:Math.ceil(dr/100)};
- return {status:"resolved",damage:maximumBlast*.1,effectiveDR:Math.ceil(dr/100),automaticApplication:false};
+ // HT170 explicitly rounds both spall damage and effective DR up.
+ return {status:"resolved",damage:Math.ceil(maximumBlast/10),effectiveDR:Math.ceil(dr/100),automaticApplication:false};
 }
 export function thermobaricDamage({damage,distanceYards}) {
  if(!Number.isFinite(damage)||damage<0||!positive(distanceYards))return {status:"unresolved",reason:"P4DistanceMissing"};

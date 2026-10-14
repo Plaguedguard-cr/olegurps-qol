@@ -29,7 +29,7 @@ function selectedToken() {
 
 export async function openMeleeAssistant() {
   if (!globalThis.foundry?.applications?.api?.ApplicationV2) {
-    return ui.notifications.error("Melee Assistant требует Foundry VTT с ApplicationV2.");
+    return ui.notifications.error("Помощник ближнего боя требует Foundry VTT с ApplicationV2.");
   }
   if (typeof globalThis.GURPS?.performAction !== "function" || typeof globalThis.GURPS?.parselink !== "function" ||
       typeof globalThis.GURPS?.DamageChat?.create !== "function") {

@@ -125,7 +125,7 @@ test("FireService keeps RRS, Quick-Shot, and Trademark Move as distinct modifier
       { modint: 4, desc: "Quick-Shot (Pistol)" },
       { modint: 1, desc: "Trademark Move" }
     ]);
-    assert.equal(applied.modifiers.find(m => m.desc === "Hit Location: Vitals (TA)")?.modint, -1);
+    assert.equal(applied.modifiers.find(m => m.desc === "Зона попадания: Vitals (TA)")?.modint, -1);
     assert.equal(stack.length, 0);
   } finally { globalThis.GURPS = previous; }
 });

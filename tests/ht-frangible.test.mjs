@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { modes, profile, context, inventoryFixture, compatibility, api } from "./fixtures/ht-special-context.mjs";
 import { resolveAmmunitionEffects } from "../scripts/tools/ammunition-effects.js";
+import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { shotAmmunitionConditions, resolveDamageShotLink } from "../scripts/tools/damage-shot-link.js";
 import { availableAmmoTypes, ammoManagementHTML } from "../scripts/tools/ammo-management-app.js";
 import { evaluateHTOptionEligibility } from "../scripts/ht-option-eligibility.js";
@@ -44,7 +45,7 @@ test("Frangible unchanged stocks on switch; immutable conditions and historical 
   }
   for (const lang of ["ru", "en"]) {
     runtime.game.i18n.lang = lang; const notes = shotAmmunitionConditions(source, runtime); assert.equal(notes.length, 2);
-    assert.match(notes[0], /DR 1/); assert.match(notes[1], /B408/);
+    assert.ok(notes.some(note=>/DR\s*1/.test(note))); assert.ok(notes.some(note=>/B408/.test(note)));
     const types = availableAmmoTypes(f.actor, f.state().weapons[0], api, lang);
     assert.equal(types.find(t => t.key === f.type.key).unavailable, false);
     assert.doesNotMatch(ammoManagementHTML(f.state().weapons[0], { ammoKey: f.type.key, language: lang }, types), /data-recipe-editor/);
@@ -62,7 +63,14 @@ test("Frangible conditions belong to native Damage identity copies or permitted 
   const p=profile(modes.glock,"ht_frangible");
   const copy={visible:true,isContentVisible:true,flags:{"olegurps-qol":{damageLink:{status:"linked",storage:"identity-copy",shotSnapshot:{damage:p.damage}}}}};
   const runtime={game:{i18n:{lang:"ru"},messages:new Map()}};
-  for(let i=0;i<2;i++)assert.equal(shotAmmunitionConditions(JSON.parse(JSON.stringify(copy)),runtime).length,2);
+  // A damage-only identity copy cannot establish a completed attack's identity.
+  for(let i=0;i<2;i++)assert.deepEqual(shotAmmunitionConditions(JSON.parse(JSON.stringify(copy)),runtime),[]);
+  const snapshot=createShotSnapshot(p,{attackId:"a",messageId:"attack",spent:1});
+  const source={id:"attack",visible:true,isContentVisible:true,flags:{"olegurps-qol":{shotSnapshot:snapshot}}};
+  runtime.game.messages.set("attack",source);
+  const linked={visible:true,isContentVisible:true,flags:{"olegurps-qol":{damageLink:{status:"linked",originatingAttackMessageId:"attack",attackId:"a"}}}};
+  for(let i=0;i<2;i++)assert.equal(shotAmmunitionConditions(JSON.parse(JSON.stringify(linked)),runtime).length,2);
+  source.visible=false;assert.deepEqual(shotAmmunitionConditions(linked,runtime),[]);
   copy.isContentVisible=false;assert.deepEqual(shotAmmunitionConditions(copy,runtime),[]);
   const reference={visible:true,isContentVisible:true,flags:{"olegurps-qol":{damageLink:{status:"linked",storage:"reference",originatingAttackMessageId:"hidden",attackId:"a"}}}};
   assert.deepEqual(shotAmmunitionConditions(reference,runtime),[]);

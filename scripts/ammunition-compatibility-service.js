@@ -1,4 +1,6 @@
 import { CATALOG_DEFINITIONS } from "./catalog-service.js";
+import { correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
+import { htIdentityNeedsReview } from "./ht-source-corrections.js";
 import { evaluateHTOptionEligibility, resolveHTCatalogFacts } from "./ht-option-eligibility.js";
 
 const BOOKS = ["lt", "ht", "ut"];
@@ -21,11 +23,23 @@ const numeric = value => typeof value === "number" && Number.isFinite(value);
 export class AmmunitionCompatibilityService {
   #catalogs;
   #indexed = new Map();
+  #memo = new Map();
+  #memoCatalogs = [];
   constructor(catalogs) {
     if (!catalogs?.getModeLinks) throw new TypeError("A CatalogService is required.");
     this.#catalogs = catalogs;
   }
   load() { return this.#catalogs.load(); }
+  #query(key, evaluate) {
+    // Only immutable reference queries are cached. Actor balances, approvals and write permissions are never cached here.
+    const data=['weapons',...BOOKS].map(book=>this.#catalogs.getCatalog(book));
+    if(data.some((value,i)=>value!==this.#memoCatalogs[i])){this.#memo.clear();this.#memoCatalogs=data;}
+    if(data.some(value=>!value))return evaluate();
+    if(this.#memo.has(key))return this.#memo.get(key);
+    const value=evaluate();
+    if(this.#memo.size>=2000)this.#memo.clear();
+    this.#memo.set(key,value);return value;
+  }
 
   #index(book) {
     const data = this.#catalogs.getCatalog(book);
@@ -34,7 +48,8 @@ export class AmmunitionCompatibilityService {
     const records = new Map();
     const labels = new Map();
     for (const [collection, kind] of Object.entries(COLLECTIONS[book])) {
-      for (const record of data[collection] ?? []) {
+      for (const original of data[collection] ?? []) {
+        const record = book === "ht" && kind === "ammo-item" ? correctHTAmmo(original) : original;
         const entries = records.get(record.id) ?? [];
         entries.push({ book, collection, kind, record }); records.set(record.id, entries);
         // Resolve names ONLY inside explicitly named HT178 rules. Never a weapon matching heuristic.
@@ -83,6 +98,9 @@ export class AmmunitionCompatibilityService {
 
   /** book/kind disambiguate IDs. ammoItemId binds an LT option to a linked projectile. */
   checkCompatibility(modeId, ammoId, options = {}) {
+    return this.#query(JSON.stringify(['pair',modeId,ammoId,options]),()=>this.#checkCompatibility(modeId,ammoId,options));
+  }
+  #checkCompatibility(modeId, ammoId, options) {
     const ctx = this.#context(modeId);
     const book = options.book ?? ctx.book;
     const entries = this.#index(book)?.records.get(ammoId) ?? [];
@@ -98,6 +116,8 @@ export class AmmunitionCompatibilityService {
   #check(ctx, entry, options) {
     const { record: r, kind } = entry;
     const fail = (code, message, status = "incompatible") => this.#result(ctx, entry, status, [reason(code, message)]);
+    if (ctx.book === "ht" && ["ammo-item", "ammo-family"].includes(kind) && htIdentityNeedsReview(ctx.mode.weapon_mode_id, r.id))
+      return fail("HT_IDENTITY_UNVERIFIED", htIdentityNeedsReview(ctx.mode.weapon_mode_id, r.id), "undetermined");
     if (ctx.mode.weapon_mode_id === "WdzSSShGT_yv4ctOi" && kind === "ammo-family")
       return fail("PHYSICAL_IDENTITY_REQUIRED", "The central barrel requires its separate source-backed 18G charge identity.");
     if (kind === "feed-device" || kind === "reference-option") return fail("NOT_AMMUNITION", "Reference equipment is not selectable ammunition.");
@@ -133,7 +153,7 @@ export class AmmunitionCompatibilityService {
     if (id) {
       const ammo = this.#catalogs.getAmmoItem("ht", id);
       if (!ammo) return this.#result(ctx, entry, "undetermined", [reason("RECORD_UNAVAILABLE", "Selected ammunition context is unavailable.")]);
-      if (!ids.includes(id)) {
+      if (!ids.includes(id) || htIdentityNeedsReview(ctx.mode.weapon_mode_id, id)) {
         const compatibility = this.#check(ctx, { book: "ht", collection: "ammo_items", kind: "ammo-item", record: ammo }, {});
         if (compatibility.status !== "compatible") return this.#result(ctx, entry, compatibility.status, compatibility.reasons, compatibility.relation);
       }
@@ -185,6 +205,10 @@ export class AmmunitionCompatibilityService {
         knownPlatformActionRequirement: d.known_platform_action_requirement, requiresNativeExactSourceChambering: true,
         excludedIds: d.excluded_ambiguous_target_or_source_ids ?? [] } };
     const unresolved = message => this.#result(ctx, entry, "undetermined", [reason("UNVERIFIED_HT178_CONDITION", message)], relation);
+    if (publishedShortShellCompatibility(ctx.mode, entry.record.id)) return {
+      ...this.#result(ctx, entry, "compatible", [], { ...relation, source:"HT106 Benelli Super 90 published 2.75/3 inch operation" }),
+      capabilities:{firing:"confirmed",feedingAndCycling:"confirmed"}
+    };
     if (pairs.length !== 1) return unresolved("No unique explicit assessment exists for this concrete mode/source/target pair.");
     const pair = pairs[0];
     const warnings = pair.warnings.map(message => reason("HT178_WARNING", message));
@@ -306,6 +330,9 @@ export class AmmunitionCompatibilityService {
   }
 
   getCompatibleAmmunition(modeId, options = {}) {
+    return this.#query(JSON.stringify(['choices',modeId,options]),()=>this.#getCompatibleAmmunition(modeId,options));
+  }
+  #getCompatibleAmmunition(modeId, options) {
     const ctx = this.#context(modeId);
     if (ctx.error) return snapshot({ modeId, book: ctx.book ?? null, status: "undetermined", ammunition: [], variants: [], undetermined: [], reasons: [ctx.error] });
     const results = [...this.#index(ctx.book).records.values()].flat().filter(entry => !["feed-device", "reference-option"].includes(entry.kind)).map(entry => this.#check(ctx, entry, options));
@@ -365,3 +392,4 @@ export class AmmunitionCompatibilityService {
     return snapshot({ catalogs: this.#catalogs.getDiagnostics(), unsupported, policy: "Explicit links and predicates only; unknown conditions remain undetermined. No gameplay integration." });
   }
 }
+import { publishedShortShellCompatibility } from "./ht-published-loads.js";

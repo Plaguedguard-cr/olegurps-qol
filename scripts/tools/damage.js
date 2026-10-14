@@ -18,9 +18,9 @@ export function normalizeDamageFormula(value) {
 }
 
 function localizedDamageTypeLabel(type, definition) {
-  const key = `GURPS.damageType${definition?.label ?? ""}`;
-  const localized = game.i18n?.localize?.(key);
-  const label = localized && localized !== key ? localized : String(definition?.label ?? type);
+  const label = ({cr:"дробящий",cut:"режущий",imp:"пронзающий",burn:"ожог",cor:"коррозия",
+    tox:"токсичный",fat:"усталость",pi:"пробивающий","pi-":"малый пробивающий",
+    "pi+":"большой пробивающий","pi++":"огромный пробивающий"})[type] ?? type;
   return label === type ? type : `${type} \u2014 ${label}`;
 }
 
@@ -100,10 +100,10 @@ export async function openDamageRoll() {
             class="oq-damage-type selected"
             data-damage-type=""
             aria-pressed="true"
-            title="Untyped / \u0411\u0435\u0437 \u0442\u0438\u043f\u0430"
+            title="Без типа"
           >
             <span class="oq-damage-type-icon"><i class="fa-solid fa-dice-d6"></i></span>
-            <span class="oq-damage-type-code">Untyped</span>
+            <span class="oq-damage-type-code">Без типа</span>
           </button>
           ${typeButtons}
         </div>

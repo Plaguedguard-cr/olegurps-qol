@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -50,7 +51,7 @@ test("unknown Acc remains unknown and positive Acc/caps/Move and Attack remain u
   assert.equal(resolveAimedFireBonuses({accuracy:0,aimSeconds:3,moveAndAttack:true}).aimBonus,0);
 });
 test("source errata is exactly HAFLA null to zero; all other weapon stats/IDs/hashes stay unchanged", async () => {
-  const raw = await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",import.meta.url),"utf8"), proof = JSON.parse(await fs.readFile(new URL("../docs/audit/ht-v1-3-preservation.json",import.meta.url),"utf8"));
+  const raw = await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",import.meta.url),"utf8"), proof = readAuditFixture('ht-v1-3-preservation');
   assertWeaponPreservation(raw,proof);
   const previous = JSON.parse(restoreHaflaErrata(raw,proof)), expected = structuredClone(previous);
   expected.equipment.flatMap(e=>e.modes).find(m=>m.weapon_mode_id===mid).stats.accuracy="0";
@@ -62,7 +63,7 @@ test("WP recipe identity, native Damage/range and existing GM hints are untouche
   const c = context(mid), p = automatic.prepare({modeId:mid,base:c.base,variantId:"ht_white_phosphorus"});
   assert.equal(c.base.ammoId,aid); assert.equal(p.state,"complete");
   const profile = resolver.resolve({actorId:"a",weaponId:"w",rawAttack:c.raw,binding:c.binding,ammunition:{type:p.type},profilePolicy:"strict"});
-  assert.equal(profile.damage.nativeSafe,true); assert.deepEqual(profile.damage.components.map(c=>c.formula),["1d-2 burn ex","1d(0.2) cut"]);
+  assert.equal(profile.damage.nativeSafe,true); assert.deepEqual(profile.damage.components.map(c=>c.formula),["1d-2 burn ex","1d(0.2) burn"]);
   assert.equal(profile.effective.acc,"0"); assert.equal(profile.effective.range,"10/90");
   assert.equal(profile.ammunition.recipe.autoProfile.revision,1);
   assert.equal(profile.damage.rules.environment.chatHint,catalogs.getVariant("ht","ht_white_phosphorus").chat_hint_ru);

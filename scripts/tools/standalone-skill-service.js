@@ -38,19 +38,24 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   const tlPolicy = readWeaponSkillTLPolicy(user);
   const snapshot = mode?.snapshot;
   const explicit = clean(mode?.overrides?.governingSkill);
+  const attributeOnly = !explicit && snapshot?.governing_skill?.status === 'none' &&
+    snapshot?.governing_skill_selection?.strategy === 'manual-or-default-only' &&
+    snapshot.governing_skill_selection.attribute_defaults?.length > 0;
   const required = explicit ? parseStandaloneSkill(explicit) :
     snapshot?.governing_skill?.status === "resolved" ? parseStandaloneSkill(
-      snapshot.governing_skill.skill.name, snapshot.governing_skill.skill.specialization) : null;
+      snapshot.governing_skill.skill.name, snapshot.governing_skill.skill.specialization) :
+      attributeOnly ? parseStandaloneSkill(snapshot.governing_skill_selection.attribute_defaults[0].attribute) : null;
   if (!required) return { resolved: false, level: null, tlPolicy, reason: "В источнике не определён требуемый навык. Укажите точный навык в настройках режима." };
   if (technical.has(required.family) && required.tl === null) {
     const tl = clean(record?.equipmentSnapshot?.tech_level);
     required.tl = /^\d+$/.test(tl) ? Number(tl) : null;
   }
-  const name = explicit ? explicit.replace(/\s*\([^()]*\)\s*$/, "").replace(/\s*\/\s*TL\s*\d+\s*/iu, "") : snapshot.governing_skill.skill.name;
+  const name = explicit ? explicit.replace(/\s*\([^()]*\)\s*$/, "").replace(/\s*\/\s*TL\s*\d+\s*/iu, "") :
+    attributeOnly ? required.name : snapshot.governing_skill.skill.name;
   const label = name +
     (required.tl === null ? "" : "/TL" + required.tl) +
     (required.specialty ? " (" + (explicit ? explicit.match(/\(([^()]*)\)/)?.[1] ?? required.specialty : snapshot.governing_skill.skill.specialization) + ")" : "");
-  const learned = learnedSkills(actor);
+  const learned = attributeOnly ? [] : learnedSkills(actor);
   const exact = learned.filter(s => sameSkill(s, required) && s.tl === required.tl).sort((a,b) => b.level-a.level)[0];
   const common = { name: label, family: required.family, specialty: required.family === "guns" ?
     ({ "light anti-armor weapon": "law", "light machine gun": "lmg", "submachine gun": "smg" }[required.specialty] ?? required.specialty) : required.specialty,
@@ -60,7 +65,8 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   // A manual replacement without catalog rules may use an exact learned skill only.
   const original = snapshot?.governing_skill?.skill;
   const originalIdentity = original && parseStandaloneSkill(original.name, original.specialization);
-  const rules = !explicit || originalIdentity && sameSkill(originalIdentity, required) ? snapshot?.defaults ?? [] : [];
+  const rules = attributeOnly ? snapshot.governing_skill_selection.attribute_defaults.map(r=>({type:canonical(r.attribute),modifier:r.modifier})) :
+    !explicit || originalIdentity && sameSkill(originalIdentity, required) ? snapshot?.defaults ?? [] : [];
   const candidates = [];
   for (const rule of rules) {
     const modifier = Number(rule.modifier);
@@ -82,8 +88,8 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
       const attribute = canonical(rule.type).toUpperCase();
       const raw = actor?.system?.attributes?.[attribute]?.value ?? actor?.system?.[canonical(rule.type)]?.value;
       const value = raw === null || raw === undefined || clean(raw) === "" ? NaN : Number(raw);
-      if (Number.isFinite(value)) candidates.push({ level: Math.min(20, value) + modifier,
-        sourceName: attribute, sourceLevel: value, penalty: modifier, rule: structuredClone(rule), source: "attribute-default" });
+      if (Number.isFinite(value)) candidates.push({ level: (attributeOnly ? value : Math.min(20, value)) + modifier,
+        sourceName: attribute, sourceLevel: value, penalty: modifier, rule: structuredClone(rule), source: attributeOnly ? "attribute-roll" : "attribute-default" });
     }
   }
   candidates.sort((a,b) => b.level-a.level);
@@ -93,6 +99,7 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
 }
 export function standaloneSkillDescription(skill) {
   if (!skill?.resolved) return skill?.reason ?? "Навык не определён.";
+  if (skill.source === 'attribute-roll') return skill.sourceName + (skill.penalty >= 0 ? '+' : '') + skill.penalty + ': ' + skill.level;
   return skill.name + ": " + skill.level + (skill.learned ? " — изучен" :
-    " — не изучен; default от " + skill.sourceName + " (" + (skill.penalty > 0 ? "+" : "") + skill.penalty + ")");
+    " — не изучен; по умолчанию от " + skill.sourceName + " (" + (skill.penalty > 0 ? "+" : "") + skill.penalty + ")");
 }

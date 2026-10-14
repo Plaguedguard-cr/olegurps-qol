@@ -1,4 +1,6 @@
 import { normalizeAccuracy, normalizeBulk } from "./fire-service.js";
+import { tracerBonus } from "./ammunition-f4.js";
+import { f4Text } from "./ammunition-f4-localization.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
 import { visibilityRules } from "./limited-visibility.js";
 import { resolveRangedRapidStrike } from "./ranged-rapid-strike-service.js";
@@ -29,7 +31,9 @@ export function measureTokenDistanceYards(sourceToken, targetToken, runtime = gl
   try {
     const sourceDocument = sourceToken.document ?? sourceToken;
     const targetDocument = targetToken.document ?? targetToken;
-    const path = runtime.canvas?.grid?.measurePath?.([sourceDocument, targetDocument]);
+    const sourcePoint=sourceDocument.getCenterPoint?.()??sourceToken.center??sourceDocument;
+    const targetPoint=targetDocument.getCenterPoint?.()??targetToken.center??targetDocument;
+    const path = runtime.canvas?.grid?.measurePath?.([sourcePoint, targetPoint]);
     const sceneDistance = runtime.canvas?.grid?.isGridless ? path?.distance : path?.spaces;
     const yards = sceneDistanceToYards(sceneDistance, runtime);
     return Number.isFinite(yards) && yards >= 0 ? yards : null;
@@ -182,6 +186,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         penalty,
         max: range.max,
         label: String(range.moddesc ?? range.desc ?? range.description ?? range.max ?? index + 1)
+          .replace(/^for range\/speed (.+) yds?$/i, "$1 ярдов")
       };
     });
   }
@@ -258,8 +263,8 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       targetDistance,
       manualRangeSelected: values?.manualRangeSelected === true
     });
-    const halfDamageRange = fireService.parseHalfDamageRange(attack?.data?.halfd) ??
-      fireService.parseHalfDamageRange(attack?.data?.range);
+    const halfDamageRange = attack?.ammunitionRange?.halfDamage === null ? null :
+      fireService.parseHalfDamageRange(attack?.data?.halfd) ?? fireService.parseHalfDamageRange(attack?.data?.range);
     return fireService.resolveMultipleProjectileFire({
       rof: attack?.ammunitionProjectileKind === "slug" ? fireService.parseRateOfFire(attack?.rof).baseRoF : attack?.rof,
       physicalShots: values?.shots,
@@ -397,16 +402,17 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const targetedAttackLabel = /^Targeted Attack\b/iu.test(targetLabel)
       ? targetLabel : (targetLabel ? `Targeted Attack: ${targetLabel}` : "Targeted Attack");
     const hitLocationLabel = targetedAttack
-      ? `${targetedAttackLabel} / Hit Location: ${hitLocation?.label ?? ""}`
-      : `Hit Location: ${hitLocation?.label ?? ""}`;
+      ? `${targetedAttackLabel} / Зона попадания: ${hitLocation?.label ?? ""}`
+      : `Зона попадания: ${hitLocation?.label ?? ""}`;
     const closeHipLabel = closeHipShooting
-      ? `${closeHipShooting.governingSkillName}: ${closeHipShooting.governingSkillLevel}; ${closeHipShooting.label}: ${closeHipShooting.techniqueLevel}; Bulk: ${closeHipShooting.bulk}; Close-Hip result: ${closeHipShooting.closeHipBase}`
+      ? `${closeHipShooting.governingSkillName}: ${closeHipShooting.governingSkillLevel}; ${closeHipShooting.label}: ${closeHipShooting.techniqueLevel}; Bulk: ${closeHipShooting.bulk}; Результат стрельбы от бедра: ${closeHipShooting.closeHipBase}`
       : "Close Combat Bulk";
     const cqbLabel = closeQuartersBattle
-      ? `${closeQuartersBattle.governingSkillName}: ${closeQuartersBattle.governingSkillLevel}; ${closeQuartersBattle.label}: ${closeQuartersBattle.techniqueLevel}; weapon technique: ${closeQuartersBattle.weaponTechniqueLevel}; Move and Attack / Bulk: ${closeQuartersBattle.movePenalty}; CQB base: ${closeQuartersBattle.cqbBase}`
+      ? `${closeQuartersBattle.governingSkillName}: ${closeQuartersBattle.governingSkillLevel}; ${closeQuartersBattle.label}: ${closeQuartersBattle.techniqueLevel}; оружейная техника: ${closeQuartersBattle.weaponTechniqueLevel}; Move and Attack / Bulk: ${closeQuartersBattle.movePenalty}; База ближнего боя: ${closeQuartersBattle.cqbBase}`
       : "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0438 \u0430\u0442\u0430\u043a\u0430";
     const closeCombatBulkBase = closeHipShooting || values?.closeCombat === true
       ? normalizeBulk(attack?.data?.bulk ?? attack?.bulk) : 0;
+    const nextTurnTracer = configuredPreview ? 0 : tracerBonus(token?.actor?.id, token?.id);
     const calculation = resolveCombatCalculation({
       combatType: "ranged", actor: token?.actor, attack, baseAttackLevel: baseLevel,
       governingSkill, attackSlot: values?.contextLabel ?? null,
@@ -416,10 +422,11 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         closeHipShooting, closeHipLabel, moveAttackBase: moveAttackPenalty,
         closeCombatBulkBase },
       channels: [
+        { id: "ammunitionTracer", value: nextTurnTracer, label: f4Text("TracerBonus") },
         ...(fuzeBonus ? [{ id: "ammunitionAirburst", value: fuzeBonus, label: automaticAmmoText("P6ht_airburst") }] : []),
         { id: "requiredStrength", value: weaponStrengthPenalty(attack, token?.actor), label: automaticAmmoText("MinimumSTPenalty") },
         { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
-        { id: "modifierBucket", value: bucketModifier, label: "Modifier Bucket", roll: false },
+        { id: "modifierBucket", value: bucketModifier, label: "Набор модификаторов", roll: false },
         { id: "ggaEffects", value: effectModifier, label: "\u042d\u0444\u0444\u0435\u043a\u0442\u044b GGA", roll: false },
         { id: "range", value: rangeAdjustment, label: `\u0420\u0430\u0441\u0441\u0442\u043e\u044f\u043d\u0438\u0435: ${effectiveRange?.label ?? ""}` },
         { id: "elevation", value: 0, label: "Elevation" },
@@ -427,7 +434,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         { id: "rangedRapidStrike", value: rapidStrike ? -6 : 0, label: "Ranged Rapid Strike", kind: "combat-option" },
         { id: "aim", value: aimBonus, label: "Aim" },
         { id: "braced", value: bracingBonus, label: "\u0423\u043f\u043e\u0440" },
-        { id: "opticalSight", value: sightBonus, label: "Optical Sight" },
+        { id: "opticalSight", value: sightBonus, label: "Оптический прицел" },
         { id: "laser", value: laserBonus, label: "\u041b\u0430\u0437\u0435\u0440\u043d\u044b\u0439 \u043f\u0440\u0438\u0446\u0435\u043b" },
         { id: "moveAndAttack", value: moveAttackPenalty, label: cqbLabel, kind: "maneuver" },
         { id: "closeCombatBulk", value: closeCombatBulkBase, label: closeHipLabel },
@@ -437,7 +444,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         { id: "hitLocation", value: Number(hitLocation?.penalty ?? 0), label: hitLocationLabel }
       ],
       rules: getCombatRules("ranged"),
-      caps: visibility?.blind ? [{ maximum: 9, label: "Cap Shooting Blind: 9" }] : []
+      caps: visibility?.blind ? [{ maximum: 9, label: "Предел навыка при стрельбе вслепую: 9" }] : []
     });
     const movementChannel = calculation.channels.find(channel => channel.id === "moveAndAttack");
     return { effectiveSkill: calculation.effectiveSkill, calculatedSkill: calculation.uncappedSkill,
@@ -445,7 +452,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       modifiers: calculation.modifiers, combatCalculation: calculation,
       closeQuartersBattle, closeHipShooting, rapidStrike,
       moveAttackPenalty: movementChannel?.resolvedValue ?? moveAttackPenalty,
-      baseSkill: baseLevel, governingSkill, baseSkillName: attack?.standaloneRef ? governingSkill?.name : "Ranged Weapon Level" };
+      baseSkill: baseLevel, governingSkill, baseSkillName: attack?.standaloneRef ? governingSkill?.name : "Базовый навык оружия" };
   }
 
   function calculateEffectiveFireSkill(attack, values, rangeBands, targetingService, targetedAttackContext = null) {

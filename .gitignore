@@ -32,3 +32,24 @@ release/
 
 # Imported macro source
 /Explosion-Fragmentation.txt
+
+# Local reference book; never publish
+/docs/GURPS - 4E - High Tech.pdf
+
+# Historical evidence lives in the verified external document archive
+/docs/audit/
+/local-archive/
+/olegurps-qol-archive/
+/local-sources/
+/docs/*.pdf
+/test-results/
+/docs/*.tap
+
+# Rule books, including accidental copies outside docs
+*.pdf
+BooksCodex/
+
+# Live LevelDB lock and diagnostic logs are not compendium content
+/packs/**/LOCK
+/packs/**/LOG
+/packs/**/LOG.old

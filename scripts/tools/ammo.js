@@ -1,4 +1,5 @@
 import { createFireControlContext, getTokenFireRangeContext } from "./fire-control-context.js";
+import {platformMotionError} from '../ht-specialized-platforms.js';
 import { WeaponAssistantApp } from "./weapon-assistant-app.js";
 import { FirePreparationApp } from "./fire-preparation-app.js";
 import { measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
@@ -20,6 +21,7 @@ import { getSuppressionFireCapacity } from "./suppression-fire-service.js";
 import { SuppressionFireSessionService } from "./suppression-fire-session-service.js";
 import { FireService } from "./fire-service.js";
 import { AmmoService } from "./ammo-service.js";
+import { inventoryAmmoName, renderAmmunitionSummary } from "./ammo-caption.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
 import { resolveRuntimeAttackProfile, newAttackId, attackProfileError, withRuntimeAmmoStats } from "./attack-profile-runtime.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
@@ -65,18 +67,18 @@ export function buildFireSkillBreakdownHtml(payload, escapeHTML) {
     const chs = payload.closeHipShooting;
     skillDetails.push(`${escapeHTML(chs.governingSkillName)}: <strong>${chs.governingSkillLevel}</strong>; ` +
       `${escapeHTML(chs.label)}: <strong>${chs.techniqueLevel}</strong>; ` +
-      `Bulk: <strong>${chs.bulk}</strong>; Close-Hip result: <strong>${chs.closeHipBase}</strong>`);
+      `Bulk: <strong>${chs.bulk}</strong>; Результат стрельбы от бедра: <strong>${chs.closeHipBase}</strong>`);
   }
   if (payload.closeQuartersBattle) {
     const cqb = payload.closeQuartersBattle;
     skillDetails.push(`${escapeHTML(cqb.governingSkillName)}: <strong>${cqb.governingSkillLevel}</strong>; ` +
       `${escapeHTML(cqb.label)}: <strong>${cqb.techniqueLevel}</strong>; ` +
-      `weapon technique: <strong>${cqb.weaponTechniqueLevel}</strong>; Move and Attack / Bulk: <strong>${cqb.movePenalty}</strong>; ` +
-      `CQB base: <strong>${cqb.cqbBase}</strong>`);
+      `оружейная техника: <strong>${cqb.weaponTechniqueLevel}</strong>; Move and Attack / Bulk: <strong>${cqb.movePenalty}</strong>; ` +
+      `База ближнего боя: <strong>${cqb.cqbBase}</strong>`);
   }
   if (payload.baseSkillName && Number.isFinite(payload.baseSkill)) {
     const base = escapeHTML(payload.baseSkillName) + ": <strong>" + payload.baseSkill + "</strong>";
-    return `<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Skill details</summary><div>${base}` +
+    return `<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Расчёт навыка</summary><div>${base}` +
       (skillDetails.length ? `<br><br>${skillDetails.join(".<br><br>")}` : "") + `</div></details>`;
   }
   return skillDetails.length
@@ -265,7 +267,7 @@ export async function openAmmoManager() {
     .gam-mag {
       display: inline-flex !important;
       align-items: center !important;
-      flex: 0 0 auto !important;
+      flex: 0 1 auto !important;
       width: auto !important;
       min-width: 0 !important;
       min-height: 0 !important;
@@ -280,7 +282,7 @@ export async function openAmmoManager() {
       background: #19191d;
       font-weight: 600;
       text-shadow: 0 1px 2px #000;
-      white-space: nowrap !important;
+      white-space: normal !important;
       line-height: 1.2 !important;
       cursor: pointer;
     }
@@ -295,7 +297,11 @@ export async function openAmmoManager() {
       pointer-events: none;
     }
 
-    .gam-mag-label { position: relative; z-index: 1; }
+    .gam-mag { max-width: 100% !important; gap: 6px; }
+    .gam-mag-label, .gam-mag-name { position: relative; z-index: 1; }
+    .gam-mag-label { flex: 0 0 auto; white-space: nowrap; }
+    .gam-mag-name { min-width: 0; overflow-wrap: anywhere; text-align: left; }
+    .gam-ammo-stock-row { overflow-wrap: anywhere; }
 
     .gam-mag:hover,
     .gam-mag:focus-visible {
@@ -681,6 +687,8 @@ export async function openAmmoManager() {
       ? resolveRangedRapidStrike({ actor, attack, governingSkill,
         governingSpecialty: governingSkill?.specialty ?? values.governingSpecialty }) : null;
     const errors = [];
+    const platformError=platformMotionError(attack,{...values,moveAndAttack});
+    if(platformError)errors.push(platformError);
     if (environment?.error) errors.push(automaticAmmoText(environment.error));
 
     if (shotsText === "" || !Number.isInteger(shots) || shots < shotLimits.minShots || shots > shotLimits.maxShots) {
@@ -705,7 +713,7 @@ export async function openAmmoManager() {
       ? getRangedRapidStrikeSpecialties({ actor, attack }) : [];
     if (!governingSkill && quickSpecialties.length > 1 &&
         !quickSpecialties.some(option => option.value === values.governingSpecialty)) {
-      errors.push("Select Governing Skill for Quick-Shot.");
+      errors.push("Выберите основной навык для Quick-Shot.");
     }
     if (visibility?.mode === "partial" &&
         (!Number.isInteger(Number(values.visibility?.partialPenalty)) ||
@@ -729,7 +737,7 @@ export async function openAmmoManager() {
       attack, values, rangeBands, targetingService, targetedAttackContext);
     const effectiveSkill = skillDetails?.effectiveSkill ?? null;
     const rcl = fireService.parseAttackRcl(attack);
-    if (rcl === null) {
+    if (rcl === null && !(attack.platformRules?.rclNotApplicable && fireMode.effectiveRoF===1)) {
       ui.notifications.warn(automaticAmmoText("ProjectileRclRequired"));
       return null;
     }
@@ -750,12 +758,12 @@ export async function openAmmoManager() {
       airburstTarget: values.airburstTarget ?? "point",
       environment: environment ?? null,
       baseSkill: skillDetails?.baseSkill ?? Number(attack?.level),
-      baseSkillName: skillDetails?.baseSkillName ?? "Ranged Weapon Level",
+      baseSkillName: skillDetails?.baseSkillName ?? "Базовый навык оружия",
       visibilityPenalty: visibilityRule?.penalty ?? 0,
       visibilityCapAdjustment: visibilityRule?.blind
         ? Math.min(0, effectiveSkill - (skillDetails?.calculatedSkill ?? effectiveSkill)) : 0,
       concealTargetDetails: visibility?.mode === "unseen" || visibility?.mode === "blind" && !visibility.knownLocation,
-      capLabel: visibilityRule?.blind ? "Cap Shooting Blind: 9" : undefined,
+      capLabel: visibilityRule?.blind ? "Предел навыка при стрельбе вслепую: 9" : undefined,
       rcl,
       aimSeconds,
       aimBonus,
@@ -806,7 +814,9 @@ export async function openAmmoManager() {
     }
 
     if (shouldReportField(state, "hits")) {
-      const hitText = payload.hits === null
+      const hitText = payload.artillery
+        ? `Наведение: запас успеха <strong>${payload.margin}</strong>. Ведущий определяет рассеивание и попадание.`
+        : payload.hits === null
         ? `не удалось определить автоматически; Rcl: <strong>${payload.rcl}</strong>`
         : payload.blindHex
           ? `\u043f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435): <strong>${payload.hits}</strong>; \u0437\u0430\u043f\u0430\u0441 \u0443\u0441\u043f\u0435\u0445\u0430: <strong>${payload.margin}</strong>; Rcl: <strong>${payload.rcl}</strong>`
@@ -828,7 +838,7 @@ export async function openAmmoManager() {
     if (payload.randomHitLocations?.length && payload.blindHex) {
       shotDetails.push("\u0421\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0435 \u0437\u043e\u043d\u044b \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435)");
     }
-    if (shotDetails.length) lines.push(`<details class="olegurps-fire-context-breakdown"><summary style="cursor:pointer">Shot details</summary><div>${shotDetails.join(".<br><br>")}</div></details>`);
+    if (shotDetails.length) lines.push(`<details class="olegurps-fire-context-breakdown"><summary style="cursor:pointer">Условия выстрела</summary><div>${shotDetails.join(".<br><br>")}</div></details>`);
     if (payload.randomHitLocations?.length) {
       lines.push(buildRandomHitLocationsHtml(payload.randomHitLocations, { escapeHtml: escapeHTML }));
     } else if (payload.hitLocationText) {
@@ -852,19 +862,19 @@ export async function openAmmoManager() {
     const visibility = normalizeVisibility(rawShotOptions.visibility);
     if (visibility?.mode === "unseen" && !preparedSnapshot) {
       if (Boolean(visibility.targetTokenId) === Boolean(visibility.blindFireHex))
-        throw new Error("Select exactly one target source.");
+        throw new Error("Выберите один источник цели.");
       if (visibility.blindFireHex) {
         const center = canvas?.grid?.getCenterPoint?.(visibility.blindFireHex);
         const distance = measureCanvasPointDistanceYards(token, center);
-        if (!Number.isFinite(distance)) throw new Error("Unable to measure selected hex.");
+        if (!Number.isFinite(distance)) throw new Error("Не удалось измерить дистанцию до выбранного гекса.");
         rawShotOptions = { ...rawShotOptions, targetDistanceOverride: distance };
       } else {
         const targets = [...(game.user?.targets ?? [])];
         if (targets.length !== 1 || targets[0]?.id !== visibility.targetTokenId ||
             !["approximate", "exact"].includes(visibility.location))
-          throw new Error("Selected Token is no longer available.");
+          throw new Error("Выбранный токен больше недоступен.");
         const distance = measureTokenDistanceYards(token, targets[0]);
-        if (!Number.isFinite(distance)) throw new Error("Unable to measure selected Token.");
+        if (!Number.isFinite(distance)) throw new Error("Не удалось измерить дистанцию до выбранного токена.");
         rawShotOptions = { ...rawShotOptions, targetDistanceOverride: distance };
       }
     }
@@ -889,6 +899,7 @@ export async function openAmmoManager() {
           weapon = context.weapon;
           if (!context.attack) throw new Error(attackProfileError("AttackMissing"));
           if (context.attack.readinessReason) throw new Error(context.attack.readinessReason);
+          if (context.attack.ammunitionReadinessReason) throw Error(attackProfileError(context.attack.ammunitionReadinessReason));
           if (ammunition && Math.min(ammunition.available, ammunition.total) <= 0)
             throw new Error("InsufficientRounds");
           shotOptions = preparedSnapshot?.shotOptions ??
@@ -896,11 +907,12 @@ export async function openAmmoManager() {
           if (!shotOptions) return null;
           if (trademarkMove) shotOptions = applyTrademarkMoveBonus(shotOptions);
           if (trademarkMove && Number.isFinite(expectedEffectiveSkill) && shotOptions.effectiveSkill !== expectedEffectiveSkill)
-            throw new Error("Effective skill changed. Review the updated preview before rolling.");
+            throw new Error("Эффективный навык изменился. Проверьте обновлённый расчёт перед броском.");
           rollAttack = preparedSnapshot?.attack ?? context.attack;
           const profile = resolveRuntimeAttackProfile({ actor, attack: rollAttack, weaponId,
             state: current, ammunition, context: { kind: preparedSnapshot ? "ranged-rapid-strike" : "normal",
               tokenId: token.id, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
+              manualGuidanceConfirmed: globalThis.game?.user?.isGM === true && rawShotOptions.manualGuidanceConfirmed === true,
               effectiveRoF: shotOptions.effectiveRoF, rcl: shotOptions.rcl,
               airburstTarget: shotOptions.airburstTarget ?? "point",
               ...(shotOptions.environment ? { environment: shotOptions.environment } : {}),
@@ -920,7 +932,7 @@ export async function openAmmoManager() {
         }
       });
     } catch (error) {
-      if (["IncompatibleAmmunition", "InsufficientRounds", "Review", "AmmunitionChangedDuringAttack", "IncompleteShotAccounting", "IncompleteExplosiveRecipe", "IncompleteAmmunitionProfile"].includes(error.message)) {
+      if (["GyrojetIdentityRequired","GuidanceRequired","AlternateLoadBallisticsRequired","GyrojetDistanceRequired","IncompatibleAmmunition", "InsufficientRounds", "Review", "AmmunitionChangedDuringAttack", "IncompleteShotAccounting", "IncompleteExplosiveRecipe", "IncompleteAmmunitionProfile"].includes(error.message)) {
         ui.notifications.warn(attackProfileError(error.message));
         return false;
       }
@@ -960,6 +972,7 @@ export async function openAmmoManager() {
       hits,
       margin,
       rcl,
+      artillery: rollAttack?.platformRules?.kind==='mortar',
       closeDamage,
       closeQuartersBattle: shotOptions.closeQuartersBattle,
       closeHipShooting: shotOptions.closeHipShooting,
@@ -1083,10 +1096,12 @@ export async function openAmmoManager() {
   }
 
 
-  async function refreshAttackOverrideConsumers(state, reference) {
+  async function refreshAttackOverrideConsumers(state, reference, { refreshAssistants = true } = {}) {
     const referenceKey = getAttackOverrideKey(reference);
     if (!referenceKey) return;
-    const effectiveAttacks = getRangedAttacks(state);
+    const preparations = [...OPEN_FIRE_PREPARATIONS.values()].filter(preparation =>
+      preparation.token?.actor?.id === actor.id && getAttackOverrideKey(preparation.weapon?.attackRef) === referenceKey);
+    const effectiveAttacks = preparations.length ? getRangedAttacks(state) : [];
 
     for (const preparation of OPEN_FIRE_PREPARATIONS.values()) {
       if (preparation.token?.actor?.id !== actor.id) continue;
@@ -1101,7 +1116,7 @@ export async function openAmmoManager() {
       });
     }
 
-    for (const assistant of OPEN_ASSISTANTS.values()) {
+    for (const assistant of refreshAssistants ? OPEN_ASSISTANTS.values() : []) {
       if (assistant.token?.actor?.id !== actor.id || !assistant.rendered) continue;
       assistant.setManagerState(state);
       await assistant.refreshContent();
@@ -1158,7 +1173,7 @@ export async function openAmmoManager() {
 
     const confirmed = await DialogV2.confirm({
       window: { title: "Удалить настройку оружия" },
-      content: `
+      content: weapon.standaloneWeaponId ? `<p>${escapeHTML(weapon.name)}</p><p>${escapeHTML(standaloneText("ConfirmDelete"))}</p>` : `
         <p>
           Удалить «<strong>${escapeHTML(weapon.name)}</strong>» из менеджера патронов?
         </p>
@@ -1254,7 +1269,7 @@ export async function openAmmoManager() {
         <div class="standard-form gam-chat-settings">
           <div class="gam-chat-block">
             <h3 class="gam-chat-section-title">Кому отправлять сообщения</h3>
-            ${radioRow("self", "Только себе (self only)", settings.mode !== "all")}
+            ${radioRow("self", "Только себе", settings.mode !== "all")}
             ${radioRow("all", "Для всех", settings.mode === "all")}
           </div>
 
@@ -1323,7 +1338,7 @@ export async function openAmmoManager() {
         const magazine = weapon.ammunitionInventory?.magazines[index];
         const ammunition = weapon.ammunitionInventory?.stocks.find(stock => stock.key === magazine?.ammoKey)?.type;
         const ammoName = rounds === 0 ? ammoWindowText("Empty")
-          : ammoDisplayName(ammunition, "ru") || weapon.ammoType || ammoWindowText("Empty");
+          : ammunition ? inventoryAmmoName(ammunition) : weapon.ammoType || "Неизвестное прежнее название";
         const ratio = capacity > 0 ? rounds / capacity : 0;
         const className =
           rounds === 0 ? "empty" : ratio <= 0.25 ? "low" : "";
@@ -1337,10 +1352,11 @@ export async function openAmmoManager() {
             data-weapon-id="${weapon.id}"
             data-magazine-index="${index}"
             aria-pressed="${loaded}"
-            aria-label="${loaded ? "Установленный" : "Установить"} магазин ${index + 1}: ${rounds} из ${capacity}"
+            aria-label="${loaded ? "Установленный" : "Установить"} магазин ${index + 1}: ${rounds} из ${capacity}, ${escapeHTML(ammoName)}"
             title="${escapeHTML(ammoName)}"
           >
             <span class="gam-mag-label">${loaded ? "● " : ""}${index + 1}: ${rounds}/${capacity}</span>
+            <span class="gam-mag-name">${escapeHTML(ammoName)}</span>
           </button>
         `;
       })
@@ -1448,14 +1464,14 @@ export async function openAmmoManager() {
           const availableRoF = getShotLimits(latestAttack, loadedNow, mode).maxShots;
           if (!validateRangedRapidStrikeSplit(Number(rawShotOptions[0]?.shots),
             Number(rawShotOptions[1]?.shots), availableRoF))
-            throw new Error("Ranged Rapid Strike: split the available RoF between Attack 1 and Attack 2.");
+            throw new Error("Быстрая двойная стрельба: распределите доступный RoF между атаками 1 и 2.");
           TARGETED_ATTACK_CONTEXTS.set(currentTargetingService,
             createTargetedAttackContext({ actor, attack: latestAttack }));
           const snapshots = [];
           for (const [index, raw] of rawShotOptions.entries()) {
             const targetId = raw.targetTokenId ?? null;
             const target = targetId ? canvas?.tokens?.get?.(targetId) : null;
-            if (targetId && !target) throw new Error("Attack " + (index + 1) + ": target Token is unavailable.");
+            if (targetId && !target) throw new Error("Атака " + (index + 1) + ": токен цели недоступен.");
             const snapshot = await withFoundryTargets(targetId ? [targetId] : [], () => {
               const measured = target ? getTokenFireRangeContext({
                 sourceToken: token, targetToken: target, rangeBands
@@ -1469,12 +1485,12 @@ export async function openAmmoManager() {
                 ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null : null;
               const shotOptions = parseShotOptions(latestWeapon, latestAttack, values,
                 rangeBands, currentTargetingService, effectRangePenalty);
-              if (!shotOptions) throw new Error("Attack " + (index + 1) + ": invalid shot options.");
+              if (!shotOptions) throw new Error("Атака " + (index + 1) + ": некорректные условия выстрела.");
               return {
                 targetId, targetingService: currentTargetingService,
                 visibility: raw.visibility,
                 attack: foundry.utils.deepClone(latestAttack),
-                shotOptions: { ...shotOptions, contextLabel: "Attack " + (index + 1) },
+                shotOptions: { ...shotOptions, contextLabel: "Атака " + (index + 1) },
                 summary: shotOptions.hitLocationLabel + " | " + shotOptions.physicalShots + " shots | " +
                   shotOptions.effectiveSkill
               };
@@ -1510,7 +1526,7 @@ export async function openAmmoManager() {
           try {
             await managerApp.refreshContent();
           } catch (error) {
-            console.error("Не удалось обновить Shooting Assistant после выстрела:", error);
+            console.error("Не удалось обновить Помощник стрельбы после выстрела:", error);
           }
         }
         return true;
@@ -1540,7 +1556,7 @@ export async function openAmmoManager() {
     }
     await repairState(state, false);
     const { weapon, attack } = getWeaponContext(state, weaponId);
-    if (!attack) throw new Error(`No linked ranged attack was found for "${weapon.name}".`);
+    if (!attack) throw new Error(`Не найдена связанная дистанционная атака для "${weapon.name}".`);
 
     const appKey = `${canvas?.scene?.id ?? "scene"}:${token.document?.id ?? token.id}:${weapon.id}`;
     const existing = OPEN_SUPPRESSION_FIRE.get(appKey);
@@ -1560,7 +1576,7 @@ export async function openAmmoManager() {
       totalAmmo: weapon.totalAmmo
     });
     if (!capacity.eligible && !restoredSession) {
-      ui.notifications.warn("Suppression Fire requires effective RoF 5+ and at least 5 rounds in the loaded magazine.");
+      ui.notifications.warn("Для подавляющего огня нужны эффективный RoF 5+ и не менее 5 патронов в установленном магазине.");
       return null;
     }
     await sessionService.ensureSession();
@@ -1751,35 +1767,35 @@ export async function openAmmoManager() {
   }
 
   async function validateTrademarkSteps(steps, state) {
-    if (!Array.isArray(steps) || !steps.length) throw new Error("Trademark Move needs at least one attack.");
+    if (!Array.isArray(steps) || !steps.length) throw new Error("Для фирменного приёма нужна хотя бы одна атака.");
     const weapons = trademarkWeapons(state);
     for (const [index, raw] of steps.entries()) {
       const step = normalizeTrademarkMoveStep(raw);
       const current = weapons.find(entry => entry.weapon.id === step.weaponId);
       if (!current || !step.attackRef ||
           resolveAttack(step.attackRef, getRangedAttacks(state))?.path !== current.attack.path)
-        throw new Error("Trademark Move attack " + (index + 1) + ": ranged attack is unavailable.");
+        throw new Error("Атака фирменного приёма " + (index + 1) + ": дистанционная атака недоступна.");
       const mode = current.profile.type === "full-auto"
         ? current.profile.modes[step.rofMode] : null;
       if (current.profile.type === "full-auto" && !mode)
-        throw new Error("Trademark Move attack " + (index + 1) + ": invalid RoF mode.");
+        throw new Error("Атака фирменного приёма " + (index + 1) + ": некорректный режим RoF.");
       const maximum = mode?.fullRoF ?? current.profile.baseRoF;
       const minimum = step.rangedRapidStrike ? 1 : mode?.minRoF ?? 1;
       if (!Number.isInteger(step.shots) || step.shots < minimum || step.shots > maximum)
-        throw new Error("Trademark Move attack " + (index + 1) + ": invalid shots.");
+        throw new Error("Атака фирменного приёма " + (index + 1) + ": некорректное число выстрелов.");
       if (!Number.isInteger(step.aimSeconds) || step.aimSeconds < 0)
-        throw new Error("Trademark Move attack " + (index + 1) + ": invalid Aim.");
+        throw new Error("Атака фирменного приёма " + (index + 1) + ": некорректное прицеливание.");
       if (!TargetingService.getBodyplanOptions().some(entry => entry.id === step.bodyplanId))
-        throw new Error("Trademark Move attack " + (index + 1) + ": invalid bodyplan.");
+        throw new Error("Атака фирменного приёма " + (index + 1) + ": некорректная схема тела.");
       const targeting = await TargetingService.create({ attack: current.attack, bodyplan: step.bodyplanId });
       if (!targeting.getSelection(step.hitLocationId, step.hitRegionId))
-        throw new Error("Trademark Move attack " + (index + 1) + ": Hit Location is unavailable.");
+        throw new Error("Атака фирменного приёма " + (index + 1) + ": зона попадания недоступна.");
       const quickSpecialties = step.rangedRapidStrike
         ? getRangedRapidStrikeSpecialties({ actor, attack: current.attack }) : [];
       if (!resolveRangedGoverningSkill({ actor, binding: current.attack.governingSkillBinding }) &&
           step.rangedRapidStrike && quickSpecialties.length > 1 &&
           !quickSpecialties.some(entry => entry.value === step.governingSpecialty))
-        throw new Error("Trademark Move attack " + (index + 1) + ": select Governing Skill for Quick-Shot.");
+        throw new Error("Атака фирменного приёма " + (index + 1) + ": выберите основной навык для Quick-Shot.");
     }
   }
 
@@ -1816,20 +1832,20 @@ export async function openAmmoManager() {
     if (parseElevationHeight(situation.height) === null || !Number.isInteger(situation.manualModifier) ||
         situation.visibilityMode === "partial" &&
         (!Number.isInteger(situation.partialPenalty) || situation.partialPenalty < -9 || situation.partialPenalty > -1))
-      throw new Error("Invalid range, height, situational modifier, or visibility penalty.");
+      throw new Error("Некорректные дистанция, высота, ситуативный модификатор или штраф видимости.");
     const targets = [...(game.user?.targets ?? [])];
-    if (targets.length > 1) throw new Error("Select no target or just one current target.");
+    if (targets.length > 1) throw new Error("Снимите выбор цели или выберите только одну текущую цель.");
     const manualRange = situation.rangeIndex === null ? null
       : rangeBands.find(entry => entry.index === situation.rangeIndex);
     if (situation.rangeIndex !== null && !manualRange)
-      throw new Error("Select an available range.");
+      throw new Error("Выберите доступную дистанцию.");
     const measuredRange = targets.length === 1 ? getTokenFireRangeContext({
       sourceToken: token, targetToken: targets[0], rangeBands
     }) : null;
     if (!manualRange && !measuredRange)
-      throw new Error("Select a range or target exactly one Token.");
+      throw new Error("Выберите дистанцию или один токен цели.");
     if (!manualRange && !rangeBands.some(entry => entry.index === measuredRange.rangeIndex))
-      throw new Error("The selected target is outside the available range table.");
+      throw new Error("Выбранная цель находится вне доступной таблицы дистанций.");
     const visibility = situation.visibilityMode === "normal" ? null
       : situation.visibilityMode === "partial" ? { mode: "partial", partialPenalty: situation.partialPenalty }
       : situation.visibilityMode === "unseen" || situation.visibilityMode === "unseen-exact"
@@ -1948,7 +1964,7 @@ export async function openAmmoManager() {
         open: () => openSuppressionFire(state, weaponId, managerApp)
       },
       {
-        id: "spraying", label: "Spraying Fire",
+        id: "spraying", label: "Стрельба с переносом огня",
         description: "\u041f\u0435\u0440\u0435\u043d\u043e\u0441 \u043e\u0433\u043d\u044f \u043f\u043e \u043d\u0435\u0441\u043a\u043e\u043b\u044c\u043a\u0438\u043c \u0446\u0435\u043b\u044f\u043c",
         icon: "fa-solid fa-arrows-left-right", sessionType: "sprayingFireSessions",
         hasSession: () => !!context().spraying,
@@ -1972,7 +1988,7 @@ export async function openAmmoManager() {
         open: () => openFirePreparation(state, weaponId, managerApp, { mode: "partial", partialPenalty: -1 })
       },
       ...(hasTrademarkMovePerk(actor) ? [{
-        id: "trademark-move", label: "Trademark Move", description: "Saved ranged attack sequence",
+        id: "trademark-move", label: "Фирменный приём", description: "Сохранённая последовательность дистанционных атак",
         icon: "fa-solid fa-star", showSavedSuffix: false,
         hasSession: () => !!savedTrademarkMove(),
         availability: () => ({ available: !!canvas?.tokens?.get?.(token.id), reason: "No active shooter token" }),
@@ -2007,7 +2023,6 @@ export async function openAmmoManager() {
             normalizeWeaponShape(weapon);
             const attack = weapon.standaloneWeaponId ? readStandaloneAttack(actor, weapon.standaloneWeaponId, weapon.standaloneModeId) : resolveAttack(weapon.attackRef, attacks);
             const loaded = weapon.ammunitionReview ? 0 : weapon.magazines[weapon.loadedIndex] ?? 0;
-            const loose = looseAmmo(weapon);
             const broken = !attack;
 
             const levelText = attack?.level > 0 ? `Навык ${attack.level}` : "Навык не указан";
@@ -2027,7 +2042,7 @@ export async function openAmmoManager() {
                       ${weapon.standaloneWeaponId ? escapeHTML(attack?.readinessReason ?? attack?.skillDescription ?? standaloneText("Pending")) : broken ? "Связанная дистанционная атака не найдена" : [levelText, rofText, accText, scopeText, bulkText, rclText].join(" \u00b7 ")}
                     </div>
                     <div class="gam-sub">
-                      <strong>${escapeHTML(weapon.ammoType)}</strong>: всего ${weapon.totalAmmo}, свободно ${loose}
+                      ${renderAmmunitionSummary(actor, weapon, escapeHTML)}
                     </div>
                   </div>
 
@@ -2083,7 +2098,7 @@ export async function openAmmoManager() {
         </div>
       `;
 
-    const modeText = state.chatSettings?.mode === "all" ? "для всех" : "self only";
+    const modeText = state.chatSettings?.mode === "all" ? "для всех" : "только себе";
 
     return `
       <div class="gam-ammo-manager">
@@ -2168,14 +2183,11 @@ export async function openAmmoManager() {
         else if (action === "spend") changed = await spendWithoutRoll(persistentState, weaponId);
         else if (action === "select-magazine") changed = await switchMagazine(persistentState, weaponId, magazineIndex);
         else if (["manage-load", "top-up", "unload", "stock", "magazines"].includes(action)) {
-          await openAmmoManagement({ actor, weaponId, onUpdate: async () => {
-            persistentState = await loadState();
-            if (managerApp.rendered) {
-              managerApp.setManagerState(persistentState);
-              await managerApp.refreshContent();
-            }
-            const attack = resolveAttack(persistentState.weapons.find(entry => entry.id === weaponId)?.attackRef, getRangedAttacks(persistentState));
-            if (attack) await refreshAttackOverrideConsumers(persistentState, attack);
+          await openAmmoManagement({ actor, weaponId, onUpdate: async state => {
+            persistentState = state;
+            // The Actor hook already refreshes the manager once after the confirmed write.
+            const reference = state.weapons.find(entry => entry.id === weaponId)?.attackRef;
+            if (reference) await refreshAttackOverrideConsumers(state, reference, { refreshAssistants: false });
           } });
         }
         else if (action === "chat-settings") changed = await openChatSettings(persistentState);

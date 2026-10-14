@@ -11,7 +11,7 @@ import { AttackProfileResolver } from "../scripts/tools/attack-profile-resolver.
 import { ammoTypeKey, applyInventoryOperation } from "../scripts/tools/ammo-inventory.js";
 import { fragmentHitCount } from "../scripts/tools/explosion-fragmentation.js";
 import { recipeEditorHTML, recipePreviewHTML } from "../scripts/tools/ammunition-recipe-editor.js";
-import { explosiveMessages, loadExplosiveTranslations } from "../scripts/tools/explosive-ammunition-localization.js";
+import { explosiveMessages, explosiveText, loadExplosiveTranslations } from "../scripts/tools/explosive-ammunition-localization.js";
 
 const data = Object.fromEntries(await Promise.all(Object.entries(CATALOG_DEFINITIONS).map(async ([book, def]) =>
   [book, JSON.parse(await fs.readFile(new URL("../data/catalogs/" + def.filename, import.meta.url), "utf8"))])));
@@ -121,12 +121,12 @@ test("compact recipe editor has explicit inputs, neutral Q, house-model warning 
     for(const language of ["ru","en"]){
       const html=recipeEditorHTML({recipe:{variantId:"ht_apex",parameters:parameters()},recipeOpen:true},typeFor(),language);
       for(const key of ["ProjectileMass","ExplosiveMass","FragmentMass","ReferenceSource","NeutralQ","ModelNotice","Save"])
-        assert.ok(html.includes(explosiveMessages[language][key]),key);
+        assert.ok(html.includes(explosiveMessages.ru[key]),key);
       const bundle=JSON.parse(await fs.readFile(new URL("../lang/"+language+".json",import.meta.url),"utf8"));
       for(const [key,value] of Object.entries(explosiveMessages[language]))assert.equal(bundle["OleGURPS.ExplosiveAmmo."+key],value);
       assert.match(recipePreviewHTML("ht_apex",parameters(),language),/1d-2 cr ex/);
       const incomplete = recipePreviewHTML("ht_apex", {}, language);
-      assert.ok(incomplete.includes(explosiveMessages[language].Unresolved));
+      assert.ok(incomplete.includes(explosiveMessages.ru.Unresolved));
       assert.doesNotMatch(incomplete, /unresolved/);
       assert.doesNotMatch(html,/value="146"[^>]*data-default/);
     }
@@ -139,7 +139,8 @@ test("real translation loader installs new RU/EN keys without changing language 
     game:{i18n:{lang:language,translations:entries,localize:key=>entries[key]??key}},
     foundry:{utils:{setProperty(object,key,value){object[key]=value;}}}};
     await loadExplosiveTranslations(runtime);assert.equal(runtime.game.i18n.lang,language);
-    assert.equal(entries["OleGURPS.ExplosiveAmmo.FollowUp"],"Follow-up");assert.ok(entries["OleGURPS.ExplosiveAmmo.Editor"]);
+    assert.deepEqual(entries,{});
+    assert.equal(explosiveText("Editor",runtime,language),explosiveMessages.ru.Editor);
     assert.equal(entries["OleGURPS.Ammo.Title"],undefined);
   }
 });

@@ -1,3 +1,7 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { f2RowsForShot } from "../scripts/tools/ammunition-f2.js";
+import { explosiveText } from "../scripts/tools/explosive-ammunition-localization.js";
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -26,7 +30,7 @@ function numerical(id,overrides={}) {
  return {o,d,f,r,effect:resolveAmmunitionEffects({raw:{damage:"4d pi+"},variantId:id,baseStatus:"compatible",constructionStatus:"gm-approved",facts:r.facts})};
 }
 test("P4 contains exactly the thirteen audited IDs without changing the other packages",async()=>{
- const a=JSON.parse(await fs.readFile(new URL('../docs/audit/ht64-independent-audit.json',import.meta.url),'utf8'));
+ const a=readAuditFixture('ht64-independent-audit');
  assert.deepEqual(a.records.filter(x=>x.implementationGroup==='P4_explosives').map(x=>x.variantId).sort(),Object.keys(EXPLOSIVE_VARIANTS).sort());
 });
 for(const id of Object.keys(EXPLOSIVE_VARIANTS))test(id+" numerical contract, TL/caliber, exact payload and no invented construction",()=>{
@@ -65,7 +69,10 @@ test("base selections of published complete rounds use their own composite paylo
  }
  const c=context('WjD-b9M0j2HJAcxyy'),type={source:'catalog',book:'ht',kind:'ammo-item',ammoId:'ht_specific_hydra_laser_guided_70mm',name:'Published but payload absent'};
  const p=resolver.resolve({actorId:'a',weaponId:'w',rawAttack:c.raw,binding:c.binding,ammunition:{type},profilePolicy:'permissive'});
- assert.equal(p.damage.nativeSafe,false);assert.equal(type.recipe,undefined);
+ assert.equal(p.damage.nativeSafe,true);assert.equal(type.recipe,undefined);
+ assert.equal(p.damage.formula,'7dx3 cr ex');assert.equal(p.effective.acc,4);
+ assert.equal(p.damage.rules.guidancePackage.warheadAmmoId,'ht_specific_hydra_mk66_he');
+ assert.equal(p.damage.rules.manualGuidance.automaticGuidance,false);
 });
 test("HEDP owns a separate linked blast and fragments; tandem never inherits the base rocket blast",()=>{
  const h=published(...pairs[2]).profile.damage;assert.deepEqual(h.components.map(x=>x.formula),['6dx3(10) cr ex','5dx4 cr ex','3d+2 cut']);
@@ -80,7 +87,9 @@ test("published .50 APHEX needs no extra GM approval; prior house recipes retain
 });
 test("unsupported named alternates and ordinary bullets cannot turn into arbitrary explosive loads",()=>{
  const c=context('W27s4Lm8QlkKVKUPn');for(const id of Object.keys(EXPLOSIVE_VARIANTS).filter(x=>!['ht_apex','ht_aphex'].includes(x))){const p=automatic.prepare({modeId:'W27s4Lm8QlkKVKUPn',base:c.base,variantId:id});assert.equal(p.state,'incomplete');assert.equal(automatic.admission(p,{policy:'permissive'}).allowed,false);}
- const p=automatic.prepare({modeId:'WjD-b9M0j2HJAcxyy',base:{book:'ht',kind:'ammo-item',ammoId:'ht_specific_hydra_laser_guided_70mm'},variantId:'ht_he'});assert.equal(p.state,'incomplete');
+ // HT150 guidance package is now explicitly separated from the independently sourced HE warhead.
+ const p=automatic.prepare({modeId:'WjD-b9M0j2HJAcxyy',base:{book:'ht',kind:'ammo-item',ammoId:'ht_specific_hydra_laser_guided_70mm'},variantId:'ht_he'});assert.equal(p.state,'complete');
+ assert.deepEqual(p.model.components.map(c=>c.formula),['7dx3 cr ex','3d+2 cut']);
  assert.equal(publishedDamageComponents('8d cr ex [2d]'),null);assert.equal(publishedDamageComponents('8d [2d] cr ex',{fragmentType:'cut'}).fragmentation,'2d cut');
 });
 test("HESH requires known DR and laminated armor; no unsupported armor assumption",()=>{
@@ -115,7 +124,7 @@ test("thermobaric falloff uses two distances and cannot assume contact distance;
 test("component buttons use the completed snapshot, maintain privacy, and survive serialization",()=>{
  const s=published(...pairs[3]),shot=createShotSnapshot(s.profile,{attackId:'attack',spent:1,messageId:'m',resourceTiming:'after-attack'});
  const m={id:'m',visible:true,isContentVisible:true,flags:{'olegurps-qol':{shotSnapshot:JSON.parse(JSON.stringify(shot))}}};
- assert.deepEqual(shotDamageComponents(m).map(x=>x.role),['main-charge','linked']);assert.ok(shotAmmunitionConditions(m).some(x=>x.includes('реактивной')));
+ assert.deepEqual(shotDamageComponents(m).map(x=>x.role),['main-charge','linked']);assert.ok(f2RowsForShot(shot).some(r=>r.id==='ht_ms_heat:tandem'));
  assert.deepEqual(shotDamageComponents({...m,isContentVisible:false}),[]);assert.deepEqual(shotDamageComponents({...m,visible:false}),[]);
  assert.equal(JSON.stringify(shot.profile.damage.components),JSON.stringify(s.profile.damage.components));
 });
@@ -127,10 +136,10 @@ test("one composite shot spends one physical round, repeat Damage and execution 
  await new AmmoService(actor).executeShot(op);await new AmmoService(actor).executeShot(op);assert.equal(state.weapons[0].ammunitionInventory.magazines[0].rounds,2);
 });
 test("new P4 RU EN translations load through the loader and every option has a localized label",async()=>{
- for(const lang of ['ru','en']){let fetched=0;const json=JSON.parse(await fs.readFile(new URL('../lang/'+lang+'.json',import.meta.url),'utf8')),i18n={lang,translations:{},localize:k=>['Editor','P4Components'].some(n=>k==='OleGURPS.ExplosiveAmmo.'+n)?'cached older feature':k};await loadExplosiveTranslations({location:{},fetch:async()=>{fetched++;return {ok:true,json:async()=>json};},game:{i18n},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}});assert.equal(fetched,1);
-  for(const [k,v]of Object.entries(explosiveMessages[lang]).filter(([k])=>k.startsWith('P4')))assert.equal(i18n.translations['OleGURPS.ExplosiveAmmo.'+k],v);
+ for(const lang of ['ru','en']){let fetched=0;const json=JSON.parse(await fs.readFile(new URL('../lang/'+lang+'.json',import.meta.url),'utf8')),i18n={lang,translations:{},localize:k=>['Editor','P4Components'].some(n=>k==='OleGURPS.ExplosiveAmmo.'+n)?'cached older feature':k};await loadExplosiveTranslations({location:{},fetch:async()=>{fetched++;return {ok:true,json:async()=>json};},game:{i18n},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}});assert.equal(fetched,0);assert.deepEqual(i18n.translations,{});
+  for(const [k,v]of Object.entries(explosiveMessages[lang]).filter(([k])=>k.startsWith('P4'))){assert.equal(json['OleGURPS.ExplosiveAmmo.'+k],v);assert.equal(explosiveText(k,{}, {game:{i18n}}),russianText('OleGURPS.ExplosiveAmmo.'+k));}
   for(const id of Object.keys(EXPLOSIVE_VARIANTS))assert.ok(explosiveMessages[lang]['P4'+id]);}
 });
 test("the previous narrow plus P diagnosis remains intact without running auditHTCoverage",async()=>{
- const d=JSON.parse(await fs.readFile(new URL('../docs/audit/ht64-multishot-plus-p-diagnostic.json',import.meta.url),'utf8'));assert.equal(d.oldReadyPreserved,284);assert.equal(d.worldReady,370);assert.equal(d.delta,86);assert.deepEqual(d.lost,[]);
+ const d=readAuditFixture('ht64-multishot-plus-p-diagnostic');assert.equal(d.oldReadyPreserved,284);assert.equal(d.worldReady,370);assert.equal(d.delta,86);assert.deepEqual(d.lost,[]);
 });

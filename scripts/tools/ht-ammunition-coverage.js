@@ -3,6 +3,8 @@ import { AutomaticAmmunitionProfileService, isExplosiveRecipe } from "./automati
 import { FIRST_STAGE_VARIANTS } from "./ammunition-recipes.js";
 import { ammoTypeKey } from "./ammo-inventory.js";
 import { isAutomaticReferenceRecipe } from "./ht-kinetic-rules.js";
+import { currentHTPairAmmo } from "../ht-physical-ammunition-evidence.js";
+import { SEALED_PLATFORM_UNITS } from "./ammunition-resource-contract.js";
 
 const collections = { cartridge_upgrades: "cartridge-upgrade", projectile_options: "projectile-option",
   projectile_upgrades: "projectile-upgrade", case_construction_options: "case-option" };
@@ -23,11 +25,12 @@ export function auditHTCoverage({ catalogs, compatibility, policy = "permissive"
     projectileOptions: ht.projectile_options.length, eligibilityOptions: variants.length }, policy, nativePairs: 0,
     ordinary: { total: 0, ready: 0, unconfirmed: 0 }, categories: {}, variants: {}, familiesReady: {}, unavailableReasons: {}, directedHT178: {} };
   for (const v of variants) report.variants[v.id] = { category: htCoverageCategory(v.id), total: 0, ready: 0,
-    compatible: 0, undetermined: 0, incompatible: 0, baseConfirmed: 0,
+    compatible: 0, undetermined: 0, incompatible: 0, baseConfirmed: 0, nativePreservedSourceOverrides: 0,
     effectIntegration: FIRST_STAGE_VARIANTS.includes(v.id) ? "implemented" : "deferred",
     support: { AUTOMATED: 0, "GM-MEDIATED": 0, PARTIAL: 0, UNDETERMINED: 0 },
     preparedComplete: 0, approvalRequiredUnderStrictPolicy: 0, missingInputs: {}, reasons: {} };
-  for (const ammo of ht.ammo_items) for (const modeId of ammo.weapon_mode_ids) {
+  for (const original of ht.ammo_items) for (const modeId of original.weapon_mode_ids) {
+    const ammo = currentHTPairAmmo(catalogs, modeId, original.id);
     const mode = catalogs.getMode(modeId), base = compatibility.checkCompatibility(modeId, ammo.id, { book: "ht", kind: "ammo-item" });
     report.nativePairs++; report.ordinary.total++;
     report.ordinary[base.status === "compatible" ? "ready" : "unconfirmed"]++;
@@ -54,7 +57,16 @@ export function auditHTCoverage({ catalogs, compatibility, policy = "permissive"
       type.key ??= ammoTypeKey(type);
       const profile = resolver.resolve({ actorId: "coverage", weaponId: "coverage", rawAttack: raw,
         binding: { status: "confirmed", binding: { confirmed: true, modeId } }, ammunition: { type, ammoKey: type.key }, profilePolicy: policy });
-      const ready = FIRST_STAGE_VARIANTS.includes(v.id) && base.status === "compatible" && rules.status !== "incompatible" && profile.damage.nativeSafe;
+      // Generic overlap guards prohibit applying HEAT twice, not firing a published native HEAT round.
+      // Keep the generic status, but account separately for exact, unchanged source payloads.
+      const nativePreserved = prepared?.nativePreserved === true && prepared.referenceConfirmed === true &&
+        profile.damage.nativeSafe && rules.status === "incompatible" &&
+        rules.reasons.filter(r => r.code === "ELIGIBILITY_PROHIBITION").every(r => r.message.startsWith("overlap_guard:") ||
+          prepared.facts?.multishotDefinition?.referenceVerified && prepared.facts.multishotDefinition.publishedPlatformException &&
+          r.message.startsWith("weapon_platforms_any:"));
+      const ready = !SEALED_PLATFORM_UNITS[modeId] && FIRST_STAGE_VARIANTS.includes(v.id) && base.status === "compatible" &&
+        (rules.status !== "incompatible" || nativePreserved) && profile.damage.nativeSafe;
+      if (ready && nativePreserved) group.nativePreservedSourceOverrides++;
       if (ready) {
         group.support[profile.damage.support?.status ?? "AUTOMATED"]++;
         group.ready++; report.familiesReady[ammo.ammo_family_id] ??= [];
@@ -70,13 +82,13 @@ export function auditHTCoverage({ catalogs, compatibility, policy = "permissive"
     }
   }
   for (const [id, v] of Object.entries(report.variants)) {
-    v.potential = v.total - v.incompatible; v.incomplete = v.potential - v.ready;
-    report.categories[v.category] ??= { variants: [], total: 0, ready: 0, compatible: 0, undetermined: 0, incompatible: 0 };
+    v.potential = v.total - v.incompatible + v.nativePreservedSourceOverrides; v.incomplete = v.potential - v.ready;
+    report.categories[v.category] ??= { variants: [], total: 0, ready: 0, compatible: 0, undetermined: 0, incompatible: 0, nativePreservedSourceOverrides: 0 };
     const c = report.categories[v.category]; c.variants.push(id);
-    for (const key of ["total", "ready", "compatible", "undetermined", "incompatible"]) c[key] += v[key];
+    for (const key of ["total", "ready", "compatible", "undetermined", "incompatible", "nativePreservedSourceOverrides"]) c[key] += v[key];
   }
   for (const category of Object.values(report.categories)) {
-    category.potential = category.total - category.incompatible;
+    category.potential = category.total - category.incompatible + category.nativePreservedSourceOverrides;
     category.incomplete = category.potential - category.ready;
     category.percent = category.potential ? category.ready / category.potential * 100 : 0;
   }
@@ -85,7 +97,9 @@ export function auditHTCoverage({ catalogs, compatibility, policy = "permissive"
     report.directedHT178[result.status] = (report.directedHT178[result.status] ?? 0) + 1;
   }
   report.special = { total: Object.values(report.variants).reduce((n,v)=>n+v.total,0), ready: Object.values(report.variants).reduce((n,v)=>n+v.ready,0) };
-  report.special.incompatible = Object.values(report.variants).reduce((n,v)=>n+v.incompatible,0);
+  report.special.genericIncompatible = Object.values(report.variants).reduce((n,v)=>n+v.incompatible,0);
+  report.special.nativePreservedSourceOverrides = Object.values(report.variants).reduce((n,v)=>n+v.nativePreservedSourceOverrides,0);
+  report.special.incompatible = report.special.genericIncompatible - report.special.nativePreservedSourceOverrides;
   report.special.potential = report.special.total - report.special.incompatible;
   report.special.incomplete = report.special.potential - report.special.ready;
   report.special.percent = report.special.potential ? report.special.ready / report.special.potential * 100 : 0;

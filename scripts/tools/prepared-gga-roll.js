@@ -101,6 +101,7 @@ export async function executeWithCapturedRollMessage({ ChatMessage = globalThis.
 export function calculateHitsFromMargin(shots, rcl, margin, rollData = null) {
   if (rollData?.failure === true || rollData?.success === false) return 0;
   const safeShots = Math.max(0, Math.trunc(Number(shots) || 0));
+  if(safeShots===1&&Number.isInteger(margin))return margin>=0?1:0;
   const safeRcl = Math.max(1, Math.trunc(Number(rcl) || 1));
   if (!Number.isInteger(margin)) return null;
   if (margin < 0) return 0;
@@ -253,7 +254,7 @@ export async function executePreparedGgaRoll({
     optlabel: "",
     isBlind: false,
     rof: combatType === "melee" ? null : displayRof,
-    rcl: combatType === "melee" ? null : safeRcl,
+    rcl: combatType === "melee" || attack?.platformRules?.rclNotApplicable ? null : safeRcl,
     rofrcl: combatType === "melee" || concealTargetDetails ? null : potentialHits
   };
   GURPS.setLastTargetedRoll?.(chatdata, speaker.actor, speaker.token, true);
@@ -269,8 +270,8 @@ export async function executePreparedGgaRoll({
     ? normalizeAttackModifierDetails([
         { label: "\u041f\u0440\u043e\u0447\u0438\u0435 \u043c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b", value: finaltarget - baseSkill - visibilityPenalty - visibilityCapAdjustment - trademarkMoveBonus - rangedRapidStrikePenalty - quickShotBonus },
         { label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c", value: visibilityPenalty },
-        { label: capLabel ?? "Cap Shooting Blind: 9", value: visibilityCapAdjustment },
-        { label: "Trademark Move", value: trademarkMoveBonus },
+        { label: capLabel ?? "Предел навыка при стрельбе вслепую: 9", value: visibilityCapAdjustment },
+        { label: "Фирменный приём", value: trademarkMoveBonus },
         ...(combatCalculation ? [{ label: "Ranged Rapid Strike / Quick-Shot",
           value: combatCalculation.channels.find(entry => entry.id === "rangedRapidStrike")?.resolvedValue ?? 0 }]
           : [{ label: "Ranged Rapid Strike", value: rangedRapidStrikePenalty },
@@ -278,7 +279,7 @@ export async function executePreparedGgaRoll({
       ])
     : reconcileAttackModifierDetails(combatCalculation
       ? [...combatCalculation.modifiers.filter(entry => entry.value !== 0),
-          { label: "Trademark Move", value: trademarkMoveBonus }]
+          { label: "Фирменный приём", value: trademarkMoveBonus }]
       : targetmods, finaltarget - baseSkill, capLabel);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
   if (modifierBreakdown) content += modifierBreakdown;
@@ -290,7 +291,7 @@ export async function executePreparedGgaRoll({
       entry.resolver && entry.baseValue !== entry.resolvedValue)
       .map(entry => `<span>${escapeModifierHtml(entry.explanation ||
         `${entry.id}: ${entry.baseValue} -> ${entry.resolvedValue}`)}</span>`);
-    content += `<details class="olegurps-combat-channel-breakdown"><summary style="cursor:pointer">Skill details</summary><div><strong>${escapeModifierHtml(
+    content += `<details class="olegurps-combat-channel-breakdown"><summary style="cursor:pointer">Расчёт навыка</summary><div><strong>${escapeModifierHtml(
       combatCalculation.baseSkillName)}: ${combatCalculation.baseSkill}</strong>` +
       (transitions.length ? `<br>${transitions.join("<br>")}` : "") + `</div></details>`;
   }
@@ -371,12 +372,12 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
     content += buildRandomHitLocationsHtml(randomHitLocations, { escapeHtml: escape });
   }
   const hasDisplayedLocationModifier = displayedModifiers.some(entry =>
-    String(entry?.label ?? "").includes("Hit Location:")
+    String(entry?.label ?? "").includes("Зона попадания:")
   );
   const attackDetails = [];
-  if (locationLabel && !hasDisplayedLocationModifier) attackDetails.push(`Hit Location: ${escape(locationLabel)}`);
-  if (closeMultiplier) attackDetails.push(`Extremely Close: basic damage \u00d7${closeMultiplier}, DR \u00d7${closeMultiplier}`);
-  if (attackDetails.length) content += `<details class="olegurps-attack-context"><summary style="cursor:pointer">Attack details</summary><div>${attackDetails.join("<br>")}</div></details>`;
+  if (locationLabel && !hasDisplayedLocationModifier) attackDetails.push(`Зона попадания: ${escape(locationLabel)}`);
+  if (closeMultiplier) attackDetails.push(`Предельно близко: базовый урон \u00d7${closeMultiplier}, DR \u00d7${closeMultiplier}`);
+  if (attackDetails.length) content += `<details class="olegurps-attack-context"><summary style="cursor:pointer">Условия атаки</summary><div>${attackDetails.join("<br>")}</div></details>`;
   const message = { user: runtime.game.user.id, speaker: runtime.ChatMessage.getSpeaker(actor ? { actor } : {}),
     content, rolls: [roll], sound: runtime.CONFIG?.sounds?.dice,
     ...(testRoll ? { flags: { "olegurps-qol": { testRoll } } } : {}) };

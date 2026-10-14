@@ -1,4 +1,5 @@
 import { calculateHitsFromMargin, executePreparedGgaRoll } from "./prepared-gga-roll.js";
+import { f4Text } from "./ammunition-f4-localization.js";
 import { resolveRuntimeAttackProfile, newAttackId, pendingShotSnapshot, attackProfileError } from "./attack-profile-runtime.js";
 import { createShotSnapshot } from "./attack-profile-resolver.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
@@ -400,6 +401,8 @@ export class FireService {
           physicalDistance: options.physicalDistance ?? null, halfDamageRange: options.halfDamageRange ?? null,
           extremelyClose: options.extremelyClose === true, closeDamageMultiplier: options.closeDamageMultiplier ?? null,
           damageApplication: "native-GGA-GM-selection" } } });
+    const previewTracer = options.combatCalculation?.channels?.find(c => c.id === "ammunitionTracer")?.resolvedValue ?? 0;
+    if (previewTracer !== (attackProfile.context?.f4?.tracerBonus ?? 0)) throw Error(f4Text("Stale"));
     if (attackProfile.compatibility.status === "incompatible") throw new Error(attackProfileError("IncompatibleAmmunition"));
     if (String(attackProfile.effective.rcl ?? "").includes("/") &&
         parseRecoil(attackProfile.effective.rcl, { projectileKind: attackProfile.effective.ammunitionProjectileKind }) === null)
@@ -441,7 +444,7 @@ export class FireService {
       if (options.hitLocationPenalty !== 0) {
         GURPS.ModifierBucket.addModifier(
           options.hitLocationPenalty,
-          `Hit Location: ${options.hitLocationModifierLabel}`
+          `Зона попадания: ${options.hitLocationModifierLabel}`
         );
         appliedModifiers.push(`hit location ${options.hitLocationPenalty} (${options.hitLocationModifierLabel})`);
       }
@@ -461,7 +464,7 @@ export class FireService {
         appliedModifiers.push(`Aim +${options.aimBonus}`);
       }
       if (options.sightBonus > 0) {
-        GURPS.ModifierBucket.addModifier(options.sightBonus, "Optical Sight");
+        GURPS.ModifierBucket.addModifier(options.sightBonus, "Оптический прицел");
         appliedModifiers.push(`optical sight +${options.sightBonus}`);
       }
       if (options.bracingBonus > 0) {
@@ -472,14 +475,14 @@ export class FireService {
         const chs = options.closeHipShooting;
         const description = `${chs.governingSkillName}: ${chs.governingSkillLevel}; ` +
           `${chs.label}: ${chs.techniqueLevel}; Bulk: ${chs.bulk}; ` +
-          `Close-Hip result: ${chs.closeHipBase}`;
+          `Результат стрельбы от бедра: ${chs.closeHipBase}`;
         GURPS.ModifierBucket.addModifier(options.moveAttackPenalty, description);
         appliedModifiers.push(description);
       } else if (options.closeQuartersBattle) {
         const cqb = options.closeQuartersBattle;
         const description = `${cqb.governingSkillName}: ${cqb.governingSkillLevel}; ` +
-          `${cqb.label}: ${cqb.techniqueLevel}; weapon technique: ${cqb.weaponTechniqueLevel}; Move and Attack / Bulk: ${cqb.movePenalty}; ` +
-          `CQB base: ${cqb.cqbBase}`;
+          `${cqb.label}: ${cqb.techniqueLevel}; оружейная техника: ${cqb.weaponTechniqueLevel}; Move and Attack / Bulk: ${cqb.movePenalty}; ` +
+          `База ближнего боя: ${cqb.cqbBase}`;
         GURPS.ModifierBucket.addModifier(options.moveAttackPenalty, description);
         appliedModifiers.push(description);
       } else if (options.moveAttackPenalty < 0) {
@@ -537,7 +540,7 @@ export class FireService {
       try {
         this.restoreModifierSnapshot(modifierSnapshot);
       } catch (cleanupError) {
-        console.error("Не удалось восстановить Modifier Bucket:", cleanupError);
+        console.error("Не удалось восстановить Набор модификаторов:", cleanupError);
         GURPS.ModifierBucket.clear?.();
       } finally {
         this._previewModifierSnapshot = null;

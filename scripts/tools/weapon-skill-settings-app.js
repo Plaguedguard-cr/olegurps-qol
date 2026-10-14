@@ -1,12 +1,13 @@
 import { readWeaponSkillTLPolicy, saveWeaponSkillTLPreference } from "./weapon-skill-tl-policy.js";
 
-const text = name => game.i18n.localize("OleGURPS.WeaponSkillTL." + name);
+import { moduleText } from "../localization.js";
+const text = name => moduleText("OleGURPS.WeaponSkillTL." + name);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 
 export class WeaponSkillSettingsApp extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "olegurps-weapon-skill-settings", classes: ["olegurps-qol"], tag: "form",
-    window: { title: "OleGURPS.WeaponSkillTL.Title", resizable: false },
+    window: { title: text("Title"), resizable: false },
     position: { width: 480, height: "auto" },
     form: { closeOnSubmit: true, handler: async function(_event, _form, formData) {
       await saveWeaponSkillTLPreference(formData.object.ignoreWeaponSkillTLDifferences === true);
@@ -21,8 +22,8 @@ export class WeaponSkillSettingsApp extends foundry.applications.api.Application
 
 export function registerWeaponSkillSettings(runtime = globalThis) {
   runtime.game.settings.registerMenu("olegurps-qol", "weapon-skills", {
-    name: "OleGURPS.WeaponSkillTL.Title", label: "OleGURPS.WeaponSkillTL.Open",
-    hint: "OleGURPS.WeaponSkillTL.MenuHint", icon: "fas fa-user-gear",
+    name: text("Title"), label: text("Open"),
+    hint: text("MenuHint"), icon: "fas fa-user-gear",
     type: WeaponSkillSettingsApp, restricted: false
   });
   runtime.Hooks.on("updateUser", (user, changes) => {

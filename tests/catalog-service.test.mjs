@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -109,7 +110,7 @@ test("lookups retain original IDs, scoped namespaces, and exact declared relatio
   for (const book of ["lt", "ht", "ut"]) {
     assert.equal(service.getEquipment(book + "-equipment").source, book.toUpperCase());
     const mode = service.getMode(book + "-mode");
-    assert.equal(service.getEquipmentForMode(mode.weapon_mode_id), service.getEquipment(book + "-equipment"));
+    assert.deepEqual(service.getEquipmentForMode(mode.weapon_mode_id), service.getEquipment(book + "-equipment"));
     assert.deepEqual(service.getModesForEquipment(book + "-equipment"), [mode]);
     assert.equal(service.getAmmoFamily(book, book + "-family").id, book + "-family");
     assert.deepEqual(service.getModesForAmmoFamily(book, book + "-family"), [mode]);
@@ -117,7 +118,7 @@ test("lookups retain original IDs, scoped namespaces, and exact declared relatio
     if (book !== "ut") {
       assert.deepEqual(service.getModeLinks(book + "-mode").ammoItemIds, [book + "-round"]);
       assert.deepEqual(service.getModesForAmmoItem(book, book + "-round"), [mode]);
-      assert.equal(service.getAmmoItem(book, book + "-round"), service.getCatalog(book).ammo_items[0]);
+      assert.deepEqual(service.getAmmoItem(book, book + "-round"), service.getCatalog(book).ammo_items[0]);
     }
   }
   assert.equal(service.getAmmoItem("lt", "ht-round"), null);
@@ -168,7 +169,8 @@ test("all public records, arrays, links, and diagnostics protect the detached ca
   original.lt.ammo_items[0].name = "loader changed";
   assert.notEqual(service.getEquipment("lt-equipment").name, "loader changed");
   assert.notEqual(service.getAmmoItem("lt", "lt-round").name, "loader changed");
-  assert.equal(service.getEquipment("lt-equipment"), equipment);
+  // Frozen effective views preserve contents; the API does not promise reference identity.
+  assert.deepEqual(service.getEquipment("lt-equipment"), equipment);
 });
 
 for (const book of books) {
@@ -356,7 +358,7 @@ test("current catalog bytes match the verified SHA-256 values", async () => {
     const data = await fs.readFile(new URL("../data/catalogs/" + filename, import.meta.url));
     if (book === "weapons") {
       const { assertWeaponPreservation } = await import("./fixtures/ht-preservation-contract.mjs");
-      const proof = JSON.parse(await fs.readFile(new URL("../docs/audit/ht-v1-3-preservation.json", import.meta.url), "utf8"));
+      const proof = readAuditFixture('ht-v1-3-preservation');
       assertWeaponPreservation(data.toString("utf8"), proof);
     } else assert.equal(createHash("sha256").update(data).digest("hex"), sourceHashes[book], filename);
     assert.doesNotThrow(() => new TextDecoder("utf-8", { fatal: true }).decode(data));

@@ -30,6 +30,18 @@ export const HT_CONFIRMED_SHOTSHELL_MODE_PROJECTILES = Object.freeze({
 
 // Exact HT91/199 source modes share this verified chamber; never transfer these facts to another shotgun.
 export function reviewedMultishotFacts(mode, ammo, variantId) {
+  if (variantId === 'ht_beehive' && mode?.weapon_mode_id === 'WjD-b9M0j2HJAcxyy' &&
+      ammo?.id === 'ht_specific_hydra_70mm_beehive' && ammo.source_evidence_level === 'book_explicit' &&
+      ammo.source_weapon_equipment_id === 'eZzq3MGvPpctZMkrq' && ammo.weapon_mode_ids.includes(mode.weapon_mode_id) &&
+      ammo.attack_override?.damage === '2d+2 cut') {
+    const source='HT150 M260 Hydra published Beehive; HT173';
+    return {source,caliberMm:70,availabilityTL:8,munitionClasses:{values:['published_beehive_round'],complete:true},
+      weaponPlatforms:{values:['rocket_launcher'],complete:true},
+      evidence:{weapon_specific_beehive_spec:{value:true,source}},
+      multishotDefinition:{source,referenceVerified:true,publishedPlatformException:true,
+        nativeVariant:variantId,sourceRawDamage:mode.raw_calc.damage,nativeDamage:'2d+2 cut',
+        nativeRange:'450/7000',nativeRoF:'7x1179',nativeRcl:'1',burstRange:{minimum:450,maximum:7000}}};
+  }
   if (!["ht_rifled_slug","ht_baton","ht_beanbag","ht_canister","ht_shotshell","ht_buck_and_ball","ht_shrapnel","ht_duplex","ht_triplex","ht_beehive","ht_multi_flechette","ht_rubber_shot","ht_abf"].includes(variantId) || ammo?.id !== "ht_12_gauge_2_75_18_5x70mmr" ||
       !reviewedShotshellConstruction(ammo) || !ammo.weapon_mode_ids.includes(mode?.weapon_mode_id)) return null;
   const kind = HT_CONFIRMED_SHOTSHELL_MODE_PROJECTILES[mode.weapon_mode_id]?.kind;

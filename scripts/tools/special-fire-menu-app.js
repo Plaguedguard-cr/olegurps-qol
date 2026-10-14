@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 const escape = value => String(value ?? "").replace(/[&<>"']/g, c =>
   ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -29,7 +30,7 @@ export class SpecialFireMenuApp extends ApplicationV2 {
       return '<div class="sf-menu-entry" title="' + escape(title) + '">' +
         '<button type="button" data-mode="' + escape(mode.id) + '" ' + (disabled ? "disabled" : "") + '>' +
         (mode.icon ? '<i class="' + escape(mode.icon) + '"></i> ' : "") +
-        escape(mode.label) + (saved && mode.showSavedSuffix !== false ? " \u2014 \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c" : "") + '</button>' + (saved && mode.edit ? '<button type="button" class="sf-menu-edit" data-mode-edit="' + escape(mode.id) + '" title="Edit Trademark Move" aria-label="Edit Trademark Move"><i class="fa-solid fa-pencil"></i></button>' : "") +
+        escape(mode.label) + (saved && mode.showSavedSuffix !== false ? " \u2014 \u043f\u0440\u043e\u0434\u043e\u043b\u0436\u0438\u0442\u044c" : "") + '</button>' + (saved && mode.edit ? '<button type="button" class="sf-menu-edit" data-mode-edit="' + escape(mode.id) + '" title="Изменить фирменный приём" aria-label="Изменить фирменный приём"><i class="fa-solid fa-pencil"></i></button>' : "") +
         '<small>' + escape(disabled ? availability.reason : mode.description) + '</small></div>';
     }).join("") + '</div>';
   }
@@ -51,7 +52,7 @@ export class SpecialFireMenuApp extends ApplicationV2 {
     if (!mode) return;
     const availability = mode.availability();
     if (!availability.available) {
-      ui.notifications.warn(availability.reason);
+      ui.notifications.warn(moduleMessage(availability.reason));
       await this.render({ force: true });
       return;
     }
@@ -61,7 +62,7 @@ export class SpecialFireMenuApp extends ApplicationV2 {
       if (button.dataset.modeEdit) await mode.edit(); else await mode.open();
     } catch (error) {
       console.error("OleGURPS QOL | Special fire mode:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      ui.notifications.error(moduleMessage(error));
     }
   }
 

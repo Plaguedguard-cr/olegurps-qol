@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -23,7 +24,7 @@ function fixture(id) {
 }
 const positive={carrierHit:true,penetration:true,target:"GM private target",distance:5,sm:0,posture:"standing",cover:0,total:10,guaranteed:false,
   era:false,precursor:40,main:140,rawConfirmed:true,nonpenetration:true,laminated:false,dr:151,damage:101,tl:6,die:4,path:101};
-const matrix=JSON.parse(await fs.readFile(new URL("../docs/audit/ht64-complex-effects-decision-matrix.json",import.meta.url),"utf8"));
+const matrix=readAuditFixture('ht64-complex-effects-decision-matrix');
 test("exactly the 33 approved F2 IDs, no F1/F3/F4/DATA expansion",()=>{
   assert.equal(Object.keys(F2_ROWS).length,33);
   assert.deepEqual(Object.keys(F2_ROWS).sort(),matrix.effects.filter(e=>e.future_package==="F2").map(e=>e.effect_id).sort());
@@ -89,10 +90,11 @@ test("ERA true/false/unknown: stages XOR total and independent Linked",()=>{
 });
 test("HESH gates nonpenetration and armor, derives maximum from saved formula, preserves fractional result",()=>{
   const id="ht_hesh:spall",f=fixture(id),run=input=>calculateF2(f.resolved,id,input,f.runtime);
-  assert.equal(run(positive).values.damage,7.2);assert.equal(run(positive).values.dr,2);
+  // HT170: linked 6dx3 maximum 108 -> ceil(108/10)=11, not kinetic 72/10.
+  assert.equal(run(positive).values.damage,11);assert.equal(run(positive).values.dr,2);
   assert.equal(run({...positive,laminated:true}).key,"Laminated");
   for(const input of [{...positive,nonpenetration:false},{...positive,laminated:undefined},{...positive,dr:undefined},{...positive,dr:-1}])assert.equal(run(input).status,"unresolved");
-  f.shot.profile.damage.components[0].formula="unknown";assert.equal(run(positive).status,"unresolved");
+  f.shot.profile.damage.components.find(c=>c.role==='linked').formula="unknown";assert.equal(run(positive).status,"unresolved");
 });
 test("Thermobaric /2r never /3r or both; zero/unknown and already reduced inputs blocked",()=>{
   const id="ht_thermobaric:falloff",f=fixture(id),run=input=>calculateF2(f.resolved,id,input,f.runtime);
@@ -130,8 +132,10 @@ test("all new RU/EN keys pass the actual loader, including an older F1 cache",as
   for(const lang of ["ru","en"]){const json=JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"));let fetches=0;
     const i18n={lang,translations:{},localize:k=>i18n.translations[k]??k};
     for(const k of ["ShotgunCloseGM","BarrelSwitchReadyGM","LeMatIdentityReview","DUIncendiaryGM","DUMinimumCaliber","MultishotDecision","DoubleKnockbackNativeGM","P5ht_white_phosphorus","P6ht_tracer","P1ht_silent","P7ht_caseless","F1HAFLASmoke","F1Title"])i18n.translations["OleGURPS.AutomaticAmmo."+k]="old cache";
-    await loadAutomaticAmmoTranslations({game:{i18n},location:{},fetch:async()=>{fetches++;return{ok:true,json:async()=>json}},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}});assert.equal(fetches,1);
-    for(const [k,v]of Object.entries(f2Messages[lang]))assert.equal(f2Text(k,{game:{i18n}}),v);
+    const before=structuredClone(i18n.translations);
+    await loadAutomaticAmmoTranslations({game:{i18n},location:{},fetch:async()=>{fetches++;return{ok:true,json:async()=>json}},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}});assert.equal(fetches,0);
+    assert.deepEqual(i18n.translations,before);
+    for(const [k,v]of Object.entries(f2Messages.ru))assert.equal(f2Text(k,{game:{i18n}}),v);
   }
 });
 

@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { immutableCopy } from "./attack-profile-resolver.js";
 import { resolveRuntimeAttackProfile } from "./attack-profile-runtime.js";
@@ -490,7 +491,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       rangeLabel: range?.label ?? "",
       effectRangePenalty: this.getEffectRangePenalty?.() ?? null,
       hitLocationPenalty: 0,
-      hitLocationModifierLabel: "Random Hit Location",
+      hitLocationModifierLabel: "Случайная зона попадания",
       extremelyClose: false,
       contextLabel: "Suppression Fire - Zone " + (zoneIndex + 1) + " - " + targetName,
       maximumHits: remainingShots,
@@ -1022,7 +1023,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       const content = String(message.content ?? "");
       await message.update({ content: content + html });
     } catch (error) {
-      console.error("Suppression Fire random Hit Location:", error);
+      console.error("Suppression Fire random Зона попадания:", error);
       ui.notifications.warn("\u0410\u0442\u0430\u043a\u0430 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0430, \u043d\u043e \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u0443\u044e \u0437\u043e\u043d\u0443 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044f \u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0434\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0432 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435.");
     }
   }
@@ -1042,7 +1043,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       content: '<div style="font-size:.88em;line-height:1.3">' +
         '<h3 style="margin:0 0 5px">Suppression Fire (\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430)</h3>' +
         '<p style="margin:0 0 5px"><strong>' + escapeHTML(this.weapon.name) + '</strong></p>' +
-        '<details class="olegurps-suppression-breakdown"><summary style="cursor:pointer">Zone details</summary>' +
+        '<details class="olegurps-suppression-breakdown"><summary style="cursor:pointer">Расчёт зоны</summary>' +
         '<div>mounted/stabilized: <strong>' + mountedText + '</strong></div>' +
         '<ol style="margin:0;padding-left:22px">' + rows + '</ol></details></div>'
     });
@@ -1078,7 +1079,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       await this.render({ force: true });
     } catch (error) {
       console.error("Suppression Fire Region:", error);
-      globalThis.ui?.notifications?.error?.(error?.message ?? String(error));
+      globalThis.ui?.notifications?.error?.(moduleMessage(error));
     } finally {
       this.regionService.clearPlacementHighlights({ cancel: true });
       this._submitting = false;
@@ -1108,7 +1109,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       await this.render({ force: true });
     } catch (error) {
       console.error("Suppression Fire corridor editor:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      ui.notifications.error(moduleMessage(error));
     } finally {
       this.regionService.clearPlacementHighlights({ cancel: true });
       this._submitting = false;
@@ -1132,7 +1133,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       await this.render({ force: true });
     } catch (error) {
       console.error("Suppression Fire delete Zone:", error);
-      globalThis.ui?.notifications?.error?.(error?.message ?? String(error));
+      globalThis.ui?.notifications?.error?.(moduleMessage(error));
     } finally {
       this._submitting = false;
       if (button.isConnected) button.disabled = false;
@@ -1152,7 +1153,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       await this.render({ force: true });
     } catch (error) {
       console.error("Suppression Fire clear Regions:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      ui.notifications.error(moduleMessage(error));
     } finally {
       this._submitting = false;
       if (button.isConnected) button.disabled = false;
@@ -1235,7 +1236,7 @@ export class SuppressionFireApp extends ApplicationV2 {
         await this.sessionService.revertActivation();
       }
       console.error("Suppression Fire:", error);
-      globalThis.ui?.notifications?.error?.(error?.message ?? String(error));
+      globalThis.ui?.notifications?.error?.(moduleMessage(error));
     } finally {
       this._submitting = false;
       if (button?.isConnected) button.disabled = false;
@@ -1253,7 +1254,7 @@ export class SuppressionFireApp extends ApplicationV2 {
       await this.render({ force: true });
     } catch (error) {
       console.error("Suppression Fire manual finish:", error);
-      globalThis.ui?.notifications?.error?.(error?.message ?? String(error));
+      globalThis.ui?.notifications?.error?.(moduleMessage(error));
     } finally {
       this._submitting = false;
       if (button?.isConnected) button.disabled = false;
@@ -1288,7 +1289,7 @@ export class SuppressionFireApp extends ApplicationV2 {
         this._switchingTargets = false;
       }
       console.error("Suppression Fire cancel:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      ui.notifications.error(moduleMessage(error));
     } finally {
       this._submitting = false;
       if (button?.isConnected) button.disabled = false;

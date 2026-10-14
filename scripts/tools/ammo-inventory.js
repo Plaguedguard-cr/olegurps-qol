@@ -1,3 +1,4 @@
+import { ammunitionResourceContract } from "./ammunition-resource-contract.js";
 // Resource accounting only. Catalog compatibility and ballistic rules belong to their existing services.
 export const AMMO_INVENTORY_VERSION = 1;
 const copy = value => structuredClone(value);
@@ -6,12 +7,33 @@ export const isArchivedAmmoType = type => !!type && !["catalog", "legacy"].inclu
 export const ammoTypeKey = binding => binding.source && binding.source !== "catalog" ? binding.key :
   [binding.book, binding.kind, encodeURIComponent(binding.ammoId)].join(":") +
     (binding.recipe ? ":recipe-v1:" + encodeURIComponent(binding.recipe.variantId) +
-      (binding.recipe.customId ? ":custom:" + encodeURIComponent(binding.recipe.customId) : "") : "");
+      (binding.recipe.customId ? ":custom:" + encodeURIComponent(binding.recipe.customId) : "") : "") +
+    (binding.sealedPlatformModeId ? ":sealed-unit:" + encodeURIComponent(binding.sealedPlatformModeId) : "");
 export const whole = (value, minimum = 0) => Number.isSafeInteger(value) && value >= minimum;
 export const inventoryTotal = inventory => inventory.stocks.reduce((sum, entry) => sum + entry.rounds, 0) +
   inventory.magazines.reduce((sum, entry) => sum + entry.rounds, 0);
 export const installedMagazine = weapon => weapon.ammunitionInventory?.magazines.find(entry =>
   entry.id === weapon.ammunitionInventory.installedId) ?? null;
+
+/** Repair only the selection. Never repair quantities, ownership or malformed inventory. */
+export function initializeInstalledMagazine(weapon) {
+  if (weapon.ammunitionReview) return false;
+  const inventory = weapon.ammunitionInventory;
+  if (inventory) {
+    if (installedMagazine(weapon)) return false;
+    const candidate = { ...inventory, installedId: null };
+    if (!validateInventory(candidate, weapon.id) || !inventory.magazines.length) return false;
+    inventory.installedId = inventory.magazines[0].id;
+    projectAmmoInventory(weapon);
+    return true;
+  }
+  if (!Array.isArray(weapon.magazines) || !weapon.magazines.length ||
+      whole(weapon.loadedIndex) && weapon.loadedIndex < weapon.magazines.length) return false;
+  const probe = { ...weapon, loadedIndex: 0 };
+  if (!migrateAmmoInventory(probe).valid) return false;
+  weapon.loadedIndex = 0;
+  return true;
+}
 
 export function validateInventory(inventory, weaponId) {
   if (inventory?.version !== AMMO_INVENTORY_VERSION || !Array.isArray(inventory.stocks) ||
@@ -97,7 +119,11 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
   if (operation === "save-recipe") {
     if (!args.type?.recipe?.customId || args.type.key !== ammoTypeKey(args.type) || inventory.stocks.some(s => s.key === args.type.key)) fail("InvalidRecipe");
     inventory.stocks.push({ key: args.type.key, type: copy(args.type), rounds: 0 });
-  } else if (operation === "add-stock") stock(args.ammoKey).rounds += count(args.amount);
+  } else if (operation === "add-stock") {
+    const type = available(args.ammoKey), rule = ammunitionResourceContract(type), amount = count(args.amount);
+    if (rule && amount % rule.capacity) fail("SealedResourceQuantity");
+    stock(args.ammoKey).rounds += amount;
+  }
   else if (operation === "remove-stock") {
     const entry = stockFor(args.ammoKey), amount = count(args.amount);
     if (amount > entry.rounds) fail("InsufficientStock");
@@ -109,7 +135,9 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
       capacity, rounds: 0, ammoKey: null });
   } else if (operation === "load") {
     const entry = magazine(), amount = count(args.amount);
-    available(args.ammoKey);
+    const rule = ammunitionResourceContract(available(args.ammoKey));
+    if (entry.sealedUsed) fail("SealedResourceSpent");
+    if (rule && (entry.capacity !== rule.capacity || entry.rounds || amount !== rule.capacity)) fail("SealedResourceQuantity");
     if (entry.rounds && entry.ammoKey !== args.ammoKey) fail("MixedTypes");
     const source = stockFor(args.ammoKey);
     if (source.rounds < amount) fail("InsufficientStock");
@@ -117,6 +145,8 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
     source.rounds -= amount; entry.rounds += amount; entry.ammoKey = args.ammoKey;
   } else if (operation === "unload" || operation === "delete-magazine") {
     const entry = magazine(), amount = operation === "delete-magazine" ? entry.rounds : count(args.amount);
+    const rule = ammunitionResourceContract(inventory.stocks.find(s => s.key === entry.ammoKey)?.type);
+    if (rule && entry.rounds && (entry.sealedUsed || entry.rounds !== rule.capacity || amount !== entry.rounds)) fail("SealedResourcePartial");
     if (amount > entry.rounds) fail("InsufficientRounds");
     if (amount) stockFor(entry.ammoKey).rounds += amount;
     entry.rounds -= amount;
@@ -133,11 +163,15 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
     const entry = magazine(), amount = count(args.amount);
     if (inventory.installedId !== entry.id) fail("MagazineNotInstalled");
     if (entry.rounds < amount) fail("InsufficientRounds");
+    const rule = ammunitionResourceContract(stockFor(entry.ammoKey).type);
+    if (rule && (entry.capacity !== rule.capacity || entry.rounds > rule.capacity)) fail("SealedResourceReview");
+    if (rule) entry.sealedUsed = true;
     entry.rounds -= amount;
     if (!entry.rounds) entry.ammoKey = null;
   } else fail("UnknownOperation");
   if (!validateInventory(inventory, weapon.id)) fail("InvalidQuantity");
   weapon.ammunitionInventory = inventory;
+  initializeInstalledMagazine(weapon);
   projectAmmoInventory(weapon);
   return inventory;
 }

@@ -1,3 +1,4 @@
+import { moduleText } from "../localization.js";
 const choices = [
   { key: "hit", icon: "fa-bullseye", ru: "Критические попадания", en: "Critical hits" },
   { key: "head", icon: "fa-head-side", ru: "Критические попадания в голову", en: "Critical head hits" },
@@ -6,14 +7,11 @@ const choices = [
 ];
 
 export function criticalTableSelectionHTML(escapeHTML, runtime = globalThis) {
-  const language = String(runtime.game?.i18n?.lang ?? "ru").startsWith("ru") ? "ru" : "en";
   const buttons = choices.map((choice, index) => {
     const key = "OleGURPS.Critical." + choice.key;
-    const translated = runtime.game?.i18n?.localize?.(key);
-    const label = translated && translated !== key ? translated : choice[language];
+    const label = moduleText(key, {}, choice.ru);
     return `<label class="oq-crit-choice" title="${escapeHTML(label)}"><input type="radio" name="table" value="${choice.key}" ${index === 0 ? "checked autofocus" : ""}><i class="fa-solid ${choice.icon}" aria-hidden="true"></i><span>${escapeHTML(label)}</span></label>`;
   }).join("");
-  const tableKey = "OleGURPS.Critical.Table", translatedTable = runtime.game?.i18n?.localize?.(tableKey);
-  const tableLabel = translatedTable && translatedTable !== tableKey ? translatedTable : language === "ru" ? "Таблица" : "Table";
+  const tableLabel = moduleText("OleGURPS.Critical.Table", {}, "Таблица");
   return `<div class="standard-form oq-crit"><fieldset class="oq-crit-row"><legend>${escapeHTML(tableLabel)}</legend><div class="oq-crit-grid">${buttons}</div></fieldset></div>`;
 }

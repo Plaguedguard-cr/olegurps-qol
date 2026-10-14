@@ -1,3 +1,7 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { HT_SOURCE_REVIEW } from "../scripts/ht-source-corrections.js";
+import { assertPlusPReadyIdentities } from "./fixtures/ht-plus-p-ready-identities.mjs";
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -107,8 +111,8 @@ test("incomplete GGA Range diagnostics really load in RU and EN, including a cac
     const runtime = { location: {}, fetch: async () => ({ ok: true, json: async () => data }), game: { i18n: { lang: language, translations,
       localize: key => translations[key] ?? key } }, foundry: { utils: { setProperty: (o,k,v) => o[k] = v } } };
     await loadAmmoEffectTranslations(runtime);
-    assert.equal(ammoEffectText("native-range-components-missing", {}, runtime), data["OleGURPS.AmmoEffects.native-range-components-missing"]);
-    assert.match(ammoEffectText("native-range-components-missing", {}, runtime), language === "ru" ? /исправьте Range самой атаки/ : /correct Range in the attack itself/);
+    assert.equal(ammoEffectText("native-range-components-missing", {}, runtime), russianText("OleGURPS.AmmoEffects.native-range-components-missing"));
+    assert.match(ammoEffectText("native-range-components-missing", {}, runtime), true ? /исправьте Range самой атаки/ : /correct Range in the attack itself/);
   }
 });
 
@@ -154,7 +158,7 @@ test("HT120 erratum preserves previously saved definitions, recipe identity and 
 
 test("historical 227 +P restrictions stay intact; current B review preserves every E/F/G blocker", async () => {
   const before = JSON.stringify(catalogs.getCatalog("ht"));
-  const report = JSON.parse(await fs.readFile(new URL("../docs/audit/ht-plus-p-blockers.json",import.meta.url),"utf8"));
+  const report = readAuditFixture('ht-plus-p-blockers');
   const current = auditPlusPBlockers({ catalogs, compatibility });
   assert.equal(report.examined, 511); assert.equal(report.ready, 284); assert.equal(report.rows.length, 227);
   assert.deepEqual(Object.fromEntries(Object.entries(report.categories).map(([k,v])=>[k,v.count])), { A:0, B:106, C:0, D:0, E:12, F:98, G:11 });
@@ -176,22 +180,22 @@ test("historical 227 +P restrictions stay intact; current B review preserves eve
   assert.equal(report.rows.find(r=>r.modeId==="W10jqOZ0kjeSuoY3C").parsed.damageStatus,"present-but-not-supported-by-plus-p-parser");
   assert.equal(JSON.stringify(catalogs.getCatalog("ht")),before);
   assert.equal(report.previousAggregate.ready,283);
-  assert.equal(current.examined,511); assert.equal(current.ready,370);
-  const excluded = r => ["E","F"].includes(r.primaryCategory);
-  const expectedExcluded = structuredClone(report.rows.filter(excluded));
-  const hafla = expectedExcluded.filter(r => r.modeId === "Wr3VDL3Z6SR3KCz3K" && r.ammoItemId === "ht_specific_hafla_dm34_35mm_wp");
-  assert.equal(hafla.length, 1);
-  // Approved HT145 Acc errata removes only the missing-Acc UI diagnostic.
-  // All +P eligibility and engine blockers, and the frozen report itself, remain intact.
-  assert.equal(hafla[0].raw.acc, null);
-  assert.deepEqual(hafla[0].downstreamStandaloneReadiness.restrictions, ["Acc"]);
-  assert.equal(hafla[0].secondaryRestrictions.filter(r => r.code === "standalone-readiness.Acc").length, 1);
-  hafla[0].raw.acc = "0";
-  hafla[0].downstreamStandaloneReadiness.restrictions = [];
-  hafla[0].secondaryRestrictions = hafla[0].secondaryRestrictions.filter(r => r.code !== "standalone-readiness.Acc");
-  assert.deepEqual(current.rows.filter(excluded),expectedExcluded);
-  assert.deepEqual(Object.fromEntries(Object.entries(current.categories).map(([k,v])=>[k,v.count])),
-    {A:0,B:0,C:0,D:0,E:12,F:98,G:4});
-  assert.deepEqual(current.rows.filter(r=>r.primaryCategory==="G").map(r=>r.modeId).sort(),
-    ["W10jqOZ0kjeSuoY3C","W7i4ZauQl8q2o5nTt","WK6cr08HEjTSsvYNS","WdzSSShGT_yv4ctOi"].sort());
+  assert.equal(current.examined,511); assert.equal(current.ready,366);
+  // P6 pressure gate changes diagnostic classification, never opens historical E/F.
+  const closed=new Set([...current.rows,...current.otherNonreadyPairs].map(r=>r.modeId+'/'+r.ammoItemId));
+  const pairs=catalogs.getCatalog('ht').ammo_items.flatMap(ammo=>ammo.weapon_mode_ids.map(modeId=>({
+    modeId,ammoItemId:ammo.id,ready:!closed.has(modeId+'/'+ammo.id)})));
+  assertPlusPReadyIdentities(pairs);
+  assert.equal(pairs.filter(r=>r.ready).length,current.ready);
+  for(const r of report.rows.filter(r=>['E','F'].includes(r.primaryCategory)))assert(closed.has(r.modeId+'/'+r.ammoItemId),r.modeId);
+  for(const [mid,[aid]]of Object.entries(HT_SOURCE_REVIEW))assert(closed.has(mid+'/'+aid),mid);
+  assert.deepEqual(current.rows.filter(r=>r.primaryCategory==='G').map(r=>r.modeId).sort(),
+    ['W10jqOZ0kjeSuoY3C','WK6cr08HEjTSsvYNS'].sort());
+  // P6 requires pressure evidence for new .410 and corrected LeMat pairs.
+  // They left the arithmetic bucket, but must remain unavailable.
+  for(const mid of ['W7i4ZauQl8q2o5nTt','WdzSSShGT_yv4ctOi']) {
+    assert(current.otherNonreadyPairs.some(r=>r.modeId===mid));
+    assert(compatibility.checkCompatibility(mid,'ht_plus_p').reasons.some(r=>
+      r.code==='ELIGIBILITY_EVIDENCE_MISSING'&&r.message.includes('weapon_pressure_rating_verified')));
+  }
 });

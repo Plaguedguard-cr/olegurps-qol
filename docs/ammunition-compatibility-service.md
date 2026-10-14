@@ -35,7 +35,7 @@ All returned objects and arrays are independent deeply frozen snapshots. Catalog
 
 ## Full data audit
 
-See [ammunition-compatibility-report.md](ammunition-compatibility-report.md): all 64 textual HT options, six structured HT178 directions, 68 assessed pairs (33 firing-confirmed, 35 undetermined), four confirmed UT Paint Gun pairs, query examples, limitations and verification. Recommendations require source confirmation; no catalog was edited.
+Текущие решения и ограничения описаны в [сводке High-Tech](high-tech.md). Исторические источниковые аудиты HT178, LT/HT/UT и примеры проверок хранятся в локальном архиве. Рекомендация требует подтверждения источником; неизвестность не становится совместимостью.
 ## Structured HT178 explicit_direction_v1
 
 New directions use explicit source_ammo_item_ids/target_ammo_item_ids and exact mode_pair_assessments. Their from/to names are descriptive only. Legacy directions retain their prior handling. A structured rule never falls back to name matching or automatic chamber guesses. Missing assessments remain undetermined; excluded heavy-load source/targets are not promoted to ordinary shells.

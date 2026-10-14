@@ -1,0 +1,272 @@
+[
+  {
+    "_id": "OQDamageMacro001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/damage.png",
+    "command": "game.olegurpsQOL.damage.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "damage"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": "0.18.23",
+      "createdTime": 1789883103588,
+      "modifiedTime": 1789883918607,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQLuckMacro00001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/luck.png",
+    "command": "game.olegurpsQOL.luck.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "luck"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": "0.18.23",
+      "createdTime": 1789882428316,
+      "modifiedTime": 1789883103579,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQMeleeAssist001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/melee-assistant.png",
+    "command": "game.olegurpsQOL.melee.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "melee-assistant"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": "0.18.23",
+      "createdTime": 1789891435920,
+      "modifiedTime": 1789891435921,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQcritical000001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/critical-table.png",
+    "command": "game.olegurpsQOL.critical.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "critical"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": null,
+      "createdTime": 0,
+      "modifiedTime": 0,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQexplosion00001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/explosion-and-fragmentation.png",
+    "command": "game.olegurpsQOL.explosion.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "explosion"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": null,
+      "createdTime": 0,
+      "modifiedTime": 0,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQfalling0000001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/falling.png",
+    "command": "game.olegurpsQOL.falling.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "falling"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": null,
+      "createdTime": 0,
+      "modifiedTime": 0,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQfirecontrol001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/fire-control.png",
+    "command": "game.olegurpsQOL.fireControl.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "fireControl"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": null,
+      "createdTime": 0,
+      "modifiedTime": 0,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQfright00000001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/fright-check.png",
+    "command": "game.olegurpsQOL.fright.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "fright"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": null,
+      "createdTime": 0,
+      "modifiedTime": 0,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQreaction000001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/reaction-roll.png",
+    "command": "game.olegurpsQOL.reaction.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "reaction"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": null,
+      "createdTime": 0,
+      "modifiedTime": 0,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  },
+  {
+    "_id": "OQshooting000001",
+    "type": "script",
+    "img": "modules/olegurps-qol/assets/shooting-assistant.png",
+    "command": "game.olegurpsQOL.ammo.open();",
+    "scope": "global",
+    "ownership": {
+      "default": 3
+    },
+    "flags": {
+      "olegurps-qol": {
+        "tool": "ammo"
+      }
+    },
+    "folder": null,
+    "sort": 0,
+    "_stats": {
+      "coreVersion": "14.364",
+      "systemId": "gurps",
+      "systemVersion": null,
+      "createdTime": 0,
+      "modifiedTime": 0,
+      "compendiumSource": null,
+      "duplicateSource": null,
+      "exportSource": null
+    }
+  }
+]

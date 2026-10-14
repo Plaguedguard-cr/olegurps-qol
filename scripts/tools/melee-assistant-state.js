@@ -1,5 +1,7 @@
 import { getAttackOverrideKey } from "./weapon-attack-overrides.js";
 import { listStandaloneAttacks } from "./standalone-attack-service.js";
+import { withActorResourceWrite } from "./actor-resource-writes.js";
+import { StandaloneWeaponService } from "./standalone-weapon-service.js";
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "olegurpsMeleeAssistant";
@@ -207,8 +209,16 @@ export class MeleeAssistantStateService {
   }
 
   async save(state) {
-    const normalized = normalizeMeleeAssistantState(clone(state));
-    await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, normalized);
-    return normalized;
+    return withActorResourceWrite(this.actor, async () => {
+      const normalized = normalizeMeleeAssistantState(clone(state)), records = new StandaloneWeaponService(this.actor).list("melee");
+      const deleted = key => {
+        const match = decodeURIComponent(key).replace(/^key:/, "").match(/^uuid:olegurps:([^:]+):(.+)$/);
+        return match && !records.some(r => r.id === match[1] && r.modes.some(m => m.modeId === match[2]));
+      };
+      if (deleted(normalized.selectedAttackKey)) normalized.selectedAttackKey = "";
+      for (const key of Object.keys(normalized.attacks)) if (deleted(key)) delete normalized.attacks[key];
+      await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, normalized);
+      return normalized;
+    });
   }
 }

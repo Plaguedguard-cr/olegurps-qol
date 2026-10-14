@@ -1,3 +1,4 @@
+import { readArchivedJSON, archiveOutputPath } from '../../tools/local-document-archive.mjs';
 import fs from "node:fs/promises";
 import { CatalogService, CATALOG_DEFINITIONS } from "../catalog-service.js";
 import { AmmunitionCompatibilityService } from "../ammunition-compatibility-service.js";
@@ -162,10 +163,10 @@ if (process.argv[1] && new URL(import.meta.url).pathname.endsWith(process.argv[1
     json: async () => data[Object.keys(CATALOG_DEFINITIONS).find(b => url.endsWith(CATALOG_DEFINITIONS[b].filename))] }) });
   await catalogs.load();
   const report = auditPlusPBlockers({ catalogs, compatibility: new AmmunitionCompatibilityService(catalogs) });
-  const previous = JSON.parse(await fs.readFile(new URL("../../docs/audit/ht-special-ammunition-after.json", import.meta.url), "utf8"));
+  const previous = await readArchivedJSON("docs/audit/ht-special-ammunition-after.json");
   report.previousAggregate = previous.variants.ht_plus_p;
   if (report.rows.length !== 227 || report.examined !== 511 || report.ready !== 284 || report.otherNonreadyPairs.length)
     throw Error("PlusPAuditScopeOrBaselineChanged");
-  await fs.writeFile(new URL("../../docs/audit/ht-plus-p-blockers.json", import.meta.url), JSON.stringify(report, null, 2) + "\n", "utf8");
+  await fs.writeFile(await archiveOutputPath("ht-plus-p-blockers.json"), JSON.stringify(report, null, 2) + "\n", "utf8");
   console.log(JSON.stringify({ examined: report.examined, ready: report.ready, summary: report.summary, categories: report.categories }));
 }

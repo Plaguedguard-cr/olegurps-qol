@@ -31,7 +31,7 @@ function resolveMeleePass(options, deceptivePenalty = 0) {
   const context = {
     weaponBond: isWeaponBondActive(options.actor, options.weaponBond),
     targetedAttack: options.targetedAttack ?? null,
-    hitLocationBase, hitLocationLabel: options.hitLocationLabel ?? "Hit Location",
+    hitLocationBase, hitLocationLabel: options.hitLocationLabel ?? "Зона попадания",
     rapidStrikePenalty: integer(options.rapidStrikePenalty),
     telegraphicAttack: !!options.telegraphicAttack, deceptivePenalty,
     evaluateBonus: getEvaluateBonus(options.evaluate), moveAndAttack: !!options.moveAndAttack,
@@ -48,17 +48,17 @@ function resolveMeleePass(options, deceptivePenalty = 0) {
       { id: "evaluate", value: 0, label: "\u041e\u0446\u0435\u043d\u043a\u0430" },
       { id: "telegraphicAttack", value: 0, label: "Telegraphic Attack" },
       { id: "committedSteps", value: 0, label: "Committed Attack (2 steps)" },
-      { id: "maneuverAttackBonus", value: 0, label: "Maneuver attack bonus" },
+      { id: "maneuverAttackBonus", value: 0, label: "Бонус атаки от манёвра" },
       { id: "moveAndAttack", value: 0, label: "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0438 \u0430\u0442\u0430\u043a\u0430" },
       { id: "rapidStrike", value: 0, label: "Rapid Strike" },
       { id: "visibility", value: integer(options.visibilityPenalty), label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c" },
       { id: "hitLocation", value: Number.isFinite(hitLocationBase) ? hitLocationBase : 0,
-        label: options.hitLocationLabel ?? "Hit Location" },
+        label: options.hitLocationLabel ?? "Зона попадания" },
       { id: "precision", value: precisionPenalty, label: "Precision" },
       { id: "deceptiveAttack", value: 0, label: "Deceptive Attack" }
     ], rules: getCombatRules("melee"), caps: [
-      ...(options.moveAndAttack ? [{ maximum: 9, label: "Move and Attack cap: 9" }] : []),
-      ...(options.visibilityCap ? [{ maximum: 9, label: "Visibility cap: 9" }] : [])
+      ...(options.moveAndAttack ? [{ maximum: 9, label: "Предел навыка при движении и атаке: 9" }] : []),
+      ...(options.visibilityCap ? [{ maximum: 9, label: "Предел навыка при ограниченной видимости: 9" }] : [])
     ] });
 }
 
@@ -268,7 +268,7 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   const modifierBreakdown = buildAttackModifierBreakdownHtml(modifierDetails);
   const attackContext = overrideText || locationText;
   const contextBreakdown = attackContext
-    ? `<details class="olegurps-attack-context"><summary style="cursor:pointer">Attack details</summary><div>${attackContext}</div></details>` : "";
+    ? `<details class="olegurps-attack-context"><summary style="cursor:pointer">Условия атаки</summary><div>${attackContext}</div></details>` : "";
   const displayText = [contextBreakdown, modifierBreakdown].filter(Boolean).join("");
   const perform = () => performMeleeActionWithoutConfirmation(() => globalThis.GURPS.performAction({
     type: "attack",

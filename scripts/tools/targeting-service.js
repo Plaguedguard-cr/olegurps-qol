@@ -5,6 +5,9 @@ import { WINGED_HEXAPOD_BODYPLAN } from "./winged-hexapod-bodyplan.js";
 import { CENTAUR_BODYPLAN } from "./centaur-bodyplan.js";
 import { AVIAN_BODYPLAN } from "./avian-bodyplan.js";
 import { createRandomHitLocationDisplay } from "./hit-location-result.js";
+const bodyplanLabel = definition => ({humanoid:"Гуманоид",quadruped:"Четвероногое",
+  "winged-quadruped":"Крылатое четвероногое",hexapod:"Шестиногое",
+  "winged-hexapod":"Крылатое шестиногое",centaur:"Кентавр",avian:"Птица"})[definition.id] ?? definition.label;
 
 export const BODYPLAN_DEFINITIONS = Object.freeze({
   humanoid: {
@@ -294,14 +297,14 @@ export class TargetingService {
   static getBodyplanOptions() {
     return Object.values(BODYPLAN_DEFINITIONS).map(definition => ({
       id: definition.id,
-      label: definition.label
+      label: bodyplanLabel(definition)
     }));
   }
 
   constructor({ definition, table, tableSource, attack }) {
     this.definition = definition;
     this.bodyplan = definition.id;
-    this.label = definition.label;
+    this.label = bodyplanLabel(definition);
     this.image = definition.image;
     this.aspectRatio = definition.aspectRatio;
     this.table = table;
@@ -377,7 +380,7 @@ export class TargetingService {
 
     if (mapped?.detailTable && zone) {
       const detailTable = this.definition.detailTables?.[mapped.detailTable] ?? null;
-      if (!detailTable) throw new Error("Не найдена таблица уточнения Hit Location: " + mapped.detailTable + ".");
+      if (!detailTable) throw new Error("Не найдена таблица уточнения Зона попадания: " + mapped.detailTable + ".");
       const detailRoll = await this._evaluateLocationRoll(detailTable.formula ?? "1d6[Hit Location Detail]");
       const detailTotal = Number(detailRoll.total);
       const detail = detailTable.results?.[detailTotal] ?? null;

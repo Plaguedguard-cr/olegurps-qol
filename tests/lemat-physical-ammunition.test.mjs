@@ -4,13 +4,14 @@ import fs from "node:fs/promises";
 import { catalogs, compatibility, automatic, resolver, context, api } from "./fixtures/ht-special-context.mjs";
 import { LEMAT, LEMAT_SHOT_CHARGE, lematBarrel } from "../scripts/ht-physical-ammunition-evidence.js";
 import { standaloneAmmoCarriers } from "../scripts/tools/standalone-weapon-service.js";
+import {printedAccuracyZero,expectedPrintedFields} from './fixtures/ht-printed-statistics.mjs';
 import { AmmoService } from "../scripts/tools/ammo-service.js";
 import { applyInventoryOperation, ammoTypeKey } from "../scripts/tools/ammo-inventory.js";
 import { resolveMultipleProjectileFire } from "../scripts/tools/fire-service.js";
 import { recipeFingerprint, approvalKey } from "../scripts/tools/ammunition-approval-service.js";
 import { displayedAmmoTypes, ammoManagementHTML } from "../scripts/tools/ammo-management-app.js";
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
-import { automaticAmmoMessages, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
+import { automaticAmmoMessages, automaticAmmoText, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
 import { ammunitionConditionTexts } from "../scripts/tools/damage-shot-link.js";
 const shot=context(LEMAT.shotModeId),rev=context(LEMAT.revolverModeId),prepared=automatic.prepare({modeId:LEMAT.shotModeId,base:shot.base,variantId:"ht_plus_p"});
 const approval={active:true,actorId:"actor",weaponId:"shot",modeId:LEMAT.shotModeId,ammoId:LEMAT.shotAmmoId,
@@ -101,7 +102,7 @@ test("old incorrect recipe is retained, visibly review-required, cannot fire; un
   const type={...rev.base,key:ammoTypeKey(rev.base),recipe:{version:1,variantId:"ht_plus_p",customId:"old"}},copy=JSON.stringify(type);
   const p=resolve(type,null);assert.equal(p.compatibility.status,"incompatible");assert.equal(p.ammunition.status,"unresolved");assert.equal(JSON.stringify(type),copy);
   const actor={id:"actor",binding:shot.binding,system:{ranged:{mode:shot.raw}}},weapon={id:"shot",attackRef:{path:"system.ranged.mode"},ammunitionInventory:{version:1,stocks:[{key:type.key,type,rounds:0}],magazines:[{id:"old",weaponId:"shot",capacity:1,rounds:1,ammoKey:type.key}],installedId:"old"}};
-  for(const lang of ["ru","en"]){const types=displayedAmmoTypes(actor,weapon,api,lang),old=types.find(t=>t.key===type.key);assert.equal(old.unavailable,true);assert.equal(old.reason,automaticAmmoMessages[lang].LeMatIdentityReview);assert.match(ammoManagementHTML(weapon,{language:lang,ammoKey:type.key},types),/data-ammo-identity-review/);}
+  for(const lang of ["ru","en"]){const types=displayedAmmoTypes(actor,weapon,api,lang),old=types.find(t=>t.key===type.key);assert.equal(old.unavailable,true);assert.equal(old.reason,automaticAmmoMessages.ru.LeMatIdentityReview);assert.match(ammoManagementHTML(weapon,{language:lang,ammoKey:type.key},types),/data-ammo-identity-review/);}
   applyInventoryOperation(weapon,"unload",{magazineId:"old",amount:1});assert.equal(weapon.ammunitionInventory.stocks[0].rounds,1);assert.equal(weapon.ammunitionInventory.stocks[0].type.ammoId,LEMAT.revolverAmmoId);
 });
 test("old snapshot does not re-resolve identity, barrel, approval or Damage after reload",()=>{
@@ -112,14 +113,49 @@ test("old snapshot does not re-resolve identity, barrel, approval or Damage afte
 test("new Ready, economics and identity messages resolve RU/EN from actual locale files",async()=>{
   for(const lang of["ru","en"]){const data=JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"));
     for(const key of ["BarrelSwitchReadyGM","LeMatEconomicsUnknown","LeMatIdentityReview"])assert.equal(data["OleGURPS.AutomaticAmmo."+key],automaticAmmoMessages[lang][key]);
-    assert.deepEqual(ammunitionConditionTexts(lematBarrel(LEMAT.shotModeId).manual,lang),[automaticAmmoMessages[lang].BarrelSwitchReadyGM]);}
+    assert.deepEqual(ammunitionConditionTexts(lematBarrel(LEMAT.shotModeId).manual,lang),[automaticAmmoMessages.ru.BarrelSwitchReadyGM]);}
 });
 test("other 510 native +P pairs retain identities and weapon source records",()=>{
+  const names={ht_87x94mmr_hotchkiss:'37x94mmR Hotchkiss',ht_25_59mmb:'25x59mmB',ht_2_2_25:'2-inch (51mm)',
+    ht_56_50_spencer_14x22mmr:'.56-50 Spencer (13x29mmR)',ht_700_nitro_express_17_8x80mmr:'.700 Nitro Express (17.8x89mmR)'};
   const modes=new Map(catalogs.getCatalog("weapons").equipment.flatMap(e=>e.modes.map(m=>[m.weapon_mode_id,m])));let count=0;
   for(const ammo of catalogs.getCatalog("ht").ammo_items)for(const modeId of ammo.weapon_mode_ids){if(modeId===LEMAT.shotModeId)continue;
-    count++;assert.deepEqual(catalogs.getMode(modeId),modes.get(modeId));const projected=catalogs.getAmmoItem("ht",ammo.id);
+    count++;const effectiveMode=structuredClone(catalogs.getMode(modeId));
+    if(modeId==='Wx13jpOUxRC_YeDo6') { // HT150: effective Acc 0; imported null remains protected.
+      assert.equal(modes.get(modeId).stats.accuracy,null);assert.equal(effectiveMode.stats.accuracy,'0');
+      assert.deepEqual(effectiveMode.sourceStatisticsCorrection,{version:1,source:'HT150',field:'accuracy',original:null,value:'0'});
+      effectiveMode.stats.accuracy=null;delete effectiveMode.sourceStatisticsCorrection;
+    }
+    if(printedAccuracyZero[modeId]) {
+      const fields=expectedPrintedFields(modeId);
+      for(const [field,value]of Object.entries(fields)) {
+        assert.equal(modes.get(modeId).stats[field],null);assert.equal(effectiveMode.stats[field],value);
+        effectiveMode.stats[field]=null;
+      }
+      assert.deepEqual(effectiveMode.sourceStatisticsCorrection,{version:1,source:printedAccuracyZero[modeId],
+        fields:Object.entries(fields).map(([field,value])=>({field,original:null,value}))});
+      delete effectiveMode.sourceStatisticsCorrection;
+    }
+    if(modeId==='WaIDKb3cN40p-9pJu') {
+      const changes=[];
+      for(const [index,rule]of effectiveMode.defaults.entries())if(rule.type==='skill'&&rule.name==='Guns'&&
+        ['Rifle','Musket','Shotgun','Light Machine Gun','Submachine Gun'].includes(rule.specialization)) {
+        assert.equal(rule.modifier,-4);rule.modifier=-2;changes.push({index,original:-2,value:-4});
+      }
+      assert.equal(changes.length,5);
+      assert.deepEqual(effectiveMode.sourceDefaultsCorrection,{version:1,source:'HT98',changes});delete effectiveMode.sourceDefaultsCorrection;
+    }
+    if(modeId==='WGZlqJxbZOxd6FR4h'){
+      assert.equal(effectiveMode.raw_calc.damage,'1d-3(0.5) cr');assert.equal(effectiveMode.stats.damage.base,'1d-3');
+      assert.deepEqual(effectiveMode.sourceDamageCorrection,{version:1,source:'HT88, baton table; HT89, paint/pepper described separately',original:'2d-3(0.5) cr',value:'1d-3(0.5) cr'});
+      effectiveMode.raw_calc.damage='2d-3(0.5) cr';effectiveMode.stats.damage.base='2d-3';delete effectiveMode.sourceDamageCorrection;
+    }
+    assert.deepEqual(effectiveMode,modes.get(modeId));const projected=catalogs.getAmmoItem("ht",ammo.id);
     assert.equal(projected.id,ammo.id);assert.ok(projected.weapon_mode_ids.includes(modeId));
-    assert.deepEqual({...projected,weapon_mode_ids:[]},{...ammo,weapon_mode_ids:[]});}
+    const restored={...projected,weapon_mode_ids:[]};
+    if(names[ammo.id]){assert.equal(projected.name,names[ammo.id]);assert.equal(projected.sourceLabelCorrection.original,ammo.name);
+      assert.equal(projected.sourceLabelCorrection.version,1);restored.name=ammo.name;delete restored.sourceLabelCorrection;}
+    assert.deepEqual(restored,{...ammo,weapon_mode_ids:[]});}
   assert.equal(count,510);
 });
 test("charge editor defaults to the actual barrel capacity without invented mass/price inputs",()=>{
@@ -132,7 +168,8 @@ test("cached older translations still load actual new LeMat keys in RU/EN withou
   for(const lang of["ru","en"]){const translations={"OleGURPS.AutomaticAmmo.ShotgunCloseGM":"already cached"};let fetched=0;
     const runtime={location:{},fetch:async()=>{fetched++;return {ok:true,json:async()=>JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"))};},
       foundry:{utils:{setProperty:(o,k,v)=>{o[k]=v;}}},game:{i18n:{lang,translations,localize:k=>translations[k]??k}}};
-    await loadAutomaticAmmoTranslations(runtime);assert.equal(fetched,1);assert.equal(runtime.game.i18n.lang,lang);
-    assert.equal(runtime.game.i18n.localize("OleGURPS.AutomaticAmmo.LeMatIdentityReview"),automaticAmmoMessages[lang].LeMatIdentityReview);
+    await loadAutomaticAmmoTranslations(runtime);assert.equal(fetched,0);assert.equal(runtime.game.i18n.lang,lang);
+    assert.deepEqual(translations,{"OleGURPS.AutomaticAmmo.ShotgunCloseGM":"already cached"});
+    assert.equal(automaticAmmoText("LeMatIdentityReview",lang),automaticAmmoMessages.ru.LeMatIdentityReview);
   }
 });

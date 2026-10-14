@@ -1,32 +1,42 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { createHash } from "node:crypto";
 import { CatalogService, CATALOG_DEFINITIONS } from "../scripts/catalog-service.js";
 import { AmmunitionCompatibilityService } from "../scripts/ammunition-compatibility-service.js";
-const proof = JSON.parse(await fs.readFile(new URL("../docs/audit/catalog-upgrade-preservation.json", import.meta.url), "utf8"));
+const proof = readAuditFixture('catalog-upgrade-preservation');
 // Historical v1.2 collection proofs are retained; only the current byte checkpoints advance.
 proof.catalogs.ht.currentFilename = "olegurps_ht_ammunition_catalog_v1_3.json";
 proof.catalogs.ht.currentSha256 = "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385";
 // Approved HAFLA Acc errata (HT145), revision 2; independently verified against the original byte contract.
 proof.catalogs.weapons.currentSha256 = "f98687171a69b27ff46d89ab12d24b457375972de293fe482e881aceb63b5460";
-const audit = JSON.parse(await fs.readFile(new URL("../docs/audit/olegurps_ht178_68_mode_pairs_v1.json", import.meta.url), "utf8"));
+const audit = readAuditFixture('olegurps_ht178_68_mode_pairs_v1');
 const originals = Object.fromEntries(await Promise.all(Object.entries(CATALOG_DEFINITIONS).map(async ([b, d]) => [b, JSON.parse(await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url), "utf8"))])));
 const hash = data => createHash("sha256").update(JSON.stringify(data)).digest("hex");
 async function loaded(mutate = () => {}) { const data = structuredClone(originals); mutate(data); const calls = []; const catalogs = new CatalogService({ logger: null, fetcher: async url => { const b = Object.keys(CATALOG_DEFINITIONS).find(key => url.endsWith(CATALOG_DEFINITIONS[key].filename)); assert.ok(b); calls.push(b); return { ok: true, json: async () => data[b] }; } }); const service = new AmmunitionCompatibilityService(catalogs); await service.load(); return { service, catalogs, calls }; }
 const { service, catalogs, calls } = await loaded();
 const nativeMode = (d, id) => d.weapons.equipment.flatMap(e => e.modes).find(m => m.weapon_mode_id === id);
+// HT106 explicitly confirms both normal 2.75-inch and 3-inch loads for these Super 90 variants.
+// The historical 68-pair audit itself is preserved byte-for-byte below.
+const benelliModes = new Set(['WcLG_XsJVbZ6CIT4p','WT-PUA77JBHLiLTPo','WmeBcFEjqKNri5FAm',
+  'W6LVJ8YGACnNB5h-S','WLp8euYFMi9Oikpjp','WH-pkGPARCbK4CP4h','W9LBQ9LeKd3uB9nSZ']);
+const publishedBenelliPair = p => benelliModes.has(p.mode_id) &&
+  ['ht_12_gauge_2_75_18_5x70mmr','ht_12_gauge_2_75_18_5x70mmr_heavy_load'].includes(p.target_ammo_item_id);
 
 for (const pair of audit.pairs) test("HT178 explicit " + pair.mode_id + " / " + pair.target_ammo_item_id, () => {
   const r = service.checkCompatibility(pair.mode_id, pair.target_ammo_item_id);
-  assert.equal(r.status, pair.status === "confirmed_to_fire" ? "compatible" : "undetermined");
+  assert.equal(r.status, publishedBenelliPair(pair) || pair.status === "confirmed_to_fire" ? "compatible" : "undetermined");
   assert.equal(r.relation.metadata, "explicit_direction_v1"); assert.equal(r.relation.directedOnly, true); assert.equal(r.relation.transitivePermission, false);
-  for (const warning of pair.warnings) assert.ok(r.warnings.some(w => w.message === warning), warning);
+  if (publishedBenelliPair(pair)) { assert.match(r.relation.source,/HT106/);assert.equal(r.capabilities.feedingAndCycling,'confirmed'); }
+  else for (const warning of pair.warnings) assert.ok(r.warnings.some(w => w.message === warning), warning);
   if (pair.status === "confirmed_to_fire") { assert.equal(r.capabilities.firing, "confirmed"); assert.equal(r.capabilities.feedingAndCycling, "not-confirmed"); }
 });
 
- test("68 pairs are the independent audit set: 33 firing confirmed, 35 undetermined", () => {
-  assert.equal(audit.pairs.length, 68); const counts = { compatible: 0, undetermined: 0 }; for (const pair of audit.pairs) counts[service.checkCompatibility(pair.mode_id, pair.target_ammo_item_id).status]++; assert.deepEqual(counts, { compatible: 33, undetermined: 35 });
+ test("68 historical pairs remain intact; HT106 resolves exactly 14 formerly uncertain Super 90 pairs", () => {
+  assert.equal(audit.pairs.length, 68);assert.equal(audit.pairs.filter(p=>p.status==='confirmed_to_fire').length,33);
+  assert.equal(audit.pairs.filter(publishedBenelliPair).length,14);
+  const counts = { compatible: 0, undetermined: 0 }; for (const pair of audit.pairs) counts[service.checkCompatibility(pair.mode_id, pair.target_ammo_item_id).status]++; assert.deepEqual(counts, { compatible: 47, undetermined: 21 });
   const embedded = originals.ht.interchangeability_rules.flatMap((r, i) => (r.explicit_direction_v1?.mode_pair_assessments ?? []).map(pair => ({ rule_index: i, ...pair }))); assert.deepEqual(embedded, audit.pairs);
 });
  test("current catalog revisions ready; audit is never a fifth runtime catalog", () => {
@@ -55,8 +65,10 @@ for (const pair of audit.pairs) test("HT178 explicit " + pair.mode_id + " / " + 
  test("LT unchanged and new catalog bytes match verified hashes", async () => {
   for (const [b, d] of Object.entries(CATALOG_DEFINITIONS)) { const bytes = await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url)); assert.equal(createHash("sha256").update(bytes).digest("hex"), b === "lt" ? proof.ltSha256 : proof.catalogs[b].currentSha256); }
 });
- test("heavy 12G load remains undetermined outside its native confirmed links", () => {
-  const pairs = audit.pairs.filter(p => p.source_ammo_item_id.includes("heavy_load") || p.target_ammo_item_id.includes("heavy_load")); assert.ok(pairs.length); for (const pair of pairs) assert.equal(service.checkCompatibility(pair.mode_id, pair.target_ammo_item_id).status, "undetermined");
+ test("conventional 12G case gains only the seven HT106 permissions, never general higher-pressure admission", () => {
+  const pairs = audit.pairs.filter(p => p.source_ammo_item_id.includes("heavy_load") || p.target_ammo_item_id.includes("heavy_load")); assert.ok(pairs.length);
+  assert.equal(pairs.filter(publishedBenelliPair).length,7);
+  for (const pair of pairs) assert.equal(service.checkCompatibility(pair.mode_id, pair.target_ammo_item_id).status, publishedBenelliPair(pair)?"compatible":"undetermined");
 });
  test("structured direction never generates reverse or transitive permission", () => {
   const russian = originals.ht.ammo_items.find(x => x.id === "ht_44_russian_11x25mmr"); assert.equal(service.checkCompatibility(russian.weapon_mode_ids[0], "ht_44_special_10_9x29mmr").status, "incompatible");
@@ -75,6 +87,6 @@ test("catalog directory contains exactly the four current runtime JSON files", a
   assert.deepEqual((await fs.readdir(new URL("../data/catalogs/", import.meta.url))).sort(), Object.values(CATALOG_DEFINITIONS).map(d => d.filename).sort());
 });
 test("audit moved unchanged; active code/docs contain no obsolete JSON paths", async () => {
-  const bytes = await fs.readFile(new URL("../docs/audit/olegurps_ht178_68_mode_pairs_v1.json", import.meta.url)); assert.equal(createHash("sha256").update(bytes).digest("hex"), proof.auditSha256);
-  for (const path of ["scripts/catalog-service.js", "scripts/ammunition-compatibility-service.js", "docs/catalog-service.md", "docs/ammunition-compatibility-service.md", "docs/ammunition-compatibility-report.md"]) { const source = await fs.readFile(new URL("../" + path, import.meta.url), "utf8"); assert.doesNotMatch(source, /olegurps_(?:weapon_reference_catalog_v5_5|ht_ammunition_catalog_v1_1|ut_ammunition_catalog_v2_6)[.]json/); }
+  assertHistoricalAudit('olegurps_ht178_68_mode_pairs_v1.json', proof.auditSha256);
+  for (const path of ["scripts/catalog-service.js", "scripts/ammunition-compatibility-service.js", "docs/catalog-service.md", "docs/ammunition-compatibility-service.md", "docs/high-tech.md"]) { const source = await fs.readFile(new URL("../" + path, import.meta.url), "utf8"); assert.doesNotMatch(source, /olegurps_(?:weapon_reference_catalog_v5_5|ht_ammunition_catalog_v1_1|ut_ammunition_catalog_v2_6)[.]json/); }
 });

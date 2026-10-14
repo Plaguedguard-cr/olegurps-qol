@@ -2,17 +2,19 @@ import { normalizeAttackOverrides } from "./weapon-attack-overrides.js";
 import { resolveRangedGoverningSkill, bindingForGoverningSkill,
   getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
 import { migrateAmmoInventory, projectAmmoInventory, validateInventory, installedMagazine,
-  applyInventoryOperation, whole, inventoryTotal } from "./ammo-inventory.js";
+  applyInventoryOperation, whole, inventoryTotal, initializeInstalledMagazine, ammoTypeKey as ammoTypeKeyForLoad } from "./ammo-inventory.js";
+import { actorResourceWrites as inventoryWrites, withActorResourceWrite } from "./actor-resource-writes.js";
 import { immutableCopy, createShotSnapshot } from "./attack-profile-resolver.js";
-import { isEnvironmentVariant } from "./environment-ammunition.js";
 import { StandaloneWeaponService, standaloneAmmoCarriers } from "./standalone-weapon-service.js";
 import { lematBarrel } from "../ht-physical-ammunition-evidence.js";
 import { readAmmunitionApproval } from "./ammunition-approval-service.js";
+import { validateResourceShot } from "./ammunition-resource-contract.js";
+import { ballisticsKey, validateLoadBallistics } from "./ammunition-ballistics.js";
+import { alternateLoadNeedsBallistics } from "../ht-published-loads.js";
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "gurpsAmmoManager";
 const STATE_VERSION = 10;
-const inventoryWrites = new WeakMap();
 const shotExecutions = new WeakMap();
 
 // Read-only: in particular, do not migrate, repair or infer a cartridge from ammoType.
@@ -132,7 +134,8 @@ export class AmmoService {
     return weapon;
   }
 
-  async loadState() {
+  async loadState({ queued = false } = {}) {
+    if (!queued) return withActorResourceWrite(this.actor, () => this.loadState({ queued: true }));
     const saved = this.actor.getFlag(FLAG_SCOPE, FLAG_KEY);
     const state = saved && typeof saved === "object" ? clone(saved) : this.defaultState();
     state.version = STATE_VERSION;
@@ -142,15 +145,18 @@ export class AmmoService {
       !Array.isArray(state.governingSkills) ? state.governingSkills : {};
     delete state.chatReports;
     state.weapons = Array.isArray(state.weapons) ? state.weapons : [];
+    let carrierChanged = false;
     for (const record of new StandaloneWeaponService(this.actor).list("ranged")) {
       const current = state.weapons.filter(w => w.standaloneWeaponId === record.id);
       const carriers = standaloneAmmoCarriers(record, current);
       for (const carrier of carriers) {
         const old = state.weapons.find(w => w.id === carrier.id);
-        if (old) Object.assign(old, carrier); else state.weapons.push(carrier);
+        if (old) Object.assign(old, carrier); else { state.weapons.push(carrier); carrierChanged = true; }
       }
     }
+    let selectionChanged = false;
     state.weapons.forEach(weapon => {
+      selectionChanged = initializeInstalledMagazine(weapon) || selectionChanged;
       // Inspect complete legacy records before normalization can clamp or repair away evidence.
       if (!weapon.ammunitionInventory && Object.hasOwn(weapon, "totalAmmo")) {
         const probe = clone(weapon);
@@ -184,17 +190,30 @@ export class AmmoService {
       state.governingSkills[key] = bindingForGoverningSkill(skill);
       migrated = true;
     }
-    if (migrated) await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, state);
+    if ((migrated || selectionChanged || carrierChanged) && (this.actor.isOwner !== false || globalThis.game?.user?.isGM))
+      await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, state);
     return state;
   }
 
-  async saveState(state, { preserveSprayingSessions = true, inventoryWrite = false } = {}) {
+  async saveState(state, { preserveSprayingSessions = true, inventoryWrite = false, queued = false } = {}) {
+    if (!inventoryWrite && !queued) return withActorResourceWrite(this.actor, () =>
+      this.saveState(state, { preserveSprayingSessions, inventoryWrite, queued: true }));
     const persisted = this.actor.getFlag(FLAG_SCOPE, FLAG_KEY);
+    const definitions = new StandaloneWeaponService(this.actor).list();
+    const removed = (state.weapons ?? []).filter(w => w.standaloneWeaponId && !definitions.some(d => d.id === w.standaloneWeaponId));
+    // A closed/deleted definition cannot be resurrected by an old configuration window.
+    state.weapons = (state.weapons ?? []).filter(w => !w.standaloneWeaponId || definitions.some(d => d.id === w.standaloneWeaponId));
+    for (const field of ["attackOverrides", "governingSkills"]) for (const [key, binding] of Object.entries(state[field] ?? {})) {
+      if (removed.some(w => key.startsWith(`uuid:olegurps:${w.standaloneWeaponId}:`)) ||
+          binding?.kind === "standalone" && !definitions.some(d => d.id === binding.weaponId)) delete state[field][key];
+    }
     if (persisted?.shotReceipts) state.shotReceipts = { ...persisted.shotReceipts, ...state.shotReceipts };
+    if (!inventoryWrite && persisted?.ammunitionBallistics) state.ammunitionBallistics = clone(persisted.ammunitionBallistics);
     // Configuration and session writers may hold an older snapshot. Resource writes use their own queue.
     for (const weapon of state.weapons ?? []) {
       const current = persisted?.weapons?.find(entry => entry.id === weapon.id);
       if (!inventoryWrite && current?.ammunitionInventory) weapon.ammunitionInventory = clone(current.ammunitionInventory);
+      initializeInstalledMagazine(weapon);
       if (weapon.ammunitionInventory) projectAmmoInventory(weapon);
     }
     if (preserveSprayingSessions) {
@@ -203,27 +222,23 @@ export class AmmoService {
       if (sessions && Object.keys(sessions).length) state.sprayingFireSessions = clone(sessions);
       else delete state.sprayingFireSessions;
     }
+    for (const [key, session] of Object.entries(state.sprayingFireSessions ?? {}))
+      if (removed.some(w => w.id === session.weaponKey)) delete state.sprayingFireSessions[key];
     await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, clone(state));
   }
 
   // Serialize deletion with magazine/stock operations so a pending inventory write
   // cannot add rounds between the resource check and removal of the carrier.
-  removeStandaloneWeapon(weaponId) {
-    const previous = inventoryWrites.get(this.actor) ?? Promise.resolve();
-    const next = previous.catch(() => {}).then(async () => {
+  async removeStandaloneWeapon(weaponId) {
       const state = clone(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY) ?? this.defaultState());
       const service = new StandaloneWeaponService(this.actor);
       const weapon = state.weapons.find(w => w.id === weaponId);
       const recordId = weapon?.standaloneWeaponId ?? service.list("ranged").find(w =>
         w.resourceLinks.ammoWeaponId === weaponId)?.id;
+      if (!recordId && !weapon) return state;
       if (!recordId) throw new Error("WeaponMissing");
       await service.remove(recordId);
-      state.weapons = state.weapons.filter(w => w.id !== weaponId);
-      await this.saveState(state);
-      return state;
-    });
-    inventoryWrites.set(this.actor, next);
-    return next;
+      return clone(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY) ?? this.defaultState());
   }
 
   async consumeLoadedRounds(state, weapon, amount, { sessionKey = null, expectedResource = null } = {}) {
@@ -316,6 +331,24 @@ export class AmmoService {
     return changed;
   }
 
+  saveLoadBallistics(weaponId, modeId, type, input, api = globalThis.OleGURPSQOL) {
+    return withActorResourceWrite(this.actor, async () => {
+      if (this.actor.isOwner === false && !globalThis.game?.user?.isGM) throw Error("Permission");
+      const state = clone(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY) ?? this.defaultState());
+      const weapon = state.weapons.find(w => w.id === weaponId);
+      const actualMode = weapon?.standaloneModeId ?? api?.weaponCatalogBindings?.analyzeMode(this.actor, weapon?.attackRef?.path)?.binding?.modeId;
+      const compatibility = api?.ammunitionCompatibility?.checkCompatibility(modeId, type?.ammoId, {book:type?.book, kind:type?.kind});
+      if (!weapon || actualMode !== modeId || type?.source !== "catalog" || type.key !== ammoTypeKeyForLoad(type) ||
+          !alternateLoadNeedsBallistics(api?.catalogs, modeId, type.ammoId, compatibility)) throw Error("TypeUnavailable");
+      const values = validateLoadBallistics(input);
+      state.ammunitionBallistics ??= {};
+      state.ammunitionBallistics[ballisticsKey(weaponId, modeId, type.key)] = { ...values, weaponId, modeId,
+        ammoId:type.ammoId, ammoKey:type.key, source:"owner-entered", approvedByBook:false };
+      await this.saveState(state, {inventoryWrite:true});
+      return state;
+    });
+  }
+
   inventoryTransaction(weaponId, operation, args = {}, options = {}) {
     if (operation === "save-recipe" && !globalThis.game?.user?.isGM) return Promise.reject(new Error("Permission"));
     const previous = inventoryWrites.get(this.actor) ?? Promise.resolve();
@@ -324,9 +357,14 @@ export class AmmoService {
       const state = clone(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY) ?? this.defaultState());
       const weapon = state.weapons.find(entry => entry.id === weaponId);
       if (!weapon) throw new Error("WeaponMissing");
+      const before = JSON.stringify(weapon);
+      initializeInstalledMagazine(weapon);
       const modeId = weapon.standaloneModeId ?? globalThis.OleGURPSQOL?.weaponCatalogBindings?.analyzeMode(this.actor, weapon.attackRef?.path)?.binding?.modeId;
       const barrel = lematBarrel(modeId);
-      const allowedTypes = typeof options.allowedTypes === "function" ? options.allowedTypes(weapon) : options.allowedTypes;
+      // Returning rounds and changing empty containers do not admit a new cartridge.
+      const needsAdmission = ["add-stock", "load", "save-recipe"].includes(operation);
+      const allowedTypes = needsAdmission && typeof options.allowedTypes === "function" ? options.allowedTypes(weapon) :
+        needsAdmission ? options.allowedTypes : [];
       if (barrel && ["add-stock", "load", "save-recipe"].includes(operation)) {
         const type = args.type ?? allowedTypes?.find(t => t.key === args.ammoKey);
         if (type?.source !== "catalog" || type.book !== "ht" || type.ammoId !== barrel.ammoId) throw new Error("TypeUnavailable");
@@ -358,6 +396,7 @@ export class AmmoService {
       }
       if (validateInventory(weapon.ammunitionInventory, weapon.id)) projectAmmoInventory(weapon);
       state.version = STATE_VERSION;
+      if (operation === "initialize" && before === JSON.stringify(weapon)) return state;
       await this.saveState(state, { inventoryWrite: true, preserveSprayingSessions: !args.sessionKey });
       return state;
     });
@@ -395,13 +434,27 @@ export class AmmoService {
       const { profile, amount } = prepared;
       if (profile.context?.barrel && !ammunition) throw new Error("MagazineNotInstalled");
       if (profile.compatibility.status === "incompatible") throw new Error("IncompatibleAmmunition");
+      if (profile.damage?.rules?.manualGuidance?.required &&
+          (globalThis.game?.user?.isGM !== true || profile.context?.manualGuidanceConfirmed !== true || amount !== 1))
+        throw Error("Ведущий должен разрешить проверку с ручным учётом наведения и полёта; за пуск расходуется одна ракета.");
+      if (profile.compatibility.reasons?.some(r => r.code === "HT_IDENTITY_UNVERIFIED"))
+        throw new Error("HTIdentityUnverified");
+      if (profile.damage?.rules?.manualCyclingRequired && amount > 1) throw new Error("AmmunitionCyclingUnconfirmed");
       if (["ht_apex", "ht_aphex"].includes(ammunition?.type?.recipe?.variantId) &&
           !profile.damage?.nativeSafe) throw new Error("IncompleteExplosiveRecipe");
+      if(!profile.damage?.nativeSafe&&['GyrojetIdentityRequired','GuidanceRequired','AlternateLoadBallisticsRequired','GyrojetDistanceRequired'].includes(profile.damage?.reason))
+        throw new Error(profile.damage.reason);
       if (ammunition?.type?.recipe && !profile.damage?.nativeSafe) throw new Error("IncompleteAmmunitionProfile");
-      if (isEnvironmentVariant(profile.ammunition?.recipe?.variantId) && !profile.damage?.nativeSafe)
+      if (profile.ammunition?.recipe && !profile.damage?.nativeSafe)
         throw new Error("IncompleteAmmunitionProfile");
       if (ammunition && (!whole(amount, 1) || amount > Math.min(ammunition.available, ammunition.total)))
         throw new Error("InsufficientRounds");
+      if (ammunition?.kind === "physical-magazine") validateResourceShot(weapon, ammunition.type,
+        profile.binding?.confirmed?.modeId ?? profile.mode?.standaloneRef?.modeId);
+      const range = profile.damage?.rules?.ballisticRange;
+      const distance = profile.context?.shotgun?.physicalDistance ?? profile.context?.environment?.actualDistance;
+      if (range && Number.isFinite(distance) && (distance < range.minimum || distance > range.maximum))
+        throw new Error("OutsideAmmunitionRange");
       const result = await execute(prepared);
       if (!result?.rolled) return { ...result, profile, spent: 0 };
       // Configuration writers can run while GGA awaits; retain their current settings.

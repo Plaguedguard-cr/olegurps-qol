@@ -106,10 +106,10 @@ export function resolveCombatCalculation({ combatType, actor = null, attack = nu
     source: channel.source, resolver: channel.resolver, explanation: channel.explanation
   }));
   if (capAdjustment) modifiers.push({ channel: "cap", label: activeCaps.find(cap =>
-    Number(cap.maximum) === capValue || Number(cap.minimum) === floorValue)?.label ?? "Skill cap",
+    Number(cap.maximum) === capValue || Number(cap.minimum) === floorValue)?.label ?? "Предел навыка",
     value: capAdjustment, baseValue: 0, resolvedValue: capAdjustment, source: "cap" });
   return {
-    combatType, baseSkill, baseSkillName: combatType === "ranged" ? "Ranged Weapon Level" : "Melee Attack Level",
+    combatType, baseSkill, baseSkillName: combatType === "ranged" ? "Базовый навык оружия" : "Базовый навык ближней атаки",
     governingSkill, attackSlot, channels: resolvedChannels, modifiers,
     activeRules: appliedRules.map(rule => ({ id: rule.id, kind: rule.kind, activation: rule.activation })),
     rejectedRules, metadata, uncappedSkill, effectiveSkill, capAdjustment,

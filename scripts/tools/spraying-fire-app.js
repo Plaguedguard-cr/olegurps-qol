@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { planSprayingFire } from "./spraying-fire-service.js";
 import { getTokenFireRangeContext, measureTokenDistanceYards } from "./fire-control-context.js";
 import { findRangeBandForDistance, resolveEffectiveRange, isBeamWeapon } from "./fire-range-service.js";
@@ -17,7 +18,7 @@ export class SprayingFireApp extends ApplicationV2 {
     id: "olegurps-spraying-fire",
     classes: ["olegurps-qol", "spraying-fire"],
     tag: "section",
-    window: { title: "Spraying Fire", resizable: true },
+    window: { title: "Стрельба с переносом огня", resizable: true },
     position: { width: 690, height: 650 }
   };
 
@@ -144,7 +145,7 @@ export class SprayingFireApp extends ApplicationV2 {
     const available = Math.min(loaded, total);
     const problem = !data.valid ? (data.plan.reason ?? (this.targetedAttackContext?.requiresSelection &&
       !this.targetedAttackContext.specialtyOptions.some(option => option.value === common.governingSpecialty)
-        ? "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 governing Guns specialty" : "\u041d\u0435\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u044b\u0439 \u0440\u0430\u0441\u0445\u043e\u0434 RoF"))
+        ? "\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 специализацию основного навыка Guns" : "\u041d\u0435\u0434\u043e\u043f\u0443\u0441\u0442\u0438\u043c\u044b\u0439 \u0440\u0430\u0441\u0445\u043e\u0434 RoF"))
       : data.plannedAmmo > available ? ammoError : "";
     const modeOptions = this.fireService.parseRateOfFire(this.attack.rof).type === "full-auto"
       ? this.fireService.parseRateOfFire(this.attack.rof).modes.filter(mode => mode.fullRoF >= 5)
@@ -157,7 +158,7 @@ export class SprayingFireApp extends ApplicationV2 {
       (locked ? " disabled" : "") + '>' + label + '</label>';
     const governingOptions = this.targetedAttackContext?.specialtyOptions ?? [];
     const governingSelect = governingOptions.length ?
-      '<label>Governing Skill<select data-field="governingSpecialty" ' + (locked ? "disabled" : "") + '>' +
+      '<label>Основной навык<select data-field="governingSpecialty" ' + (locked ? "disabled" : "") + '>' +
       '<option value="">\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 Guns specialty</option>' +
       governingOptions.map(option => '<option value="' + escape(option.value) + '"' +
         (option.value === common.governingSpecialty ? " selected" : "") + '>' + escape(option.label) + '</option>').join("") +
@@ -197,11 +198,11 @@ export class SprayingFireApp extends ApplicationV2 {
         '<div class="sf-distance"><label>\u0414\u0438\u0441\u0442\u0430\u043d\u0446\u0438\u044f<input type="number" min="0" step="0.1" data-field="manualDistance"' + attr +
         'value="' + escape(target.manualDistance ?? "") + '" placeholder="' + escape(row.automatic?.distance?.toFixed?.(1) ?? "") + '" ' + disabled + '></label>' +
         '<button type="button" data-action="auto-distance"' + attr + disabled + '>\u0410\u0432\u0442\u043e ' + escape(row.automatic?.distance?.toFixed?.(1) ?? "\u2014") + '</button></div>' +
-        '<div class="sf-elevation"><label>Elevation<input type="number" min="0" step="0.1" data-field="heightOverride"' + attr +
+        '<div class="sf-elevation"><label>Высота<input type="number" min="0" step="0.1" data-field="heightOverride"' + attr +
         'value="' + escape(target.heightOverride ?? "") + '" placeholder="' + escape(row.automatic?.height ?? 0) + '" ' + disabled + '></label>' +
         '<label class="sf-check"><input type="checkbox" data-field="highGroundOverride"' + attr +
         (row.highGround ? " checked" : "") + ' ' + disabled + '>\u0412\u044b\u0448\u0435</label></div>' +
-        '<div class="sf-pair"><span>Effective RoF: <b>' + escape(row.fireMode.effectiveRoF) + '</b></span><span>RF bonus: <b>+' + escape(row.rfBonus) + '</b></span></div>' +
+        '<div class="sf-pair"><span>Эффективный RoF: <b>' + escape(row.fireMode.effectiveRoF) + '</b></span><span>Бонус скорострельности: <b>+' + escape(row.rfBonus) + '</b></span></div>' +
         '<div class="sf-pair"><span>Rcl: <b>' + escape(row.baseRcl ?? "\u2014") + '</b></span><span>\u042d\u0444\u0444. Rcl: <b>' + escape(row.effectiveRcl ?? "\u2014") + '</b></span></div>' +
         '<label>\u0414\u043e\u043f. \u043c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440<input type="number" step="1" data-field="modifier"' + attr +
         'value="' + escape(target.modifier ?? 0) + '" ' + disabled + '></label>' +
@@ -211,8 +212,8 @@ export class SprayingFireApp extends ApplicationV2 {
         '>\u0426\u0435\u043b\u044c ' + (row.index + 1) + (completed ? " \u2713" : " \u2014 \u0410\u0442\u0430\u043a\u0430") + '</button></div>' : "") + '</section>';
     }).join("");
     return '<div class="sf-root"><div class="sf-overview"><strong class="sf-weapon">' + escape(this.weapon.name) + '</strong>' +
-      (governingSelect || '<span>Governing Skill: <b>' + escape(common.governingSpecialty || this.weapon.governingSpecialty || this.attack.name) + '</b></span>') +
-      '<label>RoF mode<select data-field="modeIndex" ' + (locked ? "disabled" : "") + '>' + modeOptions + '</select></label>' +
+      (governingSelect || '<span>Основной навык: <b>' + escape(common.governingSpecialty || this.weapon.governingSpecialty || this.attack.name) + '</b></span>') +
+      '<label>Режим RoF<select data-field="modeIndex" ' + (locked ? "disabled" : "") + '>' + modeOptions + '</select></label>' +
       '<span class="sf-ammo">\u041c\u0430\u0433\u0430\u0437\u0438\u043d: <b>' + escape(loaded) + '</b> / \u0411\u043e\u0435\u0437\u0430\u043f\u0430\u0441: <b>' + escape(total) + '</b></span>' +
       '<label>\u041f\u0435\u0440\u0435\u043d\u043e\u0441<select data-field="direction" ' + (locked ? "disabled" : "") + '>' +
       '<option value="left-to-right"' + (this.session.direction === "left-to-right" ? " selected" : "") + '>\u0421\u043b\u0435\u0432\u0430 \u2192 \u043d\u0430\u043f\u0440\u0430\u0432\u043e</option>' +
@@ -373,7 +374,7 @@ export class SprayingFireApp extends ApplicationV2 {
         this._cancelDeletion = (async () => {
           await this._pending;
           await this.sessionService.cancel();
-          if (this.sessionService.findExisting()) throw new Error("Spraying Fire session was not deleted.");
+          if (this.sessionService.findExisting()) throw new Error("Стрельба с переносом огня session was not deleted.");
         })();
         await this._cancelDeletion;
         this._cancelDeletion = null;
@@ -388,8 +389,8 @@ export class SprayingFireApp extends ApplicationV2 {
     } catch (error) {
       this._cancelDeletion = null;
       if (this.rendered) this._explicitCancel = false;
-      console.error("OleGURPS QOL | Spraying Fire:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      console.error("OleGURPS QOL | Стрельба с переносом огня:", error);
+      ui.notifications.error(moduleMessage(error));
     }
   }
 
@@ -431,7 +432,7 @@ export class SprayingFireApp extends ApplicationV2 {
         moveAttackPenalty: bonuses.moveAttackPenalty ?? 0,
         allOutAttackBonus: this.fireService.calculateRangedAllOutAttackBonus(values.allOutAttack, values.moveAndAttack),
         manualModifier: Number(values.manualModifier) || 0,
-        contextLabel: "Spraying Fire - " + row.target.name + " - " + (index + 1),
+        contextLabel: "Стрельба с переносом огня - " + row.target.name + " - " + (index + 1),
         consumeAction: index === this.session.targets.length - 1
       };
       const result = await this.sessionService.executeTarget(this.session, options,
@@ -467,7 +468,7 @@ export class SprayingFireApp extends ApplicationV2 {
           const html = buildRandomHitLocationsHtml(locations, { escapeHtml: escape });
           if (html) await result.message.update({ content: result.message.content + html });
         } catch (error) {
-          console.error("Spraying Fire random Hit Location:", error);
+          console.error("Стрельба с переносом огня random Зона попадания:", error);
           ui.notifications.warn("\u041f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044f \u0435\u0441\u0442\u044c, \u043d\u043e \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0435 \u0437\u043e\u043d\u044b \u043d\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u044b");
         }
       }

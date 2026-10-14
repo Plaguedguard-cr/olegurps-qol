@@ -25,7 +25,10 @@ const learned = (name, level, points=1) => ({ name, level, points, type:'SKILL' 
 function fixture(skills=[],dx=10) {
   const flags={};
   const actor={ id:'actor',isOwner:true,system:{ranged:{},melee:{},skills:Object.fromEntries(skills.map((s,i)=>[i,s])),attributes:{DX:{value:dx},IQ:{value:10}}},
-    getFlag:(s,k)=>structuredClone(flags[s]?.[k]),setFlag:async(s,k,v)=>{flags[s]??={};flags[s][k]=structuredClone(v);} };
+    getFlag:(s,k)=>structuredClone(flags[s]?.[k]),setFlag:async(s,k,v)=>{flags[s]??={};flags[s][k]=structuredClone(v);},
+    update:async changes=>{for(const [path,value] of Object.entries(changes)){
+      const [,s,k]=path.split('.');flags[s]??={};if(k.startsWith('-='))delete flags[s][k.slice(2)];else flags[s][k]=structuredClone(value);
+    }} };
   return {actor,service:new StandaloneWeaponService(actor,catalogs)};
 }
 async function weapon(f,type='ranged',name='Izhmash AK-47') {
@@ -36,6 +39,34 @@ async function weapon(f,type='ranged',name='Izhmash AK-47') {
 test('precise skill parsing preserves family, specialization, TL and LAW alias',()=>{
   assert.equal(parseStandaloneSkill('Guns/TL8 (LAW)').specialty,'light anti-armor weapon');
   assert.equal(parseStandaloneSkill('Two-Handed Axe/Mace').family,'two-handed axe/mace');
+});
+
+test('HT98 cigarette pistol uses DX-4 rather than inherited Guns defaults and keeps the roll snapshot',async()=>{
+  const f=fixture([learned('Guns/TL7 (Pistol)',30)],12);
+  const d=new StandaloneWeaponDraft({catalogs,type:'ranged'});
+  d.selectModel(catalogs.getEquipmentForMode('WL0SlLUJxX2V_3KVh').equipment_id);
+  const before=JSON.stringify(f.actor.system),record=await f.service.save(d);
+  const attack=readStandaloneAttack(f.actor,record.id);
+  assert.equal(attack.level,8);assert.equal(attack.readinessReason,null);
+  assert.equal(attack.standaloneRef.governingSkill.source,'attribute-roll');
+  assert.equal(attack.skillDescription,'DX-4: 8');assert.equal(JSON.stringify(f.actor.system),before);
+  const snapshot=JSON.parse(JSON.stringify(attack.standaloneRef));
+  f.actor.system.attributes.DX.value=25;
+  assert.equal(readStandaloneAttack(f.actor,record.id).level,21);
+  assert.equal(snapshot.governingSkill.level,8);
+  delete f.actor.system.attributes.DX;
+  assert.equal(readStandaloneAttack(f.actor,record.id).standaloneRef.governingSkill.resolved,false);
+});
+
+test('HT98 Wrist Gun retains Pistol -2 and other Guns -4 without changing learned levels',async()=>{
+  for(const [specialty,expected]of [['Pistol',12],['Rifle',10],['Shotgun',10],['Wrist Gun',14]]) {
+    const f=fixture([learned('Guns/TL6 ('+specialty+')',14)],10);
+    const d=new StandaloneWeaponDraft({catalogs,type:'ranged'});d.selectModel(catalogs.getEquipmentForMode('WaIDKb3cN40p-9pJu').equipment_id);
+    const record=await f.service.save(d),before=JSON.stringify(f.actor.system);
+    // HT98 classifies this construction as TL6; isolate specialty from TL.
+    assert.equal(readStandaloneAttack(f.actor,record.id).level,expected,specialty);
+    assert.equal(JSON.stringify(f.actor.system),before);
+  }
 });
 test('exact learned catalog skill wins; imported skill level is refreshed on every read',async()=>{
   const f=fixture([learned('Guns/TL7 (Rifle)',14),learned('Guns/TL7 (Pistol)',25)]),record=await weapon(f);
@@ -135,6 +166,8 @@ test('catalog binding verifies model/mode relation; absent catalogs are not fals
 });
 test('unmanaged real attacks produce receipts and completed snapshots without inventing or consuming rounds',async()=>{
   const f=fixture(),record=await weapon(f),carrier=standaloneAmmoCarrier(record),service=new AmmoService(f.actor);
+  // Existing definition-only weapons remain unmanaged; new weapons now start with an empty feed.
+  delete carrier.ammunitionInventory;Object.assign(carrier,{magazines:[],loadedIndex:-1,capacity:0,ammoUnconfigured:true});
   await f.actor.setFlag('world','gurpsAmmoManager',{weapons:[carrier]});
   assert.equal(standaloneAvailableRounds(carrier),Infinity);
   const before=structuredClone(f.actor.system),attack=readStandaloneAttack(f.actor,record.id);
@@ -184,7 +217,7 @@ test('standalone physical shot spends once; switching AP magazines preserves tot
   const ap={...base,key:base.key+':recipe-v1:ht_ap',name:base.name+' AP',recipe:{version:1,variantId:'ht_ap'}};
   await service.inventoryTransaction(carrier.id,'initialize');
   for(const t of [base,ap])await service.inventoryTransaction(carrier.id,'add-stock',{ammoKey:t.key,amount:5},{allowedTypes:[base,ap]});
-  let state=await service.inventoryTransaction(carrier.id,'add-magazines',{capacity:30,amount:2});
+  let state=await service.inventoryTransaction(carrier.id,'add-magazines',{capacity:30,amount:1});
   const mags=state.weapons[0].ammunitionInventory.magazines;
   for(const [i,t]of [base,ap].entries())await service.inventoryTransaction(carrier.id,'load',{magazineId:mags[i].id,ammoKey:t.key,amount:5},{allowedTypes:[base,ap]});
   await service.inventoryTransaction(carrier.id,'install',{magazineId:mags[0].id});

@@ -95,7 +95,7 @@ for(const [variantId,charge,kinetic,explosion] of [
   assert.equal(weapon.ammunitionInventory.stocks[0].rounds,5);assert.equal(weapon.ammunitionInventory.magazines[0].rounds,5);
   for(const lang of ["ru","en"]){
     const displayed=availableAmmoTypes(actor,weapon,api(ak),lang);
-    assert.equal(displayed.find(t=>!t.recipe).label,"7.62x39mm \u2014 "+(lang==="ru"?"\u0431\u0430\u0437\u043e\u0432\u044b\u0439":"base"));
+    assert.equal(displayed.find(t=>!t.recipe).label,"7.62x39mm \u2014 "+"\u0431\u0430\u0437\u043e\u0432\u044b\u0439");
     for(const choice of displayed.filter(t=>t.recipe))assert.equal(choice.label,
       isMultishotVariant(choice.recipe.variantId) ? "7.62x39mm "+automaticAmmoText("P3"+choice.recipe.variantId,lang) :
       isEnvironmentVariant(choice.recipe.variantId) ? "7.62x39mm "+automaticAmmoText("P5"+choice.recipe.variantId,lang) :
@@ -244,7 +244,8 @@ test("new policy, states and missing inputs have actual RU/EN translation loadin
   for(const lang of ["ru","en"]){const entries={};const runtime={location:{},fetch:async()=>({ok:true,json:async()=>JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"))}),
     game:{i18n:{lang,translations:entries,localize:key=>entries[key]??key}},foundry:{utils:{setProperty(o,k,v){o[k]=v;}}}};
     await loadAutomaticAmmoTranslations(runtime);
-    for(const [key,value]of Object.entries(automaticAmmoMessages[lang]))assert.equal(entries["OleGURPS.AutomaticAmmo."+key],value);
+    assert.deepEqual(entries,{});
+    for(const [key,value]of Object.entries(automaticAmmoMessages.ru))assert.equal(automaticAmmoText(key,lang),value);
     assert.equal(runtime.game.i18n.lang,lang);assert.ok(automaticAmmoText("Missing",lang,{fields:"REF"}).includes("REF"));
   }
 });

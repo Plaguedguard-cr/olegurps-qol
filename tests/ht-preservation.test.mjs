@@ -1,9 +1,10 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { assertWeaponPreservation, restoreApprovedErrata, restoreHaflaErrata, sha256 } from "./fixtures/ht-preservation-contract.mjs";
 
-const proof = JSON.parse(await fs.readFile(new URL("../docs/audit/ht-v1-3-preservation.json", import.meta.url), "utf8"));
+const proof = readAuditFixture('ht-v1-3-preservation');
 const raw = await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json", import.meta.url), "utf8");
 const catalog = JSON.parse(raw);
 const historical = restoreApprovedErrata(raw, proof);
@@ -68,6 +69,6 @@ for (const [name, mutate] of Object.entries(mutations)) test("both contracts rej
 
 test("frozen HT audit files retain their original byte hashes", async () => {
   for (const [file, expected] of Object.entries(proof.auditHashes)) {
-    assert.equal(sha256(await fs.readFile(new URL("../docs/audit/" + file, import.meta.url))), expected);
+    assertHistoricalAudit(file, expected);
   }
 });

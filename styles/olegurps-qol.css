@@ -823,11 +823,14 @@ dialog.gam-roll-confirmation {
 }
 .olegurps-qol .gam-inventory-du-confirmation input { flex: 0 0 auto; }
 .olegurps-qol .gam-inventory-du-wide { grid-column: 1 / -1; }
-[data-olegurps-special-effects] .olegurps-f2-local {
+[data-olegurps-special-effects] .olegurps-f2-local,
+[data-olegurps-special-effects] .olegurps-f4-local {
   margin-top: 0.5rem;
 }
-[data-olegurps-special-effects] .olegurps-f2-local > select {
+[data-olegurps-special-effects] .olegurps-f2-local > select,
+[data-olegurps-special-effects] .olegurps-f4-local > select {
   width: 100%;
+  min-width: 0;
 }
 [data-olegurps-special-effects] .olegurps-f2-fields {
   display: grid;
@@ -855,3 +858,14 @@ dialog.gam-roll-confirmation {
   width: calc(50% - 0.25rem);
   margin-inline: 0.1rem;
 }
+.olegurps-ammunition-steps { margin: 6px 0; padding-left: 22px; line-height: 1.4; }
+[data-olegurps-special-effects] .olegurps-f4-local > button { width: 100%; }
+.olegurps-ammunition-steps > li { margin: 4px 0; overflow-wrap: anywhere; }
+
+.olegurps-qol .gam-substitution { color: #e85050; }
+.olegurps-qol .gam-required-missing { border: 2px solid #e85050; }
+.olegurps-qol [data-load-ballistics] { min-width: 0; }
+.olegurps-qol [data-load-ballistics] summary { cursor: pointer; }
+.olegurps-qol [data-load-ballistics] label { display: grid; grid-template-columns: 65px minmax(0, 1fr); gap: 8px; margin: 6px 0; }
+.olegurps-qol [data-load-ballistics] input { min-width: 0; width: 100%; }
+.olegurps-qol[aria-busy="true"] [data-inventory-action] { cursor: progress; }

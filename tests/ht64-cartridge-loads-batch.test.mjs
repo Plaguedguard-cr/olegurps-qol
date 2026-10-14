@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -10,7 +11,7 @@ import { AttackProfileResolver } from "../scripts/tools/attack-profile-resolver.
 import { AutomaticAmmunitionProfileService } from "../scripts/tools/automatic-ammunition-profiles.js";
 import { recipeFingerprint } from "../scripts/tools/ammunition-approval-service.js";
 import { evaluateHTOptionEligibility } from "../scripts/ht-option-eligibility.js";
-import { availableAmmoTypes } from "../scripts/tools/ammo-management-app.js";
+import { ammunitionCandidates, availableAmmoTypes } from "../scripts/tools/ammo-management-app.js";
 import { automaticAmmoMessages, automaticAmmoText } from "../scripts/tools/automatic-ammunition-localization.js";
 import { api } from "./fixtures/ht-special-context.mjs";
 
@@ -105,7 +106,7 @@ test("legacy +P policy list is frozen; neither GM approval nor policy admits a n
   assert.equal(hasLegacyPlusPAdmission(changed, modes.glock, context(modes.glock).base.ammoId), false);
 });
 test("saved +P recipe and source stats stay unchanged; Subsonic classes/native exclusions and snapshot survive reload", () => {
-  const before=JSON.parse(fs.readFileSync('docs/audit/ht64-cartridge-loads-before.json','utf8'));
+  const before=readAuditFixture('ht64-cartridge-loads-before');
   for (const pair of before.p1.ht_plus_p.pairs) assert.equal(hasLegacyPlusPAdmission(catalogs, pair.modeId, pair.ammoId), true);
   assert.equal(compatibility.checkCompatibility(modes.mp5, "ht_subsonic_rifle").status, "incompatible");
   assert.equal(compatibility.checkCompatibility(modes.ak, "ht_subsonic_pistol").status, "incompatible");
@@ -144,7 +145,8 @@ test("P1 new labels and reason keys have exact RU/EN parity and real unavailable
   for(const lang of ['ru','en']) {
     const locale=JSON.parse(fs.readFileSync('lang/'+lang+'.json','utf8'));
     for(const [key,text] of Object.entries(automaticAmmoMessages[lang]).filter(([key])=>key.startsWith('P1')))assert.equal(locale['OleGURPS.AutomaticAmmo.'+key],text);
-    const types=availableAmmoTypes(f.actor,f.state().weapons[0],api,lang);
+    const types=ammunitionCandidates(f.actor,f.state().weapons[0],api,lang);
+    assert.ok(!availableAmmoTypes(f.actor,f.state().weapons[0],api,lang).some(t=>["ht_match_handloaded","ht_silent"].includes(t.recipe?.variantId)));
     for(const id of ['ht_match_handloaded','ht_silent']) {const t=types.find(t=>t.recipe?.variantId===id);assert.equal(t.unavailable,true);assert.ok(t.label.includes(automaticAmmoText('P1'+id,lang)));
       assert.equal(t.reason,automaticAmmoText(id==='ht_silent'?'P1SilentEvidenceMissing':'P1HandloadEvidenceMissing',lang));}
   }

@@ -6,11 +6,12 @@ const fail = message => {
   process.exit(1);
 };
 
+const manifestPath = process.argv[2] ?? "module.json";
 let manifest;
 try {
-  manifest = JSON.parse(fs.readFileSync("module.json", "utf8"));
+  manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 } catch (error) {
-  fail(`module.json is not valid JSON: ${error.message}`);
+  fail(`${manifestPath} is not valid JSON: ${error.message}`);
 }
 
 const tag = process.env.GITHUB_REF_NAME ?? "";
@@ -28,7 +29,11 @@ const expectedDownload = `${baseUrl}/releases/download/v${manifest.version}/oleg
 
 if (manifest.url !== baseUrl) fail(`url must be ${baseUrl}`);
 if (manifest.manifest !== expectedManifest) fail(`manifest must be ${expectedManifest}`);
-if (manifest.download !== expectedDownload) fail(`download must be ${expectedDownload}`);
+// Source checkpoints have no unpublished download. Distribution manifests must.
+if (manifest.download !== expectedDownload &&
+    (manifestPath !== "module.json" || manifest.download !== undefined)) {
+  fail(`download must be ${expectedDownload}`);
+}
 
 const declaredFiles = [
   ...(manifest.scripts ?? []),

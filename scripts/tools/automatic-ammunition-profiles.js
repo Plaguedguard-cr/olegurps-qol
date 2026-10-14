@@ -11,6 +11,8 @@ import { isExplosiveVariant, EXPLOSIVE_VARIANTS, sourceExplosiveDefinition, revi
 import { ENVIRONMENT_VARIANTS, isEnvironmentVariant, sourceEnvironmentDefinition, reviewEnvironmentDefinition } from "./environment-ammunition.js";
 import { FUZE_TRACER_VARIANTS, isFuzeTracerVariant, sourceFuzeTracerDefinition, reviewFuzeTracerDefinition, nativeAirburstAlreadyIncluded } from "./fuze-tracer-ammunition.js";
 import { handloadCondition, silentCondition } from "./cartridge-load-conditions.js";
+import { registeredHandloadFacts } from "./handload-registration.js";
+import { evaluateHTOptionEligibility } from "../ht-option-eligibility.js";
 import { hasLegacyPlusPAdmission } from "./legacy-plus-p-admission.js";
 import { CASE_VARIANTS, isCaseVariant, sourceCaseDefinition, reviewCaseDefinition } from "./case-technology.js";
 
@@ -219,7 +221,13 @@ export class AutomaticAmmunitionProfileService {
   prepareSpecial({ modeId, base, variantId, savedType }) {
     const rule = HT_AUTOMATIC_SPECIAL_RULES[variantId];
     const baseline = this.compatibility?.checkCompatibility(modeId, base.ammoId, { book: base.book, kind: base.kind });
-    const rules = this.compatibility?.checkCompatibility(modeId, variantId, { book: base.book, kind: htVariantKind(variantId), ammoItemId: base.ammoId });
+    let rules = this.compatibility?.checkCompatibility(modeId, variantId, { book: base.book, kind: htVariantKind(variantId), ammoItemId: base.ammoId });
+    const individual = variantId === "ht_match_handloaded" ? savedType?.recipe?.autoProfile?.handloadDefinition : null;
+    if (individual) {
+      const reviewed = registeredHandloadFacts(rules?.eligibility?.facts, individual,
+        { ...individual, modeId, ammoId: base.ammoId });
+      if (reviewed) rules = { ...rules, eligibility: { ...rules.eligibility, facts: reviewed } };
+    }
     const fallback = { state: baseline?.status === "incompatible" || rules?.status === "incompatible" ? "incompatible" : "incomplete",
       origin: "incomplete", type: null, model: null, baseStatus: baseline?.status ?? "undetermined",
       rulesStatus: rules?.status ?? "undetermined", missing: [], reasons: ["SpecialEvidenceRequired"] };
@@ -235,7 +243,8 @@ export class AutomaticAmmunitionProfileService {
     const calculablePlusP = plusP && rules?.status === "undetermined" && rules.eligibility?.checks?.every(check =>
       check.status === "confirmed" || check.field === "explicit_evidence_required.weapon_pressure_rating_verified");
     if (base.book !== "ht" || base.kind !== "ammo-item" || baseline?.status !== "compatible" ||
-        !(rules?.status === "compatible" || calculablePlusP)) return snapshot(fallback);
+        !(rules?.status === "compatible" || calculablePlusP || individual &&
+          evaluateHTOptionEligibility(this.catalogs.getVariant("ht", variantId), rules?.eligibility?.facts).status === "compatible")) return snapshot(fallback);
     const facts = structuredClone(rules.eligibility.facts);
     const ammo = this.catalogs?.getAmmoItem(base.book, base.ammoId);
     if (plusP) facts.legacyPlusPAdmission = hasLegacyPlusPAdmission(this.catalogs, modeId, base.ammoId);
@@ -255,6 +264,11 @@ export class AutomaticAmmunitionProfileService {
     const type = { source: "catalog", book: "ht", kind: "ammo-item", ammoId: base.ammoId, name: base.name + " " + rule.label,
       recipe: { version: 1, variantId, customId: "auto:" + canonical(autoProfile), parameters: {}, autoProfile } };
     type.key = ammoTypeKey(type);
+    if (individual?.registeredByGM === true) {
+      // Retain the exact individual recipe identity; permission is checked by admission and scope by the resolver.
+      return snapshot({ state: "complete", origin: "gm", type: savedType, model, facts,
+        baseStatus: baseline.status, rulesStatus: rules.status, missing: [], reasons: [] });
+    }
     if (savedType && canonical(savedType.recipe) !== canonical(type.recipe)) return snapshot({ ...fallback, reasons: ["SavedProfileUnavailable"] });
     return snapshot({ state: "complete", origin: "reference", type, model, facts, baseStatus: baseline.status, rulesStatus: rules.status, missing: [], reasons: [] });
   }
@@ -282,12 +296,15 @@ export class AutomaticAmmunitionProfileService {
     if (review.facts.multishotDefinition) review.facts.multishotDefinition.shotSizes = structuredClone(this.catalogs.getCatalog("ht").shot_sizes);
     if (review.status!=="compatible") return snapshot({...fallback,state:review.status==="incompatible"?"incompatible":"incomplete",type,facts:review.facts,reasons:[review.reason]});
     return snapshot({...fallback,state:"complete",origin:authorized?"gm":"reference",type,facts:review.facts,
-      nativePreserved:review.nativePreserved,model:{version:1,kind:"multishot-rule",status:"resolved"},reasons:[]});
+      nativePreserved:review.nativePreserved,referenceConfirmed:review.nativePreserved && original.multishotDefinition?.referenceVerified === true,
+      model:{version:1,kind:"multishot-rule",status:"resolved"},reasons:[]});
   }
   admission(profile, { policy = "strict", approval = null } = {}) {
     if (profile.state !== "complete" || profile.baseStatus !== "compatible" || profile.rulesStatus === "incompatible" && !profile.nativePreserved)
       return { allowed: false, authority: "undetermined" };
     if (approval?.active === false) return { allowed: false, authority: "revoked" };
+    if (profile.type?.recipe?.autoProfile?.handloadDefinition?.registeredByGM && approval?.active !== true)
+      return { allowed: false, authority: "approval-required" };
     if (profile.type?.recipe?.variantId === "ht_plus_p" && !profile.facts?.legacyPlusPAdmission &&
         !(profile.facts?.evidence?.weapon_pressure_rating_verified?.value === true &&
           profile.facts.evidence.weapon_pressure_rating_verified.source))

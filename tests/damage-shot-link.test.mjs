@@ -6,6 +6,25 @@ import { AttackProfileResolver, createShotSnapshot } from "../scripts/tools/atta
 import { resolveAmmunitionEffects, parseKineticDamage } from "../scripts/tools/ammunition-effects.js";
 
 const scope = "olegurps-qol";
+
+test('Gyrojet divides each native Damage result from this saved shot, preserving privacy and repeated rolls',async()=>{
+ const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+ p.damage.formula='3d pi+';p.damage.rules={gyrojetRange:{source:'HT101, note 3',status:'resolved',distanceYards:7,damageDivisor:3}};
+ p.effective.damage='3d pi+';
+ s.message.flags[scope].shotSnapshot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});
+ const text=JSON.stringify(s.message.flags[scope].shotSnapshot);
+ for(const nativeDamageValue of [11,17]){
+  const m=await f.damage(s,{nativeDamageValue});const d=m.flags.gurps.transfer.payload[0];
+  assert.equal(d.damage,Math.floor(nativeDamageValue/3));assert.equal(d.roll.formula,'3d pi+');
+  assert.equal(d.olegurpsGyrojetDivision.original,nativeDamageValue);
+  assert.equal(m.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+  assert.equal(JSON.stringify(s.message.flags[scope].shotSnapshot),text);
+ }
+ const blocked=fixture({effects:true}),privateSource=blocked.source({whisper:['gm'],blind:true});
+ privateSource.message.flags[scope].shotSnapshot=JSON.parse(text);privateSource.message.isContentVisible=false;
+ const m=await blocked.damage(privateSource,{nativeDamageValue:11});
+ assert.equal(m.flags.gurps.transfer.payload[0].damage,11);assert.equal(m.getFlag(scope,'damageLink').shotSnapshot,undefined);
+});
 test("P3 historical multi-ball and mixed Damage keeps the exact original shot after reload without extra payloads",async()=>{
  for(const [variantId,formula,kind]of [["ht_duplex","4d+1 pi","bullet"],["ht_buck_and_ball","5d+1 pi","mixed"]]){
   const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
@@ -146,7 +165,8 @@ function fixture({ effects = false } = {}) {
       const formula = action.type === "damage" ? action.formula + " " + action.damagetype : mode.damage;
       const parsed = parseKineticDamage(formula), damageType = parsed?.type ?? action.damagetype ?? "pi", armorDivisor = parsed?.divisor ?? 1;
       const roll = { formula, total: 17, options: {} };
-      await new DamageChat()._createChatMessage(actor, { damageType }, [], [{ roll, damageType, armorDivisor }], event);
+      await new DamageChat()._createChatMessage(actor, { damageType }, [], [{ roll, damageType, armorDivisor,
+        ...(event.nativeDamageValue!==undefined?{damage:event.nativeDamageValue}:{}) }], event);
       return true;
     } };
   if (effects) {

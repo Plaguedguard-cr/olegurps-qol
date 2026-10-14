@@ -1,10 +1,11 @@
 const MODULE_ID = "olegurps-qol";
+import { macroLabels } from "./macro-labels.js";
 const MACRO_PACK = `${MODULE_ID}.macros`;
 
 const MODULE_MACROS = [
   {
     _id: "OQLuckMacro00001",
-    name: "Luck",
+    name: macroLabels.OQLuckMacro00001,
     type: "script",
     img: `modules/${MODULE_ID}/assets/luck.png`,
     command: "game.olegurpsQOL.luck.open();",
@@ -14,7 +15,7 @@ const MODULE_MACROS = [
   },
   {
     _id: "OQDamageMacro001",
-    name: "Damage",
+    name: macroLabels.OQDamageMacro001,
     type: "script",
     img: `modules/${MODULE_ID}/assets/damage.png`,
     command: "game.olegurpsQOL.damage.open();",
@@ -24,7 +25,7 @@ const MODULE_MACROS = [
   },
   {
     _id: "OQMeleeAssist001",
-    name: "Melee Assistant",
+    name: macroLabels.OQMeleeAssist001,
     type: "script",
     img: `modules/${MODULE_ID}/assets/melee-assistant.png`,
     command: "game.olegurpsQOL.melee.open();",
@@ -79,6 +80,12 @@ export async function ensureModuleMacros() {
           [`flags.${MODULE_ID}.tool`]: tool
         });
       }
+    }
+    for (const entry of index) {
+      const name = macroLabels[entry._id];
+      if (!name || MODULE_MACROS.some(macro => macro._id === entry._id)) continue;
+      const document = await pack.getDocument(entry._id);
+      if (document && document.name !== name) await document.update({name});
     }
   } finally {
     if (wasLocked) await pack.configure({ locked: true });

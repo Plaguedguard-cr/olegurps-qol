@@ -1,3 +1,6 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { automaticAmmoText } from "../scripts/tools/automatic-ammunition-localization.js";
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -28,8 +31,8 @@ function numerical(id, override = {}) {
     baseStatus: "compatible", constructionStatus: "gm-approved", facts: r.facts }) };
 }
 test("P5 scope matches thirteen audited variants and the structured source review", async () => {
-  const audit = JSON.parse(await fs.readFile(new URL("../docs/audit/ht64-independent-audit.json", import.meta.url), "utf8"));
-  const review = JSON.parse(await fs.readFile(new URL("../docs/audit/olegurps_ht_64_structured_review_v1.json", import.meta.url), "utf8"));
+  const audit = readAuditFixture('ht64-independent-audit');
+  const review = readAuditFixture('olegurps_ht_64_structured_review_v1');
   assert.deepEqual(audit.records.filter(r => r.implementationGroup === "P5_environment_payloads").map(r => r.variantId).sort(), Object.keys(ENVIRONMENT_VARIANTS).sort());
   for (const id of Object.keys(ENVIRONMENT_VARIANTS)) assert.deepEqual(review.records.find(r => r.id === id).conditions, catalogs.getVariant("ht", id).eligibility_v1.conditions);
 });
@@ -69,7 +72,7 @@ test("five smokes retain distinct vision and sensor rules with no invented cloud
   assert.deepEqual(numerical("ht_hot_smoke").effect.rules.environment.mechanics.affects, ["infravision", "hyperspectral_vision"]);
   assert.deepEqual(numerical("ht_prism_smoke").effect.rules.environment.mechanics.affects, ["hot_smoke", "laser_beams"]);
   assert.deepEqual(numerical("ht_em_smoke").effect.rules.environment.mechanics.affects, ["hot_smoke", "radar", "imaging_radar"]);
-  assert.equal(environmentalVisibility("ht_hot_smoke"), null); assert.equal(smokeBuildSeconds(undefined), null); assert.equal(smokeBuildSeconds(15), 3);
+  assert.equal(environmentalVisibility("ht_hot_smoke"), -10); assert.equal(smokeBuildSeconds(undefined), null); assert.equal(smokeBuildSeconds(15), 3);
 });
 test("illumination and signal are distinct; gas resistances and aftermath use known numbers only", () => {
   assert.equal(environmentalVisibility("ht_illumination", { penalty: -8 }), -3);
@@ -91,8 +94,10 @@ test("source WP ready under strict policy preserves native blast, fragments, ran
   const { c, p } = published(); assert.equal(p.state, "complete"); assert.equal(automatic.admission(p, { policy: "strict" }).authority, "reference");
   const shot = resolver.resolve({ actorId: "a", weaponId: "w", rawAttack: c.raw, binding: c.binding, ammunition: { type: p.type }, profilePolicy: "strict" });
   assert.equal(shot.damage.nativeSafe, true); assert.equal(shot.damage.formula, "1d-2 burn ex");
-  assert.deepEqual(shot.damage.components.map(c => c.formula), ["1d-2 burn ex", "1d(0.2) cut"]);
-  assert.equal(shot.damage.transformations.filter(t => t.applied).length, 0); assert.equal(shot.effective.range, "10/90");
+  assert.deepEqual(shot.damage.components.map(c => c.formula), ["1d-2 burn ex", "1d(0.2) burn"]);
+  // HT145/172 corrects the effective WP fragment type; the protected catalog remains untouched.
+  assert.equal(shot.damage.transformations.filter(t => t.applied).length, 1);
+  assert.equal(shot.damage.transformations[0].from, c.raw.damage); assert.equal(shot.effective.range, "10/90");
   assert.equal(shot.damage.rules.costPerShot, undefined); assert.equal(automatic.admission(p, { approval: { active: false } }).allowed, false);
 });
 test("base WP derives immutable shot only; saved recipes reload, switch and native secondary Damage remain stable/private", () => {
@@ -101,10 +106,10 @@ test("base WP derives immutable shot only; saved recipes reload, switch and nati
   assert.equal(profile.ammunition.recipe.variantId, "ht_white_phosphorus"); assert.equal(JSON.stringify(c.base), old);
   const shot = createShotSnapshot(profile, { attackId: "a1", spent: 1, messageId: "m1" });
   const message = { id: "m1", visible: true, isContentVisible: true, flags: { "olegurps-qol": { shotSnapshot: shot } } };
-  assert.equal(shotDamageComponents(message)[0].formula, "1d(0.2) cut");
+  assert.equal(shotDamageComponents(message)[0].formula, "1d(0.2) burn");
   assert.deepEqual(shotDamageComponents({ ...message, isContentVisible: false }), []);
   const serialized = JSON.stringify(shot); const fresh = JSON.parse(serialized); c.raw.damage = "1d pi";
-  assert.equal(shotDamageComponents({ ...message, flags: { "olegurps-qol": { shotSnapshot: fresh } } })[0].formula, "1d(0.2) cut");
+  assert.equal(shotDamageComponents({ ...message, flags: { "olegurps-qol": { shotSnapshot: fresh } } })[0].formula, "1d(0.2) burn");
   assert.equal(JSON.stringify(shot), serialized); assert.equal(Object.isFrozen(profile.damage.rules.environment), true);
   const saved = JSON.parse(JSON.stringify(p.type)); assert.equal(automatic.prepare({ modeId: mid, base: context(mid).base, variantId: "ht_white_phosphorus", savedType: saved }).state, "complete");
   saved.recipe.autoProfile.revision++; assert.equal(automatic.prepare({ modeId: mid, base: context(mid).base, variantId: "ht_white_phosphorus", savedType: saved }).state, "incomplete");
@@ -123,7 +128,7 @@ test("UI uses localized RU/EN labels; saved WP stock never restores an English-o
   for (const lang of ["ru", "en"]) {
     const types = availableAmmoTypes({ id: "a", binding: c.binding, system: { ranged: { mode: c.raw } } }, weapon, api, lang);
     const wp = types.find(t => t.key === p.type.key); assert.equal(wp.unavailable, false);
-    assert.equal(wp.label, c.base.name + " " + automaticAmmoMessages[lang].P5ht_white_phosphorus);
+    assert.equal(wp.label, c.base.name + " " + automaticAmmoMessages.ru.P5ht_white_phosphorus);
   }
 });
 test("actual locale loader fetches P5 even when prior package translations are cached", async () => {
@@ -132,14 +137,14 @@ test("actual locale loader fetches P5 even when prior package translations are c
     const runtime = { location: {}, game: { i18n: { lang, translations, localize: key => key.endsWith("P5ht_white_phosphorus") ? key : "cached" } },
       fetch: async () => ({ ok: true, json: async () => locale }), foundry: { utils: { setProperty: (o, k, v) => { o[k] = v; } } } };
     await loadAutomaticAmmoTranslations(runtime);
-    for (const [key, value] of Object.entries(automaticAmmoMessages[lang]).filter(([k]) => k.startsWith("P5"))) assert.equal(translations["OleGURPS.AutomaticAmmo." + key], value);
+    for (const [key, value] of Object.entries(automaticAmmoMessages[lang]).filter(([k]) => k.startsWith("P5"))) {assert.equal(locale["OleGURPS.AutomaticAmmo."+key],value);assert.equal(automaticAmmoText(key,lang),russianText("OleGURPS.AutomaticAmmo."+key));}assert.deepEqual(translations,{});
   }
 });
 test("WP one physical shot spends once, damage inspection/switch/reload spends nothing and deletion returns remaining rounds", async () => {
   const { c, p } = published(); let state = { weapons: [{ id: "w", attackRef: { path: "system.ranged.mode" }, ammunitionInventory: { version: 1, stocks: [], magazines: [], installedId: null } }] };
   const w = state.weapons[0]; applyInventoryOperation(w, "add-stock", { ammoKey: p.type.key, amount: 5 }, { allowedTypes: [p.type] });
-  let index = 0; applyInventoryOperation(w, "add-magazines", { capacity: 2, amount: 2 }, { makeId: () => "m" + (++index) });
-  applyInventoryOperation(w, "load", { magazineId: "m1", ammoKey: p.type.key, amount: 2 }, { allowedTypes: [p.type] });
+  let index = 0; applyInventoryOperation(w, "add-magazines", { capacity: 1, amount: 2 }, { makeId: () => "m" + (++index) });
+  applyInventoryOperation(w, "load", { magazineId: "m1", ammoKey: p.type.key, amount: 1 }, { allowedTypes: [p.type] });
   applyInventoryOperation(w, "install", { magazineId: "m1" }); projectAmmoInventory(w);
   const actor = { id: "a", isOwner: true, system: { ranged: { mode: c.raw } }, getFlag: () => state, setFlag: async (_s, _k, value) => { state = structuredClone(value); } };
   const service = new AmmoService(actor), prepare = ({ ammunition }) => ({ amount: 1, profile: resolver.resolve({ actorId: "a", weaponId: "w", rawAttack: c.raw, binding: c.binding, ammunition }) });

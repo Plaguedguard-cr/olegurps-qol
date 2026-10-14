@@ -1,3 +1,4 @@
+import { correctedHTLabel, correctedHTModeStatistics, correctedHTSkillDefaults, reviewedHTModeIdentity, reviewedHTAmmoIdentity } from "./ht-source-corrections.js";
 // Runtime source correction only. The imported HT176 row and source hashes stay untouched.
 export const LEMAT = Object.freeze({ equipmentId: "ezbrl54zlak7I4wFF", revolverModeId: "WbrBqEG-vOeKVREkf",
   shotModeId: "WdzSSShGT_yv4ctOi", revolverAmmoId: "ht_42_caplock_lemat",
@@ -16,6 +17,9 @@ export function lematBarrel(modeId) {
     manual: [{ id: "BarrelSwitchReady", application: "manual-Ready-before-switch", source: "HT94" }] };
 }
 export function correctHTMode(mode, equipment) {
+  mode = reviewedHTModeIdentity(mode, equipment);
+  mode = correctedHTModeStatistics(mode, equipment);
+  mode = correctedHTSkillDefaults(mode, equipment);
   if (equipment?.equipment_id !== LEMAT.equipmentId || equipment.source !== "HT" ||
       mode?.weapon_mode_id !== LEMAT.shotModeId) return mode;
   return { ...mode, ht_ammo_item_ids: [LEMAT.shotAmmoId], ht_ammo_family_ids: [LEMAT_SHOT_CHARGE.ammo_family_id],
@@ -23,6 +27,8 @@ export function correctHTMode(mode, equipment) {
       source: LEMAT.source, runtimeCorrection: 1 } };
 }
 export function correctHTAmmo(ammo) {
+  ammo = reviewedHTAmmoIdentity(ammo);
+  ammo = correctedHTLabel(ammo);
   return ammo?.id === LEMAT.revolverAmmoId ? { ...ammo,
     weapon_mode_ids: ammo.weapon_mode_ids.filter(id => id !== LEMAT.shotModeId) } : ammo;
 }

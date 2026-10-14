@@ -1,3 +1,4 @@
+import { russianUI } from "../russian-ui.js";
 import { isArchivedAmmoType } from "./ammo-inventory.js";
 import { HT_12G_CASE_CONSTRUCTIONS } from "../ht-shotshell-source-data.js";
 import { variantAbbreviation } from "./ammunition-recipes.js";
@@ -6,6 +7,14 @@ import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 
 export const ammoManagementLabels = {
   en: {
+    SealedResourceQuantity: "Use a complete factory unit: five shots for P11, one for a disposable tube. The selected slot capacity must match.",
+    SealedResourceSpent: "This cluster or tube has been used. Select a new empty slot and install a fresh factory unit from stock.",
+    SealedResourcePartial: "A partly used factory cluster cannot be dismantled or topped up. Keep its remaining shots; delete the empty cluster after the last shot.",
+    SealedResourceReview: "Saved unit data needs review: P11 capacity must be five, disposable tube capacity one. Remaining ammunition is preserved.",
+    SealedClusterHint: "P11: add stock in five-shot clusters. Install a whole cluster in a capacity-five slot. Used clusters cannot be topped up (HT92).",
+    DisposableTubeHint: "One stock unit is a new loaded tube or complete disposable weapon. Use a capacity-one slot; a spent slot cannot be loaded again.",
+    HTIdentityUnverified: "The exact cartridge for this weapon version is unconfirmed. Attack cancelled; stock preserved. Check the model and chamber with the GM.",
+    UnknownCaliber: "Caliber not confirmed",
     ConstructionUnconfirmed: "construction not confirmed for this cartridge/platform (undetermined)",
     ConstructionIncompatible: "construction incompatible with this platform (incompatible)",
     Base: "base", Cartridge: "cartridge", AmmoFamily: "family",
@@ -25,38 +34,17 @@ export const ammoManagementLabels = {
     MagazineLimit: "Add at most 100 magazines at once, up to 1000 total; maximum capacity is 100000.",
     WeaponMissing: "This weapon is no longer available.", Permission: "Actor ownership or GM permission is required.",
     UnknownOperation: "Unknown ammunition operation.", Changed: "Ammunition updated.", Stored: "Saved type (review required)",
-    Scope: "Loose stock belongs to this weapon, matching the existing ammunition manager."
+    Scope: "Loose stock belongs to this weapon, matching the existing ammunition manager.",
+    Loading: "Loading…", Unloading: "Unloading…", Saving: "Saving…"
   },
-  ru: {
-    ConstructionUnconfirmed: "конструкция не подтверждена для этого патрона и оружия (undetermined)",
-    ConstructionIncompatible: "конструкция несовместима с этим оружием (incompatible)",
-    Base: "базовый", Cartridge: "патрон", AmmoFamily: "семейство",
-    LightCased12G: '12G 2.75" — облегчённая гильза', ConventionalCased12G: '12G 2.75" — обычная гильза',
-    Title: "Снарядить / Разрядить", Ammo: "Тип боеприпаса", Loose: "Свободный запас", Quantity: "Количество",
-    Add: "Добавить", Remove: "Убрать", Magazines: "Магазины", Total: "Всего", Magazine: "Магазин",
-    Capacity: "Ёмкость", Installed: "В оружии", Empty: "Пустой", NoMagazine: "Магазинов нет",
-    Load: "Снарядить", Unload: "Разрядить", UnloadAll: "Разрядить весь", Install: "Установить в оружие", Eject: "Извлечь из оружия",
-    AddMagazines: "Добавить магазины", MagazineCount: "Количество магазинов", Delete: "Удалить магазин",
-    DeleteHint: "Оставшиеся патроны возвращаются в свободный запас перед удалением.",
-    Legacy: "сохранённый тип; совместимость не проверена", NoAmmo: "Нет подтверждённого базового боеприпаса",
-    Review: "Требуется проверка: исходные данные боезапаса сохранены; операции с ресурсами недоступны.",
-    InvalidQuantity: "Введите корректное целое количество.", InsufficientStock: "Недостаточно свободных патронов этого типа.",
-    CapacityExceeded: "Количество превышает свободную ёмкость магазина.", MixedTypes: "Разрядите магазин перед сменой типа патронов.",
-    InsufficientRounds: "В магазине нет такого количества патронов.", MagazineMissing: "Выбранный магазин больше недоступен.",
-    MagazineNotInstalled: "Выбранный магазин не установлен.", TypeUnavailable: "Этот тип патронов недоступен для снаряжения.",
-    MagazineLimit: "За раз можно добавить до 100 магазинов, всего до 1000; максимальная ёмкость — 100000.",
-    WeaponMissing: "Это оружие больше недоступно.", Permission: "Требуются права владельца персонажа или GM.",
-    UnknownOperation: "Неизвестная операция с патронами.", Changed: "Боезапас обновлён.", Stored: "Сохранённый тип (требуется проверка)",
-    Scope: "Свободный запас относится к этому оружию, как в существующем менеджере патронов."
-  }
+  ru: Object.fromEntries(Object.entries(russianUI).filter(([key]) => key.startsWith("OleGURPS.Ammo.")).map(([key, value]) => [key.slice(14), value]))
 };
 
+import { moduleText } from "../localization.js";
 export function ammoText(name, runtime = globalThis) {
+  if(/[\u0400-\u04ff]/u.test(String(name)))return String(name);
   const key = "OleGURPS.Ammo." + name;
-  const i18n = runtime.game?.i18n, translated = i18n?.localize?.(key);
-  if (translated && translated !== key) return translated;
-  const language = String(i18n?.lang ?? "en").startsWith("ru") ? "ru" : "en";
-  return ammoManagementLabels[language][name] ?? ammoManagementLabels.en[name] ?? name;
+  return moduleText(key, {}, ammoManagementLabels.ru[name] ?? "Не удалось выполнить операцию. Проверьте сохранённый боезапас и повторите попытку.");
 }
 
 // This window has its own language; it does not change the world's language setting.

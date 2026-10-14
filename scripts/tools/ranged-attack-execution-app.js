@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 const ApplicationV2 = globalThis.foundry.applications.api.ApplicationV2;
 const escape = value => String(value ?? "").replace(/[&<>"']/g, character => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -7,7 +8,7 @@ export class RangedAttackExecutionApp extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     classes: ["olegurps-qol", "ranged-attack-execution"],
     tag: "section",
-    window: { title: "Ranged Rapid Strike", resizable: false, minimizable: true },
+    window: { title: "Быстрая двойная стрельба", resizable: false, minimizable: true },
     position: { width: 360, height: "auto" }
   };
 
@@ -23,7 +24,7 @@ export class RangedAttackExecutionApp extends ApplicationV2 {
   async _renderHTML() {
     return '<div class="rrs-execution-list">' + this.slots.map((slot, index) =>
       '<button type="button" data-rrs-execution-slot="' + index + '"' + (slot.completed ? ' disabled' : '') + '>' +
-      '<strong>Attack ' + (index + 1) + (slot.completed ? ' \u2713' : '') + '</strong>' +
+      '<strong>Атака ' + (index + 1) + (slot.completed ? ' \u2713' : '') + '</strong>' +
       '<small>' + escape(slot.summary) + '</small></button>').join('') + '</div>';
   }
   _replaceHTML(result, content) { content.innerHTML = result; }
@@ -45,7 +46,7 @@ export class RangedAttackExecutionApp extends ApplicationV2 {
         if (this.slots.every(entry => entry.completed)) return await this.close();
       }
     } catch (error) {
-      globalThis.ui.notifications.error(error?.message ?? String(error));
+      globalThis.ui.notifications.error(moduleMessage(error));
     } finally {
       this.busy = false;
       if (this.rendered) await this.render({ force: true });

@@ -1,7 +1,7 @@
 [
   {
     "_id": "OQDamageMacro001",
-    "name": "Damage",
+    "name": "Урон",
     "type": "script",
     "img": "modules/olegurps-qol/assets/damage.png",
     "command": "game.olegurpsQOL.damage.open();",
@@ -29,7 +29,7 @@
   },
   {
     "_id": "OQLuckMacro00001",
-    "name": "Luck",
+    "name": "Удача",
     "type": "script",
     "img": "modules/olegurps-qol/assets/luck.png",
     "command": "game.olegurpsQOL.luck.open();",
@@ -57,7 +57,7 @@
   },
   {
     "_id": "OQMeleeAssist001",
-    "name": "Melee Assistant",
+    "name": "Помощник ближнего боя",
     "type": "script",
     "img": "modules/olegurps-qol/assets/melee-assistant.png",
     "command": "game.olegurpsQOL.melee.open();",
@@ -85,7 +85,7 @@
   },
   {
     "_id": "OQcritical000001",
-    "name": "Critical Tables",
+    "name": "Критические результаты",
     "type": "script",
     "img": "modules/olegurps-qol/assets/critical-table.png",
     "command": "game.olegurpsQOL.critical.open();",
@@ -113,7 +113,7 @@
   },
   {
     "_id": "OQexplosion00001",
-    "name": "Explosion & Fragmentation",
+    "name": "Взрыв и осколки",
     "type": "script",
     "img": "modules/olegurps-qol/assets/explosion-and-fragmentation.png",
     "command": "game.olegurpsQOL.explosion.open();",
@@ -141,7 +141,7 @@
   },
   {
     "_id": "OQfalling0000001",
-    "name": "Falling Damage",
+    "name": "Урон от падения",
     "type": "script",
     "img": "modules/olegurps-qol/assets/falling.png",
     "command": "game.olegurpsQOL.falling.open();",
@@ -169,7 +169,7 @@
   },
   {
     "_id": "OQfirecontrol001",
-    "name": "Fire Control",
+    "name": "Огонь",
     "type": "script",
     "img": "modules/olegurps-qol/assets/fire-control.png",
     "command": "game.olegurpsQOL.fireControl.open();",
@@ -197,7 +197,7 @@
   },
   {
     "_id": "OQfright00000001",
-    "name": "Fright Check",
+    "name": "Проверка страха",
     "type": "script",
     "img": "modules/olegurps-qol/assets/fright-check.png",
     "command": "game.olegurpsQOL.fright.open();",
@@ -225,7 +225,7 @@
   },
   {
     "_id": "OQreaction000001",
-    "name": "Reaction Roll",
+    "name": "Реакция",
     "type": "script",
     "img": "modules/olegurps-qol/assets/reaction-roll.png",
     "command": "game.olegurpsQOL.reaction.open();",
@@ -253,7 +253,7 @@
   },
   {
     "_id": "OQshooting000001",
-    "name": "Shooting Assistant",
+    "name": "Помощник стрельбы",
     "type": "script",
     "img": "modules/olegurps-qol/assets/shooting-assistant.png",
     "command": "game.olegurpsQOL.ammo.open();",

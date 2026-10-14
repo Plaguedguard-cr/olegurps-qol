@@ -4,7 +4,45 @@ import { readStandaloneAttack, standaloneCatalogBinding } from "./standalone-att
 import { isDUVariant } from "./ht-kinetic-rules.js";
 import { reviewDUConstruction } from "./du-ammunition.js";
 import { isMultishotVariant, reviewMultishotConstruction, multishotDefinitionKey } from "./multishot-ammunition.js";
+import { registeredHandloadFacts } from "./handload-registration.js";
+import { evaluateHTOptionEligibility } from "../ht-option-eligibility.js";
 let writes = Promise.resolve();
+/** Hold the world approval queue throughout deletion and its compensating rollback. */
+export function removeOwnedAmmunitionApprovals({ actorId, weaponIds, modeIds }, operation, runtime = globalThis) {
+  const next = writes.catch(() => {}).then(async () => {
+    let saved = {};
+    if (runtime.game?.settings?.get) saved = structuredClone(runtime.game.settings.get(MODULE, SETTING) ?? {});
+    const cleaned = structuredClone(saved);
+    for (const [key, entry] of Object.entries(saved)) {
+      let identity;
+      try { identity = JSON.parse(key); } catch { identity = []; }
+      const matchesKey = identity[0] === actorId && weaponIds.includes(identity[1]);
+      const matchesEntry = entry?.actorId === actorId && weaponIds.includes(entry.weaponId);
+      if (!matchesKey && !matchesEntry) continue;
+      if (!matchesKey || !matchesEntry || identity[1] !== entry.weaponId || identity[2] !== entry.modeId ||
+          !modeIds.includes(entry.modeId) || identity[4] !== entry.ammoId || identity[5] !== (entry.recipeId ?? null))
+        throw Error("ApprovalScopeRequired");
+      delete cleaned[key];
+    }
+    const changed = JSON.stringify(cleaned) !== JSON.stringify(saved);
+    if (changed && !runtime.game?.user?.isGM) throw Error("Permission");
+    let attempted = false;
+    return operation({ commit: async () => {
+      if (!changed) return;
+      if (JSON.stringify(stable(runtime.game.settings.get(MODULE, SETTING))) !== JSON.stringify(stable(saved)))
+        throw Error("ApprovalScopeRequired");
+      attempted = true;
+      await runtime.game.settings.set(MODULE, SETTING, cleaned);
+    }, rollback: async () => {
+      if (!attempted) return;
+      const current = runtime.game.settings.get(MODULE, SETTING);
+      if (JSON.stringify(stable(current)) === JSON.stringify(stable(cleaned))) await runtime.game.settings.set(MODULE, SETTING, saved);
+      else if (JSON.stringify(stable(current)) !== JSON.stringify(stable(saved))) throw Error("ApprovalScopeRequired");
+    } });
+  });
+  writes = next;
+  return next;
+}
 export function registerAmmunitionApprovals(runtime = globalThis) {
   runtime.game.settings.register(MODULE, SETTING, { scope: "world", config: false, type: Object, default: {} });
 }
@@ -27,15 +65,23 @@ export function getAmmunitionApproval(scope, runtime = globalThis) {
 export function setAmmunitionApproval({ actor, weapon, type, active, plusPDecision = null, duDecision = null, multishotDecision = null }, runtime = globalThis) {
   if (!runtime.game?.user?.isGM) return Promise.reject(Error("Permission"));
   const next = writes.catch(() => {}).then(async () => {
+    if (weapon.standaloneWeaponId && !actor.getFlag("world", "gurpsAmmoManager")?.weapons?.some(w =>
+      w.id === weapon.id && w.standaloneWeaponId === weapon.standaloneWeaponId)) throw Error("WeaponMissing");
     const api = runtime.OleGURPSQOL;
     const binding = weapon.standaloneWeaponId ? standaloneCatalogBinding(
       readStandaloneAttack(actor, weapon.standaloneWeaponId, weapon.standaloneModeId), api?.catalogs) :
       api?.weaponCatalogBindings?.analyzeMode(actor, weapon.attackRef?.path);
     if (binding?.status !== "confirmed" || !binding.binding?.confirmed || !type.recipe?.customId ||
         type.book !== "ht" || type.kind !== "ammo-item" ||
-        !(["ht_apex", "ht_aphex", "ht_plus_p"].includes(type.recipe.variantId) || isDUVariant(type.recipe.variantId) || isMultishotVariant(type.recipe.variantId))) throw Error("ApprovalScopeRequired");
+        !(["ht_apex", "ht_aphex", "ht_plus_p", "ht_match_handloaded"].includes(type.recipe.variantId) || isDUVariant(type.recipe.variantId) || isMultishotVariant(type.recipe.variantId))) throw Error("ApprovalScopeRequired");
     const modeId = binding.binding.modeId, base = api.ammunitionCompatibility.checkCompatibility(modeId, type.ammoId, { book: type.book, kind: type.kind });
     const construction = api.ammunitionCompatibility.checkCompatibility(modeId, type.recipe.variantId, { book: "ht", kind: htVariantKind(type.recipe.variantId), ammoItemId: type.ammoId });
+    if (active && type.recipe.variantId === "ht_match_handloaded") {
+      const facts = registeredHandloadFacts(construction.eligibility?.facts, type.recipe.autoProfile?.handloadDefinition,
+        {actorId:actor.id,weaponId:weapon.id,modeId,ammoId:type.ammoId});
+      if (!facts || evaluateHTOptionEligibility(api.catalogs.getVariant("ht", "ht_match_handloaded"), facts).status !== "compatible")
+        throw Error("P1HandloadChecksMissing");
+    }
     const multishot = isMultishotVariant(type.recipe.variantId) ? reviewMultishotConstruction(api.catalogs.getVariant("ht", type.recipe.variantId),
       construction.eligibility?.facts, multishotDecision) : null;
     if (active && multishot && multishotDefinitionKey(type.recipe.parameters?.multishotDefinition)!==multishotDefinitionKey(multishotDecision)) throw Error("MultishotSourceConflict");

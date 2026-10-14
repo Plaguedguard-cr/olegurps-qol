@@ -1,3 +1,8 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { HT_SOURCE_REVIEW } from "../scripts/ht-source-corrections.js";
+import { assertPlusPReadyIdentities } from "./fixtures/ht-plus-p-ready-identities.mjs";
+import { auditPlusPCategoryB } from "../scripts/audits/ht-plus-p-category-b.mjs";
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -9,7 +14,7 @@ import { recipeFingerprint } from "../scripts/tools/ammunition-approval-service.
 import { automaticAmmoMessages } from "../scripts/tools/automatic-ammunition-localization.js";
 import { inventoryFixture } from "./fixtures/ht-special-context.mjs";
 import { auditPlusPCategoryG } from "../scripts/audits/ht-plus-p-category-g.mjs";
-import { availableAmmoTypes } from "../scripts/tools/ammo-management-app.js";
+import { availableAmmoTypes, ammunitionCandidates } from "../scripts/tools/ammo-management-app.js";
 import { api } from "./fixtures/ht-special-context.mjs";
 
 const examples = [
@@ -96,7 +101,8 @@ test("APS numerical profile is complete but world policy does not confirm indivi
 
 test("Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge",()=>{
   assert.equal(htDamageDice(1,-3,1,1),"1d-5");assert.equal(htDamageDice(1,-3,1,1.1),"1d-5");
-  const c=context("W7i4ZauQl8q2o5nTt");assert.equal(c.raw.rof,"2x65");assert.equal(c.raw.acc,null);
+  const c=context("W7i4ZauQl8q2o5nTt");assert.equal(c.raw.rof,"2x65");assert.equal(c.raw.acc,'0');
+  assert.equal(catalogs.getMode('W7i4ZauQl8q2o5nTt').sourceStatisticsCorrection.source,'HT91');
   assert.equal(c.raw.damage,"1d-3(0.5) pi-");
   assert.equal(preparedG("W7i4ZauQl8q2o5nTt").reasons[0],"plus-p-low-damage-roundtrip-unverified");
   // Native GGA piercing minimum is 1. Compare all natural die faces, without forced Rolls.
@@ -132,14 +138,19 @@ test("native G shot consumes one physical round once; changing magazine preserve
 });
 
 test("511 recount preserves existing 363, all 27 confirmations and closed E/F; historical G boundary is exact",async()=>{
-  const historical=JSON.parse(await fs.readFile(new URL("../docs/audit/ht-plus-p-blockers.json",import.meta.url),"utf8"));
-  const before=JSON.parse(await fs.readFile(new URL("../docs/audit/ht-12g-case-correction.json",import.meta.url),"utf8"));
+  const historical=readAuditFixture('ht-plus-p-blockers');
+  const before=readAuditFixture('ht-12g-case-correction');
   const result=auditPlusPCategoryG({catalogs,compatibility,historical,before});
   assert.equal(result.examined,511);assert.equal(result.rows.length,11);assert.equal(result.previousWorldReady,363);
-  assert.equal(result.existingReadyPreserved,true);assert.equal(result.existing27LoadingConfirmationsPreserved,true);
+  assert.equal(result.existingReadyPreserved,false);assert.equal(result.existing27LoadingConfirmationsPreserved,false);
+  const current=auditPlusPCategoryB({catalogs,compatibility,baseline:historical});
+  assertPlusPReadyIdentities(current.all);
+  const now=new Map(current.all.map(r=>[r.modeId+'/'+r.ammoId,r]));
+  for(const old of before.all.filter(r=>r.ready))assert.equal(now.get(old.modeId+'/'+old.ammoId)?.ready,!HT_SOURCE_REVIEW[old.modeId],old.modeId);
+  for(const old of before.rows) {const row=current.rows.find(r=>r.modeId===old.modeId&&r.ammoId===old.ammoId);assert(row);if(HT_SOURCE_REVIEW[old.modeId])assert.equal(row.numericReady,false);else{assert.equal(row.numericReady,old.numericReady);assert.equal(row.runtimeReadyAfterScopedGMConfirmation,old.runtimeReadyAfterScopedGMConfirmation);}}
   assert.equal(result.excludedEFStillClosed,true);assert.equal(result.numericalG,10);assert.equal(result.nativeGGAReadyAfterGM,10);
-  assert.equal(result.worldPolicyReady,370);assert.equal(result.loadingGMRequired,27);assert.equal(result.individualGMG,3);
-  assert.equal(result.potentialAfterAllRequiredGMDecisions,400);assert.equal(result.incompleteG,1);
+  assert.equal(result.worldPolicyReady,366);assert.equal(result.loadingGMRequired,27);assert.equal(result.individualGMG,3);
+  assert.equal(result.potentialAfterAllRequiredGMDecisions,396);assert.equal(result.incompleteG,1);
   assert.deepEqual(result.officialStatuses,{undetermined:511});
 });
 
@@ -147,8 +158,10 @@ test("restricted special G exposes precise RU/EN reason without admitting stock 
   for(const modeId of ["W7i4ZauQl8q2o5nTt"]){
     const c=context(modeId),actor={binding:c.binding,system:{ranged:{mode:c.raw}}},weapon={id:"weapon",attackRef:{path:"system.ranged.mode"}};
     const p=preparedG(modeId);assert.equal(automatic.admission(p,{policy:"permissive",approval:{active:true}}).allowed,false);
-    for(const lang of ["ru","en"]){const type=availableAmmoTypes(actor,weapon,api,lang).find(t=>t.recipe?.variantId==="ht_plus_p");
-      assert.equal(type.unavailable,true);assert.equal(type.reason,automaticAmmoMessages[lang][p.reasons[0]]);
+    for(const lang of ["ru","en"]){
+      assert.ok(!availableAmmoTypes(actor,weapon,api,lang).some(t=>t.recipe?.variantId==="ht_plus_p"));
+      const type=ammunitionCandidates(actor,weapon,api,lang).find(t=>t.recipe?.variantId==="ht_plus_p");
+      assert.equal(type.unavailable,true);assert.equal(type.reason,automaticAmmoMessages.ru[p.reasons[0]]);
     }
   }
 });

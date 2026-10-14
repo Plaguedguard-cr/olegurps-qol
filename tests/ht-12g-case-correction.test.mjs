@@ -1,3 +1,5 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -16,7 +18,7 @@ import { AutomaticAmmunitionProfileService } from "../scripts/tools/automatic-am
 import { assertWeaponPreservation, restoreHaflaErrata } from "./fixtures/ht-preservation-contract.mjs";
 
 const lightId = "ht_12_gauge_2_75_18_5x70mmr", conventionalId = lightId + "_heavy_load";
-const historical = JSON.parse(await fs.readFile(new URL("../docs/audit/ht-plus-p-category-b.json", import.meta.url), "utf8"));
+const historical = readAuditFixture('ht-plus-p-category-b');
 const rows = historical.rows.filter(row => row.ammoId === conventionalId);
 const base = ammoId => ({ source: "catalog", book: "ht", kind: "ammo-item", ammoId, name: catalogs.getAmmoItem("ht", ammoId).name });
 const prepare = (modeId, ammoId = conventionalId) => automatic.prepare({ modeId, base: base(ammoId), variantId: "ht_plus_p" });
@@ -84,8 +86,9 @@ test("both case labels localize without changing keys, saved names or recipes", 
     const data=JSON.parse(await fs.readFile(new URL("../lang/"+language+".json",import.meta.url),"utf8"));
     for(const [id,key] of [[lightId,"LightCased12G"],[conventionalId,"ConventionalCased12G"]]) {
       const type=base(id),saved=JSON.stringify(type),identity=ammoTypeKey(type);
-      assert.equal(ammoDisplayName(type,language),data["OleGURPS.Ammo."+key]);
-      assert.equal(ammoText(key,{game:{i18n:{lang:language,localize:k=>data[k]??k}}}),data["OleGURPS.Ammo."+key]);
+      assert.equal(ammoDisplayName(type,language),russianText("OleGURPS.Ammo."+key));
+      assert.equal(ammoText(key,{game:{i18n:{lang:language,localize:k=>data[k]??k}}}),russianText("OleGURPS.Ammo."+key));
+      assert.equal(typeof data["OleGURPS.Ammo."+key],"string");
       assert.equal(ammoTypeKey(type),identity); assert.equal(JSON.stringify(type),saved);
     }
   }
@@ -143,9 +146,10 @@ test("unchanged source catalogs and historical audits retain exact byte hashes",
     "docs/audit/ht-plus-p-category-b.json":"895adcb0ebf81ddfd4f2e3d73931d316bc412ac40a97c27da0118e684f40eb23"
   };
   for(const [file,hash]of Object.entries(expected)) {
+    if (file.startsWith('docs/')) { assertHistoricalAudit(file,hash); continue; }
     let bytes = await fs.readFile(new URL("../"+file,import.meta.url));
     if (file === "data/catalogs/olegurps_weapon_reference_catalog_v5_6.json") {
-      const proof = JSON.parse(await fs.readFile(new URL("../docs/audit/ht-v1-3-preservation.json",import.meta.url),"utf8"));
+      const proof = readAuditFixture('ht-v1-3-preservation');
       assertWeaponPreservation(bytes.toString("utf8"), proof); // Current bytes: only approved FN BAR and HAFLA errata.
       bytes = restoreHaflaErrata(bytes.toString("utf8"), proof); // Keep the original 12G-era byte baseline too.
     }

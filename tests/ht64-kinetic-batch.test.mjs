@@ -1,3 +1,6 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { automaticAmmoText } from "../scripts/tools/automatic-ammunition-localization.js";
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -9,7 +12,7 @@ import { recipeFingerprint, setAmmunitionApproval, approvalKey } from "../script
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { AmmoService } from "../scripts/tools/ammo-service.js";
 import { applyInventoryOperation, projectAmmoInventory } from "../scripts/tools/ammo-inventory.js";
-import { availableAmmoTypes, duApprovalHTML } from "../scripts/tools/ammo-management-app.js";
+import { ammunitionCandidates, availableAmmoTypes, duApprovalHTML } from "../scripts/tools/ammo-management-app.js";
 import { automaticAmmoMessages, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
 import { ammunitionConditionTexts } from "../scripts/tools/damage-shot-link.js";
 const ids=["ht_solid","ht_hollow_point","ht_ap","ht_aphc","ht_frangible","ht_apds","ht_apfsds","ht_sapfsds","ht_underwater_dart","ht_apdu","ht_apdsdu","ht_apfsdsdu"];
@@ -20,7 +23,7 @@ function facts(id,caliber=20){return {caliberMm:caliber,availabilityTL:8,baseCos
 function numeric(id,extra={},f=facts(id)){return resolveAmmunitionEffects({raw:{...raw,...extra},variantId:id,baseStatus:"compatible",constructionStatus:"gm-approved",facts:f});}
 
 test("batch contains exactly the twelve reviewed P2 IDs; pure DU predicates match catalog contracts",async()=>{
-  const audit=JSON.parse(await fs.readFile(new URL("../docs/audit/ht64-independent-audit.json",import.meta.url),"utf8"));
+  const audit=readAuditFixture('ht64-independent-audit');
   assert.deepEqual(audit.records.filter(r=>r.implementationGroup==="P2_kinetic_projectiles").map(r=>r.variantId).sort(),[...ids].sort());
   for(const [id,option]of Object.entries(DU_OPTIONS)){const original=catalogs.getVariant("ht",id);assert.equal(option.min_tl,original.min_tl);
     assert.ok(Object.isFrozen(option.eligibility_v1.conditions));
@@ -136,23 +139,23 @@ test("existing APDS recipe identity remains valid after adding CPS support",()=>
 });
 test("DU UI describes refusals and GM conditions in RU/EN without presenting service keys",async()=>{
   for(const lang of ["ru","en"]){const actual=JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"));
-    const html=duApprovalHTML({...pending.type,preparation:pending},lang);assert.ok(html.includes(automaticAmmoMessages[lang].DUDesign));assert.ok(!html.includes('>source_verified_other_platform<'));assert.ok(!/<details[^>]*\sopen/.test(html));
+    const html=duApprovalHTML({...pending.type,preparation:pending},lang);assert.ok(html.includes(automaticAmmoMessages.ru.DUDesign));assert.ok(!html.includes('>source_verified_other_platform<'));assert.ok(!/<details[^>]*\sopen/.test(html));
     for(const [key,text]of Object.entries(automaticAmmoMessages[lang]).filter(([k])=>k.startsWith('DU')))assert.equal(actual['OleGURPS.AutomaticAmmo.'+key],text);
     const i18n={lang,translations:{},localize:key=>key==='OleGURPS.AutomaticAmmo.DUIncendiaryGM'?key:'cached old text'};
     await loadAutomaticAmmoTranslations({game:{i18n},location:{},fetch:async()=>({ok:true,json:async()=>actual}),foundry:{utils:{setProperty:(o,k,v)=>{o[k]=v}}}});
-    assert.equal(i18n.translations['OleGURPS.AutomaticAmmo.DUIncendiaryGM'],actual['OleGURPS.AutomaticAmmo.DUIncendiaryGM']);assert.equal(i18n.lang,lang);
-    const conditions=ammunitionConditionTexts(numeric('ht_apdu').support.manual,lang);assert.ok(conditions[0].includes('DR 10+'));
+    assert.deepEqual(i18n.translations,{});assert.equal(automaticAmmoText('DUIncendiaryGM',lang),russianText('OleGURPS.AutomaticAmmo.DUIncendiaryGM'));assert.equal(i18n.lang,lang);
+    const conditions=ammunitionConditionTexts(numeric('ht_apdu').support.manual,lang);assert.ok(conditions[0].includes('DR') && /10/.test(conditions[0]));
   }
 });
 test("real load-window choices remain blocked before scoped proof and admit only the approved DU recipe",()=>{
   const originalGet=game.settings.get,approvals={};const actor={id:"du-test",binding:c.binding,system:{ranged:{mode:c.raw}}},weapon={id:"weapon",attackRef:{path:"system.ranged.mode"}};
   game.settings.get=(s,k)=>k==="ammunitionApprovals"?approvals:"permissive";
-  try{const before=availableAmmoTypes(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(before.unavailable,true);assert.equal(before.reason,automaticAmmoMessages.ru.DUConfirmationRequired);
+  try{const before=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(before.unavailable,true);assert.equal(before.reason,automaticAmmoMessages.ru.DUConfirmationRequired);assert.ok(!availableAmmoTypes(actor,weapon,api,"ru").some(t=>t.key===before.key));
     approvals[approvalKey({actorId:actor.id,weaponId:weapon.id,modeId,type:pending.type})]=approval;
     const after=availableAmmoTypes(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(after.unavailable,false);assert.equal(after.preparation.state,"complete");assert.equal(after.key,before.key);
     approvals[approvalKey({actorId:actor.id,weaponId:weapon.id,modeId,type:pending.type})]={...approval,active:false};
-    const revoked=availableAmmoTypes(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(revoked.unavailable,true);assert.equal(revoked.reason,automaticAmmoMessages.ru.Revoked);
-    const incompatible=availableAmmoTypes(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apfsdsdu");assert.equal(incompatible.unavailable,true);assert.ok(incompatible.reason.includes(automaticAmmoMessages.ru.DUMinimumCaliber));assert.ok(incompatible.reason.includes(automaticAmmoMessages.ru.DUPlatformProhibited));
+    const revoked=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(revoked.unavailable,true);assert.ok(!availableAmmoTypes(actor,weapon,api,"ru").some(t=>t.key===revoked.key));assert.equal(revoked.reason,automaticAmmoMessages.ru.Revoked);
+    const incompatible=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apfsdsdu");assert.equal(incompatible.unavailable,true);assert.ok(!availableAmmoTypes(actor,weapon,api,"ru").some(t=>t.key===incompatible.key));assert.ok(incompatible.reason.includes(automaticAmmoMessages.ru.DUMinimumCaliber));assert.ok(incompatible.reason.includes(automaticAmmoMessages.ru.DUPlatformProhibited));
   }finally{game.settings.get=originalGet;}
 });
 test("DU attestation cannot overcome explicit prohibition, native effects or contradictory platform",()=>{

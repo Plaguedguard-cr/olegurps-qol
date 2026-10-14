@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { explosiveText } from "./explosive-ammunition-localization.js";
 export function fragmentHitCount({ total, skill, inRange = true, followUp = false }) {
   const success = inRange && Number.isFinite(total) && (total <= 4 || (total < 17 && total <= skill));
@@ -294,7 +295,7 @@ export async function openExplosionFragmentation() {
         <div><strong>Дистанция до центра:</strong> ${escapeHTML(values.distance)} ярд.</div>
         <div><strong>Радиус взрыва:</strong> ${escapeHTML(blastRadius)} ярд.</div>
         ${status ? `<div style="margin-top:4px;"><strong>${escapeHTML(status)}</strong></div>` : ""}
-        <details class="olegurps-explosion-calculation"><summary style="cursor:pointer">Calculation</summary>
+        <details class="olegurps-explosion-calculation"><summary style="cursor:pointer">Расчёт</summary>
           <div style="margin-top:6px;"><strong>Расчёт:</strong> ${escapeHTML(calculation)}</div>
           <div style="margin-top:4px;opacity:0.8;">Для косвенного взрыва используется DR торса. Делитель брони исходной атаки к этому урону не применяется.</div>
         </details>
@@ -572,7 +573,7 @@ export async function openExplosionFragmentation() {
       }
     } catch (error) {
       console.error("GURPS Explosion/Fragmentation Macro:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      ui.notifications.error(moduleMessage(error));
     } finally {
       button.disabled = false;
     }

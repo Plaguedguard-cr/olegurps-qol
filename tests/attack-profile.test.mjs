@@ -339,7 +339,7 @@ test("new errors have both RU/EN translations and use the active Foundry diction
   for (const key of Object.keys(ru).filter(key => key.startsWith("OleGURPS.AttackProfile."))) {
     assert.ok(en[key]); const code = key.split(".").at(-1);
     assert.equal(attackProfileError(code, { game: { i18n: { localize: k => ru[k] } } }), ru[key]);
-    assert.equal(attackProfileError(code, { game: { i18n: { localize: k => en[k] } } }), en[key]);
+    assert.equal(attackProfileError(code, { game: { i18n: { localize: k => en[k] } } }), ru[key]);
   }
 });
 
@@ -426,7 +426,7 @@ test("cached server manifests load only new profile translations for RU/EN witho
       assert.notEqual(attackProfileError("IncompatibleAmmunition", runtime), "IncompatibleAmmunition");
       assert.equal(runtime.game.i18n.lang, language);
       assert.equal(runtime.game.i18n.translations.existing, "preserved");
-      assert.deepEqual(Object.keys(runtime.game.i18n.translations.OleGURPS), ["AttackProfile"]);
+      assert.deepEqual(runtime.game.i18n.translations, {existing:"preserved"});
     }
   }
 });

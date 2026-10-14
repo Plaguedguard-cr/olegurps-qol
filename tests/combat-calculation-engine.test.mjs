@@ -312,9 +312,9 @@ test("prepared GGA message shows channel transitions from the same ranged calcul
     physicalShots: 1, effectiveRoF: 1, rcl: 1, consumeAction: false, runtime });
   assert.equal(result.rollData.finaltarget, 8);
   assert.match(message.content, /<details class="olegurps-attack-modifiers"><summary style="cursor:pointer">/);
-  assert.match(message.content, /<details class="olegurps-combat-channel-breakdown"><summary style="cursor:pointer">Skill details<\/summary><div><strong>Ranged Weapon Level: 13/);
+  assert.match(message.content, /<details class="olegurps-combat-channel-breakdown"><summary style="cursor:pointer">Расчёт навыка<\/summary><div><strong>Базовый навык оружия: 13/);
   assert.doesNotMatch(message.content, /<details[^>]*\bopen\b/);
-  assert.match(message.content, /Ranged Weapon Level: 13/);
+  assert.match(message.content, /Базовый навык оружия: 13/);
   assert.match(message.content, /Ranged Rapid Strike -6 -&gt; Quick-Shot 0/);
   assert.match(message.content, /Hit Location -5 -&gt; Targeted Attack -2/);
   assert.match(message.content, /Move and Attack -5 -&gt; CQB -1/);
@@ -360,7 +360,7 @@ test("standalone Fire Control folds modifiers and contextual attack details", as
   assert.match(message.content, /<details class="olegurps-attack-modifiers"><summary/);
   assert.match(message.content, /Range \(-2\)/);
   assert.match(message.content, /<details class="olegurps-attack-context"><summary/);
-  assert.match(message.content, /Hit Location: Face/);
-  assert.match(message.content, /Extremely Close/);
+  assert.match(message.content, /Зона попадания: Face/);
+  assert.match(message.content, /Предельно близко: базовый урон ×2, DR ×2/);
   assert.doesNotMatch(message.content, /<details[^>]*\bopen\b/);
 });

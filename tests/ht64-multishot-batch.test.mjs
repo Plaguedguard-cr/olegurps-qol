@@ -1,3 +1,6 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { automaticAmmoText } from "../scripts/tools/automatic-ammunition-localization.js";
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -9,7 +12,7 @@ import { resolveMultipleProjectileFire } from "../scripts/tools/fire-service.js"
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { applyInventoryOperation, projectAmmoInventory } from "../scripts/tools/ammo-inventory.js";
 import { AmmoService } from "../scripts/tools/ammo-service.js";
-import { availableAmmoTypes, multishotApprovalHTML } from "../scripts/tools/ammo-management-app.js";
+import { ammunitionCandidates, availableAmmoTypes, multishotApprovalHTML } from "../scripts/tools/ammo-management-app.js";
 import { automaticAmmoMessages, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
 import { ammunitionConditionTexts } from "../scripts/tools/damage-shot-link.js";
 import { ammoEffectMessages } from "../scripts/tools/gga-damage-compatibility.js";
@@ -28,7 +31,7 @@ function effect(id,data={},definition={}) {
  return resolveAmmunitionEffects({raw:{...raw,...data},variantId:id,baseStatus:"compatible",constructionStatus:"gm-approved",facts:c.review.facts});
 }
 test("P3 contains all thirteen source-reviewed IDs and no other package",async()=>{
- const a=JSON.parse(await fs.readFile(new URL("../docs/audit/ht64-independent-audit.json",import.meta.url),"utf8"));
+ const a=readAuditFixture('ht64-independent-audit');
  assert.deepEqual(a.records.filter(r=>r.implementationGroup==="P3_multishot_nonlethal").map(r=>r.variantId).sort(),[...MULTISHOT_IDS].sort());
  assert.equal(MULTISHOT_IDS.length,13);
 });
@@ -138,9 +141,9 @@ test("existing GM approval service validates the individual definition and revok
 test("new RU/EN controls actually load, show all thirteen labels and keep GM conditions closed",async()=>{
  for(const language of ["ru","en"]){const values=JSON.parse(await fs.readFile(new URL('../lang/'+language+'.json',import.meta.url),'utf8'));const dict={};
  const runtime={location:{},fetch:async()=>({ok:true,json:async()=>values}),game:{i18n:{lang:language,translations:dict,localize:k=>dict[k]??k}},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}};
- await loadAutomaticAmmoTranslations(runtime);assert.equal(dict['OleGURPS.AutomaticAmmo.MultishotDecision'],automaticAmmoMessages[language].MultishotDecision);
+ await loadAutomaticAmmoTranslations(runtime);assert.deepEqual(dict,{});assert.equal(automaticAmmoText('MultishotDecision',language),automaticAmmoMessages.ru.MultishotDecision);
  const pending=automatic.prepare({modeId,base:c.base,variantId:"ht_duplex"});const html=multishotApprovalHTML({...pending.type,preparation:pending},language);assert.ok(html.includes('data-multishot-approval'));assert.ok(!/<details[^>]*\bopen/.test(html));assert.ok(!html.includes('undefined'));
- for(const id of MULTISHOT_IDS)assert.ok(dict['OleGURPS.AutomaticAmmo.P3'+id]);}
+ for(const id of MULTISHOT_IDS){assert.ok(values['OleGURPS.AutomaticAmmo.P3'+id]);assert.equal(automaticAmmoText('P3'+id,language),russianText('OleGURPS.AutomaticAmmo.P3'+id));}}
 });
 test("native load guards validate count, type, divisor, recoil and beanbag Acc without a second transformation",()=>{
  for(const id of ["ht_baton","ht_beanbag"]){const damage=id==="ht_baton"?"1d(0.5) cr":"1d(0.2) cr";
@@ -181,7 +184,7 @@ test("approved rubber load is available through the existing window; NP recipes 
  }finally{game.settings.get=original;}
 });
 test("bounded plus-P evidence proves the 86 additions, preserves old 284 and does not call the general audit",async()=>{
- const d=JSON.parse(await fs.readFile(new URL('../docs/audit/ht64-multishot-plus-p-diagnostic.json',import.meta.url),'utf8'));
+ const d=readAuditFixture('ht64-multishot-plus-p-diagnostic');
  assert.equal(d.examined,511);assert.equal(d.oldReadyPreserved,284);assert.equal(d.worldReady,370);assert.deepEqual(d.lost,[]);assert.equal(d.newReady.length,86);assert.deepEqual(d.categories,{B:79,G:7});assert.equal(d.derivedAggregate,1308);assert.equal(d.exactDelta86,true);
  assert.equal(new Set(d.newReady.map(x=>x.modeId+'|'+x.ammoId)).size,86);
 });
@@ -191,6 +194,6 @@ test("saved compound native load remains unavailable and explains the actual rea
  const actor={id:"a",binding:c.binding,system:{ranged:{mode:{...c.raw,damage,rof:"3x2",rcl:"1"}}}};
  const weapon={id:"w",attackRef:{path:"system.ranged.mode"},ammunitionInventory:{version:1,stocks:[{key:s.type.key,type:s.type,rounds:0}],magazines:[],installedId:null}};
  const original=game.settings.get;game.settings.get=(_s,k)=>k==="ammunitionApprovals"?{[approvalKey({actorId:"a",weaponId:"w",modeId,type:s.type})]:s.approval}:"permissive";
- try{for(const lang of ["ru","en"]){const choice=availableAmmoTypes(actor,weapon,api,lang).find(t=>t.key===s.type.key);assert.equal(choice.unavailable,true);assert.equal(choice.reason,ammoEffectMessages[lang]['unsupported-or-compound-native-damage']);}}
+ try{for(const lang of ["ru","en"]){const choice=ammunitionCandidates(actor,weapon,api,lang).find(t=>t.key===s.type.key);assert.ok(!availableAmmoTypes(actor,weapon,api,lang).some(t=>t.key===s.type.key));assert.equal(choice.unavailable,true);assert.equal(choice.reason,ammoEffectMessages.ru['unsupported-or-compound-native-damage']);}}
  finally{game.settings.get=original;}
 });

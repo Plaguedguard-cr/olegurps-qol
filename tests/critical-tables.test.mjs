@@ -16,11 +16,11 @@ for (const language of ["ru", "en"]) test(`${language} provides exactly four exc
   assert.equal([...html.matchAll(/\bchecked\b/g)].length,1);
   assert.match(html, /value="hit" checked autofocus/);
   for (const key of ["hit", "head", "miss", "unarmed"]) {
-    const label=locales[language]["OleGURPS.Critical." + key];
+    const label=locales.ru["OleGURPS.Critical." + key];
     assert.ok(html.includes(`title="${escapeHTML(label)}"`));
     assert.ok(html.includes(`<span>${escapeHTML(label)}</span>`));
   }
-  assert.ok(html.includes(`<legend>${locales[language]["OleGURPS.Critical.Table"]}</legend>`));
+  assert.ok(html.includes(`<legend>${locales.ru["OleGURPS.Critical.Table"]}</legend>`));
   assert.match(styles, /\.oq-crit-grid[^}]*repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(styles, /\.oq-crit[^}]*:has\(input:checked\)/);
   assert.match(styles, /\.oq-crit-choice span[^}]*white-space: normal/);

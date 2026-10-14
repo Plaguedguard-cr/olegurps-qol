@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -21,7 +22,7 @@ function fixture(id) {
 const positive={carrierResolved:true,contact:true,penetration:true,protectionResolved:true,blastConfirmed:true,gasConfirmed:true,areaConfirmed:true,exposureConfirmed:true,
   activeConfirmed:true,penalty:-8,remaining:true,start:100,elapsed:30,ended:false,end:220,chargeConfirmed:true,ruleConfirmed:true,radius:10,duration:120,
   intersects:true,sensor:"optical",path:2,consequence:"cough",outcome:"failure",mof:3,exposureEnded:true};
-const matrix=JSON.parse(await fs.readFile(new URL("../docs/audit/ht64-complex-effects-decision-matrix.json",import.meta.url),"utf8"));
+const matrix=readAuditFixture('ht64-complex-effects-decision-matrix');
 test("exactly all 21 F3 IDs, no F4 DATA or unrelated effects",()=>{
   assert.equal(Object.keys(F3_ROWS).length,21);assert.deepEqual(Object.keys(F3_ROWS).sort(),matrix.effects.filter(e=>e.future_package==="F3").map(e=>e.effect_id).sort());
 });
@@ -45,17 +46,18 @@ test("flare contact full seconds 0/1/10/>10 and contact ending, no assumed light
   assert.equal(run("ht_illumination:contact",{...positive,ended:true,end:99}).status,"unresolved");
 });
 test("only ordinary smoke radius/5; no inherited timing or invented lifetimes",()=>{
-  const ordinary=run("ht_smoke:cloud",positive);assert.equal(ordinary.key,"CloudBuild");assert.equal(ordinary.values.build,2);assert.equal(ordinary.values.end,220);
-  for(const v of ["ht_colored_smoke","ht_hot_smoke","ht_prism_smoke","ht_em_smoke"]){const r=run(v+":cloud",positive);assert.equal(r.key,"Cloud");assert.equal(r.values.build,null);assert.equal(run(v+":cloud",{...positive,duration:undefined}).status,"unresolved");}
+  const ordinary=run("ht_smoke:cloud",positive);assert.equal(ordinary.key,"CloudBuild");assert.equal(ordinary.values.build,2);assert.equal(ordinary.values.radius,10);assert.equal(ordinary.values.end,220);
+  // HT171: these are Smoke variants and retain its base timing.
+  for(const v of ["ht_colored_smoke","ht_hot_smoke","ht_prism_smoke","ht_em_smoke"]){const r=run(v+":cloud",positive);assert.equal(r.key,"CloudBuild");assert.equal(r.values.build,2);assert.equal(run(v+":cloud",{...positive,duration:undefined}).status,"unresolved");for(const duration of [59,241])assert.equal(run(v+':cloud',{...positive,duration}).status,'unresolved');}
   for(const input of [{...positive,radius:undefined},{...positive,duration:undefined},{...positive,ruleConfirmed:false},{...positive,duration:59},{...positive,duration:241}])assert.equal(run("ht_smoke:cloud",input).status,"unresolved");
   assert.match(run("ht_smoke:cloud",{...positive,elapsed:120}).values.state,/./);
 });
-test("Smoke -10 and Colored -7 only optical; Hot Prism EM distinct properties without numbers",()=>{
+test("HT171 Smoke variants retain optical penalties and extend them only to named sensors",()=>{
   assert.equal(run("ht_smoke:sensors",positive).values.penalty,-10);assert.equal(run("ht_colored_smoke:sensors",positive).values.penalty,-7);
-  for(const v of ["ht_hot_smoke","ht_prism_smoke","ht_em_smoke"])for(const sensor of ["infrared","hyperspectral"]){const r=run(v+":sensors",{...positive,sensor});assert.equal(r.key,"SensorAffected");assert.equal(r.values.penalty,undefined);}
+  for(const v of ["ht_hot_smoke","ht_prism_smoke","ht_em_smoke"])for(const sensor of ["optical","infrared","hyperspectral"]){const r=run(v+":sensors",{...positive,sensor});assert.equal(r.key,"Visibility");assert.equal(r.values.penalty,-10);}
   assert.equal(run("ht_prism_smoke:sensors",{...positive,sensor:"laser"}).key,"SensorAffected");assert.equal(run("ht_em_smoke:sensors",{...positive,sensor:"laser"}).key,"SensorUnknown");
-  for(const sensor of ["radar","imagingRadar"])assert.equal(run("ht_em_smoke:sensors",{...positive,sensor}).key,"SensorAffected");
-  assert.equal(run("ht_hot_smoke:sensors",{...positive,sensor:"radar"}).key,"SensorUnknown");assert.equal(run("ht_hot_smoke:sensors",positive).key,"SensorUnknown");
+  for(const sensor of ["radar","imagingRadar"])assert.equal(run("ht_em_smoke:sensors",{...positive,sensor}).values.penalty,-10);
+  assert.equal(run("ht_hot_smoke:sensors",{...positive,sensor:"radar"}).key,"SensorUnknown");assert.equal(run("ht_hot_smoke:sensors",positive).values.penalty,-10);
   assert.equal(run("ht_smoke:sensors",{...positive,intersects:false}).key,"Outside");assert.equal(run("ht_smoke:sensors",{...positive,sensor:undefined}).status,"unresolved");
 });
 test("gas uses only path inside cloud: 0/1/2/>4 and -10 floor; unknown stays unknown",()=>{
@@ -108,8 +110,10 @@ test("actual RU EN translation loading refreshes F2 cache, key parity and interp
   assert.deepEqual(Object.keys(f3Messages.ru).sort(),Object.keys(f3Messages.en).sort());
   for(const lang of ["ru","en"]){const json=JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"));const i18n={lang,translations:{},localize:k=>i18n.translations[k]??k};let calls=0;
     for(const [k,v]of Object.entries(json))if(!k.includes(".F3"))i18n.translations[k]=v;
-    await loadAutomaticAmmoTranslations({game:{i18n},fetch:async()=>{calls++;return{ok:true,json:async()=>json}},location:{},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}});assert.equal(calls,1);
-    for(const [k,v]of Object.entries(f3Messages[lang])){assert.equal(json["OleGURPS.AutomaticAmmo.F3"+k],v);assert.equal(f3Text(k,{game:{i18n}}),v.replace(/\{\w+\}/g,"\u2014"));}
+    const before=structuredClone(i18n.translations);
+    await loadAutomaticAmmoTranslations({game:{i18n},fetch:async()=>{calls++;return{ok:true,json:async()=>json}},location:{},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}});assert.equal(calls,0);
+    assert.deepEqual(i18n.translations,before);
+    for(const [k,v]of Object.entries(f3Messages.ru)){assert.ok(json["OleGURPS.AutomaticAmmo.F3"+k]);assert.equal(f3Text(k,{game:{i18n}}),v.replace(/\{\w+\}/g,"\u2014"));}
     assert(f3Text("Visibility",{game:{i18n}},{penalty:-10}).includes("-10"));
   }
 });

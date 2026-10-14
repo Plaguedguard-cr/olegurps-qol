@@ -118,7 +118,7 @@ test("normal load window exposes separate AP/APHC/HP stocks and blocks incomplet
       const html = ammoManagementHTML(weapon, { language: lang, ammoKey: type.key }, types);
       assert.doesNotMatch(html, new RegExp('value="' + type.key + '"[^>]*disabled'));
       assert.match(html, /data-inventory-action="add-stock" disabled/);
-      assert.match(html, lang === "ru" ? /Профиль не подготовлен/ : /Profile incomplete/);
+      assert.match(html, /Профиль не подготовлен/);
       assert.equal(type.preparation.rulesStatus, type.status);
       assert.ok(type.preparation.missing.includes("explosiveMassG"));
     }
@@ -160,12 +160,15 @@ test("one understandable GM diagnostic per session; localization uses both actua
   assert.equal(warnings.length,1);assert.match(warnings[0],/resolveDamageRoll/);
   for (const lang of ["ru","en"]) { const bundle=JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"));
     const runtime={game:{i18n:{lang,localize:key=>bundle[key]??key}}};
-    assert.equal(ammoEffectText("AdapterUnavailable",{points:"TEST"},runtime),bundle["OleGURPS.AmmoEffects.AdapterUnavailable"].replace("{points}","TEST"));
+    const ru=JSON.parse(await fs.readFile(new URL("../lang/ru.json",import.meta.url),"utf8"));
+    assert.equal(ammoEffectText("AdapterUnavailable",{points:"TEST"},runtime),ru["OleGURPS.AmmoEffects.AdapterUnavailable"].replace("{points}","TEST"));
     const effectSource=await fs.readFile(new URL("../scripts/tools/ammunition-effects.js",import.meta.url),"utf8");
     const reasons=[...effectSource.matchAll(/unresolved\("([^"]+)"\)/g)].map(match=>match[1]);
     for(const reason of reasons){
-      assert.ok(bundle["OleGURPS.AmmoEffects."+reason],lang+" missing "+reason);
+      const key=Object.keys(bundle).find(key=>key.endsWith("."+reason));
+      assert.ok(key,lang+" missing "+reason);
       assert.notEqual(ammoEffectText(reason,{},runtime),reason);
+      assert.equal(ammoEffectText(reason,{},runtime),ru[key]);
     }
   }
 });
@@ -174,8 +177,8 @@ test("cached Foundry manifest loads new ammunition translations for both languag
     const dictionary={};const runtime={location:{},fetch:async url=>({ok:true,json:async()=>JSON.parse(await fs.readFile(new URL("../lang/"+language+".json",import.meta.url),"utf8"))}),
       foundry:{utils:{setProperty(object,key,value){object[key]=value;}}},game:{i18n:{lang:language,translations:dictionary,localize:key=>dictionary[key]??key}}};
     await loadAmmoEffectTranslations(runtime);
-    assert.equal(runtime.game.i18n.lang,language);assert.ok(dictionary["OleGURPS.AmmoEffects.AdapterUnavailable"]);
-    assert.ok(dictionary["OleGURPS.Ammo.ConstructionIncompatible"]);
+    assert.equal(runtime.game.i18n.lang,language);assert.deepEqual(dictionary,{});
+    assert.match(ammoEffectText("AdapterUnavailable",{points:"TEST"},runtime),/TEST/);
     assert.equal(dictionary["OleGURPS.Ammo.Title"],undefined);
   }
 });

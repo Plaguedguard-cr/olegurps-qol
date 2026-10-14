@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { isSuppressionFireAuthority } from "./suppression-fire-session-service.js";
 import { getSafeSuppressionTargetName, SUPPRESSION_TARGET_FALLBACK } from "./suppression-fire-presentation.js";
 
@@ -146,7 +147,7 @@ async function processQueue() {
         await context.onSessionChange?.(currentSession(context));
       } catch (error) {
         console.error("OleGURPS QOL | Suppression Fire confirmation:", error);
-        (context.runtime ?? globalThis).ui?.notifications?.error?.(error?.message ?? String(error));
+        (context.runtime ?? globalThis).ui?.notifications?.error?.(moduleMessage(error));
       } finally {
         pending.delete(key);
       }

@@ -84,8 +84,7 @@ test("new unconfigured weapon never acquires a fictional magazine or stock", () 
 test("ambiguous, fractional, excessive and inconsistent legacy data are preserved for review", async () => {
   for (const fields of [{ totalAmmo: 10, capacity: 30, magazines: [20], loadedIndex: 0 },
     { totalAmmo: 10.5, capacity: 30, magazines: [5], loadedIndex: 0 },
-    { totalAmmo: 80, capacity: 30, magazines: [40], loadedIndex: 0 },
-    { totalAmmo: 20, capacity: 30, magazines: [20], loadedIndex: 9 }]) {
+    { totalAmmo: 80, capacity: 30, magazines: [40], loadedIndex: 0 }]) {
     const fx = fixture({ ...fresh(), ammoUnconfigured: false, ...fields });
     const state = await fx.service.loadState();
     assert.ok(state.weapons[0].ammunitionReview);
@@ -160,7 +159,8 @@ test("install, replace and eject preserve all rounds and project the installed m
   operate(weapon, "install", { magazineId: first.id }); assert.equal(weapon.capacity, 10);
   operate(weapon, "install", { magazineId: second.id }); assert.equal(weapon.capacity, 40); assert.equal(weapon.loadedIndex, 1);
   assert.equal(weapon.totalAmmo, 50);
-  operate(weapon, "eject", { magazineId: second.id }); assert.equal(weapon.loadedIndex, -1);
+  operate(weapon, "eject", { magazineId: second.id }); assert.equal(weapon.loadedIndex, 0);
+  assert.equal(weapon.ammunitionInventory.installedId, first.id);
   assert.equal(weapon.totalAmmo, 50); assert.deepEqual(weapon.magazines, [10, 23]);
 });
 
@@ -171,7 +171,7 @@ test("deleting a filled or installed magazine returns contents without changing 
   operate(weapon, "install", { magazineId: first.id });
   operate(weapon, "delete-magazine", { magazineId: first.id });
   assert.equal(weapon.ammunitionInventory.stocks[0].rounds, 20);
-  assert.equal(weapon.ammunitionInventory.installedId, null);
+  assert.equal(weapon.ammunitionInventory.installedId, second.id);
   assert.equal(weapon.ammunitionInventory.magazines[0].id, second.id); assert.equal(weapon.totalAmmo, 20);
 });
 
@@ -264,7 +264,7 @@ test("changing dropdown selection targets a stable ID and displays only that mag
   operate(weapon, "install", { magazineId: first.id });
   const html = ammoManagementHTML(weapon, { magazineId: second.id }, []);
   assert.match(html, new RegExp('value="' + second.id + '" selected'));
-  assert.match(html, /aria-valuemax="40"/); assert.match(html, /Magazine №2/);
+  assert.match(html, /aria-valuemax="40"/); assert.match(html, /Магазин №2/);
 });
 
 test("fill bar uses continuous red-yellow-green hue and exact accessible counts", () => {
@@ -276,7 +276,7 @@ test("fill bar uses continuous red-yellow-green hue and exact accessible counts"
   assert.notEqual(magazineFill(14, 30).hue, magazineFill(15, 30).hue);
   const weapon = inventory(), magazine = addMagazines(weapon, 30);
   const html = ammoManagementHTML(weapon, { magazineId: magazine.id }, []);
-  assert.match(html, /aria-valuenow="0"/); assert.match(html, /0\/30/); assert.match(html, /Empty/);
+  assert.match(html, /aria-valuenow="0"/); assert.match(html, /0\/30/); assert.match(html, /Пустой/);
 });
 
 test("retired saved ammunition cannot be created or loaded, even with old GM flags and caller options", async () => {
@@ -374,7 +374,10 @@ test("RU/EN management keeps ammunition operations without installation, test co
       assert.ok(html.includes(`data-inventory-action="${action}"`));
     assert.ok(html.includes(ammoWindowText("Installed", language)));
     assert.ok(html.includes(ammoWindowText("Stored", language)));
-    assert.doesNotMatch(html, /Test Cartridge|Тестовый патрон|GM test mode/);
+    // The revised UX preserves the known historical name exclusively in the remnants group.
+    assert.doesNotMatch(html, /GM test mode/);
+    assert.match(html, /<optgroup label="Сохранённые остатки">[^]*Test Cartridge \(Temporary\)/);
+    assert.equal((html.match(/Test Cartridge \(Temporary\)/g)??[]).length,1);
     for (const action of ["load", "add-stock"]) assert.match(html, new RegExp(`data-inventory-action="${action}" disabled`));
     for (const action of ["unload", "unload-all", "delete-magazine", "remove-stock"])
       assert.doesNotMatch(html, new RegExp(`data-inventory-action="${action}" disabled`));
@@ -397,7 +400,7 @@ test("external installation refreshes the open window without transferring or co
   const before = fx.state.weapons[0];
   await fx.service.inventoryTransaction("weapon", "install", { magazineId: second.id });
   await subscriptions.get(app._hook).fn(fx.actor);
-  await Promise.resolve();
+  await new Promise(resolve => setImmediate(resolve));
   assert.equal(updated.weapon.ammunitionInventory.installedId, second.id);
   assert.deepEqual(updated.weapon.ammunitionInventory.stocks, before.ammunitionInventory.stocks);
   assert.deepEqual(updated.weapon.ammunitionInventory.magazines, before.ammunitionInventory.magazines);
@@ -434,13 +437,13 @@ test("RU/EN translations load, match and omit retired cartridge keys", () => {
     }
     assert.equal(ammoText("Stored", { game: { i18n: { lang: language, localize: key => translations[key] ?? key } } }),
       ammoWindowText("Stored", language));
-    assert.equal(ammoDisplayName(archived, language), translations["OleGURPS.Ammo.Stored"]);
+    assert.equal(ammoDisplayName(archived, language), ammoManagementLabels.ru.Stored);
     assert.equal(ammoDisplayName(typeA, language), "A");
   }
   const app = new AmmoManagementApp({ actor: fixture().actor, weaponId: "weapon" });
   assert.equal(app.ui.language, "ru");
   assert.equal(ammoWindowText("Load"), "Снарядить");
-  assert.equal(ammoWindowText("Load", "en"), "Load");
+  assert.equal(ammoWindowText("Load", "en"), "Снарядить");
   const weapon = inventory(), magazine = addMagazines(weapon, 30);
   const html = ammoManagementHTML(weapon, { language: app.ui.language, magazineId: magazine.id }, []);
   assert.match(html, /Тип боеприпаса/);

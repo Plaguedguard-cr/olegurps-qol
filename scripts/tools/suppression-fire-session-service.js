@@ -812,7 +812,7 @@ export function registerSuppressionFireHooks(runtime = globalThis) {
   runtime.Hooks.on("updateCombat", async combat => {
     try {
       const expired = await expireSuppressionFireForCombat(combat, runtime);
-      if (expired.length) runtime.ui?.notifications?.info?.("Suppression Fire ended at the start of the shooter's next turn.");
+      if (expired.length) runtime.ui?.notifications?.info?.("Подавляющий огонь завершён в начале следующего хода стрелка.");
     } catch (error) {
       console.error("OleGURPS QOL | Suppression Fire combat cleanup:", error);
     }

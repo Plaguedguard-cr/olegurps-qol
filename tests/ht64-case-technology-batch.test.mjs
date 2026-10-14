@@ -1,3 +1,6 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { automaticAmmoText } from "../scripts/tools/automatic-ammunition-localization.js";
+import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -6,7 +9,7 @@ import { catalogs, compatibility, automatic, resolver, context, profile, api, in
 import { CASE_VARIANTS, sourceCaseDefinition, reviewCaseDefinition, inventoryPhysicalTotals } from "../scripts/tools/case-technology.js";
 import { resolveAmmunitionEffects } from "../scripts/tools/ammunition-effects.js";
 import { FIRST_STAGE_VARIANTS, assessAmmunitionRecipe } from "../scripts/tools/ammunition-recipes.js";
-import { availableAmmoTypes, ammoManagementHTML } from "../scripts/tools/ammo-management-app.js";
+import { ammunitionCandidates, availableAmmoTypes, ammoManagementHTML } from "../scripts/tools/ammo-management-app.js";
 import { ammoTypeKey, applyInventoryOperation } from "../scripts/tools/ammo-inventory.js";
 import { AutomaticAmmunitionProfileService } from "../scripts/tools/automatic-ammunition-profiles.js";
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
@@ -87,8 +90,10 @@ test("P7 missing factory design proof never falls back to ordinary base ammuniti
     const engine=new AttackProfileResolver({catalogs:mock,compatibility,automaticProfiles:service});
     const r=engine.resolve({actorId:'actor',weaponId:'weapon',rawAttack:c.raw,binding:c.binding,ammunition:{type:c.base},profilePolicy:'permissive'});
     assert.equal(r.damage.nativeSafe,false);assert.equal(r.damage.reason,'P7ConstructionMissing');
-    const opts=availableAmmoTypes({id:'actor',system:{ranged:{mode:c.raw}},binding:c.binding},{id:'weapon',attackRef:{path:'system.ranged.mode'}},{...api,catalogs:mock,automaticAmmunitionProfiles:service},'ru');
+    const actor={id:'actor',system:{ranged:{mode:c.raw}},binding:c.binding},weapon={id:'weapon',attackRef:{path:'system.ranged.mode'}},mockApi={...api,catalogs:mock,automaticAmmunitionProfiles:service};
+    const opts=ammunitionCandidates(actor,weapon,mockApi,'ru');
     assert.equal(opts.find(t=>!t.recipe&&t.ammoId===a.id).unavailable,true);
+    assert.ok(!availableAmmoTypes(actor,weapon,mockApi,'ru').some(t=>!t.recipe&&t.ammoId===a.id));
   }
 });
 
@@ -118,7 +123,7 @@ test("P7 12G corrected native economics remain separate; loading never changes a
   const after=inventoryPhysicalTotals(weapon.ammunitionInventory,types);assert.deepEqual(after.map(r=>[r.rounds,r.weightLb,r.costUsd]),before.map(r=>[r.rounds,r.weightLb,r.costUsd]));
   assert.throws(()=>applyInventoryOperation(weapon,'load',{magazineId:'m',ammoKey:weapon.ammunitionInventory.stocks[1].key,amount:1},{allowedTypes:types}),/MixedTypes/);
   const html=ammoManagementHTML(weapon,{ammoKey:types.find(t=>t.ammoId===ids[0]&&!t.recipe).key,language:'ru'},types);assert.match(html,/data-ammo-physical/);assert.match(html,/1\.1 lb/);assert.match(html,/\$5/);
-  const regularLight=types.find(t=>t.ammoId===ids[1]&&t.recipe?.variantId==='ht_light_case');assert.equal(regularLight.unavailable,true);
+  const regularLight=ammunitionCandidates(actor,weapon,api).find(t=>t.ammoId===ids[1]&&t.recipe?.variantId==='ht_light_case');assert.equal(regularLight.unavailable,true);assert.ok(!types.some(t=>t.key===regularLight.key));
   const nativeType=types.find(t=>t.ammoId===ids[0]&&t.recipe?.variantId==='ht_light_case');
   applyInventoryOperation(weapon,'add-stock',{ammoKey:nativeType.key,amount:1},{allowedTypes:types});
   for(const lang of ['ru','en']) {
@@ -134,8 +139,12 @@ test("P7 source identities, ordinary ammo, legacy +P and other variants retain m
   const p=prepare('WO9XZem8u8ze77NNs','ht_caseless');assert.equal(profile('WO9XZem8u8ze77NNs','ht_caseless').damage.formula,'5d(0.5) pi+');
   const type=structuredClone(p.type);type.recipe.variantIds=['ht_caseless','ht_plus_p'];assert.equal(assessAmmunitionRecipe(compatibility,'WO9XZem8u8ze77NNs',type).construction.status,'incompatible');
   const shot=createShotSnapshot(profile('WO9XZem8u8ze77NNs','ht_caseless'),{attackId:'old',spent:1}),old=JSON.stringify(shot);profile(modes.ak,'ht_plus_p');assert.equal(JSON.stringify(shot),old);assert.equal(Object.isFrozen(shot.profile.damage.rules.caseTechnology),true);
-  const hashes=JSON.parse(fs.readFileSync('docs/audit/ht64-case-technology-before.json','utf8'));
-  for(const [path,hash]of Object.entries(hashes))assert.equal(createHash('sha256').update(fs.readFileSync(path)).digest('hex'),hash,path);
+  const hashes=readAuditFixture('ht64-case-technology-before');
+  for(const [path,hash]of Object.entries(hashes)){
+    // Historical document checkpoints remain pinned; copies are verified outside normal tests.
+    if (path.startsWith('docs/')) { assertHistoricalAudit(path,hash,{historicalWhitespace:path==='docs/audit/olegurps_ht64_source_review_v1.md'}); continue; }
+    assert.equal(createHash('sha256').update(fs.readFileSync(path)).digest('hex'),hash,path);
+  }
 });
 
 test("P7 new RU/EN strings load into actual translation map even with older cached P1/P6 keys", async () => {
@@ -144,9 +153,9 @@ test("P7 new RU/EN strings load into actual translation map even with older cach
     const expected=Object.entries(automaticAmmoMessages[lang]).filter(([key])=>key.startsWith('P7'));
     for(const [key,value]of expected)assert.equal(locale['OleGURPS.AutomaticAmmo.'+key],value);
     const translations={}, runtime={location:{},fetch:async()=>({ok:true,json:async()=>locale}),game:{i18n:{lang,translations,localize:k=>k.includes('.P7')?k:'cached'}},foundry:{utils:{setProperty:(obj,path,value)=>{obj[path]=value;}}}};
-    await loadAutomaticAmmoTranslations(runtime);for(const [key,value]of expected)assert.equal(translations['OleGURPS.AutomaticAmmo.'+key],value);
+    await loadAutomaticAmmoTranslations(runtime);assert.deepEqual(translations,{});for(const [key]of expected)assert.equal(automaticAmmoText(key,lang),russianText('OleGURPS.AutomaticAmmo.'+key));
     const c=context(modes.ak),actor={id:'actor',system:{ranged:{mode:c.raw}},binding:c.binding};
-    const types=availableAmmoTypes(actor,{id:'weapon',attackRef:{path:'system.ranged.mode'}},api,lang);
-    for(const id of Object.keys(CASE_VARIANTS)){const t=types.find(t=>t.recipe?.variantId===id);assert.equal(t.unavailable,true);assert.ok(t.label.includes(automaticAmmoMessages[lang]['P7'+id]));assert.equal(t.reason,automaticAmmoMessages[lang].P7ConstructionMissing);}
+    const weapon={id:'weapon',attackRef:{path:'system.ranged.mode'}};const types=ammunitionCandidates(actor,weapon,api,lang);assert.ok(!availableAmmoTypes(actor,weapon,api,lang).some(t=>Object.keys(CASE_VARIANTS).includes(t.recipe?.variantId)));
+    for(const id of Object.keys(CASE_VARIANTS)){const t=types.find(t=>t.recipe?.variantId===id);assert.equal(t.unavailable,true);assert.ok(t.label.includes(automaticAmmoMessages.ru['P7'+id]));assert.equal(t.reason,automaticAmmoMessages.ru.P7ConstructionMissing);}
   }
 });

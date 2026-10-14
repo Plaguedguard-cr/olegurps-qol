@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
 export class WeaponAssistantApp extends ApplicationV2 {
@@ -5,7 +6,7 @@ export class WeaponAssistantApp extends ApplicationV2 {
     id: "olegurps-shooting-assistant",
     classes: ["olegurps-qol", "shooting-assistant"],
     tag: "section",
-    window: { title: "Shooting Assistant", resizable: true },
+    window: { title: "Помощник стрельбы", resizable: true },
     position: { width: 820, height: "auto" }
   };
 
@@ -104,7 +105,7 @@ export class WeaponAssistantApp extends ApplicationV2 {
     } catch (error) {
       if (button.isConnected) button.disabled = false;
       console.error("GURPS Ammo Manager:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      ui.notifications.error(moduleMessage(error));
     }
   }
 }

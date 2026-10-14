@@ -1,6 +1,7 @@
 import { standaloneModeStats, StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { resolveStandaloneSkill, standaloneSkillDescription } from "./standalone-skill-service.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
+import {specializedPlatform,configuredPlatform,platformRange} from '../ht-specialized-platforms.js';
 
 /** A module-owned attack value, not an Actor attack, Item or GGA lookup path. Read fresh for each calculation. */
 export function readStandaloneAttack(actor, weaponId, modeId = null) {
@@ -8,6 +9,11 @@ export function readStandaloneAttack(actor, weaponId, modeId = null) {
   const mode = modeId ? record?.modes.find(m => m.modeId === modeId) : record?.modes[0];
   if (!record || !mode) return null;
   const stats = { ...standaloneModeStats(mode.snapshot), ...mode.overrides };
+  const configured=configuredPlatform(specializedPlatform(mode.snapshot,record.source.source),mode.overrides);
+  if(configured.bulk!==undefined)stats.bulk=configured.bulk;
+  const platformRules=configured.platform;
+  const ammunitionRange=platformRange(platformRules,stats.range);
+  if(platformRules?.manualGuidance){stats.rof='1';stats.range=String(ammunitionRange?.maximum??stats.range);}
   const bulkMetadata = parseWeaponBulk(stats.bulk);
   const skill = resolveStandaloneSkill({ actor, record, mode });
   const data = { ...stats, name: record.name, mode: mode.snapshot.usage ?? "", level: skill.level };
@@ -25,17 +31,19 @@ export function readStandaloneAttack(actor, weaponId, modeId = null) {
       unsupportedDamage = !["damage", "deriveddamage"].includes(action?.type) || !!action?.next;
     } catch { unsupportedDamage = true; }
   }
-  const reason = !skill.resolved ? skill.reason : skill.level < 3 ? "Уровень навыка ниже 3: атака недоступна." : !stats.damage ? "В режиме не указан Damage." :
+  const reason = configured.reason ?? platformRules?.blockedReason ?? (!skill.resolved ? skill.reason : skill.level < 3 ? "Уровень навыка ниже 3: атака недоступна." : !stats.damage ? "В режиме не указан Damage." :
     unsupportedDamage ? "Этот Damage не поддерживается штатным адаптером. Укажите одну распознаваемую GGA формулу урона." :
-    record.type === "ranged" && (!/\d/.test(String(stats.rof ?? "")) || !/^[1-9]\d*(?:\s*\/\s*[1-9]\d*)?$/.test(String(stats.rcl ?? "")) ||
-      stats.acc === null || !Number.isFinite(Number(String(stats.acc).split("+")[0])) || !bulkMetadata) ?
+    record.type === "ranged" && (!/\d/.test(String(stats.rof ?? "")) || !platformRules?.rclNotApplicable && !/^[1-9]\d*(?:\s*\/\s*[1-9]\d*)?$/.test(String(stats.rcl ?? "")) ||
+      stats.acc === null || !Number.isFinite(Number(String(stats.acc).split("+")[0])) || !platformRules?.bulkNotApplicable && !bulkMetadata) ?
       "В режиме не хватает RoF, Rcl, Acc или Bulk. Заполните отсутствующие параметры в настройках." :
-    record.type === "melee" && !stats.reach ? "В режиме не указан Reach." : null;
+    record.type === "melee" && !stats.reach ? "В режиме не указан Reach." : null);
   return { ...data, path: "", uuid, key: "uuid:" + uuid, label: data.mode ? record.name + " — " + data.mode : record.name,
     acc: stats.acc === null ? null : Number(String(stats.acc).split("+")[0]),
     scopeBonus: Number(String(stats.acc ?? "").split("+")[1]) || 0,
     bulk: bulkMetadata?.numericBulk ?? null, bulkMetadata, data, sourceDamage: stats.damage,
     standaloneRef: reference, governingSkillBinding: { kind: "standalone", weaponId: record.id, modeId: mode.modeId },
+    ...(platformRules?{platformRules,ammunitionRange,
+      ammunitionConditions:platformRules.instruction?[{id:'SpecializedPlatform',text:platformRules.instruction}]:[]}:{}),
     skillDescription: standaloneSkillDescription(skill), readinessReason: reason };
 }
 export function listStandaloneAttacks(actor, type) {

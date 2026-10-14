@@ -16,7 +16,11 @@ function fixture() {
   const flags = {}, writes = [];
   const actor = { isOwner: true, system: { ranged: {}, melee: {}, skills: {} },
     getFlag: (scope, key) => structuredClone(flags[scope]?.[key]),
-    setFlag: async (scope, key, value) => { flags[scope] ??= {}; flags[scope][key] = structuredClone(value); writes.push([scope, key]); } };
+    setFlag: async (scope, key, value) => { flags[scope] ??= {}; flags[scope][key] = structuredClone(value); writes.push([scope, key]); },
+    update: async changes => { writes.push(structuredClone(changes)); for (const [path,value] of Object.entries(changes)) {
+      const [,scope,key] = path.split('.'); flags[scope] ??= {};
+      if (key.startsWith('-=')) delete flags[scope][key.slice(2)]; else flags[scope][key] = structuredClone(value);
+    } } };
   return { actor, flags, writes, service: new StandaloneWeaponService(actor, catalogs) };
 }
 function draft(type = 'ranged', name = 'Izhmash AK-47', existing = null) {
@@ -133,6 +137,18 @@ test('independent copies of a model get different IDs; simultaneous writes keep 
   assert.equal(service.list().length, 2);
 });
 
+test('empty carrier reads thousands Shots without changing existing magazines or malformed capacities', async()=>{
+  const {service}=fixture(),record=await service.save(draft());
+  for(const [shots,expected]of [['1,000(2i)',1000],['30+1(3)',30],['5(3i)',5],['1000',1000],['1,00',null],['1.5',null],['?',null]]) {
+    const copy=structuredClone(record);copy.modes[0].overrides={shots};
+    const carrier=standaloneAmmoCarrier(copy);
+    assert.equal(carrier.ammunitionInventory?.magazines[0]?.capacity??null,expected,shots);
+    assert.equal(carrier.totalAmmo,0);
+    const preserved=standaloneAmmoCarrier(copy,carrier);
+    assert.deepEqual(preserved,carrier);
+  }
+});
+
 test('stale editors fail without overwriting newer settings or resurrecting deleted weapons', async () => {
   const { service } = fixture(), saved = await service.save(draft());
   const a = draft('ranged', '', saved), b = draft('ranged', '', saved);
@@ -143,17 +159,27 @@ test('stale editors fail without overwriting newer settings or resurrecting dele
   await assert.rejects(service.save(stale), new RegExp(standaloneText('Stale')));
 });
 
-test('deletion and catalog changes reject remaining stocks, magazines and unresolved inventory', async () => {
+test('catalog changes reject remaining resources; deletion rejects malformed ownership and inventory', async () => {
   const { actor, service, flags } = fixture(), saved = await service.save(draft());
   for (const extra of [{ totalAmmo: 3 }, { magazines: [0] }, { ammunitionReview: { reason: 'legacy' } },
     { ammunitionInventory: { version: 1, stocks: [{ rounds: 5 }], magazines: [] } }]) {
-    flags.world = { gurpsAmmoManager: { weapons: [{ ...standaloneAmmoCarrier(saved), ...extra }] } };
+    const legacy=standaloneAmmoCarrier(saved);delete legacy.ammunitionInventory;
+    Object.assign(legacy,{magazines:[],loadedIndex:-1,capacity:0,ammoUnconfigured:true});
+    flags.world = { gurpsAmmoManager: { weapons: [{ ...legacy, ...extra }] } };
     const before = structuredClone(flags);
     assert.equal(standaloneHasResources(actor, saved.id), true);
-    await assert.rejects(service.remove(saved.id), new RegExp('Боеприпасы'));
     const change = draft('ranged', '', saved); change.selectModel(searchStandaloneModels(catalogs, 'ranged', 'Atlatl')[0].equipment_id);
     await assert.rejects(service.save(change), new RegExp('Боеприпасы'));
     assert.deepEqual(flags, before);
+    if (extra.totalAmmo === 3) {
+      await service.remove(saved.id);
+      assert.equal(service.get(saved.id), null);
+      assert.deepEqual(flags.world.gurpsAmmoManager.weapons, []);
+      flags['olegurps-qol'].standaloneWeapons.weapons.push(saved);
+    } else {
+      await assert.rejects(service.remove(saved.id), new RegExp(standaloneText('AmbiguousResources')));
+      assert.deepEqual(flags, before);
+    }
   }
 });
 
@@ -164,7 +190,7 @@ test('empty deletion keeps unrelated weapons, ammo and historical shot snapshots
   const before = structuredClone(flags.world);
   await service.remove(saved.id);
   assert.equal(service.get(saved.id), null);
-  assert.deepEqual(flags.world, before);
+  assert.deepEqual(flags.world, { gurpsAmmoManager: { ...before.gurpsAmmoManager, weapons: [other] } });
 });
 
 test('ranged form checkbox permits creation without a GGA attack and defaults to existing behavior', async () => {
@@ -176,18 +202,23 @@ test('ranged form checkbox permits creation without a GGA attack and defaults to
   const result = await model.commit({ id: 'unused' });
   assert.deepEqual(result.weapon.attackRef, {});
   assert.equal(result.weapon.totalAmmo, 0);
-  assert.deepEqual(result.weapon.magazines, []);
+  assert.deepEqual(result.weapon.magazines, [0]);
+  assert.equal(result.weapon.capacity,30);assert.equal(result.weapon.loadedIndex,0);
+  assert.deepEqual(result.weapon.ammunitionInventory.stocks,[]);
 });
 
-test('AmmoService restores standalone carriers without inferred skills, magazines or duplicate records', async () => {
+test('AmmoService creates exactly one empty feed of published capacity without ammunition, skills or duplicates', async () => {
   const { actor, service } = fixture(), saved = await service.save(draft());
   const ammo = new AmmoService(actor), state = await ammo.loadState();
   assert.equal(state.weapons.length, 1);
   assert.equal(state.weapons[0].standaloneWeaponId, saved.id);
-  assert.deepEqual(state.weapons[0].magazines, []);
+  assert.deepEqual(state.weapons[0].magazines, [0]);assert.equal(state.weapons[0].totalAmmo,0);
+  assert.equal(state.weapons[0].ammunitionInventory.magazines[0].capacity,30);
+  assert.equal(state.weapons[0].ammunitionInventory.installedId,state.weapons[0].ammunitionInventory.magazines[0].id);
   assert.deepEqual(state.governingSkills, {});
   await ammo.saveState(state);
-  assert.equal((await ammo.loadState()).weapons.length, 1);
+  const reloaded=await ammo.loadState();assert.equal(reloaded.weapons.length, 1);
+  assert.deepEqual(reloaded.weapons[0].ammunitionInventory,state.weapons[0].ammunitionInventory);
   assert.deepEqual(actor.system.ranged, {});
 });
 
@@ -201,16 +232,17 @@ test('non-owner writes and invalid model/type/mode combinations fail without tou
   assert.deepEqual(flags, {});
 });
 
-test('a queued stock write blocks ranged deletion and preserves definitions and ammunition', async () => {
+test('a queued stock write completes before atomic ranged deletion without resurrecting resources', async () => {
   const { actor, service } = fixture(), saved = await service.save(draft());
   const ammo = new AmmoService(actor); await ammo.saveState(await ammo.loadState());
   const type = { key: 'ht:ammo-item:a', source: 'catalog', book: 'ht', kind: 'ammo-item', ammoId: 'a', name: 'A' };
   const addition = ammo.inventoryTransaction(saved.id, 'add-stock', { ammoKey: type.key, amount: 3 }, { allowedTypes: [type] });
   const deletion = ammo.removeStandaloneWeapon(saved.id);
   await addition;
-  await assert.rejects(deletion, new RegExp('Боеприпасы'));
-  assert.ok(service.get(saved.id));
-  assert.equal((await ammo.loadState()).weapons[0].totalAmmo, 3);
+  await deletion;
+  assert.equal(service.get(saved.id), null);
+  assert.deepEqual((await ammo.loadState()).weapons, []);
+  await assert.rejects(ammo.inventoryTransaction(saved.id, 'add-stock', { ammoKey:type.key,amount:3 }, { allowedTypes:[type] }), /WeaponMissing/);
 });
 
 test('ranged deletion removes only its empty carrier and keeps other resources and shot receipts', async () => {

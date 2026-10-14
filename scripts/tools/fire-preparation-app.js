@@ -1,3 +1,4 @@
+import { moduleMessage, moduleText } from "../localization.js";
 import { isWeaponBondActive } from "./weapon-bond-service.js";
 import { projectAmmoInventory } from "./ammo-inventory.js";
 import { createStandaloneAttack, getTokenFireRangeContext, measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
@@ -21,6 +22,7 @@ import { withRuntimeAmmoStats } from "./attack-profile-runtime.js";
 import { parseRateOfFire } from "./fire-service.js";
 import { ammunitionConditionTexts } from "./damage-shot-link.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
+import { ammoCaption } from "./ammo-caption.js";
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
@@ -977,7 +979,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const label = this.visibility?.mode === "unseen"
       ? this.visibility.blindFireHex ? "\u0412\u044b\u0431\u0440\u0430\u043d\u043d\u044b\u0439 \u0433\u0435\u043a\u0441" : "\u0426\u0435\u043b\u044c"
       : this.visibility?.mode === "blind" && !this.visibility.knownLocation
-        ? "\u0412\u044b\u0431\u0440\u0430\u043d\u043d\u044b\u0439 \u0433\u0435\u043a\u0441" : "GGA target";
+        ? "\u0412\u044b\u0431\u0440\u0430\u043d\u043d\u044b\u0439 \u0433\u0435\u043a\u0441" : "Цель GGA";
     const penalty = recommendation ? Number(recommendation.penalty) : Number.NaN;
     if (!Number.isFinite(penalty)) return `${label}: \u043d\u0435\u0442 \u0440\u0435\u043a\u043e\u043c\u0435\u043d\u0434\u0430\u0446\u0438\u0438`;
     const distance = Number(recommendation?.distance);
@@ -1098,6 +1100,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
     this.fireState.shots = root.querySelector('[name="shots"]')?.value ?? "";
+    this.fireState.manualGuidanceConfirmed = globalThis.game?.user?.isGM === true && root.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
     this.fireState.attackEnvironment = root.querySelector('[name="attackEnvironment"]')?.value ?? "air";
     this.fireState.depthFeet = root.querySelector('[name="depthFeet"]')?.value ?? "";
     const rrsField = root.querySelector('[name="rangedRapidStrike"]');
@@ -1144,6 +1147,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   getShotOptions() {
+    this.fireState.manualGuidanceConfirmed = globalThis.game?.user?.isGM === true && this.element?.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
     // Refresh only the perk toggle; keep the GGA skill and all other attack values.
     if (this.mode === "weapon" && this.weapon && this.attack) {
       const stored = this.actor?.getFlag?.("world", "gurpsAmmoManager");
@@ -1162,6 +1166,7 @@ export class FirePreparationApp extends ApplicationV2 {
       : selectedToken ? measureTokenDistanceYards(this.token, selectedToken) : null;
     return {
       shots: this._getShotsValue(),
+      manualGuidanceConfirmed:this.fireState.manualGuidanceConfirmed,
       rangedRapidStrike: this.fireState.rangedRapidStrike,
       closeHipShooting: this.fireState.closeHipShooting,
       rangedRapidStrikePart: this.fireState.rangedRapidStrike,
@@ -1332,7 +1337,7 @@ export class FirePreparationApp extends ApplicationV2 {
       attackEnvironment: slot.attackEnvironment ?? "air", depthFeet: slot.depthFeet ?? "",
       visibility: slot.visibility, targetTokenId: slot.targetId,
       rangedRapidStrike: true, rangedRapidStrikePart: true,
-      contextLabel: "Attack " + (index + 1)
+      contextLabel: "Атака " + (index + 1)
     })) ?? [];
   }
   _getShotLimits(fireState = this.fireState) {
@@ -1468,7 +1473,7 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _getAttackStatsText(displayedRoF, displayedAcc = this._getDisplayedAcc()) {
     return [
-      this.weapon.ammoType,
+      ammoCaption(this.actor, this.weapon),
       ...(this.attack?.standaloneRef && this.weapon.ammoUnconfigured && !this.weapon.magazines.length ?
         ["Без учёта боезапаса"] : [`магазин ${this.weapon.magazines[this.weapon.loadedIndex]}/${this.weapon.capacity}`]),
       `RoF ${displayedRoF}`,
@@ -1553,6 +1558,8 @@ export class FirePreparationApp extends ApplicationV2 {
   _ammunitionConditionsHTML(fireMode) {
     const language = globalThis.game?.i18n?.lang ?? "ru";
     const lines = ammunitionConditionTexts(this.attack?.ammunitionConditions, language);
+    if (this.attack?.ammunitionRange) lines.push(moduleText("OleGURPS.AttackProfile.MinimumRangeHint", this.attack.ammunitionRange));
+    if (this.attack?.ammunitionManualCycling) lines.push(moduleText("OleGURPS.AttackProfile.AmmunitionCyclingUnconfirmed"));
     if (String(this.attack?.rcl ?? "").includes("/") && !this.attack?.ammunitionProjectileKind)
       lines.push(automaticAmmoText("ProjectileRclRequired", language));
     if (fireMode?.extremelyClose) lines.push(automaticAmmoText("ShotgunCloseGM", language,
@@ -1580,7 +1587,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const checkbox = this.element?.querySelector('[name="rangedRapidStrike"]');
     if (checkbox) {
       checkbox.disabled = !this._rrsAllowed();
-      checkbox.title = checkbox.disabled ? "Ranged Rapid Strike requires RoF 2+ and two available shots." : "";
+      checkbox.title = checkbox.disabled ? "Для быстрой двойной стрельбы нужны RoF 2+ и два доступных выстрела." : "";
     }
     const label = this.element?.querySelector("[data-rrs-penalty]");
     if (label) label.textContent = String(resolveRangedRapidStrike({ actor: this.actor,
@@ -1724,7 +1731,7 @@ export class FirePreparationApp extends ApplicationV2 {
       globalThis.requestAnimationFrame?.(() => this._syncRangeListHeight());
     } catch (error) {
       console.error("Не удалось переключить bodyplan:", error);
-      ui.notifications.error(error?.message ?? "Не удалось переключить bodyplan.");
+      ui.notifications.error(moduleMessage(error));
       const currentSelector = this.element?.querySelector('[name="bodyplanId"]');
       if (currentSelector) currentSelector.value = this.targetingService.bodyplan;
     } finally {
@@ -1780,12 +1787,12 @@ export class FirePreparationApp extends ApplicationV2 {
     try {
       const pending = this.governingSpecialtyChangeCallback?.(value);
       pending?.catch?.(error => {
-        console.error("Не удалось сохранить governing Guns specialty:", error);
-        ui.notifications.error("Не удалось сохранить выбранный governing Guns specialty.");
+        console.error("Не удалось сохранить специализацию основного навыка Guns:", error);
+        ui.notifications.error("Не удалось сохранить выбранную специализацию основного навыка Guns.");
       });
     } catch (error) {
-      console.error("Не удалось сохранить governing Guns specialty:", error);
-      ui.notifications.error("Не удалось сохранить выбранный governing Guns specialty.");
+      console.error("Не удалось сохранить специализацию основного навыка Guns:", error);
+      ui.notifications.error("Не удалось сохранить выбранную специализацию основного навыка Guns.");
     }
   }
 
@@ -2098,7 +2105,7 @@ export class FirePreparationApp extends ApplicationV2 {
       if (completed) await this.close();
     } catch (error) {
       console.error("GURPS Fire Preparation:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      ui.notifications.error(moduleMessage(error));
     } finally {
       this._submitting = false;
       this._switchingRrsTarget = false;
@@ -2176,7 +2183,7 @@ export class FirePreparationApp extends ApplicationV2 {
       const hit = slot.hitLocation;
       if (hit?.zoneId !== zoneId || regionId && hit.regionId && hit.regionId !== regionId) return [];
       return [{ className: "gam-rapid-attack-" + (index + 1) + (index === this._activeRrsSlot ? " is-active" : ""),
-        label: "Attack " + (index + 1) }];
+        label: "Атака " + (index + 1) }];
     });
   }
 
@@ -2270,16 +2277,16 @@ export class FirePreparationApp extends ApplicationV2 {
       <aside class="gam-fire-targeting gam-bodyplan-${escapeHTML(this.targetingService.bodyplan)}">
         <section>
           <div class="gam-hit-heading">
-            <h4>Hit Location</h4>
+            <h4>Зона попадания</h4>
             <div class="gam-hit-heading-controls">
               <select name="bodyplanId" aria-label="Bodyplan">${bodyplanOptions}</select>
-              <p>${escapeHTML(this.targetingService.label)} · ${this.targetingService.tableSource === "gga" ? "GGA" : "fallback"}</p>
+              <p>${escapeHTML(this.targetingService.label)} · ${this.targetingService.tableSource === "gga" ? "GGA" : "резервная таблица"}</p>
             </div>
           </div>
           <div class="gam-hit-panel">
             <div class="gam-hit-map">
               <div class="gam-hit-stage" style="--gam-hit-aspect:${escapeHTML(this.targetingService.aspectRatio)}">
-                <img src="${escapeHTML(this.targetingService.image)}" alt="${escapeHTML(this.targetingService.label)} hit locations">
+                <img src="${escapeHTML(this.targetingService.image)}" alt="${escapeHTML(this.targetingService.label)} — зоны попадания">
                 <svg class="gam-hit-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-label="Интерактивная схема зон попадания">${regions}</svg>
               </div>
             </div>
@@ -2309,7 +2316,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const hints = this.element?.querySelector("[data-missing-stats]");
     if (!hints) return;
     const missing = [];
-    if (Number(this.fireState.aimSeconds) > 0 && this.attack.acc === null) missing.push("Aim: нужен Acc");
+    if (Number(this.fireState.aimSeconds) > 0 && this.attack.acc === null) missing.push("Прицеливание: нужен Acc");
     if (this.fireState.moveAndAttack && this.attack.data.bulk === null) missing.push("Движение и атака: нужен Bulk");
     if (this.fireState.shotgun && !(Number.isInteger(Number(this.fireState.projectileMultiplier)) && Number(this.fireState.projectileMultiplier) > 1)) {
       missing.push("Дробовик: нужен целый множитель после ×");
@@ -2360,7 +2367,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const final = calculated === null ? null : rules.blind ? Math.min(calculated, 9) : calculated;
     return `<span>\u0420\u0430\u0441\u0447\u0451\u0442: ${base ?? "\u2014"}</span>
       <span>\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c: ${rules.penalty}</span>
-      ${rules.blind ? "<span>Cap Shooting Blind: 9</span>" : ""}
+      ${rules.blind ? "<span>Предел навыка при стрельбе вслепую: 9</span>" : ""}
       <strong>\u0418\u0442\u043e\u0433: ${final ?? "\u2014"}</strong>`;
   }
 
@@ -2391,7 +2398,7 @@ export class FirePreparationApp extends ApplicationV2 {
       (selected ? 'is-selected' : '') + '" aria-pressed="' + (selected ? 'true' : 'false') +
       '">' + label + '</button>';
     return '<div class="gam-visibility-location"><strong>\u041c\u0435\u0441\u0442\u043e\u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438</strong>'
-      + (manual ? '<label>Hearing <input type="number" name="manualHearing" min="1" step="1" value="' + escapeHTML(this.manualHearingLevel ?? "") + '"></label>' : "")
+      + (manual ? '<label>Слух <input type="number" name="manualHearing" min="1" step="1" value="' + escapeHTML(this.manualHearingLevel ?? "") + '"></label>' : "")
       + button("hearing-check", "\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u0441\u043b\u0443\u0445\u0430 (Hearing-2)", method === "hearing")
       + button("known-location", "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e \u0434\u0440\u0443\u0433\u0438\u043c \u0441\u043f\u043e\u0441\u043e\u0431\u043e\u043c", method === "other")
       + button("blind-fire", this.mode === "melee" ? "\u0410\u0442\u0430\u043a\u043e\u0432\u0430\u0442\u044c \u043d\u0430\u0443\u0433\u0430\u0434" : "\u0421\u0442\u0440\u0435\u043b\u044f\u0442\u044c \u043d\u0430\u0443\u0433\u0430\u0434", method === "blind-fire")
@@ -2407,7 +2414,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _buildVisibilityRuleHint(rules) {
-    return !rules.aimAllowed ? "<p>Aim \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d; Hit Location: Random; \u043b\u0430\u0437\u0435\u0440 \u043d\u0435 \u0434\u0430\u0451\u0442 \u0431\u043e\u043d\u0443\u0441.</p>" : "";
+    return !rules.aimAllowed ? "<p>Aim \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d; Зона попадания: случайная; \u043b\u0430\u0437\u0435\u0440 \u043d\u0435 \u0434\u0430\u0451\u0442 \u0431\u043e\u043d\u0443\u0441.</p>" : "";
   }
 
   _buildVisibilityContent() {
@@ -2431,7 +2438,7 @@ export class FirePreparationApp extends ApplicationV2 {
       ${state.mode === "blind" ? `<label><input type="checkbox" name="accustomed" ${state.accustomed ? "checked" : ""}> \u041f\u0440\u0438\u0432\u044b\u043a \u043a \u0441\u043b\u0435\u043f\u043e\u0442\u0435</label>` : ""}</div>
       ${state.mode === "unseen" ? this._buildUnseenLocationContent(state) : ""}
       ${state.mode === "blind" ? `<div class="gam-visibility-location"><strong>\u041e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u044f</strong>
-        ${manual ? `<label>Hearing (\u0432\u0440\u0443\u0447\u043d\u0443\u044e) <input type="number" name="manualHearing" min="1" step="1" value="${escapeHTML(this.manualHearingLevel ?? "")}"></label>` : ""}
+        ${manual ? `<label>Слух (\u0432\u0440\u0443\u0447\u043d\u0443\u044e) <input type="number" name="manualHearing" min="1" step="1" value="${escapeHTML(this.manualHearingLevel ?? "")}"></label>` : ""}
         <button type="button" data-fire-action="hearing-check">\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430 \u0441\u043b\u0443\u0445\u0430 (Hearing-2)</button>
         <button type="button" data-fire-action="known-location">\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e \u0434\u0440\u0443\u0433\u0438\u043c \u0441\u043f\u043e\u0441\u043e\u0431\u043e\u043c</button>
         <span>${state.knownLocation ? "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e: " + escapeHTML(safeName) : state.hearing === "success" && state.hex ? "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e: \u0433\u0435\u043a\u0441" : "\u041f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u043d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e"}</span>
@@ -2474,14 +2481,14 @@ export class FirePreparationApp extends ApplicationV2 {
       const penalty = range.penalty >= 0 ? `+${range.penalty}` : String(range.penalty);
       return `
         <button type="button" class="gam-fire-range-row ${selected ? "selected" : ""} ${recommended ? "recommended" : ""} ${elevationRecommended ? "elevation-recommended" : ""} ${rrsMarkers.map(index => `gam-rrs-range-${index}`).join(" ")}" data-range-index="${range.index}" aria-pressed="${selected}">
-          <span>${escapeHTML(range.label)}</span>
+          <span>${escapeHTML(String(range.label).replace(/^for range\/speed (.+) yds?$/i, "$1 ярдов"))}</span>
           <strong class="gam-fire-range-penalty">${penalty}</strong>
           <span class="gam-fire-range-markers">
             ${fireState.rangedRapidStrike && this._rrsSlots
               ? `<span class="gam-hit-selection-markers" data-rrs-range-markers>${this._buildRrsRangeMarkers(rrsMarkers)}</span>`
               : `<span class="gam-fire-range-marker gam-fire-range-marker-selected" data-selected-marker ${selected ? "" : "hidden"}>\u0412\u044b\u0431\u0440\u0430\u043d\u043e</span>`}
             <span class="gam-fire-range-marker gam-fire-range-marker-recommended" data-target-marker ${recommended ? "" : "hidden"}>${this.visibility?.mode === "unseen" && this.visibility.blindFireHex ||
-              this.visibility?.mode === "blind" && !this.visibility.knownLocation ? "\u0413\u0435\u043a\u0441" : "GGA target"}</span>
+              this.visibility?.mode === "blind" && !this.visibility.knownLocation ? "\u0413\u0435\u043a\u0441" : "Цель GGA"}</span>
             <span class="gam-fire-range-marker gam-fire-range-marker-elevation" data-elevation-marker ${elevationRecommended ? "" : "hidden"}>Высота</span>
           </span>
         </button>
@@ -2494,6 +2501,7 @@ export class FirePreparationApp extends ApplicationV2 {
           <div class="gam-fire-summary-main">
             <h3>${escapeHTML(this.mode === "standalone" ? "Fire Control" : this.weapon.name)}</h3>
             ${this.mode === "standalone" ? this._buildStandaloneStats(fireState) : `<p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>`}
+            ${this.attack?.platformRules?.manualGuidance ? `<p class="hint">${escapeHTML(this.attack.platformRules.instruction)}</p>${globalThis.game?.user?.isGM ? `<label><input type="checkbox" name="manualGuidanceConfirmed" ${fireState.manualGuidanceConfirmed?'checked':''}>Ведущий разрешил эту проверку с ручным учётом наведения и полёта</label>` : '<p class="hint">Эту проверку выполняет ведущий после ручного учёта наведения.</p>'}` : ''}
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
@@ -2521,17 +2529,17 @@ export class FirePreparationApp extends ApplicationV2 {
                   <input type="checkbox" name="laserSight" ${visibilityRules(this._visibilityForTargeting())?.random ? "disabled" : ""} aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
                 </div>
               <label class="gam-fire-aim">
-                  <span>Aim:</span>
-                  <input type="number" name="aimSeconds" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} value="${escapeHTML(fireState.aimSeconds)}" placeholder="0" min="0" step="1" inputmode="numeric" aria-label="Aim в секундах">
+                  <span>Прицеливание:</span>
+                  <input type="number" name="aimSeconds" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} value="${escapeHTML(fireState.aimSeconds)}" placeholder="0" min="0" step="1" inputmode="numeric" aria-label="Прицеливание в секундах">
                   <span>сек.</span>
-                  <span class="gam-fire-aim-effective">Eff. mod:</span>
+                  <span class="gam-fire-aim-effective">Итог:</span>
                   <strong class="gam-fire-aim-bonus" data-aim-preview>+${aimedFireModifier}</strong>
                 </label>
               <div class="gam-fire-field gam-fire-field-checkbox">
                   <span>Движение и атака</span>
                   <input type="checkbox" name="moveAndAttack" aria-label="Движение и атака" ${fireState.moveAndAttack ? "checked" : ""}>
                 </div>
-              <div class="gam-fire-braced" title="Бонус применяется только при Aim">
+              <div class="gam-fire-braced" title="Бонус применяется только при прицеливании">
                   <span>Упор</span>
                   <input type="checkbox" name="braced" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} aria-label="Упор" ${fireState.braced ? "checked" : ""}>
                 </div>
@@ -2560,11 +2568,11 @@ export class FirePreparationApp extends ApplicationV2 {
                   </label>
                   <span class="gam-fire-elevation-separator" aria-hidden="true">|</span>
                   <label class="gam-fire-high-ground">
-                    <span>High Ground</span>
+                    <span>Цель ниже</span>
                     <input type="checkbox" name="highGround" ${fireState.elevationDirection === "high" ? "checked" : ""}>
                   </label>
                   <label class="gam-fire-high-ground">
-                    <span>Low Ground</span>
+                    <span>Цель выше</span>
                     <input type="checkbox" name="lowGround" ${fireState.elevationDirection === "low" ? "checked" : ""}>
                   </label>
                 </div>

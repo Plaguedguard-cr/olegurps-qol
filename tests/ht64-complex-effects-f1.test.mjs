@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -6,7 +7,7 @@ import { shotAmmunitionConditions, ammunitionConditionTexts } from "../scripts/t
 import { automaticAmmoText, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
 
 const scope = "olegurps-qol";
-const matrix = JSON.parse(await readFile(new URL("../docs/audit/ht64-complex-effects-decision-matrix.json", import.meta.url), "utf8"));
+const matrix = readAuditFixture('ht64-complex-effects-decision-matrix');
 function fixture(variant, id = "A") {
   const shot = {version:1, attackId:"attack-"+id, actorId:"actor", spent:1,
     correlation:{attackMessageId:id}, mode:{name:"Saved weapon"},
@@ -104,7 +105,8 @@ test("RU/EN new keys load through actual translation loader including stale cach
   for(const [index,lang]of ["ru","en"].entries()) {
     let fetches=0;const i18n={lang,translations:{},_fallback:{},localize:key=>i18n.translations[key]??key};
     await loadAutomaticAmmoTranslations({location:{},foundry:{utils:{setProperty:(object,key,value)=>object[key]=value}},game:{i18n},fetch:async path=>{fetches++;assert(path.endsWith("/"+lang+".json"));return {ok:true,json:async()=>files[index]};}});
-    assert.equal(fetches,1);
-    for(const key of keys)assert.equal(i18n.localize("OleGURPS.AutomaticAmmo."+key),automaticAmmoText(key,lang));
+    assert.equal(fetches,0);
+    assert.deepEqual(i18n.translations,{});
+    for(const key of keys)assert.equal(files[0]["OleGURPS.AutomaticAmmo."+key],automaticAmmoText(key,lang));
   }
 });

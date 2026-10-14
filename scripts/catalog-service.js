@@ -1,4 +1,5 @@
 import { LEMAT, LEMAT_SHOT_CHARGE, correctHTMode, correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
+import { correctedHTLabel } from "./ht-source-corrections.js";
 // Reference data only: no Actor, Item, settings, attack or damage writes.
 export const CATALOG_DEFINITIONS = Object.freeze({
   weapons: Object.freeze({ filename: "olegurps_weapon_reference_catalog_v5_6.json",
@@ -534,9 +535,9 @@ export class CatalogService {
   getCatalog(book) { return this.#ready(book)?.data ?? null; }
   getRecord(book, collection, id) { return this.#ready(book)?.indexes.get(collection)?.get(id) ?? null; }
   getEquipment(id) {
-    const equipment = this.getRecord("weapons", "equipment", id);
-    return equipment?.equipment_id === LEMAT.equipmentId ? freeze({ ...equipment,
-      modes: equipment.modes.map(mode => correctHTMode(mode, equipment)) }) : equipment;
+    const equipment = correctedHTLabel(this.getRecord("weapons", "equipment", id), "weapon");
+    return equipment ? freeze({ ...equipment,
+      modes: equipment.modes.map(mode => correctHTMode(mode, equipment)) }) : freeze(equipment);
   }
   getMode(id) {
     return freeze(correctHTMode(this.getRecord("weapons", "modes", id), this.#ready("weapons")?.parents.get(id)));
@@ -547,6 +548,12 @@ export class CatalogService {
     if (book === "ht" && id === LEMAT.shotAmmoId && this.#ready(book)?.relationshipChecks.status === "passed" &&
         this.getMode(LEMAT.shotModeId)?.ht_ammo_item_ids.includes(id)) return LEMAT_SHOT_CHARGE;
     const record = this.getRecord(book, "ammo_items", id);
+    if(book==='ht' && id==='ht_specific_hydra_laser_guided_70mm' && record?.warhead_type==='HE' && !record.attack_override) {
+      const he=this.getRecord(book,'ammo_items','ht_specific_hydra_mk66_he');
+      if(he?.attack_override?.damage==='7dx3 cr ex [3d+2 cut]' && he.source_weapon_equipment_id===record.source_weapon_equipment_id)
+        return freeze({...record,attack_override:{...he.attack_override,range:'300/10,500',acc:'4'},
+          guidancePackage:{warheadAmmoId:he.id,source:'HT150: MK66 HE with laser guidance package; independent warhead and guidance',acc:4,manualGuidance:true}});
+    }
     return book === "ht" ? freeze(correctHTAmmo(record)) : record;
   }
   getAmmoFamily(book, id) {
@@ -558,6 +565,8 @@ export class CatalogService {
   getModeLinks(id) {
     const book = this.getEquipmentForMode(id)?.source.toLowerCase();
     const links = this.#ready(book)?.links.get(id) ?? null;
+    const reviewed=this.getMode(id)?.sourceIdentityCorrection;
+    if(links&&reviewed)return freeze({...links,ammoItemIds:[reviewed.value],ammoFamilyIds:[]});
     return links && id === LEMAT.shotModeId && this.getAmmoItem("ht", LEMAT.shotAmmoId)
       ? freeze({ ...links, ammoItemIds: [LEMAT.shotAmmoId], ammoFamilyIds: [] }) : links;
   }

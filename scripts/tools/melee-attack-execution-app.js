@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { executeNativeMeleeAttack } from "./melee-service.js";
 import { withClearedFoundryTargets } from "./foundry-targets.js";
@@ -39,7 +40,7 @@ export async function executeMeleeAttackSnapshot(snapshot) {
         ui.notifications.warn("\u0410\u0442\u0430\u043a\u0430 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0430, \u043d\u043e \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u0443\u044e Hit Location \u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u0434\u043e\u0431\u0430\u0432\u0438\u0442\u044c \u0432 \u0435\u0451 \u0441\u043e\u043e\u0431\u0449\u0435\u043d\u0438\u0435.");
       }
     } catch (error) {
-      console.error("Melee Assistant random Hit Location:", error);
+      console.error("Помощник ближнего боя random Зона попадания:", error);
       ui.notifications.warn("\u0410\u0442\u0430\u043a\u0430 \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d\u0430, \u043d\u043e \u0441\u043b\u0443\u0447\u0430\u0439\u043d\u0443\u044e Hit Location \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u044c \u043d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c.");
     }
   }
@@ -69,7 +70,7 @@ export class MeleeAttackExecutionApp extends ApplicationV2 {
     return `<div class="gam-melee-execution-list">${this.slots.map((slot, index) => `
       <button type="button" data-execution-slot="${index}" ${slot.completed ? "disabled" : ""}>
         <strong>${escapeHTML(slot.label)}${slot.completed ? " \u2713" : ""}</strong>
-        <small>${escapeHTML(slot.effectiveSkill)} \u00b7 ${escapeHTML(slot.hitLocationLabel || "Hit Location")}${slot.martialSummary ? " \u00b7 " + escapeHTML(slot.martialSummary) : ""}</small>
+        <small>${escapeHTML(slot.effectiveSkill)} \u00b7 ${escapeHTML(slot.hitLocationLabel || "Зона попадания")}${slot.martialSummary ? " \u00b7 " + escapeHTML(slot.martialSummary) : ""}</small>
       </button>`).join("")}</div>`;
   }
 
@@ -99,8 +100,8 @@ export class MeleeAttackExecutionApp extends ApplicationV2 {
         ui.notifications.warn("\u0411\u0440\u043e\u0441\u043e\u043a \u043d\u0435 \u0431\u044b\u043b \u0432\u044b\u043f\u043e\u043b\u043d\u0435\u043d.");
       }
     } catch (error) {
-      console.error("Melee Assistant attack " + slot.label + ":", error);
-      ui.notifications.error(error?.message ?? String(error));
+      console.error("Помощник ближнего боя attack " + slot.label + ":", error);
+      ui.notifications.error(moduleMessage(error));
     } finally {
       this._busy = false;
       if (!this._closed && this.rendered) await this.render({ force: true });

@@ -37,5 +37,5 @@ export function assessAmmunitionRecipe(compatibility, modeId, type, approval = n
   return { base, construction, approval: authorized ? structuredClone(approval) : null,
     applicationAllowed: construction?.status === "compatible" || authorized || automaticAllowed,
     authority: authorized ? "gm-approved" : construction?.status === "compatible" ? "reference" : automaticAllowed ? automatic.authority : construction?.status ?? "undetermined",
-    facts: (isCaseVariant(recipe.variantId) ? preparedFacts : null) ?? fuze?.facts ?? environment?.facts ?? composite?.facts ?? multishot?.facts ?? review?.facts ?? construction?.eligibility?.facts ?? null };
+    facts: (isCaseVariant(recipe.variantId) || recipe.variantId === "ht_match_handloaded" ? preparedFacts : null) ?? fuze?.facts ?? environment?.facts ?? composite?.facts ?? multishot?.facts ?? review?.facts ?? construction?.eligibility?.facts ?? null };
 }

@@ -4,7 +4,7 @@ import { requireDeveloperGM, armTestRoll, cancelTestRoll, getPendingTestRoll, su
 export class DeveloperModeWindow extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "olegurps-developer-mode", classes: ["olegurps-qol"], tag: "section",
-    window: { title: "OleGURPS.Developer.Title", resizable: false },
+    window: { title: developerText("Title"), resizable: false },
     position: { width: 380, height: "auto" }
   };
   #selected = 10;

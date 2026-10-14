@@ -1,5 +1,6 @@
 import { immutableCopy, SHOT_FLAG_SCOPE } from "./attack-profile-resolver.js";
 import { diagnoseGgaDamageAdapters, warnGgaDamageCompatibility, ammoEffectText } from "./gga-damage-compatibility.js";
+import { appendInstructionSteps } from "../localization.js";
 import { explosiveText } from "./explosive-ammunition-localization.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 import { isExplosiveVariant } from "./explosive-attack-profiles.js";
@@ -8,6 +9,9 @@ import { isFuzeTracerVariant } from "./fuze-tracer-ammunition.js";
 import { ammunitionInstructionKeys, f1ManualConditionKey } from "./ammunition-condition-presentation.js";
 import { f2RowsForShot, appendF2Conditions } from "./ammunition-f2.js";
 import { f3RowsForShot, f3Extension } from "./ammunition-f3.js";
+import { localizeOwnChat } from "./chat-ui-localization.js";
+import { f4RowsForShot, appendF4Conditions, expireTracerMarkers } from "./ammunition-f4.js";
+import {applyGyrojetDamageResult} from './gyrojet-range.js';
 
 const installations = new WeakMap();
 const flag = message => message?.getFlag?.(SHOT_FLAG_SCOPE, "shotSnapshot") ?? message?.flags?.[SHOT_FLAG_SCOPE]?.shotSnapshot;
@@ -71,12 +75,18 @@ export function shotAmmunitionConditions(message, runtime = globalThis) {
   if (!damage?.nativeSafe) return [];
   const language = runtime.game?.i18n?.lang ?? "ru";
   const keys = ammunitionInstructionKeys(shot), excluded = new Set(keys), context = shot.profile.context;
-  const existingComponentNote = explosiveShot(shot) && damage.components?.some(c => c.role !== "kinetic" && c.status === "resolved");
+  const replaced = {Linked:"P4LinkedFollowUp",Internal:"P4LinkedFollowUp",Fragments:"P4Fragmentation",
+    Falloff:"P4Thermobaric",Spall:"P4HESH",Tandem:"P4Tandem",Reliability:"P4SAPLEReliability"};
+  for (const row of f2RowsForShot(shot)) if (replaced[row.kind]) excluded.add(replaced[row.kind]);
+  const existingComponentNote = explosiveShot(shot) && damage.components?.some(c =>
+    ["linked", "follow-up"].includes(c.role) && c.status === "resolved");
+  if (!existingComponentNote) excluded.add("P4LinkedFollowUp");
   const legacy = [...ammunitionConditionTexts(damage.support?.manual, language, excluded),
     ...ammunitionConditionTexts(context?.environment?.manual, language, excluded),
-    ...ammunitionConditionTexts(context?.barrel?.manual, language, excluded)];
+    ...ammunitionConditionTexts(context?.barrel?.manual, language, excluded),
+    ...(context?.platform?.instruction?[context.platform.instruction]:[])];
   // Preserve pre-existing component guidance in this one section, rather than a duplicate details.
-  if (existingComponentNote &&
+  if (existingComponentNote && !f2RowsForShot(shot).some(r => ["Linked", "Internal"].includes(r.kind)) &&
       !damage.support?.manual?.some(c => c.id === "P4LinkedFollowUp"))
     legacy.push(explosiveText(damage.rules?.componentOrder ? "P4LinkedFollowUp" : "ManualConditions", runtime, language));
   if (!keys.length && !legacy.length) return [];
@@ -84,9 +94,10 @@ export function shotAmmunitionConditions(message, runtime = globalThis) {
 }
 export function ammunitionConditionTexts(conditions = [], language = globalThis.game?.i18n?.lang ?? "ru", excludedKeys = new Set()) {
   return (conditions ?? []).flatMap(condition => {
+    if(condition.id==='SpecializedPlatform'&&typeof condition.text==='string')return [condition.text];
     const f1Key = f1ManualConditionKey(condition.id);
     if (f1Key) return excludedKeys.has(f1Key) ? [] : [automaticAmmoText(f1Key, language)];
-    if (componentConditionIds.has(condition.id)) return [explosiveText(condition.id, {}, language, {tl:condition.tl,threshold:condition.threshold})];
+    if (componentConditionIds.has(condition.id)) return excludedKeys.has(condition.id) ? [] : [explosiveText(condition.id, {}, language, {tl:condition.tl,threshold:condition.threshold})];
     const key = { Hearing: "HearingGM", ObjectWithoutDR: "ObjectWithoutDRGM", NoOverpenetrationWithDR: "NoOverpenetrationGM",
       PlusPReliability: "PlusPReliabilityGM", PlusPAutomaticRoF: "PlusPAutomaticRoFGM", MinimumSTSupport: "MinimumSTSupportGM",
       NativeHPExpansion: "NativeHPExpansionGM", PlusPSubsonicUnverified: "PlusPSubsonicUnverifiedGM",
@@ -100,15 +111,16 @@ export function renderShotAmmunitionConditions(message, root, runtime = globalTh
   root?.querySelector?.("[data-olegurps-special-effects]")?.remove?.();
   const conditions = shotAmmunitionConditions(message, runtime);
   const resolved = ammunitionConditionSource(message, runtime);
-  if ((!conditions.length && !f2RowsForShot(resolved?.shot).length && !f3RowsForShot(resolved?.shot).length) || !runtime.document) return null;
+  if ((!conditions.length && !f2RowsForShot(resolved?.shot).length && !f3RowsForShot(resolved?.shot).length && !f4RowsForShot(resolved?.shot).length) || !runtime.document) return null;
   const card = root?.querySelector?.(".roll-message.gga-chat-message, .damage-message");
   if (!card) return null;
   const details = runtime.document.createElement("details"), summary = runtime.document.createElement("summary");
   details.dataset.olegurpsSpecialEffects = "true";
   summary.textContent = automaticAmmoText("F1Title", runtime.game?.i18n?.lang ?? "ru");
   details.append(summary);
-  for (const text of conditions) { const line = runtime.document.createElement("div"); line.textContent = text; details.append(line); }
+  for (const text of conditions) appendInstructionSteps(details, text, runtime.document);
   appendF2Conditions(details, resolved, runtime, () => ammunitionConditionSource(message, runtime), f3Extension(resolved, runtime));
+  appendF4Conditions(details, resolved, runtime, () => ammunitionConditionSource(message, runtime));
   card.append(details);
   return details;
 }
@@ -247,6 +259,8 @@ export function installDamageShotLink(runtime = globalThis) {
   };
   const render = function(actor, diceData, targetmods, draggableData, event, ...args) {
     const context = event && events.get(event), roll = draggableData?.[0]?.roll;
+    if(context?.status==='linked'&&actor?.id===context.shot.actorId&&context.shot.damage?.nativeSafe)
+      draggableData=draggableData.map(d=>applyGyrojetDamageResult(d,context.shot.damage.rules?.gyrojetRange,context.component??'kinetic'));
     if (context && roll && typeof roll === "object") {
       rolls.set(roll, context.status === "linked" && actor?.id !== context.shot.actorId
         ? unlinked("actor-mismatch") : context);
@@ -312,7 +326,9 @@ export function installDamageShotLink(runtime = globalThis) {
   const mark = (message, html) => {
     const root = html?.querySelectorAll ? html : html?.[0];
     root?.querySelector?.("[data-olegurps-special-effects]")?.remove?.();
-    if (!readable(message) || (!owned(message) && !message?.flags?.[SHOT_FLAG_SCOPE]?.damageLink)) return;
+    if (!readable(message)) return;
+    localizeOwnChat(root, runtime);
+    if (!owned(message) && !message?.flags?.[SHOT_FLAG_SCOPE]?.damageLink) return;
     const shot = flag(message), ammunition = shot?.ammunition;
     const ammunitionName = completed(shot, message.id) && ammunition?.source === "catalog" &&
       ammunition.status === "confirmed" && typeof ammunition.name === "string" ? ammunition.name.trim() : "";
@@ -371,7 +387,9 @@ export function installDamageShotLink(runtime = globalThis) {
   };
   const hooks = [["preCreateChatMessage", Hooks.on("preCreateChatMessage", preCreate)],
     ["renderChatMessageHTML", Hooks.on("renderChatMessageHTML", mark)],
-    ["renderChatMessage", Hooks.on("renderChatMessage", mark)]];
+    ["renderChatMessage", Hooks.on("renderChatMessage", mark)],
+    ["updateCombat", Hooks.on("updateCombat", combat => expireTracerMarkers(combat, runtime).catch(error =>
+      console.error("OleGURPS F4 | tracer expiry", error)))]];
   GURPS.performAction = perform;
   if (typeof originals.resolve === "function") GURPS.resolveDamageRoll = resolve;
   prototype._createChatMessage = render;

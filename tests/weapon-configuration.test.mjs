@@ -215,7 +215,7 @@ test("previously confirmed ammunition never gets silently replaced by the new ca
   const result = await draft.commit({ id: "unused" });
   assert.deepEqual(result.weapon.ammunitionBinding, existing.ammunitionBinding);
   assert.equal(result.weapon.ammoType, existing.ammoType);
-  assert.match(weaponConfigurationHTML(draft), /Review/);
+  assert.match(weaponConfigurationHTML(draft), /Требуется проверка/);
 });
 
 test("governing skill follows actual specialty and GGA level without forcing catalog TL", () => {
@@ -285,7 +285,7 @@ test("form has the requested field order and no ammunition quantity controls", (
 test("catalog failure preserves GGA functionality and old ammunition", async () => {
   const f = fixture([row()], oldWeapon()), unavailable = new CatalogService({ logger: null });
   const draft = f.makeDraft({ catalogs: unavailable, bindings: new WeaponCatalogBindingService(unavailable) });
-  assert.match(weaponConfigurationHTML(draft), /Unavailable/);
+  assert.match(weaponConfigurationHTML(draft), /недоступен/);
   const result = await draft.commit({ id: "unused" });
   assert.equal(result.weapon.ammoType, "Old custom rounds"); assert.equal(f.writes.length, 0);
 });
@@ -321,7 +321,7 @@ test("RU and EN provide identical keys for every new UI label", async () => {
 
 test("every weapon label has a RU/EN fallback when Foundry cached the old language manifest", async () => {
   for (const lang of ["en", "ru"]) {
-    const locale = JSON.parse(await fs.readFile(new URL("../lang/" + lang + ".json", import.meta.url), "utf8"));
+    const locale = JSON.parse(await fs.readFile(new URL("../lang/ru.json", import.meta.url), "utf8"));
     for (const [key, value] of Object.entries(locale).filter(([key]) => key.startsWith("OleGURPS.Weapon.")))
       assert.equal(weaponText(key.split(".").at(-1), { game: { i18n: { lang, localize: key => key } } }), value);
   }
@@ -342,7 +342,7 @@ test("full search starts only after two meaningful characters", () => {
     const result = weaponCatalogSearchState(catalogs, query, ak);
     assert.equal(result.searching, false);
     assert.equal(result.options[0].modeId, ak.modeId);
-    assert.equal(result.status, "Enter at least 2 characters");
+    assert.equal(result.status, "Введите минимум 2 символа");
   }
   assert.equal(weaponCatalogSearchState(catalogs, "AK", ak).searching, true);
 });
@@ -355,10 +355,10 @@ test("search filters the entire catalog before the cap and counts actual matches
   const result = weaponCatalogSearchState(fake, "fixture", { equipmentId: "eq129", modeId: "mode129" });
   assert.equal(result.total, 130); assert.equal(result.shown, 100);
   assert.equal(result.options.length, 101); assert.equal(result.options[0].modeId, "mode129");
-  assert.equal(result.status, "Showing 100 of 130 matches");
+  assert.equal(result.status, "Показано 100 из 130 совпадений");
   const exact = weaponCatalogSearchState(fake, "mode129", null);
   assert.equal(exact.total, 1); assert.equal(exact.options[0].modeId, "mode129");
-  assert.equal(exact.status, "1 matches found");
+  assert.equal(exact.status, "Найдено совпадений: 1");
 });
 
 test("clearing, replacing and failing a search retain the selected model without altering its binding", () => {
@@ -368,7 +368,7 @@ test("clearing, replacing and failing a search retain the selected model without
     assert.ok(result.options.some(entry => entry.modeId === target.modeId));
     assert.deepEqual(target, original);
   }
-  assert.equal(weaponCatalogSearchState(catalogs, "No such fixture model", target).status, "No matches found");
+  assert.equal(weaponCatalogSearchState(catalogs, "No such fixture model", target).status, "Совпадений не найдено");
 });
 
 test("full search supports case-insensitive explicit caliber, source, usage and equipment ID", () => {
@@ -385,8 +385,8 @@ test("editor places the short hint and search status above the selector and cont
       weaponBond: false, bondAvailable: true, candidates: [ak] } });
   assert.ok(options.content.indexOf('name="catalogSearch"') < options.content.indexOf("data-search-count"));
   assert.ok(options.content.indexOf("data-search-count") < options.content.indexOf('name="editorCatalogMode"'));
-  assert.match(options.content, /placeholder="Name, caliber or ID"/);
-  assert.match(options.content, /title="Search by weapon name, caliber, source, attack mode, equipment_id or weapon_mode_id"/);
+  assert.match(options.content, /placeholder="Название, калибр или ID"/);
+  assert.match(options.content, /title="Поиск по названию оружия, калибру, источнику, режиму атаки, equipment_id или weapon_mode_id"/);
   assert.doesNotMatch(options.content, /Weapon Bond|editorBond|weaponBond/);
   assert.equal(Object.hasOwn(result.configuration, "weaponBond"), false);
 });

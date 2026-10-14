@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { normalizeTrademarkMoveStep, getTrademarkHitLocationOptions, getTrademarkHitLocationValue } from "./trademark-move-model.js";
 import { TargetingService } from "./targeting-service.js";
 import { createTargetedAttackContext } from "./targeted-attack-service.js";
@@ -12,7 +13,7 @@ export class TrademarkMoveEditorApp extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     classes: ["olegurps-qol", "trademark-move-editor"],
     tag: "section",
-    window: { title: "Trademark Move", resizable: true, minimizable: true },
+    window: { title: "Фирменный приём", resizable: true, minimizable: true },
     position: { width: 720, height: "auto" }
   };
 
@@ -137,13 +138,13 @@ export class TrademarkMoveEditorApp extends ApplicationV2 {
           '<option value="0">' + escape(profile?.display ?? "1") + '</option>') + '</select></label>' +
         '<label>' + label("\\u0412\\u044b\\u0441\\u0442\\u0440\\u0435\\u043b\\u044b") +
         '<input name="shots" type="number" min="1" step="1" value="' + escape(step.shots) + '"></label>' +
-        '<label>Bodyplan <select name="bodyplanId">' + opts(TargetingService.getBodyplanOptions(), x => x.id, x => x.label, step.bodyplanId) + '</select></label>' +
-        '<label>Hit Location <select name="hitLocation">' + opts(locations, x => x.zoneId + "::" + (x.regionId ?? ""), x => x.label, locationValue) + '</select></label>' +
-        '<label>Governing Skill <span>' + escape(current?.attack?.governingSkillBinding?.name ?? "Ranged Level fallback") + '</span></label>' +
-        '<div class="tm-aim-preview-row"><label>Aim <input name="aimSeconds" type="number" min="0" step="1" value="' + escape(step.aimSeconds) + '"></label>' +
+        '<label>Схема тела <select name="bodyplanId">' + opts(TargetingService.getBodyplanOptions(), x => x.id, x => x.label, step.bodyplanId) + '</select></label>' +
+        '<label>Зона попадания <select name="hitLocation">' + opts(locations, x => x.zoneId + "::" + (x.regionId ?? ""), x => x.label, locationValue) + '</select></label>' +
+        '<label>Основной навык <span>' + escape(current?.attack?.governingSkillBinding?.name ?? "Уровень дистанционной атаки") + '</span></label>' +
+        '<div class="tm-aim-preview-row"><label>Прицеливание <input name="aimSeconds" type="number" min="0" step="1" value="' + escape(step.aimSeconds) + '"></label>' +
         '<span data-tm-skill-preview>' + escape(this._previewText(preview)) + '</span></div>' +
         '</div><div class="tm-checks">' + [
-          ["braced", "Braced"], ["laserSight", "Laser Sight"], ["moveAndAttack", "Move and Attack"],
+          ["braced", "С упором"], ["laserSight", "Лазерный прицел"], ["moveAndAttack", "Move and Attack"],
           ["allOutAttack", "All-Out Attack (Determined)"], ["rangedRapidStrike", "Ranged Rapid Strike"]
         ].map(([name, text]) => '<label><input type="checkbox" name="' + name + '"' + (step[name] ? ' checked' : '') + '> ' + text + '</label>').join("") +
         '</div></article>';
@@ -152,7 +153,7 @@ export class TrademarkMoveEditorApp extends ApplicationV2 {
       '<button type="button" data-tm-action="add">' + label("\\u0414\\u043e\\u0431\\u0430\\u0432\\u0438\\u0442\\u044c \\u0430\\u0442\\u0430\\u043a\\u0443") + '</button>' +
       '<button type="button" data-tm-action="cancel">' + label("\\u041e\\u0442\\u043c\\u0435\\u043d\\u0430") + '</button>' +
       '<button type="button" data-tm-action="save">' + label("\\u0421\\u043e\\u0445\\u0440\\u0430\\u043d\\u0438\\u0442\\u044c") + '</button>' +
-      (this.hasSaved ? '<button type="button" data-tm-action="delete">' + label("\\u0423\\u0434\\u0430\\u043b\\u0438\\u0442\\u044c Trademark Move") + '</button>' : '') +
+      (this.hasSaved ? '<button type="button" data-tm-action="delete">' + label("\\u0423\\u0434\\u0430\\u043b\\u0438\\u0442\\u044c Фирменный приём") + '</button>' : '') +
       '</footer></div>';
   }
 
@@ -191,8 +192,8 @@ export class TrademarkMoveEditorApp extends ApplicationV2 {
     if (["add", "remove", "up", "down"].includes(action)) return this.render({ force: true });
     if (action === "delete") {
       const confirmed = await globalThis.foundry.applications.api.DialogV2.confirm({
-        window: { title: "Trademark Move" },
-        content: "<p>" + label("\\u0423\\u0434\\u0430\\u043b\\u0438\\u0442\\u044c \\u0441\\u043e\\u0445\\u0440\\u0430\\u043d\\u0451\\u043d\\u043d\\u044b\\u0439 Trademark Move?") + "</p>"
+        window: { title: "Фирменный приём" },
+        content: "<p>" + label("\\u0423\\u0434\\u0430\\u043b\\u0438\\u0442\\u044c \\u0441\\u043e\\u0445\\u0440\\u0430\\u043d\\u0451\\u043d\\u043d\\u044b\\u0439 Фирменный приём?") + "</p>"
       });
       if (!confirmed) return;
     }
@@ -203,7 +204,7 @@ export class TrademarkMoveEditorApp extends ApplicationV2 {
       else await this.onDelete();
       await this.close();
     } catch (error) {
-      globalThis.ui.notifications.error(error?.message ?? String(error));
+      globalThis.ui.notifications.error(moduleMessage(error));
     } finally { this.busy = false; }
   }
 }

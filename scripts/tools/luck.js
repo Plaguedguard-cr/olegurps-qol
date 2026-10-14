@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 export function getLuckIntro(firstTotal, secondTotal) {
   return Number(firstTotal) === Number(secondTotal)
     ? "Все пути к одному исходу"
@@ -45,6 +46,6 @@ export async function openLuck() {
     });
   } catch (error) {
     console.error("GURPS Luck Macro:", error);
-    ui.notifications.error(error?.message ?? String(error));
+    ui.notifications.error(moduleMessage(error));
   }
 }

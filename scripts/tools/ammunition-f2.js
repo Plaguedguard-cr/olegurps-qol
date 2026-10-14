@@ -5,6 +5,7 @@ import { calculateHitsFromMargin } from "./prepared-gga-roll.js";
 import { f2Text } from "./ammunition-f2-localization.js";
 import { selfDestructDistanceReached } from "./fuze-tracer-ammunition.js";
 import { explosiveText } from "./explosive-ammunition-localization.js";
+import { appendInstructionSteps } from "../localization.js";
 
 const row = (variants, suffix, kind, component) => variants.split(" ").map(v => [v + ":" + suffix, { kind, component }]);
 export const F2_ROWS = Object.freeze(Object.fromEntries([
@@ -108,7 +109,9 @@ export function calculateF2({ shot, source, role = "kinetic", messageId = source
   }
   if (kind === "Spall") {
     if (input.nonpenetration !== true || !boolean(input.laminated) || !nonnegative(input.dr)) return missing(F2_FIELDS.Spall);
-    const dice = formulaDice(component(shot, "kinetic")?.formula);
+    // HT170 uses the linked blast maximum, never the kinetic impact maximum.
+    const blast = component(shot, "linked");
+    const dice = /\bcr\s+ex\b/.test(blast?.formula ?? "") ? formulaDice(blast.formula) : null;
     if (!dice) return missing(["Components"]);
     const r = heshSpall({ maximumBlast: Math.max(0, (6 * dice.dice + dice.adds) * dice.multiplier), dr: input.dr, laminated: input.laminated });
     return result(input.laminated ? "Laminated" : "SpallResult", { damage: r.damage, dr: r.effectiveDR });
@@ -141,7 +144,11 @@ export function appendF2Conditions(details, resolved, runtime, refresh, extensio
   const doc = runtime.document, add = (parent, tag, text) => { const el = doc.createElement(tag); if (text !== undefined) el.textContent = text; parent.append(el); return el; };
   const kinds = [...new Set(rows.map(r => r.kind))];
   const previousLinked = details.textContent?.includes(explosiveText("P4LinkedFollowUp", runtime));
-  for (const kind of kinds) add(details, "div", f2Text(kind === "Linked" && previousLinked ? "LinkedExtra" : kind, runtime));
+  for (const kind of kinds) {
+    const primaryBlast = kind === "Linked" && !component(resolved.shot, "linked") &&
+      component(resolved.shot, "kinetic")?.relation === "linked-blast-primary";
+    appendInstructionSteps(details, f2Text(primaryBlast ? "LinkedPrimary" : kind === "Linked" && previousLinked ? "LinkedExtra" : kind, runtime), doc);
+  }
   const facts = savedF2Facts(resolved, runtime), unknown = f2Text("Unknown", runtime);
   add(details, "div", f2Text("Facts", runtime, Object.fromEntries(Object.entries(facts).map(([k, v]) => [k, v ?? unknown]))));
   const formulas = resolved.shot.profile.damage.components?.filter(c => c.status === "resolved").map(c => `${f2Text("role" + c.role, runtime)}: ${c.formula}`) ?? [];

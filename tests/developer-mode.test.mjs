@@ -52,13 +52,13 @@ for (const total of [3, 10, 17, 18]) {
     assert.equal(result.rollData.isCritSuccess, total === 3);
     assert.equal(result.rollData.isCritFailure, total === 18);
     assert.equal(result.rollData.rofrcl, total >= 17 ? 0 : Math.min(20, 26 - total));
-    assert.match(fx.messages[0].content, /Test roll/);
+    assert.match(fx.messages[0].content, /Тестовый бросок/);
     assert.equal(fx.messages[0].rolls[0], result.roll);
     assert.deepEqual(fx.messages[0].flags["olegurps-qol"].testRoll, { total, userId: "gm" });
     assert.equal(getPendingTestRoll(), null);
     const ordinary = await fx.run();
     assert.equal(ordinary.roll.total, 12);
-    assert.doesNotMatch(ordinary.message.content, /Test roll/);
+    assert.doesNotMatch(ordinary.message.content, /Тестовый бросок/);
     assert.equal(ordinary.message.flags, undefined);
   });
   test(`prepared skill supports forced ${total}`, async () => {
@@ -206,7 +206,7 @@ test("developer fallback resolves every label without loaded language metadata",
       assert.equal(developerText(key.split(".").at(-1), runtime), value);
     }
   }
-  assert.equal(developerText("Open", { game: { i18n: { lang: "ru", localize: () => "Native translation" } } }), "Native translation");
+  assert.equal(developerText("Open", { game: { i18n: { lang: "ru", localize: () => "Native translation" } } }), "Открыть режим разработчика");
   const ru = JSON.parse(readFileSync(new URL("../lang/ru.json", import.meta.url), "utf8"));
   assert.equal(developerText("Open", { game: { i18n: { lang: "en", localize: () => "Open developer mode" } } }), ru["OleGURPS.Developer.Open"]);
 });

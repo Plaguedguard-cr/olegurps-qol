@@ -78,7 +78,7 @@ test("concealed ranged roll still lists Trademark Move separately", async () => 
     visibilityPenalty: 0, visibilityCapAdjustment: 0, trademarkMoveBonus: 1, runtime });
   assert.equal(result.rolled, true);
   assert.equal(result.rollData.finaltarget, 12);
-  assert.match(message.content, /Trademark Move \(\+1\)/);
+  assert.match(message.content, /Фирменный приём \(\+1\)/);
 });
 test("Humanoid Hit Location menu shows generic limbs once and keeps other saved regions", () => {
   const definition = BODYPLAN_DEFINITIONS.humanoid;
@@ -276,7 +276,7 @@ test("Trademark Move editor puts skill preview beside Aim and refreshes it", asy
       effectiveSkill: 16 + step.aimSeconds, successChance: "98,1" });
     const html = await app._renderHTML();
     assert.match(html, /tm-aim-preview-row/);
-    assert.match(html, /Aim[^<]*<input[^>]*><\/label><span data-tm-skill-preview>/);
+    assert.match(html, /Прицеливание[^<]*<input[^>]*><\/label><span data-tm-skill-preview>/);
     assert.match(html, /\u0411\u0430\u0437\u0430: 16 \| \u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b: \+0/);
     const display = { textContent: "" };
     app.element = { querySelector: () => display };

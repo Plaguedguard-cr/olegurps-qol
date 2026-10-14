@@ -1,6 +1,7 @@
 import { environmentalVisibility, gasConsequenceDuration, smokeBuildSeconds, environmentalContactSchedule } from "./environment-ammunition.js";
 import { ammunitionInstructionKeys } from "./ammunition-condition-presentation.js";
 import { f3Text } from "./ammunition-f3-localization.js";
+import { appendInstructionSteps } from "../localization.js";
 
 // Only the 21 approved F3 rows. No construction or catalog changes.
 export const F3_ROWS = Object.freeze(Object.fromEntries([
@@ -63,10 +64,11 @@ export function calculateF3({ shot, source, role = "kinetic", messageId = source
   if (row.kind === "Cloud") {
     if (input.chargeConfirmed !== true || input.ruleConfirmed !== true || !positive(input.radius) || !nonnegative(input.start) ||
         !positive(input.duration) || !nonnegative(input.elapsed)) return missing("chargeConfirmed", "ruleConfirmed", "radius", "start", "duration", "elapsed");
-    if (variant === "ht_smoke" && (input.duration < 60 || input.duration > 240)) return missing("duration");
-    return result(variant === "ht_smoke" ? "CloudBuild" : "Cloud", {
+    // HT171 lists these as variants of Smoke; they retain its build time and lifetime.
+    if (input.duration < 60 || input.duration > 240) return missing("duration");
+    return result("CloudBuild", {
       radius: input.radius, start: input.start, end: input.start + input.duration,
-      build: variant === "ht_smoke" ? smokeBuildSeconds(input.radius) : null,
+      build: smokeBuildSeconds(input.radius),
       state: f3Text(input.elapsed < input.duration ? "Active" : "Ended", runtime)
     });
   }
@@ -74,10 +76,11 @@ export function calculateF3({ shot, source, role = "kinetic", messageId = source
     if (input.intersects === false || input.activeConfirmed === false) return result("Outside");
     if (input.intersects !== true || input.activeConfirmed !== true || input.chargeConfirmed !== true ||
         !["optical", "infrared", "hyperspectral", "laser", "radar", "imagingRadar"].includes(input.sensor)) return missing("intersects", "activeConfirmed", "chargeConfirmed", "sensor");
-    if (["ht_smoke", "ht_colored_smoke"].includes(variant) && input.sensor === "optical")
+    if (input.sensor === "optical")
       return result("Visibility", { penalty: environmentalVisibility(variant) });
     const affected = ["ht_hot_smoke", "ht_prism_smoke", "ht_em_smoke"].includes(variant) && ["infrared", "hyperspectral"].includes(input.sensor) ||
       variant === "ht_prism_smoke" && input.sensor === "laser" || variant === "ht_em_smoke" && ["radar", "imagingRadar"].includes(input.sensor);
+    if (affected && input.sensor !== "laser") return result("Visibility", { penalty: -10 });
     return result(affected ? "SensorAffected" : "SensorUnknown", { sensor: f3Text(input.sensor, runtime) });
   }
   if (row.kind === "GasVision") {
@@ -112,10 +115,17 @@ export function f3Extension(resolved, runtime) {
   return {
     rows: rows.map(r => ({ ...r, name: f3Text("Name" + r.kind, runtime) })),
     instructions(details) {
-      for (const kind of keys) { const line = runtime.document.createElement("div"); line.textContent = f3Text("Rule" + kind, runtime); details.append(line); }
-      if (rows.some(r => r.kind === "Sensors")) { const line = runtime.document.createElement("div"); line.textContent = f3Text("Rule" + rows[0].id.split(":")[0], runtime); details.append(line); }
+      const variant = rows[0]?.id.split(":")[0];
+      for (const kind of keys) {
+        const key = kind === "Light" ? (variant === "ht_signal_flare" ? "RuleSignal" : "RuleIllumination") : "Rule" + kind;
+        appendInstructionSteps(details, f3Text(key, runtime), runtime.document);
+      }
+      if (rows.some(r => r.kind === "Sensors")) appendInstructionSteps(details, f3Text("Rule" + variant, runtime), runtime.document);
+      const cloud = resolved?.shot?.profile?.damage?.rules?.environment?.sourceCloud;
+      if (variant === "ht_white_phosphorus" && cloud)
+        appendInstructionSteps(details, f3Text("SourceCloud", runtime, {radius:cloud.radiusYards,seconds:cloud.durationSeconds}), runtime.document);
       // HAFLA source knowledge remains in F1, without copying those numbers to other WP or catalogs.
-      if (ammunitionInstructionKeys(resolved?.shot).includes("F1HAFLASmoke")) { const line = runtime.document.createElement("div"); line.textContent = f3Text("HAFLA", runtime); details.append(line); }
+      // The exact HAFLA smoke instructions are already included by F1; do not repeat them.
     },
     fields(id) {
       const row = F3_ROWS[id]; if (!row) return null;

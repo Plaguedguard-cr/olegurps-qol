@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { FirePreparationApp } from "./fire-preparation-app.js";
 import { getEvaluateStatusTurns } from "./aim-status-effects.js";
 import { checkHearingMinusTwo, meleeVisibilityRules, normalizeVisibility } from "./limited-visibility.js";
@@ -53,7 +54,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     id: "olegurps-melee-assistant",
     classes: ["olegurps-qol", "fire-preparation", "melee-assistant"],
     tag: "section",
-    window: { title: "Melee Assistant", resizable: true },
+    window: { title: "Помощник ближнего боя", resizable: true },
     position: { width: 1120, height: "auto" }
   };
 
@@ -64,7 +65,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     super({
       mode: "melee",
       token,
-      weapon: { id: "melee-" + actor.id, name: "Melee Assistant" },
+      weapon: { id: "melee-" + actor.id, name: "Помощник ближнего боя" },
       attack,
       rangeBands: [],
       recommendation: null,
@@ -87,7 +88,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     }, {
       ...options,
       id: options.id ?? "olegurps-melee-assistant-" + token.id,
-      window: { title: "Melee Assistant - " + actor.name, resizable: true, ...(options.window ?? {}) }
+      window: { title: "Помощник ближнего боя - " + actor.name, resizable: true, ...(options.window ?? {}) }
     });
     this.actor = actor;
     this._evaluateManuallyEdited = false;
@@ -331,7 +332,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _buildVisibilityRuleHint() {
     return this._getMeleeVisibilityRules()?.random
-      ? "<p>Hit Location: Random; Targeted Attack \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.</p>" : "";
+      ? "<p>Зона попадания: случайная; Targeted Attack \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.</p>" : "";
   }
 
   _buildVisibilityContent() {
@@ -412,7 +413,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       committedSteps: this.fireState.committedSteps,
       hitLocationPenalty: location.penalty,
       hitLocationBasePenalty: location.selection?.penalty ?? 0,
-      hitLocationLabel: "Hit Location: " + (location.selection?.label ?? ""),
+      hitLocationLabel: "Зона попадания: " + (location.selection?.label ?? ""),
       targetedAttack: location.targetedAttack,
       precisionPenalty,
       rapidStrikePenalty: this._getRapidStrikePenalty(),
@@ -491,11 +492,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
     const sourceLevel = Number(this.sourceAttack?.level ?? this.sourceAttack?.import);
     const adjustment = Number.isFinite(sourceLevel) && calculation
       ? calculation.baseSkill - sourceLevel : 0;
-    if (adjustment) details.unshift({ label: "Attack entry level adjustment", value: adjustment });
+    if (adjustment) details.unshift({ label: "Поправка уровня выбранной атаки", value: adjustment });
     const described = details.reduce((total, entry) => total + Number(entry.value), 0);
     const expected = Number(effectiveSkill) - (Number.isFinite(sourceLevel) ? sourceLevel : calculation?.baseSkill ?? 0);
     if (Number.isFinite(expected) && expected !== described)
-      details.push({ label: "Roll adjustment", value: expected - described });
+      details.push({ label: "Поправка броска", value: expected - described });
     return details;
   }
 
@@ -517,8 +518,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
       escapeHTML(skill.label) + '</option>').join("");
     return '<div class="gam-melee-governing-controls">' +
       '<label class="gam-fire-governing-skill">' +
-      '<span>Governing skill:</span>' +
-      '<select name="governingSpecialty" required aria-label="Governing skill" ' + (skills.length ? "" : "disabled") + '>' +
+      '<span>Основной навык:</span>' +
+      '<select name="governingSpecialty" required aria-label="Основной навык" ' + (skills.length ? "" : "disabled") + '>' +
       '<option value="">' + (skills.length ? "Выберите навык" : "Навыки не найдены") + '</option>' +
       options +
       '</select>' +
@@ -544,9 +545,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
         <label><input type="checkbox" name="committedAttack" ${fireState.committedAttack ? "checked" : ""}>Committed Attack</label>
         <span class="gam-melee-martial-help" title="${escapeHTML(MARTIAL_ARTS_HINTS.committed)}" aria-label="${escapeHTML(MARTIAL_ARTS_HINTS.committed)}">(?)</span>
         <span class="gam-melee-martial-detail" data-committed-detail ${fireState.committedAttack ? "" : "hidden"}>
-          <select name="committedMode" aria-label="Committed Attack mode">
-            <option value="determined" ${fireState.committedMode === "determined" ? "selected" : ""}>Determined</option>
-            <option value="strong" ${fireState.committedMode === "strong" ? "selected" : ""}>Strong</option>
+          <select name="committedMode" aria-label="Режим решительной атаки">
+            <option value="determined" ${fireState.committedMode === "determined" ? "selected" : ""}>Точная</option>
+            <option value="strong" ${fireState.committedMode === "strong" ? "selected" : ""}>Сильная</option>
           </select>
           <label><input type="checkbox" name="committedSteps" ${fireState.committedSteps ? "checked" : ""}>2 \u0448\u0430\u0433\u0430 (-2)</label>
         </span>
@@ -557,9 +558,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
         <span class="gam-melee-martial-help" title="${escapeHTML(MARTIAL_ARTS_HINTS.defensive)}" aria-label="${escapeHTML(MARTIAL_ARTS_HINTS.defensive)}">(?)</span>
         <span class="gam-melee-martial-detail" data-defensive-detail ${fireState.defensiveAttack ? "" : "hidden"}>
           <span>\u0417\u0430\u0449\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u043d\u0443\u0441:</span>
-          <select name="defensiveBonus" aria-label="Defensive Attack bonus">
-            <option value="parry" ${fireState.defensiveBonus === "parry" ? "selected" : ""}>Parry +1</option>
-            <option value="block" ${fireState.defensiveBonus === "block" ? "selected" : ""}>Block +1</option>
+          <select name="defensiveBonus" aria-label="Бонус защитной атаки">
+            <option value="parry" ${fireState.defensiveBonus === "parry" ? "selected" : ""}>Парирование +1</option>
+            <option value="block" ${fireState.defensiveBonus === "block" ? "selected" : ""}>Блок +1</option>
           </select>
         </span>
       </div>
@@ -588,9 +589,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
               <select name="meleeAttackKey" class="gam-melee-attack-select" aria-label="Melee attack">${this._buildAttackOptions()}</select>
               <button type="button" class="gam-melee-icon-button" data-melee-action="edit" title="Редактировать параметры" aria-label="Редактировать параметры"><i class="fa-solid fa-pen"></i></button>
               <button type="button" class="gam-melee-damage-button" data-melee-action="damage"><i class="fa-solid fa-burst"></i> Урон</button>
-              <label class="gam-melee-dice-adds" title="Modifying Dice + Adds, Basic Set p. 269">
+              <label class="gam-melee-dice-adds" title="Преобразование кубиков и прибавок, Basic Set, стр. 269">
                 <input type="checkbox" name="dicePlusAdds" ${fireState.dicePlusAdds ? "checked" : ""}>
-                <span>Dice + Adds</span>
+                <span>Кубики и прибавки</span>
               </label>
             </div>
             <p class="gam-fire-attack-stats" data-melee-attack-meta title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>
@@ -629,7 +630,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
                   <select name="allOutAttackMode" aria-label="Вариант тотальной атаки" ${fireState.allOutAttack ? "" : "disabled"}>
                     <option value="determined" ${fireState.allOutAttackMode === "determined" ? "selected" : ""}>Точная</option>
                     <option value="strong" ${fireState.allOutAttackMode === "strong" ? "selected" : ""}>Сильная</option>
-                    <option value="double" ${fireState.allOutAttackMode === "double" ? "selected" : ""}>Double</option>
+                    <option value="double" ${fireState.allOutAttackMode === "double" ? "selected" : ""}>Двойная</option>
                   </select>
                 </span>
               </div>
@@ -805,7 +806,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     } catch (error) {
       if (revision === this._damagePreviewRevision) {
         this._showEffectiveDamage(null);
-        console.warn("Melee Assistant damage preview:", error);
+        console.warn("Помощник ближнего боя damage preview:", error);
       }
     }
   }
@@ -843,7 +844,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       await this._persistCurrentPreferences();
       await this._stateSaveQueue;
     } catch (error) {
-      console.error("Melee Assistant state save:", error);
+      console.error("Помощник ближнего боя state save:", error);
     }
     return super.close(options);
   }
@@ -929,8 +930,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
         preparedDamage
       });
     } catch (error) {
-      console.error("Melee Assistant damage:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      console.error("Помощник ближнего боя damage:", error);
+      ui.notifications.error(moduleMessage(error));
     } finally {
       if (button.isConnected) button.disabled = false;
     }
@@ -964,7 +965,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
         const locationResult = this._getLocationResult();
         const randomLocation = locationResult.selection?.random === true;
         const locationText = !randomLocation && locationResult.selection?.label && Number(locationResult.penalty) === 0
-          ? "Hit Location: " + locationResult.selection.label : "";
+          ? "Зона попадания: " + locationResult.selection.label : "";
         const combatCalculation = resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
         const effectiveSkill = combatCalculation?.effectiveSkill;
         if (!Number.isFinite(effectiveSkill)) throw new Error("Effective skill is unavailable.");
@@ -1046,7 +1047,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this._captureFields();
     const skills = this.targetedAttackContext?.specialtyOptions ?? [];
     if (skills.length && !this.fireState.governingSpecialty) {
-      ui.notifications.warn("\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 Governing skill \u0434\u043b\u044f \u044d\u0442\u043e\u0439 melee-\u0430\u0442\u0430\u043a\u0438.");
+      ui.notifications.warn("\u0412\u044b\u0431\u0435\u0440\u0438\u0442\u0435 Основной навык \u0434\u043b\u044f \u044d\u0442\u043e\u0439 melee-\u0430\u0442\u0430\u043a\u0438.");
       return;
     }
     const visibility = this._getMeleeVisibilityRules();
@@ -1078,8 +1079,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
         } catch (error) { this._executionWindows.delete(app); throw error; }
       }
     } catch (error) {
-      console.error("Melee Assistant attack:", error);
-      ui.notifications.error(error?.message ?? String(error));
+      console.error("Помощник ближнего боя attack:", error);
+      ui.notifications.error(moduleMessage(error));
     } finally {
       this._submitting = false;
       if (button.isConnected) button.disabled = false;

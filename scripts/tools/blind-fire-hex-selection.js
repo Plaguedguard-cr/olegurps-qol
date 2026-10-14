@@ -45,7 +45,7 @@ export async function selectBlindFireHex(app, runtime = globalThis, signal = nul
   const view = canvas?.app?.canvas ?? canvas?.app?.view;
   if (!view?.addEventListener || !canvas?.canvasCoordinatesFromClient ||
       !canvas?.grid?.getOffset || !canvas?.grid?.getCenterPoint) {
-    throw new Error("Grid selection is unavailable.");
+    throw new Error("Выбор клетки недоступен.");
   }
   const instances = runtime.foundry?.applications?.instances;
   const openApplications = instances instanceof Map ? [...instances.values()] : Object.values(instances ?? {});

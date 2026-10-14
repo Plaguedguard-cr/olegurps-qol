@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -180,7 +181,7 @@ test("repeat load, protected returns and catalogs are isolated from callers", as
 test("current catalog byte hashes match the verified upgrade checkpoint", async () => {
   const hashes = { weapons: "165dfdce9fe4cccf9ca0a638deec5fce13711d8de0d22e53aee3adb52e060020", lt: "2e520c12f437ca917ab87cf6322128ce2e4776f7abd7e1a547503681a0914cdd", ht: "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385", ut: "888dd25f46b43c8d51d7e81b529d616d84e1cde6591ffc0da5a5b9613d527ccc" };
   const { assertWeaponPreservation } = await import("./fixtures/ht-preservation-contract.mjs");
-  const proof = JSON.parse(await fs.readFile(new URL("../docs/audit/ht-v1-3-preservation.json", import.meta.url), "utf8"));
+  const proof = readAuditFixture('ht-v1-3-preservation');
   for (const [b, d] of Object.entries(CATALOG_DEFINITIONS)) {
     const bytes = await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url));
     if (b === "weapons") assertWeaponPreservation(bytes.toString("utf8"), proof);

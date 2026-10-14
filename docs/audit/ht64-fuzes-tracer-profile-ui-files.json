@@ -1,6 +1,0 @@
-[
-  "tests/attack-profile.test.mjs",
-  "tests/automatic-ammunition-profiles.test.mjs",
-  "tests/ammo-ui-presentation.test.mjs",
-  "tests/limited-visibility.test.mjs"
-]

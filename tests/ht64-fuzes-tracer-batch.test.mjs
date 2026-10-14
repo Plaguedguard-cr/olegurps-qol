@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -5,8 +6,8 @@ import { catalogs, compatibility, automatic, resolver, api, context, inventoryFi
 import { FUZE_TRACER_VARIANTS, reviewFuzeTracerDefinition, sourceFuzeTracerDefinition, airburstAttackBonus, fuzeTracerShotEvents } from "../scripts/tools/fuze-tracer-ammunition.js";
 import { resolveAmmunitionEffects } from "../scripts/tools/ammunition-effects.js";
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
-import { availableAmmoTypes } from "../scripts/tools/ammo-management-app.js";
-import { automaticAmmoMessages, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
+import { ammunitionCandidates, availableAmmoTypes } from "../scripts/tools/ammo-management-app.js";
+import { automaticAmmoMessages, automaticAmmoText, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
 import { createFireControlContext } from "../scripts/tools/fire-control-context.js";
 import { FireService } from "../scripts/tools/fire-service.js";
 import { FirePreparationApp } from "../scripts/tools/fire-preparation-app.js";
@@ -32,8 +33,8 @@ function numerical(id, changes = {}, original = {}) {
   return { option, definition, review, facts, resolve };
 }
 test("P6 scope matches all four source-reviewed IDs and unchanged mechanics/eligibility", async () => {
-  const audit = JSON.parse(await fs.readFile(new URL("../docs/audit/ht64-independent-audit.json", import.meta.url), "utf8"));
-  const review = JSON.parse(await fs.readFile(new URL("../docs/audit/olegurps_ht_64_structured_review_v1.json", import.meta.url), "utf8"));
+  const audit = readAuditFixture('ht64-independent-audit');
+  const review = readAuditFixture('olegurps_ht_64_structured_review_v1');
   assert.deepEqual(audit.records.filter(r => r.implementationGroup === "P6_fuses_tracer").map(r => r.variantId).sort(), Object.keys(FUZE_TRACER_VARIANTS).sort());
   for (const id of Object.keys(FUZE_TRACER_VARIANTS)) {
     assert.deepEqual(review.records.find(r => r.id === id).conditions, catalogs.getVariant("ht", id).eligibility_v1.conditions);
@@ -205,8 +206,10 @@ for(const id of ["ht_incendiary","ht_tracer"])test(id+" AmmoService consumes onc
 test("P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry translation load",async()=>{
   const c=context(mid),weapon={id:"w",attackRef:{path:"system.ranged.mode"}};
   for(const lang of ["ru","en"]) {
-    const types=availableAmmoTypes({id:"a",binding:c.binding,system:{ranged:{mode:c.raw}}},weapon,api,lang);
-    for(const id of Object.keys(FUZE_TRACER_VARIANTS))assert.ok(types.find(t=>t.recipe?.variantId===id).label.includes(automaticAmmoMessages[lang]["P6"+id]));
+    const actor={id:"a",binding:c.binding,system:{ranged:{mode:c.raw}}};const types=ammunitionCandidates(actor,weapon,api,lang);
+    for(const type of types.filter(t=>t.unavailable&&Object.hasOwn(FUZE_TRACER_VARIANTS,t.recipe?.variantId)))assert.ok(!availableAmmoTypes(actor,weapon,api,lang).some(t=>t.key===type.key));
+    // Own UI stays Russian under both Foundry locales; EN dictionary remains a compatibility resource.
+    for(const id of Object.keys(FUZE_TRACER_VARIANTS))assert.ok(types.find(t=>t.recipe?.variantId===id).label.includes(automaticAmmoMessages.ru["P6"+id]));
     const json=JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"));
     for(const [key,value] of Object.entries(automaticAmmoMessages[lang]).filter(([key])=>key.startsWith("P6")))assert.equal(json["OleGURPS.AutomaticAmmo."+key],value);
   }
@@ -215,6 +218,7 @@ test("P6 labels/reasons RU/EN, conditional Airburst selector and cached Foundry 
   for(const lang of ["ru","en"]) {
     const i18n={lang,translations:{},localize:key=>key.includes("P6")?key:"old cached translation"};let fetched=0;
     await loadAutomaticAmmoTranslations({location:{},game:{i18n},fetch:async()=>{fetched++;return{ok:true,json:async()=>JSON.parse(await fs.readFile(new URL("../lang/"+lang+".json",import.meta.url),"utf8"))};},foundry:{utils:{setProperty:(target,key,value)=>{target[key]=value;}}}});
-    assert.equal(fetched,1);assert.equal(i18n.translations["OleGURPS.AutomaticAmmo.P6ht_tracer"],automaticAmmoMessages[lang].P6ht_tracer);
+    assert.equal(fetched,0);assert.deepEqual(i18n.translations,{});
+    assert.equal(automaticAmmoText("P6ht_tracer",lang),automaticAmmoMessages.ru.P6ht_tracer);
   }
 });

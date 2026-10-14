@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { getSuppressionRegionFlag, getSuppressionWeaponKey } from "./suppression-fire-session-service.js";
 import { getSafeSuppressionTargetName } from "./suppression-fire-presentation.js";
 
@@ -723,7 +724,7 @@ export class SuppressionFireRegionService {
       this._setPlacementHint(hint);
     } catch (error) {
       this.clearPlacementHighlights();
-      return { ok: false, error: error?.message ?? String(error) };
+      return { ok: false, error: moduleMessage(error) };
     }
 
     return new Promise(resolve => {
@@ -795,8 +796,8 @@ export class SuppressionFireRegionService {
         }).catch(error => {
           updating = false;
           console.error("OleGURPS QOL | Suppression Fire corridor editor:", error);
-          this.runtime.ui?.notifications?.error?.(error?.message ?? String(error));
-          finish({ ok: false, error: error?.message ?? String(error) });
+          this.runtime.ui?.notifications?.error?.(moduleMessage(error));
+          finish({ ok: false, error: moduleMessage(error) });
         });
       };
       const onKeyDown = event => {
@@ -810,7 +811,7 @@ export class SuppressionFireRegionService {
         view.addEventListener("click", onClick, true);
         globalThis.addEventListener?.("keydown", onKeyDown, true);
       } catch (error) {
-        finish({ ok: false, error: error?.message ?? String(error) });
+        finish({ ok: false, error: moduleMessage(error) });
       }
     });
   }
@@ -1026,7 +1027,7 @@ export class SuppressionFireRegionService {
       return { ok: true, ref, pair: { zoneIndex: index, target, corridor }, geometry };
     } catch (error) {
       await this._deleteDocuments([target, corridor].filter(Boolean));
-      return { ok: false, error: error?.message ?? String(error) };
+      return { ok: false, error: moduleMessage(error) };
     }
   }
 

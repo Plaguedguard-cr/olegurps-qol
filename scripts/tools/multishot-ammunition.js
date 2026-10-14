@@ -6,6 +6,8 @@ export const MULTISHOT_LABELS = Object.freeze({ ht_rifled_slug: "Rifled Slug", h
   ht_duplex: "Duplex", ht_triplex: "Triplex", ht_beehive: "Beehive", ht_multi_flechette: "MF", ht_rubber_shot: "Rubber Shot", ht_abf: "ABF" });
 export const MULTISHOT_IDS = Object.freeze(Object.keys(MULTISHOT_LABELS));
 export const isMultishotVariant = id => MULTISHOT_IDS.includes(id);
+export const sourceMultishotVariant = ammo => ammo?.id === 'ht_specific_hydra_70mm_beehive' &&
+  ammo.source_evidence_level === 'book_explicit' ? 'ht_beehive' : null;
 const sized = ["ht_shotshell", "ht_canister", "ht_multi_flechette", "ht_rubber_shot"];
 const burst = ["ht_shrapnel", "ht_beehive", "ht_abf"];
 const positive = n => typeof n === "number" && Number.isFinite(n) && n > 0;
@@ -65,19 +67,23 @@ export function reviewMultishotConstruction(option, originalFacts, decision = nu
   const nativePreserved = definition.nativeVariant === id && source(definition.nativeDamage);
   const evaluation = evaluateHTOptionEligibility(option, facts);
   const prohibitions = evaluation.checks.filter(c => c.status !== "confirmed" &&
-    !(nativePreserved && c.field === "overlap_guard"));
+    !(nativePreserved && (c.field === "overlap_guard" ||
+      definition.referenceVerified && definition.publishedPlatformException && c.field === "weapon_platforms_any")));
   if (prohibitions.length) return { ...fail("MultishotEvidenceRequired"), status: prohibitions.some(c=>c.status==="incompatible") ? "incompatible" : "undetermined", checks: evaluation.checks };
   if (sized.includes(id) && (!integer(definition.count) || !positive(definition.elementMm))) return fail("MultishotElementsRequired");
   if (id === "ht_buck_and_ball" && !integer(definition.count)) return fail("MultishotElementsRequired");
   if (id === "ht_canister" && !["pi+", "pi++"].includes(definition.elementType)) return fail("MultishotElementsRequired");
-  if (burst.includes(id) && (!nativePreserved || !positive(definition.burstDistance))) return fail("MultishotPublishedRequired");
+  const publishedRange = definition.referenceVerified && positive(definition.burstRange?.minimum) &&
+    positive(definition.burstRange?.maximum) && definition.burstRange.minimum < definition.burstRange.maximum;
+  if (burst.includes(id) && (!nativePreserved || !(positive(definition.burstDistance) || publishedRange))) return fail("MultishotPublishedRequired");
   facts.multishotOption = copy(option);
   return { status: "compatible", reason: null, facts, nativePreserved, checks: evaluation.checks };
 }
 
 /** Same HT166 converter as kinetic ammunition; no Rolls, Actor writes or resource spending. */
 export function resolveMultishotEffects({ raw, variantId, facts, previousTransformations = [], baseStatus, constructionStatus }, { htDamageDice, parseKineticDamage, parseDamageRange }) {
-  const formula = String(raw?.damage ?? ""), transformations = [], components = [];
+  let formula = String(raw?.damage ?? "");
+  const transformations = [], components = [];
   const result = { status: "resolved", nativeSafe: true, rawFormula: formula, formula, variantId, transformations, components,
     reason: null, rules: {}, effectiveChanges: {}, support: { status: "AUTOMATED", automatic: [], manual: [], missing: [] } };
   const fail = reason => ({ ...result, status: "unresolved", nativeSafe: false, formula, reason,
@@ -88,7 +94,15 @@ export function resolveMultishotEffects({ raw, variantId, facts, previousTransfo
   if (previousTransformations.some(e=>e.effectId===variantId && e.applied)) return fail("already-applied-use-original-profile");
   const review = reviewMultishotConstruction(facts.multishotOption, facts);
   if (review.status !== "compatible") return fail(review.reason);
-  const d = facts.multishotDefinition, m = facts.multishotOption.mechanics, range = parseDamageRange(raw.range);
+  const d = facts.multishotDefinition, m = facts.multishotOption.mechanics;
+  if (review.nativePreserved && d.referenceVerified && d.sourceRawDamage) {
+    if (formula !== d.sourceRawDamage) return fail("MultishotSourceConflict");
+    raw = {...raw,damage:d.nativeDamage,range:d.nativeRange,rof:d.nativeRoF,rcl:d.nativeRcl};
+    result.effectiveChanges = {damage:raw.damage,range:raw.range,rof:raw.rof,rcl:raw.rcl};
+    journal(variantId+':published-payload',formula,raw.damage);
+    formula=raw.damage;result.formula=formula;
+  }
+  const range = parseDamageRange(raw.range);
   const rof = String(raw.rof ?? "").match(/^(\d+)(?:[xX\u00d7*](\d+))?([!#])?$/u);
   if (!rof || !integer(Number(rof[1]))) return fail("MultishotPhysicalRoFRequired");
   const shots = Number(rof[1]), rawNP = Number(rof[2] ?? 1);
@@ -197,8 +211,9 @@ export function resolveMultishotEffects({ raw, variantId, facts, previousTransfo
     result.support.manual.push({id:doubled?"DoubleKnockbackNative":"NonlethalRisk",application:"informational-risk-not-second-application"});
   }
   if (burst.includes(variantId)) {
-    result.rules.burst={distance:d.burstDistance,source:d.source,application:"manual-GM",geometryAutomatic:false,nativeEffectsPreserved:true};
-    if (variantId!=="ht_abf") result.rules.burst.range={halfDamage:null,maximum:d.burstDistance,application:"manual-GM-burst-distance"};
+    result.rules.burst={distance:d.burstDistance??null,source:d.source,application:"manual-GM",geometryAutomatic:false,nativeEffectsPreserved:true};
+    if (variantId!=="ht_abf") result.rules.burst.range={halfDamage:null,
+      ...(d.burstRange??{maximum:d.burstDistance}),application:"manual-GM-burst-distance"};
     result.support.status="GM-MEDIATED";result.support.manual.push({id:"PublishedBurst",application:"manual-GM"});
   }
   result.support.automatic=["source-damage","accuracy","range","projectile-RoF","physical-resource-count"];

@@ -1,3 +1,5 @@
+import { moduleMessage } from "../localization.js";
+import {specializedPlatform} from '../ht-specialized-platforms.js';
 import { StandaloneWeaponDraft, StandaloneWeaponService, searchStandaloneModels,
   standaloneModeStats, standaloneText } from "./standalone-weapon-service.js";
 
@@ -18,14 +20,22 @@ export function standaloneModeFields(draft) {
   const labels = { damage: "Damage", acc: "Acc", range: "Range", rof: "RoF", shots: "Shots", rcl: "Rcl", bulk: "Bulk", st: "ST", reach: "Reach", parry: "Parry", block: "Block" };
   return draft.availableModes.map(mode => {
     const id = mode.weapon_mode_id, stats = standaloneModeStats(mode), selected = draft.modeIds.has(id);
+    const platform=specializedPlatform(mode,draft.equipment.source);
     const skill = mode.governing_skill?.status === "resolved" ? mode.governing_skill.skill : null;
     const skillName = skill ? skill.name + (skill.specialization ? " (" + skill.specialization + ")" : "") : standaloneText("Unknown");
     return `<fieldset class="gam-standalone-mode"><legend><label><input type="checkbox" data-standalone-mode="${escape(id)}" ${selected ? "checked" : ""}>${escape(mode.usage || draft.equipment.name)}</label></legend>` +
       (skill ? `<p>${escape(standaloneText("Skill"))}: <strong>${escape(skillName)}</strong></p>` :
         selected ? `<label>${escape(standaloneText("Skill"))}<input type="text" data-standalone-stat="governingSkill" data-mode-id="${escape(id)}" value="${escape(draft.overrides[id]?.governingSkill ?? "")}" placeholder="${escape(standaloneText("MissingInput"))}" title="${escape(standaloneText("Missing"))}"></label>` :
           `<p>${escape(standaloneText("Skill"))}: ${escape(skillName)}</p>`) +
+      (selected && platform?.kind==='host-dependent' ?
+        (platform.stockConfiguration?`<label>Исполнение FN 303<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите исполнение</option><option value="stock"${draft.overrides[id]?.installation==='stock'?' selected':''}>С прикладом — Bulk −4</option><option value="host"${draft.overrides[id]?.installation==='host'?' selected':''}>Подствольное</option></select></label>`:'')+
+        `<label>Bulk оружия-носителя<input data-standalone-stat="hostBulk" data-mode-id="${escape(id)}" value="${escape(draft.overrides[id]?.hostBulk??'')}" placeholder="Например, −5"></label><p class="hint">${platform.source}: к Bulk носителя прибавляется ${platform.hostBulkAdjustment}. Собственный носитель не изменяется.</p>`:'')+
+      (selected && platform?.instruction?`<p class="hint">${escape(platform.instruction)}</p>`:'')+
+      (selected && platform?.blockedReason?`<p class="hint">${escape(platform.blockedReason)}</p>`:'')+
+      (selected && platform?.terminalInstruction?`<p class="hint">${escape(platform.terminalInstruction)}</p>`:'')+
       (selected ? `<div class="gam-standalone-stats">${keys.map(key => {
         const value = draft.overrides[id]?.[key] ?? stats[key] ?? "";
+        if(key==='rcl'&&platform?.rclNotApplicable||key==='bulk'&&platform?.bulkNotApplicable)return `<label>${labels[key]}<input disabled value="Не применяется"></label>`;
         return `<label>${labels[key]}<input type="text" data-standalone-stat="${key}" data-mode-id="${escape(id)}" value="${escape(value)}" placeholder="${escape(standaloneText("MissingInput"))}" title="${escape(stats[key] == null ? standaloneText("Missing") : standaloneText("Override"))}"></label>`;
       }).join("")}</div>` : "") +
       `<p class="hint">${escape([draft.equipment.local_notes, mode.usage_notes].filter(Boolean).join(" "))}</p></fieldset>`;
@@ -34,6 +44,7 @@ export function standaloneModeFields(draft) {
 
 export function standaloneConfigurationHTML(draft) {
   return `<div class="gam-standalone-config"><p class="hint">${escape(standaloneText("Pending"))}</p>
+    ${draft.existing?'<button type="button" data-standalone-refresh>Обновить данные из каталога</button><p class="hint">Обновляются исходные параметры. Пользовательские значения, боезапас и старые атаки сохраняются.</p>':''}
     <label>${escape(standaloneText("Source"))}<select name="standaloneSource"><option value="">${escape(standaloneText("All"))}</option>${["LT", "HT", "UT"].map(source => `<option ${source === draft.source ? "selected" : ""}>${source}</option>`).join("")}</select></label>
     <label>${escape(standaloneText("Search"))}<input type="search" name="standaloneQuery" value="${escape(draft.query)}"></label>
     <p class="hint">${escape(standaloneText("ChooseFirst"))}</p>
@@ -46,9 +57,14 @@ export function bindStandaloneConfiguration(root, draft) {
   const options = () => { models.innerHTML = standaloneModelOptions(draft); };
   root.querySelector('[name="standaloneQuery"]').addEventListener("input", event => { draft.query = event.target.value; options(); });
   root.querySelector('[name="standaloneSource"]').addEventListener("change", event => { draft.source = event.target.value; options(); });
+  root.querySelector('[data-standalone-refresh]')?.addEventListener('click',()=>{
+    if(draft.refreshCatalogData()){options();modes.innerHTML=standaloneModeFields(draft);}
+    else globalThis.ui?.notifications?.warn?.('Не удалось подтвердить исходную версию этой модели. Сохранённое оружие не изменено.');
+  });
   models.addEventListener("change", event => { draft.selectModel(event.target.value); modes.innerHTML = standaloneModeFields(draft); });
   modes.addEventListener("change", event => {
     const field = event.target;
+    if(field.dataset.standaloneStat==='installation') {draft.setOverride(field.dataset.modeId,'installation',field.value);modes.innerHTML=standaloneModeFields(draft);return;}
     if (field.dataset.standaloneMode) {
       if (field.checked) draft.modeIds.add(field.dataset.standaloneMode); else draft.modeIds.delete(field.dataset.standaloneMode);
       modes.innerHTML = standaloneModeFields(draft);
@@ -64,7 +80,7 @@ export function bindStandaloneConfiguration(root, draft) {
   });
 }
 
-/** Preparation library reached from Melee Assistant, including actors with no GGA attacks. */
+/** Preparation library reached from Помощник ближнего боя, including actors with no GGA attacks. */
 export async function openStandaloneWeaponLibrary({ actor, type = "melee", catalogs = globalThis.OleGURPSQOL?.catalogs }) {
   if (!actor.isOwner) throw new Error(standaloneText("Owner"));
   try { await catalogs?.load(); } catch (error) { console.warn("OleGURPS catalog", error); }
@@ -100,7 +116,7 @@ export async function openStandaloneWeaponLibrary({ actor, type = "melee", catal
             return await openMeleeAssistant();
           }
           if (button.dataset.standaloneRemove) {
-            const yes = await DialogV2.confirm({ window: { title: standaloneText("Delete") }, content: `<p>${escape(standaloneText("ConfirmDelete"))}</p>`,
+            const yes = await DialogV2.confirm({ window: { title: standaloneText("Delete") }, content: `<p>${escape(service.get(button.dataset.standaloneRemove)?.name ?? "")}</p><p>${escape(standaloneText("ConfirmDelete"))}</p>`,
               yes: { label: standaloneText("Delete") }, no: { label: standaloneText("Cancel") }, rejectClose: false });
             if (yes) await service.remove(button.dataset.standaloneRemove);
           } else {
@@ -114,7 +130,7 @@ export async function openStandaloneWeaponLibrary({ actor, type = "melee", catal
           }
           const current = root.querySelector('.gam-standalone-library');
           if (current) current.outerHTML = content();
-        } catch (error) { ui.notifications.error(error.message); }
+        } catch (error) { ui.notifications.error(moduleMessage(error.message)); }
         finally { if (button.isConnected) button.disabled = false; }
       });
     }

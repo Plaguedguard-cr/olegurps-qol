@@ -1,3 +1,4 @@
+import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -21,10 +22,10 @@ for (const variant of variants) test("HT eligibility loads and checks " + varian
   assert.ok(r.eligibility.checks.some(c=>c.field.startsWith("explicit_evidence_required."))); assert.equal(r.eligibility.applicationAllowed,familySupported);
 });
 test("all 64 contracts and review IDs match; four current catalogs ready", async()=>{
-  const audit=JSON.parse(await fs.readFile(new URL("../docs/audit/olegurps_ht_64_structured_review_v1.json",import.meta.url),"utf8")); assert.equal(variants.length,64);assert.equal(audit.total,64);assert.deepEqual(audit.records.map(r=>r.id).sort(),variants.map(r=>r.id).sort());assert.equal(catalogs.getStatus("ht").version.revision,"1.3");assert.equal(catalogs.getStatus("ht").relationships.internal.eligibilityOptions,64);for(const b of Object.keys(CATALOG_DEFINITIONS))assert.equal(catalogs.getStatus(b).status,"ready");
+  const audit=readAuditFixture('olegurps_ht_64_structured_review_v1'); assert.equal(variants.length,64);assert.equal(audit.total,64);assert.deepEqual(audit.records.map(r=>r.id).sort(),variants.map(r=>r.id).sort());assert.equal(catalogs.getStatus("ht").version.revision,"1.3");assert.equal(catalogs.getStatus("ht").relationships.internal.eligibilityOptions,64);for(const b of Object.keys(CATALOG_DEFINITIONS))assert.equal(catalogs.getStatus(b).status,"ready");
 });
 test("all original HT fields, mechanics, HT178 and rocket data retained", async()=>{
-  const proof=JSON.parse(await fs.readFile(new URL("../docs/audit/ht-v1-3-preservation.json",import.meta.url),"utf8")); const normalized=structuredClone(data.ht);for(const c of collections)for(const r of normalized[c])delete r.eligibility_v1;normalized.revision="1.2";delete normalized.audit.structured_option_review_count;delete normalized.audit.structured_option_review_version;delete normalized.data_rule_review_v1_3;assert.equal(createHash("sha256").update(JSON.stringify(normalized)).digest("hex"),proof.normalizedPreviousHash);
+  const proof=readAuditFixture('ht-v1-3-preservation'); const normalized=structuredClone(data.ht);for(const c of collections)for(const r of normalized[c])delete r.eligibility_v1;normalized.revision="1.2";delete normalized.audit.structured_option_review_count;delete normalized.audit.structured_option_review_version;delete normalized.data_rule_review_v1_3;assert.equal(createHash("sha256").update(JSON.stringify(normalized)).digest("hex"),proof.normalizedPreviousHash);
 });
 test("matching type/TL cannot replace pressure proof",()=>{
   const r=service.checkCompatibility(python,"ht_plus_p",{availabilityTL:9});assert.equal(r.status,"undetermined");assert.ok(r.eligibility.checks.some(c=>c.field==="munition_classes_any"&&c.status==="confirmed")); assert.ok(r.reasons.some(c=>c.message.includes("weapon_pressure_rating_verified")));
@@ -81,7 +82,7 @@ for(const field of ["contract","on_missing_evidence","bounds","evidence-array"])
 test("eligibility snapshots cannot change cached records",()=>{const r=service.checkCompatibility(python,"ht_plus_p");assert.throws(()=>r.eligibility.checks.push({}),TypeError);assert.throws(()=>r.restrictions.eligibility_v1.conditions.munition_classes_any.push("anything"),TypeError);assert.deepEqual(catalogs.getVariant("ht","ht_plus_p").eligibility_v1,option("ht_plus_p").eligibility_v1);});
 
 test("audit bytes and weapon reference outside HT pointer preserved",async()=>{
-  const proof=JSON.parse(await fs.readFile(new URL("../docs/audit/ht-v1-3-preservation.json",import.meta.url),"utf8"));for(const [file,expected] of Object.entries(proof.auditHashes))assert.equal(createHash("sha256").update(await fs.readFile(new URL("../docs/audit/"+file,import.meta.url))).digest("hex"),expected);
+  const proof=readAuditFixture('ht-v1-3-preservation');for(const [file,expected] of Object.entries(proof.auditHashes))assertHistoricalAudit(file,expected);
   const current=await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",import.meta.url),"utf8");assertWeaponPreservation(current,proof);
 });
 

@@ -129,14 +129,24 @@ test("an unresolved managed recipe cannot execute or consume a round",async()=>{
 test("coverage is read-only, compares every native pair, and keeps unsupported/evidence/forbidden states separate",()=>{
   const before=JSON.stringify(data),r=auditHTCoverage({catalogs,compatibility});assert.equal(JSON.stringify(data),before);
   assert.equal(r.inventory.items,263);assert.equal(r.inventory.families,262);assert.equal(r.inventory.projectileOptions,51);assert.equal(r.inventory.eligibilityOptions,64);
-  assert.equal(r.special.total,32704);assert.equal(r.nativePairs,511);assert.equal(r.special.ready,1222);assert.equal(Object.keys(r.familiesReady).length,70);
-  assert.equal(r.variants.ht_apds.ready,98);
+  assert.equal(r.special.total,32704);assert.equal(r.nativePairs,511);assert.equal(r.special.ready,1347);assert.equal(Object.keys(r.familiesReady).length,118);
+  assert.equal(r.variants.ht_apds.ready,95);
   assert.ok(r.variants.ht_apds.ready>1);assert.equal(r.variants.ht_apfsds.ready,2);assert.equal(r.variants.ht_sapfsds.ready>1,true);
   assert.equal(r.variants.ht_frangible.ready,117);assert.equal(r.variants.ht_subsonic_rifle.ready,5);assert.equal(r.variants.ht_subsonic_pistol.ready,53);
-  assert.equal(r.variants.ht_match_grade.ready,6);assert.equal(r.variants.ht_plus_p.ready,284);assert.equal(r.variants.ht_he.ready,0);
-  assert.equal(r.variants.ht_plus_p.compatible,0);assert.equal(r.variants.ht_plus_p.support['GM-MEDIATED'],284);
+  assert.equal(r.variants.ht_match_grade.ready,6);assert.equal(r.variants.ht_plus_p.ready,365);assert.equal(r.variants.ht_he.ready,6);
+  assert.equal(r.variants.ht_plus_p.compatible,0);assert.equal(r.variants.ht_plus_p.support['GM-MEDIATED'],365);
+  // Historical 1222 +86 category-B +43 P1-P7 -21 identity-review +14 preserved payloads +2 Hydra +1 Hale (HT150).
+  assert.equal(r.special.ready,1222+86+43-21+14+2+1);
+  assert.equal(r.variants.ht_white_phosphorus.ready,2);assert.equal(r.variants.ht_beehive.ready,1);
+  assert.deepEqual(r.ordinary,{total:511,ready:505,unconfirmed:6});
+  assert.equal(r.variants.ht_heat.nativePreservedSourceOverrides,13);
+  assert.equal(r.variants.ht_ms_heat.nativePreservedSourceOverrides,1);
+  assert.equal(r.variants.ht_beehive.nativePreservedSourceOverrides,1);
+  assert.equal(r.variants.ht_he.nativePreservedSourceOverrides,0); // Hale's generic status stays undetermined.
+  assert.equal(r.special.nativePreservedSourceOverrides,15);
+  assert.equal(r.special.incompatible,r.special.genericIncompatible-15);
   assert.equal(r.special.potential,r.special.total-r.special.incompatible);
   assert.equal(r.special.percent,r.special.ready/r.special.potential*100);
-  assert.equal(r.variants.ht_apds.effectIntegration,"implemented");assert.equal(r.variants.ht_he.effectIntegration,"deferred");
+  assert.equal(r.variants.ht_apds.effectIntegration,"implemented");assert.equal(r.variants.ht_he.effectIntegration,"implemented");
   assert.equal(r.variants.ht_apex.approvalRequiredUnderStrictPolicy,4);assert.ok(r.variants.ht_apex.missingInputs.explosiveMassG>0);
 });

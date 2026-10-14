@@ -1,3 +1,4 @@
+import { moduleMessage } from "../localization.js";
 import { parseElevationHeight } from "./fire-range-service.js";
 
 const ApplicationV2 = globalThis.foundry.applications.api.ApplicationV2;
@@ -8,7 +9,7 @@ export class TrademarkMoveExecutionApp extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     classes: ["olegurps-qol", "trademark-move-execution"],
     tag: "section",
-    window: { title: "Trademark Move", resizable: false, minimizable: true },
+    window: { title: "Фирменный приём", resizable: false, minimizable: true },
     position: { width: 360, height: "auto" }
   };
 
@@ -118,21 +119,21 @@ export class TrademarkMoveExecutionApp extends ApplicationV2 {
     let previews;
     try { previews = await this.calculatePreviews?.({ ...this.situation }) ?? []; }
     catch (_error) { previews = this.slots.map(() => null); }
-    return '<div class="tm-execution-controls"><label>Visibility <select name="tmVisibility">' +
-      [["normal", "Normal"], ["partial", "Partial"], ["unseen", "Unseen"], ["unseen-exact", "Unseen exact"], ["known", "Known location"], ["blind", "Blind"]].map(([value, text]) =>
+    return '<div class="tm-execution-controls"><label>Видимость <select name="tmVisibility">' +
+      [["normal", "Обычная"], ["partial", "Частичная"], ["unseen", "Цель не видна"], ["unseen-exact", "Точное положение невидимой цели"], ["known", "Известное положение"], ["blind", "Слепота"]].map(([value, text]) =>
         '<option value="' + value + '"' + (this.situation.visibilityMode === value ? ' selected' : '') + '>' + text + '</option>').join("") +
-      '</select></label><label class="tm-range-field">Range <select name="tmRangeIndex"><option value="">Auto from selected target</option>' +
+      '</select></label><label class="tm-range-field">Дистанция <select name="tmRangeIndex"><option value="">Автоматически по выбранной цели</option>' +
       this.rangeBands.map(range => '<option value="' + escape(range.index) + '"' +
         (this.situation.rangeIndex === range.index ? ' selected' : '') + '>' +
         escape(range.label) + ' (' + (range.penalty >= 0 ? '+' : '') + escape(range.penalty) + ')</option>').join('') +
       '</select></label><div class="tm-range-selection" data-tm-range-selection aria-live="polite">' +
-      escape(this._formatRangeSelection()) + '</div><label>Height <input name="tmHeight" type="number" min="0" step="any" value="' + escape(this.situation.height) + '"></label>' +
-      '<div class="tm-elevation-directions"><label>High Ground <input name="tmHighGround" type="checkbox"' +
+      escape(this._formatRangeSelection()) + '</div><label>Высота <input name="tmHeight" type="number" min="0" step="any" value="' + escape(this.situation.height) + '"></label>' +
+      '<div class="tm-elevation-directions"><label>Выше цели <input name="tmHighGround" type="checkbox"' +
         (this.situation.elevationDirection === "high" ? ' checked' : '') + '></label>' +
-      '<label>Low Ground <input name="tmLowGround" type="checkbox"' +
+      '<label>Ниже цели <input name="tmLowGround" type="checkbox"' +
         (this.situation.elevationDirection === "low" ? ' checked' : '') + '></label></div>' +
-      '<label data-tm-partial-penalty' + (this.situation.visibilityMode === "partial" ? '' : ' hidden') + '>Partial penalty <input name="tmPartialPenalty" type="number" min="-9" max="-1" value="' + escape(this.situation.partialPenalty) + '"></label>' +
-      '<label>Situational modifier <input name="tmManualModifier" type="number" step="1" value="' + escape(this.situation.manualModifier) + '"></label></div>' +
+      '<label data-tm-partial-penalty' + (this.situation.visibilityMode === "partial" ? '' : ' hidden') + '>Штраф частичной видимости <input name="tmPartialPenalty" type="number" min="-9" max="-1" value="' + escape(this.situation.partialPenalty) + '"></label>' +
+      '<label>Ситуативный модификатор <input name="tmManualModifier" type="number" step="1" value="' + escape(this.situation.manualModifier) + '"></label></div>' +
       '<div class="tm-execution-list">' + this.slots.map((slot, index) =>
       '<button type="button" data-tm-slot="' + index + '"' + (slot.completed ? ' disabled' : '') + '>' +
       '<strong>' + (index + 1) + '. ' + escape(slot.label) + (slot.completed ? ' \u2713' : '') + '</strong>' +
@@ -184,7 +185,7 @@ export class TrademarkMoveExecutionApp extends ApplicationV2 {
         !Number.isInteger(this.situation.manualModifier) ||
         this.situation.visibilityMode === "partial" &&
         (!Number.isInteger(this.situation.partialPenalty) || this.situation.partialPenalty < -9 || this.situation.partialPenalty > -1)) {
-      globalThis.ui.notifications.error("Invalid range, height, situational modifier, or visibility penalty.");
+      globalThis.ui.notifications.error("Некорректные дистанция, высота, ситуативный модификатор или штраф видимости.");
       return;
     }
     this.busy = true;
@@ -201,7 +202,7 @@ export class TrademarkMoveExecutionApp extends ApplicationV2 {
         if (this.slots.every(entry => entry.completed)) return await this.close();
       }
     } catch (error) {
-      globalThis.ui.notifications.error(error?.message ?? String(error));
+      globalThis.ui.notifications.error(moduleMessage(error));
     } finally {
       this.busy = false;
       if (this.rendered) await this.render({ force: true });
