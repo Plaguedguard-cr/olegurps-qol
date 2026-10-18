@@ -1,6 +1,8 @@
 import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import { HT_SOURCE_REVIEW } from "../scripts/ht-source-corrections.js";
-import { assertPlusPReadyIdentities } from "./fixtures/ht-plus-p-ready-identities.mjs";
+import { ownerManualG } from "./fixtures/ht-plus-p-ready-identities.mjs";
+import { assertPlusPReadyIdentities } from './helpers/current-ht-plus-p-boundary.mjs';
+import { assertUnprovenPressure } from "./fixtures/ht-plus-p-owner.mjs";
 import { auditPlusPCategoryB } from "../scripts/audits/ht-plus-p-category-b.mjs";
 import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
@@ -40,8 +42,10 @@ for(const [modeId,damage,range,st] of examples)test("reviewed native +P preserve
   assert.equal(p.damage.transformations.filter(t=>t.effectId==="ht_plus_p"&&t.applied).length,1);
   assert.equal(p.damage.transformations.filter(t=>/ht_aphc|ht_hollow_point/.test(t.effectId)&&t.applied).length,0);
   assert.equal(p.damage.rules.nativeProjectile.application,"already-in-native-profile-preserved");
-  assert.equal(profileG(modeId,{profilePolicy:"strict"}).damage.nativeSafe,false);
-  assert.equal(automatic.admission(prepared,{policy:"strict",approval:{active:true}}).allowed,true);
+  const strict=profileG(modeId,{profilePolicy:"strict"});
+  assert.equal(strict.damage.nativeSafe,true);assertUnprovenPressure(strict);
+  assert.equal(automatic.admission(prepared,{policy:"strict"}).authority,"user-defined");
+  assert.equal(automatic.prepare({modeId,base:{...context(modeId).base,ammoId:"ht_14_5x114mm"},variantId:"ht_plus_p"}).state,"incompatible");
 });
 
 test("native APHC/HP cannot be deduced from divisor or applied a second time",()=>{
@@ -77,13 +81,16 @@ test("shared cartridge FN pistol and P90 preserve independent immutable snapshot
   assert.equal(JSON.stringify(shot),saved);assert.equal(JSON.parse(saved).profile.damage.formula,"3d-1(2) pi-");assert.ok(Object.isFrozen(shot.profile.damage));
 });
 
-test("KPV retains APHCI-T through existing charge engine and requires individual GM manufacturing decision",()=>{
+test("KPV manual +P retains source APHCI-T without GM approval or a fabricated pressure rating",()=>{
   const modeId="WK6cr08HEjTSsvYNS",p=preparedG(modeId),c=context(modeId);
   assert.equal(p.state,"complete");assert.equal(p.rulesStatus,"undetermined");
-  assert.equal(automatic.admission(p,{policy:"permissive"}).allowed,false);
+  assert.equal(automatic.admission(p,{policy:"permissive"}).allowed,true);
   const approval={active:true,actorId:"actor",weaponId:"weapon",modeId,ammoId:p.type.ammoId,
     variantId:"ht_plus_p",recipeId:p.type.recipe.customId,fingerprint:recipeFingerprint(p.type)};
   const resolved=profileG(modeId,{approval});
+  assertUnprovenPressure(resolved);
+  assert.equal(profileG(modeId,{profilePolicy:"strict"}).damage.nativeSafe,true);
+  assert.equal(automatic.prepare({modeId,base:{...c.base,ammoId:"ht_5_66x39mm"},variantId:"ht_plus_p"}).state,"incompatible");
   assert.equal(resolved.damage.nativeSafe,true);assert.equal(resolved.damage.formula,"6dx3(2) pi inc");
   assert.equal(resolved.effective.range,"2310/9680");assert.equal(resolved.effective.st,"25M");
   assert.deepEqual(resolved.damage.components.map(c=>c.role),["kinetic"]);
@@ -91,12 +98,13 @@ test("KPV retains APHCI-T through existing charge engine and requires individual
   assert.equal(resolveAmmunitionEffects({raw:c.raw,variantId:"ht_plus_p",baseStatus:"compatible",constructionStatus:"world-policy",facts:p.facts}).reason,"plus-p-individual-handload-required");
 });
 
-test("APS numerical profile is complete but world policy does not confirm individual construction",()=>{
+test("APS source-backed manual dart construction uses OWNER authority with no GM gate",()=>{
   assert.equal(htDamageDice(5,0,1,1.1),"5d+2");
   const c=context("W10jqOZ0kjeSuoY3C");assert.equal(c.raw.damage,"5d imp");
   const p=preparedG("W10jqOZ0kjeSuoY3C");assert.equal(p.state,"complete");assert.equal(p.rulesStatus,"undetermined");
-  assert.equal(automatic.admission(p,{policy:"permissive"}).allowed,false);
-  assert.equal(automatic.admission(p,{policy:"strict",approval:{active:true}}).allowed,true);
+  assert.equal(automatic.admission(p,{policy:"permissive"}).allowed,true);
+  assert.equal(automatic.admission(p,{policy:"strict"}).authority,"user-defined");
+  assertUnprovenPressure(profileG("W10jqOZ0kjeSuoY3C",{profilePolicy:"strict"}));
 });
 
 test("Derringer exact HT166 roundtrip fails identity; no fabricated accuracy or altered shot charge",()=>{
@@ -114,7 +122,13 @@ test("LeMat shot barrel uses corrected source-backed identity; historical .42 ca
   const modeId="WdzSSShGT_yv4ctOi",c=context(modeId);assert.equal(c.base.ammoId,"olegurps_lemat_18g_shot_charge");
   assert.equal(c.raw.rof,"1x11");assert.equal(preparedG(modeId).state,"complete");
   assert.equal(automatic.prepare({modeId,base:{...c.base,ammoId:"ht_42_caplock_lemat"},variantId:"ht_plus_p"}).state,"incompatible");
-  assert.equal(automatic.admission(preparedG(modeId),{policy:"permissive"}).allowed,false);
+  assert.equal(automatic.admission(preparedG(modeId),{policy:"permissive"}).allowed,true);
+  assert.equal(profileG(modeId).damage.reason,"plus-p-loading-check-required");
+  const p=preparedG(modeId),decision={active:true,origin:"user",actorId:"actor",weaponId:"weapon",modeId,
+    recipeId:p.type.recipe.customId,fingerprint:recipeFingerprint(p.type),plusPDecision:{origin:"user",loadingCheckPassed:true}};
+  assert.equal(profileG(modeId,{approval:decision}).damage.nativeSafe,true);
+  assert.equal(profileG(modeId,{approval:{...decision,weaponId:"foreign"}}).damage.nativeSafe,false);
+  assert.equal(profileG(modeId,{approval:{...decision,plusPDecision:{loadingCheckPassed:false}}}).damage.reason,"plus-p-loading-check-required");
   assert.equal(htDamageDice(1,0,1,1.1),"1d");
   assert.equal(catalogs.getCatalog("ht").ammo_items.some(a=>/18\s*gauge/i.test(a.name)),false);
 });
@@ -149,9 +163,14 @@ test("511 recount preserves existing 363, all 27 confirmations and closed E/F; h
   for(const old of before.all.filter(r=>r.ready))assert.equal(now.get(old.modeId+'/'+old.ammoId)?.ready,!HT_SOURCE_REVIEW[old.modeId],old.modeId);
   for(const old of before.rows) {const row=current.rows.find(r=>r.modeId===old.modeId&&r.ammoId===old.ammoId);assert(row);if(HT_SOURCE_REVIEW[old.modeId])assert.equal(row.numericReady,false);else{assert.equal(row.numericReady,old.numericReady);assert.equal(row.runtimeReadyAfterScopedGMConfirmation,old.runtimeReadyAfterScopedGMConfirmation);}}
   assert.equal(result.excludedEFStillClosed,true);assert.equal(result.numericalG,10);assert.equal(result.nativeGGAReadyAfterGM,10);
-  assert.equal(result.worldPolicyReady,366);assert.equal(result.loadingGMRequired,27);assert.equal(result.individualGMG,3);
-  assert.equal(result.potentialAfterAllRequiredGMDecisions,396);assert.equal(result.incompleteG,1);
-  assert.deepEqual(result.officialStatuses,{undetermined:511});
+  assert.equal(result.worldPolicyReady,369);assert.equal(result.loadingGMRequired,27);assert.equal(result.individualGMG,3);
+  const overlap=result.rows.filter(r=>r.individualGMRequired&&r.worldPolicyReady).map(r=>[r.modeId,r.ammoId]);
+  assert.deepEqual(overlap,ownerManualG);
+  const pending=result.rows.filter(r=>r.individualGMRequired&&!r.worldPolicyReady&&r.nativeGGAProfileSafeAfterGM);
+  assert.deepEqual(pending.map(r=>[r.modeId,r.ammoId]),[["WdzSSShGT_yv4ctOi","olegurps_lemat_18g_shot_charge"]]);
+  assert.equal(result.potentialAfterAllRequiredGMDecisions,result.worldPolicyReady+current.loadingChecks+pending.length);
+  assert.equal(result.potentialAfterAllRequiredGMDecisions,397);assert.equal(result.incompleteG,1);
+  assert.deepEqual(result.officialStatuses,{undetermined:509,incompatible:2});
 });
 
 test("restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass",()=>{

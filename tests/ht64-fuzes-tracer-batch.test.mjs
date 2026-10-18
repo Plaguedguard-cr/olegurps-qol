@@ -41,6 +41,14 @@ test("P6 scope matches all four source-reviewed IDs and unchanged mechanics/elig
     assert.deepEqual(audit.records.find(r => r.variantId === id).mechanicsAsCatalogued, catalogs.getVariant("ht", id).mechanics);
   }
 });
+test("owner source is accepted for fuze/tracer designs while source prohibitions remain",()=>{
+  for(const id of Object.keys(FUZE_TRACER_VARIANTS)){
+    const s=numerical(id,{source:{kind:'user',note:'Owner construction'}});
+    assert.equal(s.review.status,'resolved');
+    const key=s.option.eligibility_v1.explicit_evidence_required[0];
+    assert.equal(numerical(id,{source:{kind:'user',note:'Owner construction'}},{evidence:{[key]:{value:false,source:'Confirmed physical restriction'}}}).review.status,'unresolved');
+  }
+});
 for (const id of Object.keys(FUZE_TRACER_VARIANTS)) test(id + " general sourced calculation, evidence/TL/conflict gates and no repeated transformation", () => {
   const s = numerical(id); assert.equal(s.review.status, "resolved");
   const effect = s.resolve({ physicalDistance: 50 }); assert.equal(effect.nativeSafe, true);
@@ -138,7 +146,7 @@ test("Tracer inc uses this shot's half-damage boundary; no single shot/permanent
 for (const id of ["ht_incendiary","ht_tracer"]) test("KPV APHCI-T "+id+" source-confirmed admission, native inc/cost/saved recipe unchanged", () => {
   const c=context(mid),p=automatic.prepare({modeId:mid,base:c.base,variantId:id});
   assert.equal(p.state,"complete");assert.equal(p.rulesStatus,"undetermined");assert.equal(automatic.admission(p,{policy:"strict"}).authority,"reference");
-  assert.equal(automatic.admission(p,{approval:{active:false}}).allowed,false);
+  assert.equal(automatic.admission(p,{approval:{active:false}}).allowed,true);
   const shot=resolver.resolve({actorId:"a",weaponId:"w",rawAttack:c.raw,binding:c.binding,ammunition:{type:p.type},context:{kind:"normal",physicalDistance:3000}});
   assert.equal(shot.damage.formula,c.raw.damage);assert.equal(shot.damage.rules.costPerShot,6.7);assert.equal(shot.transformations.filter(t=>t.applied).length,0);
   const saved=JSON.parse(JSON.stringify(p.type));assert.equal(automatic.prepare({modeId:mid,base:c.base,variantId:id,savedType:saved}).state,"complete");

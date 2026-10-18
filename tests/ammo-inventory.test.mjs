@@ -44,7 +44,7 @@ function archivedInventory() {
 function fixture(weapon = fresh()) {
   let state = { version: 9, weapons: [structuredClone(weapon)], attackOverrides: { keep: { skillLevel: 13, rof: "10", acc: 5, scopeBonus: 1, bulk: -6, rcl: "2" } }, governingSkills: {}, custom: { preserved: true } };
   const actor = { id: "actor", isOwner: true, system: { ranged: {}, skills: {}, equipment: { original: true } },
-    getFlag: () => structuredClone(state), setFlag: async (_scope, _key, next) => { state = structuredClone(next); },
+    getFlag: (scope,key) => scope==="world"&&key==="gurpsAmmoManager"?structuredClone(state):undefined, setFlag: async (_scope, _key, next) => { state = structuredClone(next); },
     update: async changes => { for (const key of Object.keys(changes)) {
       if (key.endsWith("-=sprayingFireSessions")) delete state.sprayingFireSessions;
     } }
@@ -159,8 +159,9 @@ test("install, replace and eject preserve all rounds and project the installed m
   operate(weapon, "install", { magazineId: first.id }); assert.equal(weapon.capacity, 10);
   operate(weapon, "install", { magazineId: second.id }); assert.equal(weapon.capacity, 40); assert.equal(weapon.loadedIndex, 1);
   assert.equal(weapon.totalAmmo, 50);
-  operate(weapon, "eject", { magazineId: second.id }); assert.equal(weapon.loadedIndex, 0);
-  assert.equal(weapon.ammunitionInventory.installedId, first.id);
+  operate(weapon, "eject", { magazineId: second.id }); assert.equal(weapon.loadedIndex, -1);
+  assert.equal(weapon.ammunitionInventory.installedId, null);
+  assert.equal(weapon.ammunitionInventory.selectionEjected, true);
   assert.equal(weapon.totalAmmo, 50); assert.deepEqual(weapon.magazines, [10, 23]);
 });
 
@@ -245,7 +246,9 @@ test("stale configuration saves preserve the latest inventory, overrides, custom
 
 test("one dropdown and one detail panel keep 1, 10, 30 and 50 magazines compact", () => {
   for (const count of [1, 10, 30, 50]) {
-    const weapon = inventory(); addMagazines(weapon, 30, count);
+    const weapon = inventory();
+    if(count<=10)addMagazines(weapon,30,count);
+    else { weapon.ammunitionInventory.magazines=Array.from({length:count},()=>({id:makeId(),weaponId:weapon.id,capacity:30,rounds:0,ammoKey:null}));weapon.ammunitionInventory.installedId=weapon.ammunitionInventory.magazines[0].id;projectAmmoInventory(weapon); }
     const html = ammoManagementHTML(weapon, { magazineId: weapon.ammunitionInventory.magazines[0].id }, []);
     assert.equal((html.match(/name="inventoryMagazine"/g) ?? []).length, 1);
     assert.equal((html.match(/data-magazine-detail/g) ?? []).length, 1);

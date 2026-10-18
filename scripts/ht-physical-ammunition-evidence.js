@@ -1,4 +1,6 @@
 import { correctedHTLabel, correctedHTModeStatistics, correctedHTSkillDefaults, reviewedHTModeIdentity, reviewedHTAmmoIdentity } from "./ht-source-corrections.js";
+import { projectHTPreGaussMode } from './ht-pre-gauss-profiles.js';
+import { projectHTLaserMode } from './ht-laser-source.js';
 // Runtime source correction only. The imported HT176 row and source hashes stay untouched.
 export const LEMAT = Object.freeze({ equipmentId: "ezbrl54zlak7I4wFF", revolverModeId: "WbrBqEG-vOeKVREkf",
   shotModeId: "WdzSSShGT_yv4ctOi", revolverAmmoId: "ht_42_caplock_lemat",
@@ -17,6 +19,8 @@ export function lematBarrel(modeId) {
     manual: [{ id: "BarrelSwitchReady", application: "manual-Ready-before-switch", source: "HT94" }] };
 }
 export function correctHTMode(mode, equipment) {
+  mode = projectHTPreGaussMode(mode, equipment);
+  mode = projectHTLaserMode(mode, equipment);
   mode = reviewedHTModeIdentity(mode, equipment);
   mode = correctedHTModeStatistics(mode, equipment);
   mode = correctedHTSkillDefaults(mode, equipment);

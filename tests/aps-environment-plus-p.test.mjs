@@ -12,6 +12,7 @@ import { ammunitionConditionTexts } from "../scripts/tools/damage-shot-link.js";
 import { automaticAmmoMessages } from "../scripts/tools/automatic-ammunition-localization.js";
 import { availableAmmoTypes } from "../scripts/tools/ammo-management-app.js";
 import { api } from "./fixtures/ht-special-context.mjs";
+import { assertUnprovenPressure } from "./fixtures/ht-plus-p-owner.mjs";
 const modeId="W10jqOZ0kjeSuoY3C",c=context(modeId),prepared=automatic.prepare({modeId,base:c.base,variantId:"ht_plus_p"});
 const approval={active:true,actorId:"actor",weaponId:"weapon",modeId,ammoId:c.base.ammoId,variantId:"ht_plus_p",
   recipeId:prepared.type.recipe.customId,fingerprint:recipeFingerprint(prepared.type)};
@@ -34,18 +35,25 @@ test("APS exact native imp +P preserves source type, both ranges, ST, cost, RoF,
   assert.equal(base.damage.formula,"5d imp");assert.equal(base.effective.range,"750/3,200");assert.equal(base.effective.st,"9\u2020");
   assert.deepEqual(base.environmentCapability,capability);
 });
-test("APS world policy cannot replace individual manufacture/safety approval; revoke blocks future shots",()=>{
-  assert.equal(automatic.admission(prepared,{policy:"permissive"}).allowed,false);
-  assert.equal(automatic.admission(prepared,{policy:"strict",approval}).allowed,true);
-  assert.equal(resolver.resolve({...input,approval:null}).damage.nativeSafe,false);
-  assert.equal(resolver.resolve({...input,approval:{...approval,active:false}}).damage.nativeSafe,false);
-  assert.equal(resolver.resolve({...input,approval:{...approval,weaponId:"foreign"}}).damage.nativeSafe,false);
+test("APS manual +P needs no GM gate; scoped OWNER settings do not certify pressure or foreign ammunition",()=>{
+  for(const policy of ["permissive","strict"]){
+    assert.equal(automatic.admission(prepared,{policy}).allowed,true);
+    const p=resolver.resolve({...input,profilePolicy:policy,approval:null});
+    assert.equal(p.damage.nativeSafe,true);assertUnprovenPressure(p);
+  }
+  const own={...approval,origin:"user",plusPDecision:{origin:"user",rof:12}};
+  assert.equal(resolver.resolve({...input,approval:own}).effective.rof,"12");
+  for(const patch of [{weaponId:"foreign"},{actorId:"foreign"},{modeId:"foreign"},{fingerprint:"foreign"}])
+    assert.equal(resolver.resolve({...input,approval:{...own,...patch}}).effective.rof,"10");
+  const wrong=resolver.resolve({...input,ammunition:{type:{...prepared.type,ammoId:"ht_14_5x114mm"}}});
+  assert.equal(wrong.damage.nativeSafe,false);assert.equal(wrong.compatibility.status,"incompatible");
   assert.equal(resolveAmmunitionEffects({raw:c.raw,variantId:"ht_plus_p",baseStatus:"compatible",constructionStatus:"world-policy",facts:prepared.facts}).reason,"plus-p-individual-dart-required");
 });
-test("APS list explains individual manufacturing/safety approval in RU and EN",()=>{
+test("APS manual +P is selectable in RU and EN without a GM manufacturing gate",()=>{
   const actor={binding:c.binding,system:{ranged:{mode:c.raw}}},weapon={id:"weapon",attackRef:{path:"system.ranged.mode"}};
   for(const lang of["ru","en"]){const type=availableAmmoTypes(actor,weapon,api,lang).find(t=>t.recipe?.variantId==="ht_plus_p");
-    assert.equal(type.unavailable,true);assert.equal(type.reason,automaticAmmoMessages[lang]["plus-p-individual-dart-required"]);
+    assert.equal(type.unavailable,false);assert.equal(type.preparation.state,"complete");
+    assert.equal(type.status,"undetermined");
   }
 });
 test("APS uses air x1 and underwater x25 exactly once, never x1000",()=>{
@@ -102,7 +110,8 @@ test("old shot environment, admission and native Damage remain immutable after s
   resolver.resolve({...input,approval:{...approval,active:false},context:{environment:environment("air")}});
   assert.equal(JSON.stringify(shot),saved);assert.ok(Object.isFrozen(shot.profile.context.environment));
   assert.equal(JSON.parse(saved).profile.damage.formula,"5d+2 imp");assert.equal(JSON.parse(saved).profile.context.environment.effectiveDistance,500);
-  assert.equal(JSON.parse(saved).profile.construction.admission.authority,"gm-approved");
+  assert.equal(JSON.parse(saved).profile.construction.admission.authority,"user-defined");
+  assertUnprovenPressure(JSON.parse(saved).profile);
 });
 test("APS actual physical round consumption persists once across repeated attacks and magazine switch",async()=>{
   const f=inventoryFixture(modeId,"ht_plus_p"),prepare=({ammunition})=>({profile:resolver.resolve({...input,ammunition,context:{environment:environment()}}),amount:1});
@@ -116,7 +125,11 @@ test("APS actual physical round consumption persists once across repeated attack
 test("Derringer baseline avoids normalization; HT166 1.0/1.1 confirms discrete edge without house ruling",()=>{
   const d=context("W7i4ZauQl8q2o5nTt");assert.equal(resolveAmmunitionEffects({raw:d.raw}).formula,"1d-3(0.5) pi-");
   assert.equal(htDamageDice(1,-3,1,1),"1d-5");assert.equal(htDamageDice(1,-3,1,1.1),"1d-5");
-  assert.equal((3.5-3)*1.1,0.55);assert.equal(d.raw.rof,"2x65");assert.equal(d.raw.rcl,"1");assert.equal(d.raw.acc,null);
+  assert.equal((3.5-3)*1.1,0.55);assert.equal(d.raw.rof,"2x65");assert.equal(d.raw.rcl,"1");assert.equal(d.raw.acc,"0");
+  const id="W7i4ZauQl8q2o5nTt",raw=catalogs.getCatalog("weapons").equipment.flatMap(e=>e.modes).find(m=>m.weapon_mode_id===id);
+  assert.equal(raw.stats.accuracy,null);
+  assert.deepEqual(catalogs.getMode(id).sourceStatisticsCorrection,{version:1,source:"HT91",fields:[{field:"accuracy",original:null,value:"0"}]});
+  assert.equal(resolver.resolve({rawAttack:d.raw,binding:d.binding,ammunition:{type:d.base}}).effective.acc,"0");
   assert.equal(automatic.prepare({modeId:"W7i4ZauQl8q2o5nTt",base:d.base,variantId:"ht_plus_p"}).reasons[0],"plus-p-low-damage-roundtrip-unverified");
   assert.deepEqual([1,2,3,4,5,6].map(n=>Math.max(1,n-3)),[1,1,1,1,2,3]);
   assert.deepEqual([1,2,3,4,5,6].map(n=>Math.max(1,n-5)),[1,1,1,1,1,1]);

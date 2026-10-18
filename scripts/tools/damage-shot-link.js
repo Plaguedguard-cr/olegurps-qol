@@ -12,6 +12,9 @@ import { f3RowsForShot, f3Extension } from "./ammunition-f3.js";
 import { localizeOwnChat } from "./chat-ui-localization.js";
 import { f4RowsForShot, appendF4Conditions, expireTracerMarkers } from "./ammunition-f4.js";
 import {applyGyrojetDamageResult} from './gyrojet-range.js';
+import {isUTExtendedVariant,applyUTDamageResult} from './ut-extended-ammunition.js';
+import { manualProjectileGuidance } from './ut-sefop.js';
+import { ammunitionChatData } from './ammunition-chat-summary.js';
 
 const installations = new WeakMap();
 const flag = message => message?.getFlag?.(SHOT_FLAG_SCOPE, "shotSnapshot") ?? message?.flags?.[SHOT_FLAG_SCOPE]?.shotSnapshot;
@@ -46,7 +49,7 @@ const identityCopy = shot => ({ version: shot.version, attackId: shot.attackId, 
   ...(shot.profile?.damage ? { damage: shot.profile.damage, damageAttack: shot.profile.effective,
     transformations: shot.profile.transformations, context: shot.profile.context } : {}) });
 const unlinked = reason => ({ status: "unlinked", reason });
-const explosiveShot = shot => isExplosiveVariant(shot?.ammunition?.recipe?.variantId) || isEnvironmentVariant(shot?.ammunition?.recipe?.variantId) || isFuzeTracerVariant(shot?.ammunition?.recipe?.variantId);
+const explosiveShot = shot => isUTExtendedVariant(shot?.ammunition?.recipe?.variantId) || isExplosiveVariant(shot?.ammunition?.recipe?.variantId) || isEnvironmentVariant(shot?.ammunition?.recipe?.variantId) || isFuzeTracerVariant(shot?.ammunition?.recipe?.variantId);
 const componentConditionIds = new Set(["P4LinkedFollowUp", "P4Fragmentation", "P4SAPLEReliability", "P4HESH", "P4Tandem", "P4Thermobaric"]);
 export function ammunitionConditionSource(message, runtime = globalThis) {
   // Permission checks precede even reading flags, for both the clicked message and its source.
@@ -73,6 +76,9 @@ export function shotAmmunitionConditions(message, runtime = globalThis) {
   const { shot } = resolved;
   const damage = shot.profile.damage;
   if (!damage?.nativeSafe) return [];
+  // These new HT profiles already render their concise saved instructions in
+  // ammunitionChatHTML. Do not generate a second copy in the legacy section.
+  if(damage.rules?.htSourceProfile)return [];
   const language = runtime.game?.i18n?.lang ?? "ru";
   const keys = ammunitionInstructionKeys(shot), excluded = new Set(keys), context = shot.profile.context;
   const replaced = {Linked:"P4LinkedFollowUp",Internal:"P4LinkedFollowUp",Fragments:"P4Fragmentation",
@@ -94,6 +100,8 @@ export function shotAmmunitionConditions(message, runtime = globalThis) {
 }
 export function ammunitionConditionTexts(conditions = [], language = globalThis.game?.i18n?.lang ?? "ru", excludedKeys = new Set()) {
   return (conditions ?? []).flatMap(condition => {
+    if(condition.id==='BeamCondition'&&typeof condition.text==='string')return [condition.text];
+    if(condition.id==='WeaponReliability'&&Number.isFinite(condition.malf))return [`Malf ${condition.malf} (${condition.source}). Проверка надёжности — вручную; поправки боеприпаса учитываются отдельно.`];
     if(condition.id==='SpecializedPlatform'&&typeof condition.text==='string')return [condition.text];
     const f1Key = f1ManualConditionKey(condition.id);
     if (f1Key) return excludedKeys.has(f1Key) ? [] : [automaticAmmoText(f1Key, language)];
@@ -109,15 +117,32 @@ export function ammunitionConditionTexts(conditions = [], language = globalThis.
 }
 export function renderShotAmmunitionConditions(message, root, runtime = globalThis) {
   root?.querySelector?.("[data-olegurps-special-effects]")?.remove?.();
-  const conditions = shotAmmunitionConditions(message, runtime);
   const resolved = ammunitionConditionSource(message, runtime);
-  if ((!conditions.length && !f2RowsForShot(resolved?.shot).length && !f3RowsForShot(resolved?.shot).length && !f4RowsForShot(resolved?.shot).length) || !runtime.document) return null;
+  const data = resolved && ammunitionChatData({...resolved.shot.profile,ammunition:resolved.shot.ammunition});
+  const conditions = data ? [] : shotAmmunitionConditions(message, runtime);
+  if ((!data && !conditions.length && !f2RowsForShot(resolved?.shot).length && !f3RowsForShot(resolved?.shot).length && !f4RowsForShot(resolved?.shot).length) || !runtime.document) return null;
   const card = root?.querySelector?.(".roll-message.gga-chat-message, .damage-message");
   if (!card) return null;
+  for (const section of root?.querySelectorAll?.('.olegurps-combat-channel-breakdown, .olegurps-standalone-skill, .olegurps-fire-skill-breakdown') ?? [])
+    section.classList?.add('olegurps-chat-details');
+  // Replace only our displayed description, including old verbose HTML. Persisted content/flags stay intact.
+  for (const old of root?.querySelectorAll?.('.olegurps-ut-payload, .olegurps-ammunition-summary') ?? []) old.remove();
   const details = runtime.document.createElement("details"), summary = runtime.document.createElement("summary");
   details.dataset.olegurpsSpecialEffects = "true";
-  summary.textContent = automaticAmmoText("F1Title", runtime.game?.i18n?.lang ?? "ru");
+  details.className = 'olegurps-ammunition-summary olegurps-chat-details';
+  summary.textContent = data ? 'Содержимое и применение заряда' : automaticAmmoText("F1Title", runtime.game?.i18n?.lang ?? "ru");
   details.append(summary);
+  if (data) {
+    const add = value => { const p=runtime.document.createElement('p');p.textContent=value;details.append(p);return p; };
+    if(data.name)add(data.name);
+    for(const line of data.lines)add(line);
+    for(const field of data.fields){
+      const p=add(field.label+': '+field.value);
+      if(p.style){p.style.whiteSpace='pre-wrap';p.style.overflowWrap='anywhere';}
+      if(field.description)p.className='olegurps-payload-description';
+    }
+    if(data.source)add(data.source);
+  }
   for (const text of conditions) appendInstructionSteps(details, text, runtime.document);
   appendF2Conditions(details, resolved, runtime, () => ammunitionConditionSource(message, runtime), f3Extension(resolved, runtime));
   appendF4Conditions(details, resolved, runtime, () => ammunitionConditionSource(message, runtime));
@@ -129,7 +154,7 @@ export function shotDamageComponents(message, runtime = globalThis) {
   const shot = flag(message);
   if (!completed(shot, message.id) || !explosiveShot(shot)) return [];
   const composite=shot.profile.damage?.model?.kind==="published-composite" || !!shot.profile.damage?.rules?.componentOrder || !!shot.profile.damage?.rules?.fuzeTracer;
-  const roles=composite ? shot.profile.damage.components.filter(c=>c.role!=="kinetic"&&c.status==="resolved").map(c=>c.role) : ["follow-up","fragmentation"];
+  const roles=composite ? shot.profile.damage.components.filter(c=>c.role!==(shot.profile.damage.rules?.primaryDamageRole??'kinetic')&&c.status==="resolved").map(c=>c.role) : ["follow-up","fragmentation"];
   return roles.map(role => {
     const component = shot.profile.damage?.components?.find(c => c.role === role);
     const resolved = shot.profile.damage?.nativeSafe && component?.status === "resolved" && !!component.formula;
@@ -161,7 +186,7 @@ export function captureDamageSource(action, event, runtime = globalThis) {
   const actor = runtime.ChatMessage?.getSpeakerActor?.(source.speaker) ?? runtime.game?.actors?.get(shot.actorId);
   if (!actor || actor.id !== shot.actorId) return { ...unlinked("actor-unavailable"), sourceMessageId: messageId };
   return { status: "linked", sourceMessageId: messageId, actor,
-    component: secondary ? component : "kinetic", shot: immutableCopy(identityCopy(shot)) };
+    component: secondary ? component : shot.profile.damage?.rules?.primaryDamageRole??"kinetic", shot: immutableCopy(identityCopy(shot)) };
 }
 
 /** Resolve only through explicit IDs, with current document permissions. Never inspect current ammo. */
@@ -219,6 +244,7 @@ export function installDamageShotLink(runtime = globalThis) {
     let dispatched = action;
     if (context.status === "linked" && ["attackdamage", "damage"].includes(action?.type) && !action.calcOnly) {
       const damage = context.shot.damage;
+      if(damage?.rules?.instructionOnly)return false;
       const component = context.component && context.component !== "kinetic" ? damage?.components?.find(c=>c.role === context.component) : null;
       const formula = component ? component.formula : damage?.formula;
       if (explosiveShot(context.shot) && (!damage?.nativeSafe || (context.component !== "kinetic" &&
@@ -261,6 +287,8 @@ export function installDamageShotLink(runtime = globalThis) {
     const context = event && events.get(event), roll = draggableData?.[0]?.roll;
     if(context?.status==='linked'&&actor?.id===context.shot.actorId&&context.shot.damage?.nativeSafe)
       draggableData=draggableData.map(d=>applyGyrojetDamageResult(d,context.shot.damage.rules?.gyrojetRange,context.component??'kinetic'));
+    if(context?.status==='linked'&&actor?.id===context.shot.actorId&&context.shot.damage?.nativeSafe)
+      draggableData=draggableData.map(d=>applyUTDamageResult(d,context.shot.damage.rules,context.component??'kinetic'));
     if (context && roll && typeof roll === "object") {
       rolls.set(roll, context.status === "linked" && actor?.id !== context.shot.actorId
         ? unlinked("actor-mismatch") : context);
@@ -331,7 +359,8 @@ export function installDamageShotLink(runtime = globalThis) {
     if (!owned(message) && !message?.flags?.[SHOT_FLAG_SCOPE]?.damageLink) return;
     const shot = flag(message), ammunition = shot?.ammunition;
     const ammunitionName = completed(shot, message.id) && ammunition?.source === "catalog" &&
-      ammunition.status === "confirmed" && typeof ammunition.name === "string" ? ammunition.name.trim() : "";
+      ammunition.status === "confirmed" && typeof ammunition.name === "string" ?
+        (ammunitionChatData({...shot.profile,ammunition})?.name ?? ammunition.name).trim() : "";
     renderShotAmmunitionConditions(message, root, runtime);
     for (const element of root?.querySelectorAll(".roll-message.gga-chat-message .gurpslink") ?? []) {
       let action;
@@ -342,7 +371,7 @@ export function installDamageShotLink(runtime = globalThis) {
         // GGA dispatch reads data-action/data-otf, not the visible text of its native span.
         // Only a completed, readable source with a confirmed saved identity may supply this label.
         if (ammunitionName && (!action.sourceId || action.sourceId === shot.actorId))
-          element.textContent = "D:" + ammunitionName;
+          element.textContent = "D:" + (shot.profile.damage.rules?.heProximity?explosiveText('Fragmentation',runtime)+' / ':'') + ammunitionName + (manualProjectileGuidance(shot.profile) ? ' — после ручного попадания' : '');
         if (completed(shot, message.id) && explosiveShot(shot) && !element.dataset.olegurpsComponentsRendered && runtime.document) {
           element.dataset.olegurpsComponentsRendered = "true";
           let anchor = element;
@@ -352,9 +381,7 @@ export function installDamageShotLink(runtime = globalThis) {
             button.dataset.olegurpsShotComponent = component.role;
             button.dataset.gurpsClickwired = "true"; button.dataset.gurpsContextmenuwired = "true";
             button.textContent = "D:" + component.label;
-            button.title = explosiveText(shot.profile.damage?.rules?.componentOrder ? "P4LinkedFollowUp" : "ManualConditions", runtime);
-            if (shot.profile.damage?.rules?.componentOrder && component.role === "fragmentation")
-              button.title += " " + explosiveText("P4Fragmentation", runtime);
+            button.title = component.formula ?? component.label;
             if (component.formula) {
               const parsed = GURPS.parselink(component.formula);
               const template = runtime.document.createElement("template"); template.innerHTML = parsed.text;

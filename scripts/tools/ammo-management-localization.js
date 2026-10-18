@@ -7,6 +7,17 @@ import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 
 export const ammoManagementLabels = {
   en: {
+    CampaignTLUnavailable: "Construction requires a higher campaign TL.",
+    CampaignTLExisting: "Existing inventory",
+    UAWMain: "Main barrel - 10mmCLP",
+    UAWShotgun: "Shotgun barrel - 18.5mmPC",
+    MagazineLimitCount: "Magazines: {count} / {limit}.",
+    FixedFeedLimit: "This feed is fixed; additional detachable magazines cannot be added.",
+    UAWInactiveFeed: "Select a magazine for this barrel in the ammunition window.",
+    MagazineTransferUnavailable: "The magazine already belongs to this weapon.",
+    NoSelectedType:"Empty magazine — no ammunition type selected",
+    DeleteRecipe:'Delete saved recipe',
+    RecipeInUse:'First unload magazines safely and remove loose stock. A recipe containing rounds cannot be deleted.',
     SealedResourceQuantity: "Use a complete factory unit: five shots for P11, one for a disposable tube. The selected slot capacity must match.",
     SealedResourceSpent: "This cluster or tube has been used. Select a new empty slot and install a fresh factory unit from stock.",
     SealedResourcePartial: "A partly used factory cluster cannot be dismantled or topped up. Keep its remaining shots; delete the empty cluster after the last shot.",
@@ -31,7 +42,7 @@ export const ammoManagementLabels = {
     CapacityExceeded: "The quantity exceeds the magazine's free capacity.", MixedTypes: "Unload the magazine before changing its ammunition type.",
     InsufficientRounds: "The magazine does not contain that many rounds.", MagazineMissing: "The selected magazine is no longer available.",
     MagazineNotInstalled: "The selected magazine is not installed.", TypeUnavailable: "This ammunition type is unavailable for loading.",
-    MagazineLimit: "Add at most 100 magazines at once, up to 1000 total; maximum capacity is 100000.",
+    MagazineLimit: "Magazine limit: 10 per weapon; UAW: 5 per barrel.",
     WeaponMissing: "This weapon is no longer available.", Permission: "Actor ownership or GM permission is required.",
     UnknownOperation: "Unknown ammunition operation.", Changed: "Ammunition updated.", Stored: "Saved type (review required)",
     Scope: "Loose stock belongs to this weapon, matching the existing ammunition manager.",
@@ -43,6 +54,8 @@ export const ammoManagementLabels = {
 import { moduleText } from "../localization.js";
 export function ammoText(name, runtime = globalThis) {
   if(/[\u0400-\u04ff]/u.test(String(name)))return String(name);
+  if(String(name).startsWith('UT') && Object.hasOwn(russianUI,'OleGURPS.AttackProfile.'+name))
+    return moduleText('OleGURPS.AttackProfile.'+name);
   const key = "OleGURPS.Ammo." + name;
   return moduleText(key, {}, ammoManagementLabels.ru[name] ?? "Не удалось выполнить операцию. Проверьте сохранённый боезапас и повторите попытку.");
 }

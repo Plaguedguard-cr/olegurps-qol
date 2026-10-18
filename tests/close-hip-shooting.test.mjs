@@ -79,7 +79,8 @@ test("shared preview applies CHS without geometry and retains RRS/Quick-Shot mod
   let result = details();
   assert.deepEqual([result.baseSkill, result.closeHipShooting.closeHipBase,
     result.modifiers.reduce((total, part) => total + part.value, 0), result.effectiveSkill], [13, 11, -7, 6]);
-  assert.equal(result.modifiers.filter(part => part.label.includes("Close-Hip result")).length, 1);
+  assert.equal(result.modifiers.filter(part => part.channel === "closeCombatBulk").length, 1);
+  assert.equal(result.modifiers.find(part => part.channel === "closeCombatBulk").value, -2);
   values.closeHipShooting = false;
   result = details();
   assert.equal(result.effectiveSkill, 8, JSON.stringify(result.modifiers));
@@ -110,7 +111,7 @@ test("actual roll receives one CHS modifier with no repeated Bulk", async () => 
       moveAttackPenalty: -2, rangePenalty: 0, rapidFireBonus: 0,
       hitLocationPenalty: 0, manualModifier: 0, visibilityPenalty: 0
     });
-    const chs = applied.modifiers.filter(item => item.desc.includes("Close-Hip result"));
+    const chs = applied.modifiers.filter(item => item.desc.includes("Результат стрельбы от бедра"));
     assert.equal(chs.length, 1);
     assert.equal(chs[0].modint, -2);
     assert.equal(applied.modifiers.filter(item => item.desc.includes("Move and Attack")).length, 0);
@@ -150,22 +151,22 @@ test("personal fire report folds weapon level and technique details by default",
   globalThis.foundry = { applications: { api: { ApplicationV2: class {} } } };
   try {
     const { buildFireSkillBreakdownHtml } = await import("../scripts/tools/ammo.js");
-    const html = buildFireSkillBreakdownHtml({ baseSkillName: "Ranged Weapon Level", baseSkill: 13,
+    const html = buildFireSkillBreakdownHtml({ baseSkillName: "Базовый навык оружия", baseSkill: 13,
       closeHipShooting: { governingSkillName: "Guns/TL9 (Rifle)", governingSkillLevel: 13,
         label: "Close-Hip Shooting (Rifle)", techniqueLevel: 16, bulk: -5, closeHipBase: 11 },
       closeQuartersBattle: { governingSkillName: "Guns/TL9 (Rifle)", governingSkillLevel: 13,
         label: "Close-Quarters Battle (Rifle)", techniqueLevel: 17,
         weaponTechniqueLevel: 17, movePenalty: -5, cqbBase: 12 }
     }, value => String(value));
-    assert.match(html, /<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Skill details<\/summary><div>Ranged Weapon Level: <strong>13<\/strong>/);
-    assert.match(html, /Close-Hip result: <strong>11<\/strong>/);
-    assert.match(html, /CQB base: <strong>12<\/strong>/);
+    assert.match(html, /<details class="olegurps-fire-skill-breakdown olegurps-chat-details"><summary style="cursor:pointer">Расчёт навыка<\/summary><div>Базовый навык оружия: <strong>13<\/strong>/);
+    assert.match(html, /Результат стрельбы от бедра: <strong>11<\/strong>/);
+    assert.match(html, /База ближнего боя: <strong>12<\/strong>/);
     assert.doesNotMatch(html, /<details[^>]*\bopen\b/);
     const withoutBase = buildFireSkillBreakdownHtml({ closeHipShooting: {
       governingSkillName: "Guns (Rifle)", governingSkillLevel: 13,
       label: "Close-Hip Shooting", techniqueLevel: 16, bulk: -5, closeHipBase: 11
     } }, value => String(value));
-    assert.match(withoutBase, /<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Techniques<\/summary>/);
+    assert.match(withoutBase, /<details class="olegurps-fire-skill-breakdown olegurps-chat-details"><summary style="cursor:pointer">Расчёт навыка<\/summary>/);
     assert.doesNotMatch(withoutBase, /<details[^>]*\bopen\b/);
   } finally { globalThis.foundry = previous; }
 });

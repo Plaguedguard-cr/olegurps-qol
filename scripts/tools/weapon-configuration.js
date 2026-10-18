@@ -1,10 +1,18 @@
+import { LP_PROFILES, lpAdmission } from './ut-liquid-propellant.js';
+import { gaussProfile } from '../ut-gauss-source.js';
 import { listRangedGoverningSkills, resolveRangedGoverningSkill, bindingForGoverningSkill,
   getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
 import { setAttackOverride, clearAttackOverride } from "./weapon-attack-overrides.js";
 import { hasWeaponBondPerk } from "./weapon-bond-service.js";
 import { weaponText } from "./weapon-localization.js";
 import { StandaloneWeaponDraft, StandaloneWeaponService, standaloneAmmoCarriers, standaloneText } from "./standalone-weapon-service.js";
-import { standaloneConfigurationHTML, bindStandaloneConfiguration } from "./standalone-weapon-configuration.js";
+import { standaloneConfigurationHTML, bindStandaloneConfiguration, updateStandaloneResolvedDamage } from "./standalone-weapon-configuration.js";
+import { readAttackAmmunition } from './ammo-service.js';
+import { readCampaignTL, parseCampaignTL, saveCampaignTL, campaignAmmunitionAdmission } from './ammunition-tech-level.js';
+import { etcAdmission, executionConfigurationHTML } from './ut-etc.js';
+import { ETC_PROFILES } from './ut-etc.js';
+import { AttackProfileResolver } from './attack-profile-resolver.js';
+import { standaloneModeStats } from './standalone-weapon-service.js';
 export { weaponText } from "./weapon-localization.js";
 
 export const escapeWeaponHTML = value => String(value ?? "").replace(/[&<>"']/g,
@@ -148,10 +156,21 @@ export function suggestWeaponSkill(actor, attack, mode) {
 export class WeaponConfigurationDraft {
   constructor({ actor, state, attacks, existing = null, catalogs, bindings, ammunition }) {
     Object.assign(this, { actor, state, attacks, existing, catalogs, bindings, ammunition });
+    this.campaignTL = readCampaignTL(actor);
+    this.originalCampaignTL = this.campaignTL;
+    const executionOwner=existing?.standaloneModeId==='WRvS5pz3LMCzqQyiZ'?
+      state.weapons?.find(w=>w.standaloneWeaponId===existing.standaloneWeaponId&&w.standaloneModeId==='WtM51JNSpOUIy3Eo1'):existing;
+    this.executionVariant=executionOwner?.executionVariant??'ordinary';
+    this.lpFireMode=executionOwner?.lpFireMode??'standard';
+    this.gaussSpeed=executionOwner?.gaussSpeed??'standard';
+    this.gaussSpeedChanged=false;
+    this.executionChanged=false;
     this.standaloneService = new StandaloneWeaponService(actor, catalogs);
     this.standalone = Boolean(existing?.standaloneWeaponId);
-    this.standaloneDraft = new StandaloneWeaponDraft({ catalogs, type: "ranged",
+    this.standaloneDraft = new StandaloneWeaponDraft({ catalogs, type: "ranged", actor,
+      weaponBond:existing?.weaponBond,
       existing: this.standaloneService.get(existing?.standaloneWeaponId) });
+    this.standaloneDraft.statPreview=modeId=>this.previewStats(modeId);
     this.modes = new Map();
     this.analysis = new Map((bindings?.analyzeActor(actor)?.modes ?? []).map(entry => [entry.attack.path, entry]));
     const reference = existing?.attackRef;
@@ -164,6 +183,48 @@ export class WeaponConfigurationDraft {
   }
 
   selectAttack(path) { this.path = this.attacks.some(attack => attack.path === path) ? path : ""; return this.current; }
+  get executionModeId() {
+    if(this.standalone&&this.standaloneDraft.selectedModes.some(m=>m.weapon_mode_id==='WtM51JNSpOUIy3Eo1'))return 'WtM51JNSpOUIy3Eo1';
+    return this.standalone ? this.standaloneDraft.selectedModes.find(m=>m.weapon_mode_id===this.existing?.standaloneModeId)?.weapon_mode_id ??
+      this.standaloneDraft.selectedModes[0]?.weapon_mode_id : this.current?.target?.modeId;
+  }
+  requestExecution(weapon) {
+    if(this.gaussSpeedChanged)weapon.gaussSpeedRequest=this.gaussSpeed;
+    if(this.executionChanged)weapon.executionRequest={variant:this.executionVariant,modeId:this.executionModeId};
+  }
+  previewStats(modeId=this.executionModeId) {
+    const mode=this.standaloneDraft.availableModes.find(m=>m.weapon_mode_id===modeId);
+    const raw=this.standalone ? {...standaloneModeStats(mode),...this.standaloneDraft.overrides[modeId]} :
+      {...this.attack?.data,...(this.current?.override?.action==='save'?this.current.override.value:{})};
+    const sharedETC=this.executionVariant==='etc'&&this.executionModeId==='WtM51JNSpOUIy3Eo1'&&modeId==='WRvS5pz3LMCzqQyiZ';
+    if(gaussProfile(modeId)) {
+      const carrier={id:'configuration-preview',catalogModeId:modeId,gaussSpeed:this.gaussSpeed};
+      const saved=this.state.weapons?.find(w=>w.id===this.existing?.id&&w.standaloneModeId===modeId);
+      let ammunition=null;try{ammunition=readAttackAmmunition(saved);}catch{}
+      ammunition??={kind:'preview',type:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:gaussProfile(modeId).familyId}};
+      const profile=new AttackProfileResolver({catalogs:this.catalogs,compatibility:this.ammunition??globalThis.OleGURPSQOL?.ammunitionCompatibility}).resolve({
+        actorId:this.actor.id,weaponId:carrier.id,attack:{data:raw},rawAttack:raw,state:{weapons:[carrier]},ammunition,
+        binding:{status:'confirmed',binding:{confirmed:true,modeId}}});
+      return {stats:{...raw,damage:profile.effective.damage,range:profile.effective.range},derivedFields:['damage','range'],resolvedDamage:profile.damage.formula};
+    }
+    if(!['etc','lp'].includes(this.executionVariant)||modeId!==this.executionModeId&&!sharedETC){
+      const carrier=this.state.weapons?.find(w=>w.id===this.existing?.id&&w.standaloneModeId===modeId);
+      let ammunition=null;try{ammunition=readAttackAmmunition(carrier);}catch{/* Keep editable source fields on inventory review. */}
+      const family=mode?.ammunition_profile?.primary_ammo_family_id;
+      if(!ammunition?.type&&family)ammunition={kind:'preview',type:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:family}};
+      const profile=mode?new AttackProfileResolver({catalogs:this.catalogs,compatibility:this.ammunition??globalThis.OleGURPSQOL?.ammunitionCompatibility}).resolve({
+        actorId:this.actor.id,weaponId:carrier?.id,attack:{data:raw},rawAttack:raw,ammunition,
+        binding:{status:'confirmed',binding:{confirmed:true,modeId}}}):null;
+      return {stats:raw,derivedFields:[],resolvedDamage:profile?.damage.nativeSafe?profile.damage.formula:null};
+    }
+    const profile=new AttackProfileResolver({catalogs:this.catalogs,compatibility:this.ammunition??globalThis.OleGURPSQOL?.ammunitionCompatibility}).resolve({
+      actorId:this.actor.id,weaponId:'configuration-preview',attack:{data:raw},rawAttack:raw,
+      state:{weapons:[{id:'configuration-preview',catalogModeId:modeId,executionVariant:this.executionVariant,lpFireMode:this.lpFireMode}]},
+      binding:{status:'confirmed',binding:{confirmed:true,modeId}},
+      ammunition:{kind:'preview',type:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:(this.executionVariant==='lp'?LP_PROFILES:ETC_PROFILES)[modeId]?.familyId}}});
+    return {stats:profile.damage.nativeSafe ? {...raw,damage:profile.effective.damage,range:profile.effective.range,...(this.executionVariant==='lp'?{shots:profile.effective.shots}:{})} :
+      {...raw,damage:'—',range:'—'},derivedFields:this.executionVariant==='lp'?['damage','range','shots']:['damage','range']};
+  }
   get attack() { return this.attacks.find(attack => attack.path === this.path) ?? null; }
   get current() {
     if (!this.attack) return null;
@@ -190,7 +251,8 @@ export class WeaponConfigurationDraft {
   suggestAmmo(draft = this.current) {
     if (!draft || draft.ammo || draft.ammoType || draft.ammoChanged ||
         this.existing && Object.hasOwn(this.existing, "ammunitionBinding")) return;
-    const first = baseAmmunition(this.ammunition, draft.target?.modeId, this.catalogs)[0];
+    const first = baseAmmunition(this.ammunition, draft.target?.modeId, this.catalogs).find(entry =>
+      campaignAmmunitionAdmission({...entry, source:'catalog'}, this.catalogs, this.campaignTL).allowed);
     if (first) draft.ammo = this.ammoBinding(first, draft.target.modeId);
   }
   ammoBinding(entry, modeId) {
@@ -210,7 +272,8 @@ export class WeaponConfigurationDraft {
   selectAmmo(ammoId) {
     const draft = this.current;
     const entry = baseAmmunition(this.ammunition, draft?.target?.modeId, this.catalogs, draft?.ammo)
-      .find(row => row.choiceKey === ammoId || row.ammoId === ammoId);
+      .find(row => (row.choiceKey === ammoId || row.ammoId === ammoId) &&
+        campaignAmmunitionAdmission({...row, source:'catalog'}, this.catalogs, this.campaignTL).allowed);
     if (!draft) return;
     draft.ammoChanged = true;
     draft.ammo = entry ? this.ammoBinding(entry, draft.target.modeId) : ammoId === "stored" ? this.existing?.ammunitionBinding ?? null : null;
@@ -224,6 +287,12 @@ export class WeaponConfigurationDraft {
   }
 
   async commit({ id }) {
+    if(this.actor.isOwner===false)throw Error(standaloneText('Owner'));
+    if(this.executionChanged&&['etc','lp'].includes(this.executionVariant)) {
+      const admission=(this.executionVariant==='lp'?lpAdmission:etcAdmission)(this.executionModeId,this.catalogs,this.campaignTL);
+      if(!admission.allowed)throw Error(admission.reason);
+    }
+    if (this.campaignTL !== this.originalCampaignTL) await saveCampaignTL(this.actor, this.campaignTL);
     if (this.standalone) {
       const record = await this.standaloneService.save(this.standaloneDraft);
       const next = structuredClone(this.state);
@@ -232,7 +301,8 @@ export class WeaponConfigurationDraft {
         const old = next.weapons.find(w => w.id === carrier.id);
         if (old) next.weapons[next.weapons.indexOf(old)] = carrier; else next.weapons.push(carrier);
       }
-      const weapon = carriers[0];
+      const weapon = carriers.find(w=>w.standaloneModeId===this.executionModeId)??carriers[0];
+      this.requestExecution(weapon);
       return { state: next, weapon };
     }
     const attack = this.attack, draft = this.current;
@@ -252,6 +322,11 @@ export class WeaponConfigurationDraft {
       weaponBond: hasWeaponBondPerk(this.actor) ? draft.weaponBond : this.existing?.weaponBond === true,
       ammoType: !draft.ammoChanged && this.existing ? this.existing.ammoType : draft.ammo?.name ?? draft.ammoType ?? "" });
     if (draft.ammo) weapon.ammunitionBinding = { ...draft.ammo, confirmed: true };
+    this.requestExecution(weapon);
+    if (!this.existing && isPaintCarbine(weapon, draft.target?.modeId)) {
+      weapon.catalogModeId = draft.target.modeId;
+      weapon.paintBattery = newPaintBattery();
+    }
     else if (draft.ammoChanged) weapon.ammunitionBinding = null;
     next.governingSkills ??= {};
     const key = getRangedGoverningAttackKey(attack);
@@ -294,12 +369,14 @@ export function weaponConfigurationHTML(model) {
       `${attack.path === model.path ? " selected" : ""}>${escapeWeaponHTML(label)}</option>`;
   }).join("");
   return `<div class="standard-form gam-config gam-weapon-config">
+    <label>${escapeWeaponHTML(weaponText('CampaignTL'))}<input name="campaignTL" type="number" min="0" step="1" placeholder="${escapeWeaponHTML(weaponText('CampaignTLUnset'))}" value="${model.campaignTL ?? ''}"></label>
     <label class="gam-config-checkbox"><input type="checkbox" name="standaloneWeapon" ${model.standalone ? "checked" : ""} ${model.existing ? "disabled" : ""}><span>${escapeWeaponHTML(standaloneText("Absent"))}</span></label>
     <div data-gga-configuration ${model.standalone ? "hidden" : ""}>
     <label>${escapeWeaponHTML(weaponText("Attack"))}<select name="attackPath">` +
     `${model.path ? "" : `<option value="">${escapeWeaponHTML(weaponText("SelectAttack"))}</option>`}${attackOptions}</select></label>
     <div data-weapon-mode-fields>${weaponModeFieldsHTML(model, draft)}</div></div>
-    <div data-standalone-configuration ${model.standalone ? "" : "hidden"}>${standaloneConfigurationHTML(model.standaloneDraft)}</div></div>`;
+    <div data-standalone-configuration ${model.standalone ? "" : "hidden"}>${standaloneConfigurationHTML(model.standaloneDraft)}</div>
+    <div data-weapon-execution>${executionConfigurationHTML(model.executionModeId,model.executionVariant,model.catalogs,model.campaignTL,escapeWeaponHTML,model.gaussSpeed)}</div></div>`;
 }
 
 export function weaponModeFieldsHTML(model, draft = model.current) {
@@ -315,7 +392,8 @@ export function weaponModeFieldsHTML(model, draft = model.current) {
     return `<option value="${escapeWeaponHTML(target.modeId)}" title="${escapeWeaponHTML(label)}"` +
       `${draft.target?.modeId === target.modeId ? " selected" : ""}>${escapeWeaponHTML(label)}</option>`;
   }).join("");
-  const ammo = baseAmmunition(model.ammunition, draft.target?.modeId, model.catalogs, draft.ammo);
+  const ammo = baseAmmunition(model.ammunition, draft.target?.modeId, model.catalogs, draft.ammo).filter(entry =>
+    campaignAmmunitionAdmission({...entry, source:'catalog'}, model.catalogs, model.campaignTL).allowed);
   const stored = draft.ammo && (!ammo.some(entry => sameAmmoBinding(entry, draft.ammo)) || draft.ammo.modeId !== draft.target?.modeId);
   const ammoOptions = (stored ? `<option value="stored" selected>${escapeWeaponHTML(draft.ammo.name)} (${escapeWeaponHTML(weaponText("Review"))})</option>` :
     draft.ammoType && !draft.ammo ? `<option value="stored" selected>${escapeWeaponHTML(draft.ammoType)} (${escapeWeaponHTML(weaponText("Stored"))})</option>` : "") +
@@ -327,7 +405,7 @@ export function weaponModeFieldsHTML(model, draft = model.current) {
       <option value="">${escapeWeaponHTML(weaponText("NoBinding"))}</option>${options}</select>
       <button type="button" data-edit-attack-parameters title="${escapeWeaponHTML(weaponText("Edit"))}" aria-label="${escapeWeaponHTML(weaponText("Edit"))}"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button></div>
     <p class="hint gam-catalog-status" role="status">${escapeWeaponHTML(weaponText(status))}</p>
-    <div class="gam-catalog-comparison" data-catalog-comparison>${weaponComparisonHTML(model.attack, model.catalogs?.getMode(draft.target?.modeId))}</div></div>
+    <div class="gam-catalog-comparison" data-catalog-comparison>${weaponComparisonHTML(['etc','lp'].includes(model.executionVariant)?{...model.attack,data:model.previewStats().stats}:model.attack, model.catalogs?.getMode(draft.target?.modeId))}</div></div>
     <label>${escapeWeaponHTML(weaponText("Ammo"))}<select name="ammunition"><option value="">${escapeWeaponHTML(weaponText("NoAmmo"))}</option>${ammoOptions}</select></label>
     <label>${escapeWeaponHTML(weaponText("Skill"))}<select name="governingSkillKey">${skillOptionsHTML(model.actor, draft.skillBinding)}</select></label>
     <label class="gam-config-checkbox"><input type="checkbox" name="weaponBond" ${draft.weaponBond ? "checked" : ""} ${available ? "" : "disabled"}>
@@ -335,6 +413,32 @@ export function weaponModeFieldsHTML(model, draft = model.current) {
 }
 
 export function bindWeaponConfiguration(root, model, edit) {
+  const refreshExecution=()=>{
+    const section=root.querySelector('[data-weapon-execution]');
+    if(section)section.innerHTML=executionConfigurationHTML(model.executionModeId,model.executionVariant,model.catalogs,model.campaignTL,escapeWeaponHTML,model.gaussSpeed);
+    for(const input of root.querySelectorAll('[data-standalone-stat]')) {
+      const field=input.dataset.standaloneStat;
+      if(!['damage','range','shots'].includes(field))continue;
+      const preview=model.previewStats(input.dataset.modeId);
+      input.value=preview.stats[field]??'';
+      input.readOnly=preview.derivedFields.includes(field);
+      input.title=input.readOnly?weaponText('DerivedExecution'):standaloneText(input.value===''?'Missing':'Override');
+      updateStandaloneResolvedDamage(root,model.standaloneDraft,input.dataset.modeId,preview);
+    }
+    if(!model.standalone&&model.current){
+      const comparison=root.querySelector('[data-catalog-comparison]');
+      if(comparison)comparison.innerHTML=weaponComparisonHTML(['etc','lp'].includes(model.executionVariant)?{...model.attack,data:model.previewStats().stats}:model.attack,model.catalogs?.getMode(model.current.target?.modeId));
+    }
+  };
+  root.addEventListener('change',event=>{
+    if(event.target.name==='gaussSpeed') {model.gaussSpeed=event.target.value;model.gaussSpeedChanged=true;}
+    if(event.target.name==='weaponExecution') {model.executionVariant=event.target.value;model.executionChanged=true;}
+    refreshExecution();
+  });
+  root.querySelector('[name="campaignTL"]')?.addEventListener('change', event => {
+    try { model.campaignTL = parseCampaignTL(event.target.value); event.target.setCustomValidity(''); refresh(); }
+    catch (error) { event.target.setCustomValidity(error.message); event.target.reportValidity(); }
+  });
   const standaloneRoot = root.querySelector('[data-standalone-configuration]');
   if (standaloneRoot?.querySelector) {
     bindStandaloneConfiguration(standaloneRoot, model.standaloneDraft);
@@ -357,6 +461,7 @@ export function bindWeaponConfiguration(root, model, edit) {
   const fields = root.querySelector("[data-weapon-mode-fields]");
   const refresh = () => {
     fields.innerHTML = weaponModeFieldsHTML(model);
+    refreshExecution();
     for (const select of root.querySelectorAll("select")) select.title = select.selectedOptions?.[0]?.textContent?.trim() ?? "";
   };
   root.querySelector('[name="attackPath"]').addEventListener("change", event => { model.selectAttack(event.target.value); refresh(); });
@@ -392,3 +497,4 @@ export function bindWeaponConfiguration(root, model, edit) {
   });
   refresh();
 }
+import { isPaintCarbine, newPaintBattery } from './ut-paint-power.js';

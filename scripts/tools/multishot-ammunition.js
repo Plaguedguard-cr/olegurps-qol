@@ -90,7 +90,7 @@ export function resolveMultishotEffects({ raw, variantId, facts, previousTransfo
     support: { ...result.support, status: "UNDETERMINED", missing: [reason] } });
   const journal = (effectId, from, to, applied = true) => transformations.push({ source: facts.multishotOption?.source_ref,
     effectId, from, to, order: transformations.length + 1, applied, reason: applied ? "HT166-from-immutable-source" : "native-source-preserved" });
-  if (baseStatus !== "compatible" || !["compatible", "gm-approved", "world-policy"].includes(constructionStatus)) return fail("MultishotEvidenceRequired");
+  if (baseStatus !== "compatible" || !["compatible", "user-defined", "gm-approved", "world-policy"].includes(constructionStatus)) return fail("MultishotEvidenceRequired");
   if (previousTransformations.some(e=>e.effectId===variantId && e.applied)) return fail("already-applied-use-original-profile");
   const review = reviewMultishotConstruction(facts.multishotOption, facts);
   if (review.status !== "compatible") return fail(review.reason);

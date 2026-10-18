@@ -36,7 +36,7 @@ export function publishedDamageComponents(text,{fragmentType=null}={}) {
 export function reviewExplosiveDefinition(option,originalFacts,definition) {
  const facts=copy(originalFacts??{}),fail=reason=>({status:"unresolved",reason,facts});
  if(!isExplosiveVariant(option?.id)||definition?.verified!==true||!definition.source?.note?.trim()||
-    !["reference","gm"].includes(definition.source.kind))return fail("P4ConstructionMissing");
+    !["reference","gm","user"].includes(definition.source.kind))return fail("P4ConstructionMissing");
  const nativeTL = publishedTLException(option, definition);
  if(!Number.isInteger(definition.availabilityTL)||definition.availabilityTL<option.min_tl&&!nativeTL)return fail("P4TLRequired");
  if(facts.caliberMm!=null&&definition.caliberMm!=null&&facts.caliberMm!==definition.caliberMm)return fail("P4SourceConflict");
@@ -107,7 +107,7 @@ export function sourceExplosiveDefinition(catalogs,modeId,ammo,variantId) {
 export function resolveCompositeExplosiveEffects({raw,variantId,baseStatus,constructionStatus,facts,previousTransformations=[]},{htDamageDice,parseKineticDamage}) {
  const formula=String(raw?.damage??""),components=[],transformations=[],result={status:"unresolved",nativeSafe:false,rawFormula:formula,formula,variantId,components,transformations,reason:null,rules:{},support:{status:"UNDETERMINED",automatic:[],manual:[]}};
  const fail=reason=>({...result,reason});
- if(baseStatus!=="compatible"||!["compatible","reference","gm-approved","world-policy"].includes(constructionStatus))return fail("P4ConstructionMissing");
+ if(baseStatus!=="compatible"||!["compatible","user-defined","reference","gm-approved","world-policy"].includes(constructionStatus))return fail("P4ConstructionMissing");
  const review=reviewExplosiveDefinition(facts.explosiveOption,facts,facts.explosiveDefinition);if(review.status!=="resolved")return fail(review.reason);
  const d=review.facts.explosiveDefinition,o=review.facts.explosiveOption,m=o.mechanics;
  if(previousTransformations.some(t=>t.applied&&t.effectId===variantId))return fail("already-applied-use-original-profile");

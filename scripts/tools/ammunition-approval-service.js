@@ -7,8 +7,18 @@ import { isMultishotVariant, reviewMultishotConstruction, multishotDefinitionKey
 import { registeredHandloadFacts } from "./handload-registration.js";
 import { evaluateHTOptionEligibility } from "../ht-option-eligibility.js";
 let writes = Promise.resolve();
+const decisionPatch=(before,after)=>({...structuredClone(after),...Object.fromEntries(
+  Object.keys(before).filter(key=>!Object.hasOwn(after,key)).map(key=>['-='+key,null]))});
+export function canManageAmmunitionShot(resolved,runtime=globalThis) {
+  const source=resolved?.source;
+  if(source?.visible!==true||source?.isContentVisible!==true)return false;
+  if(runtime.game?.user?.isGM)return true;
+  const shot=source.getFlag?.(MODULE,'shotSnapshot')??source.flags?.[MODULE]?.shotSnapshot;
+  return shot?.version===1&&shot.correlation?.attackMessageId===source.id&&JSON.stringify(shot)===JSON.stringify(resolved.shot)&&
+    runtime.game?.actors?.get?.(shot.actorId)?.isOwner===true;
+}
 /** Hold the world approval queue throughout deletion and its compensating rollback. */
-export function removeOwnedAmmunitionApprovals({ actorId, weaponIds, modeIds }, operation, runtime = globalThis) {
+export function removeOwnedAmmunitionApprovals({ actor = null, actorId, weaponIds, modeIds }, operation, runtime = globalThis) {
   const next = writes.catch(() => {}).then(async () => {
     let saved = {};
     if (runtime.game?.settings?.get) saved = structuredClone(runtime.game.settings.get(MODULE, SETTING) ?? {});
@@ -24,16 +34,31 @@ export function removeOwnedAmmunitionApprovals({ actorId, weaponIds, modeIds }, 
         throw Error("ApprovalScopeRequired");
       delete cleaned[key];
     }
-    const changed = JSON.stringify(cleaned) !== JSON.stringify(saved);
-    if (changed && !runtime.game?.user?.isGM) throw Error("Permission");
+    // Players never need a world-setting write to remove their own weapon.
+    const changed = JSON.stringify(cleaned) !== JSON.stringify(saved) && runtime.game?.user?.isGM === true;
+    actor ??= runtime.game?.actors?.get?.(actorId);
+    const local=structuredClone(actor?.getFlag?.(MODULE,'ammunitionDecisions')??{}),nextLocal=structuredClone(local);
+    for(const [key,entry] of Object.entries(local))if(entry.actorId===actorId&&weaponIds.includes(entry.weaponId)&&modeIds.includes(entry.modeId))delete nextLocal[key];
+    const localChanged=JSON.stringify(local)!==JSON.stringify(nextLocal);
+    let localAttempted=false;
     let attempted = false;
     return operation({ commit: async () => {
+      if(localChanged){
+        if(actor?.isOwner!==true&&!runtime.game?.user?.isGM)throw Error('Permission');
+        if(JSON.stringify(stable(actor.getFlag(MODULE,'ammunitionDecisions')??{}))!==JSON.stringify(stable(local)))throw Error('ApprovalScopeRequired');
+        localAttempted=true;await actor.setFlag(MODULE,'ammunitionDecisions',decisionPatch(local,nextLocal));
+      }
       if (!changed) return;
       if (JSON.stringify(stable(runtime.game.settings.get(MODULE, SETTING))) !== JSON.stringify(stable(saved)))
         throw Error("ApprovalScopeRequired");
       attempted = true;
       await runtime.game.settings.set(MODULE, SETTING, cleaned);
     }, rollback: async () => {
+      if(localAttempted){
+        const actual=actor.getFlag(MODULE,'ammunitionDecisions')??{};
+        if(JSON.stringify(stable(actual))===JSON.stringify(stable(nextLocal)))await actor.setFlag(MODULE,'ammunitionDecisions',decisionPatch(actual,local));
+        else if(JSON.stringify(stable(actual))!==JSON.stringify(stable(local)))throw Error('ApprovalScopeRequired');
+      }
       if (!attempted) return;
       const current = runtime.game.settings.get(MODULE, SETTING);
       if (JSON.stringify(stable(current)) === JSON.stringify(stable(cleaned))) await runtime.game.settings.set(MODULE, SETTING, saved);
@@ -52,9 +77,16 @@ export const recipeFingerprint = type => JSON.stringify(stable({ book: type.book
   ammoId: type.ammoId, recipe: type.recipe }));
 export const approvalKey = ({ actorId, weaponId, modeId, type }) =>
   JSON.stringify([actorId, weaponId, modeId, type.book, type.ammoId, type.recipe?.customId]);
+// Actor document updates expand dots in object keys. Keep the legacy world key unchanged.
+export const actorDecisionKey = scope => encodeURIComponent(approvalKey(scope)).replaceAll('.','%2E');
 export function readAmmunitionApproval(scope, runtime = globalThis) {
   let saved;
-  try { saved = runtime.game?.settings?.get(MODULE, SETTING)?.[approvalKey(scope)]; } catch { return null; }
+  try {
+    const actor=scope.actor??runtime.game?.actors?.get?.(scope.actorId);
+    const local=actor?.getFlag?.(MODULE,'ammunitionDecisions');
+    saved=local?.[actorDecisionKey(scope)]??local?.[approvalKey(scope)];
+    saved??=runtime.game?.settings?.get(MODULE, SETTING)?.[approvalKey(scope)];
+  } catch { return null; }
   return typeof saved?.active === "boolean" && saved.fingerprint === recipeFingerprint(scope.type) &&
     saved.variantId === scope.type.recipe?.variantId ? structuredClone(saved) : null;
 }
@@ -63,7 +95,7 @@ export function getAmmunitionApproval(scope, runtime = globalThis) {
   return saved?.active === true ? saved : null;
 }
 export function setAmmunitionApproval({ actor, weapon, type, active, plusPDecision = null, duDecision = null, multishotDecision = null }, runtime = globalThis) {
-  if (!runtime.game?.user?.isGM) return Promise.reject(Error("Permission"));
+  if (!actor || actor.isOwner!==true&&!runtime.game?.user?.isGM) return Promise.reject(Error("Permission"));
   const next = writes.catch(() => {}).then(async () => {
     if (weapon.standaloneWeaponId && !actor.getFlag("world", "gurpsAmmoManager")?.weapons?.some(w =>
       w.id === weapon.id && w.standaloneWeaponId === weapon.standaloneWeaponId)) throw Error("WeaponMissing");
@@ -96,20 +128,22 @@ export function setAmmunitionApproval({ actor, weapon, type, active, plusPDecisi
     if (plusPDecision && (type.recipe.variantId !== "ht_plus_p" ||
         plusPDecision.malfModifier != null && (!Number.isInteger(plusPDecision.malfModifier) || plusPDecision.malfModifier > 0) ||
         plusPDecision.rof != null && (!Number.isInteger(plusPDecision.rof) || plusPDecision.rof < 1))) throw Error("ApprovalScopeRequired");
-    const scope = { actorId: actor.id, weaponId: weapon.id, modeId, type }, key = approvalKey(scope);
-    const saved = structuredClone(runtime.game.settings.get(MODULE, SETTING) ?? {});
+    const scope = { actorId: actor.id, weaponId: weapon.id, modeId, type }, key = actorDecisionKey(scope);
+    const previous=readAmmunitionApproval({...scope,actor},runtime);
+    const saved = structuredClone(actor.getFlag(MODULE,'ammunitionDecisions') ?? {});
     saved[key] = { version: 1, active: !!active, actorId: actor.id, weaponId: weapon.id, modeId,
       familyId, ammoId: type.ammoId, variantId: type.recipe.variantId, recipeId: type.recipe.customId,
-      fingerprint: recipeFingerprint(type), gmId: runtime.game.user.id,
-      ...(isMultishotVariant(type.recipe.variantId) ? { multishotDecision: active ? structuredClone(multishotDecision) : null } : {}),
-      ...(isDUVariant(type.recipe.variantId) ? { duDecision: active ? structuredClone(duDecision) : null } : {}),
+      fingerprint: recipeFingerprint(type), origin:'user', userId:runtime.game.user.id,
+      ...(isMultishotVariant(type.recipe.variantId) ? { multishotDecision: structuredClone(multishotDecision??previous?.multishotDecision??null) } : {}),
+      ...(isDUVariant(type.recipe.variantId) ? { duDecision: structuredClone(duDecision??previous?.duDecision??null) } : {}),
       ...(type.recipe.variantId === "ht_plus_p" ? { plusPDecision: plusPDecision ? {
+        origin:'user', pressureSuitable:plusPDecision.pressureSuitable===true,
         malfModifier: plusPDecision.malfModifier ?? null, rof: plusPDecision.rof ?? null,
         loadingCheckPassed: plusPDecision.loadingCheckPassed === true,
         ...(active && plusPDecision.loadingCheckPassed === true ? { loadingConfirmation: {
-          id: globalThis.crypto.randomUUID(), gmId: runtime.game.user.id,
-          scope: key, fingerprint: recipeFingerprint(type), perShot: false } } : {}) } : null } : {}) };
-    await runtime.game.settings.set(MODULE, SETTING, saved);
+          id: globalThis.crypto.randomUUID(), userId: runtime.game.user.id, origin:'user',
+          scope: key, fingerprint: recipeFingerprint(type), perShot: false } } : {}) } : structuredClone(previous?.plusPDecision??null) } : {}) };
+    await actor.setFlag(MODULE,'ammunitionDecisions',saved);
     return structuredClone(saved[key]);
   });
   writes = next; return next;

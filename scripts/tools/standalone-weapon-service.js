@@ -5,6 +5,18 @@ import { actorResourceWrites as queues, withActorResourceWrite } from "./actor-r
 import { removeOwnedAmmunitionApprovals } from "./ammunition-approval-service.js";
 import { moduleText } from "../localization.js";
 import { AmmunitionCompatibilityService } from "../ammunition-compatibility-service.js";
+import { utConventionalFeed, parseUTSourceFeed } from "./ut-conventional-ammunition.js";
+import { UT_SPECIAL_MODES } from './ut-special-ammunition.js';
+import { uawFeed } from './ut-uaw.js';
+import { isPaintCarbine, newPaintBattery } from './ut-paint-power.js';
+import { hasWeaponBondPerk } from './weapon-bond-service.js';
+import { applyUTErrataMode } from '../ut-errata.js';
+import { htPreGaussProfile } from '../ht-pre-gauss-profiles.js';
+import { HT_PROJECT_WEAPON_POLICIES, correctedHTModeStatistics } from '../ht-source-corrections.js';
+import { beamProfile } from '../ut-beam-source.js';
+import { htLaserProfile } from '../ht-laser-source.js';
+import { utDazzlerProfile } from '../ut-dazzler-source.js';
+import { newWeaponBattery, weaponPowerProfile } from './weapon-power.js';
 
 export const STANDALONE_WEAPON_FLAG = "standaloneWeapons";
 const scope = "olegurps-qol";
@@ -54,8 +66,9 @@ export function searchStandaloneModels(catalogs, type, query = "", source = "") 
 }
 
 export function standaloneModeStats(mode) {
-  return Object.fromEntries(Object.entries(fields).map(([key, stat]) => [key,
+  const result=Object.fromEntries(Object.entries(fields).map(([key, stat]) => [key,
     key === "damage" ? mode?.raw_calc?.damage ?? null : mode?.stats?.[stat] ?? null]));
+  return result;
 }
 
 export function standaloneHasResources(actor, id) {
@@ -70,12 +83,38 @@ export function standaloneHasResources(actor, id) {
 /** Flags only. Records are definitions, never synthetic GGA attacks or inventory Items. */
 export class StandaloneWeaponService {
   constructor(actor, catalogs) { Object.assign(this, { actor, catalogs }); }
-  load() {
+  load(weaponId = null) {
     const data = this.actor?.getFlag?.(scope, STANDALONE_WEAPON_FLAG);
-    return clone(data && Array.isArray(data.weapons) ? data : { version: 1, weapons: [] });
+    // A fresh lookup needs only its own definition. Do not copy every other
+    // weapon (and all its mode snapshots) for each card or attack lookup.
+    const source = data && Array.isArray(data.weapons) ? data : { version: 1, weapons: [] };
+    const result=clone(weaponId === null ? source : {...source, weapons:source.weapons.filter(w=>w.id===weaponId)});
+    const catalogs=this.catalogs??globalThis.OleGURPSQOL?.catalogs;
+    const errataHash=catalogs?.getCatalog('weapons')?.sources?.find(s=>s.code==='UT')?.sha256;
+    for(const record of result.weapons){
+      if(record.source?.source==='HT')for(const mode of record.modes??[])
+        if(HT_PROJECT_WEAPON_POLICIES[mode.modeId]&&record.source.equipmentId===catalogs?.getEquipmentForMode(mode.modeId)?.equipment_id)
+          mode.snapshot=correctedHTModeStatistics(mode.snapshot,{source:'HT',equipment_id:record.source.equipmentId});
+      if(errataHash && record.source?.source==='UT' && record.source.sourceHash===errataHash)
+        for(const mode of record.modes??[]){
+          applyUTErrataMode(mode.snapshot,{snapshot:true});
+          const current=catalogs?.getMode(mode.modeId);
+          if(beamProfile(mode.modeId)&&current?.beam_source&&record.source.equipmentId===beamProfile(mode.modeId).equipmentId)
+            mode.snapshot.governing_skill=clone(current.governing_skill);
+        }
+      if(!record.modes?.some(m=>uawFeed(m.modeId)))continue;
+      const equipment=catalogs?.getEquipment(record.source.equipmentId);
+      const hash=catalogs?.getCatalog('weapons')?.sources.find(s=>s.code==='UT')?.sha256;
+      if(equipment?.source!=='UT'||!hash||hash!==record.source.sourceHash)continue;
+      // Read-through completion of an old single-mode definition. Its saved record,
+      // existing carrier, overrides and historical shots are never rewritten here.
+      for(const mode of equipment.modes.filter(m=>uawFeed(m.weapon_mode_id)))
+        if(!record.modes.some(m=>m.modeId===mode.weapon_mode_id))record.modes.push({modeId:mode.weapon_mode_id,snapshot:clone(mode),overrides:{}});
+    }
+    return result;
   }
   list(type) { return this.load().weapons.filter(w => !type || w.type === type); }
-  get(id) { return this.load().weapons.find(w => w.id === id) ?? null; }
+  get(id) { return this.load(id).weapons.find(w => w.id === id) ?? null; }
   async write(operation) {
     const previous = queues.get(this.actor) ?? Promise.resolve();
     const run = previous.catch(() => {}).then(async () => {
@@ -98,9 +137,9 @@ export class StandaloneWeaponService {
         throw new Error(standaloneText("SelectModes"));
       if(!old && equipment.source==='HT' && draft.type==='ranged') {
         const compatibility=new AmmunitionCompatibilityService(this.catalogs);
-        for(const mode of modes)if(!(mode.ht_ammo_item_ids??[]).some(id=>
+        for(const mode of modes)if(htLaserProfile(mode.weapon_mode_id)?.equipmentId!==equipment.equipment_id&&!(mode.ht_ammo_item_ids??[]).some(id=>
           compatibility.checkCompatibility(mode.weapon_mode_id,id,{book:'ht',kind:'ammo-item'}).status==='compatible'))
-          throw Error(mode.weapon_mode_id==='WwlfY-FYthqkLvByK' ? 'Не подтверждён физический патрон Zip-Gun: HT92 указывает .22, но не устанавливает именно .22 LR. Добавление оружия закрыто; старые экземпляры сохраняются.' : 'Не удалось подтвердить физический патрон для этого режима. Добавление оружия закрыто; существующие экземпляры сохраняются.');
+          throw Error('Не удалось подтвердить физический патрон для этого режима. Добавление оружия закрыто; существующие экземпляры сохраняются.');
       }
       const changed = old && (equipment.equipment_id !== old.source.equipmentId ||
         JSON.stringify(modes.map(m => m.weapon_mode_id)) !== JSON.stringify(old.modes.map(m => m.modeId)));
@@ -121,6 +160,8 @@ export class StandaloneWeaponService {
           overrides: clone(draft.overrides[mode.weapon_mode_id] ?? {}) })),
         settings: clone(old?.settings ?? {}), resourceLinks: clone(old?.resourceLinks ??
           (draft.type === "ranged" ? { ammoWeaponId: id } : {})), readiness: "definition-only" };
+      if(draft.weaponBondChanged&&typeof draft.weaponBond==='boolean'&&hasWeaponBondPerk(this.actor))
+        record.settings.weaponBond=draft.weaponBond;
       if (old) state.weapons[state.weapons.indexOf(old)] = record;
       else state.weapons.push(record);
       return record;
@@ -183,7 +224,7 @@ export class StandaloneWeaponService {
         for (const key of attackKeys) delete melee.attacks?.["key:" + encodeURIComponent(key).replaceAll(".", "%2E")];
       }
       const meleeChanged = JSON.stringify(originalMelee) !== JSON.stringify(melee ?? originalMelee);
-      return removeOwnedAmmunitionApprovals({ actorId: this.actor.id,
+      return removeOwnedAmmunitionApprovals({ actor:this.actor, actorId: this.actor.id,
         weaponIds: [...new Set([...ids, record.resourceLinks?.ammoWeaponId].filter(Boolean))], modeIds: modes }, async approvals => {
         const unchanged = (actual, expected) => JSON.stringify(ordered(actual)) === JSON.stringify(ordered(expected));
         try {
@@ -220,7 +261,7 @@ export class StandaloneWeaponService {
 }
 
 export class StandaloneWeaponDraft {
-  constructor({ catalogs, type, existing = null }) {
+  constructor({ catalogs, type, existing = null, actor = null, weaponBond = null }) {
     Object.assign(this, { catalogs, type, existing });
     this.modelId = existing?.source.equipmentId ?? "";
     this.query = existing?.name ?? "";
@@ -228,6 +269,9 @@ export class StandaloneWeaponDraft {
     this.modeIds = new Set(existing?.modes.map(m => m.modeId) ?? []);
     this.overrides = Object.fromEntries(existing?.modes.map(m => [m.modeId, clone(m.overrides ?? {})]) ?? []);
     this.modelChanged = false;
+    this.weaponBondAvailable=hasWeaponBondPerk(actor);
+    this.weaponBond=existing?.settings?.weaponBond ?? weaponBond ?? actor?.getFlag?.('world','gurpsAmmoManager')?.weapons?.find(w=>w.standaloneWeaponId===existing?.id)?.weaponBond ?? false;
+    this.weaponBondChanged=false;
   }
   get equipment() {
     // Retain saved source data across catalog revisions and unavailable catalogs.
@@ -251,7 +295,8 @@ export class StandaloneWeaponDraft {
     if(!this.existing||!this.catalogs?.getEquipment(this.modelId))return false;
     const sourceHash=this.catalogs.getCatalog('weapons')?.sources.find(s=>s.code===this.existing.source.source)?.sha256;
     if(!sourceHash||sourceHash!==this.existing.source.sourceHash)return false;
-    const raw=this.catalogs.getCatalog('weapons').equipment.find(e=>e.equipment_id===this.modelId);
+    const raw=(this.catalogs.getSourceCatalog?.('weapons')??this.catalogs.getCatalog('weapons')).equipment.find(e=>e.equipment_id===this.modelId)
+      ??this.catalogs.getCatalog('weapons').equipment.find(e=>e.equipment_id===this.modelId);
     if(!raw||[...this.modeIds].some(id=>!raw.modes.some(m=>m.weapon_mode_id===id)))return false;
     // Preserve older direct customizations too; a catalog correction never overwrites user values.
     for(const saved of this.existing.modes){
@@ -273,7 +318,8 @@ export class StandaloneWeaponDraft {
     this.overrides = {};
   }
   setOverride(modeId, key, value) {
-    if ((!Object.hasOwn(fields, key) && !['installation','hostBulk'].includes(key)) || !this.availableModes.some(m => m.weapon_mode_id === modeId)) return;
+    if ((!Object.hasOwn(fields, key) && !['installation','hostBulk','jetMode'].includes(key)) || !this.availableModes.some(m => m.weapon_mode_id === modeId)) return;
+    if(key==='jetMode'&&(!htPreGaussProfile(modeId)?.continuousUnits||!['','short','continuous'].includes(value)))return;
     this.overrides[modeId] ??= {};
     const clean = text(value);
     if (clean) this.overrides[modeId][key] = clean;
@@ -287,11 +333,30 @@ export function standaloneAmmoCarrier(record, existing = null) {
     name: record.name, standaloneWeaponId: record.id,
     standaloneModeId: record.modes.some(m => m.modeId === existing?.standaloneModeId)
       ? existing.standaloneModeId : record.modes[0]?.modeId, attackRef: {} };
+  if(typeof record.settings?.weaponBond==='boolean')carrier.weaponBond=record.settings.weaponBond;
+  if (!existing && isPaintCarbine(carrier)) carrier.paintBattery = newPaintBattery();
+  if (!existing && (htLaserProfile(carrier.standaloneModeId)||utDazzlerProfile(carrier.standaloneModeId))){
+    const power=weaponPowerProfile(carrier);carrier[power.stateKey]=newWeaponBattery(power);
+  }
+  const beam=beamProfile(carrier.standaloneModeId)??htLaserProfile(carrier.standaloneModeId)??utDazzlerProfile(carrier.standaloneModeId);
+  if(beam){
+    // A newly acquired crystal is a complete sealed device. Never replenish an existing instance.
+    if(!existing&&beam.oneShot)carrier.beamCrystal=newWeaponBattery(weaponPowerProfile(carrier));
+    return carrier;
+  }
+  const sourceMode=record.modes.find(m=>m.modeId===carrier.standaloneModeId);
+  const htProfile=record.source.source==='HT'&&htPreGaussProfile(carrier.standaloneModeId);
+  if(htProfile){
+    carrier.htJetMode=sourceMode?.overrides?.jetMode==='continuous'?'continuous':'short';
+    if(htProfile.kind!=='net')carrier.physicalResource={detachable:false,source:htProfile.source,kind:htProfile.kind};
+  }
   if (!existing && record.source.equipmentId !== LEMAT.equipmentId) {
     const mode=record.modes.find(m=>m.modeId===carrier.standaloneModeId);
     const shots=String(mode?.overrides?.shots??mode?.snapshot?.stats?.shots??'');
     const capacity=Number(/^(\d{1,3}(?:,\d{3})+|\d+)(?=$|[+(\s])/.exec(shots)?.[1]?.replaceAll(',',''));
-    initializeEmptyCarrier(carrier,capacity);
+    const feed=utConventionalFeed(mode?.modeId,shots)??(UT_SPECIAL_MODES[mode?.modeId]?parseUTSourceFeed(shots,'Ultra-Tech 2007, pp. 139-140'):null);
+    initializeEmptyCarrier(carrier,htProfile?.capacity ?? feed?.loadedCapacity ?? capacity);
+    if(feed)carrier.ammunitionInventory.magazines[0].sourceFeed=feed;
   }
   return carrier;
 }
@@ -306,6 +371,22 @@ function initializeEmptyCarrier(carrier,capacity) {
 
 /** Separate physical feeds declared by reviewed source identity, preserving every existing carrier. */
 export function standaloneAmmoCarriers(record, existing = []) {
+  if(record.modes.some(m=>uawFeed(m.modeId))){
+    const result=existing.map(w=>({...w}));
+    for(const mode of record.modes){
+      const feed=uawFeed(mode.modeId);if(!feed)continue;
+      let carrier=result.find(w=>w.standaloneModeId===mode.modeId);
+      if(!carrier){
+        carrier=standaloneAmmoCarrier(record);
+        carrier.id=result.length?record.resourceLinks.ammoWeaponId+':'+mode.modeId:record.resourceLinks.ammoWeaponId;
+        carrier.standaloneModeId=mode.modeId;
+        initializeEmptyCarrier(carrier,feed.capacity);
+        carrier.ammunitionInventory.magazines[0].sourceFeed=parseUTSourceFeed(feed.shots,'UT137');
+        result.push(carrier);
+      }
+    }
+    return result;
+  }
   if (record.source.equipmentId !== LEMAT.equipmentId)
     return [standaloneAmmoCarrier(record, existing[0] ?? null)];
   const result = existing.map(carrier => ({ ...carrier }));
@@ -321,7 +402,8 @@ export function standaloneAmmoCarriers(record, existing = []) {
       initializeEmptyCarrier(carrier,barrel.capacity);
       result.push(carrier);
     }
-    Object.assign(carrier, { standaloneModeId: mode.modeId, physicalResource: barrel });
+    Object.assign(carrier, { standaloneModeId: mode.modeId, physicalResource: {
+      ...barrel,...(mode.modeId===LEMAT.shotModeId?{detachable:false}:{})} });
   }
   return result;
 }

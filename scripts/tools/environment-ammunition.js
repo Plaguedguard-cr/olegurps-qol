@@ -18,7 +18,7 @@ const chemical = id => ["ht_poison", "ht_liquid", "ht_poison_gas", "ht_tear_gas"
 export function reviewEnvironmentDefinition(option, originalFacts, definition) {
   const facts = copy(originalFacts ?? {}), fail = reason => ({ status: "unresolved", reason, facts });
   if (!isEnvironmentVariant(option?.id) || definition?.variantId !== option.id || definition.verified !== true ||
-      !["reference", "gm"].includes(definition.source?.kind) || !definition.source?.note?.trim()) return fail("P5ConstructionMissing");
+      !["reference", "gm", "user"].includes(definition.source?.kind) || !definition.source?.note?.trim()) return fail("P5ConstructionMissing");
   if (!Number.isInteger(definition.availabilityTL) || definition.availabilityTL < option.min_tl) return fail("P5TLRequired");
   if (facts.caliberMm != null && definition.caliberMm !== facts.caliberMm ||
       !definition.nativePreserved && facts.availabilityTL != null && facts.availabilityTL !== definition.availabilityTL)
@@ -102,7 +102,7 @@ export function resolveEnvironmentEffects({ raw, variantId, baseStatus, construc
     nativeSafe: true, reason: null, rules: {}, support: { status: "GM-MEDIATED", automatic: [], manual: [], missing: [] } };
   const fail = reason => ({ ...result, status: "unresolved", nativeSafe: false, formula, reason,
     support: { ...result.support, status: "UNDETERMINED", missing: [reason] } });
-  if (baseStatus !== "compatible" || !["compatible", "gm-approved", "world-policy"].includes(constructionStatus)) return fail("P5ConstructionMissing");
+  if (baseStatus !== "compatible" || !["compatible", "user-defined", "gm-approved", "world-policy"].includes(constructionStatus)) return fail("P5ConstructionMissing");
   if (previousTransformations.some(t => t.effectId === variantId && t.applied)) return fail("already-applied-use-original-profile");
   const review = reviewEnvironmentDefinition(facts.environmentOption, facts, facts.environmentDefinition);
   if (review.status !== "resolved") return fail(review.reason);

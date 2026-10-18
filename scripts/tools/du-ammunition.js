@@ -1,5 +1,14 @@
 import { evaluateHTOptionEligibility } from "../ht-option-eligibility.js";
 import { isDUVariant } from "./ht-kinetic-rules.js";
+import { ammoTypeKey } from './ammo-inventory.js';
+import { recipeFingerprint } from './ammunition-approval-service.js';
+
+export function bindDUDecision(type,decision) {
+  const result=structuredClone(type);
+  result.recipe.parameters={duDecision:{...structuredClone(decision),origin:'user'}};
+  result.recipe.customId='auto:'+recipeFingerprint({recipe:result.recipe.autoProfile})+':du:'+recipeFingerprint({recipe:result.recipe.parameters});
+  result.key=ammoTypeKey(result);return result;
+}
 
 // Mirrors the reviewed HT169 eligibility contract for the pure numeric resolver.
 const freeze = value => { if (value && typeof value === "object") { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
@@ -35,9 +44,9 @@ export function reviewDUConstruction(option, originalFacts, decision = null) {
     // A negative source finding cannot be overridden by an attestation.
     if (facts.evidence?.[requirement]?.value === false) return invalid("DUIdentityConflict");
     facts.evidence ??= {};
-    facts.evidence[requirement] ??= { value: true, source: decision.source.trim(), authority: "individual-GM" };
+    facts.evidence[requirement] ??= { value: true, source: decision.source.trim(), authority: "individual-user" };
     facts.provenance ??= [];
-    facts.provenance.push({ source: decision.source.trim(), authority: "individual-GM", design: requirement,
+    facts.provenance.push({ source: decision.source.trim(), authority: "individual-user", design: requirement,
       platform: decision.platform, caliberMm: facts.caliberMm, availabilityTL: facts.availabilityTL });
   }
   const result = evaluateHTOptionEligibility(option, facts);

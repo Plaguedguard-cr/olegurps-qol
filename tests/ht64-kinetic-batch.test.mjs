@@ -102,18 +102,20 @@ const modeId="W27s4Lm8QlkKVKUPn",c=context(modeId),pending=automatic.prepare({mo
 const decision={designConfirmed:true,platform:"source_verified_other_platform",caliberMm:7.62,availabilityTL:8,source:"isolated explicit GM design test, not source-confirmed production ammunition"};
 const approval={active:true,actorId:"du-test",weaponId:"weapon",modeId,ammoId:c.base.ammoId,variantId:"ht_apdu",recipeId:pending.type.recipe.customId,fingerprint:recipeFingerprint(pending.type),duDecision:decision};
 const profile=(a=approval)=>resolver.resolve({actorId:"du-test",weaponId:"weapon",rawAttack:c.raw,binding:c.binding,ammunition:{type:pending.type},approval:a,profilePolicy:"permissive"});
-test("scoped DU GM proof admits only the attested physical design; world policy cannot supply it",()=>{
+test("scoped DU technical proof admits only the attested physical design; world policy cannot supply it",()=>{
   assert.equal(pending.state,"incomplete");assert.equal(automatic.admission(pending,{policy:"permissive"}).allowed,false);
-  assert.equal(profile(null).damage.nativeSafe,false);assert.equal(profile().damage.nativeSafe,true);
-  for(const a of [{...approval,actorId:"other"},{...approval,weaponId:"other"},{...approval,active:false},{...approval,duDecision:{...decision,designConfirmed:false}},{...approval,duDecision:{...decision,caliberMm:20}},{...approval,duDecision:{...decision,availabilityTL:7}}])assert.equal(profile(a).damage.nativeSafe,false);
+  assert.equal(profile(null).damage.nativeSafe,false);assert.equal(profile().damage.nativeSafe,true);assert.equal(profile({...approval,active:false}).damage.nativeSafe,true);
+  for(const a of [{...approval,actorId:"other"},{...approval,weaponId:"other"},{...approval,duDecision:{...decision,designConfirmed:false}},{...approval,duDecision:{...decision,caliberMm:20}},{...approval,duDecision:{...decision,availabilityTL:7}}])assert.equal(profile(a).damage.nativeSafe,false);
   assert.equal(compatibility.checkCompatibility(modeId,"ht_apdu",{book:"ht",kind:"projectile-option",ammoItemId:c.base.ammoId}).status,"undetermined");
 });
-test("existing GM approval service validates and persists DU evidence, rejects non-GM and source conflicts",async()=>{
-  let settings={};const actor={id:"du-test",binding:c.binding},weapon={id:"weapon",attackRef:{path:"system.ranged.mode"}};
+test("owner decision service persists DU evidence, rejects foreign writes and source conflicts",async()=>{
+  let settings={},local={};const actor={id:"du-test",isOwner:true,binding:c.binding,getFlag:(_s,k)=>local[k],setFlag:async(_s,k,v)=>{local[k]=structuredClone(v);}},weapon={id:"weapon",attackRef:{path:"system.ranged.mode"}};
   const runtime={game:{user:{id:"gm",isGM:true},settings:{get:()=>settings,set:async(s,k,v)=>{settings=v;}}},OleGURPSQOL:api};
   await assert.rejects(setAmmunitionApproval({actor,weapon,type:pending.type,active:true},runtime),/DUConfirmationRequired/);
   const saved=await setAmmunitionApproval({actor,weapon,type:pending.type,active:true,duDecision:decision},runtime);assert.deepEqual(saved.duDecision,decision);
-  await assert.rejects(setAmmunitionApproval({actor,weapon,type:pending.type,active:true,duDecision:decision},{...runtime,game:{...runtime.game,user:{isGM:false}}}),/Permission/);
+  await setAmmunitionApproval({actor,weapon,type:pending.type,active:true,duDecision:decision},{...runtime,game:{...runtime.game,user:{isGM:false}}});
+  await assert.rejects(setAmmunitionApproval({actor:{...actor,isOwner:false},weapon,type:pending.type,active:true,duDecision:decision},{...runtime,game:{...runtime.game,user:{isGM:false}}}),/Permission/);
+  assert.deepEqual(settings,{});
   await assert.rejects(setAmmunitionApproval({actor,weapon,type:pending.type,active:true,duDecision:{...decision,caliberMm:20}},runtime),/DUIdentityConflict/);
   const before=JSON.stringify(saved);const revoked=await setAmmunitionApproval({actor,weapon,type:pending.type,active:false},runtime);assert.equal(revoked.active,false);assert.equal(JSON.stringify(saved),before);
 });
@@ -150,11 +152,11 @@ test("DU UI describes refusals and GM conditions in RU/EN without presenting ser
 test("real load-window choices remain blocked before scoped proof and admit only the approved DU recipe",()=>{
   const originalGet=game.settings.get,approvals={};const actor={id:"du-test",binding:c.binding,system:{ranged:{mode:c.raw}}},weapon={id:"weapon",attackRef:{path:"system.ranged.mode"}};
   game.settings.get=(s,k)=>k==="ammunitionApprovals"?approvals:"permissive";
-  try{const before=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(before.unavailable,true);assert.equal(before.reason,automaticAmmoMessages.ru.DUConfirmationRequired);assert.ok(!availableAmmoTypes(actor,weapon,api,"ru").some(t=>t.key===before.key));
+  try{const before=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(before.unavailable,true);assert.equal(before.reason,automaticAmmoMessages.ru.DUConfirmationRequired);assert.equal(availableAmmoTypes(actor,weapon,api,"ru").find(t=>t.key===before.key).unavailable,true);
     approvals[approvalKey({actorId:actor.id,weaponId:weapon.id,modeId,type:pending.type})]=approval;
     const after=availableAmmoTypes(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(after.unavailable,false);assert.equal(after.preparation.state,"complete");assert.equal(after.key,before.key);
     approvals[approvalKey({actorId:actor.id,weaponId:weapon.id,modeId,type:pending.type})]={...approval,active:false};
-    const revoked=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(revoked.unavailable,true);assert.ok(!availableAmmoTypes(actor,weapon,api,"ru").some(t=>t.key===revoked.key));assert.equal(revoked.reason,automaticAmmoMessages.ru.Revoked);
+    const revoked=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apdu");assert.equal(revoked.unavailable,false);assert.equal(revoked.preparation.state,"complete");
     const incompatible=ammunitionCandidates(actor,weapon,api,"ru").find(t=>t.recipe?.variantId==="ht_apfsdsdu");assert.equal(incompatible.unavailable,true);assert.ok(!availableAmmoTypes(actor,weapon,api,"ru").some(t=>t.key===incompatible.key));assert.ok(incompatible.reason.includes(automaticAmmoMessages.ru.DUMinimumCaliber));assert.ok(incompatible.reason.includes(automaticAmmoMessages.ru.DUPlatformProhibited));
   }finally{game.settings.get=originalGet;}
 });

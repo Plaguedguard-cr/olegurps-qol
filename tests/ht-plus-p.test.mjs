@@ -7,6 +7,7 @@ import { readAmmunitionApproval, setAmmunitionApproval } from "../scripts/tools/
 import { withRuntimeAmmoStats } from "../scripts/tools/attack-profile-runtime.js";
 import { evaluateHTOptionEligibility } from "../scripts/ht-option-eligibility.js";
 import { availableAmmoTypes, ammoManagementHTML } from "../scripts/tools/ammo-management-app.js";
+import { ownerRuntime, reloadOwnerActor, assertUnprovenPressure } from "./fixtures/ht-plus-p-owner.mjs";
 test("+P calculation needs no numeric pressure; admission never changes unknown platform safety", () => {
   for (const modeId of [modes.ak, modes.glock, modes.aw]) {
     const c = context(modeId), r = compatibility.checkCompatibility(modeId, "ht_plus_p", { availabilityTL: 9, evidence: { weapon_pressure_rating_verified: true } });
@@ -14,9 +15,15 @@ test("+P calculation needs no numeric pressure; admission never changes unknown 
     const p = automatic.prepare({ modeId, base: c.base, variantId: "ht_plus_p" });
     assert.equal(p.state, "complete"); assert.equal(p.rulesStatus, "undetermined"); assert.deepEqual(p.missing, []);
     assert.equal(automatic.admission(p, { policy: "permissive" }).allowed, true);
-    assert.equal(automatic.admission(p, { policy: "strict" }).allowed, false);
-    assert.equal(automatic.admission(p, { policy: "strict", approval: { active: true } }).allowed, true);
-    assert.equal(automatic.admission(p, { policy: "permissive", approval: { active: false } }).allowed, false);
+    assert.equal(automatic.admission(p, { policy: "strict" }).allowed, true);
+    const profile=resolver.resolve({rawAttack:c.raw,binding:c.binding,ammunition:{type:p.type},profilePolicy:"strict"});
+    assert.equal(profile.damage.nativeSafe,true);assertUnprovenPressure(profile);
+    const fresh=structuredClone(p);fresh.facts.legacyPlusPAdmission=false;delete fresh.facts.evidence.weapon_pressure_rating_verified;
+    assert.equal(automatic.admission(fresh).allowed,false);
+    const own={origin:"user",plusPDecision:{origin:"user",pressureSuitable:true}};
+    assert.equal(automatic.admission(fresh,{approval:own}).allowed,true);
+    fresh.facts.evidence.weapon_pressure_rating_verified={value:false,source:"confirmed-pressure-prohibition"};
+    assert.equal(automatic.admission(fresh,{approval:own}).allowed,false);
   }
 });
 test("+P explicit contraindication and Match conflict remain prohibited", () => {
@@ -78,20 +85,29 @@ test("+P stock, magazine, Hit, history and reload work under permissive admissio
   assert.equal(ready.state().weapons[0].totalAmmo,9);assert.equal(JSON.stringify(JSON.parse(history)),history);
   assert.equal(JSON.stringify(result.snapshot),history);
 });
-test("+P GM decisions persist by exact mode/recipe, allow strict use and revoke future shots only", async()=>{
-  const f=inventoryFixture(modes.glock,"ht_plus_p"),c=context(modes.glock);let settings={};
-  const runtime={game:{user:{isGM:true,id:"gm"},settings:{get:()=>settings,set:async(s,k,v)=>{settings=structuredClone(v);}}},OleGURPSQOL:api};
+test("+P OWNER choices persist by exact Actor/mode/recipe after reload, without world writes or foreign rights", async()=>{
+  const f=inventoryFixture(modes.glock,"ht_plus_p"),c=context(modes.glock),runtime=ownerRuntime(f.actor,api);
   const approval=await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[0],type:f.type,active:true,plusPDecision:{malfModifier:-1,rof:4}},runtime);
+  assert.equal(approval.origin,"user");assert.equal(approval.userId,"owner");
+  assert.ok(Object.keys(f.actor.getFlag("olegurps-qol","ammunitionDecisions")).length);
   assert.deepEqual(readAmmunitionApproval({actorId:"actor",weaponId:"weapon",modeId:modes.glock,type:f.type},runtime),approval);
+  const actor=reloadOwnerActor(f.actor),reloaded=ownerRuntime(actor,api);
+  assert.deepEqual(readAmmunitionApproval({actorId:actor.id,weaponId:"weapon",modeId:modes.glock,type:f.type},reloaded),approval);
+  for(const patch of [{actorId:"foreign"},{weaponId:"foreign"},{modeId:modes.ak},{type:{...f.type,recipe:{...f.type.recipe,customId:"foreign"}}}])
+    assert.equal(readAmmunitionApproval({actorId:"actor",weaponId:"weapon",modeId:modes.glock,type:f.type,...patch},reloaded),null);
+  await assert.rejects(setAmmunitionApproval({actor:{...actor,isOwner:false},weapon:f.state().weapons[0],type:f.type,active:true},reloaded),/Permission/);
+  await assert.rejects(setAmmunitionApproval({actor,weapon:f.state().weapons[0],type:f.type,active:true,plusPDecision:{rof:0}},reloaded),/ApprovalScopeRequired/);
+  await assert.rejects(setAmmunitionApproval({actor,weapon:f.state().weapons[0],type:{...f.type,ammoId:"ht_14_5x114mm"},active:true},reloaded),/ApprovalCannotOverrideProhibition/);
   const shot=resolver.resolve({actorId:"actor",weaponId:"weapon",rawAttack:c.raw,binding:c.binding,ammunition:{type:f.type},approval,profilePolicy:"strict"});
   assert.equal(shot.damage.nativeSafe,true);assert.equal(shot.effective.rof,"4");assert.equal(shot.damage.rules.pressure.decision.malfModifier,-1);
-  const previous=globalThis.OleGURPSQOL, previousGet=globalThis.game.settings.get;
-  globalThis.OleGURPSQOL=api;globalThis.game.settings.get=(scope,key)=>key==='ammunitionApprovals'?settings:'strict';
+  const previous=globalThis.OleGURPSQOL,previousGame=globalThis.game;
+  globalThis.OleGURPSQOL=api;globalThis.game={...previousGame,...runtime.game};
   try {const preview=withRuntimeAmmoStats({path:'system.ranged.mode',data:c.raw,rof:c.raw.rof},f.actor);
     assert.equal(preview.rof,'4');assert.equal(preview.st,'9');assert.equal(preview.data.range,'176/1980');
-  } finally {globalThis.OleGURPSQOL=previous;globalThis.game.settings.get=previousGet;}
+  } finally {globalThis.OleGURPSQOL=previous;globalThis.game=previousGame;}
   assert.equal(shot.construction.status,"undetermined");const old=JSON.stringify(shot);
-  const revoked=await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[0],type:f.type,active:false},runtime);
-  assert.equal(resolver.resolve({actorId:"actor",weaponId:"weapon",rawAttack:c.raw,binding:c.binding,ammunition:{type:f.type},approval:revoked,profilePolicy:"permissive"}).damage.nativeSafe,false);
+  const changed=await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[0],type:f.type,active:true,plusPDecision:{malfModifier:0,rof:3}},runtime);
+  const next=resolver.resolve({actorId:"actor",weaponId:"weapon",rawAttack:c.raw,binding:c.binding,ammunition:{type:f.type},approval:changed,profilePolicy:"strict"});
+  assert.equal(next.damage.nativeSafe,true);assert.equal(next.effective.rof,"3");assert.equal(shot.effective.rof,"4");
   assert.equal(JSON.stringify(shot),old);assert.equal(readAmmunitionApproval({actorId:"actor",weaponId:"weapon",modeId:modes.ak,type:f.type},runtime),null);
 });

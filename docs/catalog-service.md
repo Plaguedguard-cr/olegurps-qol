@@ -52,6 +52,14 @@ source identifiers. There is no matching by name, diameter, character TL or skil
 | `getModesForAmmoItem(book, id)` | Modes from validated LT/HT reverse links |
 | `getModesForAmmoFamily(book, id)` | Modes from validated family reverse links |
 
+## Поправки UT2007
+
+`getCatalog` и обычные lookup-методы возвращают согласованное представление с проверенными поправками `ut-2007-1` из `scripts/ut-source-data.js`. Четыре защищённых исходных JSON, их GCS-хеши и прежние IDs сохранены побайтно. `getSourceCatalog(book)` возвращает неизменяемые исходные данные до этого слоя.
+
+В представление добавлены Gauss Needler 3mm и Gauss PDW 4mm с собственными идентификаторами OleGURPS и точными связями 3mm/4mm EM. Итоговые индексы: 1154 equipment, 1477 modes; UT — 87 связей и 81 linked mode. Schema/revision исходных каталогов и версия модуля 0.2.0 не изменены. WT2014 используется только для недостающего/неполного поля по разрешению пользователя; полные значения книги2007 имеют приоритет.
+
+Этот слой не записывает Actor, не исправляет импорт GCS и не обновляет сохранённые определения автоматически. Полный разбор122 сопоставлений: [отчёт UT-DATA](ultra-tech-data-corrections-report.md).
+
 `getModeLinks` returns:
 `book`, `modeId`, `equipmentId`, `ammoItemIds`, `ammoFamilyIds`,
 `specialLoadIds`, `defaultWarheadId`, and `suggestedWarheadIds`.

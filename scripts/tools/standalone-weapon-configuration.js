@@ -1,5 +1,8 @@
-import { moduleMessage } from "../localization.js";
+import { moduleMessage, moduleText } from "../localization.js";
 import {specializedPlatform} from '../ht-specialized-platforms.js';
+import {weaponBondCheckbox} from './weapon-bond-service.js';
+import {weaponText} from './weapon-localization.js';
+import { htPreGaussProfile } from '../ht-pre-gauss-profiles.js';
 import { StandaloneWeaponDraft, StandaloneWeaponService, searchStandaloneModels,
   standaloneModeStats, standaloneText } from "./standalone-weapon-service.js";
 
@@ -20,6 +23,7 @@ export function standaloneModeFields(draft) {
   const labels = { damage: "Damage", acc: "Acc", range: "Range", rof: "RoF", shots: "Shots", rcl: "Rcl", bulk: "Bulk", st: "ST", reach: "Reach", parry: "Parry", block: "Block" };
   return draft.availableModes.map(mode => {
     const id = mode.weapon_mode_id, stats = standaloneModeStats(mode), selected = draft.modeIds.has(id);
+    const preview=draft.statPreview?.(id);
     const platform=specializedPlatform(mode,draft.equipment.source);
     const skill = mode.governing_skill?.status === "resolved" ? mode.governing_skill.skill : null;
     const skillName = skill ? skill.name + (skill.specialization ? " (" + skill.specialization + ")" : "") : standaloneText("Unknown");
@@ -31,15 +35,24 @@ export function standaloneModeFields(draft) {
         (platform.stockConfiguration?`<label>Исполнение FN 303<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите исполнение</option><option value="stock"${draft.overrides[id]?.installation==='stock'?' selected':''}>С прикладом — Bulk −4</option><option value="host"${draft.overrides[id]?.installation==='host'?' selected':''}>Подствольное</option></select></label>`:'')+
         `<label>Bulk оружия-носителя<input data-standalone-stat="hostBulk" data-mode-id="${escape(id)}" value="${escape(draft.overrides[id]?.hostBulk??'')}" placeholder="Например, −5"></label><p class="hint">${platform.source}: к Bulk носителя прибавляется ${platform.hostBulkAdjustment}. Собственный носитель не изменяется.</p>`:'')+
       (selected && platform?.instruction?`<p class="hint">${escape(platform.instruction)}</p>`:'')+
+      (selected && htPreGaussProfile(id)?.continuousUnits?`<label>Струя Beattie M2-2<select data-standalone-stat="jetMode" data-mode-id="${escape(id)}"><option value="short" ${draft.overrides[id]?.jetMode!=='continuous'?'selected':''}>2 с — один подготовленный заряд</option><option value="continuous" ${draft.overrides[id]?.jetMode==='continuous'?'selected':''}>10 с — пять подготовленных зарядов</option></select></label>`:'')+
       (selected && platform?.blockedReason?`<p class="hint">${escape(platform.blockedReason)}</p>`:'')+
       (selected && platform?.terminalInstruction?`<p class="hint">${escape(platform.terminalInstruction)}</p>`:'')+
       (selected ? `<div class="gam-standalone-stats">${keys.map(key => {
-        const value = draft.overrides[id]?.[key] ?? stats[key] ?? "";
-        if(key==='rcl'&&platform?.rclNotApplicable||key==='bulk'&&platform?.bulkNotApplicable)return `<label>${labels[key]}<input disabled value="Не применяется"></label>`;
-        return `<label>${labels[key]}<input type="text" data-standalone-stat="${key}" data-mode-id="${escape(id)}" value="${escape(value)}" placeholder="${escape(standaloneText("MissingInput"))}" title="${escape(stats[key] == null ? standaloneText("Missing") : standaloneText("Override"))}"></label>`;
+        const value = preview?.stats[key] ?? draft.overrides[id]?.[key] ?? stats[key] ?? "";
+        const derived=preview?.derivedFields.includes(key);
+        if(key==='rcl'&&platform?.rclNotApplicable||key==='bulk'&&platform?.bulkNotApplicable||key==='acc'&&platform?.accNotApplicable)return `<label>${labels[key]}<input disabled value="Не применяется"></label>`;
+        return `<label>${labels[key]}<input type="text" ${derived?'readonly ':''}data-standalone-stat="${key}" data-mode-id="${escape(id)}" value="${escape(value)}" placeholder="${escape(standaloneText("MissingInput"))}" title="${escape(derived?weaponText('DerivedExecution'):stats[key] == null ? standaloneText("Missing") : standaloneText("Override"))}"></label>`;
       }).join("")}</div>` : "") +
+      `<p class="hint" data-standalone-profile="${escape(id)}" ${!preview?.resolvedDamage||preview.resolvedDamage===preview.stats.damage?'hidden':''}>${escape(moduleText('OleGURPS.Weapon.ResolvedProfile',{damage:preview?.resolvedDamage??''}))}</p>`+
       `<p class="hint">${escape([draft.equipment.local_notes, mode.usage_notes].filter(Boolean).join(" "))}</p></fieldset>`;
   }).join("");
+}
+
+export function updateStandaloneResolvedDamage(root,draft,id,preview=draft.statPreview?.(id)){
+  const line=root.querySelector(`[data-standalone-profile="${id}"]`);if(!line)return;
+  line.hidden=!preview?.resolvedDamage||preview.resolvedDamage===preview.stats.damage;
+  line.textContent=moduleText('OleGURPS.Weapon.ResolvedProfile',{damage:preview?.resolvedDamage??''});
 }
 
 export function standaloneConfigurationHTML(draft) {
@@ -49,10 +62,14 @@ export function standaloneConfigurationHTML(draft) {
     <label>${escape(standaloneText("Search"))}<input type="search" name="standaloneQuery" value="${escape(draft.query)}"></label>
     <p class="hint">${escape(standaloneText("ChooseFirst"))}</p>
     <label>${escape(standaloneText("Model"))}<select name="standaloneModel">${standaloneModelOptions(draft)}</select></label>
-    <div data-standalone-modes>${standaloneModeFields(draft)}</div></div>`;
+    <div data-standalone-modes>${standaloneModeFields(draft)}</div>
+    ${weaponBondCheckbox({available:draft.weaponBondAvailable,checked:draft.weaponBond,name:'standaloneWeaponBond'})}</div>`;
 }
 
 export function bindStandaloneConfiguration(root, draft) {
+  root.querySelector('[name="standaloneWeaponBond"]')?.addEventListener('change',event=>{
+    draft.weaponBond=event.target.checked;draft.weaponBondChanged=true;
+  });
   const models = root.querySelector('[name="standaloneModel"]'), modes = root.querySelector('[data-standalone-modes]');
   const options = () => { models.innerHTML = standaloneModelOptions(draft); };
   root.querySelector('[name="standaloneQuery"]').addEventListener("input", event => { draft.query = event.target.value; options(); });
@@ -64,6 +81,7 @@ export function bindStandaloneConfiguration(root, draft) {
   models.addEventListener("change", event => { draft.selectModel(event.target.value); modes.innerHTML = standaloneModeFields(draft); });
   modes.addEventListener("change", event => {
     const field = event.target;
+    if(field.dataset.standaloneStat==='jetMode'){draft.setOverride(field.dataset.modeId,'jetMode',field.value);return;}
     if(field.dataset.standaloneStat==='installation') {draft.setOverride(field.dataset.modeId,'installation',field.value);modes.innerHTML=standaloneModeFields(draft);return;}
     if (field.dataset.standaloneMode) {
       if (field.checked) draft.modeIds.add(field.dataset.standaloneMode); else draft.modeIds.delete(field.dataset.standaloneMode);
@@ -73,10 +91,11 @@ export function bindStandaloneConfiguration(root, draft) {
   // Keep the draft current even when Save immediately follows typing in a field.
   modes.addEventListener("input", event => {
     const field = event.target;
-    if (!field.dataset.standaloneStat) return;
+    if (!field.dataset.standaloneStat || field.readOnly) return;
     const mode = draft.availableModes.find(m => m.weapon_mode_id === field.dataset.modeId);
     const base = String(standaloneModeStats(mode)[field.dataset.standaloneStat] ?? "");
     draft.setOverride(field.dataset.modeId, field.dataset.standaloneStat, field.value.trim() === base ? "" : field.value);
+    updateStandaloneResolvedDamage(root,draft,field.dataset.modeId);
   });
 }
 
@@ -121,7 +140,14 @@ export async function openStandaloneWeaponLibrary({ actor, type = "melee", catal
             if (yes) await service.remove(button.dataset.standaloneRemove);
           } else {
             const existing = service.get(button.dataset.standaloneEdit);
-            const draft = new StandaloneWeaponDraft({ catalogs, type, existing });
+            let legacyBond=null;
+            if(existing&&type==='melee') {
+              const {getMeleeAttackSettings}=await import('./melee-assistant-state.js');
+              const {readStandaloneAttack}=await import('./standalone-attack-service.js');
+              legacyBond=getMeleeAttackSettings(actor.getFlag('world','olegurpsMeleeAssistant'),
+                readStandaloneAttack(actor,existing.id,existing.modes[0]?.modeId)).weaponBond;
+            }
+            const draft = new StandaloneWeaponDraft({ catalogs, type, existing, actor, weaponBond:legacyBond });
             const result = await DialogV2.input({ window: { title: standaloneText(existing ? "Edit" : "Add") },
               content: `<div class="standard-form"><label><input type="checkbox" checked disabled>${escape(standaloneText("Absent"))}</label>${standaloneConfigurationHTML(draft)}</div>`,
               position: { width: 720 }, modal: false, rejectClose: false, ok: { label: standaloneText("Save") },

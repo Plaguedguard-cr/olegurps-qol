@@ -1,0 +1,2068 @@
+{
+  "schema": "ut2007-completeness-source-contract-v1",
+  "source": {
+    "book": "GURPS Ultra-Tech Fourth Edition, Version 1.0, 22 May 2007",
+    "sha256": "d1c930f8fdc2382ad833d68b4b6464c9d78e010ec62251e54ba1ee3e194efc38",
+    "pageMapping": "printed p -> PDF one-based p+1",
+    "verifiedPages": [
+      19,
+      88,
+      135,
+      136,
+      137,
+      138,
+      139,
+      140,
+      146,
+      152,
+      153,
+      154,
+      155,
+      156,
+      157,
+      158,
+      159,
+      160,
+      161,
+      162,
+      193
+    ],
+    "basicSetCampaigns": {
+      "sha256": "79cff8f75b91b4ba72e7947320bf98e184515e60108bda0f0891d379b3c96e80",
+      "pageMapping": "printed Bp -> PDF one-based p-335",
+      "verifiedPages": [
+        378,
+        414,
+        415,
+        432,
+        433,
+        435,
+        436
+      ]
+    },
+    "weaponTables2014": {
+      "pageMapping": "printed p -> PDF one-based p",
+      "verifiedPage": 11,
+      "usedOnlyFor": [
+        "Underbarrel Shotgun missing add",
+        "Tank Cannon missing damage type"
+      ]
+    }
+  },
+  "guidanceVariants": [
+    {
+      "id": "homing_ir",
+      "name": "Infrared Homing",
+      "pages": [
+        146
+      ],
+      "scope": "gun projectile",
+      "minSizeByTL": {
+        "9": 15,
+        "10": 10,
+        "11": 7,
+        "12": 0
+      },
+      "superscience": false
+    },
+    {
+      "id": "homing_multispectral_passive",
+      "name": "Multispectral: Hyperspectral Vision",
+      "pages": [
+        146
+      ],
+      "scope": "gun projectile",
+      "minSizeByTL": {
+        "9": 40,
+        "10": 25,
+        "11": 15,
+        "12": 10
+      },
+      "superscience": false
+    },
+    {
+      "id": "homing_multispectral_antiradiation",
+      "name": "Multispectral: Detect Radar and Radio",
+      "pages": [
+        146
+      ],
+      "scope": "gun projectile",
+      "minSizeByTL": {
+        "9": 40,
+        "10": 25,
+        "11": 15,
+        "12": 10
+      },
+      "superscience": false
+    },
+    {
+      "id": "homing_multispectral_active",
+      "name": "Multispectral: Imaging Radar",
+      "pages": [
+        146
+      ],
+      "scope": "gun projectile",
+      "minSizeByTL": {
+        "9": 40,
+        "10": 25,
+        "11": 15,
+        "12": 10
+      },
+      "superscience": false
+    },
+    {
+      "id": "homing_multiscanner",
+      "name": "Multiscanner: Penetrating Para-Radar",
+      "pages": [
+        146
+      ],
+      "scope": "gun projectile",
+      "minSizeByTL": {
+        "11": 15,
+        "12": 10
+      },
+      "superscience": true
+    }
+  ],
+  "warheadIds": [
+    "standard_inert",
+    "aphc",
+    "apds",
+    "apep",
+    "aphex",
+    "biochemical_aerosol",
+    "biochemical_liquid",
+    "flare",
+    "he",
+    "hec",
+    "hp",
+    "shaped_charge",
+    "memory_baton",
+    "monochain",
+    "shotshell",
+    "sefop",
+    "tangler",
+    "thermobaric",
+    "burrow_darts",
+    "hemp",
+    "stingray",
+    "swarm",
+    "aphd",
+    "mininuke",
+    "micro_antimatter",
+    "emp",
+    "expendable_jammer",
+    "strobe",
+    "warbler",
+    "force",
+    "plasma",
+    "implosion",
+    "psi_bomb",
+    "message_psi_bomb",
+    "terror_psi_bomb",
+    "stasis",
+    "vortex"
+  ],
+  "specialLoadIds": [
+    "drugged_dart",
+    "drugged_ice_sliver",
+    "paint_pellet",
+    "biochemical_liquid_pellet",
+    "ice_needle",
+    "solid_slug_25mm_tangler_gun"
+  ],
+  "designs": [
+    {
+      "id": "laser_wavelength",
+      "pages": [
+        114,
+        115,
+        116,
+        117,
+        118
+      ],
+      "scope": "specified laser constructions only",
+      "category": "C",
+      "rules": "Blue-green: range x2, RoF/2, two energy shots per firing, not chemical; underwater150/60/15yd cap by clarity. UV: range x3, damage/2, cap500yd/pressure. Rainbow trace/vacuum range/10 loses AD, underwater2yd. X-ray/graser limits per exact source."
+    },
+    {
+      "id": "laser_blinding",
+      "pages": [
+        113,
+        114
+      ],
+      "scope": "laser beam weapons, laser communicators and ladar; source-specific adaptation",
+      "category": "C",
+      "rules": "HT-10 vision affliction; beam blinding mode uses 1/10 power, hence x10 shots; printed special ranges for ladar."
+    },
+    {
+      "id": "laser_pulse",
+      "pages": [
+        118,
+        119
+      ],
+      "scope": "laser-family beams with pulse-beam hardware; not arbitrary blaster",
+      "category": "B",
+      "rules": "remove tight-beam; armor divisor reduced one step; double range; pulse-beam costs +100%, switching Ready."
+    },
+    {
+      "id": "omni_blaster_stun",
+      "pages": [
+        124
+      ],
+      "scope": "all blasters with purchased Omni hardware, not a default extra attack",
+      "category": "C",
+      "rules": "Ready switch; HT penalty -1 per normal damage die capped -10; DR/3 protects; unconscious MoF minutes; no HP."
+    },
+    {
+      "id": "force_kinetic_stun",
+      "pages": [
+        128
+      ],
+      "scope": "force beams with optional kinetic-stun hardware",
+      "category": "C",
+      "rules": "fatigue rather than crushing damage; exact extra construction data must be selected before attack."
+    },
+    {
+      "id": "neural_settings",
+      "pages": [
+        121,
+        122
+      ],
+      "scope": "neural disruptors",
+      "category": "C",
+      "rules": "agony/ecstasy/neural stun/paralysis/seizure; Ready switching; +50% cost per extra setting; sealed excludes; death setting TL+1."
+    },
+    {
+      "id": "microwave_sonic_psychotronic_settings",
+      "pages": [
+        120,
+        121,
+        124,
+        125,
+        126,
+        131,
+        132
+      ],
+      "scope": "named resistance weapons, no automatic conversion to HP",
+      "category": "C",
+      "rules": "Separate target prerequisites, senses, DR/resistance, pressure and cone geometry in descriptions."
+    },
+    {
+      "id": "hotshot",
+      "pages": [
+        133
+      ],
+      "scope": "eligible beam weapons; not Gatling, not ordinary plasma cartridges",
+      "category": "C",
+      "rules": "double energy, +1 damage/die or x1.3 damage/radius/HT/Will penalty, Malf14; hot cartridges separate construction."
+    },
+    {
+      "id": "overheating",
+      "pages": [
+        133
+      ],
+      "scope": "beam weapons except exempt Gatling designs",
+      "category": "B",
+      "rules": "RoF x10 accumulation and cooldown; Malf14, or12 during hotshots; not merely changed Damage."
+    },
+    {
+      "id": "beam_design_options",
+      "pages": [
+        133
+      ],
+      "scope": "specified TL/family: cell technology, superscience/field jacket/grav focus/FTL/cyborg/biomechanical",
+      "category": "C",
+      "rules": "Design and environment/power changes; no universal ammunition option or calculated physical cartridge."
+    },
+    {
+      "id": "etc",
+      "pages": [
+        139
+      ],
+      "scope": "all conventional slugthrowers as optional weapon construction",
+      "category": "C",
+      "rules": "Damage and range x1.5; price x2; A/B/C cell supplies10magazines; physical ammunition unchanged."
+    },
+    {
+      "id": "liquid_propellant",
+      "pages": [
+        139
+      ],
+      "scope": "conventional caseless alternative construction, Smart Nail Gun",
+      "category": "C",
+      "rules": "Shots per magazine x1.5; boosted +1/die, range x1.3, propellant1.5; low damage/range half, hearing-3, propellant0.25; 3mag bottles,5s reload."
+    },
+    {
+      "id": "em_variable_velocity",
+      "pages": [
+        139,
+        141
+      ],
+      "scope": "EM weapons by direct cross-reference",
+      "category": "C",
+      "rules": "Source allows same velocity settings as liquid propellant; decide dual-resource fractional energy contract before enabling."
+    },
+    {
+      "id": "gyroc_mixed_chambers",
+      "pages": [
+        144
+      ],
+      "scope": "four-chamber Gyroc Pistol specifically",
+      "category": "B",
+      "rules": "Each chamber may contain different15mmrocket; physical magazine currently homogeneous."
+    },
+    {
+      "id": "homing",
+      "pages": [
+        146
+      ],
+      "scope": "explicit projectile weapons and size/TL/sensor limits",
+      "category": "B",
+      "rules": "GM Artillery lock-on plus separate projectile attack/sensor conditions, no automated flight; guided range is speed/max."
+    },
+    {
+      "id": "reactionless_missiles",
+      "pages": [
+        145
+      ],
+      "scope": "missile propulsion TL11^",
+      "category": "B",
+      "rules": "no backblast, max x5, cost x2, speed/halfD unchanged."
+    },
+    {
+      "id": "conversion_beams",
+      "pages": [
+        131
+      ],
+      "scope": "six disintegrator designs as optional TL12^ conversion construction",
+      "category": "C",
+      "rules": "AD10 instead cosmic; corrosion plus follow-up burn ex rad sur equal dice; power constraints preserved."
+    },
+    {
+      "id": "reality_disintegrators",
+      "pages": [
+        131
+      ],
+      "scope": "six disintegrator designs as optional TL12^ construction",
+      "category": "C",
+      "rules": "Only reality-stabilized force screens/DR protect; Temporal Inertia can protect depending on setting."
+    },
+    {
+      "id": "nuclear_jammers",
+      "pages": [
+        193
+      ],
+      "scope": "two projector designs TL11^ optional jammer",
+      "category": "C",
+      "rules": "Also stops fission reactor/RTG; HT malfunction/restart checks; optional tunable double cost."
+    },
+    {
+      "id": "grenade_fuses",
+      "pages": [
+        146,
+        147
+      ],
+      "scope": "all grenade forms and limpet mines",
+      "category": "D",
+      "rules": "ordinary2s; smartdelay/command/impact/antitamper,3Readyprogramming; no fake damage-only support."
+    }
+  ],
+  "userDecisions": [
+    {
+      "id": "etc_weapon_configuration",
+      "date": "2026-10-17",
+      "source": "UT19,135-139,152-159",
+      "damageFactor": 1.5,
+      "rangeFactor": 1.5,
+      "weaponPriceFactor": 2,
+      "ammunitionPriceFactor": 1,
+      "accounting": "atomic-physical-and-energy",
+      "nominalFeed": "published N without chamber; fixed per weapon, including alternative physical magazines",
+      "nonRechargeableFactor": 2,
+      "profiles": [
+        {
+          "modeId": "WngbnzWRwLntvaRbR",
+          "familyId": "7_5mm_clp",
+          "cell": "A",
+          "nominalCapacity": 18,
+          "source": "UT137"
+        },
+        {
+          "modeId": "WlqvLkGz-INk0A-_o",
+          "familyId": "7_5mm_clp",
+          "cell": "A",
+          "nominalCapacity": 30,
+          "source": "UT137"
+        },
+        {
+          "modeId": "W9chB7ydzOWTAxQP0",
+          "familyId": "10mm_clp",
+          "cell": "A",
+          "nominalCapacity": 20,
+          "source": "UT137"
+        },
+        {
+          "modeId": "WIAo1otMCstnbi4Dv",
+          "familyId": "15mm_clp",
+          "cell": "A",
+          "nominalCapacity": 9,
+          "source": "UT137"
+        },
+        {
+          "modeId": "W5_0Tkbdr1S4b4Hlv",
+          "familyId": "10mm_clp",
+          "cell": "B",
+          "nominalCapacity": 30,
+          "source": "UT137"
+        },
+        {
+          "modeId": "WoLIvHFqsiusWgmXF",
+          "familyId": "5_7mm_cl",
+          "cell": "B",
+          "nominalCapacity": 100,
+          "source": "UT137"
+        },
+        {
+          "modeId": "WFc8O-LgWxenUseNy",
+          "familyId": "7mm_cl",
+          "cell": "B",
+          "nominalCapacity": 50,
+          "source": "UT137"
+        },
+        {
+          "modeId": "W30vD5BH3t_VdkWUZ",
+          "familyId": "10mm_cl",
+          "cell": "B",
+          "nominalCapacity": 50,
+          "source": "UT137"
+        },
+        {
+          "modeId": "W3Ggl5bTeg_44b_rU",
+          "familyId": "10mm_clr",
+          "cell": "B",
+          "nominalCapacity": 12,
+          "source": "UT137"
+        },
+        {
+          "modeId": "WeFF7cHxefAAGmowq",
+          "familyId": "7mm_cl",
+          "cell": "B",
+          "nominalCapacity": 10,
+          "source": "UT137"
+        },
+        {
+          "modeId": "WlstnlxI_Mm-2UJf0",
+          "familyId": "15mm_cl",
+          "cell": "B",
+          "nominalCapacity": 10,
+          "source": "UT137"
+        },
+        {
+          "modeId": "WdUnAFzFvv59Smhhk",
+          "familyId": "25mm_cl",
+          "cell": "B",
+          "nominalCapacity": 8,
+          "source": "UT137"
+        },
+        {
+          "modeId": "W5_HQQYf_zjoG9A7J",
+          "familyId": "7mm_cl",
+          "cell": "C",
+          "nominalCapacity": 200,
+          "source": "UT138"
+        },
+        {
+          "modeId": "WgqAB3QGTUZrgtdES",
+          "familyId": "25mm_cl",
+          "cell": "C",
+          "nominalCapacity": 34,
+          "source": "UT138"
+        },
+        {
+          "modeId": "WYYJ_58OEKOTk38wi",
+          "familyId": "5_7mm_cl",
+          "cell": "B",
+          "nominalCapacity": 200,
+          "source": "UT137"
+        },
+        {
+          "modeId": "W6-C_sQqk0Ak_c-8_",
+          "familyId": "7mm_cl",
+          "cell": "C",
+          "nominalCapacity": 400,
+          "source": "UT138"
+        },
+        {
+          "modeId": "W6bX3WBkGZdZfoeMu",
+          "familyId": "15mm_cl",
+          "cell": "C",
+          "nominalCapacity": 50,
+          "source": "UT138"
+        }
+      ],
+      "blockedModes": [
+        "W8mzf5YoC9fFjAhO2",
+        "WwK7xKN4sLQXIuQ64",
+        "Wap9nUEQPwuDkUEUp",
+        "WkudgdqO3lymAYks5",
+        "WtM51JNSpOUIy3Eo1",
+        "WRvS5pz3LMCzqQyiZ",
+        "WmyROTLk0gs7lrYCE",
+        "WOMuCBSS_c_nIstvm"
+      ]
+    },
+    {
+      "id": "paint_carbine_B_cell",
+      "date": "2026-10-17",
+      "modeId": "Wg_f0E5hqv6o1C0Uj",
+      "capacity": 500,
+      "chargePerPhysicalShot": 1,
+      "accounting": "atomic-with-physical-ammunition",
+      "source": "UT139-140",
+      "provenance": "user-module-rule-10x50",
+      "independentOfMagazineObjectLimit": true
+    },
+    {
+      "id": "jammer_25mm_radius",
+      "yards": 25,
+      "date": "2026-10-15",
+      "provenance": "user-defined",
+      "bookValue": null
+    },
+    {
+      "id": "integral_conventional_B_cell",
+      "date": "2026-10-15",
+      "accounting": "manual",
+      "inventedDrain": false,
+      "motorPaintCarbineETCRemainBlocked": true
+    },
+    {
+      "id": "motor_power_manual",
+      "date": "2026-10-15",
+      "modeIds": [
+        "WYYJ_58OEKOTk38wi",
+        "W6-C_sQqk0Ak_c-8_",
+        "WmyROTLk0gs7lrYCE",
+        "W6bX3WBkGZdZfoeMu"
+      ],
+      "accounting": "manual",
+      "batteryUI": false,
+      "separateResourcesRemainBlocked": true
+    },
+    {
+      "id": "sefop_manual_guidance",
+      "date": "2026-10-15",
+      "automaticGuidance": false,
+      "automaticImpact": false,
+      "ownerCanUse": true,
+      "sourcePages": [
+        146,
+        154,
+        155
+      ],
+      "defaultGuidance": "infrared",
+      "aphexMinimumTL": 10
+    },
+    {
+      "id": "generic_homing_manual",
+      "date": "2026-10-16",
+      "automaticGuidance": false,
+      "automaticImpact": false,
+      "ownerCanUse": true,
+      "sourcePages": [
+        146
+      ],
+      "sameRegistrationAsSEFOP": true,
+      "independentBlockersPreserved": true
+    },
+    {
+      "id": "he_proximity_manual",
+      "source": "UT153-154",
+      "minimumYards": 40,
+      "areaAttackBonus": 4,
+      "damage": "published HE fragmentation only",
+      "burstAndScatter": "manual; future grenade automation tracked separately",
+      "automaticHit": false
+    },
+    {
+      "id": "uaw_ut137_dual_feeds",
+      "date": "2026-10-17",
+      "shotgunDamage": "1d+1 pi",
+      "shotgunRcl": 1,
+      "shotgunShots": "5+1(3i)",
+      "primaryShots": "40+1(3)",
+      "sourceConflict": "UT135 cross-reference vs UT137 own shotgun row remains unresolved",
+      "magazineLimits": {
+        "ordinary": 10,
+        "uawPerFeed": 5
+      }
+    }
+  ],
+  "warheads": [
+    {
+      "id": "standard_inert",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": null
+      },
+      "source_ref": "UT 152"
+    },
+    {
+      "id": "aphc",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [
+          "electromagnetic",
+          "gauss",
+          "railgun"
+        ],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 2
+      },
+      "source_ref": "UT 152"
+    },
+    {
+      "id": "apds",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [
+          "electromagnetic-unspecified",
+          "railgun"
+        ],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 1
+      },
+      "source_ref": "UT 152"
+    },
+    {
+      "id": "apep",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [
+          "electromagnetic",
+          "gauss",
+          "railgun"
+        ],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 1
+      },
+      "source_ref": "UT 152"
+    },
+    {
+      "id": "aphex",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "followup": "1d-4 cr ex",
+          "fragmentation": "1d-2 cut"
+        },
+        "15mm": {
+          "followup": "1d-2 cr ex",
+          "fragmentation": "1d-1 cut"
+        },
+        "18.5mm": {
+          "followup": "1d-1 cr ex",
+          "fragmentation": "1d cut"
+        },
+        "25mm": {
+          "followup": "1d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "followup": "2d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "followup": "4d cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "followup": "8d cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "economics": {
+        "cost_multiplier": null,
+        "lc": null
+      },
+      "source_ref": "UT 152-153"
+    },
+    {
+      "id": "biochemical_aerosol",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "damage": "spec.",
+          "delivery": "face-only",
+          "doses": 1
+        },
+        "15mm": {
+          "damage": "spec.",
+          "radius_yards": 1,
+          "doses": 3
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "radius_yards": 1.5,
+          "doses": 5
+        },
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "doses": 10
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "doses": 40
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 7,
+          "doses": 150
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 10,
+          "doses": 300
+        }
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": null
+      },
+      "source_ref": "UT 153"
+    },
+    {
+      "id": "biochemical_liquid",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "15mm": {
+          "damage": "spec.",
+          "radius_yards": 1,
+          "doses": 1
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "radius_yards": 1.5,
+          "doses": 2
+        },
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "doses": 4
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "doses": 16
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 9,
+          "doses": 8
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 18,
+          "doses": 16
+        }
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": null
+      },
+      "source_ref": "UT 153"
+    },
+    {
+      "id": "flare",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "15mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 150
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 185
+        },
+        "25mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 250
+        },
+        "40mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 400
+        },
+        "64mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 600
+        },
+        "100mm": {
+          "damage": "spec.",
+          "illumination_radius_yards": 1000
+        }
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 4
+      },
+      "source_ref": "UT 153"
+    },
+    {
+      "id": "he",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "explosion": "1d cr ex",
+          "fragmentation": "1d-2 cut"
+        },
+        "15mm": {
+          "explosion": "2d cr ex",
+          "fragmentation": "1d-1 cut"
+        },
+        "18.5mm": {
+          "explosion": "2d+2 cr ex",
+          "fragmentation": "1d cut"
+        },
+        "25mm": {
+          "explosion": "4d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "explosion": "8d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "explosion": "8d×2 cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "explosion": "6d×5 cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 2
+      },
+      "source_ref": "UT 153-154"
+    },
+    {
+      "id": "hec",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "linked": "1d cr ex"
+        },
+        "15mm": {
+          "linked": "2d cr ex"
+        },
+        "18.5mm": {
+          "linked": "2d+2 cr ex"
+        },
+        "25mm": {
+          "linked": "4d cr ex"
+        },
+        "40mm": {
+          "linked": "8d cr ex"
+        },
+        "64mm": {
+          "linked": "8d×2 cr ex"
+        },
+        "100mm": {
+          "linked": "6d×5 cr ex"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 2
+      },
+      "source_ref": "UT 154"
+    },
+    {
+      "id": "hp",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": 15,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 4
+      },
+      "source_ref": "UT 154"
+    },
+    {
+      "id": "shaped_charge",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "primary": "5d×3(10) cr inc",
+          "linked": "2d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "primary": "6d×4(10) cr inc",
+          "linked": "4d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "primary": "6d×7(10) cr inc",
+          "linked": "8d cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "primary": "6d×10(10) cr inc",
+          "linked": "8d×2 cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 1
+      },
+      "source_ref": "UT 154"
+    },
+    {
+      "id": "memory_baton",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 4
+      },
+      "source_ref": "UT 154"
+    },
+    {
+      "id": "monochain",
+      "min_tl": 9,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "source_ref": "UT 154"
+    },
+    {
+      "id": "shotshell",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": [
+          "grenade_launcher",
+          "shotgun",
+          "gauss_shotgun",
+          "gyroc"
+        ],
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 1,
+        "lc": 4
+      },
+      "source_ref": "UT 154"
+    },
+    {
+      "id": "sefop",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": true
+      },
+      "damage_table": {
+        "15mm": {
+          "damage": "4d(2) imp inc"
+        },
+        "18.5mm": {
+          "damage": "5d(2) imp inc"
+        },
+        "25mm": {
+          "damage": "5d×3(3) cr inc"
+        },
+        "40mm": {
+          "damage": "6d×4(3) cr inc"
+        },
+        "64mm": {
+          "damage": "6d×7(3) cr inc"
+        },
+        "100mm": {
+          "damage": "6d×10(3) cr inc"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "source_ref": "UT 154"
+    },
+    {
+      "id": "tangler",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "damage": "ST 15",
+          "layer_bonus": "+1 ST per additional layer"
+        },
+        "40mm": {
+          "damage": "ST 24",
+          "layer_bonus": "+2 ST per additional layer"
+        },
+        "64mm": {
+          "damage": "ST 36",
+          "layer_bonus": "+2 ST per additional layer",
+          "radius_yards": 1
+        },
+        "100mm": {
+          "damage": "ST 60",
+          "layer_bonus": "+3 ST per additional layer",
+          "radius_yards": 1
+        }
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 4
+      },
+      "source_ref": "UT 155"
+    },
+    {
+      "id": "thermobaric",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "damage": "8d cr ex inc"
+        },
+        "40mm": {
+          "damage": "8d×2 cr ex inc"
+        },
+        "64mm": {
+          "damage": "6d×5 cr ex inc"
+        },
+        "100mm": {
+          "damage": "6d×10 cr ex inc"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 1
+      },
+      "source_ref": "UT 155"
+    },
+    {
+      "id": "burrow_darts",
+      "min_tl": 10,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": 10,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false,
+        "base_damage_types_any": [
+          "pi-",
+          "pi"
+        ]
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 3,
+        "lc": 2
+      },
+      "source_ref": "UT 155"
+    },
+    {
+      "id": "hemp",
+      "min_tl": 10,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "primary": "8d(5) imp inc",
+          "linked": "1d-2 cr ex",
+          "fragmentation": "1d-2 cut"
+        },
+        "15mm": {
+          "primary": "5d×2(5) imp inc",
+          "linked": "1d cr ex",
+          "fragmentation": "1d-1 cut"
+        },
+        "18.5mm": {
+          "primary": "6d×2(5) imp inc",
+          "linked": "1d+1 cr ex",
+          "fragmentation": "1d cut"
+        },
+        "25mm": {
+          "primary": "6d×3(10) cr inc",
+          "linked": "2d cr ex",
+          "fragmentation": "1d+1 cut"
+        },
+        "40mm": {
+          "primary": "6d×5(10) cr inc",
+          "linked": "4d cr ex",
+          "fragmentation": "2d cut"
+        },
+        "64mm": {
+          "primary": "6d×8(10) cr inc",
+          "linked": "8d cr ex",
+          "fragmentation": "3d cut"
+        },
+        "100mm": {
+          "primary": "6d×12(10) cr inc",
+          "linked": "8d×2 cr ex",
+          "fragmentation": "5d cut"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 2,
+        "lc": 1
+      },
+      "source_ref": "UT 155"
+    },
+    {
+      "id": "stingray",
+      "min_tl": 10,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "linked": "1d-3 burn sur"
+        },
+        "15mm": {
+          "linked": "1d-1 burn sur"
+        },
+        "18.5mm": {
+          "linked": "1d burn sur"
+        },
+        "25mm": {
+          "linked": "1d+1 burn sur"
+        },
+        "40mm": {
+          "linked": "2d burn sur"
+        },
+        "64mm": {
+          "linked": "3d burn sur"
+        },
+        "100mm": {
+          "linked": "5d burn sur"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "source_ref": "UT 155-156"
+    },
+    {
+      "id": "swarm",
+      "min_tl": 10,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "40mm": {
+          "damage": "spec.",
+          "capacity": "1 square-yard swarm"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "capacity": "4 square-yard swarms"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "capacity": "16 square-yard swarms"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": null
+      },
+      "source_ref": "UT 156"
+    },
+    {
+      "id": "aphd",
+      "min_tl": 11,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": null,
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 1
+      },
+      "source_ref": "UT 156"
+    },
+    {
+      "id": "mininuke",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false,
+        "min_size_mm_by_tl": {
+          "9": 100,
+          "10": 64,
+          "11": 40,
+          "12": 25
+        }
+      },
+      "damage_table": {
+        "0.01kt": {
+          "primary": "6d×200 cr ex",
+          "linked": "4d×200 burn ex rad sur"
+        },
+        "0.1kt": {
+          "primary": "6d×600 cr ex",
+          "linked": "6d×400 burn ex rad sur"
+        },
+        "1kt": {
+          "primary": "6d×2,000 cr ex",
+          "linked": "4d×2,000 burn ex rad sur"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 1000,
+        "lc": 0
+      },
+      "source_ref": "UT 156"
+    },
+    {
+      "id": "micro_antimatter",
+      "min_tl": 10,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": null,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false,
+        "min_size_mm_by_tl": {
+          "10": 100,
+          "11": 40,
+          "12": 10
+        }
+      },
+      "damage_table": {
+        "0.1ug": {
+          "primary": "6d×4 burn ex sur",
+          "linked": "6d×10,000 tox rad"
+        },
+        "1ug": {
+          "primary": "6d×12 burn ex sur",
+          "linked": "6d×100,000 tox rad"
+        },
+        "10ug": {
+          "primary": "6d×40 burn ex sur",
+          "linked": "6d×1,000,000 tox rad"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 0
+      },
+      "source_ref": "UT 156-157"
+    },
+    {
+      "id": "emp",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "15mm": {
+          "damage": "spec. + 1d-4 cr ex",
+          "radius_yards": 1,
+          "resist": "HT-8 (2) for electrical targets"
+        },
+        "18.5mm": {
+          "damage": "spec. + 1d-3 cr ex",
+          "radius_yards": 1,
+          "resist": "HT-8 (2)"
+        },
+        "25mm": {
+          "damage": "spec. + 1d-2 cr ex",
+          "radius_yards": 2,
+          "resist": "HT-8 (2)"
+        },
+        "40mm": {
+          "damage": "spec. + 1d cr ex",
+          "radius_yards": 4,
+          "resist": "HT-8 (2)"
+        },
+        "64mm": {
+          "damage": "spec. + 2d cr ex",
+          "radius_yards": 8,
+          "resist": "HT-8 (2)"
+        },
+        "100mm": {
+          "damage": "spec. + 4d cr ex",
+          "radius_yards": 16,
+          "resist": "HT-8 (2)"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 2
+      },
+      "source_ref": "UT 157"
+    },
+    {
+      "id": "expendable_jammer",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "damage": "spec.",
+          "radius_yards": 10
+        },
+        "15mm": {
+          "damage": "spec.",
+          "radius_yards": 15
+        },
+        "18.5mm": {
+          "damage": "spec.",
+          "radius_yards": 20
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 40
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 60
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 100
+        }
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 3
+      },
+      "source_ref": "UT 157"
+    },
+    {
+      "id": "strobe",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "damage": "HT-3 aff",
+          "radius_yards": 3
+        },
+        "40mm": {
+          "damage": "HT-4 aff",
+          "radius_yards": 4
+        },
+        "64mm": {
+          "damage": "HT-6 aff",
+          "radius_yards": 6
+        },
+        "100mm": {
+          "damage": "HT-10 aff",
+          "radius_yards": 10
+        }
+      },
+      "economics": {
+        "cost_multiplier": 4,
+        "lc": 3
+      },
+      "source_ref": "UT 157"
+    },
+    {
+      "id": "warbler",
+      "min_tl": 9,
+      "superscience": false,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "damage": "HT-3 aff",
+          "radius_yards": 3
+        },
+        "40mm": {
+          "damage": "HT-4 aff",
+          "radius_yards": 4
+        },
+        "64mm": {
+          "damage": "HT-6 aff",
+          "radius_yards": 6
+        },
+        "100mm": {
+          "damage": "HT-10 aff",
+          "radius_yards": 10
+        }
+      },
+      "economics": {
+        "cost_multiplier": 4,
+        "lc": 3
+      },
+      "source_ref": "UT 157"
+    },
+    {
+      "id": "force",
+      "min_tl": 10,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 15,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "15mm": {
+          "damage": "2d cr dkb ex"
+        },
+        "18.5mm": {
+          "damage": "2d+2 cr dkb ex"
+        },
+        "25mm": {
+          "damage": "4d cr dkb ex"
+        },
+        "40mm": {
+          "damage": "8d cr dkb ex"
+        },
+        "64mm": {
+          "damage": "8d×2 cr dkb ex"
+        },
+        "100mm": {
+          "damage": "6d×5 cr dkb ex"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 2
+      },
+      "source_ref": "UT 157-158"
+    },
+    {
+      "id": "plasma",
+      "min_tl": 10,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 10,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "10mm": {
+          "damage": "1d+2 burn ex sur"
+        },
+        "15mm": {
+          "damage": "3d burn ex sur"
+        },
+        "18.5mm": {
+          "damage": "3d+2 burn ex sur"
+        },
+        "25mm": {
+          "damage": "6d burn ex sur"
+        },
+        "40mm": {
+          "damage": "6d×2 burn ex sur"
+        },
+        "64mm": {
+          "damage": "6d×4 burn ex sur"
+        },
+        "100mm": {
+          "damage": "6d×10 burn ex sur"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 1
+      },
+      "source_ref": "UT 158"
+    },
+    {
+      "id": "implosion",
+      "min_tl": 11,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "40mm": {
+          "primary": "6d×25 cr dkb ex",
+          "linked": "6d×40 tox rad ex"
+        },
+        "64mm": {
+          "primary": "6d×50 cr dkb ex",
+          "linked": "6d×60 tox rad ex"
+        },
+        "100mm": {
+          "primary": "6d×100 cr dkb ex",
+          "linked": "6d×100 tox rad ex"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 5,
+        "lc": 0
+      },
+      "source_ref": "UT 158"
+    },
+    {
+      "id": "psi_bomb",
+      "min_tl": 12,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "resist": "Will-5"
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "resist": "Will-5"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 8,
+          "resist": "Will-5"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 16,
+          "resist": "Will-5"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 2
+      },
+      "source_ref": "UT 158"
+    },
+    {
+      "id": "message_psi_bomb",
+      "min_tl": 12,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "resist": "Will-2"
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "resist": "Will-2"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 8,
+          "resist": "Will-2"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 16,
+          "resist": "Will-2"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 3
+      },
+      "source_ref": "UT 158"
+    },
+    {
+      "id": "terror_psi_bomb",
+      "min_tl": 12,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 25,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "25mm": {
+          "damage": "spec.",
+          "radius_yards": 2,
+          "resist": "Fright Check -5"
+        },
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 4,
+          "resist": "Fright Check -5"
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 8,
+          "resist": "Fright Check -5"
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 16,
+          "resist": "Fright Check -5"
+        }
+      },
+      "economics": {
+        "cost_multiplier": 10,
+        "lc": 2
+      },
+      "source_ref": "UT 158"
+    },
+    {
+      "id": "stasis",
+      "min_tl": 12,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 2
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 3
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 5
+        }
+      },
+      "economics": {
+        "cost_multiplier": 500,
+        "lc": 0
+      },
+      "source_ref": "UT 158-159"
+    },
+    {
+      "id": "vortex",
+      "min_tl": 12,
+      "superscience": true,
+      "compatibility": {
+        "source_required": "Ultra-Tech",
+        "weapon_min_tl": 9,
+        "min_size_mm": 40,
+        "max_size_exclusive_mm": null,
+        "allowed_warhead_classes": null,
+        "platform_any": null,
+        "exclude_platforms": [],
+        "requires_homing": false
+      },
+      "damage_table": {
+        "40mm": {
+          "damage": "spec.",
+          "radius_yards": 2
+        },
+        "64mm": {
+          "damage": "spec.",
+          "radius_yards": 3
+        },
+        "100mm": {
+          "damage": "spec.",
+          "radius_yards": 5
+        }
+      },
+      "economics": {
+        "cost_multiplier": 1000,
+        "lc": 0
+      },
+      "source_ref": "UT 159"
+    }
+  ],
+  "specialLoads": [
+    {
+      "id": "drugged_dart",
+      "name": "Drugged Dart",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "needler",
+        "needle_rifle",
+        "wrist_needler"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "follow_up": "user-defined injectable drug/poison",
+      "notes_required": true,
+      "notes_hint": "Enter drug/poison name and any extra text.",
+      "source_ref": "UT 139, 161"
+    },
+    {
+      "id": "drugged_ice_sliver",
+      "name": "Drugged Ice Sliver",
+      "min_tl": 10,
+      "platform_tags_any": [
+        "ice_gun"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "follow_up": "user-defined hypo-injected drug/poison if projectile penetrates",
+      "notes_required": true,
+      "notes_hint": "Enter drug/poison name and any extra text.",
+      "source_ref": "UT 140"
+    },
+    {
+      "id": "paint_pellet",
+      "name": "Paint Pellet",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "paint_pistol",
+        "paint_carbine"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "notes_allowed": true,
+      "notes_hint": "Optional paint color/marking text.",
+      "source_ref": "UT 139"
+    },
+    {
+      "id": "biochemical_liquid_pellet",
+      "name": "Biochemical Liquid Pellet",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "paint_pistol",
+        "paint_carbine"
+      ],
+      "warhead_ref": "biochemical_liquid",
+      "damage_behavior": "use_warhead_spec",
+      "notes_required": true,
+      "notes_hint": "Enter the liquid/foam name and any extra text.",
+      "source_ref": "UT 139, 153"
+    },
+    {
+      "id": "ice_needle",
+      "name": "Ice Needle",
+      "min_tl": 10,
+      "platform_tags_any": [
+        "ice_gun"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "source_ref": "UT 140"
+    },
+    {
+      "id": "solid_slug_25mm_tangler_gun",
+      "name": "25mm Solid Metal Slug",
+      "min_tl": 9,
+      "platform_tags_any": [
+        "tangler_25mm",
+        "tangler_pistol_25mm"
+      ],
+      "damage_behavior": "inherit_weapon_damage",
+      "source_ref": "UT 139"
+    }
+  ],
+  "sourceStatusDigestBeforeMotorSEFOP": "67e4314b7b64e5a1ffdd0f700045e99b8c08d723a7632f29625c481ee612acbf",
+  "sourceStatusDigestBeforeGenericHoming": "67e4314b7b64e5a1ffdd0f700045e99b8c08d723a7632f29625c481ee612acbf",
+  "sourceStatusDigestBeforeHEProximity": "67e4314b7b64e5a1ffdd0f700045e99b8c08d723a7632f29625c481ee612acbf",
+  "sourceStatusDigestBeforeUAW": "67e4314b7b64e5a1ffdd0f700045e99b8c08d723a7632f29625c481ee612acbf"
+}

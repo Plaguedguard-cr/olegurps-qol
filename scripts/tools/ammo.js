@@ -1,6 +1,17 @@
+import { lpProfile, readLPFuel, lpText } from './ut-liquid-propellant.js';
+import { weaponResourceProfile, weaponResourceHTML } from './weapon-resources.js';
+import { resourceOnlyWeapon as beamWeapon, weaponResourceLabel as beamResourceLabel } from './weapon-resources.js';
+import { confirmLPFuelReplacement } from './lp-fuel-replacement-dialog.js';
+import { weaponResourceReason as weaponPowerReason } from './weapon-resources.js';
+import { uawGroup, activeUAWCarrier, uawManagerWeapons, renderUAWMagazineGroups, uawWeaponView } from './ut-uaw.js';
+import { PAINT_BATTERY_CSS } from './ut-paint-power.js';
+import { weaponPowerProfile, readWeaponBattery, weaponBatteryHTML } from './weapon-power.js';
+import { confirmBatteryReplacement } from './battery-replacement-dialog.js';
+import { batteryText } from './weapon-power.js';
 import { createFireControlContext, getTokenFireRangeContext } from "./fire-control-context.js";
 import {platformMotionError} from '../ht-specialized-platforms.js';
-import { WeaponAssistantApp } from "./weapon-assistant-app.js";
+import { WeaponAssistantApp, changedAmmunitionCards } from "./weapon-assistant-app.js";
+import { installViewportBounds } from './application-viewport.js';
 import { FirePreparationApp } from "./fire-preparation-app.js";
 import { measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
 import { checkHearingMinusTwo, normalizeVisibility, visibilityRules } from "./limited-visibility.js";
@@ -21,10 +32,13 @@ import { getSuppressionFireCapacity } from "./suppression-fire-service.js";
 import { SuppressionFireSessionService } from "./suppression-fire-session-service.js";
 import { FireService } from "./fire-service.js";
 import { AmmoService } from "./ammo-service.js";
+import { parseCampaignTL } from './ammunition-tech-level.js';
 import { inventoryAmmoName, renderAmmunitionSummary } from "./ammo-caption.js";
+import { attackProfilePresentation } from './weapon-profile-presentation.js';
 import { parseWeaponBulk } from "./weapon-bulk.js";
 import { resolveRuntimeAttackProfile, newAttackId, attackProfileError, withRuntimeAmmoStats } from "./attack-profile-runtime.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
+import { moduleText } from '../localization.js';
 import { TargetingService } from "./targeting-service.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { createRangedTargetedAttackContext as createTargetedAttackContext } from "./ranged-governing-skill-service.js";
@@ -78,11 +92,11 @@ export function buildFireSkillBreakdownHtml(payload, escapeHTML) {
   }
   if (payload.baseSkillName && Number.isFinite(payload.baseSkill)) {
     const base = escapeHTML(payload.baseSkillName) + ": <strong>" + payload.baseSkill + "</strong>";
-    return `<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Расчёт навыка</summary><div>${base}` +
+    return `<details class="olegurps-fire-skill-breakdown olegurps-chat-details"><summary style="cursor:pointer">Расчёт навыка</summary><div>${base}` +
       (skillDetails.length ? `<br><br>${skillDetails.join(".<br><br>")}` : "") + `</div></details>`;
   }
   return skillDetails.length
-    ? `<details class="olegurps-fire-skill-breakdown"><summary style="cursor:pointer">Techniques</summary><div>${skillDetails.join(".<br><br>")}</div></details>`
+    ? `<details class="olegurps-fire-skill-breakdown olegurps-chat-details"><summary style="cursor:pointer">Расчёт навыка</summary><div>${skillDetails.join(".<br><br>")}</div></details>`
     : "";
 }
 
@@ -142,13 +156,17 @@ export async function openAmmoManager() {
     getTaggedModifierSettings, calculateEffectiveFireSkill, calculateEffectiveFireSkillDetails, getFireBonuses } =
       createFireControlContext({ token, fireService });
   const ammoService = new AmmoService(actor);
+  const selectedBatteries = new Set();
+  const batteryReplacements = new Set();
 
   const MANAGER_CSS = `
     .gam-ammo-manager {
-      display: block !important;
+      display: flex !important;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
       width: 100% !important;
-      max-height: 72vh;
-      overflow-y: auto;
+      overflow-y: hidden;
       overflow-x: hidden;
       box-sizing: border-box;
       padding: 2px 8px 2px 2px;
@@ -161,6 +179,7 @@ export async function openAmmoManager() {
     }
 
     .gam-toolbar {
+      flex: 0 0 auto;
       display: grid !important;
       grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
       gap: 7px !important;
@@ -187,6 +206,9 @@ export async function openAmmoManager() {
     .gam-weapon-list {
       display: flex !important;
       flex-direction: column !important;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
       align-items: stretch !important;
       gap: 10px !important;
       width: 100% !important;
@@ -252,6 +274,8 @@ export async function openAmmoManager() {
       overflow-wrap: anywhere;
     }
 
+    .gam-uaw-feeds { display:grid; gap:6px; }
+    .gam-uaw-feed { display:grid; gap:3px; }
     .gam-magazines {
       display: flex !important;
       flex-direction: row !important;
@@ -558,11 +582,11 @@ export async function openAmmoManager() {
   }
 
   function withWeaponBond(attack, weapon) {
-    return attack ? { ...attack, weaponBond: isWeaponBondActive(actor, weapon?.weaponBond) } : null;
+    return attack ? { ...attack, weaponBond: isWeaponBondActive(actor, attack.weaponBondSetting??weapon?.weaponBond) } : null;
   }
 
   function getWeaponContext(state, weaponId) {
-    const weapon = state.weapons.find(entry => entry.id === weaponId);
+    const weapon = uawWeaponView(state,state.weapons.find(entry => entry.id === weaponId));
     if (!weapon) {
       throw new Error("Оружие не найдено в настройках макроса.");
     }
@@ -677,7 +701,8 @@ export async function openAmmoManager() {
     const targetedAttackContext = TARGETED_ATTACK_CONTEXTS.get(targetingService) ?? null;
     const governingSkill = resolveRangedGoverningSkill({ actor,
       binding: attack?.governingSkillBinding });
-    const targetedAttack = !visibilityRule?.random && targetedAttackContext?.resolve({
+    const locationIgnored=attack?.platformRules?.hitLocationNotApplicable===true;
+    const targetedAttack = !locationIgnored && !visibilityRule?.random && targetedAttackContext?.resolve({
       governingSkill, specialty: governingSkill?.specialty ?? values.governingSpecialty,
       target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
@@ -786,15 +811,15 @@ export async function openAmmoManager() {
       elevationDirection,
       beamWeapon,
       effectiveDistance: environment?.effectiveDistance ?? elevation?.effectiveDistance ?? null,
-      rangePenalty: (effectiveRange ?? rangeEntry).penalty,
+      rangePenalty: attack?.platformRules?.rofJet?0:(effectiveRange ?? rangeEntry).penalty,
       rangeLabel: (effectiveRange ?? rangeEntry).label,
       effectRangePenalty: Number.isFinite(effectRangePenalty) ? effectRangePenalty : null,
       hitLocationId: hitLocation.zoneId,
       hitRegionId: hitLocation.regionId,
-      hitLocationLabel: hitLocation.label,
+      hitLocationLabel: locationIgnored?'Зрение':hitLocation.label,
       hitLocationModifierLabel: targetedAttack ? `${hitLocation.modifierLabel} (TA)` : hitLocation.modifierLabel,
-      hitLocationPenalty: targetedAttack?.effectivePenalty ?? hitLocation.penalty,
-      randomHitLocation: hitLocation.random
+      hitLocationPenalty: locationIgnored?0:targetedAttack?.effectivePenalty ?? hitLocation.penalty,
+      randomHitLocation: !locationIgnored&&hitLocation.random
     };
   }
   async function executeRangedAttack(attack, options) {
@@ -814,7 +839,7 @@ export async function openAmmoManager() {
     }
 
     if (shouldReportField(state, "hits")) {
-      const hitText = payload.artillery
+      const hitText = payload.heProximity ? moduleText('OleGURPS.UTPayload.ProximityManualOutcome') : payload.manualSEFOP ? 'Выстрел SEFOP зарегистрирован; наведение и попадание — вручную.' : payload.manualHoming ? moduleText('OleGURPS.UTPayload.HomingManualOutcome') : payload.artillery
         ? `Наведение: запас успеха <strong>${payload.margin}</strong>. Ведущий определяет рассеивание и попадание.`
         : payload.hits === null
         ? `не удалось определить автоматически; Rcl: <strong>${payload.rcl}</strong>`
@@ -838,13 +863,14 @@ export async function openAmmoManager() {
     if (payload.randomHitLocations?.length && payload.blindHex) {
       shotDetails.push("\u0421\u043b\u0443\u0447\u0430\u0439\u043d\u044b\u0435 \u0437\u043e\u043d\u044b \u0432\u043e\u0437\u043c\u043e\u0436\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435)");
     }
-    if (shotDetails.length) lines.push(`<details class="olegurps-fire-context-breakdown"><summary style="cursor:pointer">Условия выстрела</summary><div>${shotDetails.join(".<br><br>")}</div></details>`);
+    if (shotDetails.length) lines.push(`<details class="olegurps-fire-context-breakdown olegurps-chat-details"><summary style="cursor:pointer">Условия выстрела</summary><div>${shotDetails.join(".<br><br>")}</div></details>`);
     if (payload.randomHitLocations?.length) {
       lines.push(buildRandomHitLocationsHtml(payload.randomHitLocations, { escapeHtml: escapeHTML }));
     } else if (payload.hitLocationText) {
       lines.push(`Зона попадания: <strong>${escapeHTML(payload.hitLocationText)}</strong>`);
     }
 
+    if(payload.beamResource)lines.push(escapeHTML(payload.beamResource));
     if (payload.loadedAfter !== undefined && shouldReportField(state, "loadedMagazine")) {
       lines.push(
         `Установленный магазин: <strong>${payload.loadedAfter}/${payload.capacity}</strong>`
@@ -912,7 +938,7 @@ export async function openAmmoManager() {
           const profile = resolveRuntimeAttackProfile({ actor, attack: rollAttack, weaponId,
             state: current, ammunition, context: { kind: preparedSnapshot ? "ranged-rapid-strike" : "normal",
               tokenId: token.id, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
-              manualGuidanceConfirmed: globalThis.game?.user?.isGM === true && rawShotOptions.manualGuidanceConfirmed === true,
+              manualGuidanceConfirmed: rawShotOptions.manualGuidanceConfirmed === true,
               effectiveRoF: shotOptions.effectiveRoF, rcl: shotOptions.rcl,
               airburstTarget: shotOptions.airburstTarget ?? "point",
               ...(shotOptions.environment ? { environment: shotOptions.environment } : {}),
@@ -970,6 +996,9 @@ export async function openAmmoManager() {
       ammoType: firedAmmoType,
       fired,
       hits,
+      heProximity:!!result.profile.damage?.rules?.heProximity,
+      manualSEFOP:!!result.profile.damage?.rules?.manualSEFOP,
+      manualHoming:!!result.profile.damage?.rules?.manualHoming,
       margin,
       rcl,
       artillery: rollAttack?.platformRules?.kind==='mortar',
@@ -983,6 +1012,7 @@ export async function openAmmoManager() {
       blindHex: visibility?.mode === "unseen" ? visibility.blindFireHex
         : visibility?.mode === "blind" && !visibility.knownLocation ? visibility.hex : null,
       loadedAfter: weapon.magazines[weapon.loadedIndex],
+      beamResource:beamResourceLabel(weapon),
       capacity: weapon.capacity,
       totalAmmo: weapon.totalAmmo
     });
@@ -995,6 +1025,20 @@ export async function openAmmoManager() {
   }
 
   async function spendWithoutRoll(state, weaponId) {
+    if (selectedBatteries.has(weaponId)) {
+      const weapon = uawWeaponView(state,state.weapons.find(w => w.id === weaponId));
+      const fuel=lpProfile(weapon);
+      const charge = fuel?(readLPFuel(weapon)?.remainingUnits??0)/4:readWeaponBattery(weapon)?.charge ?? 0;
+      if (!charge) return false;
+      const data = await DialogV2.input({window:{title:(fuel?lpText('Spend'):moduleText('OleGURPS.PaintBattery.Spend'))},
+        content:`<label>${escapeHTML((fuel?lpText('Amount'):moduleText('OleGURPS.PaintBattery.Amount')))}<input type="number" name="charge" min="${fuel?0.25:1}" max="${charge}" step="${fuel?0.25:1}" required></label>`,
+        ok:{label:(fuel?lpText('Spend'):moduleText('OleGURPS.PaintBattery.Spend'))},rejectClose:false,modal:true});
+      if (!data) return false;
+      const value = Number((data.object ?? data).charge);
+      const updated = await (fuel?ammoService.spendLPFuel(weaponId,value):ammoService.spendWeaponCharge(weaponId, value));
+      Object.assign(state, updated);
+      return true;
+    }
     await repairState(state, false);
     const { weapon } = getWeaponContext(state, weaponId);
     const loaded = weapon.magazines[weapon.loadedIndex] ?? 0;
@@ -1064,14 +1108,14 @@ export async function openAmmoManager() {
     return true;
   }
 
-  async function switchMagazine(state, weaponId, magazineIndex) {
+  async function switchMagazine(state, weaponId, magazineIndex, managerApp) {
     const { weapon } = getWeaponContext(state, weaponId);
     const newIndex = Number(magazineIndex);
     if (!Number.isInteger(newIndex) || newIndex < 0 || newIndex >= weapon.magazines.length) {
       ui.notifications.error("Выбранный магазин больше недоступен.");
       return false;
     }
-    if (newIndex === weapon.loadedIndex) return false;
+    if (newIndex === weapon.loadedIndex&&(!uawGroup(weapon)||activeUAWCarrier(state,weapon)?.id===weapon.id)) return false;
 
     const oldIndex = weapon.loadedIndex;
     if (weapon.ammunitionInventory) {
@@ -1083,6 +1127,14 @@ export async function openAmmoManager() {
       await saveState(state);
     }
 
+    const group=uawGroup(weapon);
+    if(group){
+      for(const app of [...OPEN_FIRE_PREPARATIONS.values()])if(app.rendered&&uawGroup(app.weapon)===group&&app.weapon.id!==weapon.id){
+        const selection=Object.fromEntries(['selectedRangeIndex','manualRangeSelected','manualModifier','aimSeconds','braced','laserSight','height','elevationDirection','proximityDistance'].map(k=>[k,app.fireState[k]]));
+        await app.close();const next=await openFirePreparation(state,weapon.id,managerApp);
+        if(next){Object.assign(next.fireState,selection);await next.render({force:true});}
+      }
+    }
     await reportToChat(
       state,
       "reload",
@@ -1135,7 +1187,9 @@ export async function openAmmoManager() {
       window: { title: existing ? `${weaponText("Configure")}: ${existing.name}` : weaponText("Add") },
       position: { width: 720 },
       content: weaponConfigurationHTML(draft),
-      render: (_event, dialog) => bindWeaponConfiguration(dialog.element, draft, async (attack, mode) => {
+      render: (_event, dialog) => {
+        installViewportBounds(dialog);
+        bindWeaponConfiguration(dialog.element, draft, async (attack, mode) => {
         const effective = mode.override?.action === "reset" ?
           resolveAttack(makeAttackRef(attack), getRangedAttacks()) : mode.override?.action === "save" ?
             applyAttackOverride(attack, { attackOverrides: { [getAttackOverrideKey(attack)]: mode.override.value } }) : attack;
@@ -1143,7 +1197,8 @@ export async function openAmmoManager() {
           parseRateOfFire: value => fireService.parseRateOfFire(value),
           configuration: { catalogs: api?.catalogs, target: mode.target,
             candidates: mode.analysis?.automatic?.candidates ?? [] } });
-      }),
+        });
+      },
       ok: { label: weaponText("Save"), icon: "fa-solid fa-floppy-disk" },
       rejectClose: false,
       modal: false
@@ -1155,6 +1210,7 @@ export async function openAmmoManager() {
       ui.notifications.error(weaponText("SelectAttack"));
       return false;
     }
+    draft.campaignTL = parseCampaignTL(values.campaignTL ?? draft.campaignTL);
     const result = await draft.commit({ id: randomId() });
     await saveState(result.state);
     for (const key of Object.keys(state)) if (!Object.hasOwn(result.state, key)) delete state[key];
@@ -1328,11 +1384,16 @@ export async function openAmmoManager() {
     return true;
   }
 
-  function renderMagazineBadges(weapon) {
+  function renderMagazineBadges(weapon,state) {
+    const render = (carrier, options={}) => renderSingleMagazineBadges(carrier,
+      {...options,batterySelected:selectedBatteries.has(carrier.id)});
+    return renderUAWMagazineGroups(state,weapon,render,escapeHTML)??render(weapon);
+  }
+  function renderSingleMagazineBadges(weapon,{active=true,batterySelected=false}={}) {
     if (weapon.ammunitionReview) return "";
     return weapon.magazines
       .map((rounds, index) => {
-        const loaded = index === weapon.loadedIndex;
+        const loaded = active&&index === weapon.loadedIndex;
         const capacity = weapon.ammunitionInventory?.magazines[index]?.capacity ?? weapon.capacity;
         const fill = magazineFill(rounds, capacity);
         const magazine = weapon.ammunitionInventory?.magazines[index];
@@ -1346,17 +1407,16 @@ export async function openAmmoManager() {
         return `
           <button
             type="button"
-            class="gam-mag ${className} ${loaded ? "loaded" : ""}"
+            class="gam-mag ${className} ${loaded && !batterySelected ? "loaded" : ""}"
             style="--gam-mag-fill:${fill.percent}%;--gam-mag-hue:${fill.hue}"
             data-ammo-action="select-magazine"
             data-weapon-id="${weapon.id}"
             data-magazine-index="${index}"
-            aria-pressed="${loaded}"
+            aria-pressed="${loaded && !batterySelected}"
             aria-label="${loaded ? "Установленный" : "Установить"} магазин ${index + 1}: ${rounds} из ${capacity}, ${escapeHTML(ammoName)}"
             title="${escapeHTML(ammoName)}"
           >
             <span class="gam-mag-label">${loaded ? "● " : ""}${index + 1}: ${rounds}/${capacity}</span>
-            <span class="gam-mag-name">${escapeHTML(ammoName)}</span>
           </button>
         `;
       })
@@ -1364,15 +1424,20 @@ export async function openAmmoManager() {
   }
 
   async function openFirePreparation(state, weaponId, managerApp, initialVisibility = null) {
-    await repairState(state, false);
-    const { weapon, attack } = getWeaponContext(state, weaponId);
+    // A just-committed magazine change can precede the manager's async update hook.
+    // Open from the current ledger, not the previous card's inventory snapshot.
+    const currentState=await loadState();
+    await repairState(currentState, false);
+    const { weapon, attack } = getWeaponContext(currentState, weaponId);
     if (!attack) {
       throw new Error(`Для «${weapon.name}» больше не найдена связанная дистанционная атака.`);
     }
 
     if (attack.readinessReason) throw new Error(attack.readinessReason);
+    const powerReason = weaponPowerReason(weapon);
+    if (powerReason) throw Error(powerReason);
     const loaded = standaloneAvailableRounds(weapon);
-    if (loaded <= 0 || loaded !== Infinity && weapon.totalAmmo <= 0) {
+    if (loaded <= 0 || !beamWeapon(weapon)&&loaded !== Infinity && weapon.totalAmmo <= 0) {
       ui.notifications.warn(`«${weapon.name}»: установленный магазин пуст.`);
       return null;
     }
@@ -1524,7 +1589,7 @@ export async function openAmmoManager() {
           managerApp.setManagerState(state);
           managerApp.setResult("Бросок выполнен, боезапас обновлён.");
           try {
-            await managerApp.refreshContent();
+            await managerApp.refreshContent({weaponIds:[weaponId]});
           } catch (error) {
             console.error("Не удалось обновить Помощник стрельбы после выстрела:", error);
           }
@@ -2014,16 +2079,21 @@ export async function openAmmoManager() {
     try { await app.render({ force: true }); return app; }
     catch (error) { OPEN_SPECIAL_FIRE_MENUS.delete(key); throw error; }
   }
-  function buildManagerContent(state, uiState = {}) {
-    const attacks = getRangedAttacks(state);
+  function buildManagerCards(state, weaponIds = null) {
+    const attacks = state.weapons.some(w=>!w.standaloneWeaponId&&(!weaponIds||weaponIds.includes(w.id)))?getRangedAttacks(state):[];
 
     const cards = state.weapons.length
-      ? state.weapons
+      ? uawManagerWeapons(state)
+          .filter(weapon => !weaponIds || weaponIds.includes(weapon.id))
           .map(weapon => {
             normalizeWeaponShape(weapon);
-            const attack = weapon.standaloneWeaponId ? readStandaloneAttack(actor, weapon.standaloneWeaponId, weapon.standaloneModeId) : resolveAttack(weapon.attackRef, attacks);
+            const attack = weapon.standaloneWeaponId ? withRuntimeAmmoStats(readStandaloneAttack(actor, weapon.standaloneWeaponId, weapon.standaloneModeId),actor,state) : resolveAttack(weapon.attackRef, attacks);
             const loaded = weapon.ammunitionReview ? 0 : weapon.magazines[weapon.loadedIndex] ?? 0;
             const broken = !attack;
+            const beam=beamWeapon(weapon);
+            if(beam&&!beam.oneShot)selectedBatteries.add(weapon.id);
+            const batterySelected = weaponResourceProfile(weapon) && selectedBatteries.has(weapon.id);
+            const powerReason = weaponPowerReason(weapon);
 
             const levelText = attack?.level > 0 ? `Навык ${attack.level}` : "Навык не указан";
             const rofText = attack?.rof ? `RoF ${escapeHTML(attack.rof)}` : "RoF не указан";
@@ -2039,37 +2109,40 @@ export async function openAmmoManager() {
                   <div class="gam-card-info">
                     <h3>${escapeHTML(weapon.name)}</h3>
                     <div class="gam-sub">
-                      ${weapon.standaloneWeaponId ? escapeHTML(attack?.readinessReason ?? attack?.skillDescription ?? standaloneText("Pending")) : broken ? "Связанная дистанционная атака не найдена" : [levelText, rofText, accText, scopeText, bulkText, rclText].join(" \u00b7 ")}
+                      ${weapon.standaloneWeaponId ? escapeHTML(attack?.readinessReason ?? attack?.skillDescription ?? standaloneText("Pending")) : broken ? "Связанная дистанционная атака не найдена" : levelText}
                     </div>
                     <div class="gam-sub">
-                      ${renderAmmunitionSummary(actor, weapon, escapeHTML)}
+                      ${beam?'':renderAmmunitionSummary(actor, weapon, escapeHTML,attack?.ammunitionDisplay)}
                     </div>
+                    <div class="gam-sub gam-weapon-stats" data-current-weapon-stats>${[
+                      escapeHTML((attack?.ammunitionDisplay??attackProfilePresentation(null)).damageText),
+                      beamResourceLabel(weapon)??`магазин ${loaded}/${weapon.capacity}`,rofText,accText,scopeText,bulkText,rclText].join(' · ')}</div>
                   </div>
-
+                  ${weaponResourceHTML(weapon,batterySelected,escapeHTML)}
                 </div>
 
-                <div class="gam-magazines">${renderMagazineBadges(weapon)}</div>
+                ${beam?'':`<div class="${uawGroup(weapon)?'gam-uaw-feeds':'gam-magazines'}">${renderMagazineBadges(weapon,state)}</div>`}
 
                 <div class="gam-actions">
-                  ${weapon.standaloneWeaponId && lematBarrel(weapon.standaloneModeId) ? `<strong>${escapeHTML(attack?.data?.mode ?? "")}</strong><p class="hint">${escapeHTML(automaticAmmoText("BarrelSwitchReadyGM", globalThis.game?.i18n?.lang))}</p>` : weapon.standaloneWeaponId ? `<select data-standalone-mode="${escapeHTML(weapon.id)}" aria-label="Режим атаки">${new StandaloneWeaponService(actor).get(weapon.standaloneWeaponId)?.modes.map(m => `<option value="${escapeHTML(m.modeId)}" ${m.modeId === weapon.standaloneModeId ? "selected" : ""}>${escapeHTML(m.snapshot.usage ?? "Основной режим")}</option>`).join("") ?? ""}</select>` : ""}
-                  <button type="button" data-ammo-action="fire-roll" data-weapon-id="${weapon.id}" ${broken || attack?.readinessReason || standaloneAvailableRounds(weapon) <= 0 ? "disabled" : ""}>
+                  ${weapon.standaloneWeaponId && lematBarrel(weapon.standaloneModeId) ? `<strong>${escapeHTML(attack?.data?.mode ?? "")}</strong><p class="hint">${escapeHTML(automaticAmmoText("BarrelSwitchReadyGM", globalThis.game?.i18n?.lang))}</p>` : weapon.standaloneWeaponId&&!uawGroup(weapon) ? `<select data-standalone-mode="${escapeHTML(weapon.id)}" aria-label="Режим атаки">${new StandaloneWeaponService(actor).get(weapon.standaloneWeaponId)?.modes.map(m => `<option value="${escapeHTML(m.modeId)}" ${m.modeId === weapon.standaloneModeId ? "selected" : ""}>${escapeHTML(m.snapshot.usage ?? "Основной режим")}</option>`).join("") ?? ""}</select>` : ""}
+                  <button type="button" data-ammo-action="fire-roll" data-weapon-id="${weapon.id}" title="${escapeHTML(powerReason ?? attack?.readinessReason ?? '')}" ${broken || powerReason || attack?.readinessReason || standaloneAvailableRounds(weapon) <= 0 ? "disabled" : ""}>
                     <i class="fa-solid fa-crosshairs"></i>
                     Огонь
                   </button>
 
-                  <button type="button" data-ammo-action="special-fire-modes" data-weapon-id="${weapon.id}" ${weapon.standaloneWeaponId && standaloneAvailableRounds(weapon) === Infinity ? "disabled" : ""}>
+                  <button type="button" data-ammo-action="special-fire-modes" data-weapon-id="${weapon.id}" ${beam||weapon.standaloneWeaponId && standaloneAvailableRounds(weapon) === Infinity ? "disabled" : ""}>
                     <i class="fa-solid fa-burst"></i>
                     \u0420\u0435\u0436\u0438\u043c\u044b \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b
                   </button>
 
-                  <button type="button" data-ammo-action="spend" data-weapon-id="${weapon.id}" ${loaded <= 0 ? "disabled" : ""}>
+                  <button type="button" data-ammo-action="spend" data-weapon-id="${weapon.id}" ${(batterySelected ? lpProfile(weapon)?readLPFuel(weapon)?.remainingUnits??0:readWeaponBattery(weapon)?.charge ?? 0 : loaded) <= 0 ? "disabled" : ""}>
                     <i class="fa-solid fa-minus"></i>
                     Списать
                   </button>
 
-                  <button type="button" data-ammo-action="manage-load" data-weapon-id="${weapon.id}">
+                  <button type="button" data-ammo-action="${batterySelected?'replace-battery':'manage-load'}" data-weapon-id="${weapon.id}" ${beam?.oneShot||batterySelected&&batteryReplacements.has(weapon.id)?'disabled':''}>
                     <i class="fa-solid fa-box-open"></i>
-                    ${escapeHTML(ammoWindowText("Title"))}
+                    ${escapeHTML(beam?.oneShot?'Заряд одноразовый':beam?.chemical?beam.modeId==='WY4jJpxSq5uG4KNl2'?'Заменить бак':'Заменить ранец':batterySelected ? lpProfile(weapon)?lpText('Replace'):batteryText('Replace') : ammoWindowText("Title"))}
                   </button>
 
                   <button type="button" data-ammo-action="edit" data-weapon-id="${weapon.id}">
@@ -2098,6 +2171,11 @@ export async function openAmmoManager() {
         </div>
       `;
 
+    return cards;
+  }
+
+  function buildManagerContent(state, uiState = {}) {
+    const cards = buildManagerCards(state);
     const modeText = state.chatSettings?.mode === "all" ? "для всех" : "только себе";
 
     return `
@@ -2129,7 +2207,7 @@ export async function openAmmoManager() {
     const assistantKey = `${canvas?.scene?.id ?? "scene"}:${token.document?.id ?? token.id}`;
     const existing = OPEN_ASSISTANTS.get(assistantKey);
     if (existing?.rendered) {
-      existing.bringToTop();
+      existing.bringToFront();
       return existing;
     }
 
@@ -2155,16 +2233,38 @@ export async function openAmmoManager() {
       token,
       managerState: persistentState,
       title: `Патроны — ${token.name}`,
-      styles: MANAGER_CSS,
+      styles: MANAGER_CSS + PAINT_BATTERY_CSS,
       buildContent: buildManagerContent,
+      buildWeaponCards: buildManagerCards,
       onClose: () => {
         OPEN_ASSISTANTS.delete(assistantKey);
         if (actorHook !== null) { Hooks.off("updateActor", actorHook); actorHook = null; }
       },
       handleAction: async ({ action, weaponId, magazineIndex, app: managerApp }) => {
+        if (action === 'replace-battery') {
+          if (!selectedBatteries.has(weaponId) || batteryReplacements.has(weaponId)) return {changed:false};
+          batteryReplacements.add(weaponId);
+          try {
+            const fuel=lpProfile(actor.getFlag('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===weaponId));
+            const updated = await (fuel?confirmLPFuelReplacement:confirmBatteryReplacement)({actor,weaponId,ammoService});
+            if (!updated) return {changed:false};
+            persistentState = updated;
+            return {changed:true,weaponIds:[weaponId],managerState:persistentState,message:fuel?lpText('Replaced'):batteryText('Replaced')};
+          } finally {
+            batteryReplacements.delete(weaponId);
+            if (managerApp?.rendered) await managerApp.refreshContent({weaponIds:[weaponId]});
+          }
+        }
+        if (action === 'select-battery') {
+          if (!weaponResourceProfile(uawWeaponView(persistentState,persistentState.weapons.find(w=>w.id===weaponId)))) return {changed:false};
+          if (selectedBatteries.has(weaponId)) return {changed:false};
+          selectedBatteries.add(weaponId);
+          return {changed:true,weaponIds:[weaponId],managerState:persistentState};
+        }
+        const batteryWasSelected = action === 'select-magazine' && selectedBatteries.delete(weaponId);
         const configured = persistentState.weapons.find(weapon => weapon.id === weaponId);
         const configurationOnly = configured?.ammoUnconfigured === true;
-        if (configurationOnly && !(configured?.standaloneWeaponId && action === "fire-roll") && ["fire-roll", "special-fire-modes", "spend", "select-magazine", "top-up", "unload"].includes(action)) {
+        if (configurationOnly && !selectedBatteries.has(weaponId) && !(configured?.standaloneWeaponId && action === "fire-roll") && ["fire-roll", "special-fire-modes", "spend", "select-magazine", "top-up", "unload"].includes(action)) {
           ui.notifications.warn(weaponText("NoMagazines"));
           return { changed: false, managerState: persistentState, message: "" };
         }
@@ -2181,7 +2281,7 @@ export async function openAmmoManager() {
         else if (action === "edit") changed = await configureWeapon(persistentState, weaponId);
         else if (action === "remove") changed = await removeWeapon(persistentState, weaponId);
         else if (action === "spend") changed = await spendWithoutRoll(persistentState, weaponId);
-        else if (action === "select-magazine") changed = await switchMagazine(persistentState, weaponId, magazineIndex);
+        else if (action === "select-magazine") changed = await switchMagazine(persistentState, weaponId, magazineIndex, managerApp);
         else if (["manage-load", "top-up", "unload", "stock", "magazines"].includes(action)) {
           await openAmmoManagement({ actor, weaponId, onUpdate: async state => {
             persistentState = state;
@@ -2197,9 +2297,10 @@ export async function openAmmoManager() {
           changed = true;
         }
         return {
-          changed,
+          changed: changed || batteryWasSelected,
+          weaponIds: ['select-magazine','spend'].includes(action) ? [weaponId] : null,
           managerState: persistentState,
-          message: changed ? actionMessages[action] ?? "" : ""
+          message: changed ? action==='spend' && selectedBatteries.has(weaponId) ? lpProfile(persistentState.weapons.find(w=>w.id===weaponId))?lpText('Spent'):moduleText('OleGURPS.PaintBattery.Spent') : actionMessages[action] ?? "" : ""
         };
       }
     });
@@ -2210,7 +2311,7 @@ export async function openAmmoManager() {
       const id = event.target?.dataset?.standaloneMode;
       if (!id) return;
       const current = await loadState(), weapon = current.weapons.find(w => w.id === id);
-      if (lematBarrel(weapon?.standaloneModeId)) return;
+      if (lematBarrel(weapon?.standaloneModeId)||uawGroup(weapon)) return;
       if (!weapon || !readStandaloneAttack(actor, weapon.standaloneWeaponId, event.target.value)) return;
       weapon.standaloneModeId = event.target.value;
       await saveState(current);
@@ -2218,13 +2319,14 @@ export async function openAmmoManager() {
       app.setManagerState(current);
       await app.refreshContent();
     });
-    actorHook = Hooks.on("updateActor", async updatedActor => {
+    actorHook = Hooks.on("updateActor", async (updatedActor, changes) => {
       if (updatedActor.id !== actor.id || !app.rendered) return;
       try {
+        const previous = structuredClone(app.managerState);
         persistentState = await loadState();
         if (!app.rendered) return;
         app.setManagerState(persistentState);
-        await app.refreshContent();
+        await app.refreshContent({weaponIds:changedAmmunitionCards(previous,persistentState,changes ?? {})});
       } catch (error) { console.error("OleGURPS ammunition indicators refresh", error); }
     });
     return app;

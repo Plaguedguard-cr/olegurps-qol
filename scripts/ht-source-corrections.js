@@ -3,8 +3,16 @@ export const HT_SOURCE_REVIEW = Object.freeze({
   W82oDY970UdeqLXTF: ['ht_5_56x45mm_nato', 'HT117,119: R6001 chamber/load not specified'],
   Wkvf5salwlKpkRx_c: ['ht_5_56x45mm_nato', 'HT117,119: R653 chamber/load not specified'],
   WGJgRQusTscOtoLC9: ['ht_5_56x45mm_nato', 'HT117,119: XM177E1 early load not specified'],
-  WOAL2ladqiRbTuvRU: ['ht_17_5mm_flintlock_mle_1777', 'HT90,107: pistol and musket loads need separate evidence'],
-  'WwlfY-FYthqkLvByK': ['ht_22_long_rifle_5_7x16mmr', 'HT92: .22 does not establish LR chamber']
+  WOAL2ladqiRbTuvRU: ['ht_17_5mm_flintlock_mle_1777', 'HT90,107: pistol and musket loads need separate evidence']
+});
+// Project policy, not a claim that HT92 establishes this exact cartridge.
+// The existing physical item and all its shared construction rules are reused.
+export const HT_PROJECT_WEAPON_POLICIES = Object.freeze({
+  'WwlfY-FYthqkLvByK': Object.freeze({
+    version: 1, authority: 'user-approved-project-policy', date: '2026-10-18',
+    ammoId: 'ht_22_long_rifle_5_7x16mmr', caliber: '.22 Long Rifle (.22 LR)', physicalCartridgeRequired:true,
+    weaponReliability: Object.freeze({malf:12, source:'HT92', application:'manual'})
+  })
 });
 // HT117 explicitly separates the original .223 AR-15 family from the M16A2's modified NATO load.
 // HT119 identifies these early carbine variants; HT90 explicitly shares pistol statistics with AN XIII.
@@ -15,6 +23,12 @@ export const HT_REVIEWED_LOADS = Object.freeze({
   WOAL2ladqiRbTuvRU:{ammoId:'ht_specific_mas_an_xiii_17_1_flintlock',source:'HT90/91',original:'ht_17_5mm_flintlock_mle_1777'}
 });
 export function reviewedHTModeIdentity(mode,equipment) {
+  const policy=equipment?.source==='HT'&&HT_PROJECT_WEAPON_POLICIES[mode?.weapon_mode_id];
+  if(policy)return {...mode,ht_ammo_item_ids:[policy.ammoId],ht_ammo_family_ids:[],caliber_hint:policy.caliber,
+    ammunitionIdentityPolicy:{version:policy.version,authority:policy.authority,date:policy.date,ammoId:policy.ammoId,physicalCartridgeRequired:policy.physicalCartridgeRequired},
+    weaponReliability:{...policy.weaponReliability},
+    ht_ammo_resolution:{status:'project_approved_existing_round',authority:policy.authority,source:'User decision 2026-10-18'},
+    ht_ammo_review:{status:'project_approved_existing_round',authority:policy.authority,source_ref:'User decision 2026-10-18',book:'HT'}};
   const evidence=equipment?.source==='HT'&&HT_REVIEWED_LOADS[mode?.weapon_mode_id];
   if(!evidence||!mode.ht_ammo_item_ids?.includes(evidence.original))return mode;
   return {...mode,ht_ammo_item_ids:[evidence.ammoId],ht_ammo_family_ids:[],

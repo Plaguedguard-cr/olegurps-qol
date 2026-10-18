@@ -49,10 +49,44 @@ test("four-catalog audit is read-only and distinguishes complete data from unkno
   assert.deepEqual(rejected, [["WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", "ht_apex"], ["WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", "ht_aphex"]]);
   assert.equal(compatibility.checkCompatibility("WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", { book: "ht", kind: "ammo-item" }).status, "incompatible");
   assert.deepEqual(r.ht,{combinations:1022,complete:10,incomplete:1010,incompatible:2,rules:{undetermined:1020,incompatible:2}});
-  assert.equal(r.catalogs.weapons.equipment,1152);assert.equal(r.catalogs.lt.items,134);
+  // UT-DATA transcribed two previously absent UT142 weapons; the imported GCS stays intact.
+  assert.equal(data.weapons.equipment.length,1152);
+  assert.equal(r.catalogs.weapons.equipment,1154);assert.equal(r.catalogs.lt.items,134);
+  const equipment=catalogs.getCatalog("weapons").equipment;
+  const sourceIds=new Set(data.weapons.equipment.map(e=>e.equipment_id));
+  const additions=equipment.filter(e=>!sourceIds.has(e.equipment_id));
+  assert.deepEqual(additions.map(e=>e.equipment_id).sort(),
+    ["eUT2007GaussNeedler3mm","eUT2007GaussPDW4mm"].sort());
+  assert.equal(new Set(equipment.map(e=>e.equipment_id)).size,equipment.length);
+  const modeIds=equipment.flatMap(e=>e.modes.map(m=>m.weapon_mode_id));
+  assert.equal(new Set(modeIds).size,modeIds.length);
+  for(const [eid,mid,name,family] of [
+    ["eUT2007GaussNeedler3mm","WUT2007GaussNeedler3mm","Gauss Needler, 3mm","3mm_em"],
+    ["eUT2007GaussPDW4mm","WUT2007GaussPDW4mm","Gauss PDW, 4mm","4mm_em"]]) {
+    const item=additions.find(e=>e.equipment_id===eid),mode=catalogs.getMode(mid);
+    assert.equal(equipment.filter(e=>e.name===name).length,1);
+    assert.equal(item.name,name);assert.equal(item.source,"UT");assert.equal(item.reference,"UT142");
+    assert.deepEqual(item.modes.map(m=>m.weapon_mode_id),[mid]);
+    assert.equal(mode.ammunition_profile.primary_ammo_family_id,family);
+    assert.equal(mode.ut_source_data.origin,"module-owned-source-transcription");
+    assert.equal(mode.ut_source_data.revision,"ut-2007-1");
+    assert.deepEqual(mode.ut_source_data.sources,["Ultra-Tech141","Ultra-Tech142","Ultra-Tech143"]);
+    assert.equal(mode.ut_source_data.readiness,"definition-only");
+    assert.equal(mode.ut_source_data.power_accounting_required,true);
+    const aphex=compatibility.checkCompatibility(mid,"aphex",{book:"ut",kind:"warhead"});
+    assert.equal(aphex.status,"undetermined");
+    assert.ok(aphex.reasons.some(reason=>reason.code==="UT_VARIANT_NOT_IMPLEMENTED"));
+  }
   assert.equal(r.catalogs.ht.items,263);assert.equal(r.catalogs.ut.families,36);assert.equal(r.catalogs.ut.aphexTableRows,7);
   assert.deepEqual(Object.fromEntries(Object.entries(r.ut).filter(([k])=>k!=="reasons")),
-    {combinations:85,compatible:52,undetermined:6,incompatible:27,sourceRowsMatched:52,automaticProfiles:0});
+    {combinations:87,compatible:52,undetermined:10,incompatible:25,sourceRowsMatched:52,automaticProfiles:0});
+  // Two new definitions and two explicit UT141/143 source conflicts stay unresolved;
+  // neither change creates an additional compatible APHEX pair.
+  for(const mid of ["WJstukbcBFPxQFtJE","WbvkCgoaLuWViWyKK"]) {
+    const result=compatibility.checkCompatibility(mid,"aphex",{book:"ut",kind:"warhead"});
+    assert.equal(result.status,"undetermined");
+    assert.ok(result.reasons.some(reason=>reason.code==="UT_SOURCE_CONFLICT"));
+  }
   assert.equal(r.catalogs.weapons.candidates,667);assert.equal(r.catalogs.weapons.payloadTemplates,122);
   assert.equal(r.catalogs.lt.projectileOptions,38);assert.equal(r.catalogs.ut.warheads,37);
   assert.ok(Object.values(r.catalogs).every(c=>c.structuredProfiles===0));assert.equal(JSON.stringify(data),before);
@@ -82,8 +116,8 @@ for(const [variantId,charge,kinetic,explosion] of [
     binding:{status:"confirmed",binding:{confirmed:true,modeId:ak}},ammunition:{type:r.type,kind:"physical-magazine",ammoKey:r.type.key,available:5,total:10}};
   const resolved=resolver.resolve({...input,profilePolicy:"permissive"});
   assert.equal(resolved.damage.formula,kinetic);assert.equal(resolved.damage.nativeSafe,true);
-  assert.equal(resolved.construction.status,"undetermined");assert.equal(resolved.construction.authority,"world-policy");
-  assert.equal(resolver.resolve({...input,profilePolicy:"strict"}).damage.nativeSafe,false);
+  assert.equal(resolved.construction.status,"undetermined");assert.equal(resolved.construction.authority,"user-defined");
+  assert.equal(resolver.resolve({...input,profilePolicy:"strict"}).damage.nativeSafe,true);
   assert.equal(resolved.damage.components.some(c=>c.role==="incendiary"&&c.status==="manual"),variantId==="ht_aphex");
   assert.equal(automatic.prepare({modeId:barrett,base:browning,variantId}).origin==="calculated",false);
   const actor={id:"actor"},weapon={id:"weapon",name:"AK",totalAmmo:0,attackRef:{path:"system.ranged.0"},ammunitionInventory:{version:1,installedId:null,stocks:[],magazines:[]}};
@@ -95,7 +129,7 @@ for(const [variantId,charge,kinetic,explosion] of [
   assert.equal(weapon.ammunitionInventory.stocks[0].rounds,5);assert.equal(weapon.ammunitionInventory.magazines[0].rounds,5);
   for(const lang of ["ru","en"]){
     const displayed=availableAmmoTypes(actor,weapon,api(ak),lang);
-    assert.equal(displayed.find(t=>!t.recipe).label,"7.62x39mm \u2014 "+"\u0431\u0430\u0437\u043e\u0432\u044b\u0439");
+    assert.equal(displayed.find(t=>!t.recipe).label,"7.62x39mm \u2014 \u0411\u0430\u0437\u043e\u0432\u044b\u0439");
     for(const choice of displayed.filter(t=>t.recipe))assert.equal(choice.label,
       isMultishotVariant(choice.recipe.variantId) ? "7.62x39mm "+automaticAmmoText("P3"+choice.recipe.variantId,lang) :
       isEnvironmentVariant(choice.recipe.variantId) ? "7.62x39mm "+automaticAmmoText("P5"+choice.recipe.variantId,lang) :
@@ -112,18 +146,18 @@ test("published source is scoped to reviewed modes and carries no fabricated num
   assert.equal(prepare(automatic,{modeId:"WdNlv4XvVH5vNfQoh"}).state,"incomplete");
   assert.equal(prepare().type.key,r.type.key);assert.equal(prepare(automatic,{savedType:JSON.parse(JSON.stringify(r.type))}).state,"complete");
 });
-test("strict, permissive, compatible, revoked and prohibited admissions remain separate",()=>{
+test("legacy admission policy does not gate complete profiles; prohibitions remain technical",()=>{
   const published=prepare();assert.deepEqual(automatic.admission(published,{policy:"strict"}),{allowed:true,authority:"reference"});
   const r=automatic.prepare({modeId:ak,base:base("ht_7_62x39mm"),variantId:"ht_aphex"});
-  assert.equal(automatic.admission(r,{policy:"strict"}).allowed,false);
-  assert.deepEqual(automatic.admission(r,{policy:"permissive"}),{allowed:true,authority:"world-policy"});
+  assert.equal(automatic.admission(r,{policy:"strict"}).allowed,true);
+  assert.deepEqual(automatic.admission(r,{policy:"permissive"}),{allowed:true,authority:"user-defined"});
   assert.equal(automatic.admission({...r,rulesStatus:"compatible"},{policy:"strict"}).allowed,true);
-  assert.equal(automatic.admission(r,{policy:"permissive",approval:{active:false}}).allowed,false);
+  assert.equal(automatic.admission(r,{policy:"permissive",approval:{active:false}}).allowed,true);
   assert.equal(automatic.admission({...r,rulesStatus:"incompatible"},{policy:"permissive",approval:{active:true}}).allowed,false);
   const prohibited=new AutomaticAmmunitionProfileService({catalogs,compatibility:{checkCompatibility:(_m,id)=>({status:id===browning.ammoId?"compatible":"incompatible"})}});
   assert.equal(prepare(prohibited).state,"incompatible");
 });
-test("new worlds default to permissive policy while explicitly saved strict policy remains respected",()=>{
+test("legacy policy value is preserved while admission no longer depends on it",()=>{
   let registered;registerAutomaticAmmoPolicy({game:{settings:{register(scope,key,options){registered={scope,key,options};}}}});
   assert.equal(registered.scope,"olegurps-qol");assert.equal(registered.key,"preparedAmmoPolicy");
   assert.equal(registered.options.default,"permissive");assert.equal(registered.options.scope,"world");
@@ -132,27 +166,27 @@ test("new worlds default to permissive policy while explicitly saved strict poli
   for(const saved of ["permissive","strict"]){const runtime={game:{settings:{get:()=>saved}}};
     assert.equal(automaticAmmoPolicy(runtime),saved);
     const calculated=automatic.prepare({modeId:ak,base:base("ht_7_62x39mm"),variantId:"ht_aphex"});
-    assert.equal(automatic.admission(calculated,{policy:automaticAmmoPolicy(runtime)}).allowed,saved==="permissive");
+    assert.equal(automatic.admission(calculated,{policy:automaticAmmoPolicy(runtime)}).allowed,true);
     assert.equal(automatic.admission(prepare(),{policy:automaticAmmoPolicy(runtime)}).allowed,true);}
 });
-test("individual GM approvals are preserved and revocation vetoes world admission",async()=>{
-  let saved={unrelated:{keep:true}};const actor={id:"actor"},weapon={id:"weapon",attackRef:{path:"system.ranged.0"}},type=prepare().type;
+test("legacy approvals preserved, owner decisions persisted without a world permission gate",async()=>{
+  let saved={unrelated:{keep:true}},local={};const actor={id:"actor",isOwner:true,getFlag:()=>local,setFlag:async(_s,_k,v)=>{local=structuredClone(v);}},weapon={id:"weapon",attackRef:{path:"system.ranged.0"}},type=prepare().type;
   const runtime={game:{user:{id:"gm",isGM:true},settings:{get:()=>saved,set:async(_s,_k,v)=>{saved=structuredClone(v);}}},OleGURPSQOL:api()};
-  await setAmmunitionApproval({actor,weapon,type,active:true},runtime);const scope={actorId:actor.id,weaponId:weapon.id,modeId:barrett,type};
+  await setAmmunitionApproval({actor,weapon,type,active:true},runtime);const scope={actor,actorId:actor.id,weaponId:weapon.id,modeId:barrett,type};
   const granted=getAmmunitionApproval(scope,runtime);assert.equal(profile(type,{policy:"strict",approval:granted}).damage.nativeSafe,true);
   const original=JSON.stringify(saved);automatic.audit();assert.equal(JSON.stringify(saved),original);
   await setAmmunitionApproval({actor,weapon,type,active:false},runtime);
   assert.equal(getAmmunitionApproval(scope,runtime),null);assert.equal(saved.unrelated.keep,true);
-  assert.equal(profile(type,{approval:readAmmunitionApproval(scope,runtime)}).damage.nativeSafe,false);
-  // A foreign approval cannot veto source-confirmed admission; explicit revocation still does.
+  assert.equal(profile(type,{approval:readAmmunitionApproval(scope,runtime)}).damage.nativeSafe,true);
+  // A foreign approval cannot veto source-confirmed admission or a complete owner-defined profile.
   assert.equal(profile(type,{policy:"strict",approval:{...granted,fingerprint:"other recipe"}}).damage.nativeSafe,true);
   const calculated=automatic.prepare({modeId:ak,base:base("ht_7_62x39mm"),variantId:"ht_aphex"});
-  assert.equal(automatic.admission(calculated,{policy:"strict"}).allowed,false);
+  assert.equal(automatic.admission(calculated,{policy:"strict"}).allowed,true);
   const foreignFingerprint=new AttackProfileResolver({catalogs,compatibility}).resolve({actorId:actor.id,weaponId:weapon.id,
     rawAttack:{name:"AK",damage:"5d+1 pi"},binding:{status:"confirmed",binding:{confirmed:true,modeId:ak}},
     ammunition:{type:calculated.type},profilePolicy:"strict",approval:{...granted,modeId:ak,ammoId:calculated.type.ammoId,
       recipeId:calculated.type.recipe.customId,fingerprint:"other recipe"}});
-  assert.equal(foreignFingerprint.damage.nativeSafe,false);
+  assert.equal(foreignFingerprint.damage.nativeSafe,true);
 });
 test("prepared profile uses existing kinetic transformations and immutable separate components",()=>{
   const type=prepare().type,p=profile(type),snapshot=createShotSnapshot(p,{attackId:"attack",messageId:"message"});
@@ -207,7 +241,7 @@ test("base, AP/APHC/HP and unrelated ammunition completely hide the special edit
   for(const variantId of [null,"ht_ap","ht_aphc","ht_hollow_point","other"]){const type={...browning,...(variantId?{recipe:{version:1,variantId}}:{})};
     assert.equal(recipeEditorHTML({recipe:{variantId:"ht_apex",parameters:{projectileMassG:999}},recipeOpen:true},type,"ru"),"");}
 });
-test("APEX/APHEX settings are specific, collapsed and hidden from ordinary players",()=>{
+test("APEX/APHEX settings are specific, collapsed and editable by owners",()=>{
   for(const variantId of ["ht_apex","ht_aphex"]){const type={...browning,recipe:{version:1,variantId,parameters:{projectileMassG:100}}};
     const html=recipeEditorHTML({recipe:{variantId:variantId==="ht_apex"?"ht_aphex":"ht_apex",parameters:{projectileMassG:999}}},type,"ru");
     assert.ok(html.includes('value="100"'));assert.ok(!html.includes('value="999"'));
@@ -216,7 +250,8 @@ test("APEX/APHEX settings are specific, collapsed and hidden from ordinary playe
   }
   game.user.isGM=false;
   try{const ready=prepare();const html=recipeEditorHTML({}, {...ready.type,preparation:{...ready,admission:{allowed:true}}},"ru");
-    assert.ok(html.includes("1d-2 cr ex"));assert.doesNotMatch(html,/recipe-projectileMassG|data-recipe-editor|recipe-ref|recipe-q/);
+    assert.ok(html.includes("1d-2 cr ex"));assert.match(html,/data-recipe-editor/);
+    assert.doesNotMatch(recipeEditorHTML({canEdit:false}, {...ready.type,preparation:{...ready,admission:{allowed:true}}},"ru"),/recipe-projectileMassG|data-recipe-editor|recipe-ref|recipe-q/);
   }finally{game.user.isGM=true;}
 });
 test("ammo selection clears draft and expansion without inventory or Actor writes",async()=>{

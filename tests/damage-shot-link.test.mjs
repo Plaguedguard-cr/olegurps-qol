@@ -5,7 +5,171 @@ import { installDamageShotLink, captureDamageSource, resolveDamageShotLink, shot
 import { AttackProfileResolver, createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { resolveAmmunitionEffects, parseKineticDamage } from "../scripts/tools/ammunition-effects.js";
 
+test('ETC repeated native Damage uses frozen converted piercing and never spends or rechecks the live cell',async()=>{
+  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+  p.mode.standaloneRef={weaponId:'etc-rifle',modeId:'WFc8O-LgWxenUseNy',combatType:'ranged'};
+  p.weaponConfiguration={variant:'etc',source:'UT139',baseline:{damage:'6d pi',range:'700/4000'},converted:{damage:'9d pi',range:'1050/6000'}};
+  p.raw.damage='6d pi';p.effective.damage='9d pi';p.effective.range='1050/6000';
+  p.damage=resolveAmmunitionEffects({raw:{...p.raw,damage:'9d pi'}});
+  p.resource.power={type:'B',capacity:500,before:500,after:499,spent:1};
+  s.actor.inventory.etcBattery={type:'B',capacity:500,charge:0};
+  s.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:s.shot,attackProfile:p};
+  const saved=JSON.stringify(s.shot),inventory=JSON.stringify(s.actor.inventory);
+  s.actor.system.ranged.Rifle.damage='99d pi';
+  for(let i=0;i<2;i++){
+    const message=await f.damage(s);assert.equal(message.flags.gurps.transfer.payload[0].roll.formula,'9d pi');
+    assert.equal(message.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(s.actor.inventory),inventory);assert.equal(JSON.stringify(s.shot),saved);
+  }
+});
+
 const scope = "olegurps-qol";
+
+for (const [enabled, formula] of [[true, '5d+1 pi++'], [false, '4d+5 pi++'], [null, '4d+5 pi++']])
+test('B269 frozen native Damage ignores current and other-user preferences: ' + enabled, async () => {
+  const fx = fixture({effects:true}), source = fx.source(), profile = structuredClone(source.shot.profile);
+  profile.damage = resolveAmmunitionEffects({raw:{damage:formula}});
+  profile.effective.damage = formula;
+  if (enabled === null) delete profile.diceAdds;
+  else profile.diceAdds = {version:1,source:'B269',userId:'original-shooter',enabled,eligible:true,applied:enabled};
+  source.shot = createShotSnapshot(profile,{attackId:'attack-A',spent:1,messageId:'A'});
+  source.message.flags[scope] = {shotSnapshot:source.shot,attackProfile:profile};
+  const saved = JSON.stringify(source.shot), resources = JSON.stringify(source.actor.inventory);
+  for (const [id, preference] of [['original-shooter', !enabled], ['other-player', true]]) {
+    fx.runtime.game.user = {id,getFlag:()=>preference};
+    source.actor.system.ranged.Rifle.damage = '99d pi';
+    const message = await fx.damage(source);
+    assert.equal(message.flags.gurps.transfer.payload[0].roll.formula,formula);
+    assert.equal(message.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(source.shot),saved);assert.equal(JSON.stringify(source.actor.inventory),resources);
+  }
+});
+
+for(const [mode,formula,rate]of [['standard','6d pi',4],['boosted','6d+6 pi',6],['low-velocity','3d pi',1]])
+test('LP '+mode+' native Damage replays the frozen profile twice after depletion and bottle replacement',async()=>{
+  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+  p.mode.standaloneRef={weaponId:'lp-rifle',modeId:'WFc8O-LgWxenUseNy',combatType:'ranged'};
+  p.weaponConfiguration={variant:'lp',source:'UT139',fireMode:mode};
+  p.raw.damage='6d pi';p.effective.damage=formula;p.damage=resolveAmmunitionEffects({raw:{...p.raw,damage:formula}});
+  p.resource.fuel={capacityUnits:900,beforeUnits:900,afterUnits:900-rate,spentUnits:rate,fireMode:mode};
+  s.actor.inventory.lpFuel={capacityUnits:900,remainingUnits:0};
+  s.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:s.shot,attackProfile:p};
+  const saved=JSON.stringify(s.shot);s.actor.system.ranged.Rifle.damage='99d pi';
+  for(let i=0;i<2;i++){
+    if(i)s.actor.inventory.lpFuel={capacityUnits:900,remainingUnits:900,replacementId:'new-bottle'};
+    const inventory=JSON.stringify(s.actor.inventory),message=await f.damage(s);
+    assert.equal(message.flags.gurps.transfer.payload[0].roll.formula,formula);
+    assert.equal(message.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(s.actor.inventory),inventory);assert.equal(JSON.stringify(s.shot),saved);
+  }
+});
+
+for(const formula of ['4d+1(0.25) cr dkb','4d+5(0.25) cr dkb'])
+test('Memory Baton native Damage keeps corrected or historical frozen dice: '+formula,async()=>{
+  const fx=fixture({effects:true}),source=fx.source(),p=structuredClone(source.shot.profile);
+  p.ammunition.recipe={version:1,variantId:'ut_memory_baton'};
+  p.weaponConfiguration={variant:'lp',source:'UT139',fireMode:'boosted'};
+  p.damage={nativeSafe:true,formula,components:[{role:'kinetic',status:'resolved',formula}],rules:{componentOrder:['kinetic']}};
+  p.effective.damage=formula;delete p.diceAdds;
+  p.resource.fuel={capacityUnits:156,beforeUnits:156,afterUnits:150,spentUnits:6};
+  source.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});
+  source.message.flags[scope]={shotSnapshot:source.shot,attackProfile:p};
+  const saved=JSON.stringify(source.shot);source.actor.system.ranged.Rifle.damage='99d pi';source.actor.inventory.lpFuel={capacityUnits:156,remainingUnits:0};
+  for(const userId of ['original-shooter','other-player']){
+    fx.runtime.game.user={id:userId,getFlag:()=>true};const resources=JSON.stringify(source.actor.inventory);
+    const message=await fx.damage(source);assert.equal(message.flags.gurps.transfer.payload[0].roll.formula,formula);
+    assert.equal(message.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(source.actor.inventory),resources);assert.equal(JSON.stringify(source.shot),saved);
+  }
+});
+
+for(const formula of ['4d+1(10) cut','4d+5(10) cut'])
+test('Monochain native cut replays corrected or historical alternative and halves once: '+formula,async()=>{
+  const fx=fixture({effects:true}),source=fx.source(),p=structuredClone(source.shot.profile);
+  p.ammunition.recipe={version:1,variantId:'ut_monochain'};
+  p.weaponConfiguration={variant:'lp',source:'UT139',fireMode:'boosted'};
+  p.damage={nativeSafe:true,formula:'5d+1 pi++',components:[{role:'kinetic',status:'resolved',formula:'5d+1 pi++'},
+    {role:'main-charge',relation:'alternative',status:'resolved',formula}],rules:{componentOrder:['kinetic','main-charge'],resultDivisors:{kinetic:2,'main-charge':2}}};
+  p.effective.damage=p.damage.formula;source.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});
+  source.message.flags[scope]={shotSnapshot:source.shot,attackProfile:p};const saved=JSON.stringify(source.shot),resources=JSON.stringify(source.actor.inventory);
+  source.actor.system.ranged.Rifle.damage='99d pi';
+  for(let i=0;i<2;i++){
+    const event=fx.click(source,{nativeDamageValue:17});event.currentTarget.dataset.olegurpsShotDamageSource='A';event.currentTarget.dataset.olegurpsShotComponent='main-charge';
+    await fx.runtime.GURPS.performAction(fx.runtime.GURPS.parselink('1d cut').action,source.actor,event);await Promise.all(fx.tasks);
+    const m=fx.calls.at(-1).message,payload=m.flags.gurps.transfer.payload[0];assert.equal(payload.roll.formula,formula);assert.equal(payload.damage,8);
+    assert.equal(m.getFlag(scope,'damageLink').damageComponent,'main-charge');assert.equal(JSON.stringify(source.shot),saved);assert.equal(JSON.stringify(source.actor.inventory),resources);
+  }
+});
+
+test('Non-Rechargeable shot Damage survives a later ordinary battery replacement without energy expense',async()=>{
+  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+  p.mode.standaloneRef={weaponId:'paint',modeId:'Wg_f0E5hqv6o1C0Uj',combatType:'ranged'};
+  p.raw.damage='1d-4 pi++';p.effective.damage=p.raw.damage;p.damage=resolveAmmunitionEffects({raw:p.raw});
+  p.resource.power={type:'B',nonRechargeable:true,capacity:1000,before:1000,after:999,spent:1,replacementId:'old-cell'};
+  s.actor.inventory.paintBattery={type:'B',nonRechargeable:false,capacity:500,charge:500,replacementId:'new-cell'};
+  s.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:s.shot,attackProfile:p};
+  const saved=JSON.stringify(s.shot),inventory=JSON.stringify(s.actor.inventory);
+  for(let i=0;i<2;i++){
+    const m=await f.damage(s);assert.equal(m.flags.gurps.transfer.payload[0].roll.formula,'1d-4 pi++');
+    assert.equal(m.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(s.actor.inventory),inventory);assert.equal(JSON.stringify(s.shot),saved);
+  }
+});
+
+test('Paint Carbine repeated native Damage retains frozen B cell evidence without spending charge or rounds',async()=>{
+  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+  p.mode.standaloneRef={weaponId:'paint',modeId:'Wg_f0E5hqv6o1C0Uj',combatType:'ranged'};
+  p.raw.damage='1d-4 pi++';p.effective.damage=p.raw.damage;p.damage=resolveAmmunitionEffects({raw:p.raw});
+  p.resource.power={type:'B',capacity:500,before:500,after:499,spent:1};
+  s.actor.inventory.paintBattery={type:'B',capacity:500,charge:0};
+  s.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:s.shot,attackProfile:p};
+  const saved=JSON.stringify(s.shot),inventory=JSON.stringify(s.actor.inventory);
+  for(let i=0;i<2;i++){
+    const m=await f.damage(s);assert.equal(m.flags.gurps.transfer.payload[0].roll.formula,'1d-4 pi++');
+    assert.equal(m.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(s.actor.inventory),inventory);assert.equal(JSON.stringify(s.shot),saved);
+  }
+});
+
+test('generic manual Homing Damage replays the frozen payload after weapon changes and never mutates history',async()=>{
+  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+  p.ammunition.recipe={version:1,variantId:'ut_homing',parameters:{availabilityTL:11,homingGuidance:'multiscanner'}};
+  p.damage={nativeSafe:true,variantId:'ut_homing',formula:'5d(2) pi+',components:[{role:'kinetic',status:'resolved',formula:'5d(2) pi+'}],
+    rules:{manualHoming:{manual:true,projectileHit:'manual',guidance:'multiscanner',superscience:true},componentOrder:['kinetic']}};
+  p.effective.damage=p.damage.formula;
+  s.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:s.shot,attackProfile:p};
+  const old=JSON.stringify(s.shot);s.actor.system.ranged.Rifle.damage='99d pi';
+  for(let i=0;i<2;i++){
+    const message=await f.damage(s),payload=message.flags.gurps.transfer.payload;
+    assert.equal(payload[0].roll.formula,'5d(2) pi+');assert.equal(message.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(s.message.getFlag(scope,'shotSnapshot')),old);assert.equal(s.shot.spent,1);
+  }
+});
+
+test('manual SEFOP uses its frozen native GGA damage after current weapon changes, without altering shot history',async()=>{
+  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+  p.ammunition.recipe={version:1,variantId:'ut_sefop'};
+  p.damage={nativeSafe:true,variantId:'ut_sefop',formula:'5d+5x3(3) cr inc',components:[{role:'kinetic',status:'resolved',formula:'5d+5x3(3) cr inc'}],rules:{manualSEFOP:{manual:true,projectileHit:'manual'},componentOrder:['kinetic']}};
+  p.effective.damage=p.damage.formula;
+  s.shot=createShotSnapshot(p,{attackId:'attack-A',spent:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:s.shot,attackProfile:p};
+  const before=JSON.stringify(s.shot);s.actor.system.ranged.Rifle.damage='99d pi';
+  for(let i=0;i<2;i++){
+    const message=await f.damage(s),payload=message.flags.gurps.transfer.payload;
+    assert.equal(payload[0].roll.formula,'5d+5x3(3) cr inc');assert.equal(message.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+    assert.equal(JSON.stringify(s.message.getFlag(scope,'shotSnapshot')),before);assert.equal(s.message.getFlag(scope,'shotSnapshot').spent,1);
+  }
+});
+
+test('UT-2 instruction-only shot cannot fall back to imported GGA weapon HP damage',async()=>{
+  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
+  p.damage={...p.damage,nativeSafe:true,formula:null,components:[],rules:{instructionOnly:true}};
+  p.effective.damage=null;
+  s.message.flags[scope].shotSnapshot=createShotSnapshot(p,{attackId:s.shot.attackId,spent:1,messageId:s.message.id});
+  const before=JSON.stringify(s.message.flags[scope].shotSnapshot);
+  const result=await f.runtime.GURPS.performAction(s.action,s.actor,f.click(s));
+  assert.equal(result,false);assert.equal(f.calls.length,0);
+  assert.equal(JSON.stringify(s.message.flags[scope].shotSnapshot),before);
+});
 
 test('Gyrojet divides each native Damage result from this saved shot, preserving privacy and repeated rolls',async()=>{
  const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
@@ -174,6 +338,12 @@ function fixture({ effects = false } = {}) {
     runtime.GURPS.parselink = text => {
       if (text.startsWith("{")) return { action: JSON.parse(text) };
       const parsed = parseKineticDamage(text);
+      const baton=text.match(/^(\d+d(?:[+-]\d+)?(?:x\d+)?\(0\.25\)) cr dkb$/);
+      if(baton)return {action:{type:'damage',formula:baton[1],damagetype:'cr dkb'}};
+      const monochain=text.match(/^(\d+d(?:[+-]\d+)?(?:x\d+)?\(10\)) cut$/);
+      if(monochain)return {action:{type:'damage',formula:monochain[1],damagetype:'cut'}};
+      const sefop = text.match(/^(\d+d(?:[+-]\d+)?(?:x\d+)?(?:\(\d+\))?) (cr|imp) inc$/);
+      if(sefop)return {action:{type:'damage',formula:sefop[1],damagetype:sefop[2]+' inc'}};
       const secondary = text.match(/^(\d+d(?:[+-]\d+)?) (cr ex|cut)$/);
       if (secondary) return { action: { type: "damage", formula: secondary[1], damagetype: secondary[2].split(" ")[0],
         ...(secondary[2] === "cr ex" ? { extdamagetype: "ex" } : {}) } };
@@ -598,6 +768,29 @@ function standaloneSource(fx) {
   source.actor.system.ranged = {};
   return source;
 }
+test('HE Proximity native primary D dispatches only exact frozen cut fragments, after miss/reload and on repeat',async()=>{
+  for(const standalone of [false,true]){
+    const fx=fixture({effects:true}),source=standalone?standaloneSource(fx):fx.source();
+    const p=structuredClone(source.shot.profile);
+    p.ammunition.book='ut';p.ammunition.recipe={version:1,variantId:'ut_he',parameters:{fuze:'proximity'}};
+    p.damage={status:'resolved',nativeSafe:true,formula:'1d+1 cut',variantId:'ut_he',
+      components:[{role:'fragmentation',formula:'1d+1 cut',status:'resolved',relation:'fragmentation'}],
+      rules:{utWarhead:true,primaryDamageRole:'fragmentation',componentOrder:['fragmentation'],heProximity:{minimumYards:40}}};
+    p.effective.damage=p.damage.formula;
+    source.shot=createShotSnapshot(p,{attackId:'proximity',spent:1,messageId:source.message.id});
+    source.message.flags[scope]={shotSnapshot:source.shot,attackProfile:p};
+    const saved=JSON.stringify(source.shot),before=JSON.stringify([source.actor.inventory,source.actor.system]);
+    assert.equal(shotDamageComponents(source.message,fx.runtime).length,0);
+    for(let i=0;i<2;i++){
+      source.message.flags[scope].shotSnapshot=JSON.parse(saved);
+      const damage=await fx.damage(source),payload=damage.flags.gurps.transfer.payload;
+      assert.equal(payload.length,1);assert.equal(payload[0].roll.formula,'1d+1 cut');assert.equal(payload[0].damageType,'cut');
+      assert.equal(payload[0].armorDivisor,1);assert.equal(damage.getFlag(scope,'damageLink').damageComponent,'fragmentation');
+      assert.equal(JSON.stringify(source.message.getFlag(scope,'shotSnapshot')),saved);
+    }
+    assert.equal(JSON.stringify([source.actor.inventory,source.actor.system]),before);
+  }
+});
 test('standalone D uses completed shot after source weapon removal and never needs an Actor attack', async () => {
   const fx = fixture({ effects: true }), source = standaloneSource(fx);
   const before = structuredClone(source.actor.system);

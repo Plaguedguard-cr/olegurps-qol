@@ -141,6 +141,8 @@ export class SprayingFireSessionService {
           weaponId: this.weapon.id, state, ammunition,
           context: { kind: "spraying", sessionId: session.sessionId, physicalShots: options.physicalShots,
             effectiveSkill: options.effectiveSkill, effectiveRoF: options.effectiveRoF, rcl: options.rcl } });
+        if(persisted.ammunitionProfile?.weaponConfiguration?.variant==='lp'&&
+          persisted.ammunitionProfile.weaponConfiguration.fireMode!==profile.weaponConfiguration?.fireMode)throw Error('LPFireModeChanged');
         return { profile, amount: session.plannedAmmo };
       },
       execute: ({ profile }) => execute({ ...options, attackProfile: profile, attackId,
@@ -184,7 +186,11 @@ export class SprayingFireSessionService {
     for (const execution of session.attackExecutions ?? []) {
       const message = this.runtime.game?.messages?.get?.(execution.messageId);
       if (!message?.setFlag || message.getFlag?.("olegurps-qol", "shotSnapshot")) continue;
-      const snapshot = createShotSnapshot(execution.profile, { attackId: execution.attackId,
+      const power = this.actor.getFlag('world','gurpsAmmoManager')?.sprayingFireSessions?.[this.key]?.powerReceipt;
+      const fuel=this.actor.getFlag('world','gurpsAmmoManager')?.sprayingFireSessions?.[this.key]?.fuelReceipt;
+      const profile = fuel&&!cancelled?{...execution.profile,resource:{...execution.profile.resource,fuel:{...fuel,allocation:execution.allocatedShots,sharedReceipt:'spraying:'+session.sessionId}}}:power && !cancelled ? {...execution.profile,resource:{...execution.profile.resource,
+        power:{...power,allocation:execution.allocatedShots,sharedReceipt:'spraying:'+session.sessionId}}} : execution.profile;
+      const snapshot = createShotSnapshot(profile, { attackId: execution.attackId,
         spent: cancelled ? 0 : execution.allocatedShots, resourceTiming: cancelled ? "spraying-cancelled" : "spraying-completion",
         resourceReceiptId: "spraying:" + session.sessionId, messageId: execution.messageId });
       try {

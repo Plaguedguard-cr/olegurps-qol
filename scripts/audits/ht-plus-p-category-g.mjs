@@ -49,8 +49,9 @@ export function auditPlusPCategoryG({ catalogs, compatibility, historical, befor
     incompleteG: rows.filter(r => !r.numericalProfileComplete).length,
     worldPolicyReady: current.readyWithoutLoadingConfirmation,
     loadingGMRequired: current.loadingChecks,
+    // Legacy field name: count pending manual G rows only; APS/KPV are already ready.
     potentialAfterAllRequiredGMDecisions: current.readyWithoutLoadingConfirmation + current.loadingChecks +
-      rows.filter(r => r.individualGMRequired && r.nativeGGAProfileSafeAfterGM).length,
+      rows.filter(r => r.individualGMRequired && !r.worldPolicyReady && r.nativeGGAProfileSafeAfterGM).length,
     officialStatuses: Object.fromEntries([...new Set(current.all.map(r => r.rulesStatus))].map(s =>
       [s, current.all.filter(r => r.rulesStatus === s).length])), rows };
 }

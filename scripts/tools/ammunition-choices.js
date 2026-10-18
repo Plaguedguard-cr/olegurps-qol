@@ -1,10 +1,15 @@
 import { moduleText } from "../localization.js";
 // Presentation never grants admission. AmmoService rechecks the live type before a write.
 export function ammunitionChoiceGroup(type) {
+  if (type.inventoryOnly) return type.unavailable ? 'historical' : 'existing';
   if (type.historical) return "historical";
-  if (!type.unavailable) return "available";
+  if (type.platformBlocked) return "hidden";
+  if (!type.unavailable) return type.book === 'ut' ? type.recipe ? 'ut-special' : 'ut-base' : "available";
   const prepared=type.preparation;
-  // A complete, previously approved OleGURPS library design still needs an actionable GM approval under strict policy.
+  if(prepared?.baseStatus==='compatible'&&prepared.state!=='incompatible'&&
+      ['ht_apex','ht_aphex','ht_apdu','ht_apdsdu','ht_apfsdsdu','ht_match_handloaded'].includes(type.recipe?.variantId))return 'conditional';
+  if(prepared?.baseStatus==='compatible'&&prepared.state!=='incompatible'&&prepared.facts?.multishotOption)return 'conditional';
+  // Keep incomplete legacy library designs visible for parameter review. Presentation grants no admission.
   const calculatedDesign=prepared?.state==='complete' && prepared.origin==='calculated' && prepared.model?.status==='resolved' &&
     type.recipe?.autoProfile?.source?.kind==='gm' && prepared.rulesStatus!=='incompatible';
   if (type.ballisticsRequired && !type.recipe || type.preparation?.baseStatus === "compatible" &&
@@ -13,7 +18,8 @@ export function ammunitionChoiceGroup(type) {
   return "hidden";
 }
 export function choiceGroupsHTML(types, selected, escape) {
-  const labels = {available:moduleText("OleGURPS.AmmoUX.Choices1"), conditional:moduleText("OleGURPS.AmmoUX.Choices2"), historical:moduleText("OleGURPS.AmmoUX.Choices3")};
+  const labels = {existing:moduleText('OleGURPS.Ammo.CampaignTLExisting'), available:moduleText("OleGURPS.AmmoUX.Choices1"), 'ut-base':moduleText('OleGURPS.AttackProfile.UTBaseChoices'),
+    'ut-special':moduleText('OleGURPS.AttackProfile.UTSpecialChoices'), conditional:moduleText("OleGURPS.AmmoUX.Choices2"), historical:moduleText("OleGURPS.AmmoUX.Choices3")};
   return Object.entries(labels).map(([group,label]) => {
     const rows = types.filter(t => ammunitionChoiceGroup(t) === group);
     return rows.length ? `<optgroup label="${label}">${rows.map(t =>

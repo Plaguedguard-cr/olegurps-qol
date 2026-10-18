@@ -47,21 +47,21 @@ for(const row of substitutions)test('manual HT178 exact pair '+row.modeId+' / '+
 test('invalid numerical inputs cannot prepare a load',()=>{for(const v of [{damage:'0d pi',range:'1/2'},{damage:'1d pi',range:'0/10'},{damage:'1d pi',range:'10/5'},{damage:'NaN',range:'1/2'},{damage:'1d pi',range:''},{damage:'1d pi',range:'-1/20'}])assert.throws(()=>validateLoadBallistics(v));});
 test('manual input cannot open unproven or reverse physical pairs',async()=>{const f=await weaponFixture('W27s4Lm8QlkKVKUPn'),type={source:'catalog',book:'ht',kind:'ammo-item',ammoId:'ht_22_short_5_7x11mmr'};type.key=ammoTypeKey(type);const old=JSON.stringify(f.actor.getFlag('world','gurpsAmmoManager'));await assert.rejects(f.service.saveLoadBallistics(f.weapon.id,f.modeId,type,{damage:'1d pi',range:'50/500'},api));assert.equal(JSON.stringify(f.actor.getFlag('world','gurpsAmmoManager')),old);});
 test('forbidden constructs disappear, original cartridge remains Base, no invented legacy',async()=>{const f=await weaponFixture('W27s4Lm8QlkKVKUPn');const types=displayedAmmoTypes(f.actor,f.weapon,api);assert.ok(types.find(t=>!t.recipe&&/Базовый/.test(t.label)));assert.ok(!types.some(t=>['ht_smoke','ht_illumination','ht_poison_gas'].includes(t.recipe?.variantId)));assert.ok(!types.some(t=>t.historical));});
-test('strict policy keeps a complete approved house design conditional without admitting unknown constructs',async()=>{
+test('legacy strict policy admits complete owner-defined designs without admitting unknown constructs',async()=>{
  const f=await weaponFixture('W27s4Lm8QlkKVKUPn'),get=game.settings.get;
  game.settings.get=(s,k)=>k==='preparedAmmoPolicy'?'strict':k==='ammunitionApprovals'?{}:get(s,k);
  try{const types=availableAmmoTypes(f.actor,f.weapon,api),apex=types.find(t=>t.recipe?.variantId==='ht_apex');
-  assert.ok(apex);assert.equal(apex.unavailable,true);assert.equal(ammunitionChoiceGroup(apex),'conditional');
+  assert.ok(apex);assert.equal(apex.unavailable,false);assert.equal(ammunitionChoiceGroup(apex),'available');
   assert.equal(apex.preparation.rulesStatus,'undetermined');assert.ok(!types.some(t=>t.recipe?.variantId==='ht_smoke'));
  }finally{game.settings.get=get;}
 });
 test('historic stock keeps its name once and cannot admit new rounds',async()=>{const f=await weaponFixture('W27s4Lm8QlkKVKUPn');await f.service.inventoryTransaction(f.weapon.id,'initialize');const state=await f.service.loadState(),w=state.weapons.find(w=>w.id===f.weapon.id);w.ammunitionInventory.stocks.push({key:'old',type:{key:'old',source:'test',name:'Прежний патрон'},rounds:5});await f.actor.setFlag('world','gurpsAmmoManager',state);const rows=displayedAmmoTypes(f.actor,w,api).filter(t=>t.key==='old');assert.equal(rows.length,1);assert.match(rows[0].label,/Прежний патрон/);assert.equal(rows[0].unavailable,true);assert.equal(rows[0].historical,true);});
 for(const [id,ammo]of Object.entries({W82oDY970UdeqLXTF:'ht_223_remington',Wkvf5salwlKpkRx_c:'ht_223_remington',WGJgRQusTscOtoLC9:'ht_223_remington',Wlk1hvahF3JF9aBB8:'ht_5_56x45mm_nato',WOAL2ladqiRbTuvRU:'ht_specific_mas_an_xiii_17_1_flintlock'}))test('reviewed source permits only verified load '+id,async()=>{const f=await weaponFixture(id);assert.ok(catalogs.getModeLinks(id).ammoItemIds.includes(ammo));assert.equal(compatibility.checkCompatibility(id,ammo,{book:'ht',kind:'ammo-item'}).status,'compatible');assert.ok(availableAmmoTypes(f.actor,f.weapon,api).some(t=>t.ammoId===ammo&&!t.recipe&&!t.unavailable));});
-test('Zip-Gun has printed Acc 0 but unresolved .22 identity blocks only new additions',async()=>{assert.equal(catalogs.getMode('WwlfY-FYthqkLvByK').stats.accuracy,'0');await assert.rejects(weaponFixture('WwlfY-FYthqkLvByK'),/физический патрон/);});
+test('Zip-Gun has printed Acc 0 and project-approved .22 LR without free ammunition',async()=>{const f=await weaponFixture('WwlfY-FYthqkLvByK');assert.equal(catalogs.getMode(f.modeId).stats.accuracy,'0');assert.equal(f.weapon.totalAmmo,0);assert.ok(availableAmmoTypes(f.actor,f.weapon,api).some(t=>t.ammoId==='ht_22_long_rifle_5_7x16mmr'&&!t.recipe&&!t.unavailable));});
 for(const id of ['WLtxCaJ16zBNXOM6B','WYtq-OBcCaZp7ShJJ','WmG_jTzAKmvFs5myW','WeXQmnN9negUgW4dp','WfQbQ4kVYxR2_9Ji1','WQymu6IvqV_kTwiqz','WCjHOf4oONWBafSAa','W0nH5aEN5CsOLWS2t'])test('missile uses native profile with manual guidance '+id,async()=>{const f=await weaponFixture(id),c=context(id),p=resolver.resolve({actorId:f.actor.id,weaponId:f.weapon.id,attack:readStandaloneAttack(f.actor,f.record.id,id),rawAttack:c.raw,binding:c.binding,ammunition:{type:c.base,ammoKey:ammoTypeKey(c.base)},context:{manualGuidanceConfirmed:true}});assert.equal(p.damage.nativeSafe,true);assert.equal(p.effective.rof,'1');assert.equal(p.damage.rules.ballisticRange.halfDamage,null);assert.equal(p.damage.rules.ballisticRange.minimum,catalogs.getAmmoItem('ht',c.base.ammoId).rocket_contract.min_range_yards??null);assert.equal(p.damage.rules.manualGuidance.automaticGuidance,false);assert.equal(p.damage.rules.manualGuidance.confirmed,true);assert.equal(p.damage.formula,c.raw.damage.replace(/\s*\[[^\]]*\]/g,''));});
 test('Hydra laser package uses independently sourced HE, Acc4 and min300',()=>{const c=context('WjD-b9M0j2HJAcxyy'),a=catalogs.getAmmoItem('ht','ht_specific_hydra_laser_guided_70mm'),type={source:'catalog',book:'ht',kind:'ammo-item',ammoId:a.id,name:a.name};const p=resolver.resolve({actorId:'actor',weaponId:'weapon',rawAttack:c.raw,binding:c.binding,ammunition:{type,ammoKey:ammoTypeKey(type)}});assert.equal(p.damage.nativeSafe,true);assert.equal(p.damage.formula,'7dx3 cr ex');assert.equal(p.effective.acc,4);assert.equal(p.damage.rules.ballisticRange.minimum,300);assert.equal(p.damage.rules.guidancePackage.warheadAmmoId,'ht_specific_hydra_mk66_he');});
 
-test('missile execution requires GM decision, commits one unit once and preserves disposable tube',async()=>{
+test('missile execution requires owner confirmation, commits one unit once and preserves disposable tube',async()=>{
   const f=await weaponFixture('WCjHOf4oONWBafSAa'),c=context(f.modeId),type={...c.base,key:ammoTypeKey(c.base)};
   await f.service.inventoryTransaction(f.weapon.id,'initialize');
   await f.service.inventoryTransaction(f.weapon.id,'add-stock',{ammoKey:type.key,amount:3},{allowedTypes:[type]});
@@ -72,11 +72,11 @@ test('missile execution requires GM decision, commits one unit once and preserve
   const prepare=({state,ammunition})=>({amount:1,profile:resolver.resolve({actorId:f.actor.id,weaponId:f.weapon.id,
     rawAttack:c.raw,binding:c.binding,state,ammunition,context:{manualGuidanceConfirmed:confirmed,shotgun:{physicalDistance:300}}})});
   const execute=async()=>{executions++;return {rolled:true};};
-  await assert.rejects(f.service.executeShot({weaponId:f.weapon.id,attackId:'unapproved',prepare,execute}),/Ведущий/);
+  await assert.rejects(f.service.executeShot({weaponId:f.weapon.id,attackId:'unapproved',prepare,execute}),/подтверд/i);
   assert.equal(executions,0);confirmed=true;game.user.isGM=false;
-  try{await assert.rejects(f.service.executeShot({weaponId:f.weapon.id,attackId:'player',prepare,execute}),/Ведущий/);}finally{game.user.isGM=true;}
+  try{const player=await f.service.executeShot({weaponId:f.weapon.id,attackId:'approved',prepare,execute});assert.equal(player.spent,1);}finally{game.user.isGM=true;}
   const result=await f.service.executeShot({weaponId:f.weapon.id,attackId:'approved',prepare,execute});
-  assert.equal(result.spent,1);assert.equal(executions,1);
+  assert.equal(result.duplicate,true);assert.equal(executions,1);
   await f.service.executeShot({weaponId:f.weapon.id,attackId:'approved',prepare,execute});assert.equal(executions,1);
   const state=await f.service.loadState(),w=state.weapons.find(w=>w.id===f.weapon.id);assert.equal(w.totalAmmo,2);
   assert.equal(w.ammunitionInventory.magazines[0].sealedUsed,true);assert.ok(ammunitionResourceContract(type));

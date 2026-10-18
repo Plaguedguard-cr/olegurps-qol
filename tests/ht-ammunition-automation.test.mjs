@@ -11,9 +11,10 @@ import { auditHTCoverage } from "../scripts/tools/ht-ammunition-coverage.js";
 import { withRuntimeAmmoStats } from "../scripts/tools/attack-profile-runtime.js";
 import { resolveAmmunitionEffects } from "../scripts/tools/ammunition-effects.js";
 import { evaluateHTOptionEligibility } from "../scripts/ht-option-eligibility.js";
+import { createHash } from "node:crypto";
 globalThis.foundry={utils:{deepClone:structuredClone},applications:{api:{ApplicationV2:class{}}}};
 globalThis.game={user:{id:"gm",isGM:true},i18n:{lang:"ru",localize:k=>k},settings:{get:()=>"permissive"}};
-const {availableAmmoTypes,ammoManagementHTML,openAmmoManagement}=await import("../scripts/tools/ammo-management-app.js");
+const {availableAmmoTypes,ammunitionCandidates,ammoManagementHTML,openAmmoManagement}=await import("../scripts/tools/ammo-management-app.js");
 const data=Object.fromEntries(await Promise.all(Object.entries(CATALOG_DEFINITIONS).map(async([book,d])=>[book,
   JSON.parse(await fs.readFile(new URL("../data/catalogs/"+d.filename,import.meta.url),"utf8"))])));
 const catalogs=new CatalogService({logger:null,fetcher:async u=>({ok:true,json:async()=>data[Object.entries(CATALOG_DEFINITIONS).find(([,d])=>u.endsWith(d.filename))[0]]})});
@@ -91,7 +92,9 @@ test("new types load without an editor, keep separate stocks and preserve conten
 test("compatible but unresolved HP and already transformed attacks are blocked for new loading",()=>{
   const c=context(aw),actor={id:"actor",system:{ranged:{mode:c.raw}}},weapon={id:"weapon",attackRef:{path:"system.ranged.mode"},ammunitionInventory:{stocks:[]}};
   const api={catalogs,ammunitionCompatibility:compatibility,automaticAmmunitionProfiles:automatic,weaponCatalogBindings:{analyzeMode:()=>c.binding}};
-  assert.equal(availableAmmoTypes(actor,weapon,api).find(t=>t.recipe?.variantId==="ht_hollow_point").unavailable,true);
+  const hp=ammunitionCandidates(actor,weapon,api).find(t=>t.recipe?.variantId==="ht_hollow_point");
+  assert.equal(hp.unavailable,true);
+  assert.ok(!availableAmmoTypes(actor,weapon,api).some(t=>t.key===hp.key));
   actor.system.ranged.mode.damage="7d(2) pi";
   assert.equal(availableAmmoTypes(actor,weapon,api).find(t=>t.recipe?.variantId==="ht_apds").unavailable,true);
 });
@@ -126,19 +129,28 @@ test("an unresolved managed recipe cannot execute or consume a round",async()=>{
     prepare:()=>({profile:resolved(aw,"ht_apds",{rawAttack:{...c.raw,range:"?"}}),amount:1}),execute:()=>{executed=true;}}),/IncompleteAmmunitionProfile/);
   assert.equal(executed,false);assert.equal(JSON.stringify(state),before);
 });
-test("coverage is read-only, compares every native pair, and keeps unsupported/evidence/forbidden states separate",()=>{
-  const before=JSON.stringify(data),r=auditHTCoverage({catalogs,compatibility});assert.equal(JSON.stringify(data),before);
+test("coverage is read-only, compares every native pair, and keeps unsupported/evidence/forbidden states separate",async()=>{
+  const before=JSON.stringify(data),r=auditHTCoverage({catalogs,compatibility,includeIdentities:true});assert.equal(JSON.stringify(data),before);
+  const history=JSON.parse(await fs.readFile(new URL('./fixtures/ht-coverage-history.json',import.meta.url),'utf8'));
+  const keys=r.readyIdentities.map(row=>row.modeId+'/'+row.ammoId+'/'+row.variantId),restored=new Set(keys);
+  assert.equal(restored.size,keys.length);
+  for(const {key} of history.added){assert(restored.delete(key),key);}
+  for(const {key} of history.removed){assert(!restored.has(key),key);restored.add(key);}
+  assert.equal(restored.size,history.baseCount);
+  assert.equal(createHash('sha256').update([...restored].sort().join('\n')).digest('hex'),history.baseReadyIdentitiesSha256);
   assert.equal(r.inventory.items,263);assert.equal(r.inventory.families,262);assert.equal(r.inventory.projectileOptions,51);assert.equal(r.inventory.eligibilityOptions,64);
-  assert.equal(r.special.total,32704);assert.equal(r.nativePairs,511);assert.equal(r.special.ready,1347);assert.equal(Object.keys(r.familiesReady).length,118);
-  assert.equal(r.variants.ht_apds.ready,95);
+  assert.equal(r.special.total,32704);assert.equal(r.nativePairs,511);
+  assert.equal(r.special.ready,history.baseCount+history.added.length-history.removed.length);
+  assert.equal(r.special.ready,keys.length);assert.equal(r.special.ready,1356);
+  assert.deepEqual(Object.keys(r.familiesReady).sort(),[...history.baseFamilies,...history.addedFamilies].sort());
+  assert.equal(Object.keys(r.familiesReady).length,121);
+  assert.equal(r.variants.ht_apds.ready,96);
   assert.ok(r.variants.ht_apds.ready>1);assert.equal(r.variants.ht_apfsds.ready,2);assert.equal(r.variants.ht_sapfsds.ready>1,true);
   assert.equal(r.variants.ht_frangible.ready,117);assert.equal(r.variants.ht_subsonic_rifle.ready,5);assert.equal(r.variants.ht_subsonic_pistol.ready,53);
-  assert.equal(r.variants.ht_match_grade.ready,6);assert.equal(r.variants.ht_plus_p.ready,365);assert.equal(r.variants.ht_he.ready,6);
-  assert.equal(r.variants.ht_plus_p.compatible,0);assert.equal(r.variants.ht_plus_p.support['GM-MEDIATED'],365);
-  // Historical 1222 +86 category-B +43 P1-P7 -21 identity-review +14 preserved payloads +2 Hydra +1 Hale (HT150).
-  assert.equal(r.special.ready,1222+86+43-21+14+2+1);
+  assert.equal(r.variants.ht_match_grade.ready,6);assert.equal(r.variants.ht_plus_p.ready,368);assert.equal(r.variants.ht_he.ready,8);
+  assert.equal(r.variants.ht_plus_p.compatible,0);assert.equal(r.variants.ht_plus_p.support['GM-MEDIATED'],368);
   assert.equal(r.variants.ht_white_phosphorus.ready,2);assert.equal(r.variants.ht_beehive.ready,1);
-  assert.deepEqual(r.ordinary,{total:511,ready:505,unconfirmed:6});
+  assert.deepEqual(r.ordinary,{total:511,ready:506,unconfirmed:5});
   assert.equal(r.variants.ht_heat.nativePreservedSourceOverrides,13);
   assert.equal(r.variants.ht_ms_heat.nativePreservedSourceOverrides,1);
   assert.equal(r.variants.ht_beehive.nativePreservedSourceOverrides,1);
@@ -148,5 +160,5 @@ test("coverage is read-only, compares every native pair, and keeps unsupported/e
   assert.equal(r.special.potential,r.special.total-r.special.incompatible);
   assert.equal(r.special.percent,r.special.ready/r.special.potential*100);
   assert.equal(r.variants.ht_apds.effectIntegration,"implemented");assert.equal(r.variants.ht_he.effectIntegration,"implemented");
-  assert.equal(r.variants.ht_apex.approvalRequiredUnderStrictPolicy,4);assert.ok(r.variants.ht_apex.missingInputs.explosiveMassG>0);
+  assert.equal(r.variants.ht_apex.approvalRequiredUnderStrictPolicy,0);assert.ok(r.variants.ht_apex.missingInputs.explosiveMassG>0);
 });

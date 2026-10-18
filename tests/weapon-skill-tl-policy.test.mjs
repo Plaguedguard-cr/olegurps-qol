@@ -100,7 +100,7 @@ test('RU/EN keys actually load into cached Foundry dictionaries and render the l
     await loadWeaponSkillTLTranslations(runtime);globalThis.game={i18n,user:user('player')};
     assert.equal(i18n.lang,language);
     const html=await new WeaponSkillSettingsApp()._renderHTML({ignoreWeaponSkillTLDifferences:false});
-    assert.ok(html.includes(dictionaries.ru['OleGURPS.WeaponSkillTL.Label']));assert.ok(!html.includes(' checked'));
+    assert.ok(html.includes(dictionaries.ru['OleGURPS.WeaponSkillTL.Label']));assert.doesNotMatch(html.match(/<input[^>]*name="ignoreWeaponSkillTLDifferences"[^>]*>/)[0],/checked/);
     assert.deepEqual(i18n.translations,{});
     assert.ok(!html.includes('OleGURPS.WeaponSkillTL.Label'));
   }

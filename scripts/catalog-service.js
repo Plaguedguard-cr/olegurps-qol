@@ -1,5 +1,7 @@
 import { LEMAT, LEMAT_SHOT_CHARGE, correctHTMode, correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
 import { correctedHTLabel } from "./ht-source-corrections.js";
+import { projectUTSourceData } from "./ut-source-data.js";
+import { HT_PRE_GAUSS_AMMO, htPreGaussAmmoIds } from './ht-pre-gauss-profiles.js';
 // Reference data only: no Actor, Item, settings, attack or damage writes.
 export const CATALOG_DEFINITIONS = Object.freeze({
   weapons: Object.freeze({ filename: "olegurps_weapon_reference_catalog_v5_6.json",
@@ -449,6 +451,10 @@ export class CatalogService {
       entry.version = { catalogKind: data?.catalog_kind ?? null, schemaVersion: data?.schema_version ?? null,
         revision: book === "weapons" ? isObject(data?.rules_audit_v5_6) ? "5.6" : null : data?.revision ?? null,
         revisionSource: book === "weapons" ? "rules_audit_v5_6" : "revision" };
+      // Validate the protected source first; corrections must never repair malformed inputs.
+      buildIndexes(book, data);
+      entry.sourceData = freeze(structuredClone(data));
+      data = projectUTSourceData(book, data);
       const built = buildIndexes(book, data);
       Object.assign(entry, built, { data });
       entry.counts = Object.fromEntries([...entry.indexes].map(([name, index]) => [name, index.size]));
@@ -533,6 +539,7 @@ export class CatalogService {
 
   getStatus(book) { return this.#entries.has(book) ? this.getDiagnostics().catalogs[book] : null; }
   getCatalog(book) { return this.#ready(book)?.data ?? null; }
+  getSourceCatalog(book) { return this.#ready(book)?.sourceData ?? null; }
   getRecord(book, collection, id) { return this.#ready(book)?.indexes.get(collection)?.get(id) ?? null; }
   getEquipment(id) {
     const equipment = correctedHTLabel(this.getRecord("weapons", "equipment", id), "weapon");
@@ -545,6 +552,9 @@ export class CatalogService {
   getEquipmentForMode(id) { return this.getEquipment(this.#ready("weapons")?.parents.get(id)?.equipment_id); }
   getModesForEquipment(id) { return this.getEquipment(id)?.modes ?? EMPTY; }
   getAmmoItem(book, id) {
+    if(book==='ht'&&this.#ready(book)?.relationshipChecks.status==='passed') {
+      const item=HT_PRE_GAUSS_AMMO.find(a=>a.id===id);if(item)return freeze(item);
+    }
     if (book === "ht" && id === LEMAT.shotAmmoId && this.#ready(book)?.relationshipChecks.status === "passed" &&
         this.getMode(LEMAT.shotModeId)?.ht_ammo_item_ids.includes(id)) return LEMAT_SHOT_CHARGE;
     const record = this.getRecord(book, "ammo_items", id);
@@ -557,6 +567,10 @@ export class CatalogService {
     return book === "ht" ? freeze(correctHTAmmo(record)) : record;
   }
   getAmmoFamily(book, id) {
+    if(book==='ht'&&this.#ready(book)?.relationshipChecks.status==='passed') {
+      const item=HT_PRE_GAUSS_AMMO.find(a=>a.ammo_family_id===id);
+      if(item)return freeze({id,name:item.name,ammo_item_ids:[item.id],compatible_weapon_mode_ids:item.weapon_mode_ids,provenance:item.provenance});
+    }
     const charge = book === "ht" && id === LEMAT_SHOT_CHARGE.ammo_family_id ? this.getAmmoItem(book, LEMAT.shotAmmoId) : null;
     return charge ? freeze({ id, name: charge.name, ammo_item_ids: [charge.id], compatible_weapon_mode_ids: [LEMAT.shotModeId],
       provenance: charge.provenance }) : this.getRecord(book, "ammo_families", id);
@@ -565,6 +579,9 @@ export class CatalogService {
   getModeLinks(id) {
     const book = this.getEquipmentForMode(id)?.source.toLowerCase();
     const links = this.#ready(book)?.links.get(id) ?? null;
+    const htItems=book==='ht'&&this.#ready(book)?.relationshipChecks.status==='passed'&&htPreGaussAmmoIds(id);
+    if(htItems?.length)return freeze({book,modeId:id,equipmentId:this.getEquipmentForMode(id).equipment_id,
+      ammoItemIds:htItems,ammoFamilyIds:[],specialLoadIds:[],defaultWarheadId:null,suggestedWarheadIds:[]});
     const reviewed=this.getMode(id)?.sourceIdentityCorrection;
     if(links&&reviewed)return freeze({...links,ammoItemIds:[reviewed.value],ammoFamilyIds:[]});
     return links && id === LEMAT.shotModeId && this.getAmmoItem("ht", LEMAT.shotAmmoId)

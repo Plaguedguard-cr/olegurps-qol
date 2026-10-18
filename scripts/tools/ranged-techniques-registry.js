@@ -48,8 +48,7 @@ export const RANGED_TECHNIQUES = Object.freeze([
     availability: context => findCloseHipShooting({
       actor: context.actor, governingSkill: context.governingSkill
     }) ? { available: true } : { available: false, reason: "\u0422\u0435\u0445\u043d\u0438\u043a\u0430 \u043e\u0442\u0441\u0443\u0442\u0441\u0442\u0432\u0443\u0435\u0442 \u0443 \u043f\u0435\u0440\u0441\u043e\u043d\u0430\u0436\u0430" },
-    status: context => context.fireState?.closeHipShooting && context.closeHipApplied
-      ? "Результат стрельбы от бедра: " + context.closeHipApplied.closeHipBase : ""
+    status: () => ""
   }
 ]);
 

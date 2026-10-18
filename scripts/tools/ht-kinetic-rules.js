@@ -3,6 +3,9 @@ import { isMultishotVariant } from "./multishot-ammunition.js";
 import { isEnvironmentVariant } from "./environment-ammunition.js";
 import { isFuzeTracerVariant } from "./fuze-tracer-ammunition.js";
 import { isCaseVariant } from "./case-technology.js";
+import { isUTConventionalVariant } from "./ut-conventional-ammunition.js";
+import { isUTSpecialVariant } from './ut-special-ammunition.js';
+import { isUTExtendedVariant } from './ut-extended-ammunition.js';
 export const HT_AUTOMATIC_KINETIC_RULES = Object.freeze({
   ht_apds: Object.freeze({ factor: 1.3, divisor: 2, shift: -1, caliberThreshold: 30, rangeFactor: 1.5, costFactor: 3, source: "HT 167", label: "APDS" }),
   ht_apfsds: Object.freeze({ factor: 1.5, divisor: 2, shift: -2, caliberThreshold: 40, rangeFactor: 2, costFactor: 4, source: "HT 167", label: "APFSDS" }),
@@ -22,5 +25,5 @@ export const HT_AUTOMATIC_SPECIAL_RULES = Object.freeze({
   ht_frangible: Object.freeze({ factor: 1, divisor: 0.5, shift: 1, rangeFactor: 0.9, costFactor: 1.5, source: "HT 167; B408", label: "Frangible", kind: "projectile-option" }),
   ht_plus_p: Object.freeze({ factor: 1.1, rangeFactor: 1.1, strengthFactor: 1.1, costFactor: 1.5, source: "HT 165", label: "+P", kind: "cartridge-upgrade" })
 });
-export const isAutomaticReferenceRecipe = type => isCaseVariant(type?.recipe?.variantId) || isAutomaticKineticRecipe(type) || !!HT_AUTOMATIC_SPECIAL_RULES[type?.recipe?.variantId] || isMultishotVariant(type?.recipe?.variantId) || isEnvironmentVariant(type?.recipe?.variantId) || isFuzeTracerVariant(type?.recipe?.variantId) || !!type?.recipe?.autoProfile?.definition?.components;
+export const isAutomaticReferenceRecipe = type => isUTExtendedVariant(type?.recipe?.variantId) || isUTSpecialVariant(type?.recipe?.variantId) || isUTConventionalVariant(type?.recipe?.variantId) || isCaseVariant(type?.recipe?.variantId) || isAutomaticKineticRecipe(type) || !!HT_AUTOMATIC_SPECIAL_RULES[type?.recipe?.variantId] || isMultishotVariant(type?.recipe?.variantId) || isEnvironmentVariant(type?.recipe?.variantId) || isFuzeTracerVariant(type?.recipe?.variantId) || !!type?.recipe?.autoProfile?.definition?.components;
 export const htVariantKind = id => isCaseVariant(id) ? "case-option" : isFuzeTracerVariant(id) ? "projectile-upgrade" : HT_AUTOMATIC_SPECIAL_RULES[id]?.kind ?? "projectile-option";

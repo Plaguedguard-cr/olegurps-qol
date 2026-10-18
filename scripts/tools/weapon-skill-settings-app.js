@@ -1,4 +1,5 @@
 import { readWeaponSkillTLPolicy, saveWeaponSkillTLPreference } from "./weapon-skill-tl-policy.js";
+import { readDamageDiceAddsPolicy, saveDamageDiceAddsPreference } from './damage-dice-adds.js';
 
 import { moduleText } from "../localization.js";
 const text = name => moduleText("OleGURPS.WeaponSkillTL." + name);
@@ -11,11 +12,12 @@ export class WeaponSkillSettingsApp extends foundry.applications.api.Application
     position: { width: 480, height: "auto" },
     form: { closeOnSubmit: true, handler: async function(_event, _form, formData) {
       await saveWeaponSkillTLPreference(formData.object.ignoreWeaponSkillTLDifferences === true);
+      await saveDamageDiceAddsPreference(formData.object.convertDamageAddsToDice === true);
     } }
   };
-  async _prepareContext() { return readWeaponSkillTLPolicy(); }
+  async _prepareContext() { return { ...readWeaponSkillTLPolicy(), diceAdds: readDamageDiceAddsPolicy() }; }
   async _renderHTML(context) {
-    return `<div class="standard-form"><div class="form-group"><label for="olegurps-ignore-weapon-tl">${escape(text("Label"))}</label><div class="form-fields"><input id="olegurps-ignore-weapon-tl" name="ignoreWeaponSkillTLDifferences" type="checkbox" ${context.ignoreWeaponSkillTLDifferences ? "checked" : ""}></div><p class="hint">${escape(text("Hint"))}</p></div><footer class="form-footer"><button type="submit"><i class="fas fa-save"></i>${escape(text("Save"))}</button></footer></div>`;
+    return `<div class="standard-form"><div class="form-group"><label for="olegurps-ignore-weapon-tl">${escape(text("Label"))}</label><div class="form-fields"><input id="olegurps-ignore-weapon-tl" name="ignoreWeaponSkillTLDifferences" type="checkbox" ${context.ignoreWeaponSkillTLDifferences ? "checked" : ""}></div><p class="hint">${escape(text("Hint"))}</p></div><div class="form-group"><label for="olegurps-damage-dice-adds">${escape(moduleText("OleGURPS.DamageDiceAdds.Label"))}</label><div class="form-fields"><input id="olegurps-damage-dice-adds" name="convertDamageAddsToDice" type="checkbox" ${context.diceAdds?.enabled !== false ? "checked" : ""}></div><p class="hint">${escape(moduleText("OleGURPS.DamageDiceAdds.Hint"))}</p></div><footer class="form-footer"><button type="submit"><i class="fas fa-save"></i>${escape(text("Save"))}</button></footer></div>`;
   }
   _replaceHTML(result, content) { content.innerHTML = result; }
 }
@@ -31,8 +33,8 @@ export function registerWeaponSkillSettings(runtime = globalThis) {
     if (!Object.keys(changes).some(key => key === "flags" || key.startsWith("flags.olegurps-qol."))) return;
     for (const app of runtime.foundry.applications.instances.values()) {
       if (app instanceof WeaponSkillSettingsApp) void app.render({ force: true });
-      else if (app.attack?.standaloneRef || app.sourceAttacks?.some(attack => attack.standaloneRef)) app._onActorUpdate?.(app.actor);
-      else if (app.managerState?.weapons?.some(weapon => weapon.standaloneWeaponId)) void app.refreshContent?.();
+      else if (app.attack || app.sourceAttacks?.length) app._onActorUpdate?.(app.actor);
+      else if (app.managerState?.weapons?.length) void app.refreshContent?.();
     }
   });
 }

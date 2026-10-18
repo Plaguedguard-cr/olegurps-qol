@@ -1,10 +1,15 @@
 import { calculateExplosiveRecipe } from "./explosive-ammunition-model.js";
+import { campaignAmmunitionAdmission, readCampaignTL } from './ammunition-tech-level.js';
 import { ammoTypeKey } from "./ammo-inventory.js";
+import { approvedLegacyUTRecipe } from '../ut-errata.js';
+import { isUTConventionalVariant, reviewUTConventional, UT_CONVENTIONAL_RULES } from "./ut-conventional-ammunition.js";
+import { isUTSpecialVariant, reviewUTSpecial, UT_SPECIAL_RULES, utPayloadParameters } from './ut-special-ammunition.js';
+import { isUTExtendedVariant, reviewUTExtended, UT_EXTENDED_RULES, utExtendedParameters } from './ut-extended-ammunition.js';
 import { PREPARED_AMMUNITION_PROFILES } from "./prepared-ammunition-profiles.js";
 import { HT_AUTOMATIC_KINETIC_RULES, HT_AUTOMATIC_SPECIAL_RULES, htVariantKind } from "./ht-kinetic-rules.js";
 import { HT_NATIVE_PLUS_P_RESTRICTIONS } from "../ht-native-charge-profiles.js";
 import { isDUVariant } from "./ht-kinetic-rules.js";
-import { reviewDUConstruction } from "./du-ammunition.js";
+import { reviewDUConstruction, bindDUDecision } from "./du-ammunition.js";
 import { recipeFingerprint } from "./ammunition-approval-service.js";
 import { isMultishotVariant, MULTISHOT_LABELS, reviewMultishotConstruction, bindMultishotDefinition, multishotDefinitionKey } from "./multishot-ammunition.js";
 import { isExplosiveVariant, EXPLOSIVE_VARIANTS, sourceExplosiveDefinition, reviewExplosiveDefinition } from "./explosive-attack-profiles.js";
@@ -28,7 +33,7 @@ export function missingExplosiveInputs(parameters = {}) {
   const fields = ["projectileMassG", "explosiveMassG", "ref", "fragmentMassG", "referenceMassG", "referenceDice"];
   const missing = fields.filter(field => !positive(parameters[field]));
   if (!parameters.referenceSource?.trim?.()) missing.push("referenceSource");
-  if (!["reference", "gm"].includes(parameters.source?.kind) || !parameters.source?.note?.trim?.()) missing.push("source");
+  if (!["reference", "user", "gm"].includes(parameters.source?.kind) || !parameters.source?.note?.trim?.()) missing.push("source");
   if (parameters.q != null && !positive(parameters.q)) missing.push("q");
   return missing;
 }
@@ -62,7 +67,10 @@ export class AutomaticAmmunitionProfileService {
       inputs && { id: base.book + ":" + base.ammoId + ":" + variantId + ":inputs", revision: 1,
         method: "calculated", origin: "calculated", verified: true, source: inputs.source, parameters: inputs }].filter(Boolean);
   }
-  prepare({ modeId, base, variantId, savedType = null, approval = null }) {
+  prepare({ modeId, base, variantId, savedType = null, approval = null, parameters = null }) {
+    if (isUTExtendedVariant(variantId)) return this.prepareUTExtended({modeId,base,variantId,savedType,parameters});
+    if (isUTSpecialVariant(variantId)) return this.prepareUTSpecial({modeId,base,variantId,savedType,parameters});
+    if (isUTConventionalVariant(variantId)) return this.prepareUT({ modeId, base, variantId, savedType });
     if (isCaseVariant(variantId)) return this.prepareCase({ modeId, base, variantId, savedType });
     if (isFuzeTracerVariant(variantId)) return this.prepareFuzeTracer({ modeId, base, variantId, savedType });
     if (isEnvironmentVariant(variantId)) return this.prepareEnvironment({ modeId, base, variantId, savedType });
@@ -104,6 +112,80 @@ export class AutomaticAmmunitionProfileService {
         ...(!positive(facts.caliberMm) ? ["caliberMm"] : [])], reasons: model.reasons };
     }
     return snapshot(savedType ? { ...fallback, reasons: ["SavedProfileUnavailable"] } : failed);
+  }
+  prepareUTExtended({modeId,base,variantId,savedType,parameters}) {
+    const input=parameters??savedType?.recipe?.parameters??{};
+    const review=reviewUTExtended(this.catalogs,this.compatibility,modeId,base,variantId,input),rule=UT_EXTENDED_RULES[variantId];
+    const result={state:'incomplete',origin:'reference',baseStatus:review.base?.status??'undetermined',rulesStatus:review.status,
+      type:null,model:null,facts:review.facts,missing:[],reasons:[review.reason??'UTPayloadRequired']};
+    if(review.status!=='compatible')return snapshot(result);
+    let payload;
+    try{payload=utExtendedParameters(review,input);}catch(error){return snapshot({...result,reasons:[error.message]});}
+    let warhead=null;
+    if(variantId==='ut_homing'&&review.facts.warheadVariant){
+      const nested=this.prepare({modeId,base,variantId:review.facts.warheadVariant,parameters:input});
+      if(nested.state!=='complete')return snapshot({...result,reasons:nested.reasons});
+      warhead={variantId:review.facts.warheadVariant,facts:structuredClone(nested.facts),
+        source:nested.type.recipe.autoProfile.source.note};
+      payload={...structuredClone(nested.type.recipe.parameters),...payload};
+    }
+    const facts={...review.facts,payload,...(warhead?{warhead}:{})};
+    const autoProfile={version:1,id:'ut-2007:'+base.ammoId+':'+variantId,revision:1,origin:'reference',
+      source:{kind:'reference',edition:'Ultra-Tech 2007',note:rule.source},facts,
+      model:{version:1,kind:'ut-warhead',status:'resolved',rule:{...rule}}};
+    const guidedLabel=variantId==='ut_homing'?'Homing '+facts.homing.attack+
+      (facts.homing.superscience?'^':'')+(warhead?' / '+(UT_EXTENDED_RULES[warhead.variantId]??UT_SPECIAL_RULES[warhead.variantId]??UT_CONVENTIONAL_RULES[warhead.variantId]).label:''):rule.label;
+    const name=this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+guidedLabel+' (TL'+facts.availabilityTL+')'+
+      (payload.fuze==='proximity'?' — Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' — '+payload.note:'');
+    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,name,
+      recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:payload,autoProfile}};
+    type.key=ammoTypeKey(type);
+    const legacy=savedType&&approvedLegacyUTRecipe(savedType.recipe,type.recipe,canonical);
+    if(savedType&&canonical(savedType.recipe)!==canonical(type.recipe)&&!legacy)return snapshot({...result,reasons:['SavedProfileUnavailable']});
+    if(legacy)Object.assign(type,structuredClone(savedType));
+    return snapshot({...result,state:'complete',type,facts,model:autoProfile.model,referenceConfirmed:true,reasons:[]});
+  }
+  prepareUTSpecial({modeId,base,variantId,savedType,parameters}) {
+    const review=reviewUTSpecial(this.catalogs,this.compatibility,modeId,base,variantId),rule=UT_SPECIAL_RULES[variantId];
+    const result={state:'incomplete',origin:'reference',baseStatus:review.base?.status??'undetermined',rulesStatus:review.status,
+      type:null,model:null,facts:review.facts,missing:[],reasons:[review.reason??'UTPayloadRequired']};
+    if(review.status!=='compatible')return snapshot(result);
+    let payload;
+    try {payload=utPayloadParameters(review,parameters??savedType?.recipe?.parameters??{});} catch(error){return snapshot({...result,reasons:[error.message]});}
+    const facts={...review.facts,payload};
+    const origin=review.facts.ammunitionSupply?.basis??'reference';
+    const autoProfile={version:1,id:'ut-2007:'+base.ammoId+':'+variantId,revision:1,origin,
+      source:{kind:origin,edition:'Ultra-Tech 2007',note:review.facts.ammunitionSupply?.source??rule.source},facts,
+      model:{version:1,kind:'ut-special',status:'resolved',rule:{...rule}}};
+    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,
+      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label+(payload.note?' — '+payload.note:''),
+      recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:payload,autoProfile}};
+    type.key=ammoTypeKey(type);
+    const legacy=savedType&&approvedLegacyUTRecipe(savedType.recipe,type.recipe,canonical);
+    if(savedType&&canonical(savedType.recipe)!==canonical(type.recipe)&&!legacy)return snapshot({...result,reasons:['SavedProfileUnavailable']});
+    if(legacy)Object.assign(type,structuredClone(savedType));
+    const complete=true;
+    return snapshot({...result,origin,state:complete?'complete':'incomplete',type,facts,model:autoProfile.model,referenceConfirmed:true,
+      missing:complete?[]:['note'],reasons:complete?[]:['UTPayloadRequired']});
+  }
+  prepareUT({ modeId, base, variantId, savedType }) {
+    const review = reviewUTConventional(this.catalogs, this.compatibility, modeId, base, variantId);
+    const result = { state: review.status === 'compatible' ? 'complete' : 'incomplete', origin: 'reference',
+      baseStatus: review.base?.status ?? 'undetermined', rulesStatus: review.status, reasons: review.reason ? [review.reason] : [],
+      type: null, model: null, facts: review.facts, missing: [] };
+    if (review.status !== 'compatible') return snapshot(result);
+    const rule = UT_CONVENTIONAL_RULES[variantId];
+    const autoProfile = {version:1,id:'ut-2007:'+base.ammoId+':'+variantId,revision:1,origin:'reference',
+      source:{kind:'reference',edition:'Ultra-Tech 2007',note:rule.source},facts:review.facts,
+      model:{version:1,kind:'ut-conventional',status:'resolved',rule:{...rule}}};
+    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,
+      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label,
+      recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:{},autoProfile}};
+    type.key=ammoTypeKey(type);
+    const legacy=savedType&&approvedLegacyUTRecipe(savedType.recipe,type.recipe,canonical);
+    if(savedType && canonical(savedType.recipe)!==canonical(type.recipe)&&!legacy)return snapshot({...result,state:'incomplete',reasons:['SavedProfileUnavailable']});
+    if(legacy)Object.assign(type,structuredClone(savedType));
+    return snapshot({...result,type,model:autoProfile.model,referenceConfirmed:true});
   }
   prepareCase({ modeId, base, variantId, savedType }) {
     const baseline = this.compatibility?.checkCompatibility(modeId, base.ammoId, { book: base.book, kind: base.kind });
@@ -204,16 +286,17 @@ export class AutomaticAmmunitionProfileService {
     const autoProfile = { version: 1, id: variantId + ":ht-kinetic-rule", revision: 1, origin: "reference",
       source: { kind: "reference", note: rule.source + (du ? "; numeric rule only; specific DU design needs source evidence or scoped GM confirmation" : "; reviewed-ht-kinetic-families-v1"), url: "https://gametable.pbworks.com/f/GURPS%2B-%2B4th%2BEdition%2B-%2BHigh-Tech.pdf" },
       facts: { caliberMm: facts.caliberMm }, model };
-    const type = { source: "catalog", book: "ht", kind: "ammo-item", ammoId: base.ammoId, name: base.name + " " + rule.label,
+    let type = { source: "catalog", book: "ht", kind: "ammo-item", ammoId: base.ammoId, name: base.name + " " + rule.label,
       recipe: { version: 1, variantId, customId: "auto:" + canonical(autoProfile), parameters: {}, autoProfile } };
     type.key = ammoTypeKey(type);
+    if(du&&savedType?.recipe?.parameters?.duDecision)type=bindDUDecision(type,savedType.recipe.parameters.duDecision);
     if (savedType && canonical(savedType.recipe) !== canonical(type.recipe)) return snapshot({ ...fallback, reasons: ["SavedProfileUnavailable"] });
     if (du) {
-      const authorized = approval?.active === true && approval.modeId === modeId && approval.ammoId === base.ammoId &&
+      const authorized = !!approval && approval.modeId === modeId && approval.ammoId === base.ammoId &&
         approval.variantId === variantId && approval.recipeId === type.recipe.customId && approval.fingerprint === recipeFingerprint(type);
-      const review = reviewDUConstruction(this.catalogs.getVariant("ht", variantId), facts, authorized ? approval.duDecision : null);
+      const review = reviewDUConstruction(this.catalogs.getVariant("ht", variantId), facts, savedType?.recipe?.parameters?.duDecision ?? (authorized ? approval.duDecision : null));
       if (review.status !== "compatible" || review.reason) return snapshot({ ...fallback, type, facts: review.facts, reasons: [review.reason ?? "DUConfirmationRequired"] });
-      return snapshot({ state: "complete", origin: authorized ? "gm" : "reference", type, model, facts: review.facts,
+      return snapshot({ state: "complete", origin: authorized || savedType?.recipe?.parameters?.duDecision ? "user" : "reference", type, model, facts: review.facts,
         baseStatus: baseline.status, rulesStatus: rules.status, missing: [], reasons: [] });
     }
     return snapshot({ state: "complete", origin: "reference", type, model, facts, baseStatus: baseline.status, rulesStatus: rules.status, missing: [], reasons: [] });
@@ -264,9 +347,9 @@ export class AutomaticAmmunitionProfileService {
     const type = { source: "catalog", book: "ht", kind: "ammo-item", ammoId: base.ammoId, name: base.name + " " + rule.label,
       recipe: { version: 1, variantId, customId: "auto:" + canonical(autoProfile), parameters: {}, autoProfile } };
     type.key = ammoTypeKey(type);
-    if (individual?.registeredByGM === true) {
+    if (individual?.handloaded === true) {
       // Retain the exact individual recipe identity; permission is checked by admission and scope by the resolver.
-      return snapshot({ state: "complete", origin: "gm", type: savedType, model, facts,
+      return snapshot({ state: "complete", origin: "user", type: savedType, model, facts,
         baseStatus: baseline.status, rulesStatus: rules.status, missing: [], reasons: [] });
     }
     if (savedType && canonical(savedType.recipe) !== canonical(type.recipe)) return snapshot({ ...fallback, reasons: ["SavedProfileUnavailable"] });
@@ -289,31 +372,29 @@ export class AutomaticAmmunitionProfileService {
     const definition = savedType?.recipe?.parameters?.multishotDefinition;
     if (definition) type = bindMultishotDefinition(type, definition);
     if (savedType && canonical(savedType.recipe)!==canonical(type.recipe)) return snapshot({...fallback,reasons:["SavedProfileUnavailable"]});
-    const authorized = approval?.active===true && approval.modeId===modeId && approval.ammoId===base.ammoId &&
+    const authorized = !!approval && approval.modeId===modeId && approval.ammoId===base.ammoId &&
       approval.variantId===variantId && approval.recipeId===type.recipe.customId && approval.fingerprint===recipeFingerprint(type) &&
       definition && multishotDefinitionKey(definition)===multishotDefinitionKey(approval.multishotDecision);
-    const review = reviewMultishotConstruction(option, original, authorized ? approval.multishotDecision : null);
+    const review = reviewMultishotConstruction(option, original, definition ?? (authorized ? approval.multishotDecision : null));
     if (review.facts.multishotDefinition) review.facts.multishotDefinition.shotSizes = structuredClone(this.catalogs.getCatalog("ht").shot_sizes);
     if (review.status!=="compatible") return snapshot({...fallback,state:review.status==="incompatible"?"incompatible":"incomplete",type,facts:review.facts,reasons:[review.reason]});
-    return snapshot({...fallback,state:"complete",origin:authorized?"gm":"reference",type,facts:review.facts,
+    return snapshot({...fallback,state:"complete",origin:definition||authorized?"user":"reference",type,facts:review.facts,
       nativePreserved:review.nativePreserved,referenceConfirmed:review.nativePreserved && original.multishotDefinition?.referenceVerified === true,
       model:{version:1,kind:"multishot-rule",status:"resolved"},reasons:[]});
   }
-  admission(profile, { policy = "strict", approval = null } = {}) {
+  admission(profile, { policy = "strict", approval = null, actor = null, campaignTL = readCampaignTL(actor) } = {}) {
+    if (!campaignAmmunitionAdmission(profile.type, this.catalogs, campaignTL).allowed)
+      return {allowed:false, authority:'campaign-tl'};
     if (profile.state !== "complete" || profile.baseStatus !== "compatible" || profile.rulesStatus === "incompatible" && !profile.nativePreserved)
       return { allowed: false, authority: "undetermined" };
-    if (approval?.active === false) return { allowed: false, authority: "revoked" };
-    if (profile.type?.recipe?.autoProfile?.handloadDefinition?.registeredByGM && approval?.active !== true)
-      return { allowed: false, authority: "approval-required" };
+    if(isUTSpecialVariant(profile.type?.recipe?.variantId))return {allowed:true,authority:profile.facts?.ammunitionSupply?.basis??'reference'};
     if (profile.type?.recipe?.variantId === "ht_plus_p" && !profile.facts?.legacyPlusPAdmission &&
-        !(profile.facts?.evidence?.weapon_pressure_rating_verified?.value === true &&
-          profile.facts.evidence.weapon_pressure_rating_verified.source))
-      return { allowed: false, authority: "pressure-proof-required" };
-    if (profile.rulesStatus === "compatible" || profile.referenceConfirmed === true) return { allowed: true, authority: "reference" };
-    if (approval?.active === true) return { allowed: true, authority: "gm-approved" };
-    if (profile.facts?.nativeChargeBaseline?.individualGMRequired) return { allowed: false, authority: "approval-required" };
-    return { allowed: policy === "permissive", authority: policy === "permissive" ? "world-policy" : "approval-required" };
+        !(profile.facts?.evidence?.weapon_pressure_rating_verified?.value === true && profile.facts.evidence.weapon_pressure_rating_verified.source) &&
+        !(approval?.plusPDecision?.pressureSuitable===true && profile.facts?.evidence?.weapon_pressure_rating_verified?.value!==false))
+      return {allowed:false,authority:'pressure-proof-required'};
+    return {allowed:true,authority:profile.rulesStatus==='compatible'||profile.referenceConfirmed===true?'reference':'user-defined'};
   }
+
   audit() {
     const report = { catalogs: {}, ht: { combinations: 0, complete: 0, incomplete: 0, incompatible: 0, rules: {} } };
     for (const book of ["weapons", "lt", "ht", "ut"]) {

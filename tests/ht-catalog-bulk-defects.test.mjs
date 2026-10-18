@@ -1,6 +1,6 @@
 import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import { HT_SOURCE_REVIEW } from "../scripts/ht-source-corrections.js";
-import { assertPlusPReadyIdentities } from "./fixtures/ht-plus-p-ready-identities.mjs";
+import { assertPlusPReadyIdentities } from './helpers/current-ht-plus-p-boundary.mjs';
 import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -180,7 +180,7 @@ test("historical 227 +P restrictions stay intact; current B review preserves eve
   assert.equal(report.rows.find(r=>r.modeId==="W10jqOZ0kjeSuoY3C").parsed.damageStatus,"present-but-not-supported-by-plus-p-parser");
   assert.equal(JSON.stringify(catalogs.getCatalog("ht")),before);
   assert.equal(report.previousAggregate.ready,283);
-  assert.equal(current.examined,511); assert.equal(current.ready,366);
+  assert.equal(current.examined,511); assert.equal(current.ready,369);
   // P6 pressure gate changes diagnostic classification, never opens historical E/F.
   const closed=new Set([...current.rows,...current.otherNonreadyPairs].map(r=>r.modeId+'/'+r.ammoItemId));
   const pairs=catalogs.getCatalog('ht').ammo_items.flatMap(ammo=>ammo.weapon_mode_ids.map(modeId=>({
@@ -189,8 +189,11 @@ test("historical 227 +P restrictions stay intact; current B review preserves eve
   assert.equal(pairs.filter(r=>r.ready).length,current.ready);
   for(const r of report.rows.filter(r=>['E','F'].includes(r.primaryCategory)))assert(closed.has(r.modeId+'/'+r.ammoItemId),r.modeId);
   for(const [mid,[aid]]of Object.entries(HT_SOURCE_REVIEW))assert(closed.has(mid+'/'+aid),mid);
-  assert.deepEqual(current.rows.filter(r=>r.primaryCategory==='G').map(r=>r.modeId).sort(),
-    ['W10jqOZ0kjeSuoY3C','WK6cr08HEjTSsvYNS'].sort());
+  assert.deepEqual(current.rows.filter(r=>r.primaryCategory==='G').map(r=>r.modeId),[]);
+  for(const [modeId,ammoId] of [['W10jqOZ0kjeSuoY3C','ht_5_66x39mm'],['WK6cr08HEjTSsvYNS','ht_14_5x114mm']]){
+    assert(!closed.has(modeId+'/'+ammoId));
+    assert.equal(compatibility.checkCompatibility(modeId,ammoId,{book:'ht',kind:'ammo-item'}).status,'compatible');
+  }
   // P6 requires pressure evidence for new .410 and corrected LeMat pairs.
   // They left the arithmetic bucket, but must remain unavailable.
   for(const mid of ['W7i4ZauQl8q2o5nTt','WdzSSShGT_yv4ctOi']) {

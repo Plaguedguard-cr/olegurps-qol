@@ -5,7 +5,13 @@ const tubes = new Set([
   'ht_specific_m72a4_66mm_heat','ht_specific_m72a6_66mm_hedp','ht_specific_rpoz_93mm_wp',
   'ht_specific_pzf3_110mm_heat','ht_specific_pzf3_110mm_tandem'
 ]);
+// Shared irreversible marker for disposable tubes and integral one-shot devices.
+export function useSealedResource(entry) {
+  if(entry.sealedUsed)throw Error('SealedResourceSpent');
+  entry.sealedUsed=true;
+}
 export const SEALED_PLATFORM_UNITS = Object.freeze({
+  W073XWePe7F0ZsLMX: {ammoId:'olegurps_ht_flame_W073XWePe7F0ZsLMX',source:'HT179-180'},
   WI9EWrbCRSJOCS_y4: {ammoId:'ht_37x122mmr',source:'HT144'},
   WL0SlLUJxX2V_3KVh: {ammoId:'ht_22_long_rifle_5_7x16mmr',source:'HT98'}
 });

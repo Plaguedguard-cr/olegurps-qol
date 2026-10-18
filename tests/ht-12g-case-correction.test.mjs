@@ -16,6 +16,8 @@ import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js"
 import { resolveHTCatalogFacts } from "../scripts/ht-option-eligibility.js";
 import { AutomaticAmmunitionProfileService } from "../scripts/tools/automatic-ammunition-profiles.js";
 import { assertWeaponPreservation, restoreHaflaErrata } from "./fixtures/ht-preservation-contract.mjs";
+import { assertUnprovenPressure, ownerRuntime } from "./fixtures/ht-plus-p-owner.mjs";
+import { setAmmunitionApproval } from "../scripts/tools/ammunition-approval-service.js";
 
 const lightId = "ht_12_gauge_2_75_18_5x70mmr", conventionalId = lightId + "_heavy_load";
 const historical = readAuditFixture('ht-plus-p-category-b');
@@ -44,9 +46,12 @@ for (const row of rows) test("conventional-case +P: " + row.modeId + " " + row.n
   assert.ok(Math.abs(resolved.damage.rules.costPerShot-1.05)<1e-12); assert.equal(resolved.damage.rules.costMultiplier,1.5);
   assert.equal(resolved.damage.rules.pressure.application,"manual-GM");
   assert.equal(resolved.effective.rof,row.raw.rof); assert.equal(resolved.effective.rcl,row.raw.rcl);
-  assert.equal(resolver.resolve(input(row.modeId,p.type,{profilePolicy:"strict"})).damage.nativeSafe,false);
-  assert.equal(automatic.admission(p,{policy:"strict",approval:{active:true}}).allowed,true);
-  assert.equal(automatic.admission(p,{policy:"permissive",approval:{active:false}}).allowed,false);
+  const strict=resolver.resolve(input(row.modeId,p.type,{profilePolicy:"strict"}));
+  assert.equal(strict.damage.nativeSafe,true);assertUnprovenPressure(strict);
+  assert.equal(automatic.admission(p,{policy:"strict"}).authority,"user-defined");
+  assert.equal(prepare(row.modeId,"ht_14_5x114mm").state,"incompatible");
+  const newPlatform=structuredClone(p);newPlatform.facts.legacyPlusPAdmission=false;
+  assert.equal(automatic.admission(newPlatform).allowed,false);
   const c=context(row.modeId), actor={id:"actor",system:{ranged:{mode:c.raw}},binding:c.binding};
   const types=availableAmmoTypes(actor,{id:"weapon",attackRef:{path:"system.ranged.mode"}},api,"ru");
   const option=types.find(type=>type.ammoId===conventionalId&&type.recipe?.variantId==="ht_plus_p");
@@ -94,7 +99,7 @@ test("both case labels localize without changing keys, saved names or recipes", 
   }
 });
 
-test("independent legacy ledgers, old recipes and snapshot survive switch, reload and GM revocation without repeat spend", async () => {
+test("independent legacy ledgers and snapshots survive reload and OWNER decision changes without repeat spend", async () => {
   const modeId="W19ooSM10ivSwlXSP",p=prepare(modeId),light=prepare(modeId,lightId).type;
   const weapon={id:"weapon",ammunitionInventory:{version:1,stocks:[],magazines:[],installedId:null}},types=[p.type,light,base(conventionalId),base(lightId)].map(type=>({...type,key:ammoTypeKey(type)}));
   for(const type of types)applyInventoryOperation(weapon,"add-stock",{ammoKey:type.key,amount:8},{allowedTypes:types});
@@ -103,7 +108,10 @@ test("independent legacy ledgers, old recipes and snapshot survive switch, reloa
   applyInventoryOperation(weapon,"load",{magazineId:"m2",ammoKey:light.key,amount:3},{allowedTypes:types});
   applyInventoryOperation(weapon,"install",{magazineId:"m1"});projectAmmoInventory(weapon);
   let state={weapons:[weapon]};const system={ranged:{mode:context(modeId).raw}},originalSystem=JSON.stringify(system);
-  const actor={id:"actor",isOwner:true,system,getFlag:()=>state,setFlag:async(s,k,v)=>{state=structuredClone(v);}};
+  const flags={},actor={id:"actor",isOwner:true,system,binding:context(modeId).binding,
+    getFlag:(s,k)=>s==="world"&&k==="gurpsAmmoManager"?state:flags[s]?.[k],setFlag:async(s,k,v)=>{
+      if(s==="world"&&k==="gurpsAmmoManager")state=structuredClone(v);else{flags[s]??={};flags[s][k]=structuredClone(v);}}};
+  weapon.attackRef={path:"system.ranged.mode"};
   const service=new AmmoService(actor),legacyRecipes=JSON.stringify(state.weapons[0].ammunitionInventory.stocks.map(s=>s.type.recipe));
   const result=await service.executeShot({weaponId:"weapon",attackId:"old",prepare:({ammunition})=>({profile:resolver.resolve({...input(modeId,p.type),ammunition}),amount:2}),execute:async()=>({rolled:true,message:{id:"old"}})});
   assert.equal(result.spent,2);assert.equal(state.weapons[0].totalAmmo,30);
@@ -111,7 +119,10 @@ test("independent legacy ledgers, old recipes and snapshot survive switch, reloa
   await service.inventoryTransaction("weapon","install",{magazineId:"m2"});assert.equal(state.weapons[0].totalAmmo,30);
   state=JSON.parse(JSON.stringify(state));const restored=JSON.parse(snapshot);
   for(const language of ["ru","en"])ammoDisplayName(restored.profile.ammunition,language);
-  assert.equal(resolver.resolve(input(modeId,p.type,{profilePolicy:"strict"})).damage.nativeSafe,false);
+  const decision=await setAmmunitionApproval({actor,weapon:state.weapons[0],type:p.type,active:true,plusPDecision:{rof:3}},ownerRuntime(actor,api));
+  const next=resolver.resolve(input(modeId,p.type,{profilePolicy:"strict",approval:decision}));
+  assert.equal(next.damage.nativeSafe,true);assert.equal(next.effective.rof,"3x9");
+  assert.equal(result.snapshot.profile.effective.rof,"2x9");
   assert.equal(JSON.stringify(restored),snapshot);assert.equal(JSON.stringify(result.snapshot),snapshot);
   assert.equal(createShotSnapshot(result.profile,{attackId:"separate"}).profile.damage.formula,"1d+1 pi");
   for(let i=0;i<2;i++)assert.equal(restored.profile.damage.formula,"1d+1 pi");

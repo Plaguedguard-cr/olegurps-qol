@@ -17,13 +17,14 @@ export function htCoverageCategory(id) {
   return "incendiary-and-special";
 }
 /** Native linked mode/ammo pairs only; categories never add item/family/option inventories together. */
-export function auditHTCoverage({ catalogs, compatibility, policy = "permissive" }) {
+export function auditHTCoverage({ catalogs, compatibility, policy = "permissive", includeIdentities = false }) {
   const ht = catalogs.getCatalog("ht"), automatic = new AutomaticAmmunitionProfileService({ catalogs, compatibility });
   const resolver = new AttackProfileResolver({ catalogs, compatibility, automaticProfiles: automatic });
   const variants = Object.entries(collections).flatMap(([collection, kind]) => ht[collection].map(v=>({ ...v, kind })));
   const report = { inventory: { items: ht.ammo_items.length, families: ht.ammo_families.length,
     projectileOptions: ht.projectile_options.length, eligibilityOptions: variants.length }, policy, nativePairs: 0,
     ordinary: { total: 0, ready: 0, unconfirmed: 0 }, categories: {}, variants: {}, familiesReady: {}, unavailableReasons: {}, directedHT178: {} };
+  if (includeIdentities) report.readyIdentities = [];
   for (const v of variants) report.variants[v.id] = { category: htCoverageCategory(v.id), total: 0, ready: 0,
     compatible: 0, undetermined: 0, incompatible: 0, baseConfirmed: 0, nativePreservedSourceOverrides: 0,
     effectIntegration: FIRST_STAGE_VARIANTS.includes(v.id) ? "implemented" : "deferred",
@@ -68,6 +69,7 @@ export function auditHTCoverage({ catalogs, compatibility, policy = "permissive"
         (rules.status !== "incompatible" || nativePreserved) && profile.damage.nativeSafe;
       if (ready && nativePreserved) group.nativePreservedSourceOverrides++;
       if (ready) {
+        if (includeIdentities) report.readyIdentities.push({ modeId, ammoId: ammo.id, variantId: v.id });
         group.support[profile.damage.support?.status ?? "AUTOMATED"]++;
         group.ready++; report.familiesReady[ammo.ammo_family_id] ??= [];
         if (!report.familiesReady[ammo.ammo_family_id].includes(v.id)) report.familiesReady[ammo.ammo_family_id].push(v.id);

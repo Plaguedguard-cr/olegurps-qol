@@ -14,8 +14,8 @@ const { ammoManagementHTML } = await import("../scripts/tools/ammo-management-ap
 
 // Exercise the manager's actual nested renderer without opening an Application in Node.
 const source = readFileSync(new URL("../scripts/tools/ammo.js", import.meta.url), "utf8");
-const body = source.match(/  function renderMagazineBadges\(weapon\) \{[\s\S]*?\n  \}/)[0];
-const renderBadges = new Function("escapeHTML", "ammoWindowText", "magazineFill", "inventoryAmmoName", body + "; return renderMagazineBadges;")(
+const body = source.match(/  function renderSingleMagazineBadges\(weapon,\{active=true,batterySelected=false\}=\{\}\) \{[\s\S]*?\n  \}/)[0];
+const renderBadges = new Function("escapeHTML", "ammoWindowText", "magazineFill", "inventoryAmmoName", body + "; return renderSingleMagazineBadges;")(
   escapeWeaponHTML, ammoWindowText, magazineFill, inventoryAmmoName);
 
 test("each selectable magazine reflects its own rounds, capacity, smooth fill and ammunition tooltip", () => {
@@ -35,7 +35,8 @@ test("each selectable magazine reflects its own rounds, capacity, smooth fill an
     assert.ok(buttons[index].includes(`aria-pressed="${index === 2}"`));
     assert.ok(buttons[index].includes('data-ammo-action="select-magazine"'));
     assert.ok(buttons[index].includes(`title="${rounds ? '7.62 &quot;A&quot;' : ammoWindowText("Empty")}"`));
-    assert.ok(buttons[index].includes(`<span class="gam-mag-name">${rounds ? '7.62 &quot;A&quot;' : ammoWindowText("Empty")}</span>`));
+    assert.doesNotMatch(buttons[index],/gam-mag-name/);
+    assert.equal(buttons[index].match(/<span class="gam-mag-label">([^<]+)<\/span>/)[1].replace(/^● /,""),`${index+1}: ${rounds}/${capacity}`);
   }
   assert.ok(buttons[3].includes('--gam-mag-fill:0%'));
   assert.deepEqual(weapon, before);
@@ -48,7 +49,7 @@ test("Fire Control shows exact historical name only for saved contents, retainin
       stocks: [{ key: "archived", type: { source: "test", name: "Test Cartridge (Temporary)" }, rounds: 7 }] } };
   const before = structuredClone(weapon), html = renderBadges(weapon);
   assert.ok(html.includes('title="Test Cartridge (Temporary)"'));
-  assert.ok(html.includes('<span class="gam-mag-name">Test Cartridge (Temporary)</span>'));
+  assert.doesNotMatch(html,/<span[^>]*>Test Cartridge/);
   assert.ok(html.includes('data-ammo-action="select-magazine"'));
   assert.ok(html.includes('aria-pressed="true"'));
   assert.ok(html.includes("1: 20/30"));
@@ -63,17 +64,36 @@ test("summary counts exact recipe identities independently, including loose-only
   const before=structuredClone(weapon),rows=ammoStockRows(weapon);
   assert.deepEqual(rows.map(r=>[r.key,r.total,r.loaded,r.loose]),[['base',30,30,0],['aphc',37,27,10],['old',10,0,10]]);
   const html=renderAmmunitionSummary(null,weapon,escapeWeaponHTML);
-  assert.match(html,/7.62x39mm APHC<\/strong> — всего 37, в магазинах 27, свободно 10/);
-  assert.doesNotMatch(html,/всего 77/);assert.match(html,/Known old name/);assert.doesNotMatch(html,/>Zero</);
+  assert.doesNotMatch(html,/7.62x39mm APHC<\/strong> — всего 37, в магазинах 27, свободно 10/);
+  assert.doesNotMatch(html,/всего 77/);assert.doesNotMatch(html,/Known old name/);assert.doesNotMatch(html,/>Zero</);
   assert.equal(ammoCaption(null,weapon),'7.62x39mm');weapon.ammunitionInventory.installedId='two';
-  assert.equal(ammoCaption(null,weapon),'7.62x39mm APHC');weapon.ammunitionInventory.installedId='one';assert.deepEqual(weapon,before);
+  assert.equal(ammoCaption(null,weapon),'7.62x39mm APHC');assert.match(renderAmmunitionSummary(null,weapon,escapeWeaponHTML),/APHC<\/strong>/);assert.equal((renderAmmunitionSummary(null,weapon,escapeWeaponHTML).match(/gam-ammo-stock-row/g)||[]).length,1);weapon.ammunitionInventory.installedId='one';assert.deepEqual(weapon,before);
+});
+test('installed summary switches between two physical types and never shows another type for an empty magazine',()=>{
+  const weapon={id:'w',capacity:30,totalAmmo:57,magazines:[29,28,0],loadedIndex:0,ammunitionInventory:{version:1,installedId:'a',stocks:[
+    {key:'base',type:{key:'base',source:'catalog',name:'7.62x39mm'},rounds:0},{key:'aphc',type:{key:'aphc',source:'catalog',name:'7.62x39mm APHC'},rounds:0}],
+    magazines:[{id:'a',weaponId:'w',capacity:30,rounds:29,ammoKey:'base'},{id:'b',weaponId:'w',capacity:30,rounds:28,ammoKey:'aphc'},{id:'c',weaponId:'w',capacity:30,rounds:0,ammoKey:null}]}};
+  const before=structuredClone(weapon);
+  assert.match(renderAmmunitionSummary(null,weapon,escapeWeaponHTML),/7.62x39mm<\/strong> — всего 29, в магазинах 29, свободно 0/);
+  applyInventoryOperation(weapon,'install',{magazineId:'b'});const second=renderAmmunitionSummary(null,weapon,escapeWeaponHTML);
+  assert.match(second,/APHC<\/strong> — всего 28, в магазинах 28, свободно 0/);assert.equal((second.match(/gam-ammo-stock-row/g)||[]).length,1);
+  applyInventoryOperation(weapon,'install',{magazineId:'c'});const empty=renderAmmunitionSummary(null,weapon,escapeWeaponHTML);
+  assert.match(empty,/тип боеприпасов не выбран/);assert.doesNotMatch(empty,/APHC|всего 57|в магазинах/);assert.equal(weapon.totalAmmo,before.totalAmmo);
+  assert.deepEqual(weapon.ammunitionInventory.stocks,before.ammunitionInventory.stocks);
+});
+test('single 9+1 magazine preserves chamber capacity and removes only the technical Shots explanation',()=>{
+  const feed={sourceShots:'9+1(3)',loadedCapacity:10,magazineCapacity:9,chamberCapacity:1};
+  const weapon={id:'w',name:'fixture',magazines:[0],loadedIndex:0,capacity:10,totalAmmo:0,ammunitionInventory:{version:1,installedId:'m',stocks:[],magazines:[{id:'m',weaponId:'w',capacity:10,rounds:0,ammoKey:null,sourceFeed:feed}]}};
+  const before=structuredClone(weapon);const html=ammoManagementHTML(weapon,{magazineId:'m',language:'en'},[]),chips=renderBadges(weapon);
+  assert.match(chips,/1: 0\/10/);assert.match(chips,/title="Пустой"/);assert.match(html,/Ёмкость: 9 \+ 1/);assert.match(html,/Тип боеприпаса: Пустой/);
+  assert.doesNotMatch(html,/data-ut-feed|Shots 9\+1|магазин\/труба|i означает|Действия перезаряжания/);assert.deepEqual(weapon,before);
 });
 
 test("two equal magazines share one named total, with full untruncated escaped special name", () => {
   const name='Long & <special> '+ 'charge '.repeat(30),weapon={id:'w',magazines:[30,27],loadedIndex:1,capacity:30,totalAmmo:57,
     ammunitionInventory:{magazines:[{ammoKey:'a',capacity:30,rounds:30},{ammoKey:'a',capacity:30,rounds:27}],stocks:[{key:'a',type:{source:'catalog',name,recipe:{variantId:'custom'}},rounds:0}]}};
   const before=structuredClone(weapon);assert.equal(ammoStockRows(weapon).length,1);assert.equal(ammoStockRows(weapon)[0].total,57);
-  assert.equal((renderBadges(weapon).match(/class="gam-mag-name"/g)||[]).length,2);assert.ok(renderBadges(weapon).includes(escapeWeaponHTML(name.trim())));
+  assert.equal((renderBadges(weapon).match(/class="gam-mag-name"/g)||[]).length,0);assert.ok(renderBadges(weapon).includes(escapeWeaponHTML(name.trim())));
   assert.match(renderAmmunitionSummary(null,weapon,escapeWeaponHTML),/всего 57, в магазинах 57, свободно 0/);assert.deepEqual(weapon,before);
 });
 
@@ -87,7 +107,7 @@ test("unload and stock changes update named counts without merging variants or i
   applyInventoryOperation(weapon,'unload',{magazineId:mags[0].id,amount:5},context);
   assert.equal(ammoStockRows(weapon).find(r=>r.key==='variant').loose,15);
   applyInventoryOperation(weapon,'remove-stock',{ammoKey:'base',amount:10},context);assert.equal(ammoStockRows(weapon).find(r=>r.key==='base').total,20);
-  assert.ok(renderBadges(weapon).includes(`<span class="gam-mag-name">${ammoWindowText("Empty")}</span>`));
+  assert.ok(renderBadges(weapon).includes(`title="${ammoWindowText("Empty")}"`));assert.doesNotMatch(renderBadges(weapon),/gam-mag-name/);
 });
 
 test("skill summary follows actual selected mode and leaves effective skill and probability intact", () => {

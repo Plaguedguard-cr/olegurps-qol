@@ -188,7 +188,9 @@ test("two attacks, magazine switch and reopened service preserve independent nat
   assert.equal(a.correlation.attackMessageId, first.message.id);
   assert.equal(b.correlation.attackMessageId, second.message.id);
   assert.equal(a.correlation.nativeDamageLink, "unlinked"); assert.equal(b.correlation.damageMessageId, null);
-  assert.equal(first.message.content, '[@actor-a@D:"AK-47 (Rifle)"]');
+  assert.equal(first.message.content.split('<details')[0], '[@actor-a@D:"AK-47 (Rifle)"]');
+  assert.match(first.message.content, /<p>ht_7_62x39mm<\/p><p>HT176<\/p>/);
+  assert.doesNotMatch(first.message.content, /<details[^>]*\bopen/);
   assert.deepEqual(first.message.getFlag("olegurps-qol", "shotSnapshot"), a);
   assert.deepEqual(fx.state().weapons[0].magazines, [15, 7]);
   assert.deepEqual(fx.actor.system, originalSystem);

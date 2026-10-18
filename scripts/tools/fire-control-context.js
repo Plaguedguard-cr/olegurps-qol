@@ -162,6 +162,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     });
     return {
       ...aimed,
+      ...(attack?.platformRules?.rofJet?{aimBonus:0,bracingBonus:0,sightBonus:0,laserBonus:0}:{}),
       bracingBonus: mode === "standalone" && !hasAcc ? 0 : aimed.bracingBonus,
       moveAttackPenalty: mode === "standalone" && !hasBulk ? 0 : fireService.calculateMoveAttackPenalty(
         attack?.data?.bulk ?? attack?.bulk, parseBoolean(values?.moveAndAttack)
@@ -363,7 +364,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const effectRangePenalty = !configuredPreview && settings?.autoAdd && useEffects && !blindUnknown
       ? getGgaTargetRangeRecommendation(rangeBands)?.penalty ?? null
       : null;
-    const rangeAdjustment = effectiveRange
+    const rangeAdjustment = attack?.platformRules?.rofJet ? 0-(Number.isFinite(effectRangePenalty)?effectRangePenalty:0) : effectiveRange
       ? effectiveRange.penalty - (Number.isFinite(effectRangePenalty) ? effectRangePenalty : 0)
       : 0;
     const manualValue = Number(String(values?.manualModifier ?? "").replace(",", "."));
@@ -388,7 +389,9 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       visibility?.random ? "silhouette" : values?.hitLocationId,
       visibility?.random ? null : values?.hitRegionId
     );
-    const targetedAttack = !visibility?.random && !values?.suppressTargetedAttack && targetedAttackContext?.resolve({
+    const locationIgnored=attack?.platformRules?.hitLocationNotApplicable===true;
+    const locationPenalty=locationIgnored?0:Number(hitLocation?.penalty??0);
+    const targetedAttack = !locationIgnored && !visibility?.random && !values?.suppressTargetedAttack && targetedAttackContext?.resolve({
       governingSkill, specialty: governingSkill?.specialty ?? values?.governingSpecialty,
       target: hitLocation?.canonicalKeys ?? hitLocation?.canonicalKey ?? hitLocation?.zoneId,
       basePenalty: hitLocation?.penalty
@@ -417,12 +420,13 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       combatType: "ranged", actor: token?.actor, attack, baseAttackLevel: baseLevel,
       governingSkill, attackSlot: values?.contextLabel ?? null,
       context: { weaponBond: mode === "weapon" && isWeaponBondActive(token?.actor, attack?.weaponBond),
-        rapidStrike, targetedAttack, hitLocationBase: Number(hitLocation?.penalty ?? 0),
+        rapidStrike, targetedAttack, hitLocationBase: locationPenalty,
         hitLocationLabel, closeQuartersBattle, closeQuartersBattleLabel: cqbLabel,
         closeHipShooting, closeHipLabel, moveAttackBase: moveAttackPenalty,
         closeCombatBulkBase },
       channels: [
         { id: "ammunitionTracer", value: nextTurnTracer, label: f4Text("TracerBonus") },
+        { id: "ammunitionConstruction", value: attack?.ammunitionHitBonus??0, label: "Конструкция боеприпаса" },
         ...(fuzeBonus ? [{ id: "ammunitionAirburst", value: fuzeBonus, label: automaticAmmoText("P6ht_airburst") }] : []),
         { id: "requiredStrength", value: weaponStrengthPenalty(attack, token?.actor), label: automaticAmmoText("MinimumSTPenalty") },
         { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
@@ -441,7 +445,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         { id: "maneuverAttackBonus", value: allOutAttackBonus, label: "\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 (\u0422\u043e\u0447\u043d\u0430\u044f)", kind: "maneuver" },
         { id: "situational", value: manualModifier, label: "\u0411\u043e\u043d\u0443\u0441\u044b/\u0448\u0442\u0440\u0430\u0444\u044b" },
         { id: "visibility", value: visibility?.penalty ?? 0, label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c" },
-        { id: "hitLocation", value: Number(hitLocation?.penalty ?? 0), label: hitLocationLabel }
+        { id: "hitLocation", value: locationPenalty, label: locationIgnored?'Зрение: прицеливание в глаза не требуется':hitLocationLabel }
       ],
       rules: getCombatRules("ranged"),
       caps: visibility?.blind ? [{ maximum: 9, label: "Предел навыка при стрельбе вслепую: 9" }] : []

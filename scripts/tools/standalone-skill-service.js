@@ -38,12 +38,18 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   const tlPolicy = readWeaponSkillTLPolicy(user);
   const snapshot = mode?.snapshot;
   const explicit = clean(mode?.overrides?.governingSkill);
+  const sourceSkill = snapshot?.governing_skill?.skill;
+  const alternatives = snapshot?.governing_skill?.candidates ?? snapshot?.governing_skill_selection?.candidates;
+  if (!explicit && !clean(sourceSkill?.name) && Array.isArray(alternatives) && alternatives.length > 1)
+    return { resolved: false, level: null, tlPolicy, reason: "Допустимы несколько навыков: " +
+      alternatives.map(s => clean(s?.name) + (s?.specialization ? " (" + clean(s.specialization) + ")" : "")).filter(Boolean).join(", ") +
+      ". Выберите требуемый навык в настройках этого режима." };
   const attributeOnly = !explicit && snapshot?.governing_skill?.status === 'none' &&
     snapshot?.governing_skill_selection?.strategy === 'manual-or-default-only' &&
     snapshot.governing_skill_selection.attribute_defaults?.length > 0;
   const required = explicit ? parseStandaloneSkill(explicit) :
-    snapshot?.governing_skill?.status === "resolved" ? parseStandaloneSkill(
-      snapshot.governing_skill.skill.name, snapshot.governing_skill.skill.specialization) :
+    snapshot?.governing_skill?.status === "resolved" && clean(sourceSkill?.name) ? parseStandaloneSkill(
+      sourceSkill.name, sourceSkill.specialization) :
       attributeOnly ? parseStandaloneSkill(snapshot.governing_skill_selection.attribute_defaults[0].attribute) : null;
   if (!required) return { resolved: false, level: null, tlPolicy, reason: "В источнике не определён требуемый навык. Укажите точный навык в настройках режима." };
   if (technical.has(required.family) && required.tl === null) {
@@ -51,17 +57,18 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
     required.tl = /^\d+$/.test(tl) ? Number(tl) : null;
   }
   const name = explicit ? explicit.replace(/\s*\([^()]*\)\s*$/, "").replace(/\s*\/\s*TL\s*\d+\s*/iu, "") :
-    attributeOnly ? required.name : snapshot.governing_skill.skill.name;
+    attributeOnly ? required.name : sourceSkill.name;
   const label = name +
     (required.tl === null ? "" : "/TL" + required.tl) +
-    (required.specialty ? " (" + (explicit ? explicit.match(/\(([^()]*)\)/)?.[1] ?? required.specialty : snapshot.governing_skill.skill.specialization) + ")" : "");
+    (required.specialty ? " (" + (explicit ? explicit.match(/\(([^()]*)\)/)?.[1] ?? required.specialty : sourceSkill.specialization) + ")" : "");
   const learned = attributeOnly ? [] : learnedSkills(actor);
   const exact = learned.filter(s => sameSkill(s, required) && s.tl === required.tl).sort((a,b) => b.level-a.level)[0];
   const common = { name: label, family: required.family, specialty: required.family === "guns" ?
     ({ "light anti-armor weapon": "law", "light machine gun": "lmg", "submachine gun": "smg" }[required.specialty] ?? required.specialty) : required.specialty,
     tl: required.tl, tlPolicy, key: "standalone:" + record.id + ":" + mode.modeId };
-  if (exact) return { ...common, resolved: true, level: exact.level, learned: true,
-    source: "learned", sourceName: exact.name, penalty: 0, entry: exact.entry, candidates: [] };
+  const attackModifier=Number.isInteger(snapshot?.governing_skill?.attack_modifier)?snapshot.governing_skill.attack_modifier:0;
+  if (exact) return { ...common, resolved: true, level: exact.level+attackModifier, learned: true,
+    source: "learned", sourceName: exact.name, penalty: attackModifier, entry: exact.entry, candidates: [] };
   // A manual replacement without catalog rules may use an exact learned skill only.
   const original = snapshot?.governing_skill?.skill;
   const originalIdentity = original && parseStandaloneSkill(original.name, original.specialization);

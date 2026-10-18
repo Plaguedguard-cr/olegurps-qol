@@ -32,6 +32,7 @@ export function profile(modeId, variantId, extra = {}) {
 export const api = { catalogs, ammunitionCompatibility: compatibility, automaticAmmunitionProfiles: automatic,
   weaponCatalogBindings: { analyzeMode: actor => actor.binding } };
 export function inventoryFixture(modeId, variantId) {
+  const moduleFlags = {};
   const c = context(modeId), type = automatic.prepare({ modeId, base: c.base, variantId }).type;
   let state = { weapons: [{ id: "weapon", attackRef: { path: "system.ranged.mode" },
     ammunitionInventory: { version: 1, stocks: [], magazines: [], installedId: null } }] };
@@ -42,8 +43,11 @@ export function inventoryFixture(modeId, variantId) {
   applyInventoryOperation(weapon, "load", { magazineId: "m1", ammoKey: type.key, amount: 4 }, { allowedTypes: [type] });
   applyInventoryOperation(weapon, "install", { magazineId: "m1" }); projectAmmoInventory(weapon);
   const actor = { id: "actor", isOwner: true, system: { ranged: { mode: c.raw } }, binding: c.binding,
-    getFlag: (scope, key) => scope === "world" && key === "gurpsAmmoManager" ? state : undefined,
-    setFlag: async (scope, key, value) => { if (scope === "world" && key === "gurpsAmmoManager") state = structuredClone(value); } };
+    getFlag: (scope, key) => scope === "world" && key === "gurpsAmmoManager" ? state : structuredClone(moduleFlags[scope]?.[key]),
+    setFlag: async (scope, key, value) => {
+      if (scope === "world" && key === "gurpsAmmoManager") state = structuredClone(value);
+      else { moduleFlags[scope] ??= {}; moduleFlags[scope][key] = structuredClone(value); }
+    } };
   const service = new AmmoService(actor);
   return { actor, service, type, state: () => state, prepare: ({ ammunition }) => ({
     profile: resolver.resolve({ actorId: actor.id, weaponId: "weapon", rawAttack: c.raw, binding: c.binding, ammunition }), amount: 1 }) };

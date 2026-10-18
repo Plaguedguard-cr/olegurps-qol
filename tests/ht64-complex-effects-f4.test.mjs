@@ -115,19 +115,20 @@ test("register public native Armoury/IQ-Guns results as new individual batch, no
   assert.equal(type.recipe.customId,"new-batch-identity");assert.equal(d.batchId,"batch");assert.equal(d.iqGuns.basedOn,"IQ");assert.equal(d.armoury.total,9);
   assert.equal(JSON.stringify(f.args.type),before);assert.equal(handloadCondition(registeredHandloadFacts(f.args.facts,d),{...d,weaponId:"different"}),"P1HandloadWeaponMismatch");
 });
-test("manufacture rejects 17/18, failure, private checks, wrong skill/basis confirmation, duplicate check, automatic or unknown action",()=>{
+test("manufacture rejects 17/18, failure, hidden checks, wrong skill/basis confirmation, duplicate check, automatic or unknown action",()=>{
   for(const total of [2,17,18]){const f=manufacturing();f.runtime.game.messages.get("armoury").rolls[0].total=total;assert.throws(()=>createRegisteredHandload(f.args,f.runtime));}
-  for(const patch of [{blind:true},{whisper:["gm"]},{visible:false},{isContentVisible:false},{content:JSON.stringify({skill:"Armoury",success:false,margin:-1})},{content:JSON.stringify({skill:"Cooking",success:true,margin:3})}]){const f=manufacturing();Object.assign(f.runtime.game.messages.get("armoury"),patch);assert.throws(()=>createRegisteredHandload(f.args,f.runtime));}
+  for(const patch of [{blind:true},{visible:false},{isContentVisible:false},{content:JSON.stringify({skill:"Armoury",success:false,margin:-1})},{content:JSON.stringify({skill:"Cooking",success:true,margin:3})}]){const f=manufacturing();Object.assign(f.runtime.game.messages.get("armoury"),patch);assert.throws(()=>createRegisteredHandload(f.args,f.runtime));}
   for(const action of ["automatic","self_loading"]){const f=manufacturing();f.args.facts.weaponActions.values=[action];assert.throws(()=>createRegisteredHandload(f.args,f.runtime));}
+  const accessible=manufacturing();accessible.runtime.game.messages.get("armoury").whisper=["gm"];assert.ok(createRegisteredHandload(accessible.args,accessible.runtime));
   const f=manufacturing();f.args.facts.weaponActions.complete=false;assert.throws(()=>createRegisteredHandload(f.args,f.runtime));f.args.facts.weaponActions.complete=true;f.args.input.confirmed=false;assert.throws(()=>createRegisteredHandload(f.args,f.runtime));f.args.input.confirmed=true;f.args.input.iqGuns="armoury";assert.throws(()=>createRegisteredHandload(f.args,f.runtime));
 });
-test("individual registration remains catalog-undetermined, needs GM approval, computes Acc once and rejects other weapon",()=>{
+test("individual registration remains catalog-undetermined, needs no GM approval, computes Acc once and rejects other weapon",()=>{
   const f=manufacturing(),type=createRegisteredHandload(f.args,f.runtime);
   const compatibility={checkCompatibility:(mode,id)=>id==="ammo"?{status:"compatible"}:{status:"undetermined",eligibility:{facts:f.args.facts}}};
   const catalogs={getVariant:()=>f.args.option,getAmmoItem:()=>({name:"fixture"})};
   const service=new AutomaticAmmunitionProfileService({catalogs,compatibility});
   const prepared=service.prepare({modeId:"mode",base:type,variantId:"ht_match_handloaded",savedType:type});
-  assert.equal(prepared.state,"complete");assert.equal(prepared.rulesStatus,"undetermined");assert.equal(service.admission(prepared,{policy:"permissive"}).allowed,false);
+  assert.equal(prepared.state,"complete");assert.equal(prepared.rulesStatus,"undetermined");assert.equal(service.admission(prepared,{policy:"permissive"}).allowed,true);
   assert.equal(service.admission(prepared,{policy:"strict",approval:{active:true}}).allowed,true);
   const args={raw:{damage:"5d pi",acc:"4+2"},variantId:"ht_match_handloaded",baseStatus:"compatible",constructionStatus:"gm-approved",facts:prepared.facts,context:{actorId:"shooter",weaponId:"weapon",modeId:"mode",ammoId:"ammo"}};
   const r=resolveAmmunitionEffects(args);assert.equal(r.nativeSafe,true);assert.equal(r.effectiveChanges.acc,6);assert.equal(r.effectiveChanges.scopeBonus,2);
@@ -153,7 +154,7 @@ test("existing GGA card: closed own section, local GM properties only, player ha
   assert(fields.children.every(l=>!Object.hasOwn(l.children[0].attrs,"value")));
   f.runtime.game.user.isGM=false;const player=new Element("details");appendF4Conditions(player,f.resolved,f.runtime,()=>null);assert(!player.children.some(e=>e.className==="olegurps-f4-local"));
   await local.children.find(e=>e.tag==="button").events.click({preventDefault(){},stopPropagation(){}});assert.equal(local.removed,true);
-  assert.equal(handloadEditorHTML({recipe:{variantId:"ht_match_handloaded"}},f.runtime),"");
+  assert.match(handloadEditorHTML({recipe:{variantId:"ht_match_handloaded"}},f.runtime),/data-handload-registration/);
 });
 test("RU/EN synchronized; own F4 remains Russian under en/missing translations, no GGA dictionary mutation",async()=>{
   const ru=JSON.parse(await fs.readFile(new URL("../lang/ru.json",import.meta.url),"utf8")),en=JSON.parse(await fs.readFile(new URL("../lang/en.json",import.meta.url),"utf8"));

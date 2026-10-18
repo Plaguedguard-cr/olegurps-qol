@@ -1,5 +1,5 @@
 import { f4Text } from "./ammunition-f4-localization.js";
-import { appendInstructionSteps } from "../localization.js";
+import { canManageAmmunitionShot } from './ammunition-approval-service.js';
 
 export const F4_ROWS = Object.freeze({
   "ht_subsonic_pistol:hearing":"Hearing", "ht_subsonic_rifle:hearing":"Hearing", "ht_silent:hearing":"Hearing",
@@ -14,7 +14,7 @@ export function f4RowsForShot(shot) {
 const readable = source => source?.visible===true&&source?.isContentVisible===true;
 export function permittedF4(resolved, runtime=globalThis) {
   // Do not even inspect the snapshot before permissions on its source.
-  if (runtime.game?.user?.isGM!==true || !readable(resolved?.source)) return false;
+  if (!canManageAmmunitionShot(resolved,runtime) || !readable(resolved?.source)) return false;
   const saved=resolved.source.getFlag?.("olegurps-qol","shotSnapshot")??resolved.source.flags?.["olegurps-qol"]?.shotSnapshot;
   return saved?.version===1 && saved.correlation?.attackMessageId===resolved.source.id &&
     !!saved.attackId && saved.actorId===saved.profile?.actorId &&
@@ -28,6 +28,7 @@ export function calculateF4(resolved,id,input={},runtime=globalThis) {
   if (F4_ROWS[id]==="Hearing") {
     if (!input.listener||!finite(input.distance)||input.distance<0) return missing;
     const listener=runtime.game.actors?.get(input.listener);
+    if(!runtime.game?.user?.isGM&&listener?.isOwner!==true)return missing;
     const base=Number(listener?.system?.hearing);
     if (!listener||!Number.isFinite(base)||base<=0) return missing;
     if (variant==="ht_silent") return rules.silent?.hearingTableDistanceYards===16 ?
@@ -79,10 +80,10 @@ export function captureF4Combat(actorId,tokenId,runtime=globalThis) {
 }
 export function tracerBonus(actorId,tokenId,runtime=globalThis) {
   const b=combatBinding(actorId,tokenId,runtime); if(!b||b.c.turn!==b.index) return 0;
-  const state=b.combatant.getFlag?.(tracerScope,tracerFlag);
-  return state?.version===1&&state.expired!==true&&state.actorId===actorId&&state.tokenId===b.combatant.tokenId&&state.combatId===b.c.id&&
+  const states=[runtime.game?.actors?.get?.(actorId)?.getFlag?.(tracerScope,tracerFlag),b.combatant.getFlag?.(tracerScope,tracerFlag)];
+  return states.some(state=>state?.version===1&&state.expired!==true&&state.actorId===actorId&&state.tokenId===b.combatant.tokenId&&state.combatId===b.c.id&&
     state.round===b.c.round&&state.turn===b.c.turn&&state.originRound===b.c.round-1&&
-    state.order===orderFingerprint(b.c) ? 1:0;
+    state.order===orderFingerprint(b.c)) ? 1:0;
 }
 export async function confirmTracer(resolved,confirmed,runtime=globalThis) {
   if (!permittedF4(resolved,runtime)||confirmed!==true||resolved.messageId!==resolved.source.id||
@@ -91,24 +92,26 @@ export async function confirmTracer(resolved,confirmed,runtime=globalThis) {
   const shot=resolved.shot,b=combatBinding(shot.actorId,shot.profile.context?.tokenId,runtime),origin=shot.profile.context?.f4?.combat;
   if(!b||!origin||origin.combatId!==b.c.id||origin.combatantId!==b.combatant.id||origin.round!==b.c.round||origin.turn!==b.c.turn||b.index!==b.c.turn)
     throw Error(f4Text("TracerBlocked"));
-  const previous=queues.get(b.combatant)??Promise.resolve();
+  const actor=runtime.game?.actors?.get?.(shot.actorId);
+  const storage=runtime.game?.user?.isGM?b.combatant:actor;
+  if(!storage?.setFlag||!runtime.game?.user?.isGM&&actor?.isOwner!==true)throw Error(f4Text('TracerBlocked'));
+  const previous=queues.get(storage)??Promise.resolve();
   const next=previous.catch(()=>{}).then(async()=>{
     const now=captureF4Combat(shot.actorId,b.combatant.tokenId,runtime);
     if(JSON.stringify(now)!==JSON.stringify(origin))throw Error(f4Text("TracerBlocked"));
-    const saved=b.combatant.getFlag?.(tracerScope,tracerFlag);
+    const saved=storage.getFlag?.(tracerScope,tracerFlag);
     if(saved?.attackId===shot.attackId)return false;
-    await b.combatant.setFlag(tracerScope,tracerFlag,{version:1,actorId:shot.actorId,tokenId:b.combatant.tokenId,
+    await storage.setFlag(tracerScope,tracerFlag,{version:1,actorId:shot.actorId,tokenId:b.combatant.tokenId,
       combatId:b.c.id,attackId:shot.attackId,attackMessageId:resolved.source.id,originRound:origin.round,
       round:origin.round+1,turn:origin.turn,order:orderFingerprint(b.c)});
     return true;
-  });queues.set(b.combatant,next);return next;
+  });queues.set(storage,next);return next;
 }
 
 export function appendF4Conditions(details,resolved,runtime,refresh) {
   if (!readable(resolved?.source)) return;
   const rows=f4RowsForShot(resolved?.shot);if(!rows.length)return;
   const doc=runtime.document,add=(p,tag,text)=>{const e=doc.createElement(tag);if(text!==undefined)e.textContent=text;p.append(e);return e;};
-  for(const kind of [...new Set(rows.map(r=>r.kind))])appendInstructionSteps(details,f4Text(kind==="Hearing"&&rows[0].id.startsWith("ht_silent:")?"RuleSilent":"Rule"+kind),doc);
   if(!permittedF4(resolved,runtime))return;
   const local=add(details,"details");local.className="olegurps-f4-local";add(local,"summary",f4Text("Local"));add(local,"div",f4Text("Hint"));
   const select=add(local,"select");select.setAttribute("aria-label",f4Text("Local"));for(const r of rows){const o=add(select,"option",f4Text(r.kind));o.value=r.id;}

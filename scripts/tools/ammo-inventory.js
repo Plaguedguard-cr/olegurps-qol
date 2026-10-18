@@ -1,4 +1,5 @@
-import { ammunitionResourceContract } from "./ammunition-resource-contract.js";
+import { ammunitionResourceContract, useSealedResource } from "./ammunition-resource-contract.js";
+import { assertMagazineAddition, magazinePolicy } from './magazine-policy.js';
 // Resource accounting only. Catalog compatibility and ballistic rules belong to their existing services.
 export const AMMO_INVENTORY_VERSION = 1;
 const copy = value => structuredClone(value);
@@ -20,6 +21,7 @@ export function initializeInstalledMagazine(weapon) {
   if (weapon.ammunitionReview) return false;
   const inventory = weapon.ammunitionInventory;
   if (inventory) {
+    if(inventory.selectionEjected===true&&inventory.installedId===null)return false;
     if (installedMagazine(weapon)) return false;
     const candidate = { ...inventory, installedId: null };
     if (!validateInventory(candidate, weapon.id) || !inventory.magazines.length) return false;
@@ -116,7 +118,20 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
     if (!entry) { entry = { key, type: copy(type), rounds: 0 }; inventory.stocks.push(entry); }
     return entry;
   };
-  if (operation === "save-recipe") {
+  if(operation==='delete-recipe') {
+    const entry=stockFor(args.ammoKey);
+    if(!entry.type.recipe?.customId)fail('InvalidRecipe');
+    if(entry.rounds||inventory.magazines.some(m=>m.ammoKey===entry.key&&m.rounds))fail('RecipeInUse');
+    for(const container of inventory.magazines)if(container.ammoKey===entry.key)container.ammoKey=null;
+    inventory.stocks=inventory.stocks.filter(s=>s!==entry);
+  } else if(operation==='edit-recipe') {
+    const entry=stockFor(args.ammoKey),type=args.type;
+    if(!type?.recipe?.customId||type.key!==ammoTypeKey(type)||type.book!==entry.type.book||type.kind!==entry.type.kind||
+      type.ammoId!==entry.type.ammoId||type.recipe.variantId!==entry.type.recipe?.variantId)fail('InvalidRecipe');
+    if(inventory.stocks.some(s=>s!==entry&&s.key===type.key))fail('MixedTypes');
+    for(const container of inventory.magazines)if(container.ammoKey===entry.key)container.ammoKey=type.key;
+    entry.key=type.key;entry.type=copy(type);
+  } else if (operation === "save-recipe") {
     if (!args.type?.recipe?.customId || args.type.key !== ammoTypeKey(args.type) || inventory.stocks.some(s => s.key === args.type.key)) fail("InvalidRecipe");
     inventory.stocks.push({ key: args.type.key, type: copy(args.type), rounds: 0 });
   } else if (operation === "add-stock") {
@@ -130,7 +145,8 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
     entry.rounds -= amount;
   } else if (operation === "add-magazines") {
     const capacity = count(args.capacity), amount = count(args.amount);
-    if (amount > 100 || capacity > 100000 || inventory.magazines.length + amount > 1000) fail("MagazineLimit");
+    assertMagazineAddition(weapon,amount);
+    if (capacity > 100000 || magazinePolicy(weapon).capacity!==null&&capacity!==magazinePolicy(weapon).capacity) fail("CapacityExceeded");
     for (let index = 0; index < amount; index++) inventory.magazines.push({ id: makeId(), weaponId: weapon.id,
       capacity, rounds: 0, ammoKey: null });
   } else if (operation === "load") {
@@ -155,17 +171,20 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
       inventory.magazines = inventory.magazines.filter(other => other.id !== entry.id);
       if (inventory.installedId === entry.id) inventory.installedId = null;
     }
-  } else if (operation === "install") inventory.installedId = magazine().id;
+  } else if (operation === "install") {
+    inventory.installedId=magazine().id;delete inventory.selectionEjected;
+  }
   else if (operation === "eject") {
     if (inventory.installedId !== magazine().id) fail("MagazineNotInstalled");
     inventory.installedId = null;
+    inventory.selectionEjected=true;
   } else if (operation === "consume") {
     const entry = magazine(), amount = count(args.amount);
     if (inventory.installedId !== entry.id) fail("MagazineNotInstalled");
     if (entry.rounds < amount) fail("InsufficientRounds");
     const rule = ammunitionResourceContract(stockFor(entry.ammoKey).type);
     if (rule && (entry.capacity !== rule.capacity || entry.rounds > rule.capacity)) fail("SealedResourceReview");
-    if (rule) entry.sealedUsed = true;
+    if (rule) useSealedResource(entry);
     entry.rounds -= amount;
     if (!entry.rounds) entry.ammoKey = null;
   } else fail("UnknownOperation");

@@ -24,9 +24,9 @@ export const explosiveMessages = {
     ReferenceSource: "Calibration source", Source: "Parameter source", SourceKind: "Value provenance",
     GM: "GM", Reference: "Reference", Q: "Q", NeutralQ: "Q = 1 is the neutral assumption of the OleGURPS house model.",
     ModelNotice: "Fragmentation uses the OleGURPS house model, not an official GURPS formula. Explicit masses are required; the 146 g M406 estimate is not measured fragment mass.",
-    Save: "Save a new recipe and approve for this weapon", Approve: "Approve recipe for this weapon", Revoke: "Revoke GM approval",
-    RevisionNotice: "Changed parameters become a new recipe. Existing stocks, magazines and shot snapshots are preserved.",
-    ReferenceConfirmed: "Reference confirmed", GMApproved: "Custom GM approval", Unknown: "Compatibility unknown", Incompatible: "Confirmed incompatible",
+    Save: "Save recipe", Approve: "Approve recipe for this weapon", Revoke: "Revoke GM approval",
+    RevisionNotice: "Saving edits the selected user recipe and preserves rounds. A published profile creates a separate user recipe; old attacks remain unchanged.",
+    ReferenceConfirmed: "Reference confirmed", GMApproved: "User recipe", Unknown: "Compatibility unknown", Incompatible: "Confirmed incompatible",
     Resolved: "Calculation complete", Unresolved: "Calculation incomplete", Explosion: "Explosion", Fragmentation: "Fragments",
     Incendiary: "APHEX: incendiary — the GM determines ignition conditions; no separate fire damage is assigned.",
     ManualConditions: "The GM determines Follow-Up conditions. Select Explosion, internal explosion and DR handling manually in Apply Damage; these are not enabled automatically.",
@@ -42,9 +42,9 @@ export const explosiveMessages = {
     "nonfinite-model-result": "calculation does not produce a finite positive result",
     "unusual-model-parameters": "Unusually large parameters or result: check units and calibration.",
     ApprovalScopeRequired: "A confirmed weapon, family and distinct recipe identity are required.",
-    ApprovalCannotOverrideProhibition: "GM approval cannot bypass a confirmed prohibition.",
+    ApprovalCannotOverrideProhibition: "User parameters cannot bypass a confirmed technical prohibition.",
     InvalidRecipe: "Invalid or existing recipe identity.",
-    IncompleteShot: "Complete the parameters and obtain GM approval before firing; shot cancelled."
+    IncompleteShot: "Complete valid parameters before firing; an incomplete recipe cannot be calculated."
   }
 };
 import { moduleText } from "../localization.js";

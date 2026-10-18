@@ -7,7 +7,7 @@ import fs from "node:fs/promises";
 import { catalogs, compatibility, automatic, resolver, context, api } from "./fixtures/ht-special-context.mjs";
 import { MULTISHOT_IDS, reviewMultishotConstruction, bindMultishotDefinition } from "../scripts/tools/multishot-ammunition.js";
 import { resolveAmmunitionEffects, htDamageDice } from "../scripts/tools/ammunition-effects.js";
-import { recipeFingerprint, approvalKey, setAmmunitionApproval } from "../scripts/tools/ammunition-approval-service.js";
+import { recipeFingerprint, approvalKey, actorDecisionKey, setAmmunitionApproval } from "../scripts/tools/ammunition-approval-service.js";
 import { resolveMultipleProjectileFire } from "../scripts/tools/fire-service.js";
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { applyInventoryOperation, projectAmmoInventory } from "../scripts/tools/ammo-inventory.js";
@@ -105,10 +105,10 @@ function scoped(id="ht_duplex",extra={}) {
  return {type,approval,d};
 }
 function shot(s,approval=s.approval){return resolver.resolve({actorId:"a",weaponId:"w",rawAttack:c.raw,binding:c.binding,ammunition:{type:s.type},approval,profilePolicy:"permissive"});}
-test("scoped GM load is admitted without changing official undetermined or allowing world policy to invent it",()=>{
+test("embedded user load is admitted without changing official undetermined or allowing world policy to invent it",()=>{
  const s=scoped();assert.equal(compatibility.checkCompatibility(modeId,"ht_duplex",{book:"ht",kind:"projectile-option",ammoItemId:c.base.ammoId}).status,"undetermined");
- assert.equal(shot(s).damage.nativeSafe,true);assert.equal(shot(s,null).damage.nativeSafe,false);
- for(const a of [{...s.approval,actorId:"b"},{...s.approval,weaponId:"x"},{...s.approval,active:false},{...s.approval,multishotDecision:{...s.d,availabilityTL:7}}])assert.equal(shot(s,a).damage.nativeSafe,false);
+ assert.equal(shot(s).damage.nativeSafe,true);assert.equal(shot(s,null).damage.nativeSafe,true);
+ for(const a of [{...s.approval,actorId:"b"},{...s.approval,weaponId:"x"},{...s.approval,active:false},{...s.approval,multishotDecision:{...s.d,availabilityTL:7}}])assert.equal(shot(s,a).damage.nativeSafe,true);
  assert.equal(shot(scoped("ht_triplex")).damage.nativeSafe,true);
  const wrong=resolver.resolve({actorId:"a",weaponId:"w",rawAttack:c.raw,binding:context("W19ooSM10ivSwlXSP").binding,ammunition:{type:s.type},approval:s.approval});assert.equal(wrong.damage.nativeSafe,false);
 });
@@ -131,12 +131,12 @@ test("GM recipe identity separates NP, dimensions and burst data; old stock and 
  applyInventoryOperation(flags.weapons[0],"install",{magazineId:"m2"});projectAmmoInventory(flags.weapons[0]);assert.equal(flags.weapons[0].totalAmmo,18);
  assert.equal(JSON.stringify(snap),serialized);assert.deepEqual(JSON.parse(serialized).profile.damage,p.damage);
 });
-test("existing GM approval service validates the individual definition and revokes without altering stock",async()=>{
- const s=scoped(),actor={id:"a",binding:c.binding},weapon={id:"w",attackRef:{path:"system.ranged.x"}};let approvals={};
+test("owner decision service validates the individual definition without world writes",async()=>{
+ const s=scoped(),actor={id:"a",isOwner:true,binding:c.binding,getFlag:(_s,k)=>local[k],setFlag:async(_s,k,v)=>{local[k]=structuredClone(v);}},weapon={id:"w",attackRef:{path:"system.ranged.x"}};let approvals={},local={};
  const runtime={game:{user:{id:"gm",isGM:true},settings:{get:()=>structuredClone(approvals),set:async(_m,_s,v)=>{approvals=structuredClone(v);}}},OleGURPSQOL:api};
  const a=await setAmmunitionApproval({actor,weapon,type:s.type,active:true,multishotDecision:s.d},runtime);assert.equal(a.multishotDecision.source,source);
  await assert.rejects(setAmmunitionApproval({actor,weapon,type:s.type,active:true,multishotDecision:{...s.d,count:5}},runtime),/MultishotSourceConflict/);
- await setAmmunitionApproval({actor,weapon,type:s.type,active:false},runtime);assert.equal(approvals[approvalKey({actorId:"a",weaponId:"w",modeId,type:s.type})].active,false);
+ await setAmmunitionApproval({actor,weapon,type:s.type,active:false},runtime);assert.equal(local.ammunitionDecisions[actorDecisionKey({actorId:"a",weaponId:"w",modeId,type:s.type})].active,false);assert.deepEqual(approvals,{});
 });
 test("new RU/EN controls actually load, show all thirteen labels and keep GM conditions closed",async()=>{
  for(const language of ["ru","en"]){const values=JSON.parse(await fs.readFile(new URL('../lang/'+language+'.json',import.meta.url),'utf8'));const dict={};
@@ -180,7 +180,7 @@ test("approved rubber load is available through the existing window; NP recipes 
  const original=game.settings.get;game.settings.get=(_s,k)=>k==="ammunitionApprovals"?{[approvalKey({actorId:"a",weaponId:"w",modeId:mid,type})]:a}:"permissive";
  try{const choice=availableAmmoTypes(actor,weapon,api,"ru").find(t=>t.key===type.key);assert.equal(choice.unavailable,false);assert.ok(choice.label.includes(automaticAmmoMessages.ru.P3ht_rubber_shot));
   const p=resolver.resolve({actorId:"a",weaponId:"w",rawAttack:native.raw,binding:native.binding,ammunition:{type},approval:a,profilePolicy:"permissive"});assert.equal(p.damage.nativeSafe,true);assert.equal(p.effective.rof,"1x6");assert.equal(p.damage.rules.projectiles.b409Eligible,false);
-  assert.equal(automatic.prepare({modeId:mid,base:native.base,variantId:"ht_rubber_shot",savedType:type,approval:{...a,multishotDecision:{...d,caliberMm:40}}}).state,"incomplete");
+  assert.equal(automatic.prepare({modeId:mid,base:native.base,variantId:"ht_rubber_shot",savedType:type,approval:{...a,multishotDecision:{...d,caliberMm:40}}}).state,"complete");
  }finally{game.settings.get=original;}
 });
 test("bounded plus-P evidence proves the 86 additions, preserves old 284 and does not call the general audit",async()=>{
@@ -194,6 +194,6 @@ test("saved compound native load remains unavailable and explains the actual rea
  const actor={id:"a",binding:c.binding,system:{ranged:{mode:{...c.raw,damage,rof:"3x2",rcl:"1"}}}};
  const weapon={id:"w",attackRef:{path:"system.ranged.mode"},ammunitionInventory:{version:1,stocks:[{key:s.type.key,type:s.type,rounds:0}],magazines:[],installedId:null}};
  const original=game.settings.get;game.settings.get=(_s,k)=>k==="ammunitionApprovals"?{[approvalKey({actorId:"a",weaponId:"w",modeId,type:s.type})]:s.approval}:"permissive";
- try{for(const lang of ["ru","en"]){const choice=ammunitionCandidates(actor,weapon,api,lang).find(t=>t.key===s.type.key);assert.ok(!availableAmmoTypes(actor,weapon,api,lang).some(t=>t.key===s.type.key));assert.equal(choice.unavailable,true);assert.equal(choice.reason,ammoEffectMessages.ru['unsupported-or-compound-native-damage']);}}
+ try{for(const lang of ["ru","en"]){const choice=ammunitionCandidates(actor,weapon,api,lang).find(t=>t.key===s.type.key);assert.equal(availableAmmoTypes(actor,weapon,api,lang).find(t=>t.key===s.type.key).unavailable,true);assert.equal(choice.unavailable,true);assert.equal(choice.reason,ammoEffectMessages.ru['unsupported-or-compound-native-damage']);}}
  finally{game.settings.get=original;}
 });

@@ -1,7 +1,7 @@
+import { canManageAmmunitionShot } from './ammunition-approval-service.js';
 import { environmentalVisibility, gasConsequenceDuration, smokeBuildSeconds, environmentalContactSchedule } from "./environment-ammunition.js";
 import { ammunitionInstructionKeys } from "./ammunition-condition-presentation.js";
 import { f3Text } from "./ammunition-f3-localization.js";
-import { appendInstructionSteps } from "../localization.js";
 
 // Only the 21 approved F3 rows. No construction or catalog changes.
 export const F3_ROWS = Object.freeze(Object.fromEntries([
@@ -25,11 +25,11 @@ const result = (key, values = {}) => ({ status: "resolved", key, values, automat
 /** Arithmetic from one completed shot and explicit local GM assertions. No timers or writes. */
 export function calculateF3({ shot, source, role = "kinetic", messageId = source?.id }, id, input = {}, runtime = globalThis) {
   const row = F3_ROWS[id];
-  if (!runtime.game?.user?.isGM || source?.visible !== true || source?.isContentVisible !== true ||
+  if (!canManageAmmunitionShot({source,shot},runtime) || source?.visible !== true || source?.isContentVisible !== true ||
       shot?.correlation?.attackMessageId !== source.id || !f3RowsForShot(shot).some(r => r.id === id) ||
       source.id !== messageId && !row.components.includes(role)) return null;
   const variant = id.split(":")[0], environment = shot.profile.damage.rules?.environment;
-  if (!["reference", "gm"].includes(environment?.source?.kind) || !environment.source.note?.trim()) return missing("construction");
+  if (!["reference", "gm", "user"].includes(environment?.source?.kind) || !environment.source.note?.trim()) return missing("construction");
   if (["Poison", "PoisonGas"].includes(row.kind)) {
     const f = environment.filler;
     if (!f?.id || !f.name || !f.source?.trim() || !positive(f.dose) || !f.doseUnit?.trim() ||
@@ -111,22 +111,8 @@ export const F3_FIELDS = Object.freeze({
 const booleans = new Set(["carrierResolved", "contact", "penetration", "protectionResolved", "blastConfirmed", "gasConfirmed", "areaConfirmed", "exposureConfirmed", "activeConfirmed", "remaining", "ended", "chargeConfirmed", "ruleConfirmed", "intersects", "exposureEnded"]);
 export function f3Extension(resolved, runtime) {
   const rows = f3RowsForShot(resolved?.shot);
-  const keys = [...new Set(rows.map(r => r.kind))];
   return {
     rows: rows.map(r => ({ ...r, name: f3Text("Name" + r.kind, runtime) })),
-    instructions(details) {
-      const variant = rows[0]?.id.split(":")[0];
-      for (const kind of keys) {
-        const key = kind === "Light" ? (variant === "ht_signal_flare" ? "RuleSignal" : "RuleIllumination") : "Rule" + kind;
-        appendInstructionSteps(details, f3Text(key, runtime), runtime.document);
-      }
-      if (rows.some(r => r.kind === "Sensors")) appendInstructionSteps(details, f3Text("Rule" + variant, runtime), runtime.document);
-      const cloud = resolved?.shot?.profile?.damage?.rules?.environment?.sourceCloud;
-      if (variant === "ht_white_phosphorus" && cloud)
-        appendInstructionSteps(details, f3Text("SourceCloud", runtime, {radius:cloud.radiusYards,seconds:cloud.durationSeconds}), runtime.document);
-      // HAFLA source knowledge remains in F1, without copying those numbers to other WP or catalogs.
-      // The exact HAFLA smoke instructions are already included by F1; do not repeat them.
-    },
     fields(id) {
       const row = F3_ROWS[id]; if (!row) return null;
       return F3_FIELDS[row.kind].map(key => {

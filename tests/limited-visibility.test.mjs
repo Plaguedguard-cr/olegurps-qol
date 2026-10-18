@@ -52,8 +52,9 @@ test("visibility uses ordinary Fire Control and forces random/zero Aim for unsee
   const unseen = fire.calculateEffectiveFireSkillDetails(attack,
     { ...values, visibility: { mode: "unseen" } }, bands, target);
   assert.equal(unseen.effectiveSkill, 14);
-  assert.equal(unseen.modifiers.find(entry => entry.label === "Aim").value, 0);
-  assert.equal(unseen.modifiers.find(entry => entry.label === "Hit Location: silhouette").value, 0);
+  assert.equal(unseen.modifiers.find(entry => entry.channel === "aim").value, 0);
+  assert.equal(unseen.modifiers.find(entry => entry.channel === "hitLocation").value, 0);
+  assert.match(unseen.modifiers.find(entry => entry.channel === "hitLocation").label, /Зона попадания: silhouette/);
   const known = fire.calculateEffectiveFireSkill(attack,
     { ...values, visibility: { mode: "known" } }, bands, target);
   assert.equal(known, 16);
@@ -67,7 +68,7 @@ test("Shooting Blind applies -10 or -6 before the final cap of 9", () => {
       { ...values, visibility: { mode: "blind", accustomed } }, bands, target);
     assert.equal(details.calculatedSkill, 30 + penalty);
     assert.equal(details.effectiveSkill, 9);
-    assert.equal(details.modifiers.find(entry => entry.label === "Cap Shooting Blind: 9").value,
+    assert.equal(details.modifiers.find(entry => entry.channel === "cap").value,
       9 - details.calculatedSkill);
   }
 });
@@ -140,8 +141,8 @@ test("visibility block hides restricted target names and explains the blind cap"
   app.calculateEffectiveSkill = values => values.visibility ? 9 : 24;
   app.targetingService = {};
   const html = app._buildVisibilityContent();
-  assert.match(html, /Cap Shooting Blind: 9/);
-  assert.match(html, /Hearing-2/);
+  assert.match(html, /Предел навыка при стрельбе вслепую: 9/);
+  assert.match(html, /Проверка слуха \(Hearing-2\)/);
   assert.doesNotMatch(html, /Secret Enemy/);
   assert.match(html, /\\u0426\\u0435\\u043b\\u044c|\u0426\u0435\u043b\u044c/);
 });

@@ -3,12 +3,13 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { catalogs, compatibility, automatic, resolver, context, api } from "./fixtures/ht-special-context.mjs";
 import { LEMAT, LEMAT_SHOT_CHARGE, lematBarrel } from "../scripts/ht-physical-ammunition-evidence.js";
+import { projectHTPreGaussMode } from '../scripts/ht-pre-gauss-profiles.js';
 import { standaloneAmmoCarriers } from "../scripts/tools/standalone-weapon-service.js";
 import {printedAccuracyZero,expectedPrintedFields} from './fixtures/ht-printed-statistics.mjs';
 import { AmmoService } from "../scripts/tools/ammo-service.js";
 import { applyInventoryOperation, ammoTypeKey } from "../scripts/tools/ammo-inventory.js";
 import { resolveMultipleProjectileFire } from "../scripts/tools/fire-service.js";
-import { recipeFingerprint, approvalKey } from "../scripts/tools/ammunition-approval-service.js";
+import { recipeFingerprint, setAmmunitionApproval, readAmmunitionApproval } from "../scripts/tools/ammunition-approval-service.js";
 import { displayedAmmoTypes, ammoManagementHTML } from "../scripts/tools/ammo-management-app.js";
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { automaticAmmoMessages, automaticAmmoText, loadAutomaticAmmoTranslations } from "../scripts/tools/automatic-ammunition-localization.js";
@@ -19,6 +20,12 @@ const approval={active:true,actorId:"actor",weaponId:"shot",modeId:LEMAT.shotMod
 const resolve=(type=prepared.type,a=approval)=>resolver.resolve({actorId:"actor",weaponId:"shot",rawAttack:{...shot.raw,bulk:"-3"},
   binding:shot.binding,ammunition:{type},approval:a,profilePolicy:"permissive"});
 test("runtime correction preserves source catalogs and .42 economics while removing central reverse link",()=>{
+  for(const [modeId,acc] of [[LEMAT.revolverModeId,"2"],[LEMAT.shotModeId,"1"]]){
+    const source=catalogs.getCatalog("weapons").equipment.flatMap(e=>e.modes).find(m=>m.weapon_mode_id===modeId);
+    assert.equal(source.stats.accuracy,acc);assert.equal(catalogs.getMode(modeId).stats.accuracy,acc);
+    assert.equal(catalogs.getMode(modeId).sourceStatisticsCorrection,undefined);
+  }
+  assert.equal(resolver.resolve({rawAttack:rev.raw,binding:rev.binding,ammunition:{type:rev.base}}).effective.acc,"2");
   const raw=catalogs.getCatalog("ht").ammo_items.find(a=>a.id===LEMAT.revolverAmmoId);
   assert.ok(raw.weapon_mode_ids.includes(LEMAT.shotModeId));assert.equal(raw.cost_per_shot_usd,0.2);assert.equal(raw.weight_per_shot_lb,0.018);
   assert.deepEqual(catalogs.getAmmoItem("ht",raw.id).weapon_mode_ids,[LEMAT.revolverModeId]);
@@ -58,12 +65,31 @@ test("LeMat B409 is strictly below current 10% half-D and counts 11 pellets as o
     assert.equal(p.extremelyClose,close);assert.equal(p.effectiveRoF,close?1:11);assert.equal(p.closeDamageMultiplier,close?5:null);
   }
 });
-test("+P needs both scoped GM safety and prior loading check; revoke affects future use",()=>{
-  assert.equal(automatic.admission(prepared,{policy:"permissive"}).allowed,false);
-  assert.equal(resolve(prepared.type,null).damage.nativeSafe,false);
+test("OWNER +P needs a scoped loading check, not GM approval or world writes; pressure and ownership remain enforced",async()=>{
+  assert.equal(automatic.admission(prepared,{policy:"permissive"}).allowed,true);
+  assert.equal(automatic.admission(prepared,{policy:"strict"}).allowed,true);
+  assert.equal(resolve(prepared.type,null).damage.reason,"plus-p-loading-check-required");
   assert.equal(resolve(prepared.type,{...approval,plusPDecision:{loadingCheckPassed:false}}).damage.reason,"plus-p-loading-check-required");
-  assert.equal(resolve(prepared.type,{...approval,active:false}).damage.nativeSafe,false);
   assert.equal(resolve(prepared.type,{...approval,weaponId:"revolver"}).damage.nativeSafe,false);
+  const f=fixture(),weapon=f.state().weapons[1],runtime=ownerRuntime(f.actor);
+  f.actor.binding=shot.binding;
+  const inventoryBefore=JSON.stringify(f.state());
+  const saved=await setAmmunitionApproval({actor:f.actor,weapon,type:prepared.type,active:true,plusPDecision:{loadingCheckPassed:true}},runtime);
+  assert.equal(saved.origin,"user");assert.equal(saved.userId,"owner");assert.equal(saved.plusPDecision.loadingConfirmation.perShot,false);
+  assert.deepEqual(readAmmunitionApproval({actor:f.actor,actorId:f.actor.id,weaponId:weapon.id,modeId:LEMAT.shotModeId,type:prepared.type},runtime),saved);
+  assert.equal(resolve(prepared.type,saved).damage.nativeSafe,true);
+  assert.equal(resolve(prepared.type,{...saved,actorId:"foreign"}).damage.nativeSafe,false);
+  assert.equal(resolve(prepared.type,{...saved,fingerprint:"other-recipe"}).damage.nativeSafe,false);
+  await assert.rejects(setAmmunitionApproval({actor:{...f.actor,isOwner:false},weapon,type:prepared.type,active:true},runtime),/Permission/);
+  await assert.rejects(setAmmunitionApproval({actor:f.actor,weapon,type:prepared.type,active:true,plusPDecision:{rof:0}},runtime),/ApprovalScopeRequired/);
+  assert.equal(JSON.stringify(f.state()),inventoryBefore);assert.deepEqual(f.writes,[["olegurps-qol","ammunitionDecisions"]]);
+  const pressure=structuredClone(prepared);pressure.facts.legacyPlusPAdmission=false;
+  delete pressure.facts.evidence.weapon_pressure_rating_verified;
+  assert.equal(automatic.admission(pressure,{approval:saved}).allowed,false);
+  const ownPressure={...saved,plusPDecision:{...saved.plusPDecision,pressureSuitable:true}};
+  assert.equal(automatic.admission(pressure,{approval:ownPressure}).allowed,true);
+  pressure.facts.evidence.weapon_pressure_rating_verified={value:false,source:"confirmed-pressure-prohibition"};
+  assert.equal(automatic.admission(pressure,{approval:ownPressure}).allowed,false);
 });
 const definition={id:"lemat",name:"LeMat",source:{equipmentId:LEMAT.equipmentId},resourceLinks:{ammoWeaponId:"lemat"},
   modes:[LEMAT.revolverModeId,LEMAT.shotModeId].map(modeId=>({modeId}))};
@@ -75,11 +101,15 @@ test("one instance owns distinct 9 and 1 carriers without retagging old stock or
   assert.deepEqual(carriers.map(c=>c.physicalResource.capacity).sort(),[1,9]);
   assert.deepEqual(standaloneAmmoCarriers(definition,carriers),carriers);
 });
+function ownerRuntime(actor){return {OleGURPSQOL:api,game:{user:{id:"owner",isGM:false},actors:new Map([[actor.id,actor]]),settings:{get:()=>null,
+  set:async()=>{throw Error("WorldSettingWriteForbidden");},register:()=>{throw Error("WorldSettingRegistrationForbidden");}}}};}
 function fixture(){let state={weapons:[{id:"rev",standaloneModeId:LEMAT.revolverModeId},{id:"shot",standaloneModeId:LEMAT.shotModeId}].map(w=>({...w,ammunitionInventory:{version:1,stocks:[],magazines:[],installedId:null}}))};
-  const actor={id:"actor",isOwner:true,getFlag:(s,k)=>s==="world"?state:null,setFlag:async(s,k,v)=>{state=structuredClone(v);}};
+  const flags={},writes=[];
+  const actor={id:"actor",isOwner:true,getFlag:(s,k)=>s==="world"&&k==="gurpsAmmoManager"?state:structuredClone(flags[s]?.[k]),
+    setFlag:async(s,k,v)=>{writes.push([s,k]);if(s==="world"&&k==="gurpsAmmoManager")state=structuredClone(v);else{flags[s]??={};flags[s][k]=structuredClone(v);}}};
   const types=[rev.base,shot.base].map(t=>({...t,key:ammoTypeKey(t)}));
   for(let i=0;i<2;i++){const w=state.weapons[i];applyInventoryOperation(w,"add-stock",{ammoKey:types[i].key,amount:10},{allowedTypes:types});applyInventoryOperation(w,"add-magazines",{capacity:i?1:9,amount:1},{makeId:()=>"m"+i});applyInventoryOperation(w,"load",{magazineId:"m"+i,ammoKey:types[i].key,amount:i?1:9},{allowedTypes:types});applyInventoryOperation(w,"install",{magazineId:"m"+i});}
-  return {actor,service:new AmmoService(actor),types,state:()=>state};}
+  return {actor,service:new AmmoService(actor),types,writes,state:()=>state};}
 test("each barrel spends one physical charge, duplicate attack is idempotent and other feed unchanged",async()=>{
   const f=fixture(),other=JSON.stringify(f.state().weapons[0]);
   const input={weaponId:"shot",attackId:"shot-barrel",prepare:({ammunition})=>({profile:resolve(ammunition.type,null),amount:1}),execute:async()=>({rolled:true,message:{id:"message"}})};
@@ -90,13 +120,19 @@ test("each barrel spends one physical charge, duplicate attack is idempotent and
 });
 test("service blocks wrong identities/capacities even with caller-provided permissive type list",async()=>{
   const f=fixture();for(const [weaponId,type] of [["shot",f.types[0]],["rev",f.types[1]]])await assert.rejects(f.service.inventoryTransaction(weaponId,"add-stock",{ammoKey:type.key,amount:1},{allowedTypes:f.types}),/TypeUnavailable/);
-  await assert.rejects(f.service.inventoryTransaction("shot","add-magazines",{capacity:2,amount:1}),/CapacityExceeded/);
+  const before=JSON.stringify(f.state());
+  await assert.rejects(f.service.inventoryTransaction("shot","add-magazines",{capacity:1,amount:1}),/FixedFeedLimit/);
+  await assert.rejects(f.service.inventoryTransaction("shot","add-magazines",{capacity:2,amount:1}),/FixedFeedLimit/);
   await assert.rejects(f.service.inventoryTransaction("rev","add-magazines",{capacity:10,amount:1}),/CapacityExceeded/);
-  const approvals={};globalThis.game.settings.get=()=>approvals;
+  assert.equal(JSON.stringify(f.state()),before);
+  // Without an existing fixed carrier, its own capacity check is reachable.
+  const empty=fixture();empty.state().weapons[1].ammunitionInventory={version:1,stocks:[],magazines:[],installedId:null};
+  await assert.rejects(empty.service.inventoryTransaction("shot","add-magazines",{capacity:2,amount:1}),/CapacityExceeded/);
   await assert.rejects(f.service.inventoryTransaction("shot","add-stock",{ammoKey:prepared.type.key,amount:1},{allowedTypes:[prepared.type]}),/TypeUnavailable/);
-  approvals[approvalKey({actorId:"actor",weaponId:"shot",modeId:LEMAT.shotModeId,type:prepared.type})]=approval;
+  f.actor.binding=shot.binding;
+  await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[1],type:prepared.type,active:true,plusPDecision:{loadingCheckPassed:true}},ownerRuntime(f.actor));
   await f.service.inventoryTransaction("shot","add-stock",{ammoKey:prepared.type.key,amount:1},{allowedTypes:[prepared.type]});
-  globalThis.game.settings.get=()=>"permissive";
+  assert.equal(f.state().weapons[1].ammunitionInventory.stocks.find(s=>s.key===prepared.type.key).rounds,1);
 });
 test("old incorrect recipe is retained, visibly review-required, cannot fire; unload safely returns its original type",()=>{
   const type={...rev.base,key:ammoTypeKey(rev.base),recipe:{version:1,variantId:"ht_plus_p",customId:"old"}},copy=JSON.stringify(type);
@@ -116,11 +152,34 @@ test("new Ready, economics and identity messages resolve RU/EN from actual local
     assert.deepEqual(ammunitionConditionTexts(lematBarrel(LEMAT.shotModeId).manual,lang),[automaticAmmoMessages.ru.BarrelSwitchReadyGM]);}
 });
 test("other 510 native +P pairs retain identities and weapon source records",()=>{
+  const reviewedIdentities={
+    W82oDY970UdeqLXTF:['ht_5_56x45mm_nato','ht_223_remington','HT117/119'],
+    Wkvf5salwlKpkRx_c:['ht_5_56x45mm_nato','ht_223_remington','HT117/119'],
+    WGJgRQusTscOtoLC9:['ht_5_56x45mm_nato','ht_223_remington','HT117/119'],
+    WOAL2ladqiRbTuvRU:['ht_17_5mm_flintlock_mle_1777','ht_specific_mas_an_xiii_17_1_flintlock','HT90/91']};
   const names={ht_87x94mmr_hotchkiss:'37x94mmR Hotchkiss',ht_25_59mmb:'25x59mmB',ht_2_2_25:'2-inch (51mm)',
     ht_56_50_spencer_14x22mmr:'.56-50 Spencer (13x29mmR)',ht_700_nitro_express_17_8x80mmr:'.700 Nitro Express (17.8x89mmR)'};
   const modes=new Map(catalogs.getCatalog("weapons").equipment.flatMap(e=>e.modes.map(m=>[m.weapon_mode_id,m])));let count=0;
   for(const ammo of catalogs.getCatalog("ht").ammo_items)for(const modeId of ammo.weapon_mode_ids){if(modeId===LEMAT.shotModeId)continue;
     count++;const effectiveMode=structuredClone(catalogs.getMode(modeId));
+    if(reviewedIdentities[modeId]){
+      const [original,value,source]=reviewedIdentities[modeId];
+      assert.deepEqual(modes.get(modeId).ht_ammo_item_ids,[original]);
+      assert.deepEqual(effectiveMode.ht_ammo_item_ids,[value]);assert.deepEqual(effectiveMode.ht_ammo_family_ids,[]);
+      assert.deepEqual(effectiveMode.sourceIdentityCorrection,{version:1,source,original,value});
+      effectiveMode.ht_ammo_item_ids=[original];delete effectiveMode.ht_ammo_family_ids;delete effectiveMode.sourceIdentityCorrection;
+    }
+    if(modeId==='WwlfY-FYthqkLvByK') { // Zip-Gun HT92 (not LeMat HT94): printed Acc 0.
+      assert.equal(effectiveMode.ammunitionIdentityPolicy.authority,'user-approved-project-policy');
+      assert.equal(effectiveMode.weaponReliability.malf,12);
+      for(const key of ['caliber_hint','ht_ammo_resolution','ht_ammo_review'])effectiveMode[key]=structuredClone(modes.get(modeId)[key]);
+      delete effectiveMode.ht_ammo_family_ids;delete effectiveMode.ammunitionIdentityPolicy;delete effectiveMode.weaponReliability;
+      assert.equal(modes.get(modeId).stats.accuracy,null);assert.equal(effectiveMode.stats.accuracy,'0');
+      assert.deepEqual(effectiveMode.sourceStatisticsCorrection,{version:1,source:'HT92',fields:[{field:'accuracy',original:null,value:'0'}]});
+      const c=context(modeId),p=resolver.resolve({rawAttack:c.raw,binding:c.binding});
+      assert.equal(p.effective.acc,'0');
+      effectiveMode.stats.accuracy=null;delete effectiveMode.sourceStatisticsCorrection;
+    }
     if(modeId==='Wx13jpOUxRC_YeDo6') { // HT150: effective Acc 0; imported null remains protected.
       assert.equal(modes.get(modeId).stats.accuracy,null);assert.equal(effectiveMode.stats.accuracy,'0');
       assert.deepEqual(effectiveMode.sourceStatisticsCorrection,{version:1,source:'HT150',field:'accuracy',original:null,value:'0'});
@@ -150,9 +209,19 @@ test("other 510 native +P pairs retain identities and weapon source records",()=
       assert.deepEqual(effectiveMode.sourceDamageCorrection,{version:1,source:'HT88, baton table; HT89, paint/pepper described separately',original:'2d-3(0.5) cr',value:'1d-3(0.5) cr'});
       effectiveMode.raw_calc.damage='2d-3(0.5) cr';effectiveMode.stats.damage.base='2d-3';delete effectiveMode.sourceDamageCorrection;
     }
-    assert.deepEqual(effectiveMode,modes.get(modeId));const projected=catalogs.getAmmoItem("ht",ammo.id);
-    assert.equal(projected.id,ammo.id);assert.ok(projected.weapon_mode_ids.includes(modeId));
+    assert.deepEqual(effectiveMode,projectHTPreGaussMode(modes.get(modeId),catalogs.getEquipmentForMode(modeId)));const projected=catalogs.getAmmoItem("ht",ammo.id);
+    assert.equal(projected.id,ammo.id);
+    const reviewed=Object.entries(reviewedIdentities),removed=new Set(reviewed.filter(([,r])=>r[0]===ammo.id).map(([id])=>id));
+    if(ammo.id===LEMAT.revolverAmmoId)removed.add(LEMAT.shotModeId);
+    const added=reviewed.filter(([,r])=>r[1]===ammo.id).map(([id])=>id);
+    assert.deepEqual(projected.weapon_mode_ids,[...new Set([...ammo.weapon_mode_ids.filter(id=>!removed.has(id)),...added])]);
     const restored={...projected,weapon_mode_ids:[]};
+    if(ammo.id==='ht_specific_hydra_laser_guided_70mm'){
+      assert.equal(ammo.attack_override,null);
+      assert.deepEqual(projected.attack_override,{damage:'7dx3 cr ex [3d+2 cut]',secondary_effects:[],selected_variant_only:true,range:'300/10,500',acc:'4'});
+      assert.deepEqual(projected.guidancePackage,{warheadAmmoId:'ht_specific_hydra_mk66_he',source:'HT150: MK66 HE with laser guidance package; independent warhead and guidance',acc:4,manualGuidance:true});
+      restored.attack_override=null;delete restored.guidancePackage;
+    }
     if(names[ammo.id]){assert.equal(projected.name,names[ammo.id]);assert.equal(projected.sourceLabelCorrection.original,ammo.name);
       assert.equal(projected.sourceLabelCorrection.version,1);restored.name=ammo.name;delete restored.sourceLabelCorrection;}
     assert.deepEqual(restored,{...ammo,weapon_mode_ids:[]});}

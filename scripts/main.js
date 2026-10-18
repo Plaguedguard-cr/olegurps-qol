@@ -31,6 +31,8 @@ import { AmmunitionCompatibilityService } from "./ammunition-compatibility-servi
 import { AttackProfileResolver } from "./tools/attack-profile-resolver.js";
 import { loadAttackProfileTranslations } from "./tools/attack-profile-runtime.js";
 import { installDamageShotLink, resolveDamageShotLink } from "./tools/damage-shot-link.js";
+import { installDoubleKnockback } from './tools/double-knockback.js';
+import { installResistanceRoll, rollResistance, messageResistanceEffect } from './tools/resistance-roll.js';
 import { diagnoseGgaDamageAdapters, warnGgaDamageCompatibility, loadAmmoEffectTranslations } from "./tools/gga-damage-compatibility.js";
 
 const MODULE_ID = "olegurps-qol";
@@ -59,6 +61,7 @@ const api = {
   automaticAmmunitionProfiles,
   attackProfiles: new AttackProfileResolver({ catalogs, compatibility: ammunitionCompatibility }),
   damageShots: { resolve: resolveDamageShotLink, diagnose: diagnoseGgaDamageAdapters },
+  resistance:{roll:rollResistance,readEffect:messageResistanceEffect},
   weaponCatalogBindings,
   ammo: { open: openAmmoManager },
   fireControl: { open: openFireControl },
@@ -98,6 +101,10 @@ Hooks.once("ready", async () => {
   warnGgaDamageCompatibility(diagnoseGgaDamageAdapters());
   try { installDamageShotLink(); }
   catch (error) { console.error("OleGURPS QOL | Native damage linkage unavailable:", error); }
+  try { installResistanceRoll(); }
+  catch(error){console.error('OleGURPS QOL | Resistance hooks:',error);}
+  try { installDoubleKnockback(); }
+  catch (error) { console.error('OleGURPS QOL | dkb:', error); }
   await loadAttackProfileTranslations().catch(error => console.error("OleGURPS QOL | Attack profile translations:", error));
   try {
     await registerCustomStatusEffects();

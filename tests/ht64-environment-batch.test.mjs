@@ -36,6 +36,14 @@ test("P5 scope matches thirteen audited variants and the structured source revie
   assert.deepEqual(audit.records.filter(r => r.implementationGroup === "P5_environment_payloads").map(r => r.variantId).sort(), Object.keys(ENVIRONMENT_VARIANTS).sort());
   for (const id of Object.keys(ENVIRONMENT_VARIANTS)) assert.deepEqual(review.records.find(r => r.id === id).conditions, catalogs.getVariant("ht", id).eligibility_v1.conditions);
 });
+test("owner source is accepted for explicit environmental constructions without changing technical checks",()=>{
+  for(const id of Object.keys(ENVIRONMENT_VARIANTS)){
+    const s=numerical(id,{source:{kind:'user',note:'Owner construction'}});
+    assert.equal(s.r.status,'resolved');
+    assert.equal(resolveAmmunitionEffects({raw:{damage:'4d pi',range:'100/1000'},variantId:id,baseStatus:'compatible',constructionStatus:'user-defined',facts:s.r.facts}).nativeSafe,true);
+    assert.equal(reviewEnvironmentDefinition(s.option,{...s.facts,caliberMm:99},s.d).status,'unresolved');
+  }
+});
 for (const id of Object.keys(ENVIRONMENT_VARIANTS)) test(id + " exact mechanics, required evidence, TL/caliber/platform, no invented filler", () => {
   const s = numerical(id); assert.equal(s.r.status, "resolved"); assert.equal(s.effect.nativeSafe, true);
   assert.deepEqual(s.effect.rules.environment.mechanics, s.option.mechanics);
@@ -98,7 +106,7 @@ test("source WP ready under strict policy preserves native blast, fragments, ran
   // HT145/172 corrects the effective WP fragment type; the protected catalog remains untouched.
   assert.equal(shot.damage.transformations.filter(t => t.applied).length, 1);
   assert.equal(shot.damage.transformations[0].from, c.raw.damage); assert.equal(shot.effective.range, "10/90");
-  assert.equal(shot.damage.rules.costPerShot, undefined); assert.equal(automatic.admission(p, { approval: { active: false } }).allowed, false);
+  assert.equal(shot.damage.rules.costPerShot, undefined); assert.equal(automatic.admission(p, { approval: { active: false } }).allowed, true);
 });
 test("base WP derives immutable shot only; saved recipes reload, switch and native secondary Damage remain stable/private", () => {
   const { c, p } = published(), old = JSON.stringify(c.base);

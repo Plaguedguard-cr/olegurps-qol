@@ -287,7 +287,7 @@ test("Deceptive Attack combines with a situation modifier without mixing defense
 });
 
 
-test("prepared GGA message shows channel transitions from the same ranged calculation", async () => {
+test("prepared GGA message keeps resolved modifiers without duplicating the skill derivation", async () => {
   const fixture = withRangedRuntime(() => rangedFixture(rangedActor()));
   const calculation = withRangedRuntime(() => fixture.details().combatCalculation);
   let message;
@@ -311,14 +311,58 @@ test("prepared GGA message shows channel transitions from the same ranged calcul
     effectiveSkill: calculation.effectiveSkill, combatCalculation: calculation,
     physicalShots: 1, effectiveRoF: 1, rcl: 1, consumeAction: false, runtime });
   assert.equal(result.rollData.finaltarget, 8);
-  assert.match(message.content, /<details class="olegurps-attack-modifiers"><summary style="cursor:pointer">/);
-  assert.match(message.content, /<details class="olegurps-combat-channel-breakdown"><summary style="cursor:pointer">Расчёт навыка<\/summary><div><strong>Базовый навык оружия: 13/);
+  assert.match(message.content, /<details class="olegurps-attack-modifiers olegurps-chat-details"><summary style="cursor:pointer">/);
+  assert.doesNotMatch(message.content, /olegurps-combat-channel-breakdown|olegurps-standalone-skill/);
   assert.doesNotMatch(message.content, /<details[^>]*\bopen\b/);
-  assert.match(message.content, /Базовый навык оружия: 13/);
-  assert.match(message.content, /Ranged Rapid Strike -6 -&gt; Quick-Shot 0/);
-  assert.match(message.content, /Hit Location -5 -&gt; Targeted Attack -2/);
-  assert.match(message.content, /Move and Attack -5 -&gt; CQB -1/);
-  assert.match(message.content, /Close Combat Bulk -5 -&gt; Close-Hip Shooting -2/);
+  assert.equal(result.rollData.origtarget,13);
+  assert.equal(result.rollData.modifier,-5);
+  assert.equal(result.rollData.rtotal,10);
+  assert.equal(result.rollData.margin,-2);
+  assert.equal(result.rollData.failure,true);
+  assert.deepEqual(calculation.channels.filter(e=>e.resolver&&e.baseValue!==e.resolvedValue).map(e=>e.explanation),[
+    'Ranged Rapid Strike -6 -> Quick-Shot 0',
+    'Move and Attack -5 -> CQB -1',
+    'Close Combat Bulk -5 -> Close-Hip Shooting -2',
+    'Hit Location -5 -> Targeted Attack -2'
+  ]);
+});
+
+for (const [mode, level, expected, channelId, penalty] of [
+  ["CHS", 13, 11, "closeCombatBulk", -2],
+  ["CQB", 13, 12, "moveAndAttack", -1],
+  ["blind", 30, 9, "visibility", -10]
+]) test("Fire Control -> FireService -> native GGA -> private ChatMessage: " + mode, async () => {
+  const previous = { game: globalThis.game, GURPS: globalThis.GURPS };
+  const stack = [], applied = [], messages = [];
+  const bucket = { modifierStack: { modifierList: stack },
+    addModifier(value, desc) { stack.push({ modint: value, desc }); },
+    clear() { stack.length = 0; },
+    async applyMods() { applied.push(...structuredClone(stack)); return structuredClone(stack); } };
+  const runtime = { game: { user: { id: "owner", targets: new Set() }, settings: { get: () => null } },
+    GURPS: { ModifierBucket: bucket, setLastTargetedRoll() {} }, canvas: { tokens: { placeables: [] } },
+    ChatMessage: { getSpeaker: () => ({ actor: "temporary" }), create: async data => {
+      const message = { ...data, id: mode, whisper: ["owner"], async setFlag() {} }; messages.push(message); return message;
+    } },
+    Roll: { create: () => ({ total: 10, dice: [{ results: [3,3,4].map(result => ({ result })) }],
+      async evaluate() { return this; } }) }, renderTemplate: async () => "<p>GGA</p>" };
+  globalThis.game = runtime.game; globalThis.GURPS = runtime.GURPS;
+  try {
+    const fixture = rangedFixture(rangedActor(), level);
+    Object.assign(fixture.values, { closeHipShooting: mode === "CHS", moveAndAttack: mode === "CQB",
+      rangedRapidStrike: false, hitLocationId: "torso", visibility: { mode: mode === "blind" ? "blind" : "normal" } });
+    const details = fixture.details(), calculation = details.combatCalculation;
+    assert.equal(details.effectiveSkill, expected);
+    assert.equal(calculation.channels.find(entry => entry.id === channelId).resolvedValue, penalty);
+    const service = new FireService({ actor: fixture.actor, token: fixture.token,
+      preparedRollExecutor: options => executePreparedGgaRoll({ ...options, consumeAction: false, runtime }) });
+    const result = await service.executeRangedAttack(fixture.attack, { ...details, physicalShots: 1, effectiveRoF: 1, rcl: 1 });
+    assert.equal(result.rollData.finaltarget, expected); assert.equal(messages.length, 1);
+    assert.deepEqual(applied.map(entry => entry.modint), [penalty]);
+    assert.equal(messages[0].whisper[0], "owner");
+    assert.match(messages[0].content, /olegurps-chat-details/);
+    assert.doesNotMatch(messages[0].content, /<details[^>]*\bopen\b/);
+    assert.equal(stack.length, 0);
+  } finally { globalThis.game = previous.game; globalThis.GURPS = previous.GURPS; }
 });
 
 
@@ -357,9 +401,9 @@ test("standalone Fire Control folds modifiers and contextual attack details", as
   await executePreparedSkillRoll({ actor: { id: "actor" }, baseSkill: 13, effectiveSkill: 11,
     modifierDetails: [{ label: "Range", value: -2 }],
     location: { label: "Face", random: false }, closeMultiplier: 2, runtime });
-  assert.match(message.content, /<details class="olegurps-attack-modifiers"><summary/);
+  assert.match(message.content, /<details class="olegurps-attack-modifiers olegurps-chat-details"><summary/);
   assert.match(message.content, /Range \(-2\)/);
-  assert.match(message.content, /<details class="olegurps-attack-context"><summary/);
+  assert.match(message.content, /<details class="olegurps-attack-context olegurps-chat-details"><summary/);
   assert.match(message.content, /Зона попадания: Face/);
   assert.match(message.content, /Предельно близко: базовый урон ×2, DR ×2/);
   assert.doesNotMatch(message.content, /<details[^>]*\bopen\b/);

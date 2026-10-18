@@ -177,6 +177,17 @@
 .gam-ammo-inventory:has(> [data-published-explosive]) { grid-auto-rows: max-content; align-content: start; }
 .gam-ammo-inventory p, .gam-ammo-inventory hr { margin: 0; }
 .gam-ammo-inventory label, .gam-ammo-inventory select { min-width: 0; width: 100%; }
+.gam-ammo-inventory [data-ut-payload] { min-width: 0; }
+.gam-ammo-inventory .gam-payload-fields { display: grid; gap: 8px; margin-top: 8px; min-width: 0; }
+.gam-ammo-inventory .gam-payload-short-fields { display: grid; grid-template-columns: repeat(2,minmax(0,180px)); gap: 8px 12px; min-width: 0; }
+@media (max-width: 480px) {
+  .gam-ammo-inventory .gam-payload-short-fields { grid-template-columns: minmax(0,1fr); }
+}
+.application.olegurps-qol:has(.gam-ammo-inventory [data-ut-payload]) { min-width: min(720px, calc(100vw - 24px)); }
+.gam-ammo-inventory [data-ut-payload] label { display: grid; gap: 3px; }
+.gam-ammo-inventory [data-ut-payload] input, .gam-ammo-inventory [data-ut-payload] textarea { width: 100%; min-width: 0; box-sizing: border-box; }
+.gam-ammo-inventory [data-ut-payload] textarea { resize: vertical; overflow-wrap: anywhere; }
+.gam-ammo-inventory [data-ut-payload] button { white-space: normal; }
 .oq-crit { font-size: .94em; }
 .oq-crit .oq-crit-row { margin: 0; padding: 10px 2px; border: 0; border-top: 1px solid rgba(128,128,128,.28); border-bottom: 1px solid rgba(128,128,128,.28); }
 .oq-crit-row legend { font-weight: 700; }
@@ -858,6 +869,16 @@ dialog.gam-roll-confirmation {
   width: calc(50% - 0.25rem);
   margin-inline: 0.1rem;
 }
+.olegurps-chat-details > summary {
+  font: 400 13px/18px Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  display: list-item;
+  list-style-type: disclosure-closed;
+}
+.olegurps-chat-details[open] > summary { list-style-type: disclosure-open; }
+.olegurps-chat-details > summary::marker { font: inherit; color: inherit; }
 .olegurps-ammunition-steps { margin: 6px 0; padding-left: 22px; line-height: 1.4; }
 [data-olegurps-special-effects] .olegurps-f4-local > button { width: 100%; }
 .olegurps-ammunition-steps > li { margin: 4px 0; overflow-wrap: anywhere; }
@@ -869,3 +890,6 @@ dialog.gam-roll-confirmation {
 .olegurps-qol [data-load-ballistics] label { display: grid; grid-template-columns: 65px minmax(0, 1fr); gap: 8px; margin: 6px 0; }
 .olegurps-qol [data-load-ballistics] input { min-width: 0; width: 100%; }
 .olegurps-qol[aria-busy="true"] [data-inventory-action] { cursor: progress; }
+.gam-fuel-bottle { position:relative; display:block; width:16px; height:28px; margin-top:4px; border:2px solid currentColor; border-radius:5px 5px 4px 4px; }
+.gam-fuel-bottle::before { content:""; position:absolute; z-index:1; top:-6px; left:3px; right:3px; height:5px; border:1px solid currentColor; border-radius:1px; }
+.gam-fuel-liquid { position:absolute; display:block; bottom:0; left:0; right:0; border-radius:0 0 2px 2px; }

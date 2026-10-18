@@ -113,7 +113,8 @@ export function setSelectedMeleeAttack(state, attack) {
 
 export function getMeleeAttackSettings(state, attack) {
   const key = storedAttackKey(attack);
-  return key ? state?.attacks?.[key] ?? {} : {};
+  const settings=key ? state?.attacks?.[key] ?? {} : {};
+  return typeof attack?.weaponBondSetting==='boolean'?{...settings,weaponBond:attack.weaponBondSetting}:settings;
 }
 
 export function applyMeleeAttackOverride(attack, state) {

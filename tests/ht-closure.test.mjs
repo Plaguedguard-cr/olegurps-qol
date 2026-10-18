@@ -30,7 +30,8 @@ export async function standaloneFixture(mid,overrides={}){
 for(const row of earlier)test('each formerly blocked source link uses explicit applicability: '+row.ordinal,async()=>{
  if(row.modeId==='WwlfY-FYthqkLvByK'){
   assert.equal(catalogs.getMode(row.modeId).stats.accuracy,'0');
-  await assert.rejects(standaloneFixture(row.modeId),/физический патрон/);return;
+  const f=await standaloneFixture(row.modeId);assert.equal(f.attack.readinessReason,null);
+  assert.deepEqual(catalogs.getMode(row.modeId).ht_ammo_item_ids,['ht_22_long_rifle_5_7x16mmr']);return;
  }
  const f=await standaloneFixture(row.modeId),p=f.attack.platformRules;
  if(p?.kind==='mortar'){
@@ -115,7 +116,9 @@ for(const[mid,aid]of substitutes)test('HT178 physical permission does not invent
  assert.equal(p.damage.nativeSafe,false);assert.equal(p.damage.reason,'AlternateLoadBallisticsRequired');
  const w={id:'w',attackRef:{path:'system.ranged.mode'},ammunitionInventory:{version:1,stocks:[],magazines:[],installedId:null}},opts={allowedTypes:[type],makeId:()=> 'm'};
  applyInventoryOperation(w,'add-stock',{ammoKey:type.key,amount:3},opts);applyInventoryOperation(w,'add-magazines',{capacity:3,amount:1},opts);applyInventoryOperation(w,'load',{ammoKey:type.key,magazineId:'m',amount:2},opts);applyInventoryOperation(w,'install',{magazineId:'m'},opts);
- let state={weapons:[w]};const actor={id:'closure',isOwner:true,system:{ranged:{mode:c.raw}},binding:c.binding,getFlag:()=>state,setFlag:async(_s,_k,v)=>state=v};
+ let state={weapons:[w]};const actor={id:'closure',isOwner:true,system:{ranged:{mode:c.raw}},binding:c.binding,
+   getFlag:(s,k)=>s==='world'&&k==='gurpsAmmoManager'?state:undefined,
+   setFlag:async(s,k,v)=>{assert.equal(s,'world');assert.equal(k,'gurpsAmmoManager');state=v;}};
  assert(availableAmmoTypes(actor,w,api).find(t=>t.ammoId===aid&&!t.recipe)?.unavailable);
  const before=JSON.stringify(state);await assert.rejects(new AmmoService(actor).executeShot({weaponId:'w',attackId:'a',prepare:()=>({profile:p,amount:1}),execute:()=>{throw Error('must not roll');}}),/AlternateLoadBallisticsRequired/);
  assert.equal(JSON.stringify(state),before);assert.equal(inventoryTotal(w.ammunitionInventory),3);

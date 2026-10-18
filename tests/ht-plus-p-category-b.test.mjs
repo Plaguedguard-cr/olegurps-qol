@@ -1,6 +1,7 @@
 import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
 import { HT_SOURCE_REVIEW } from "../scripts/ht-source-corrections.js";
-import { assertPlusPReadyIdentities } from "./fixtures/ht-plus-p-ready-identities.mjs";
+import { assertPlusPReadyIdentities, ownerManualG } from "./fixtures/ht-plus-p-ready-identities.mjs";
+import { ownerRuntime, reloadOwnerActor, assertUnprovenPressure } from "./fixtures/ht-plus-p-owner.mjs";
 import { moduleText as russianText } from "../scripts/localization.js";
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -15,7 +16,7 @@ import { shotgunProjectileKind } from "../scripts/tools/shotgun-ammunition.js";
 import { availableAmmoTypes, displayedAmmoTypes, ammoManagementHTML } from "../scripts/tools/ammo-management-app.js";
 import { ammunitionConditionTexts, shotAmmunitionConditions } from "../scripts/tools/damage-shot-link.js";
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
-import { recipeFingerprint, setAmmunitionApproval } from "../scripts/tools/ammunition-approval-service.js";
+import { recipeFingerprint, setAmmunitionApproval, readAmmunitionApproval } from "../scripts/tools/ammunition-approval-service.js";
 import { loadAutomaticAmmoTranslations, automaticAmmoText } from "../scripts/tools/automatic-ammunition-localization.js";
 import { readStandaloneAttack } from "../scripts/tools/standalone-attack-service.js";
 import { StandaloneWeaponService, StandaloneWeaponDraft } from "../scripts/tools/standalone-weapon-service.js";
@@ -26,15 +27,40 @@ const historicalCategoryB = readAuditFixture('ht-plus-p-category-b');
 const b = baseline.rows.filter(r => r.primaryCategory === "B");
 const win = "W19ooSM10ivSwlXSP", usas = "W2EHajHoWWSlF8B6z", vickers = "W1h1yefMQlw39LdSu";
 const report = auditPlusPCategoryB({ catalogs, compatibility, baseline });
-test("B boundary: historical 85/21 retained; all 106 calculable; E/F closed and seven reviewed G admitted", () => {
+// Keep the immutable historical checkpoint; test the single approved delta separately.
+const historicalBoundary=rows=>rows.map(r=>r.modeId==='WwlfY-FYthqkLvByK'?{...r,ready:false}:r);
+test("B boundary preserves historical 85/21, closed E/F and the two source-verified OWNER manual G additions", async() => {
   assert.equal(report.examined,511); assert.equal(report.rows.length,106); assert.equal(report.previousReady,284);
-  assert.equal(report.newNumericProfiles,104); assert.equal(report.newReadyWithoutLoadingConfirmation,78);
-  assert.equal(report.readyWithoutLoadingConfirmation,366); assert.equal(report.readyAfterRequiredGMConfirmations,388);
-  assertPlusPReadyIdentities(report.all);
-  assert.equal(report.incompleteB,2); assert.equal(report.loadingChecks,27); assert.equal(report.standaloneOnlyBlockedPairs,4); // HT91 printed Rigby Acc 0 restored in the effective view.
-  assert.deepEqual(report.unchangedClosed,{E:{count:12,opened:0},F:{count:98,opened:0},G:{count:11,opened:7}});
-  assert.deepEqual(report.rows.filter(r=>!r.numericReady).map(r=>r.modeId).sort(),['WOAL2ladqiRbTuvRU','WwlfY-FYthqkLvByK'].sort());
-  assert.ok(report.all.every(r=>r.rulesStatus==='undetermined'));
+  assert.equal(report.newNumericProfiles,105); assert.equal(report.newReadyWithoutLoadingConfirmation,79);
+  assert.equal(report.readyWithoutLoadingConfirmation,369); assert.equal(report.readyAfterRequiredGMConfirmations,389);
+  assertPlusPReadyIdentities(historicalBoundary(report.all));
+  assert.equal(report.all.find(r=>r.modeId==='WwlfY-FYthqkLvByK').ready,true);
+  const oldReady=readAuditFixture('ht-12g-case-correction').all.filter(r=>r.ready);
+  const oldKeys=new Set(oldReady.map(r=>r.modeId+'/'+(r.ammoId??r.ammoItemId)));
+  const added=report.all.filter(r=>r.ready&&!oldKeys.has(r.modeId+'/'+r.ammoId));
+  // Seven previously reviewed APHC/HP profiles plus precisely APS and KPV.
+  assert.equal(added.length,9);
+  assert.deepEqual(added.filter(r=>ownerManualG.some(([id])=>id===r.modeId)).map(r=>[r.modeId,r.ammoId]),ownerManualG);
+  for(const [modeId,ammoId] of ownerManualG){
+    const c=context(modeId),p=automatic.prepare({modeId,base:c.base,variantId:'ht_plus_p'});
+    assert.equal(c.base.ammoId,ammoId);assert.equal(compatibility.checkCompatibility(modeId,ammoId).status,'compatible');
+    assert.equal(p.facts.nativeChargeBaseline.ammoId,ammoId);assert.equal(p.rulesStatus,'undetermined');
+    assert.equal(automatic.admission(p,{policy:'strict'}).authority,'user-defined');
+    const profile=resolver.resolve({rawAttack:c.raw,binding:c.binding,ammunition:{type:p.type},profilePolicy:'strict'});
+    assert.equal(profile.damage.nativeSafe,true);assertUnprovenPressure(profile);
+    const f=inventoryFixture(modeId,'ht_plus_p'),runtime=ownerRuntime(f.actor,api);
+    const decision=await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[0],type:f.type,active:true,
+      plusPDecision:{malfModifier:-1,rof:12}},runtime);
+    const actor=reloadOwnerActor(f.actor);
+    assert.deepEqual(readAmmunitionApproval({actor,actorId:actor.id,weaponId:'weapon',modeId,type:f.type},ownerRuntime(actor,api)),decision);
+    const chosen=resolver.resolve({actorId:actor.id,weaponId:'weapon',rawAttack:c.raw,binding:c.binding,ammunition:{type:f.type},approval:decision,profilePolicy:'strict'});
+    assert.equal(chosen.effective.rof,'12');assert.equal(chosen.damage.rules.pressure.decision.origin,'user');assertUnprovenPressure(chosen);
+  }
+  assert.equal(report.incompleteB,1); assert.equal(report.loadingChecks,27); assert.equal(report.standaloneOnlyBlockedPairs,4); // HT91 printed Rigby Acc 0 restored in the effective view.
+  assert.deepEqual(report.unchangedClosed,{E:{count:12,opened:0},F:{count:98,opened:0},G:{count:11,opened:9}});
+  assert.deepEqual(report.rows.filter(r=>!r.numericReady).map(r=>r.modeId),['WOAL2ladqiRbTuvRU']);
+  assert.deepEqual(report.all.filter(r=>r.rulesStatus!=='undetermined').map(r=>[r.modeId,r.rulesStatus]),
+    [['WhcXEtCOb-yikzW5Z','incompatible'],['WI9EWrbCRSJOCS_y4','incompatible']]); // Existing signal-only source profiles.
   const historical=historicalCategoryB;
   assert.equal(historical.newNumericProfiles,85);assert.equal(historical.incompleteB,21);
   for(const row of report.rows) { assert.ok(row.source); assert.equal(row.numericReady,!HT_SOURCE_REVIEW[row.modeId]); }
@@ -50,10 +76,10 @@ test("Vickers native 10! is ready, HT166 damage/ranges/ST are computed without p
 test("exact +P identity checkpoint rejects a same-count substitution and duplicate pairs",()=>{
   const changed=structuredClone(report.all);
   changed.find(r=>r.ready).ready=false;
-  changed.find(r=>r.modeId==='WwlfY-FYthqkLvByK').ready=true;
-  assert.equal(changed.filter(r=>r.ready).length,366);
-  assert.throws(()=>assertPlusPReadyIdentities(changed),assert.AssertionError);
-  assert.throws(()=>assertPlusPReadyIdentities([...report.all,report.all[0]]),assert.AssertionError);
+  changed.find(r=>r.modeId==='WOAL2ladqiRbTuvRU').ready=true;
+  assert.equal(changed.filter(r=>r.ready).length,369);
+  assert.throws(()=>assertPlusPReadyIdentities(historicalBoundary(changed)),assert.AssertionError);
+  assert.throws(()=>assertPlusPReadyIdentities(historicalBoundary([...report.all,report.all[0]])),assert.AssertionError);
 });
 test("physical and pellet RoF remain separate for six patterns and all native delimiters", () => {
   const service=new FireService({});
@@ -99,29 +125,35 @@ test("B409 calculation report uses completed +P Damage, preserving raw and nativ
   assert.equal(damage.formula,'2d pi');const result=report({data:raw},{extremelyClose:true,closeDamageMultiplier:6},{damage});
   assert.equal(result.formula,'12d');assert.equal(result.source,'2d pi');assert.equal(raw.damage,'2d-1 pi');assert.equal(damage.formula,'2d pi');
 });
-test("GM physical RoF decision preserves pellets and !/#, without changing Rcl",()=>{
+test("OWNER physical RoF decision preserves pellets and !/#, without changing Rcl",()=>{
   for(const [raw,expected] of [['2x9','3x9'],['2\u00d79','3\u00d79'],['10!','3!'],['3#','3#'],['2','3']]) {
-    const p=resolveAmmunitionEffects({raw:{damage:'1d+1 pi',range:'40/800',st:'11\u2020',rof:raw,rcl:'1/5'},variantId:'ht_plus_p',baseStatus:'compatible',constructionStatus:'gm-approved',facts:{plusPDecision:{rof:3}}});
+    const p=resolveAmmunitionEffects({raw:{damage:'1d+1 pi',range:'40/800',st:'11\u2020',rof:raw,rcl:'1/5'},variantId:'ht_plus_p',baseStatus:'compatible',constructionStatus:'user-defined',facts:{plusPDecision:{origin:'user',rof:3}}});
     assert.equal(p.effectiveChanges.rof,expected);assert.equal(p.effectiveChanges.rcl,undefined);
   }
 });
-test("powder-and-shot requires GM confirmation before stock/load; exact confirmation persists in old snapshot",async()=>{
+test("powder-and-shot requires an OWNER loading check before stock/load; its scoped confirmation survives reload and snapshots",async()=>{
   const row=b.find(r=>r.GM.loadingCheckRequired),c=context(row.modeId),type=automatic.prepare({modeId:row.modeId,base:c.base,variantId:'ht_plus_p'}).type;
-  assert.ok(type);const f=inventoryFixture(row.modeId,'ht_plus_p');let settings={};
-  const runtime={game:{user:{isGM:true,id:'gm'},settings:{get:()=>settings,set:async(s,k,v)=>{settings=structuredClone(v);}}},OleGURPSQOL:api};
+  assert.ok(type);const f=inventoryFixture(row.modeId,'ht_plus_p'),runtime=ownerRuntime(f.actor,api);
   const input={actorId:'actor',weaponId:'weapon',rawAttack:c.raw,binding:c.binding,ammunition:{type},profilePolicy:'permissive'};
   assert.equal(resolver.resolve(input).damage.reason,'plus-p-loading-check-required');
   const approval=await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[0],type,active:true,plusPDecision:{loadingCheckPassed:true}},runtime);
-  assert.equal(approval.plusPDecision.loadingConfirmation.gmId,'gm');assert.equal(approval.plusPDecision.loadingConfirmation.perShot,false);
-  const approvedSettings=structuredClone(settings);
+  assert.equal(approval.origin,'user');assert.equal(approval.plusPDecision.loadingConfirmation.userId,'owner');
+  assert.equal(approval.plusPDecision.loadingConfirmation.gmId,undefined);assert.equal(approval.plusPDecision.loadingConfirmation.perShot,false);
+  const actor=reloadOwnerActor(f.actor),reloaded=ownerRuntime(actor,api);
+  assert.deepEqual(readAmmunitionApproval({actor,actorId:actor.id,weaponId:'weapon',modeId:row.modeId,type},reloaded),approval);
   const p=resolver.resolve({...input,approval}),shot=createShotSnapshot(p,{attackId:'loaded',messageId:'msg'}),saved=JSON.stringify(shot);
   assert.equal(p.damage.nativeSafe,true);assert.equal(p.damage.rules.loadingCheck.perShot,false);
-  await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[0],type,active:false},runtime);
-  assert.equal(JSON.stringify(shot),saved);assert.equal(JSON.parse(saved).profile.damage.rules.pressure.decision.loadingConfirmation.id,approval.plusPDecision.loadingConfirmation.id);
-  const oldApi=globalThis.OleGURPSQOL,oldGet=game.settings.get;globalThis.OleGURPSQOL=api;
-  try {game.settings.get=(s,k)=>k==='ammunitionApprovals'?approvedSettings:'permissive';
+  const oldApi=globalThis.OleGURPSQOL,oldGame=globalThis.game;
+  globalThis.OleGURPSQOL=api;globalThis.game={...oldGame,...runtime.game};
+  try {
     assert.ok(availableAmmoTypes(f.actor,f.state().weapons[0],api,'ru').some(t=>t.key===type.key&&!t.unavailable));
-    game.settings.get=(s,k)=>k==='ammunitionApprovals'?{}:'permissive';
+    const allowed=availableAmmoTypes(f.actor,f.state().weapons[0],api,'ru');
+    await f.service.inventoryTransaction('weapon','load',{magazineId:'m2',ammoKey:type.key,amount:1},{allowedTypes:allowed});
+    await f.service.inventoryTransaction('weapon','unload',{magazineId:'m2',amount:1});
+    await assert.rejects(setAmmunitionApproval({actor:{...f.actor,isOwner:false},weapon:f.state().weapons[0],type,active:true,plusPDecision:{loadingCheckPassed:true}},runtime),/Permission/);
+    await setAmmunitionApproval({actor:f.actor,weapon:f.state().weapons[0],type,active:true,plusPDecision:{loadingCheckPassed:false}},runtime);
+    assert.equal(JSON.stringify(shot),saved);assert.equal(JSON.parse(saved).profile.damage.rules.pressure.decision.loadingConfirmation.id,approval.plusPDecision.loadingConfirmation.id);
+    assert.equal(resolver.resolve({...input,approval:readAmmunitionApproval({actor:f.actor,actorId:f.actor.id,weaponId:'weapon',modeId:row.modeId,type},runtime)}).damage.reason,'plus-p-loading-check-required');
     const selectable=availableAmmoTypes(f.actor,f.state().weapons[0],api,'ru');
     assert.ok(!selectable.some(t=>t.recipe?.variantId==='ht_plus_p'));
     const types=displayedAmmoTypes(f.actor,f.state().weapons[0],api,'ru'),p=types.find(t=>t.key===type.key);
@@ -138,7 +170,7 @@ test("powder-and-shot requires GM confirmation before stock/load; exact confirma
     assert.equal(f.state().weapons[0].totalAmmo,10);
     await f.service.inventoryTransaction('weapon','remove-stock',{ammoKey:p.key,amount:10});
     assert.equal(f.state().weapons[0].totalAmmo,0);assert.equal(JSON.stringify(shot),saved);
-  }finally{globalThis.OleGURPSQOL=oldApi;game.settings.get=oldGet;}
+  }finally{globalThis.OleGURPSQOL=oldApi;globalThis.game=oldGame;}
 });
 test("ordinary conventional-case legacy stock remains distinct and unload/deletion returns its own rounds with ready +P",async()=>{
   const f=inventoryFixture(win,'ht_plus_p'),regular=context(win).base;
@@ -171,10 +203,11 @@ test("missing Acc and Bulk remain precise standalone-only blockers; composite Rc
   for(const modeId of [win,...b.filter(r=>r.downstreamStandaloneReadiness.restrictions.some(v=>['Acc','Bulk'].includes(v))).map(r=>r.modeId)]){
     const eq=catalogs.getEquipmentForMode(modeId),draft=new StandaloneWeaponDraft({catalogs,type:'ranged'});draft.selectModel(eq.equipment_id);draft.modeIds=new Set([modeId]);
     if(modeId==='WwlfY-FYthqkLvByK'){
-      const before=structuredClone(actor.flags),system=structuredClone(actor.system);
+      const system=structuredClone(actor.system);
       assert.equal(catalogs.getMode(modeId).stats.accuracy,'0');
-      await assert.rejects(new StandaloneWeaponService(actor,catalogs).save(draft),/физический патрон Zip-Gun/);
-      assert.deepEqual(actor.flags,before);assert.deepEqual(actor.system,system);continue;
+      const record=await new StandaloneWeaponService(actor,catalogs).save(draft);
+      assert.equal(readStandaloneAttack(actor,record.id,modeId).readinessReason,null);
+      assert.deepEqual(actor.system,system);continue;
     }
     const record=await new StandaloneWeaponService(actor,catalogs).save(draft);const attack=readStandaloneAttack(actor,record.id,modeId);
     if(modeId===win)assert.equal(attack.readinessReason,null);
@@ -183,7 +216,7 @@ test("missing Acc and Bulk remain precise standalone-only blockers; composite Rc
     else{assert.match(attack.readinessReason,/Acc|Bulk/);assert.ok(attack.data.acc===null||attack.data.bulk===null);}
   }
 });
-test("historical Zip-Gun definition and unconfirmed stock survive; only unload and removal are allowed",async()=>{
+test("Zip-Gun with an unverified source hash preserves its definition and stock; identity policy does not forge a catalog binding",async()=>{
   const modeId='WwlfY-FYthqkLvByK',equipment=catalogs.getEquipmentForMode(modeId),mode=catalogs.getRecord('weapons','modes',modeId);
   const record={id:'old-zip',type:'ranged',revision:1,name:equipment.name,
     source:{equipmentId:equipment.equipment_id,source:'HT',filename:'legacy-import.json',sourceHash:'old'},
@@ -198,9 +231,10 @@ test("historical Zip-Gun definition and unconfirmed stock survive; only unload a
     flags:{'olegurps-qol':{standaloneWeapons:{version:1,weapons:[record]}},world:{gurpsAmmoManager:{version:10,weapons:[weapon]}}},
     getFlag(s,k){return this.flags[s]?.[k];},async setFlag(s,k,v){(this.flags[s]??={})[k]=structuredClone(v);}};
   const definitions=new StandaloneWeaponService(actor,catalogs),beforeSystem=structuredClone(actor.system);
-  assert.deepEqual(definitions.get(record.id),record);
+  assert.deepEqual(actor.flags['olegurps-qol'].standaloneWeapons.weapons[0],record);
+  assert.equal(definitions.get(record.id).modes[0].snapshot.stats.accuracy,'0');
   const saved=await definitions.save(new StandaloneWeaponDraft({catalogs,type:'ranged',existing:record}));
-  assert.deepEqual(saved.modes,record.modes);assert.deepEqual(saved.source,record.source);assert.deepEqual(saved.settings,record.settings);
+  assert.deepEqual(saved.modes[0].overrides,record.modes[0].overrides);assert.equal(saved.modes[0].snapshot.stats.accuracy,'0');assert.deepEqual(saved.source,record.source);assert.deepEqual(saved.settings,record.settings);
   assert.equal(saved.name,record.name);
   const types=displayedAmmoTypes(actor,weapon,api,'ru'),historical=types.find(t=>t.key===key);
   assert.equal(historical.historical,true);assert.equal(historical.unavailable,true);

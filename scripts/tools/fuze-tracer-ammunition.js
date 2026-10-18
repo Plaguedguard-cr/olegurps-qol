@@ -49,7 +49,7 @@ export function sourceFuzeTracerDefinition(catalogs, modeId, ammo, variantId) {
 export function reviewFuzeTracerDefinition(option, originalFacts, definition) {
   const facts = copy(originalFacts ?? {}), fail = reason => ({ status: "unresolved", reason, facts });
   if (!isFuzeTracerVariant(option?.id) || definition?.variantId !== option.id || definition.verified !== true ||
-      !["reference", "gm"].includes(definition.source?.kind) || !definition.source?.note?.trim() ||
+      !["reference", "gm", "user"].includes(definition.source?.kind) || !definition.source?.note?.trim() ||
       !parseFuzeDamage(definition.baseDamage)) return fail("P6ConstructionMissing");
   if (!Number.isInteger(definition.availabilityTL) || definition.availabilityTL < option.min_tl) return fail("P6TLRequired");
   if (facts.availabilityTL != null && facts.availabilityTL !== definition.availabilityTL) return fail("P6SourceConflict");
@@ -106,7 +106,7 @@ export function resolveFuzeTracerEffects({ raw, variantId, baseStatus, construct
     nativeSafe: true, reason: null, rules: {}, support: { status: "GM-MEDIATED", automatic: ["damage-profile", "shot-snapshot"], manual: [], missing: [] } };
   const fail = reason => ({ ...result, status: "unresolved", nativeSafe: false, reason, formula,
     support: { ...result.support, status: "UNDETERMINED", missing: [reason] } });
-  if (baseStatus !== "compatible" || !["compatible", "gm-approved", "world-policy"].includes(constructionStatus)) return fail("P6ConstructionMissing");
+  if (baseStatus !== "compatible" || !["compatible", "user-defined", "gm-approved", "world-policy"].includes(constructionStatus)) return fail("P6ConstructionMissing");
   if (previousTransformations.some(t => (t.effectId === variantId || t.effectId?.startsWith(variantId + ":")) && t.applied)) return fail("already-applied-use-original-profile");
   const review = reviewFuzeTracerDefinition(facts.fuzeTracerOption, facts, facts.fuzeTracerDefinition);
   if (review.status !== "resolved") return fail(review.reason);

@@ -9,7 +9,7 @@ export function calculateExplosiveRecipe(variantId, parameters = {}) {
     source: "OleGURPS house model", version: FRAGMENT_MODEL_VERSION };
   const result = { version: 1, parameters: p, explosion, fragmentation, warnings, reasons, status: "unresolved" };
   if (!["ht_apex", "ht_aphex"].includes(variantId)) { reasons.push("unsupported-construction"); return result; }
-  const source = p.source && ["gm", "reference"].includes(p.source.kind) && String(p.source.note ?? "").trim();
+  const source = p.source && ["user", "gm", "reference"].includes(p.source.kind) && String(p.source.note ?? "").trim();
   const mass = positive(p.projectileMassG);
   if (!mass) reasons.push("projectile-mass-required");
   if (!source) reasons.push("parameter-source-required");

@@ -12,7 +12,7 @@ export function recipePreviewHTML(variantId, parameters, language) {
     model.warnings.map(reason=>`<div role="alert">${escape(t(reason))}</div>`).join("") + `</div>`;
 }
 export function recipeEditorHTML(ui, selectedType, language) {
-  const t = name => explosiveText(name, {}, language), gm = globalThis.game?.user?.isGM;
+  const t = name => explosiveText(name, {}, language), canEdit = ui.canEdit !== false;
   if (!isExplosiveRecipe(selectedType)) return "";
   if (!["ht_apex","ht_aphex"].includes(selectedType.recipe.variantId)) {
     const profile=selectedType.preparation;
@@ -27,24 +27,24 @@ export function recipeEditorHTML(ui, selectedType, language) {
     ${profile.state === "complete" ? `<div>${escape(t("Explosion"))}: ${escape(profile.model.explosion.formula)} · ${escape(t("Fragmentation"))}: ${escape(profile.model.fragmentation.formula)}</div>` :
       `<p class="hint">${escape(profile.missing?.length ? at("Missing", { fields: profile.missing.map(field=>at(field)).join(", ") }) :
         profile.reasons?.map(reason=>at(reason) === reason ? t(reason) : at(reason)).join("; ") ?? at("AutomaticInputsMissing"))}</p>`}
-    ${gm && profile.state !== "complete" ? `<p class="hint">${escape(at("GMSetup"))}</p>` : ""}</div>` : "";
-  if (!gm) return summary;
+    ${canEdit && profile.state !== "complete" ? `<p class="hint">${escape(at("GMSetup"))}</p>` : ""}</div>` : "";
+  if (!canEdit) return summary;
   const recipe = ui.recipe?.variantId === selectedType.recipe.variantId ? ui.recipe : selectedType.recipe, p = recipe.parameters ?? {};
   const fields = [["projectileMassG","ProjectileMass"],["explosiveMassG","ExplosiveMass"],["ref","REF"],["fragmentMassG","FragmentMass"],
     ["referenceMassG","ReferenceMass"],["referenceDice","ReferenceDice"],["q","Q"]];
-  const inputs = fields.map(([name,label])=>`<label>${escape(t(label))}<input data-recipe-field type="number" name="recipe-${name}" step="any" min="0" value="${escape(p[name] ?? (name === "q" ? 1 : ""))}" ${gm ? "" : "disabled"}></label>`).join("");
+  const inputs = fields.map(([name,label])=>`<label>${escape(t(label))}<input data-recipe-field type="number" name="recipe-${name}" step="any" min="0" value="${escape(p[name] ?? (name === "q" ? 1 : ""))}" ${canEdit ? "" : "disabled"}></label>`).join("");
   return summary + `<details data-recipe-editor ${ui.recipeOpen ? "open" : ""}><summary>${escape(at("Settings", { variant }))}</summary>
     <div class="gam-inventory-add">
       <input type="hidden" name="recipe-variant" value="${selectedType.recipe.variantId}"><strong>${escape(t("Variant"))}: ${variant}</strong>
-      <label>${escape(t("Name"))}<input data-recipe-field name="recipe-name" value="${escape(recipe.label ?? "")}" ${gm ? "" : "disabled"}></label>
+      <label>${escape(t("Name"))}<input data-recipe-field name="recipe-name" value="${escape(recipe.label ?? "")}" ${canEdit ? "" : "disabled"}></label>
       ${inputs}
-      <label>${escape(t("SourceKind"))}<select data-recipe-field name="recipe-source-kind" ${gm ? "" : "disabled"}><option value="gm">GM</option><option value="reference" ${p.source?.kind === "reference" ? "selected" : ""}>${escape(t("Reference"))}</option></select></label>
-      <label>${escape(t("Source"))}<input data-recipe-field name="recipe-source" value="${escape(p.source?.note ?? "")}" ${gm ? "" : "disabled"}></label>
-      <label>${escape(t("ReferenceSource"))}<input data-recipe-field name="recipe-referenceSource" value="${escape(p.referenceSource ?? "")}" ${gm ? "" : "disabled"}></label>
+      <label>${escape(t("SourceKind"))}<select data-recipe-field name="recipe-source-kind" ${canEdit ? "" : "disabled"}><option value="user">Пользовательские</option><option value="reference" ${p.source?.kind === "reference" ? "selected" : ""}>${escape(t("Reference"))}</option></select></label>
+      <label>${escape(t("Source"))}<input data-recipe-field name="recipe-source" value="${escape(p.source?.note ?? "")}" ${canEdit ? "" : "disabled"}></label>
+      <label>${escape(t("ReferenceSource"))}<input data-recipe-field name="recipe-referenceSource" value="${escape(p.referenceSource ?? "")}" ${canEdit ? "" : "disabled"}></label>
     </div><p class="hint">${escape(t("NeutralQ"))}</p><p class="hint">${escape(t("ModelNotice"))}</p>
     ${recipePreviewHTML(recipe.variantId, p, language)}
-    ${gm ? `<p class="hint">${escape(t("RevisionNotice"))}</p><button type="button" data-inventory-action="save-custom-recipe">${escape(t("Save"))}</button>` : ""}
-    ${gm && selectedType?.recipe?.customId ? `<div class="gam-inventory-actions"><button type="button" data-inventory-action="approve-recipe">${escape(t("Approve"))}</button><button type="button" data-inventory-action="revoke-recipe">${escape(t("Revoke"))}</button></div>` : ""}
+    ${canEdit ? `<p class="hint">${escape(t("RevisionNotice"))}</p><button type="button" data-inventory-action="save-custom-recipe">${escape(t("Save"))}</button>` : ""}
+
   </details>`;
 }
 export function captureRecipeInputs(root, ui) {

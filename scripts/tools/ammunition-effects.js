@@ -9,6 +9,9 @@ import { isEnvironmentVariant, resolveEnvironmentEffects } from "./environment-a
 import { isFuzeTracerVariant, resolveFuzeTracerEffects } from "./fuze-tracer-ammunition.js";
 import { handloadCondition, silentCondition } from "./cartridge-load-conditions.js";
 import { isCaseVariant, resolveCaseEffects } from "./case-technology.js";
+import { isUTConventionalVariant, resolveUTConventionalEffects } from "./ut-conventional-ammunition.js";
+import { isUTSpecialVariant, resolveUTSpecialEffects } from './ut-special-ammunition.js';
+import { isUTExtendedVariant, resolveUTExtendedEffects } from './ut-extended-ammunition.js';
 const piercing = ["pi-", "pi", "pi+", "pi++"];
 const rules = { ...HT_AUTOMATIC_KINETIC_RULES, ...HT_AUTOMATIC_SPECIAL_RULES,
   ht_ap: { factor: 0.7, divisor: 2, shift: -1, costFactor: 1.5, source: "HT 166-167" },
@@ -18,40 +21,8 @@ const rules = { ...HT_AUTOMATIC_KINETIC_RULES, ...HT_AUTOMATIC_SPECIAL_RULES,
   ht_aphex: { factor: 1, divisor: 2, shift: -1, costFactor: 4, explosive: true, incendiary: true, source: "HT 170" }
 };
 
-/** HT166: fractional-dice bands, including sub-die and >12d branches. No rounded mean. */
-export function htDamageDice(dice, adds = 0, multiplier = 1, factor = 1) {
-  const value = (dice + adds / 3.5) * multiplier * factor;
-  if (!Number.isFinite(value) || value <= 0) throw new Error("UnresolvedDamageDice");
-  if (value > 12) return "6dx" + Math.round(value / 6);
-  if (value < 1) {
-    const rounded = Math.round((value + 1e-10) * 100) / 100;
-    const penalty = rounded < 0.33 ? 5 : rounded < 0.43 ? 4 : rounded < 0.57 ? 3 : rounded < 0.76 ? 2 : rounded < 0.96 ? 1 : 0;
-    return "1d" + (penalty ? "-" + penalty : "");
-  }
-  // HT's worked example expresses 34.5/3.5 as 9.86 and rounds it to 10d.
-  const whole = Math.floor(value + 1e-10), fraction = Math.round((value - whole + 1e-10) * 100) / 100;
-  if (fraction < 0.15 - 1e-10) return whole + "d";
-  if (fraction < 0.43 - 1e-10) return whole + "d+1";
-  if (fraction < 0.65 - 1e-10) return whole + "d+2";
-  if (fraction < 0.86 - 1e-10) return (whole + 1) + "d-1";
-  return (whole + 1) + "d";
-}
-
-export function parseKineticDamage(formula) {
-  const m = String(formula ?? "").trim().match(/^(\d+(?:\.\d+)?)d(?:6)?((?:[+-]\d+){0,2})(?:[x\u00d7*](\d+(?:\.\d+)?))?\s*(?:\((\d+(?:\.\d+)?)\))?(!)?\s+(pi\+\+|pi\+|pi-|pi)(\s+inc)?$/i);
-  if (!m) return null;
-  const adds = (m[2].match(/[+-]\d+/g) ?? []).reduce((sum, n) => sum + Number(n), 0);
-  return { dice: Number(m[1]), adds, multiplier: Number(m[3] ?? 1), divisor: Number(m[4] ?? 1),
-    type: m[6].toLowerCase(), diceText: m[1] + "d" + m[2] + (m[3] ? "x" + m[3] : ""),
-    minimum: m[5] ?? "", suffix: m[7] ?? "" };
-}
-
-/** Nearest integer, halves upward; preserve supported GGA operating suffixes verbatim. */
-export function parseDamageRange(value) {
-  const match = String(value ?? "").trim().replaceAll(",", "").match(/^(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
-  if (!match || !(Number(match[1]) > 0) || !(Number(match[2]) >= Number(match[1]))) return null;
-  return { halfDamage: Number(match[1]), maximum: Number(match[2]) };
-}
+import { htDamageDice, parseKineticDamage, parseDamageRange } from './kinetic-damage-math.js';
+export { htDamageDice, parseKineticDamage, parseDamageRange } from './kinetic-damage-math.js';
 
 export function scaleRequiredStrength(value, factor = 1.1) {
   const match = String(value ?? "").match(/^(\d+)(\s*[\u2020\u2021RBM]*\s*)$/);
@@ -61,6 +32,9 @@ export function scaleRequiredStrength(value, factor = 1.1) {
 /** Input is always raw GGA data. No state writes or Rolls, even for secondary effects. */
 export function resolveAmmunitionEffects({ raw, variantId = null, baseStatus = "undetermined",
   constructionStatus = "undetermined", facts = {}, previousTransformations = [], secondary = null, explosiveParameters = null, preparedExplosiveModel = null, context = {} } = {}) {
+  if (isUTExtendedVariant(variantId)) return resolveUTExtendedEffects({raw,variantId,baseStatus,constructionStatus,facts,previousTransformations}, {parseKineticDamage,parseDamageRange,resolveEffects:resolveAmmunitionEffects});
+  if (isUTConventionalVariant(variantId)) return resolveUTConventionalEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations, context }, { parseKineticDamage, parseDamageRange, htDamageDice });
+  if (isUTSpecialVariant(variantId)) return resolveUTSpecialEffects({raw,variantId,baseStatus,constructionStatus,facts,previousTransformations});
   if (isCaseVariant(variantId)) return resolveCaseEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations, context });
   if (isFuzeTracerVariant(variantId)) return resolveFuzeTracerEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations, context });
   if (isEnvironmentVariant(variantId)) return resolveEnvironmentEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations },
@@ -86,7 +60,7 @@ export function resolveAmmunitionEffects({ raw, variantId = null, baseStatus = "
   if (!rule) return unresolved("unsupported-construction");
   if (previousTransformations.some(entry => entry.effectId === variantId && entry.applied))
     return unresolved("already-applied-use-original-profile");
-  if (baseStatus !== "compatible" || !["compatible", "gm-approved", "world-policy"].includes(constructionStatus)) return unresolved("unconfirmed-compatibility");
+  if (baseStatus !== "compatible" || !["compatible", "user-defined", "gm-approved", "world-policy"].includes(constructionStatus)) return unresolved("unconfirmed-compatibility");
   // imp is admitted only for this source-backed native charge, never for generic AP/HP transformations.
   const impProof = facts.nativeChargeBaseline;
   const impBaseline = impProof && HT_NATIVE_PLUS_P_BASELINES[impProof.modeId];
@@ -102,9 +76,9 @@ export function resolveAmmunitionEffects({ raw, variantId = null, baseStatus = "
   if (nativeImp && !nativeCharge) return unresolved("native-armor-divisor-needs-explicit-provenance");
   // Accuracy-only Match leaves a source-confirmed HP/AP/APHC projectile untouched.
   if (parsed.divisor !== 1 && !nativeCharge && !rule.accuracyFactor) return unresolved("native-armor-divisor-needs-explicit-provenance");
-  if (nativeCharge && reviewed.construction === "underwater_dart" && constructionStatus !== "gm-approved")
+  if (nativeCharge && reviewed.construction === "underwater_dart" && !["user-defined","gm-approved"].includes(constructionStatus))
     return unresolved("plus-p-individual-dart-required");
-  if (nativeCharge && reviewed.individualGMRequired && constructionStatus !== "gm-approved")
+  if (nativeCharge && reviewed.individualGMRequired && !["user-defined","gm-approved"].includes(constructionStatus))
     return unresolved("plus-p-individual-handload-required");
   if (raw?.linked || raw?.followUp || raw?.followup || raw?.components?.length || raw?.ammunitionEffects?.length ||
       Object.values(facts.nativeEffects ?? {}).some(present => present === true))

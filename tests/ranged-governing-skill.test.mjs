@@ -81,7 +81,7 @@ test("weapon base remains Ranged Level while Governing Skill anchors techniques"
     const current = values();
     let details = fire.calculateEffectiveFireSkillDetails(weapon, current, bands, targeting);
     assert.deepEqual([details.baseSkill, details.effectiveSkill], [8, 8]);
-    assert.equal(details.baseSkillName, "Ranged Weapon Level");
+    assert.equal(details.baseSkillName, "Базовый навык оружия");
     assert.equal(details.modifiers.reduce((sum, modifier) => sum + modifier.value, 0), 0);
     actor.system.skills.rifle.level = 14;
     details = fire.calculateEffectiveFireSkillDetails(weapon, current, bands, targeting);

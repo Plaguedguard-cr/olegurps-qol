@@ -70,8 +70,8 @@ test("all four real catalogs load with record-derived counts and symmetric links
     new URL("../data/catalogs/" + CATALOG_DEFINITIONS[book].filename, import.meta.url), "utf8"));
   const { service, diagnostics } = await loaded(originals);
   assert.equal(diagnostics.state, "ready");
-  const weaponModes = originals.weapons.equipment.flatMap(e => e.modes);
-  assert.equal(diagnostics.catalogs.weapons.counts.equipment, originals.weapons.equipment.length);
+  const weaponModes = service.getCatalog("weapons").equipment.flatMap(e => e.modes);
+  assert.equal(diagnostics.catalogs.weapons.counts.equipment, originals.weapons.equipment.length + 2);
   assert.equal(diagnostics.catalogs.weapons.counts.modes, weaponModes.length);
   for (const book of books) {
     const status = diagnostics.catalogs[book];
@@ -82,7 +82,7 @@ test("all four real catalogs load with record-derived counts and symmetric links
   }
   for (const book of ["lt", "ht", "ut"]) {
     const status = diagnostics.catalogs[book];
-    const edges = book === "ut" ? originals.ut.ammo_families.flatMap(f => f.linked_weapon_modes.map(m => m.weapon_mode_id)) :
+    const edges = book === "ut" ? service.getCatalog("ut").ammo_families.flatMap(f => f.linked_weapon_modes.map(m => m.weapon_mode_id)) :
       originals[book].ammo_items.flatMap(i => i.weapon_mode_ids);
     assert.equal(status.relationships.forward, edges.length);
     assert.equal(status.relationships.reverse, edges.length);

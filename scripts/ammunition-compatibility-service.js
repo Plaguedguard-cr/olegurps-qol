@@ -1,6 +1,10 @@
 import { CATALOG_DEFINITIONS } from "./catalog-service.js";
+import { utCompatibilityDecision } from './ut-compatibility-policy.js';
 import { correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
 import { htIdentityNeedsReview } from "./ht-source-corrections.js";
+import { moduleText } from "./localization.js";
+import { HT_PRE_GAUSS_AMMO, htPreGaussProfile } from './ht-pre-gauss-profiles.js';
+import { gaussProfile, GAUSS_PROJECT_POLICY } from './ut-gauss-source.js';
 import { evaluateHTOptionEligibility, resolveHTCatalogFacts } from "./ht-option-eligibility.js";
 
 const BOOKS = ["lt", "ht", "ut"];
@@ -60,6 +64,10 @@ export class AmmunitionCompatibilityService {
       }
     }
     const corrected = this.#catalogs.getAmmoItem("ht", "olegurps_lemat_18g_shot_charge");
+    if(book==='ht')for(const item of HT_PRE_GAUSS_AMMO) {
+      const record=this.#catalogs.getAmmoItem(book,item.id);
+      if(record)records.set(record.id,[{book,collection:'runtime_evidence',kind:'ammo-item',record}]);
+    }
     if (book === "ht" && corrected) records.set(corrected.id, [{ book, collection: "runtime_evidence", kind: "ammo-item", record: corrected }]);
     const rules = (data.interchangeability_rules ?? []).map((rule, index) => ({ rule, index,
       from: rule.explicit_direction_v1 ? [...rule.explicit_direction_v1.source_ammo_item_ids, ...(rule.explicit_direction_v1.excluded_ambiguous_target_or_source_ids ?? [])] : labels.get(rule.from) ?? [],
@@ -107,6 +115,9 @@ export class AmmunitionCompatibilityService {
     const selected = options.kind ? entries.filter(entry => entry.kind === options.kind) :
       entries.some(entry => entry.kind === "ammo-item") ? entries.filter(entry => entry.kind === "ammo-item") : entries;
     if (ctx.error) return snapshot({ ...this.#result(ctx, selected[0], "undetermined", [ctx.error]), modeId, ammoId });
+    const decision=book==='ut'&&ctx.book==='ut'?utCompatibilityDecision(modeId,ammoId,{caliberMm:ctx.mode.ammunition_profile?.caliber_mm}):null;
+    if(decision?.status==='incompatible')return snapshot({...this.#result(ctx,selected[0]??null, 'incompatible',
+      [reason('UT_COMPATIBILITY_DECISION',decision.reason)]),relation:{type:decision.basis,revision:decision.revision},modeId,ammoId});
     if (selected.length !== 1) return snapshot({ ...this.#result(ctx, null, "undetermined", [reason(selected.length ? "AMBIGUOUS_ID" : "RECORD_UNAVAILABLE", "Record is missing, ambiguous or its catalog is unavailable.")]), modeId, ammoId });
     const entry = selected[0];
     if (book !== ctx.book) return snapshot(this.#result(ctx, entry, "incompatible", [reason("SOURCE_MISMATCH", "No explicit cross-source compatibility is defined.")]));
@@ -116,6 +127,11 @@ export class AmmunitionCompatibilityService {
   #check(ctx, entry, options) {
     const { record: r, kind } = entry;
     const fail = (code, message, status = "incompatible") => this.#result(ctx, entry, status, [reason(code, message)]);
+    if (ctx.book === "ut" && ctx.mode.ut_source_data?.source_conflict &&
+        !['WbvkCgoaLuWViWyKK','WJstukbcBFPxQFtJE'].includes(ctx.mode.weapon_mode_id))
+      return fail("UT_SOURCE_CONFLICT", moduleText("OleGURPS.UTData.SourceConflict"), "undetermined");
+    if (ctx.book === "ut" && ctx.mode.ut_source_data?.special_variants_pending && !["ammo-item", "ammo-family"].includes(kind))
+      return fail("UT_VARIANT_NOT_IMPLEMENTED", moduleText("OleGURPS.UTData.VariantsPending"), "undetermined");
     if (ctx.book === "ht" && ["ammo-item", "ammo-family"].includes(kind) && htIdentityNeedsReview(ctx.mode.weapon_mode_id, r.id))
       return fail("HT_IDENTITY_UNVERIFIED", htIdentityNeedsReview(ctx.mode.weapon_mode_id, r.id), "undetermined");
     if (ctx.mode.weapon_mode_id === "WdzSSShGT_yv4ctOi" && kind === "ammo-family")
@@ -148,6 +164,8 @@ export class AmmunitionCompatibilityService {
   }
 
   #htOption(ctx, entry, options) {
+    if(htPreGaussProfile(ctx.mode.weapon_mode_id))return this.#result(ctx,entry,'incompatible',
+      [reason('SOURCE_SPECIFIC_PROFILE','This reviewed tool/liquid/special platform admits only its explicitly implemented physical loads; generic firearm upgrades do not establish another supported construction.')]);
     const ids = ctx.links.ammoItemIds;
     const id = options.ammoItemId ?? (ids.length === 1 ? ids[0] : null);
     if (id) {
@@ -243,6 +261,11 @@ export class AmmunitionCompatibilityService {
   }
 
   #utFamilyTL(ctx, family) {
+    // This existing, scoped project exception requires explicit selection/loading
+    // of 7mm EM. Physical admission never changes campaign availability or Guns TL.
+    const exception=ctx.mode.ammunition_profile.user_authorized_ammo_tl_exception;
+    if(ctx.mode.weapon_mode_id==='WkhAN9tcmB9eEkmY6'&&family.id==='7mm_em'&&
+      exception?.ammo_family_id===family.id&&exception.opt_in_required===true)return null;
     const nativeTL = Number(ctx.mode.ammunition_profile.native_weapon_tl);
     if (!Number.isFinite(nativeTL) || !numeric(family.tl)) return reason("MISSING_FAMILY_TL", "Native weapon or family TL is missing.");
     if (family.tl > nativeTL) return reason("FAMILY_TL_EXCEPTION", "Family exceeds native weapon TL; optional authorization is not assumed.");
@@ -251,11 +274,21 @@ export class AmmunitionCompatibilityService {
 
   #utOption(ctx, entry, options) {
     const r = entry.record, p = ctx.mode.ammunition_profile;
+    if(ctx.mode.weapon_mode_id==='W__0RKAth-4yvVBSl'&&r.id==='apds')return this.#result(ctx,entry,'undetermined',
+      [reason('UT_EM_TECHNOLOGY_UNKNOWN','UT141: тип ускорителя Electromag Mortar не уточнён; разрешение APDS для coilgun не определяет эту пару.')],
+      {type:'source-undetermined-em-technology',source:'UT141,152'});
     const reasons = [], warnings = [];
     let status = "compatible";
     const uncertain = (code, message) => { if (status !== "incompatible") status = "undetermined"; reasons.push(reason(code, message)); };
     const deny = (code, message) => { status = "incompatible"; reasons.push(reason(code, message)); };
     const tags = p.platform_tags;
+    if (r.id === "apds" && tags?.includes("gauss") && !tags.includes("railgun") &&
+        !(gaussProfile(ctx.mode.weapon_mode_id)?.coilgun && GAUSS_PROJECT_POLICY.coilgunAPDS))
+      uncertain("UT_APDS_GAUSS_CONFLICT", moduleText("OleGURPS.UTData.APDSGaussConflict"));
+    if(r.id==='apds'&&gaussProfile(ctx.mode.weapon_mode_id)?.coilgun)
+      warnings.push(reason('USER_APPROVED_COILGUN_APDS','APDS coilgun: утверждённая политика проекта 18.10.2026; не официальная эррата.'));
+    if (r.id === "expendable_jammer" && p.warhead_class === "25mm")
+      uncertain("UT_JAMMER_RADIUS_MISSING", moduleText("OleGURPS.UTData.JammerRadiusMissing"));
     if (numeric(r.min_tl) && !numeric(options.availabilityTL)) warnings.push(reason("AVAILABILITY_UNCHECKED", "Physical compatibility only; ammunition availability TL was not supplied."));
     const platform = (required, excluded = []) => {
       if (!Array.isArray(tags)) uncertain("MISSING_PLATFORM_TAGS", "Platform tags are missing.");
@@ -310,7 +343,7 @@ export class AmmunitionCompatibilityService {
       }
       // Size is a necessary restriction after an explicit family link, never a compatibility join.
       const classMatch = /^([0-9]+(?:\.[0-9]+)?)mm$/.exec(p.warhead_class ?? "");
-      const size = c.min_size_mm_by_tl ? (classMatch ? Number(classMatch[1]) : null) : p.caliber_mm;
+      const size = c.min_size_mm_by_tl ? (classMatch ? Number(classMatch[1]) : gaussProfile(ctx.mode.weapon_mode_id)?p.caliber_mm:null) : p.caliber_mm;
       if (numeric(minimum) || numeric(c.max_size_exclusive_mm)) {
         if (!numeric(size)) uncertain("MISSING_SIZE", "Required explicit size/warhead class is unavailable.");
         else if ((numeric(minimum) && size < minimum) || (numeric(c.max_size_exclusive_mm) && size >= c.max_size_exclusive_mm)) deny("SIZE_RESTRICTION", "Projectile fails explicit warhead size limits.");

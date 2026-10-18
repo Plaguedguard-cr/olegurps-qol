@@ -1,3 +1,6 @@
+import { lpProfile, lpFireMode, LP_FIRE_MODES, lpText } from './ut-liquid-propellant.js';
+import { gaussSpeedHTML } from './ut-gauss.js';
+import { AmmoService } from './ammo-service.js';
 import { moduleMessage, moduleText } from "../localization.js";
 import { isWeaponBondActive } from "./weapon-bond-service.js";
 import { projectAmmoInventory } from "./ammo-inventory.js";
@@ -22,11 +25,17 @@ import { withRuntimeAmmoStats } from "./attack-profile-runtime.js";
 import { parseRateOfFire } from "./fire-service.js";
 import { ammunitionConditionTexts } from "./damage-shot-link.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
-import { ammoCaption } from "./ammo-caption.js";
+import { attackProfilePresentation, fireControlWeaponTitle } from './weapon-profile-presentation.js';
+import { proximityRangeReason } from './ut-he-proximity.js';
+import { weaponResourceReason as weaponPowerReason } from './weapon-resources.js';
+import { uawWeaponView } from './ut-uaw.js';
+import { getRangeBandDistance } from './fire-range-service.js';
+import { weaponResourceLabel as beamResourceLabel } from './weapon-resources.js';
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
 const FIRE_PREPARATION_CSS = `
+  .olegurps-qol.fire-preparation > .window-content { container: olegurps-fire / inline-size; }
   .gam-visibility { display: grid; gap: 4px; padding: 6px 8px; border: 1px solid rgba(153, 102, 255, .5); border-radius: 5px; }
   .gam-visibility-header { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
   .gam-visibility-header h4 { margin: 0; }
@@ -67,6 +76,7 @@ const FIRE_PREPARATION_CSS = `
 
   .gam-fire-preparation {
     display: grid;
+    grid-template-columns: minmax(0,1fr);
     gap: 12px;
     width: 100%;
     max-height: 82vh;
@@ -106,11 +116,15 @@ const FIRE_PREPARATION_CSS = `
     margin: 0;
   }
   .gam-fire-summary h3 { margin: 0 0 4px; }
+  .gam-fire-lp-controls { display:grid; gap:4px; min-width:0; margin:8px 0; }
+  .gam-fire-lp-controls > label { display:flex; flex-wrap:wrap; align-items:center; gap:8px; width:fit-content; max-width:100%; margin:0; }
+  .gam-fire-lp-controls select { flex:0 1 auto; width:auto; min-width:140px; max-width:100%; margin:0; }
+  .gam-fire-lp-controls small { overflow-wrap:anywhere; }
   .gam-fire-summary p { margin: 0; opacity: 0.82; }
   .gam-fire-attack-stats {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .gam-fire-skill {
@@ -161,16 +175,18 @@ const FIRE_PREPARATION_CSS = `
   .gam-fire-aim,
   .gam-fire-braced {
     display: grid;
-    grid-template-columns: 46px 60px auto auto auto;
+    grid-template-columns: max-content 52px max-content max-content;
     align-items: center;
     gap: 7px;
     min-width: 0;
   }
 
-  .gam-fire-aim { min-height: 34px; }
+  .gam-fire-aim { min-height: 34px; grid-column: auto; justify-content:start; }
+  .gam-melee-fields > .gam-melee-evaluate { grid-column: 1 / -1; }
+  .gam-fire-aim > span:first-child { white-space:nowrap; }
 
   .gam-fire-aim input {
-    width: 60px;
+    width: 52px;
     margin: 0;
   }
 
@@ -653,6 +669,18 @@ const FIRE_PREPARATION_CSS = `
     .gam-fire-range-markers { grid-column: 1 / -1; justify-content: flex-start; }
     .gam-hit-map { max-width: 270px; justify-self: center; }
   }
+  @container olegurps-fire (max-width: 900px) {
+    .gam-fire-layout { grid-template-columns:minmax(0,1fr); }
+  }
+  @container olegurps-fire (max-width: 560px) {
+    .gam-fire-summary { flex-direction:column; align-items:stretch; gap:8px; }
+    .gam-standalone-attack .gam-fire-summary > .gam-fire-summary-main,
+    .gam-standalone-attack .gam-fire-summary > .gam-fire-skill { flex:0 0 auto; }
+    .gam-fire-skill { justify-items:start; text-align:left; white-space:normal; }
+    .gam-fire-fields, .gam-fire-actions, .gam-hit-panel { grid-template-columns:minmax(0,1fr); }
+    .gam-fire-rof-row.has-rrs-slots { grid-template-columns:minmax(0,1fr); }
+    .gam-rrs-slots { flex-wrap:wrap; }
+  }
 `;
 
 const escapeHTML = value => {
@@ -674,6 +702,10 @@ const formatDistance = value => new Intl.NumberFormat("ru-RU", {
 const formatAttackStat = value => String(value ?? "").trim() || "—";
 
 export class FirePreparationApp extends ApplicationV2 {
+  get title() {
+    return this.mode==='weapon'&&this.weapon ? `Огонь — ${this._getAttackTitle()}` : super.title;
+  }
+
   static DEFAULT_OPTIONS = {
     id: "olegurps-fire-preparation",
     classes: ["olegurps-qol", "fire-preparation"],
@@ -813,6 +845,7 @@ export class FirePreparationApp extends ApplicationV2 {
     }
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
+    if(this.attack?.platformRules?.rofJet)this._updateAimPreview();
     if (!this._rangeLayoutObserver && globalThis.ResizeObserver) {
       this._rangeLayoutObserver = new globalThis.ResizeObserver(() => this._syncRangeListHeight());
       this._rangeLayoutObserver.observe(root);
@@ -1022,6 +1055,7 @@ export class FirePreparationApp extends ApplicationV2 {
         projectAmmoInventory(this.weapon);
       }
     }
+    if(!this.attack?.standaloneRef&&this.mode==="weapon")this.attack=withRuntimeAmmoStats(this.attack,this.actor);
     this.targetedAttackContext = createTargetedAttackContext({ actor: this.actor, attack: this.attack });
     this.render({ force: true });
   }
@@ -1055,7 +1089,7 @@ export class FirePreparationApp extends ApplicationV2 {
   _updateTargetRecommendation() {
     this.recommendation = this._readTargetRangeRecommendation();
     const confirm = this.element?.querySelector('button[data-fire-action="confirm"]');
-    if (confirm && this.visibility?.mode === "unseen") confirm.disabled = !this._hasUnseenDirection();
+    if (confirm && this.visibility?.mode === "unseen") confirm.disabled = !!this._proximityReason() || !this._hasUnseenDirection();
     const recommendedIndex = Number.isInteger(this.recommendation?.rangeIndex)
       ? this.recommendation.rangeIndex
       : null;
@@ -1100,7 +1134,8 @@ export class FirePreparationApp extends ApplicationV2 {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
     this.fireState.shots = root.querySelector('[name="shots"]')?.value ?? "";
-    this.fireState.manualGuidanceConfirmed = globalThis.game?.user?.isGM === true && root.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
+    this.fireState.proximityDistance = root.querySelector('[name="proximityDistance"]')?.value ?? this.fireState.proximityDistance ?? '';
+    this.fireState.manualGuidanceConfirmed = root.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
     this.fireState.attackEnvironment = root.querySelector('[name="attackEnvironment"]')?.value ?? "air";
     this.fireState.depthFeet = root.querySelector('[name="depthFeet"]')?.value ?? "";
     const rrsField = root.querySelector('[name="rangedRapidStrike"]');
@@ -1147,12 +1182,12 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   getShotOptions() {
-    this.fireState.manualGuidanceConfirmed = globalThis.game?.user?.isGM === true && this.element?.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
+    this.fireState.manualGuidanceConfirmed = this.element?.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
     // Refresh only the perk toggle; keep the GGA skill and all other attack values.
     if (this.mode === "weapon" && this.weapon && this.attack) {
       const stored = this.actor?.getFlag?.("world", "gurpsAmmoManager");
       const weapon = stored?.weapons?.find(entry => entry.id === this.weapon.id) ?? this.weapon;
-      this.attack.weaponBond = isWeaponBondActive(this.actor, weapon.weaponBond);
+      this.attack.weaponBond = isWeaponBondActive(this.actor, this.attack.weaponBondSetting??weapon.weaponBond);
     }
     const visibility = this.visibility
       ? { ...normalizeVisibility(this.visibility), partialPenalty: this.visibility.partialPenalty } : null;
@@ -1164,6 +1199,9 @@ export class FirePreparationApp extends ApplicationV2 {
       ? globalThis.canvas?.tokens?.get?.(visibility.targetTokenId) : null;
     const targetDistance = center ? measureCanvasPointDistanceYards(this.token, center)
       : selectedToken ? measureTokenDistanceYards(this.token, selectedToken) : null;
+    const proximity=this.attack?.ammunitionHEProximity;
+    const exact=proximity&&String(this.fireState.proximityDistance??'').trim()!=='';
+    const distance=exact?Number(this.fireState.proximityDistance):targetDistance;
     return {
       shots: this._getShotsValue(),
       manualGuidanceConfirmed:this.fireState.manualGuidanceConfirmed,
@@ -1175,11 +1213,11 @@ export class FirePreparationApp extends ApplicationV2 {
       shotgun: this.fireState.shotgun,
       projectileMultiplier: this.fireState.projectileMultiplier,
       manualModifier: this.fireState.manualModifier,
-      aimSeconds: rules && !rules.aimAllowed ? 0 : this.fireState.aimSeconds,
-      braced: rules && !rules.aimAllowed ? false : this.fireState.braced,
-      laserSight: rules?.random ? false : this.fireState.laserSight,
+      aimSeconds: this.attack?.platformRules?.rofJet || rules && !rules.aimAllowed ? 0 : this.fireState.aimSeconds,
+      braced: this.attack?.platformRules?.rofJet || rules && !rules.aimAllowed ? false : this.fireState.braced,
+      laserSight: this.attack?.platformRules?.rofJet || rules?.random ? false : this.fireState.laserSight,
       visibility,
-      targetDistanceOverride: targetDistance,
+      targetDistanceOverride: distance,
       attackEnvironment: this.fireState.attackEnvironment ?? "air",
       airburstTarget: this.fireState.airburstTarget ?? "point",
       depthFeet: this.fireState.depthFeet ?? "",
@@ -1187,11 +1225,12 @@ export class FirePreparationApp extends ApplicationV2 {
       allOutAttack: this.fireState.allOutAttack,
       height: this.fireState.height,
       elevationDirection: this.fireState.elevationDirection,
-      rangeIndex: this.fireState.selectedRangeIndex,
-      manualRangeSelected: this.fireState.manualRangeSelected,
+      rangeIndex: exact?findRangeBandForDistance(this.rangeBands,distance)?.index??null:this.fireState.selectedRangeIndex,
+      manualRangeSelected: exact?false:this.fireState.manualRangeSelected,
       bodyplanId: this.fireState.bodyplanId,
-      hitLocationId: rules?.random ? "silhouette" : this.fireState.hitLocation.zoneId,
-      hitRegionId: rules?.random ? null : this.fireState.hitLocation.regionId
+      hitLocationId: rules?.random||proximity ? "silhouette" : this.fireState.hitLocation.zoneId,
+      hitRegionId: rules?.random||proximity ? null : this.fireState.hitLocation.regionId,
+      suppressTargetedAttack:!!proximity
     };
   }
 
@@ -1400,6 +1439,7 @@ export class FirePreparationApp extends ApplicationV2 {
     return total > 0 ? `+${total}` : String(total);
   }
   _getAimBonus(fireState = this.fireState) {
+    if(this.attack?.platformRules?.rofJet)return 0;
     if (visibilityRules(this.visibility)?.aimAllowed === false) return 0;
     const value = Number(this.calculateAimBonus?.(
       fireState.aimSeconds,
@@ -1425,16 +1465,18 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _updateAimPreview() {
+    if(this.attack?.platformRules?.rofJet)for(const input of this.element?.querySelectorAll('[name="aimSeconds"], [name="braced"], [name="laserSight"]')??[])input.disabled=true;
     const aimPreview = this.element?.querySelector("[data-aim-preview]");
     const laserPreview = this.element?.querySelector("[data-laser-preview]");
     const effectiveModifier = visibilityRules(this.visibility)?.aimAllowed === false
       ? 0 : this._getAimBonus() + this._getBracingBonus();
     if (aimPreview) aimPreview.textContent = `+${effectiveModifier}`;
-    if (laserPreview) laserPreview.textContent = `+${visibilityRules(this._visibilityForTargeting())?.random ? 0 : this.fireState.laserSight ? this._getLaserBonus() : 1}`;
+    if (laserPreview) laserPreview.textContent = `+${this.attack?.platformRules?.rofJet || visibilityRules(this._visibilityForTargeting())?.random ? 0 : this.fireState.laserSight ? this._getLaserBonus() : 1}`;
     this._updateAttackStats();
   }
 
   _getBracingBonus(fireState = this.fireState) {
+    if(this.attack?.platformRules?.rofJet)return 0;
     if (visibilityRules(this.visibility)?.aimAllowed === false) return 0;
     const value = Number(this.calculateBracingBonus?.(
       fireState.braced,
@@ -1446,6 +1488,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getLaserBonus(fireState = this.fireState) {
+    if(this.attack?.platformRules?.rofJet)return 0;
     if (visibilityRules(this._visibilityForTargeting())?.random) return 0;
     const value = Number(this.calculateLaserBonus?.(
       fireState.laserSight,
@@ -1465,17 +1508,24 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getDisplayedAcc(fireState = this.fireState) {
+    if(this.attack?.platformRules?.accNotApplicable)return '—';
     if (this.mode === "standalone" && this.attack?.acc === null) return "—";
     const baseAcc = Number(this.attack?.acc);
     if (!Number.isFinite(baseAcc)) return "—";
     return String(Math.trunc(baseAcc) + (fireState.braced && !fireState.moveAndAttack ? 1 : 0));
   }
 
+  _getAttackTitle() {
+    return fireControlWeaponTitle(this.weapon?.name??this.attack?.name,this.attack?.ammunitionDisplay);
+  }
+
   _getAttackStatsText(displayedRoF, displayedAcc = this._getDisplayedAcc()) {
+    const weapon=this.actor?.getFlag?.('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===this.weapon?.id)??this.weapon;
     return [
-      ammoCaption(this.actor, this.weapon),
-      ...(this.attack?.standaloneRef && this.weapon.ammoUnconfigured && !this.weapon.magazines.length ?
-        ["Без учёта боезапаса"] : [`магазин ${this.weapon.magazines[this.weapon.loadedIndex]}/${this.weapon.capacity}`]),
+      (this.attack?.ammunitionDisplay??attackProfilePresentation(null)).damageText,
+      ...(this.attack?.data?.range?['Range '+this.attack.data.range]:[]),
+      ...(beamResourceLabel(weapon)?[beamResourceLabel(weapon)]:this.attack?.standaloneRef && weapon.ammoUnconfigured && !weapon.magazines.length ?
+        ["Без учёта боезапаса"] : [`${this.attack?.platformRules?.rofJet?'резервуар':'магазин'} ${weapon.magazines[weapon.loadedIndex]}/${weapon.capacity}`]),
       `RoF ${displayedRoF}`,
       `Acc ${displayedAcc}`,
       `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(this.attack?.scopeBonus) || 0))}`,
@@ -1505,6 +1555,8 @@ export class FirePreparationApp extends ApplicationV2 {
       this._updateStandaloneHints();
       return;
     }
+    const title=this.element?.querySelector('[data-attack-title]');
+    if(title)title.textContent=this._getAttackTitle();
     const attackStats = this.element?.querySelector("[data-attack-stats]");
     if (!attackStats) return;
     const text = this._getAttackStatsText(this._getDisplayedRoF(fireMode));
@@ -1520,6 +1572,37 @@ export class FirePreparationApp extends ApplicationV2 {
     if (rof) rof.textContent = displayedRoF;
     if (effective) effective.textContent = String(fireMode.effectiveRoF);
     this._updateAttackStats(fireMode);
+    this._updateProximityPreview();
+  }
+
+  _proximityReason() {
+    const state=this.actor?.getFlag?.('world','gurpsAmmoManager');
+    const weapon = uawWeaponView(state,state?.weapons?.find(w=>w.id===this.weapon?.id) ?? this.weapon);
+    return weaponPowerReason(weapon, Number(this.fireState?.shots) || 1, this.attack?.standaloneRef?.modeId) ??
+      proximityRangeReason(this.attack?.ammunitionHEProximity,this._getRapidFireState()?.physicalDistance);
+  }
+
+  _updateProximityPreview() {
+    const reason=this._proximityReason();
+    const hint=this.element?.querySelector('[data-proximity-reason]');
+    if(hint)hint.textContent=reason??'';
+    const button=this.element?.querySelector('[data-fire-action="confirm"]');
+    if(button){button.disabled=this._submitting||!!reason||this.visibility?.mode==='unseen'&&!this._hasUnseenDirection();button.title=reason??'';}
+  }
+
+  _buildLPContent() {
+    const weapon=this.actor?.getFlag?.('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===this.weapon?.id)??this.weapon;
+    const em=gaussSpeedHTML(weapon,escapeHTML);if(em)return em;
+    if(!lpProfile(weapon))return '';
+    const selected=lpFireMode(weapon),mode=LP_FIRE_MODES[selected];
+    return `<div class="gam-fire-lp-controls"><label><span>${escapeHTML(lpText('Mode'))}</span><select name="lpFireMode">${Object.entries(LP_FIRE_MODES).map(([id,value])=>
+      `<option value="${id}"${selected===id?' selected':''}>${escapeHTML(lpText(value.label))}</option>`).join('')}</select></label>`+
+      `<small>${escapeHTML(lpText((mode?.label??'Standard')+'Hint'))}</small></div>`;
+  }
+
+  _buildProximityContent() {
+    if(!this.attack?.ammunitionHEProximity)return '';
+    return `<label>${escapeHTML(moduleText('OleGURPS.UTPayload.ProximityDistance'))}<input name="proximityDistance" type="number" min="40" step="any" value="${escapeHTML(this.fireState.proximityDistance??'')}"></label><small data-proximity-reason>${escapeHTML(this._proximityReason()??'')}</small>`;
   }
 
   _environmentRange() {
@@ -1557,8 +1640,11 @@ export class FirePreparationApp extends ApplicationV2 {
   }
   _ammunitionConditionsHTML(fireMode) {
     const language = globalThis.game?.i18n?.lang ?? "ru";
-    const lines = ammunitionConditionTexts(this.attack?.ammunitionConditions, language);
-    if (this.attack?.ammunitionRange) lines.push(moduleText("OleGURPS.AttackProfile.MinimumRangeHint", this.attack.ammunitionRange));
+    const conditions = this.attack?.platformRules?.kind === 'vision-laser'
+      ? this.attack.ammunitionConditions?.filter(condition => condition.id !== 'SpecializedPlatform')
+      : this.attack?.ammunitionConditions;
+    const lines = ammunitionConditionTexts(conditions, language);
+    if (this.attack?.ammunitionRange&&!this.attack.data?.isBeamWeapon) lines.push(moduleText("OleGURPS.AttackProfile.MinimumRangeHint", this.attack.ammunitionRange));
     if (this.attack?.ammunitionManualCycling) lines.push(moduleText("OleGURPS.AttackProfile.AmmunitionCyclingUnconfirmed"));
     if (String(this.attack?.rcl ?? "").includes("/") && !this.attack?.ammunitionProjectileKind)
       lines.push(automaticAmmoText("ProjectileRclRequired", language));
@@ -1659,6 +1745,11 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _selectRange(index) {
+    const range=this.rangeBands.find(r=>r.index===index);
+    if(proximityRangeReason(this.attack?.ammunitionHEProximity,getRangeBandDistance(range)))return;
+    this.fireState.proximityDistance='';
+    const exactField=this.element?.querySelector('[name="proximityDistance"]');
+    if(exactField)exactField.value='';
     const nextIndex = this.fireState.selectedRangeIndex === index ? null : index;
     this.fireState.selectedRangeIndex = nextIndex;
     this.fireState.manualRangeSelected = nextIndex !== null;
@@ -1797,8 +1888,22 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   async _onInput(event) {
+    if(['lpFireMode','gaussSpeed'].includes(event.target.name)) {
+      if(event.type!=='change')return;
+      try {
+        await new AmmoService(this.actor)[event.target.name==='gaussSpeed'?'setGaussSpeed':'setLPFireMode'](this.weapon.id,event.target.value);
+        this.attack=withRuntimeAmmoStats(this.attack,this.actor);
+        this._onActorUpdate(this.actor);
+        await this.render({force:true});
+      } catch(error) {globalThis.ui?.notifications?.error?.(error.message);}
+      return;
+    }
+
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
+    if(field.name==='proximityDistance'){
+      this._captureFields();this._updateRapidFirePreview();this._updateSkillPreview();return;
+    }
     if (["attackEnvironment", "depthFeet"].includes(field.name)) {
       this._captureFields();
       if (field.name === "attackEnvironment" && event.type === "change") await this.render({ force: true });
@@ -2083,6 +2188,9 @@ export class FirePreparationApp extends ApplicationV2 {
     if (button.dataset.fireAction !== "confirm" || this._submitting) return;
 
     this._captureFields();
+    if(this._proximityReason()){
+      globalThis.ui?.notifications?.warn?.(this._proximityReason());this._updateProximityPreview();return;
+    }
     if (this.visibility?.mode === "unseen" && !this._hasUnseenDirection()) {
       globalThis.ui?.notifications?.warn?.("\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u0435\u043a\u0441 \u0434\u043b\u044f \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b");
       return;
@@ -2102,7 +2210,9 @@ export class FirePreparationApp extends ApplicationV2 {
       }
       this._switchingRrsTarget = Array.isArray(options);
       const completed = await this.confirmCallback?.(options, this.targetingService);
-      if (completed) await this.close();
+      // Completion is already confirmed (including resource persistence and chat).
+      // Await cleanup, without waiting for a throttled window animation in Electron.
+      if (completed) await this.close({animate:false});
     } catch (error) {
       console.error("GURPS Fire Preparation:", error);
       ui.notifications.error(moduleMessage(error));
@@ -2478,9 +2588,9 @@ export class FirePreparationApp extends ApplicationV2 {
       const recommended = this.recommendation?.rangeIndex === range.index;
       const elevationRecommended = elevation?.rangeIndex === range.index;
       const rrsMarkers = this._getRrsRangeMarkers(range.index);
-      const penalty = range.penalty >= 0 ? `+${range.penalty}` : String(range.penalty);
+      const penalty = this.attack?.platformRules?.rofJet ? '+0' : range.penalty >= 0 ? `+${range.penalty}` : String(range.penalty);
       return `
-        <button type="button" class="gam-fire-range-row ${selected ? "selected" : ""} ${recommended ? "recommended" : ""} ${elevationRecommended ? "elevation-recommended" : ""} ${rrsMarkers.map(index => `gam-rrs-range-${index}`).join(" ")}" data-range-index="${range.index}" aria-pressed="${selected}">
+        <button type="button" ${proximityRangeReason(this.attack?.ammunitionHEProximity,getRangeBandDistance(range))?'disabled title="'+escapeHTML(moduleText('OleGURPS.UTPayload.ProximityMinimum'))+'"':''} class="gam-fire-range-row ${selected ? "selected" : ""} ${recommended ? "recommended" : ""} ${elevationRecommended ? "elevation-recommended" : ""} ${rrsMarkers.map(index => `gam-rrs-range-${index}`).join(" ")}" data-range-index="${range.index}" aria-pressed="${selected}">
           <span>${escapeHTML(String(range.label).replace(/^for range\/speed (.+) yds?$/i, "$1 ярдов"))}</span>
           <strong class="gam-fire-range-penalty">${penalty}</strong>
           <span class="gam-fire-range-markers">
@@ -2499,9 +2609,9 @@ export class FirePreparationApp extends ApplicationV2 {
       <div class="gam-fire-preparation ${this.attack?.standaloneRef ? "gam-standalone-attack" : ""}">
         <div class="gam-fire-summary">
           <div class="gam-fire-summary-main">
-            <h3>${escapeHTML(this.mode === "standalone" ? "Fire Control" : this.weapon.name)}</h3>
+            <h3 data-attack-title>${escapeHTML(this.mode === "standalone" ? "Fire Control" : this._getAttackTitle())}</h3>
             ${this.mode === "standalone" ? this._buildStandaloneStats(fireState) : `<p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>`}
-            ${this.attack?.platformRules?.manualGuidance ? `<p class="hint">${escapeHTML(this.attack.platformRules.instruction)}</p>${globalThis.game?.user?.isGM ? `<label><input type="checkbox" name="manualGuidanceConfirmed" ${fireState.manualGuidanceConfirmed?'checked':''}>Ведущий разрешил эту проверку с ручным учётом наведения и полёта</label>` : '<p class="hint">Эту проверку выполняет ведущий после ручного учёта наведения.</p>'}` : ''}
+            ${this.attack?.platformRules?.manualGuidance ? `<p class="hint">${escapeHTML(this.attack.platformRules.instruction)}</p><label><input type="checkbox" name="manualGuidanceConfirmed" ${fireState.manualGuidanceConfirmed?'checked':''}>Подтверждаю ручной учёт наведения и полёта</label>` : ''}
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
@@ -2529,9 +2639,8 @@ export class FirePreparationApp extends ApplicationV2 {
                   <input type="checkbox" name="laserSight" ${visibilityRules(this._visibilityForTargeting())?.random ? "disabled" : ""} aria-label="Лазерный прицел" ${fireState.laserSight ? "checked" : ""}>
                 </div>
               <label class="gam-fire-aim">
-                  <span>Прицеливание:</span>
+                  <span>${escapeHTML(moduleText('OleGURPS.PaintBattery.AimSeconds'))}</span>
                   <input type="number" name="aimSeconds" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} value="${escapeHTML(fireState.aimSeconds)}" placeholder="0" min="0" step="1" inputmode="numeric" aria-label="Прицеливание в секундах">
-                  <span>сек.</span>
                   <span class="gam-fire-aim-effective">Итог:</span>
                   <strong class="gam-fire-aim-bonus" data-aim-preview>+${aimedFireModifier}</strong>
                 </label>
@@ -2557,6 +2666,7 @@ export class FirePreparationApp extends ApplicationV2 {
                   <span data-rrs-split></span></div>` : ""}
               </div>
             </div>
+            ${this._buildLPContent()}
             <section>
               <div class="gam-fire-range-heading">
                 <h4>Расстояние</h4>
@@ -2586,6 +2696,7 @@ export class FirePreparationApp extends ApplicationV2 {
               >
                 Реальная дистанция: <strong data-effective-distance-value>${elevation ? formatDistance(elevation.effectiveDistance) : ""}</strong> ярдов
               </div>
+              ${this._buildProximityContent()}
               <div class="gam-fire-range-list" role="listbox" aria-label="Диапазоны расстояния">${rows}</div>
             </section>
           </div>

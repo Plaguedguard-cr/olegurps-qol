@@ -4,7 +4,7 @@ import fs from "node:fs";
 import { AmmoService } from "../scripts/tools/ammo-service.js";
 import { StandaloneWeaponService } from "../scripts/tools/standalone-weapon-service.js";
 import { initializeInstalledMagazine, applyInventoryOperation, inventoryTotal } from "../scripts/tools/ammo-inventory.js";
-import { approvalKey, recipeFingerprint } from "../scripts/tools/ammunition-approval-service.js";
+import { approvalKey, recipeFingerprint, actorDecisionKey } from "../scripts/tools/ammunition-approval-service.js";
 import { ammoCaption } from "../scripts/tools/ammo-caption.js";
 import { CatalogService } from "../scripts/catalog-service.js";
 import { moduleText, moduleMessage } from "../scripts/localization.js";
@@ -25,10 +25,10 @@ function carrier(id="weapon", standaloneWeaponId=null) {
 }
 function fixture(weapons=[carrier()]) {
   const record={id:"standalone",name:"Example",type:"ranged",revision:1,source:{equipmentId:"fixture"},modes:[{modeId:"primary",snapshot:{}},{modeId:"secondary",snapshot:{}}],resourceLinks:{ammoWeaponId:"weapon"}};
-  const flags={world:{gurpsAmmoManager:{version:10,weapons:structuredClone(weapons),shotReceipts:{old:{damage:"5d pi",spent:1}},custom:"kept"}},"olegurps-qol":{standaloneWeapons:{version:1,weapons:[record]}}};
+  const flags={world:{gurpsAmmoManager:{version:10,weapons:structuredClone(weapons),shotReceipts:{old:{damage:"5d pi",spent:1}},custom:"kept"}},"olegurps-qol":{standaloneWeapons:{version:1,weapons:weapons.some(w=>w.standaloneWeaponId==='standalone')?[record]:[]}}};
   const writes=[];
   const actor={id:"actor",isOwner:true,system:{ranged:{},skills:{}},getFlag:(s,k)=>structuredClone(flags[s]?.[k]),
-    setFlag:async(s,k,v)=>{writes.push({set:[s,k]});flags[s]??={};flags[s][k]=structuredClone(v);},
+    setFlag:async(s,k,v)=>{writes.push({set:[s,k]});flags[s]??={};flags[s][k]=mergeFlags(flags[s][k],v);},
     update:async changes=>{writes.push(structuredClone(changes));for(const [path,v] of Object.entries(changes)){const[,s,k]=path.split('.');flags[s]??={};if(k.startsWith('-='))delete flags[s][k.slice(2)];else flags[s][k]=mergeFlags(flags[s][k],v);}}};
   let approvals={};
   globalThis.game={user:{isGM:true},i18n:{lang:"en",localize:()=>"OLD ENGLISH"},settings:{get:()=>structuredClone(approvals),set:async(_s,_k,v)=>{approvals=structuredClone(v);}}};
@@ -129,10 +129,19 @@ test("exact scoped approvals are cleaned; unrelated approvals remain; failed cle
     else{await f.standalone.remove("standalone");assert.deepEqual(f.approvals,{unrelated:beforeApprovals.unrelated});}
   }
 });
-test("non-GM deletion needing world cleanup is rejected without partial deletion",async()=>{
-  const f=fixture([carrier("weapon","standalone")]),t={...type,recipe:{customId:"r"}};
+test("OWNER deletion cleans local decisions without GM or world writes; foreign resources and legacy data survive",async()=>{
+  const f=fixture([carrier("weapon","standalone"),carrier("other")]),t={...type,recipe:{customId:"r"}};
   const key=approvalKey({actorId:"actor",weaponId:"weapon",modeId:"primary",type:t});f.approvals={[key]:{actorId:"actor",weaponId:"weapon",modeId:"primary",ammoId:"round",recipeId:"r"}};
-  game.user.isGM=false;const before=structuredClone(f.flags);await assert.rejects(f.standalone.remove("standalone"),/Permission/);assert.deepEqual(f.flags,before);assert.equal(f.writes.length,0);
+  const own=actorDecisionKey({actorId:'actor',weaponId:'weapon',modeId:'primary',type:t});
+  f.flags['olegurps-qol'].ammunitionDecisions={[own]:{actorId:'actor',weaponId:'weapon',modeId:'primary'},foreign:{actorId:'other',weaponId:'other',modeId:'primary'}};
+  game.user={id:'owner',isGM:false};game.settings.set=async()=>{throw Error('WorldSettingWriteForbidden');};
+  const before=structuredClone(f.flags),legacy=structuredClone(f.approvals);
+  await f.standalone.remove('standalone');
+  assert.equal(f.standalone.get('standalone'),null);
+  assert.deepEqual(f.flags.world.gurpsAmmoManager.weapons,[before.world.gurpsAmmoManager.weapons[1]]);
+  assert.deepEqual(f.flags.world.gurpsAmmoManager.shotReceipts,before.world.gurpsAmmoManager.shotReceipts);
+  assert.deepEqual(f.flags['olegurps-qol'].ammunitionDecisions,{foreign:before['olegurps-qol'].ammunitionDecisions.foreign});
+  assert.deepEqual(f.approvals,legacy);assert.equal(f.writes.length,2);
 });
 test("two instances of the same model and caliber retain independent resources on deletion", async () => {
   const f=fixture([carrier("weapon","standalone"),carrier("second","copy")]);
@@ -181,7 +190,7 @@ test("caption uses confirmed cartridge identity then saved caliber, never a name
     const w={id:"weapon",standaloneWeaponId:r.id,standaloneModeId:mode.weapon_mode_id,ammoType:""};
     assert.equal(ammoCaption(f.actor,w,catalogs),mode.ht_ammo_resolution?.status==="exact_chambering" ? catalogs.getAmmoItem("ht",mode.ht_ammo_item_ids[0]).name : mode.caliber_hint);
   }
-  const f=fixture(),w={id:"weapon",standaloneWeaponId:"standalone",standaloneModeId:"primary",name:"KBP RPO-A, 93mm"};
+  const f=fixture([carrier("weapon","standalone")]),w={id:"weapon",standaloneWeaponId:"standalone",standaloneModeId:"primary",name:"KBP RPO-A, 93mm"};
   assert.equal(ammoCaption(f.actor,w,catalogs),"Калибр не подтверждён");
   f.record.modes[0].snapshot.caliber_hint="saved caliber";assert.equal(ammoCaption(f.actor,w,catalogs),"saved caliber");
   assert.equal(ammoCaption(f.actor,{...w,standaloneModeId:"secondary"},catalogs),"Калибр не подтверждён");

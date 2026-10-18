@@ -1,0 +1,1892 @@
+[
+  {
+    "equipmentId": "e4MAlLcPDVsEmrkE1",
+    "name": "Area Defense Laser",
+    "reference": "UT116",
+    "modeId": "Wm0JEnm7qc1UMFRMJ",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6dx5",
+        "armor_divisor": 2
+      },
+      "strength": "200M",
+      "accuracy": "18",
+      "range": "36,000/110,000",
+      "rate_of_fire": "1",
+      "shots": "83(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx5(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eqmEm3vEao5gN7tJM",
+    "name": "Assault Laser",
+    "reference": "UT115",
+    "modeId": "WdE418jjnR9LT9qHl",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "4d",
+        "armor_divisor": 2
+      },
+      "strength": "7†",
+      "accuracy": "12+1",
+      "range": "700/2,100",
+      "rate_of_fire": "1",
+      "shots": "40(5)",
+      "bulk": "-5",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "ecRfyv5uDotDjSsUr",
+    "name": "Dinosaur Graser",
+    "reference": "UT118",
+    "modeId": "W7lSMo8cFWd4JZTBT",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "8d",
+        "armor_divisor": 10
+      },
+      "strength": "10†",
+      "accuracy": "12",
+      "range": "200/600 mi",
+      "rate_of_fire": "1",
+      "shots": "35(5)",
+      "bulk": "-5",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "8d(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "etU9krC1dOaDdOChj",
+    "name": "Dinosaur Laser",
+    "reference": "UT115",
+    "modeId": "WTY4stfOc8dsLHbj6",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "8d",
+        "armor_divisor": 2
+      },
+      "strength": "10†",
+      "accuracy": "12",
+      "range": "1,300/3,900",
+      "rate_of_fire": "1",
+      "shots": "35(5)",
+      "bulk": "-5",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "8d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "ex8c6sDVNeyGQwPqe",
+    "name": "Dinosaur Rainbow Laser",
+    "reference": "UT117",
+    "modeId": "WQXf574e3MQgiqOjT",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "8d",
+        "armor_divisor": 3
+      },
+      "strength": "7†",
+      "accuracy": "12",
+      "range": "4,000/12,000",
+      "rate_of_fire": "1",
+      "shots": "35(5)",
+      "bulk": "-5",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "8d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eSSRq-HjPID9urpzo",
+    "name": "Gatling Laser",
+    "reference": "UT116",
+    "modeId": "WWD518NZwbUXKQkjv",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6dx2",
+        "armor_divisor": 2
+      },
+      "strength": "18M",
+      "accuracy": "18",
+      "range": "2,900/8,700",
+      "rate_of_fire": "4",
+      "shots": "100(5)",
+      "bulk": "-8",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx2(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "ebBOHGh1wXVX7tAX2",
+    "name": "Graser Cannon",
+    "reference": "UT118",
+    "modeId": "Wl8pfEIt0lDrF8N8y",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "6dx10",
+        "armor_divisor": 10
+      },
+      "strength": "200M",
+      "accuracy": "18",
+      "range": "12,000/36,000 mi",
+      "rate_of_fire": "1",
+      "shots": "83(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx10(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e3p6dD7cCTRMSrfFl",
+    "name": "Graser Carbine",
+    "reference": "UT118",
+    "modeId": "Wjehd13gUuNCUaJCG",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "4d",
+        "armor_divisor": 10
+      },
+      "strength": "5†",
+      "accuracy": "12",
+      "range": "80/240 mi",
+      "rate_of_fire": "10",
+      "shots": "28(3)",
+      "bulk": "-3",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e9S498fQa60SS0VIR",
+    "name": "Graser Pistol",
+    "reference": "UT118",
+    "modeId": "WYXEggDAB8XvLAJUl",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "3d",
+        "armor_divisor": 10
+      },
+      "strength": "4",
+      "accuracy": "6",
+      "range": "10/30 mi",
+      "rate_of_fire": "10",
+      "shots": "33(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "3d(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e-KxyzBP1zZ55J1fl",
+    "name": "Graser Rifle",
+    "reference": "UT118",
+    "modeId": "WpwW-d59mktP9xP5h",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "5d",
+        "armor_divisor": 10
+      },
+      "strength": "7†",
+      "accuracy": "12",
+      "range": "120/360 mi",
+      "rate_of_fire": "10",
+      "shots": "83(5)",
+      "bulk": "-4",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "5d(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eRZRZVQQ9098nEJ56",
+    "name": "Heavy Graser Pistol",
+    "reference": "UT118",
+    "modeId": "WRCA_Pii_eNjB9e-a",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "4d",
+        "armor_divisor": 10
+      },
+      "strength": "6",
+      "accuracy": "6",
+      "range": "50/150 mi",
+      "rate_of_fire": "10",
+      "shots": "56(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eZy6BFBoX-Q3tdBQv",
+    "name": "Heavy Laser Pistol",
+    "reference": "UT115",
+    "modeId": "WTA-8AmAT11Ed7XnQ",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "4d",
+        "armor_divisor": 2
+      },
+      "strength": "6",
+      "accuracy": "6",
+      "range": "300/900",
+      "rate_of_fire": "10",
+      "shots": "56(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "exYOC6emseKRHSAyl",
+    "name": "Heavy Rainbow Laser Pistol",
+    "reference": "UT117",
+    "modeId": "WJKny3UHj4SVw7sTF",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "4d",
+        "armor_divisor": 3
+      },
+      "strength": "6",
+      "accuracy": "6",
+      "range": "900/2,700",
+      "rate_of_fire": "10",
+      "shots": "56(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "edRBp1blNIxph6a0k",
+    "name": "Heavy X-Ray Laser Pistol",
+    "reference": "UT118",
+    "modeId": "WsnzM2hK-rTzkuSJp",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "4d",
+        "armor_divisor": 5
+      },
+      "strength": "6",
+      "accuracy": "6",
+      "range": "17/50 mi",
+      "rate_of_fire": "10",
+      "shots": "56(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eLvWnLgQmuv8k2VBP",
+    "name": "Holdout Graser",
+    "reference": "UT118",
+    "modeId": "WSzRnBfV8bvlC38tL",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "2d",
+        "armor_divisor": 10
+      },
+      "strength": "3",
+      "accuracy": "3",
+      "range": "17/50 mi",
+      "rate_of_fire": "10",
+      "shots": "22(3)",
+      "bulk": "-1",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "2d(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eKgc2TYCDL6dVjNQx",
+    "name": "Holdout Laser",
+    "reference": "UT115",
+    "modeId": "WK2APM9OSzUrmtcQb",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "2d",
+        "armor_divisor": 2
+      },
+      "strength": "3",
+      "accuracy": "3",
+      "range": "100/300",
+      "rate_of_fire": "10",
+      "shots": "22(3)",
+      "bulk": "-1",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "2d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "emE7-KRWB7VJkZKLZ",
+    "name": "Holdout Rainbow Laser",
+    "reference": "UT117",
+    "modeId": "Woa0LwUqAanFvHPN6",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "2d",
+        "armor_divisor": 3
+      },
+      "strength": "3",
+      "accuracy": "3",
+      "range": "300/900",
+      "rate_of_fire": "10",
+      "shots": "22(3)",
+      "bulk": "-1",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "2d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e0PlbKQPJLjRB_IdW",
+    "name": "Holdout X-Ray Laser",
+    "reference": "UT118",
+    "modeId": "Wt0gFdLg5mfVU8f0-",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "2d",
+        "armor_divisor": 5
+      },
+      "strength": "3",
+      "accuracy": "3",
+      "range": "1/3 mi",
+      "rate_of_fire": "10",
+      "shots": "22(3)",
+      "bulk": "-1",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "2d(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "ekoxH_5vcxv9EvyAx",
+    "name": "Laser Cannon",
+    "reference": "UT116",
+    "modeId": "WIFpFU3L67kVgjIaA",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6dx10",
+        "armor_divisor": 2
+      },
+      "strength": "200M",
+      "accuracy": "18",
+      "range": "72,000/220,000",
+      "rate_of_fire": "1",
+      "shots": "83(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx10(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eXIdPRU6d3ta3Zpgk",
+    "name": "Laser Carbine",
+    "reference": "UT115",
+    "modeId": "WOe0AiejW3FSlE-nO",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "5d",
+        "armor_divisor": 2
+      },
+      "strength": "5†",
+      "accuracy": "12",
+      "range": "500/1,500",
+      "rate_of_fire": "10",
+      "shots": "28(3)",
+      "bulk": "-3",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "5d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eANNUkHRbCEIhyacu",
+    "name": "Laser Crystal",
+    "reference": "UT115",
+    "modeId": "Wci8UZ1PotNMyGWgA",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "1d-1",
+        "armor_divisor": 2
+      },
+      "strength": "0",
+      "accuracy": "3",
+      "range": "15/45",
+      "rate_of_fire": "1",
+      "shots": "1",
+      "bulk": "0",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "1d-1(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e0k1uCmBF-xZUhA7d",
+    "name": "Laser Pistol",
+    "reference": "UT115",
+    "modeId": "Wc8n7l5aGm-_aywZc",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "3d",
+        "armor_divisor": 2
+      },
+      "strength": "4",
+      "accuracy": "6",
+      "range": "200/600",
+      "rate_of_fire": "10",
+      "shots": "33(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "3d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eXxvmiDy3aPO9TqMr",
+    "name": "Laser Rifle",
+    "reference": "UT115",
+    "modeId": "WEKZc3qKlKcbdRyNi",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6d",
+        "armor_divisor": 2
+      },
+      "strength": "7†",
+      "accuracy": "12",
+      "range": "700/2,100",
+      "rate_of_fire": "10",
+      "shots": "83(5)",
+      "bulk": "-4",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "egs98yGPPjQ1nXN0_",
+    "name": "Laser Sniper Rifle",
+    "reference": "UT115",
+    "modeId": "WpX009tH0GW_AT_qS",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "5d",
+        "armor_divisor": 2
+      },
+      "strength": "10†",
+      "accuracy": "12+2",
+      "range": "1,100/3,300",
+      "rate_of_fire": "1",
+      "shots": "20(5)",
+      "bulk": "-8",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "5d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eyLBL-WE1b6Rc1pYb",
+    "name": "Point Defense Laser",
+    "reference": "UT116",
+    "modeId": "WhXscpFZM5LXQYp5S",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "3dx5",
+        "armor_divisor": 2
+      },
+      "strength": "70M",
+      "accuracy": "18",
+      "range": "9,000/27,000",
+      "rate_of_fire": "1",
+      "shots": "66(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "3dx5(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eQOQhu5RiWcnXgzw1",
+    "name": "Rainbow Gatling Laser",
+    "reference": "UT117",
+    "modeId": "Wylv1NUHoY2bMMBFa",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "12d",
+        "armor_divisor": 3
+      },
+      "strength": "16M",
+      "accuracy": "18",
+      "range": "8,000/24,000",
+      "rate_of_fire": "4",
+      "shots": "100(5)",
+      "bulk": "-8",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "12d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "egfiiZreRwlvqp2Mx",
+    "name": "Rainbow Laser Cannon",
+    "reference": "UT117",
+    "modeId": "W50gKKdq3_8ZCqNA4",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6dx10",
+        "armor_divisor": 3
+      },
+      "strength": "45M",
+      "accuracy": "18",
+      "range": "200,000/600,000",
+      "rate_of_fire": "1",
+      "shots": "83(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx10(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eFE5ZegbEyhGzw3uq",
+    "name": "Rainbow Laser Carbine",
+    "reference": "UT117",
+    "modeId": "WdwCPV31W4KiCkUU4",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "5d",
+        "armor_divisor": 3
+      },
+      "strength": "5†",
+      "accuracy": "12",
+      "range": "1,500/4,500",
+      "rate_of_fire": "10",
+      "shots": "28(3)",
+      "bulk": "-3",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "5d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "edmYyO6iyS424Ay8F",
+    "name": "Rainbow Laser Crystal",
+    "reference": "UT117",
+    "modeId": "WQ2l-NQg-aohXfpJq",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "1d-1",
+        "armor_divisor": 3
+      },
+      "strength": "0",
+      "accuracy": "3",
+      "range": "50/150",
+      "rate_of_fire": "1",
+      "shots": "1",
+      "bulk": "0",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "1d-1(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eum23ABkE3J3yXE_j",
+    "name": "Rainbow Laser Pistol",
+    "reference": "UT117",
+    "modeId": "W9xFaHmLrYOcqTm_z",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "3d",
+        "armor_divisor": 3
+      },
+      "strength": "4",
+      "accuracy": "6",
+      "range": "600/1,800",
+      "rate_of_fire": "10",
+      "shots": "33(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "3d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e2azNNabElm1GaC1w",
+    "name": "Rainbow Laser Rifle",
+    "reference": "UT117",
+    "modeId": "WtuI6BNF1hhgDXR_Q",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6d",
+        "armor_divisor": 3
+      },
+      "strength": "7†",
+      "accuracy": "12",
+      "range": "2,000/6,000",
+      "rate_of_fire": "10",
+      "shots": "83(5)",
+      "bulk": "-4",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e6pVnV-VICF-6926e",
+    "name": "Rainbow Strike Laser",
+    "reference": "UT117",
+    "modeId": "WLvTAej6RPNoyd8hQ",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6dx5",
+        "armor_divisor": 3
+      },
+      "strength": "27M",
+      "accuracy": "18",
+      "range": "50,000/150,000",
+      "rate_of_fire": "1",
+      "shots": "45(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx5(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eYtMl1usnY7MNPdPE",
+    "name": "Rainbow Survival Laser",
+    "reference": "UT117",
+    "modeId": "WWZwHBgeAlfdvGZb7",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "4d",
+        "armor_divisor": 3
+      },
+      "strength": "6†",
+      "accuracy": "12",
+      "range": "900/2,700",
+      "rate_of_fire": "6",
+      "shots": "56(3)",
+      "bulk": "-3",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(3) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eh0fmr3S9tmRjZyH6",
+    "name": "Semi-Portable Graser",
+    "reference": "UT118",
+    "modeId": "WXsCLDIZuQvzZAPJ-",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "12d",
+        "armor_divisor": 10
+      },
+      "strength": "18M",
+      "accuracy": "18",
+      "range": "480/1,400 mi",
+      "rate_of_fire": "10",
+      "shots": "100(5)",
+      "bulk": "-8",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "12d(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eZQ8BLxrnu-F0L4D7",
+    "name": "Semi-Portable Laser",
+    "reference": "UT116",
+    "modeId": "WY4jJpxSq5uG4KNl2",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6d",
+        "armor_divisor": 2
+      },
+      "strength": "18M",
+      "accuracy": "18",
+      "range": "1,400/4,300",
+      "rate_of_fire": "10",
+      "shots": "100(5)",
+      "bulk": "-8",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eWSfmW9JVVqUMpv3-",
+    "name": "Semi-Portable X-Ray Laser",
+    "reference": "UT118",
+    "modeId": "W3n55B_jGCqWOKiS-",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "12d",
+        "armor_divisor": 5
+      },
+      "strength": "18M",
+      "accuracy": "18",
+      "range": "160/480 mi",
+      "rate_of_fire": "10",
+      "shots": "100(5)",
+      "bulk": "-8",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "12d(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e-vQD4NxTQEXD8eFf",
+    "name": "Strike Graser",
+    "reference": "UT118",
+    "modeId": "WdvYMXBeLHXn_i-j1",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "6dx5",
+        "armor_divisor": 10
+      },
+      "strength": "70M",
+      "accuracy": "18",
+      "range": "3,000/9,000 mi",
+      "rate_of_fire": "1",
+      "shots": "66(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx5(10) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e3v99Wae6-GVlZ0dh",
+    "name": "Strike Laser",
+    "reference": "UT116",
+    "modeId": "W1fUkbnr1bxzNtst0",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "6dx5",
+        "armor_divisor": 2
+      },
+      "strength": "70M",
+      "accuracy": "18",
+      "range": "18,000/54,000",
+      "rate_of_fire": "1",
+      "shots": "66(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx5(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eZmWCtWBhycwnMQpq",
+    "name": "Survival Laser",
+    "reference": "UT115",
+    "modeId": "WtueyS1tl-dqhxus_",
+    "stats": {
+      "damage": {
+        "type": "burn",
+        "base": "4d",
+        "armor_divisor": 2
+      },
+      "strength": "6†",
+      "accuracy": "12",
+      "range": "300/900",
+      "rate_of_fire": "6",
+      "shots": "56(3)",
+      "bulk": "-3",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "4d(2) burn"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eZ_OgL4YafFURvsCI",
+    "name": "X-Ray Dino Laser",
+    "reference": "UT118",
+    "modeId": "Wt6X3D82hwHZ6d3OY",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "8d",
+        "armor_divisor": 5
+      },
+      "strength": "10†",
+      "accuracy": "12",
+      "range": "72/220 mi",
+      "rate_of_fire": "1",
+      "shots": "35(5)",
+      "bulk": "-5",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "8d(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eslG-WfeXUSCD8bV5",
+    "name": "X-Ray Laser Cannon",
+    "reference": "UT118",
+    "modeId": "Wkj-hXVqccdySMffW",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "6dx10",
+        "armor_divisor": 5
+      },
+      "strength": "200M",
+      "accuracy": "18",
+      "range": "4,000/12,000 mi",
+      "rate_of_fire": "1",
+      "shots": "83(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx10(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eB7JtGqNZDx3lmzpD",
+    "name": "X-Ray Laser Carbine",
+    "reference": "UT118",
+    "modeId": "Wwq33XxaswGgzkEFH",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "5d",
+        "armor_divisor": 5
+      },
+      "strength": "5†",
+      "accuracy": "12",
+      "range": "27/83 mi",
+      "rate_of_fire": "10",
+      "shots": "28(3)",
+      "bulk": "-3",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "5d(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "eWXkicVlR7hNRtiPR",
+    "name": "X-Ray Laser Pistol",
+    "reference": "UT118",
+    "modeId": "WyjXKeL0uUgpH4lj-",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "3d",
+        "armor_divisor": 5
+      },
+      "strength": "4",
+      "accuracy": "6",
+      "range": "5.5/17 mi",
+      "rate_of_fire": "10",
+      "shots": "33(3)",
+      "bulk": "-2",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "3d(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Pistol",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Pistol",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "e4sbsa7hJQmfyNlA2",
+    "name": "X-Ray Laser Rifle",
+    "reference": "UT118",
+    "modeId": "WaiupSRzwrIeGex04",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "6d",
+        "armor_divisor": 5
+      },
+      "strength": "7†",
+      "accuracy": "12",
+      "range": "40/120 mi",
+      "rate_of_fire": "10",
+      "shots": "83(5)",
+      "bulk": "-4",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6d(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Beam Weapons",
+        "specialization": "Rifle",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Beam Weapons",
+          "specialization": "Rifle",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  },
+  {
+    "equipmentId": "elEW6MrVe8fRVux42",
+    "name": "X-Ray Strike Laser",
+    "reference": "UT118",
+    "modeId": "WAg2AcFXMlFlVMhp9",
+    "stats": {
+      "damage": {
+        "type": "burn, sur",
+        "base": "6dx5",
+        "armor_divisor": 5
+      },
+      "strength": "70M",
+      "accuracy": "18",
+      "range": "1,000/3,000 mi",
+      "rate_of_fire": "1",
+      "shots": "66(5)",
+      "bulk": "-10",
+      "recoil": "1",
+      "reach": null,
+      "parry": null,
+      "block": null
+    },
+    "raw": {
+      "damage": "6dx5(5) burn, sur"
+    },
+    "skill": {
+      "status": "resolved",
+      "skill": {
+        "name": "Gunner",
+        "specialization": "Beams",
+        "modifier": 0
+      },
+      "candidates": [
+        {
+          "name": "Gunner",
+          "specialization": "Beams",
+          "modifier": 0
+        }
+      ],
+      "basis": "unique unmodified skill default"
+    }
+  }
+]

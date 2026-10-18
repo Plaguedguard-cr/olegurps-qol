@@ -1,0 +1,284 @@
+{
+  "schema": 1,
+  "baseCommit": "be7eb9111888f16a3f1190d9fe19aa5a6520bb09",
+  "baseCount": 1351,
+  "baseReadyIdentitiesSha256": "f8915013881ec07cf9c98b1f12b474132e657b7293cc407e84d6ad5f74e5dbe0",
+  "provenance": "Read-only replay of the historical source and catalogs; additions/removals individually reviewed in full-regression-repair-report.md. No runtime/PDF/archive dependency for tests.",
+  "added": [
+    {
+      "key": "W-KvhNTS2RaLIZvSw/ht_specific_at4_84mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "W0nH5aEN5CsOLWS2t/ht_specific_javelin_fgm148a_mseat/ht_ms_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "W10jqOZ0kjeSuoY3C/ht_5_66x39mm/ht_plus_p",
+      "source": "HT117/120/165/169; OWNER manual +P"
+    },
+    {
+      "key": "W61HbVOrJ-DAQGkHW/ht_specific_rpg7_85mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WCN9YaUpioje5KB5t/ht_specific_m72a2_66mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WCjHOf4oONWBafSAa/ht_specific_stinger_fim92a_heab/ht_he",
+      "source": "HT152; native Stinger HE-AB"
+    },
+    {
+      "key": "WGykc_h_j4Ojyn6fu/ht_specific_pzf3_110mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WK6cr08HEjTSsvYNS/ht_14_5x114mm/ht_plus_p",
+      "source": "HT134/137/165; OWNER manual +P"
+    },
+    {
+      "key": "WLtxCaJ16zBNXOM6B/ht_specific_ss11_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WWhhyDtXaDfdAFrfB/ht_specific_armbrust_67mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WYtq-OBcCaZp7ShJJ/ht_specific_milan_103_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WbiMQvLGw4VhGQmTc/ht_specific_pf30_150mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WeXQmnN9negUgW4dp/ht_specific_malyutka_m_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WfQbQ4kVYxR2_9Ji1/ht_specific_dragon_127_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WhyC2rpq5gO7kJvPq/ht_specific_m20_89mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WjD-b9M0j2HJAcxyy/ht_specific_hydra_70mm_beehive/ht_beehive",
+      "source": "HT150; exact Hydra load / independent guidance"
+    },
+    {
+      "key": "WjD-b9M0j2HJAcxyy/ht_specific_hydra_70mm_wp/ht_white_phosphorus",
+      "source": "HT150; exact Hydra load / independent guidance"
+    },
+    {
+      "key": "WjD-b9M0j2HJAcxyy/ht_specific_hydra_laser_guided_70mm/ht_he",
+      "source": "HT150; exact Hydra load / independent guidance"
+    },
+    {
+      "key": "Wm1zVlIxEdhIN7Bdc/ht_specific_rpg2_82mm_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "WmG_jTzAKmvFs5myW/ht_specific_tow_bgm71a_heat/ht_heat",
+      "source": "HT147-153/170; exact native HEAT/MS-HEAT payload, not a second overlay"
+    },
+    {
+      "key": "Wx13jpOUxRC_YeDo6/ht_specific_hale_9pr_he/ht_he",
+      "source": "HT150; native Hale HE"
+    }
+  ],
+  "removed": [
+    {
+      "key": "W82oDY970UdeqLXTF/ht_5_56x45mm_nato/ht_ap",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "W82oDY970UdeqLXTF/ht_5_56x45mm_nato/ht_apds",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "W82oDY970UdeqLXTF/ht_5_56x45mm_nato/ht_aphc",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "W82oDY970UdeqLXTF/ht_5_56x45mm_nato/ht_plus_p",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "W82oDY970UdeqLXTF/ht_5_56x45mm_nato/ht_sapfsds",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "WGJgRQusTscOtoLC9/ht_5_56x45mm_nato/ht_ap",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "WGJgRQusTscOtoLC9/ht_5_56x45mm_nato/ht_apds",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "WGJgRQusTscOtoLC9/ht_5_56x45mm_nato/ht_aphc",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "WGJgRQusTscOtoLC9/ht_5_56x45mm_nato/ht_plus_p",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "WGJgRQusTscOtoLC9/ht_5_56x45mm_nato/ht_sapfsds",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "Wkvf5salwlKpkRx_c/ht_5_56x45mm_nato/ht_ap",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "Wkvf5salwlKpkRx_c/ht_5_56x45mm_nato/ht_apds",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "Wkvf5salwlKpkRx_c/ht_5_56x45mm_nato/ht_aphc",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "Wkvf5salwlKpkRx_c/ht_5_56x45mm_nato/ht_plus_p",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "Wkvf5salwlKpkRx_c/ht_5_56x45mm_nato/ht_sapfsds",
+      "source": "HT117/119: old NATO link is not the reviewed .223 load"
+    },
+    {
+      "key": "WwlfY-FYthqkLvByK/ht_22_long_rifle_5_7x16mmr/ht_plus_p",
+      "source": "HT92: .22 does not prove LR chamber"
+    }
+  ],
+  "baseFamilies": [
+    "ht_10_gauge_2_875",
+    "ht_10x25mm_auto",
+    "ht_12_7x108mm",
+    "ht_12_gauge_2_5_18_5x63mmr",
+    "ht_12_gauge_2_75_18_5x70mmr",
+    "ht_12_gauge_3_18_5x76mmr",
+    "ht_12x16mm_lefaucheux",
+    "ht_13x92mmsr_mauser",
+    "ht_14_5x114mm",
+    "ht_15_43x54mm_dreyse",
+    "ht_16_gauge_2_75_16_8x70mmr",
+    "ht_20_gauge_2_5_15_56x63mmr",
+    "ht_20_gauge_2_75_15_56x70mmr",
+    "ht_223_remington",
+    "ht_22_long_rifle_5_7x16mmr",
+    "ht_22_short_5_6x11mmr",
+    "ht_25_acp_6_35x16mmsr_browning",
+    "ht_300_winchester_magnum_7_62x66mmb",
+    "ht_303_british_7_7x56mmr",
+    "ht_30_06_springfield_7_62x63mm",
+    "ht_30_30_winchester_7_62x51mmr",
+    "ht_30_40_krag_7_62x59mmr",
+    "ht_30_m1_carbine_7_62x33mm",
+    "ht_32_acp_7_65x17mmsr_browning",
+    "ht_32_long_rifle_7_92x24mmr",
+    "ht_338_lapua_magnum_8_6x70mm",
+    "ht_357_magnum_9x33mmr",
+    "ht_357_sig_9x22mm",
+    "ht_35_remington_8_9x49mm",
+    "ht_380_acp_9x17mm",
+    "ht_38_acp_9x23mmsr",
+    "ht_38_long_colt",
+    "ht_38_s_w_9x20mmr",
+    "ht_38_special_9x29mmr",
+    "ht_38_super_auto_9x23mmsr",
+    "ht_38_volcanic",
+    "ht_40_s_w_10x21mm",
+    "ht_41_short_remington_10x12mmr",
+    "ht_442_ric_11_2x17mmr",
+    "ht_444_marlin_10_9x57mmr",
+    "ht_44_40_winchester_10_8x33mmr",
+    "ht_44_colt_11_25x28mmr",
+    "ht_44_henry_10_7x22mmr",
+    "ht_44_magnum_10_9x33mmr",
+    "ht_44_russian_11x25mmr",
+    "ht_44_special_10_9x29mmr",
+    "ht_450_adams_12_05x17mmr",
+    "ht_450_martini_henry_11_43x59mmr",
+    "ht_454_casull_11_43x35mmr",
+    "ht_455_webley_11_5x19mmr",
+    "ht_45_70_springfield_11_43x53mmr",
+    "ht_45_acp_11_43x23mm",
+    "ht_45_gap_11_43x19mm",
+    "ht_45_long_colt",
+    "ht_45_s_w_11_43x28mmr",
+    "ht_476_enfield_12_05x22mmr",
+    "ht_4_6x30mm_royal_ordnance",
+    "ht_4_73x33mm_dynamit_nobel",
+    "ht_50_90_sharps_12_9x64mmr",
+    "ht_50_action_express_12_7x33mm",
+    "ht_50_browning_12_7x99mm",
+    "ht_56_56_spencer_14x22mmr",
+    "ht_5_45x39mm",
+    "ht_5_56x45mm_nato",
+    "ht_5_6x57mmb",
+    "ht_5_7x26mm_usel",
+    "ht_5_7x28mm_fabrique_nationale",
+    "ht_5_8x42mm",
+    "ht_600_nitro_express_15_2x76mmr",
+    "ht_6_5x50mmsr_arisaka",
+    "ht_6x60mm_lee_236_navy",
+    "ht_7_62x25mm_tokarev",
+    "ht_7_62x39mm",
+    "ht_7_62x39mmr_nagant",
+    "ht_7_62x42mm",
+    "ht_7_62x51mm_nato_308_winchester",
+    "ht_7_62x54mmr_mosin_nagant",
+    "ht_7_63x25mm_mauser",
+    "ht_7_65x21mm_parabellum",
+    "ht_7_92x33mm_kurz",
+    "ht_7_92x57mm_mauser",
+    "ht_8_bore_21_2x70mmr",
+    "ht_8x21mm_nambu",
+    "ht_8x50mmr_lebel",
+    "ht_8x58mmr_krag",
+    "ht_9x18mm_makarov",
+    "ht_9x19mm_parabellum",
+    "ht_9x21mm_gyurza",
+    "ht_9x39mm",
+    "ht_specific_hafla_dm34_35mm_wp",
+    "ht_specific_hydra_70mm_heavy_he",
+    "ht_specific_hydra_70mm_hedp",
+    "ht_specific_hydra_mk66_he",
+    "ht_specific_katyusha_m13_he",
+    "ht_specific_m10_m8_he",
+    "ht_specific_pzf3_110mm_tandem",
+    "ht_specific_rpg7_105mm_msheat",
+    "ht_specific_rpg7_40mm_he",
+    "ht_specific_rpg7_93mm_heat",
+    "ht_specific_rpg7_93mm_thermobaric",
+    "ht_specific_rpoa_93mm_thermobaric"
+  ],
+  "addedFamilies": [
+    "ht_5_66x39mm",
+    "ht_specific_armbrust_67mm_heat",
+    "ht_specific_at4_84mm_heat",
+    "ht_specific_dragon_127_heat",
+    "ht_specific_hale_9pr_he",
+    "ht_specific_hydra_70mm_beehive",
+    "ht_specific_hydra_70mm_wp",
+    "ht_specific_hydra_laser_guided_70mm",
+    "ht_specific_javelin_fgm148a_mseat",
+    "ht_specific_m20_89mm_heat",
+    "ht_specific_m72a2_66mm_heat",
+    "ht_specific_malyutka_m_heat",
+    "ht_specific_milan_103_heat",
+    "ht_specific_pf30_150mm_heat",
+    "ht_specific_pzf3_110mm_heat",
+    "ht_specific_rpg2_82mm_heat",
+    "ht_specific_rpg7_85mm_heat",
+    "ht_specific_ss11_heat",
+    "ht_specific_stinger_fim92a_heab",
+    "ht_specific_tow_bgm71a_heat"
+  ]
+}

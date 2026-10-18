@@ -889,7 +889,10 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async _editAttack() {
-    if (this.attack?.standaloneRef) return openStandaloneWeaponLibrary({ actor: this.actor, type: "melee" });
+    if (this.attack?.standaloneRef) {
+      await openStandaloneWeaponLibrary({actor:this.actor,type:'melee'});
+      const key=this.selectedAttackKey;this.selectedAttackKey='';await this._selectAttack(key);return;
+    }
     const result = await openMeleeAttackEditor({
       DialogV2: foundry.applications.api.DialogV2,
       attack: this.attack,

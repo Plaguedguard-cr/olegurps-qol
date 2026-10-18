@@ -155,7 +155,8 @@ test("a canceled enclosing form leaves staged overrides, skills and bond out of 
 test("a second catalog-only editor Save retains the first staged numerical override", async () => {
   const f = fixture(), draft = f.makeDraft(), events = {};
   const fields = { innerHTML: "", addEventListener: (name, handler) => { events[name] = handler; } };
-  const root = { querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} },
+  const root = { addEventListener: (name, handler) => { events["root:" + name] = handler; },
+    querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} },
     querySelectorAll: () => [] };
   const value = { skillLevel: 13, rof: "10", acc: 9, scopeBonus: 0, bulk: -5, rcl: "2" };
   const results = [{ action: "save", value }, { action: "configuration", configuration: {
@@ -413,7 +414,8 @@ test("editor catalog Save preserves the main skill choice, including clearing an
     f.state.attackOverrides[getAttackOverrideKey(f.attacks[0])] = override;
     const staleBinding = structuredClone(draft.current.skillBinding);
     const fields = { innerHTML: "", addEventListener: (name, handler) => { events[name] = handler; } };
-    const root = { querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} },
+    const root = { addEventListener: (name, handler) => { events["root:" + name] = handler; },
+    querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} },
       querySelectorAll: () => [] };
     bindWeaponConfiguration(root, draft, async () => {
       events.change({ target: { name: "governingSkillKey", value: key, tagName: "SELECT" } });
@@ -435,7 +437,8 @@ test("editor catalog change leaves the initial main skill suggestion intact", as
   const before = structuredClone(draft.current.skillBinding);
   assert.equal(before.key, "id:rifle");
   const fields = { innerHTML: "", addEventListener: (name, handler) => { events[name] = handler; } };
-  const root = { querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} },
+  const root = { addEventListener: (name, handler) => { events["root:" + name] = handler; },
+    querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} },
     querySelectorAll: () => [] };
   bindWeaponConfiguration(root, draft, async () => ({ action: "configuration",
     configuration: { target: pistol, catalogChanged: true } }));
@@ -448,7 +451,8 @@ test("editor catalog change leaves the initial main skill suggestion intact", as
 test("an editor Save cannot overwrite a newer Weapon Bond choice in the main form", async () => {
   const f = fixture(), draft = f.makeDraft(), events = {};
   const fields = { innerHTML: "", addEventListener: (name, handler) => { events[name] = handler; } };
-  const root = { querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} }, querySelectorAll: () => [] };
+  const root = { addEventListener: (name, handler) => { events["root:" + name] = handler; },
+    querySelector: selector => selector === "[data-weapon-mode-fields]" ? fields : { addEventListener() {} }, querySelectorAll: () => [] };
   bindWeaponConfiguration(root, draft, async () => {
     draft.current.weaponBond = true;
     return { action: "configuration", configuration: { target: ak, catalogChanged: false,

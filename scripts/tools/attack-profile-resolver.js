@@ -1,3 +1,4 @@
+import { uawBarrelFacts, uawWeaponView } from './ut-uaw.js';
 import { getAttackOverride } from "./weapon-attack-overrides.js";
 import { assessAmmunitionRecipe } from "./ammunition-recipes.js";
 import { resolveAmmunitionEffects } from "./ammunition-effects.js";
@@ -18,6 +19,24 @@ import { sourceCaseVariant } from "./case-technology.js";
 import { publishedLoadBaseline,alternateLoadNeedsBallistics } from "../ht-published-loads.js";
 import { selectedLoadBallistics } from "./ammunition-ballistics.js";
 import { sourceMultishotVariant } from "./multishot-ammunition.js";
+import { requiresUTPowerAccounting } from "../ut-source-data.js";
+import { utConventionalReadiness, UT_CONVENTIONAL_READY_MODES as UT_CONVENTIONAL_MODES, reviewUTConventional } from "./ut-conventional-ammunition.js";
+import { UT_SPECIAL_MODES, reviewUTSpecial, utSpecialReadiness, isUTSpecialVariant } from './ut-special-ammunition.js';
+import { isUTExtendedVariant, reviewUTExtended } from './ut-extended-ammunition.js';
+import { isUTConventionalVariant } from './ut-conventional-ammunition.js';
+import { compactAmmoSource } from './ammunition-chat-summary.js';
+import { ETC_PROFILES, etcBallistics, etcAdmission } from './ut-etc.js';
+import { LP_PROFILES, LP_FIRE_MODES, lpAdmission, lpBallistics, lpFireMode } from './ut-liquid-propellant.js';
+import { readDamageDiceAddsPolicy, applyDamageDiceAdds } from './damage-dice-adds.js';
+import { parseKineticDamage } from './kinetic-damage-math.js';
+import { stormFeed } from './ut-storm-feeds.js';
+import { htSourceDamage } from '../ht-pre-gauss-profiles.js';
+import { gaussProfile } from '../ut-gauss-source.js';
+import { gaussSpeed, gaussBallistics, GAUSS_SPEEDS } from './ut-gauss.js';
+import { beamProfile } from '../ut-beam-source.js';
+import { beamDamage } from './ut-beam.js';
+import { htLaserDamage } from '../ht-laser-source.js';
+import { utDazzlerDamage, utDazzlerProfile } from '../ut-dazzler-source.js';
 
 export const SHOT_PROFILE_VERSION = 1;
 export const SHOT_FLAG_SCOPE = "olegurps-qol";
@@ -39,7 +58,8 @@ export class AttackProfileResolver {
   }
 
   resolve({ actorId, weaponId = null, attack, rawAttack, state = {}, binding = null,
-    ammunition = null, context = {}, approval = null, profilePolicy = "strict" }) {
+    ammunition = null, context = {}, approval = null, profilePolicy = "strict",
+    diceAddsPolicy = readDamageDiceAddsPolicy() }) {
     const raw = structuredClone(rawAttack ?? attack?.data ?? attack ?? {});
     const overrides = getAttackOverride(state, attack);
     const type = ammunition?.type;
@@ -64,6 +84,51 @@ export class AttackProfileResolver {
     if (type?.source === "test") identity.status = "unresolved";
     const confirmedBinding = binding?.status === "confirmed" && binding.binding?.confirmed
       ? binding.binding : null;
+    const carrier=uawWeaponView(state,state.weapons?.find(w=>w.id===weaponId));
+    let convertedRaw=raw,weaponConfiguration=null,etcError=null;
+    const em=gaussProfile(confirmedBinding?.modeId);
+    if(em) {
+      const fireMode=gaussSpeed(carrier);
+      try {
+        if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant))throw Error('EM не использует ETC или LP.');
+        convertedRaw=gaussBallistics(raw,em.modeId,fireMode);
+        weaponConfiguration={variant:'gauss',modeId:em.modeId,fireMode,source:em.source,
+          unitsPerShot:GAUSS_SPEEDS[fireMode].units,unitsPerStandardShot:4,externalPower:em.external,
+          hearingModifier:GAUSS_SPEEDS[fireMode].hearingModifier??0,
+          baseline:{damage:raw.damage,range:raw.range},converted:{damage:convertedRaw.damage,range:convertedRaw.range}};
+      }catch{etcError='Некорректный режим скорости или конфигурация EM.';}
+    }
+    if(carrier?.executionVariant==='etc') {
+      const modeId=confirmedBinding?.modeId,profile=ETC_PROFILES[modeId];
+      // Campaign limits creation; an already owned configuration survives a later TL change.
+      if(!etcAdmission(modeId,this.catalogs).allowed || modeId!==(carrier.standaloneModeId??carrier.catalogModeId))
+        etcError='UTETCConfigurationInvalid';
+      else try {
+        convertedRaw=etcBallistics(raw,modeId);
+        weaponConfiguration={variant:'etc',modeId,source:'UT139',requiredTL:profile.minimumTL,
+          basePrice:profile.basePrice,weaponPrice:profile.basePrice*2,priceMultiplier:2,
+          cellSize:profile.cellSize,nominalCapacity:profile.nominalCapacity,feedSource:profile.feedSource,
+          baseline:{damage:raw.damage,range:raw.range},converted:{damage:convertedRaw.damage,range:convertedRaw.range}};
+      } catch {etcError='UTETCConfigurationInvalid';}
+    }
+    if(carrier?.executionVariant==='lp') {
+      const modeId=confirmedBinding?.modeId,p=LP_PROFILES[modeId],fireMode=lpFireMode(carrier);
+      if(!lpAdmission(modeId,this.catalogs).allowed||modeId!==(carrier.standaloneModeId??carrier.catalogModeId))etcError='UTLPConfigurationInvalid';
+      else try {
+        convertedRaw=lpBallistics(raw,modeId,fireMode);
+        weaponConfiguration={variant:'lp',modeId,fireMode,source:'UT139',requiredTL:9,
+          basePrice:p.basePrice,weaponPrice:p.basePrice*1.5,priceMultiplier:1.5,
+          baseNominal:p.baseNominal,nominalCapacity:p.nominalCapacity,capacity:p.capacity,feedSource:p.feedSource,
+          unitsPerShot:LP_FIRE_MODES[fireMode].units,hearingModifier:LP_FIRE_MODES[fireMode].hearingModifier??0,
+          baseline:{damage:raw.damage,range:raw.range,shots:raw.shots},
+          converted:{damage:convertedRaw.damage,range:convertedRaw.range,shots:convertedRaw.shots}};
+      } catch {etcError='UTLPConfigurationInvalid';}
+    }
+    const selectedFeed=stormFeed(carrier,carrier?.ammunitionInventory?.magazines.find(m=>m.id===ammunition?.magazineId));
+    if(selectedFeed){
+      if(carrier.executionVariant!=='lp')convertedRaw={...convertedRaw,shots:selectedFeed.sourceShots};
+      context={...context,sourceFeed:{...selectedFeed,effectiveShots:convertedRaw.shots}};
+    }
     let compatibility = { status: identity.status === "unavailable" ? "unavailable" : "undetermined",
       reasons: [], relation: null };
     if (confirmedBinding && identity.status === "confirmed" && this.compatibility) {
@@ -74,7 +139,7 @@ export class AttackProfileResolver {
       if (result.reasons?.some(reason => ["CATALOG_UNAVAILABLE", "MODE_UNAVAILABLE"].includes(reason.code)))
         compatibility.status = "unavailable";
     } else if (binding?.status === "unavailable") compatibility.status = "unavailable";
-    const barrel = lematBarrel(confirmedBinding?.modeId);
+    const barrel = lematBarrel(confirmedBinding?.modeId)??uawBarrelFacts(confirmedBinding?.modeId);
     if (barrel) context = { ...context, barrel };
     if (confirmedBinding?.modeId === LEMAT.shotModeId &&
         (identity.status !== "confirmed" || identity.ammoId !== LEMAT.shotAmmoId)) {
@@ -107,11 +172,12 @@ export class AttackProfileResolver {
         scopedApproval, admission, automatic?.facts) : null;
     const construction = identity.recipe ? structuredClone(assessment?.construction ?? { status: "undetermined" })
       : { status: compatibility.status };
-    if (assessment?.approval) Object.assign(construction, { authorization: assessment.approval, authority: "gm-approved" });
+    if(identity.recipe&&assessment)construction.authority=assessment.authority;
+    if (assessment?.approval) Object.assign(construction, { authorization: assessment.approval, authority: "user-defined" });
     if (automatic) Object.assign(construction, { authority: assessment.authority, profileOrigin: automatic.origin,
       profileState: automatic.state, admission: structuredClone(admission) });
     if (identity.recipe && construction.status === "incompatible") compatibility.status = "incompatible";
-    const effective = { ...raw };
+    const effective = { ...convertedRaw };
     // Preserve existing mode overrides before computing damage from the raw GGA source.
     for (const key of ["level", "acc", "scopeBonus", "rof", "rcl", "bulk"])
       if (attack?.[key] !== undefined) effective[key] = attack[key];
@@ -125,15 +191,50 @@ export class AttackProfileResolver {
     const manualLoad = selectedLoadBallistics({state, weaponId, modeId:confirmedBinding?.modeId,
       type: type ? {...type, key:ammunition.ammoKey} : null, catalogs:this.catalogs, compatibility});
     const caseOnly = ["ht_light_case", "ht_caseless", "ht_consumable_case"].includes(identity.recipe?.variantId);
-    const damage = resolveAmmunitionEffects({ raw: manualLoad ? {...raw, damage:manualLoad.damage, range:manualLoad.range} : caseOnly ? raw : published?.raw ?? raw, variantId: identity.recipe?.variantId,
-      baseStatus: assessment?.base?.status ?? compatibility.status, constructionStatus: automatic && (automatic.state !== "complete" || !admission?.allowed) ? "undetermined" : automatic?.referenceConfirmed && admission?.allowed ? "compatible" : assessment?.authority === "world-policy" ? "world-policy" : assessment?.approval ? "gm-approved" : construction.status === "native-preserved" ? "compatible" : construction.status,
+    const damageInput = { raw: identity.book==='ut' ? {...convertedRaw,rof:overrides?.rof??raw.rof,rcl:overrides?.rcl??raw.rcl} : manualLoad ? {...raw, damage:manualLoad.damage, range:manualLoad.range} : caseOnly ? raw : published?.raw ?? raw, variantId: identity.recipe?.variantId,
+      baseStatus: assessment?.base?.status ?? compatibility.status, constructionStatus: automatic && (automatic.state !== "complete" || !admission?.allowed) ? "undetermined" : automatic?.referenceConfirmed && admission?.allowed ? "compatible" : assessment?.authority === "user-defined" ? "user-defined" : assessment?.authority === "world-policy" ? "world-policy" : assessment?.approval ? "user-defined" : construction.status === "native-preserved" ? "compatible" : construction.status,
       facts: { ...assessment?.facts, ...(automatic?.state === "complete" && !Number.isFinite(assessment?.facts?.caliberMm) ? automatic.facts : {}),
         ...(["ht_apex","ht_aphex"].includes(identity.recipe?.variantId) && record?.book_cost_weight_verified && Number.isFinite(record.cost_per_shot_usd) ?
           { baseCostPerShot: record.cost_per_shot_usd } : {}),
-        ...(scopedApproval?.active && identity.recipe?.variantId === "ht_plus_p" ? { plusPDecision: scopedApproval.plusPDecision } : {}) },
+        ...(scopedApproval && identity.recipe?.variantId === "ht_plus_p" ? { plusPDecision: scopedApproval.plusPDecision } : {}) },
       explosiveParameters: identity.recipe?.customId && !identity.recipe.autoProfile ? identity.recipe.parameters : null,
       preparedExplosiveModel: automatic?.state === "complete" ? automatic.model : null,
-      context: { ...context, actorId, weaponId, modeId: confirmedBinding?.modeId, ammoId: identity.ammoId } });
+      context: { ...context, actorId, weaponId, modeId: confirmedBinding?.modeId, ammoId: identity.ammoId, weaponConfiguration } };
+    let damage = resolveAmmunitionEffects(damageInput);
+    // UT139 Boosted adds only to piercing damage, including a selected alternative
+    // that replaces the primary. Independent linked/follow-up/fragments stay intact.
+    // ETC, Standard and Low Velocity keep their existing source-first order.
+    const nonPiercingAlternative=component=>component.relation==='alternative' &&
+      component.status==='resolved' && !parseKineticDamage(component.formula);
+    if(['lp','gauss'].includes(weaponConfiguration?.variant) && weaponConfiguration.fireMode==='boosted' && damage.nativeSafe &&
+      (damage.formula && !parseKineticDamage(damage.formula) || damage.components.some(nonPiercingAlternative))) {
+      const unboostedRaw=(weaponConfiguration.variant==='gauss'?gaussBallistics:lpBallistics)(raw,weaponConfiguration.modeId,'boosted',{boostPiercingDamage:false});
+      const unboosted=resolveAmmunitionEffects({...damageInput,raw:{...damageInput.raw,damage:unboostedRaw.damage}});
+      if(!unboosted.nativeSafe)damage=unboosted;
+      else if(!parseKineticDamage(damage.formula)) {
+        convertedRaw=unboostedRaw;
+        weaponConfiguration.converted.damage=convertedRaw.damage;
+        damage=unboosted;
+      } else {
+        damage.components=damage.components.map(component=>{
+          if(!nonPiercingAlternative(component))return component;
+          const original=unboosted.components.find(c=>c.role===component.role&&c.relation===component.relation);
+          if(!original||original.formula===component.formula)return component;
+          damage.transformations.push({source:'UT139',effectId:'lp-boosted-piercing-only',field:'components.'+component.role,
+            from:component.formula,to:original.formula,applied:true,order:damage.transformations.length+1,
+            reason:'non-piercing-alternative-replaces-primary'});
+          return original;
+        });
+      }
+    }
+    if(weaponConfiguration) {
+      damage.rules.weaponConfiguration=weaponConfiguration;
+      if(damage.nativeSafe)damage.effectiveChanges={damage:damage.formula,range:convertedRaw.range,halfd:convertedRaw.halfd,...(weaponConfiguration.variant==='lp'?{shots:convertedRaw.shots}:{}),...damage.effectiveChanges};
+      transformations.push({source:'UT139',effectId:'weapon-'+weaponConfiguration.variant,field:'weapon',from:weaponConfiguration.baseline,
+        to:weaponConfiguration.converted,applied:true,order:transformations.length+1,reason:'weapon-conversion-before-ammunition'});
+    }
+    if(etcError){damage.nativeSafe=false;damage.status='unresolved';damage.reason=etcError;}
+    if(selectedFeed&&damage.nativeSafe)damage.effectiveChanges={...damage.effectiveChanges,shots:convertedRaw.shots};
     // Non-automatic old recipes/approvals must not become a bypass for new platform combinations.
     if (identity.recipe?.variantId === "ht_plus_p") {
       const legacy = hasLegacyPlusPAdmission(this.catalogs, confirmedBinding?.modeId, identity.ammoId);
@@ -142,7 +243,10 @@ export class AttackProfileResolver {
       damage.rules.pressureAdmission = { legacyPolicyAdmission: legacy, ratingVerified: verified,
         ratingSource: verified ? rating.source : null,
         basis: verified ? "verified-pressure-rating" : legacy ? "preserved-legacy-policy" : "pressure-proof-required" };
-      if (!legacy && !verified) {
+      const userPressure=!!scopedApproval?.plusPDecision?.pressureSuitable&&rating?.value!==false;
+      damage.rules.pressureAdmission.userPressureAssumption=userPressure;
+      if(userPressure&&!verified)damage.rules.pressureAdmission.basis='user-defined-pressure-assumption';
+      if (!legacy && !verified && !userPressure) {
         damage.nativeSafe = false; damage.status = "unresolved"; damage.reason = "P1PressureProofRequired"; damage.formula = raw.damage;
       }
     }
@@ -239,12 +343,97 @@ export class AttackProfileResolver {
         damage.nativeSafe = false; damage.status = "unresolved"; damage.reason = environment?.error ?? "EnvironmentIdentityRequired";
       }
     }
+    // Physical projectile compatibility does not implement the required second resource.
+    // No context flag, stock balance or GM approval can stand in for power accounting.
+    const utModeId = confirmedBinding?.modeId ?? attack?.standaloneRef?.modeId;
+    const cardSource = identity.book === 'ht' ?
+      [this.catalogs?.getVariant?.('ht', identity.recipe?.variantId)?.source_ref,
+        record?.ammunition_construction === 'complete_munition' || !identity.recipe ? record?.table_ref ?? record?.source_ref : null].filter(Boolean).join('; ') :
+      identity.book === 'ut' && !identity.recipe ? (identity.ammoId === '3mm_ice' ? 'UT140' : UT_SPECIAL_MODES[utModeId] ? 'UT139' : 'UT152') : null;
+    if(cardSource)damage.rules.ammunitionSource=compactAmmoSource(cardSource);
+    if (identity.book==='ut' && identity.status==='confirmed' && UT_CONVENTIONAL_MODES[utModeId]===identity.ammoId) {
+      identity.sourceEdition='Ultra-Tech 2007';damage.rules.sourceEdition='Ultra-Tech 2007';
+      if(!identity.recipe)Object.assign(damage.rules,{costPerShot:record.cps_usd,weightPerShotLb:record.wps_lb,legalityClass:record.lc});
+    }
+    if (UT_CONVENTIONAL_MODES[utModeId] && (identity.status !== 'confirmed' || identity.book !== 'ut' ||
+        identity.kind !== 'ammo-family' || identity.ammoId !== UT_CONVENTIONAL_MODES[utModeId] || compatibility.status !== 'compatible' ||
+        reviewUTConventional(this.catalogs,this.compatibility,utModeId,type).status!=='compatible')) {
+      damage.nativeSafe = false; damage.status = 'unresolved'; damage.reason = 'UTVariantUnavailable';
+    }
+    if(UT_SPECIAL_MODES[utModeId]) {
+      const review=isUTExtendedVariant(identity.recipe?.variantId)?reviewUTExtended(this.catalogs,this.compatibility,utModeId,type,identity.recipe.variantId,identity.recipe.parameters):
+        isUTConventionalVariant(identity.recipe?.variantId)?reviewUTConventional(this.catalogs,this.compatibility,utModeId,type,identity.recipe.variantId):
+        reviewUTSpecial(this.catalogs,this.compatibility,utModeId,type,identity.recipe?.variantId);
+      if(review.status!=='compatible'||identity.status!=='confirmed') {
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='UTVariantUnavailable';
+      } else {
+        identity.sourceEdition='Ultra-Tech 2007';damage.rules.sourceEdition='Ultra-Tech 2007';
+        if(!identity.recipe)Object.assign(damage.rules,{costPerShot:record.cps_usd,weightPerShotLb:record.wps_lb});
+      }
+    }
+    const utReadiness = utSpecialReadiness(utModeId)??utConventionalReadiness(utModeId, effective);
+    if (utReadiness) { damage.nativeSafe = false; damage.status = 'unresolved'; damage.reason = utReadiness; }
+    if (requiresUTPowerAccounting(utModeId)) {
+      damage.nativeSafe = false;
+      damage.status = "unresolved";
+      damage.reason = "UTPowerAccountingRequired";
+      damage.rules.powerAccounting = { required: true, implemented: false, source: "Ultra-Tech82-83,141-143" };
+    }
+    if(em) {
+      const review=identity.recipe?.variantId&&isUTExtendedVariant(identity.recipe.variantId)?
+        reviewUTExtended(this.catalogs,this.compatibility,utModeId,type,identity.recipe.variantId,identity.recipe.parameters):
+        identity.recipe?.variantId&&isUTSpecialVariant(identity.recipe.variantId)?
+          reviewUTSpecial(this.catalogs,this.compatibility,utModeId,type,identity.recipe.variantId):
+          reviewUTConventional(this.catalogs,this.compatibility,utModeId,type,identity.recipe?.variantId);
+      if(identity.book!=='ut'||identity.kind!=='ammo-family'||identity.ammoId!==em.familyId||
+        identity.status!=='confirmed'||review.status!=='compatible') {
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='UTVariantUnavailable';
+      } else {
+        identity.sourceEdition='Ultra-Tech 2007';damage.rules.sourceEdition='Ultra-Tech 2007';
+        damage.rules.gauss={modeId:utModeId,source:em.source,physicalFamily:em.familyId};
+        damage.rules.ammunitionSource=em.nail?'UT82–83':'UT143';
+        if(!identity.recipe)Object.assign(damage.rules,{costPerShot:record.cps_usd,weightPerShotLb:record.wps_lb});
+      }
+    }
+    // Admission has finished. The shot needs the selected mechanics, not a catalog-sized rulebook copy.
+    // Keep the source identity; tables/prose in record are never consumed by frozen Damage replay.
+    if(construction.record)construction.record={id:construction.record.id,source_ref:construction.record.source_ref};
+    const htDamage=htSourceDamage({modeId:confirmedBinding?.modeId,type,compatible:compatibility.status==='compatible',raw,weapon:carrier});
+    if(htDamage){damage=htDamage;if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+      if(context.platform)context={...context,platform:{...context.platform,instruction:null}};
+    }
+    const beam=beamProfile(utModeId);
+    if(beam){
+      damage=beamDamage(raw,utModeId);
+      if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Лазер использует собственный источник, без патронов, ETC и LP.';
+      }
+      compatibility={status:'compatible',reasons:[],relation:'source-beam-no-physical-ammunition'};
+      Object.assign(identity,{status:'not-required',book:'ut',kind:'beam',name:beam.name,source:'catalog'});
+      weaponConfiguration={variant:'beam',modeId:utModeId,source:beam.source,family:beam.family};
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
+    const dazzler=utDazzlerProfile(utModeId),laser=htLaserDamage(raw,utModeId)??utDazzlerDamage(raw,utModeId);
+    if(laser){
+      damage=laser;
+      if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Лазер использует собственную батарею, без патронов, ETC и LP.';
+      }
+      compatibility={status:'compatible',reasons:[],relation:'source-ht-laser-no-cartridges'};
+      Object.assign(identity,{status:'not-required',book:dazzler?'ut':'ht',kind:'laser',name:attack?.name,source:'catalog'});
+      weaponConfiguration={variant:dazzler?'ut-dazzler':'ht-laser',modeId:utModeId,source:dazzler?'UT113':'HT181'};
+    }
+    const diceAdds = applyDamageDiceAdds(damage, { policy: diceAddsPolicy,
+      mode: this.catalogs?.getMode?.(confirmedBinding?.modeId),
+      book: this.catalogs?.getEquipmentForMode?.(confirmedBinding?.modeId)?.source });
+    if (damage.nativeSafe) effective.damage = laser?raw.damage:damage.formula;
+    const weaponReliability=this.catalogs?.getMode(confirmedBinding?.modeId)?.weaponReliability;
     transformations.push(...damage.transformations.map(entry => ({ ...entry, order: transformations.length + entry.order })));
     return immutableCopy({ version: SHOT_PROFILE_VERSION, actorId, weaponId,
       mode: { uuid: attack?.uuid ?? null, path: attack?.path ?? null,
         ...(attack?.standaloneRef ? { standaloneRef: structuredClone(attack.standaloneRef) } : {}),
         name: attack?.name ?? raw.name ?? null, mode: attack?.mode ?? raw.mode ?? null },
-      raw, overrides, effective, ...(environmentCapability ? { environmentCapability } : {}), bulkMetadata: {
+      raw, overrides, effective, ...(weaponReliability?{weaponReliability}:{}), ...(weaponConfiguration?{weaponConfiguration}:{}), ...(environmentCapability ? { environmentCapability } : {}), bulkMetadata: {
         source: parseWeaponBulk(raw.bulk),
         effective: parseWeaponBulk(effective.bulk),
         capability: attack?.sourceBulkMetadata ?? attack?.bulkMetadata ?? parseWeaponBulk(raw.bulk)
@@ -253,7 +442,7 @@ export class AttackProfileResolver {
         legacyIndex: ammunition.legacyIndex ?? null, available: ammunition.available,
         total: ammunition.total, ammoKey: ammunition.ammoKey } : { kind: "unmanaged", magazineId: null },
       binding: { status: confirmedBinding ? "confirmed" : binding?.status ?? "undetermined",
-        confirmed: confirmedBinding }, compatibility, construction, damage,
+        confirmed: confirmedBinding }, compatibility, construction, damage, diceAdds,
       sources: { raw: attack?.standaloneRef ? "flags.olegurps-qol.standaloneWeapons" : "Actor.system.ranged", overrides: "world.gurpsAmmoManager.attackOverrides",
         ammunition: "world.gurpsAmmoManager", catalog: identity.book,
         catalogStatisticsApplied: false }, transformations, context });

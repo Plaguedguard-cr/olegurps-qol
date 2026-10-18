@@ -81,13 +81,14 @@ test("shared fire calculation replaces Bulk once, then applies later modifiers",
     const details = () => fire.calculateEffectiveFireSkillDetails(weapon, values, bands, targeting);
     let result = details();
     assert.equal(result.closeQuartersBattle.cqbBase, 12);
-    assert.equal(result.modifiers.find(entry => entry.label.includes("CQB base"))?.value, -1);
+    assert.equal(result.modifiers.find(entry => entry.channel === "moveAndAttack")?.value, -1);
+    assert.equal(result.combatCalculation.channels.find(entry => entry.id === "moveAndAttack").resolver, "closeQuartersBattle");
     assert.equal(result.effectiveSkill, 13 + result.modifiers.reduce((n, entry) => n + entry.value, 0));
     values.targetDistanceOverride = 20;
     result = details();
     assert.equal(result.closeQuartersBattle, null);
-    assert.equal(result.modifiers.find(entry => entry.label.includes("CQB base")), undefined);
-    assert.equal(result.modifiers.find(entry => entry.value === -5 && entry.label.includes("CQB base")), undefined);
+    assert.equal(result.combatCalculation.channels.find(entry => entry.id === "moveAndAttack").resolver, null);
+    assert.equal(result.modifiers.find(entry => entry.channel === "moveAndAttack").value, -5);
     values.targetDistanceOverride = 8;
     values.configuredPreview = true;
     assert.equal(details().closeQuartersBattle, null);
@@ -190,6 +191,7 @@ test("clicking Range rows immediately updates CQB skill and modifier previews", 
     app.mode = "weapon";
     app.actor = actor;
     app.attack = weapon;
+    app.rangeBands = bands;
     app.targetingService = targeting;
     app.fireState = { selectedRangeIndex: null, manualRangeSelected: false };
     app.element = { querySelectorAll: () => [], querySelector: selector =>
@@ -318,12 +320,12 @@ test("RRS slots measure their own targets and TA, Quick-Shot, Trademark Move fol
       targetingService: targeting, targetedAttackContext: ta,
       calculateSkillDetails: fire.calculateEffectiveFireSkillDetails });
     assert.equal(preview.effectiveSkill, first.effectiveSkill + 1);
-    assert.equal(preview.modifiers.find(entry => entry.label.includes("CQB base"))?.value, -1);
+    assert.equal(preview.modifiers.find(entry => entry.channel === "moveAndAttack")?.value, -1);
     const editor = getTrademarkMoveSkillPreview({ attack: weapon,
       values: { ...values, targetTokenId: "near", configuredPreview: true }, rangeBands: bands,
       targetingService: targeting, targetedAttackContext: ta,
       calculateSkillDetails: fire.calculateEffectiveFireSkillDetails });
-    assert.equal(editor.modifiers.some(entry => entry.label.includes("CQB base")), false);
+    assert.equal(editor.modifiers.find(entry => entry.channel === "moveAndAttack").resolver, null);
   } finally {
     globalThis.game = prior.game;
     globalThis.GURPS = prior.GURPS;

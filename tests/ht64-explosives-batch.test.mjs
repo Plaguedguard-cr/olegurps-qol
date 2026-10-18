@@ -33,6 +33,14 @@ test("P4 contains exactly the thirteen audited IDs without changing the other pa
  const a=readAuditFixture('ht64-independent-audit');
  assert.deepEqual(a.records.filter(x=>x.implementationGroup==='P4_explosives').map(x=>x.variantId).sort(),Object.keys(EXPLOSIVE_VARIANTS).sort());
 });
+test('owner explosive constructions accept user provenance without overriding confirmed technical limits',()=>{
+ for(const id of Object.keys(EXPLOSIVE_VARIANTS)){
+  const s=numerical(id,{source:{kind:'user',note:'Owner construction'}});
+  assert.equal(s.r.status,'resolved');
+  assert.equal(resolveAmmunitionEffects({raw:{damage:'4d pi+'},variantId:id,baseStatus:'compatible',constructionStatus:'user-defined',facts:s.r.facts}).nativeSafe,true);
+  assert.equal(numerical(id,{source:{kind:'user',note:'Owner construction'},availabilityTL:s.o.min_tl-1}).r.status,'unresolved');
+ }
+});
 for(const id of Object.keys(EXPLOSIVE_VARIANTS))test(id+" numerical contract, TL/caliber, exact payload and no invented construction",()=>{
  const s=numerical(id);assert.equal(s.r.status,'resolved');assert.equal(s.effect.nativeSafe,true);assert.equal(s.effect.formula,s.d.components[0].formula);
  assert.equal(s.effect.rules.costPerShot,3*s.o.mechanics.cost_multiplier);assert.equal(s.effect.support.status,'GM-MEDIATED');
@@ -56,7 +64,7 @@ for(const [mid,aid,id] of pairs)test(id+" actual published round is available un
  assert.equal(s.profile.damage.transformations.filter(t=>t.applied).length,0);
  assert.equal(s.profile.damage.components.filter(c=>c.role==='kinetic').length,1);
  const changed=resolver.resolve({actorId:'a',weaponId:'w',rawAttack:{...s.raw,damage:'1d pi'},binding:s.binding,ammunition:{type:s.p.type},profilePolicy:'strict'});assert.equal(changed.damage.nativeSafe,false);
- assert.equal(automatic.admission(s.p,{policy:'strict',approval:{active:false}}).allowed,false);
+ assert.equal(automatic.admission(s.p,{policy:'strict',approval:{active:false}}).allowed,true);
  const actor={id:'a',binding:s.binding,system:{ranged:{mode:s.raw}}},weapon={id:'w',attackRef:{path:'system.ranged.mode'},ammunitionInventory:{version:1,stocks:[],magazines:[],installedId:null}};
  const type=availableAmmoTypes(actor,weapon,api,'ru').find(x=>x.key===s.p.type.key);assert.equal(type.unavailable,false);
  const html=recipeEditorHTML({},type,'ru');assert.ok(html.includes('data-published-explosive'));assert.ok(!html.includes('recipe-projectileMassG'));assert.ok(!/<details[^>]*\bopen/.test(html));
@@ -82,7 +90,7 @@ test("HEDP owns a separate linked blast and fragments; tandem never inherits the
 test("published .50 APHEX needs no extra GM approval; prior house recipes retain their identity and policy",()=>{
  const mid='W4EbC4v3uPyORRhTC',base=context(mid).base,p=automatic.prepare({modeId:mid,base,variantId:'ht_aphex'});
  assert.equal(automatic.admission(p,{policy:'strict'}).authority,'reference');
- const c=context('W27s4Lm8QlkKVKUPn'),house=automatic.prepare({modeId:'W27s4Lm8QlkKVKUPn',base:c.base,variantId:'ht_apex'});assert.equal(automatic.admission(house,{policy:'strict'}).allowed,false);
+ const c=context('W27s4Lm8QlkKVKUPn'),house=automatic.prepare({modeId:'W27s4Lm8QlkKVKUPn',base:c.base,variantId:'ht_apex'});assert.equal(automatic.admission(house,{policy:'strict'}).allowed,true);
  assert.equal(house.type.recipe.autoProfile.id,'olegurps-7-62x39mm-ht_apex-house');assert.equal(house.type.recipe.autoProfile.revision,1);
 });
 test("unsupported named alternates and ordinary bullets cannot turn into arbitrary explosive loads",()=>{

@@ -1,3 +1,21 @@
+import { uawGroup, uawFeed, activeUAWCarrier, uawExecutionOwner, uawWeaponView, uawPowerOwner } from './ut-uaw.js';
+import { assertMagazineAddition, magazinePolicy } from './magazine-policy.js';
+import { validateProximityShot } from './ut-he-proximity.js';
+import { HT_PROJECT_WEAPON_POLICIES } from '../ht-source-corrections.js';
+import { gaussProfile } from '../ut-gauss-source.js';
+import { beamProfile } from '../ut-beam-source.js';
+import { htLaserProfile } from '../ht-laser-source.js';
+import { utDazzlerProfile } from '../ut-dazzler-source.js';
+import { resourceOnlyWeapon } from './weapon-resources.js';
+import { gaussSpeed, GAUSS_SPEEDS } from './ut-gauss.js';
+import { weaponPowerCost } from './weapon-power.js';
+import { weaponPowerProfile, newWeaponBattery, batteryExpectation, sameBattery, batteryText,
+  readWeaponBattery, weaponPowerReason, weaponPowerEvidence, validateWeaponExecution } from './weapon-power.js';
+import { applyExecutionRequest } from './ut-etc.js';
+import { adaptStormFeeds, stormFeed, stormMagazineOptions, isStorm } from './ut-storm-feeds.js';
+import { lpProfile, lpAdmission, lpFireMode, LP_FIRE_MODES, LP_PROFILES, lpText, newLPFuel, readLPFuel, adaptLPFeed, lpFeedReason } from './ut-liquid-propellant.js';
+import { weaponResourceProfile, weaponResourceReason, weaponResourceEvidence, consumeWeaponResource,
+  readWeaponResource, sameWeaponResource, validateWeaponResources } from './weapon-resources.js';
 import { normalizeAttackOverrides } from "./weapon-attack-overrides.js";
 import { resolveRangedGoverningSkill, bindingForGoverningSkill,
   getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
@@ -11,15 +29,36 @@ import { readAmmunitionApproval } from "./ammunition-approval-service.js";
 import { validateResourceShot } from "./ammunition-resource-contract.js";
 import { ballisticsKey, validateLoadBallistics } from "./ammunition-ballistics.js";
 import { alternateLoadNeedsBallistics } from "../ht-published-loads.js";
+import { UT_CONVENTIONAL_READY_MODES as UT_CONVENTIONAL_MODES, UT_CONVENTIONAL_DEFERRED, utConventionalReadiness } from "./ut-conventional-ammunition.js";
+import { UT_SPECIAL_MODES, isUTSpecialVariant, utSpecialReadiness } from './ut-special-ammunition.js';
+import { isUTExtendedVariant } from './ut-extended-ammunition.js';
+import { FIRST_STAGE_VARIANTS } from './ammunition-recipes.js';
+import { htPreGaussProfile, htLiquidRecipe, validHTLiquidRecipe } from '../ht-pre-gauss-profiles.js';
+import { htSupplyProfiles, readHTSupply, htSupplyEvidence, consumeHTSupplies } from './weapon-resources.js';
+import { campaignAmmunitionAdmission, readCampaignTL, requiredAmmunitionTL } from './ammunition-tech-level.js';
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "gurpsAmmoManager";
+function validateGaussType(weapon,type,api=globalThis.OleGURPSQOL) {
+  const p=gaussProfile(weapon?.standaloneModeId??weapon?.catalogModeId);if(!p)return;
+  if(type?.source!=='catalog'||type.book!=='ut'||type.kind!=='ammo-family'||type.ammoId!==p.familyId||
+    api?.ammunitionCompatibility?.checkCompatibility(p.modeId,type.ammoId,{book:'ut',kind:'ammo-family'}).status!=='compatible')throw Error('TypeUnavailable');
+  if(type.recipe&&api?.automaticAmmunitionProfiles?.prepare({modeId:p.modeId,base:type,variantId:type.recipe.variantId,savedType:type}).state!=='complete')
+    throw Error('TypeUnavailable');
+}
 const STATE_VERSION = 10;
 const shotExecutions = new WeakMap();
+function magazineCountOwner(state,weapon){
+  if(!weapon.standaloneWeaponId)return weapon;
+  const own=state.weapons.filter(w=>w.standaloneWeaponId===weapon.standaloneWeaponId&&
+    (!uawFeed(weapon.standaloneModeId)||w.standaloneModeId===weapon.standaloneModeId));
+  return {...weapon,ammunitionInventory:{magazines:own.flatMap(w=>w.ammunitionInventory?.magazines??w.magazines??[])}};
+}
 
 // Read-only: in particular, do not migrate, repair or infer a cartridge from ammoType.
 export function readAttackAmmunition(weapon) {
   if (!weapon) return null;
+  if(resourceOnlyWeapon(weapon))return null;
   if (weapon.ammunitionReview) throw new Error("Review");
   const inventory = weapon.ammunitionInventory;
   if (inventory) {
@@ -63,7 +102,7 @@ export class AmmoService {
 
   defaultChatSettings() {
     return {
-      mode: "self",
+      mode: "all",
       events: { fire: true, spend: false, reload: false, topUp: false, unload: false, stock: false },
       fireFields: {
         ammoType: true,
@@ -78,7 +117,7 @@ export class AmmoService {
   normalizeChatSettings(raw) {
     const defaults = this.defaultChatSettings();
     const settings = raw && typeof raw === "object" ? clone(raw) : {};
-    settings.mode = settings.mode === "all" ? "all" : defaults.mode;
+    settings.mode = ["all", "self"].includes(settings.mode) ? settings.mode : defaults.mode;
     settings.events = settings.events && typeof settings.events === "object" ? settings.events : {};
     settings.fireFields =
       settings.fireFields && typeof settings.fireFields === "object" ? settings.fireFields : {};
@@ -156,6 +195,7 @@ export class AmmoService {
     }
     let selectionChanged = false;
     state.weapons.forEach(weapon => {
+      adaptStormFeeds(weapon);
       selectionChanged = initializeInstalledMagazine(weapon) || selectionChanged;
       // Inspect complete legacy records before normalization can clamp or repair away evidence.
       if (!weapon.ammunitionInventory && Object.hasOwn(weapon, "totalAmmo")) {
@@ -209,12 +249,58 @@ export class AmmoService {
     }
     if (persisted?.shotReceipts) state.shotReceipts = { ...persisted.shotReceipts, ...state.shotReceipts };
     if (!inventoryWrite && persisted?.ammunitionBallistics) state.ammunitionBallistics = clone(persisted.ammunitionBallistics);
+    if(!inventoryWrite&&persisted?.uawActiveFeeds)state.uawActiveFeeds=clone(persisted.uawActiveFeeds);
+    if(!inventoryWrite){
+      const requests=new Map();
+      for(const weapon of [...state.weapons])if(uawGroup(weapon)&&weapon.executionRequest){
+        const group=uawGroup(weapon),request=weapon.executionRequest;
+        if(request.variant==='lp'&&request.modeId!=='WtM51JNSpOUIy3Eo1')throw Error(lpText('Shotgun'));
+        if(!state.weapons.some(w=>uawGroup(w)===group&&uawFeed(w.standaloneModeId)?.id==='main')){
+          const definition=definitions.find(d=>d.id===group);
+          if(definition)for(const carrier of standaloneAmmoCarriers(definition,state.weapons.filter(w=>uawGroup(w)===group)))
+            if(!state.weapons.some(w=>w.id===carrier.id))state.weapons.push(carrier);
+        }
+        const owner=uawExecutionOwner(state,weapon);
+        if(uawFeed(owner?.standaloneModeId)?.id!=='main')throw Error('UTETCConfigurationInvalid');
+        const shared={...request,modeId:owner.standaloneModeId};
+        if(requests.has(group)&&JSON.stringify(requests.get(group).request)!==JSON.stringify(shared))throw Error('UTETCConfigurationInvalid');
+        requests.set(group,{owner,request:shared});delete weapon.executionRequest;
+      }
+      for(const {owner,request}of requests.values())owner.executionRequest=request;
+    }
     // Configuration and session writers may hold an older snapshot. Resource writes use their own queue.
     for (const weapon of state.weapons ?? []) {
       const current = persisted?.weapons?.find(entry => entry.id === weapon.id);
+      const priorExecution=current?.executionVariant;
+      if (!inventoryWrite) {
+        if (this.actor.isOwner === false && !globalThis.game?.user?.isGM) throw Error('Permission');
+        const request=weapon.executionRequest;
+        // Stale unrelated configuration saves cannot switch ETC off or restore charge.
+        for (const key of ['executionVariant','etcConfigured','etcBattery','paintBattery','lpConfigured','lpFuel','lpFireMode','gaussBattery','gaussSpeed','beamBattery','beamChemical','beamCrystal','htLaserBattery','dazzlerBattery']) {
+          if(current){if(Object.hasOwn(current,key))weapon[key]=clone(current[key]);else delete weapon[key];}
+        }
+        if(['etc','lp'].includes(current?.executionVariant)&&!request&&current.catalogModeId)weapon.catalogModeId=current.catalogModeId;
+        if(!current&&['etc','lp'].includes(weapon.executionVariant)&&!request)throw Error('UTETCConfigurationInvalid');
+        if (request) applyExecutionRequest(weapon,current,request,globalThis.OleGURPSQOL?.catalogs,readCampaignTL(this.actor));
+        if(weapon.gaussSpeedRequest!==undefined) {
+          if(!gaussProfile(weapon.standaloneModeId??weapon.catalogModeId)||!Object.hasOwn(GAUSS_SPEEDS,weapon.gaussSpeedRequest))throw Error('Некорректная скорость EM.');
+          weapon.gaussSpeed=weapon.gaussSpeedRequest;
+        }
+      }
+      delete weapon.executionRequest;
+      delete weapon.gaussSpeedRequest;
       if (!inventoryWrite && current?.ammunitionInventory) weapon.ammunitionInventory = clone(current.ammunitionInventory);
+      adaptLPFeed(weapon,{executionVariant:priorExecution});
+      adaptStormFeeds(weapon);
       initializeInstalledMagazine(weapon);
       if (weapon.ammunitionInventory) projectAmmoInventory(weapon);
+      const priorOwner=current?magazineCountOwner(persisted,current):null;
+      const priorIds=new Set(priorOwner?.ammunitionInventory?.magazines?.map(m=>m.id)??[]);
+      const added=weapon.ammunitionInventory?.magazines?.some(m=>!priorIds.has(m.id))||
+        !weapon.ammunitionInventory&&(weapon.magazines?.length??0)>(current?.magazines?.length??0);
+      const owner=magazineCountOwner(state,weapon);
+      if(added&&(owner.ammunitionInventory?.magazines?.length??owner.magazines?.length??0)>magazinePolicy(weapon).limit)
+        throw Error(magazinePolicy(weapon).fixed?'FixedFeedLimit':'MagazineLimit');
     }
     if (preserveSprayingSessions) {
       const current = this.actor.getFlag(FLAG_SCOPE, FLAG_KEY);
@@ -275,6 +361,15 @@ export class AmmoService {
           amount > Math.min(actual.available, actual.total)) return false;
       const session = current.sprayingFireSessions?.[sessionKey];
       if (sessionKey && (!session || session.ammoConsumed)) return false;
+      const resourceView=uawWeaponView(current,actualWeapon),powerOwner=uawPowerOwner(current,actualWeapon);
+      if(session?.ammunitionProfile)validateWeaponResources(resourceView,session.ammunitionProfile,actual);
+      if (sessionKey && weaponResourceProfile(resourceView)) {
+        const reason = weaponResourceReason(resourceView, amount);
+        if (reason) throw Error(reason);
+        const resourceProfile=weaponResourceProfile(resourceView);
+        session[resourceProfile.receiptKey+'Receipt'] = weaponResourceEvidence(powerOwner, amount,amount,resourceProfile);
+        consumeWeaponResource(powerOwner,amount,resourceProfile);
+      }
       actualWeapon.magazines[actual.legacyIndex] -= amount;
       actualWeapon.totalAmmo -= amount;
       if (session) session.ammoConsumed = true;
@@ -350,7 +445,6 @@ export class AmmoService {
   }
 
   inventoryTransaction(weaponId, operation, args = {}, options = {}) {
-    if (operation === "save-recipe" && !globalThis.game?.user?.isGM) return Promise.reject(new Error("Permission"));
     const previous = inventoryWrites.get(this.actor) ?? Promise.resolve();
     const next = previous.catch(() => {}).then(async () => {
       if (this.actor.isOwner === false && !globalThis.game?.user?.isGM) throw new Error("Permission");
@@ -358,19 +452,60 @@ export class AmmoService {
       const weapon = state.weapons.find(entry => entry.id === weaponId);
       if (!weapon) throw new Error("WeaponMissing");
       const before = JSON.stringify(weapon);
+      if(resourceOnlyWeapon(weapon))throw Error('Лазер не использует физические патроны и магазины.');
       initializeInstalledMagazine(weapon);
       const modeId = weapon.standaloneModeId ?? globalThis.OleGURPSQOL?.weaponCatalogBindings?.analyzeMode(this.actor, weapon.attackRef?.path)?.binding?.modeId;
+      if(modeId)weapon.catalogModeId=modeId;else delete weapon.catalogModeId;
+      const htSource=htPreGaussProfile(modeId);
+      const emSource=gaussProfile(modeId);
+      if(operation==='load'&&emSource){const m=weapon.ammunitionInventory?.magazines.find(m=>m.id===args.magazineId);if(m&&m.rounds+args.amount>emSource.feedCapacity)throw Error('CapacityExceeded');}
+      if(operation==='load'&&htSource){const m=weapon.ammunitionInventory?.magazines.find(m=>m.id===args.magazineId);if(m&&m.rounds+args.amount>htSource.capacity)throw Error('CapacityExceeded');}
+      const lp=LP_PROFILES[modeId];
+      if(isStorm(weapon)){
+        adaptStormFeeds(weapon);
+        if(operation==='add-magazines'&&!stormMagazineOptions(weapon).some(p=>p.capacity===args.capacity))throw Error('CapacityExceeded');
+        const magazine=weapon.ammunitionInventory?.magazines.find(m=>m.id===args.magazineId),feed=stormFeed(weapon,magazine);
+        if(operation==='load'&&feed&&!(weapon.executionVariant==='lp'&&feed.feed==='primary-belt')&&magazine.rounds+args.amount>feed.loadedCapacity)throw Error('CapacityExceeded');
+      }
+      if(lp&&(weapon.lpConfigured||weapon.executionVariant==='lp')) {
+        const limit=(weapon.executionVariant==='lp'?lp.nominalCapacity:lp.baseNominal)+lp.chamber;
+        if(operation==='add-magazines'&&args.capacity!==limit&&!isStorm(weapon))throw Error('CapacityExceeded');
+        const magazine=weapon.ammunitionInventory?.magazines.find(m=>m.id===args.magazineId);
+        if(operation==='load'&&magazine&&magazine.rounds+args.amount>limit)throw Error('CapacityExceeded');
+        if(weapon.executionVariant==='lp'&&['load','install'].includes(operation)) {
+          const reason=lpFeedReason(weapon,{magazineId:args.magazineId});if(reason)throw Error(reason);
+        }
+      }
+      if(operation==='add-magazines')assertMagazineAddition(magazineCountOwner(state,weapon),args.amount);
       const barrel = lematBarrel(modeId);
       // Returning rounds and changing empty containers do not admit a new cartridge.
-      const needsAdmission = ["add-stock", "load", "save-recipe"].includes(operation);
+      const needsAdmission = ["add-stock", "load", "save-recipe", "edit-recipe"].includes(operation);
+      const catalogs = globalThis.OleGURPSQOL?.catalogs;
+      const existingType = weapon.ammunitionInventory?.stocks.find(s => s.key === args.ammoKey)?.type;
+      const proposed = args.type ?? existingType ?? (typeof options.allowedTypes === 'function' ? options.allowedTypes(weapon) : options.allowedTypes)?.find(t => t.key === args.ammoKey);
+      if(needsAdmission)validateGaussType(weapon,proposed);
+      const preservesExisting = operation === 'edit-recipe' && existingType &&
+        requiredAmmunitionTL(existingType, catalogs) === requiredAmmunitionTL(proposed, catalogs) &&
+        existingType.recipe?.parameters?.availabilityTL === proposed?.recipe?.parameters?.availabilityTL;
+      if (['add-stock','save-recipe','edit-recipe'].includes(operation) && !preservesExisting &&
+          !campaignAmmunitionAdmission(proposed, catalogs, readCampaignTL(this.actor)).allowed)
+        throw Error('CampaignTLUnavailable');
+      if (needsAdmission && UT_CONVENTIONAL_DEFERRED[modeId]) throw new Error(UT_CONVENTIONAL_DEFERRED[modeId]);
+      if(needsAdmission&&utSpecialReadiness(modeId))throw Error(utSpecialReadiness(modeId));
+      if(operation==='edit-recipe'&&!validHTLiquidRecipe(args.type)&&!isUTSpecialVariant(args.type?.recipe?.variantId)&&!isUTExtendedVariant(args.type?.recipe?.variantId)&&!FIRST_STAGE_VARIANTS.includes(args.type?.recipe?.variantId))throw Error('InvalidRecipe');
+      if(needsAdmission&&htLiquidRecipe(proposed)&&(!validHTLiquidRecipe(proposed)||htPreGaussProfile(modeId)?.kind!=='squirt'))throw Error('InvalidRecipe');
+      if(['save-recipe','edit-recipe'].includes(operation)&&(isUTSpecialVariant(args.type?.recipe?.variantId)||isUTExtendedVariant(args.type?.recipe?.variantId))) {
+        const prepared=globalThis.OleGURPSQOL?.automaticAmmunitionProfiles?.prepare({modeId,base:args.type,variantId:args.type.recipe.variantId,savedType:args.type});
+        if(prepared?.state!=='complete')throw Error('UTPayloadRequired');
+      }
       const allowedTypes = needsAdmission && typeof options.allowedTypes === "function" ? options.allowedTypes(weapon) :
         needsAdmission ? options.allowedTypes : [];
       if (barrel && ["add-stock", "load", "save-recipe"].includes(operation)) {
         const type = args.type ?? allowedTypes?.find(t => t.key === args.ammoKey);
         if (type?.source !== "catalog" || type.book !== "ht" || type.ammoId !== barrel.ammoId) throw new Error("TypeUnavailable");
         if (type.recipe?.variantId === "ht_plus_p") {
-          const approval = readAmmunitionApproval({ actorId: this.actor.id, weaponId, modeId, type });
-          if (!approval?.active || !approval.plusPDecision?.loadingCheckPassed) throw new Error("TypeUnavailable");
+          const approval = readAmmunitionApproval({ actor:this.actor, actorId: this.actor.id, weaponId, modeId, type });
+          if (!approval?.plusPDecision?.loadingCheckPassed) throw new Error("TypeUnavailable");
         }
       }
       if (barrel && operation === "add-magazines" && args.capacity > barrel.capacity) throw new Error("CapacityExceeded");
@@ -389,10 +524,24 @@ export class AmmoService {
         if (operation === "consume" && args.sessionKey) {
           const session = state.sprayingFireSessions?.[args.sessionKey];
           if (!session || session.ammoConsumed) throw new Error("InsufficientRounds");
+          const resourceView=uawWeaponView(state,weapon),powerOwner=uawPowerOwner(state,weapon);
+          if(session.ammunitionProfile)validateWeaponResources(resourceView,session.ammunitionProfile,readAttackAmmunition(weapon));
+          if (weaponResourceProfile(resourceView)) {
+            const reason = weaponResourceReason(resourceView, args.amount);
+            if (reason) throw Error(reason);
+            const resourceProfile=weaponResourceProfile(resourceView);
+            session[resourceProfile.receiptKey+'Receipt'] = weaponResourceEvidence(powerOwner, args.amount,args.amount,resourceProfile);
+            consumeWeaponResource(powerOwner,args.amount,resourceProfile);
+          }
           session.ammoConsumed = true;
         }
+        if(operation==='consume'&&htSupplyProfiles(weapon).length)consumeHTSupplies(weapon,htSupplyEvidence(weapon,args.amount));
         applyInventoryOperation(weapon, operation, args, { ...options,
           allowedTypes });
+        const group=uawGroup(weapon);
+        if(group&&operation==='install'){
+          state.uawActiveFeeds??={};state.uawActiveFeeds[group]=weapon.id;
+        }
       }
       if (validateInventory(weapon.ammunitionInventory, weapon.id)) projectAmmoInventory(weapon);
       state.version = STATE_VERSION;
@@ -404,9 +553,148 @@ export class AmmoService {
     return next;
   }
 
+  transferMagazine(fromWeaponId,toWeaponId,magazineId,{allowedTypes=[]}={}) {
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner===false&&!globalThis.game?.user?.isGM)throw Error('Permission');
+      if(fromWeaponId===toWeaponId)throw Error('MagazineTransferUnavailable');
+      const state=clone(this.actor.getFlag(FLAG_SCOPE,FLAG_KEY)??this.defaultState());
+      const from=state.weapons.find(w=>w.id===fromWeaponId),to=state.weapons.find(w=>w.id===toWeaponId);
+      if(!from||!to)throw Error('WeaponMissing');
+      if(!migrateAmmoInventory(from).valid||!migrateAmmoInventory(to).valid)throw Error('Review');
+      assertMagazineAddition(magazineCountOwner(state,to),1);
+      if(magazinePolicy(from).fixed||magazinePolicy(to).fixed)throw Error('FixedFeedLimit');
+      const magazine=from.ammunitionInventory.magazines.find(m=>m.id===magazineId);
+      if(!magazine)throw Error('MagazineMissing');
+      if(magazinePolicy(to).capacity!==null&&magazine.capacity!==magazinePolicy(to).capacity)throw Error('CapacityExceeded');
+      if(uawFeed(from.standaloneModeId)?.familyId!==uawFeed(to.standaloneModeId)?.familyId&&
+        (uawFeed(from.standaloneModeId)||uawFeed(to.standaloneModeId)))throw Error('TypeUnavailable');
+      if(magazine.rounds){
+        const source=from.ammunitionInventory.stocks.find(s=>s.key===magazine.ammoKey);
+        validateGaussType(to,source?.type);
+        const types=typeof allowedTypes==='function'?allowedTypes(to):allowedTypes;
+        if(!source||!types.some(t=>t.key===source.key&&!t.unavailable))throw Error('TypeUnavailable');
+        if(!to.ammunitionInventory.stocks.some(s=>s.key===source.key))to.ammunitionInventory.stocks.push({...clone(source),rounds:0});
+      }
+      from.ammunitionInventory.magazines=from.ammunitionInventory.magazines.filter(m=>m.id!==magazineId);
+      if(from.ammunitionInventory.installedId===magazineId)from.ammunitionInventory.installedId=null;
+      to.ammunitionInventory.magazines.push({...magazine,weaponId:to.id});
+      for(const w of [from,to]){
+        if(!validateInventory(w.ammunitionInventory,w.id))throw Error('Review');
+        initializeInstalledMagazine(w);projectAmmoInventory(w);
+      }
+      await this.saveState(state,{inventoryWrite:true});return state;
+    });
+  }
+
   readAttackAmmunition(weaponId) {
     const weapon = this.actor.getFlag(FLAG_SCOPE, FLAG_KEY)?.weapons?.find(entry => entry.id === weaponId);
     return readAttackAmmunition(weapon);
+  }
+
+  spendPaintCharge(weaponId, amount) {
+    return this.spendWeaponCharge(weaponId,amount);
+  }
+
+  setLPFireMode(weaponId, fireMode) {
+    return withActorResourceWrite(this.actor, async () => {
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Permission');
+      const state=clone(this.actor.getFlag(FLAG_SCOPE,FLAG_KEY)??this.defaultState());
+      const weapon=state.weapons.find(w=>w.id===weaponId);
+      if(!lpProfile(weapon)||!Object.hasOwn(LP_FIRE_MODES,fireMode))throw Error(lpText('Invalid'));
+      if(lpFireMode(weapon)===fireMode)return state;
+      weapon.lpFireMode=fireMode;
+      await this.actor.setFlag(FLAG_SCOPE,FLAG_KEY,state);return state;
+    });
+  }
+
+  setGaussSpeed(weaponId, speed) {
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Permission');
+      const state=clone(this.actor.getFlag(FLAG_SCOPE,FLAG_KEY)??this.defaultState());
+      const weapon=state.weapons.find(w=>w.id===weaponId);
+      if(!gaussProfile(weapon?.standaloneModeId??weapon?.catalogModeId)||!Object.hasOwn(GAUSS_SPEEDS,speed))throw Error('Некорректная скорость EM.');
+      if(gaussSpeed(weapon)===speed)return state;
+      weapon.gaussSpeed=speed;await this.actor.setFlag(FLAG_SCOPE,FLAG_KEY,state);return state;
+    });
+  }
+
+  spendLPFuel(weaponId, amount) {
+    return withActorResourceWrite(this.actor, async () => {
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Permission');
+      const state=clone(this.actor.getFlag(FLAG_SCOPE,FLAG_KEY)??this.defaultState());
+      const weapon=state.weapons.find(w=>w.id===weaponId),fuel=readLPFuel(weapon);
+      const units=typeof amount==='number'?amount*4:NaN;
+      if(!fuel||!Number.isSafeInteger(units)||units<=0||units>fuel.remainingUnits)throw Error(lpText('Invalid'));
+      fuel.remainingUnits-=units;
+      await this.actor.setFlag(FLAG_SCOPE,FLAG_KEY,state);return state;
+    });
+  }
+
+  replaceLPFuel(weaponId, options={}) {
+    return withActorResourceWrite(this.actor, async () => {
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Permission');
+      const state=clone(this.actor.getFlag(FLAG_SCOPE,FLAG_KEY)??this.defaultState());
+      const weapon=state.weapons.find(w=>w.id===weaponId),profile=lpProfile(weapon);
+      const {requestId,expectedFuel}=options;
+      if(!profile||typeof requestId!=='string'||!requestId.trim()||requestId.length>100||
+        !Object.hasOwn(options,'expectedFuel'))throw Error(lpText('Invalid'));
+      if(weapon.lpFuel?.replacementId===requestId)return state;
+      if(!sameWeaponResource(weapon.lpFuel,expectedFuel))throw Error(lpText('Stale'));
+      weapon.lpFuel={...newLPFuel(profile),replacementId:requestId};weapon.lpConfigured=true;
+      await this.actor.setFlag(FLAG_SCOPE,FLAG_KEY,state);return state;
+    });
+  }
+  spendWeaponCharge(weaponId, amount) {
+    return withActorResourceWrite(this.actor, async () => {
+      if (this.actor.isOwner === false && !globalThis.game?.user?.isGM) throw Error('Permission');
+      const state = clone(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY) ?? this.defaultState());
+      const weapon = uawPowerOwner(state,state.weapons.find(w => w.id === weaponId));
+      const profile=weaponPowerProfile(weapon);
+      if (!profile) throw Error('WeaponMissing');
+      const reason = weaponPowerReason(weapon, amount);
+      if (reason) throw Error(reason);
+      consumeWeaponResource(weapon,amount,{...profile,kind:'power'});
+      await this.saveState(state, {inventoryWrite:true});
+      return state;
+    });
+  }
+
+  // Explicit replacement only. Share the attack/inventory queue and reread live
+  // state; do not normalize inventory or rewrite any other weapon field.
+  replaceBattery(weaponId, options = {}) {
+    return withActorResourceWrite(this.actor, async () => {
+      if (this.actor.isOwner !== true && !globalThis.game?.user?.isGM) throw Error('Permission');
+      const state = clone(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY) ?? this.defaultState());
+      const weapon = uawPowerOwner(state,state.weapons?.find(w=>w.id===weaponId)), profile = weaponPowerProfile(weapon);
+      if (!profile) throw Error(batteryText('NoProfile'));
+      if(profile.oneShot)throw Error('Использованный кристалл не перезаряжается. Нужен новый экземпляр.');
+      const {requestId, nonRechargeable = false, expectedBattery} = options;
+      if (typeof requestId !== 'string' || !requestId.trim() || requestId.length > 100 ||
+          typeof nonRechargeable !== 'boolean' || !Object.hasOwn(options,'expectedBattery'))
+        throw Error(batteryText('Invalid'));
+      if (weapon[profile.stateKey]?.replacementId === requestId) {
+        if (profile.standard==='HT13'?nonRechargeable:weapon[profile.stateKey].nonRechargeable !== nonRechargeable) throw Error(batteryText('Invalid'));
+        return state;
+      }
+      if (!sameBattery(batteryExpectation(weapon,profile), expectedBattery)) throw Error(batteryText('Stale'));
+      weapon[profile.stateKey] = {...newWeaponBattery(profile,nonRechargeable),replacementId:requestId};
+      await this.actor.setFlag(FLAG_SCOPE, FLAG_KEY, clone(state));
+      return state;
+    });
+  }
+
+  replaceHTSupply(weaponId,{resourceId,requestId,expected,connected=true}={}) {
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner!==true)throw Error('Permission');
+      const state=clone(this.actor.getFlag(FLAG_SCOPE,FLAG_KEY)??this.defaultState());
+      const weapon=state.weapons?.find(w=>w.id===weaponId),p=htSupplyProfiles(weapon).find(p=>p.id===resourceId);
+      if(!p||expected===undefined||typeof requestId!=='string'||!requestId||requestId.length>100||typeof connected!=='boolean')throw Error('Некорректный ресурс Nail Gun.');
+      const prior=weapon.htSupplies?.[p.id]??null;
+      if(prior?.replacementId===requestId)return state;
+      if(!sameBattery(prior,expected))throw Error('Ресурс уже изменён. Откройте окно заново.');
+      weapon.htSupplies??={};weapon.htSupplies[p.id]={capacity:p.capacity,remaining:p.manual&&!connected?0:p.capacity,replacementId:requestId};
+      await this.actor.setFlag(FLAG_SCOPE,FLAG_KEY,state);return state;
+    });
   }
 
   // Same queue as install/load/unload. Resolve, native execution and resource commit use one magazine.
@@ -431,12 +719,58 @@ export class AmmoService {
       const ammunition = readAttackAmmunition(weapon);
       const prepared = await prepare({ state, weapon, ammunition });
       if (!prepared) return { rolled: false };
-      const { profile, amount } = prepared;
+      let { profile } = prepared;
+      const { amount } = prepared;
+      const uaw=uawGroup(weapon);
+      if(uaw&&activeUAWCarrier(state,weapon)?.id!==weapon.id)throw Error('UAWInactiveFeed');
+      if(uaw&&(profile.weaponId!==weapon.id||
+        (profile.binding?.confirmed?.modeId??profile.mode?.standaloneRef?.modeId)!==weapon.standaloneModeId||
+        profile.ammunition?.ammoId!==uawFeed(weapon.standaloneModeId).familyId))throw Error('TypeUnavailable');
+      validateProximityShot(profile);
+      const utModeId=profile.binding?.confirmed?.modeId ?? profile.mode?.standaloneRef?.modeId;
+      const em=gaussProfile(utModeId);
+      const beam=beamProfile(utModeId);
+      if(utDazzlerProfile(utModeId)&&(!whole(amount,1)||deferConsumption||amount>Number(profile.effective.rof)||
+        !profile.damage?.nativeSafe||profile.damage.rules?.utDazzler!==utModeId||!resourceOnlyWeapon(weapon)||ammunition))
+        throw Error('Dazzler требует штатное питание, профиль сопротивления и допустимый RoF.');
+      if(htLaserProfile(utModeId)&&(!whole(amount,1)||deferConsumption||amount>Number(profile.effective.rof)||
+        !profile.damage?.nativeSafe||profile.damage.rules?.htLaser!==utModeId||!resourceOnlyWeapon(weapon)||ammunition))
+        throw Error('Лазеру HT нужны штатное питание и профиль сопротивления.');
+      if(beam&&(!whole(amount,1)||deferConsumption||!profile.damage?.nativeSafe||
+        amount>Number(profile.effective.rof)||profile.damage.rules?.beam?.modeId!==utModeId||!resourceOnlyWeapon(weapon)||ammunition))
+        throw Error('Для лазера нужны готовый профиль и подтверждённый источник; отложенный расход не разрешён.');
+      if(em&&(!profile.damage?.nativeSafe||profile.ammunition?.ammoId!==em.familyId||
+        ammunition?.kind!=='physical-magazine'||!ammunition.magazineId))throw Error('EM требует совместимого физического снаряда и готового профиля.');
+      if(HT_PROJECT_WEAPON_POLICIES[utModeId]?.physicalCartridgeRequired&&
+        (ammunition?.kind!=='physical-magazine'||!ammunition.magazineId))throw Error('MagazineNotInstalled');
+      const htProfile=htPreGaussProfile(utModeId);
+      if(htProfile&&(!profile.damage?.nativeSafe||profile.damage.rules?.htSourceProfile!==utModeId))throw Error('Для этого режима нужен подтверждённый физический заряд HT.');
+      if(htProfile&&(amount!==1||deferConsumption))throw Error('Для этого режима используется одна обычная атака; специальные очереди не применяются.');
+      const unitCost=htProfile?profile.damage.rules.physicalUnitsPerAttack??1:1;
+      if(htProfile&&unitCost!==(htProfile.kind==='flame'&&weapon.htJetMode==='continuous'?htProfile.continuousUnits??1:1))throw Error('Режим струи изменился. Подготовьте атаку заново.');
+      const physicalAmount=amount*unitCost;
+      if(htProfile&&(!ammunition||ammunition.kind!=='physical-magazine'||!ammunition.magazineId))throw Error('MagazineNotInstalled');
+      const htSupplies=htSupplyEvidence(weapon,amount);
+      if(htProfile)profile=immutableCopy({...profile,resource:{...profile.resource,physicalUnits:physicalAmount,htSupplies}});
+      const resourceView=uawWeaponView(state,weapon),powerOwner=uawPowerOwner(state,weapon);
+      validateWeaponResources(resourceView,profile,ammunition);
+      const powerProfile = weaponResourceProfile(resourceView) ?? weaponResourceProfile(resourceView,utModeId);
+      if(['etc','lp'].includes(resourceView.executionVariant)&&(!ammunition||ammunition.kind==='physical-magazine'&&!ammunition.magazineId))
+        throw Error('MagazineNotInstalled');
+      const powerReason = weaponResourceReason(resourceView, amount, weaponResourceProfile(resourceView) ? null : utModeId);
+      if (powerReason) throw Error(powerReason);
+      const power = powerProfile ? weaponResourceEvidence(powerOwner, amount, deferConsumption ? 0 : amount,powerProfile) : null;
+      if(power&&uaw&&resourceView.executionVariant==='etc')power.ownerWeaponId=powerOwner.id;
+      if (power) {
+        profile = immutableCopy({...profile, resource:{...profile.resource, [powerProfile.receiptKey]:power}});
+      }
+      if (!profile.damage?.nativeSafe && (UT_CONVENTIONAL_MODES[utModeId] || UT_SPECIAL_MODES[utModeId] ||
+          utConventionalReadiness(utModeId,profile.raw))) throw new Error(profile.damage?.reason ?? 'UTVariantUnavailable');
       if (profile.context?.barrel && !ammunition) throw new Error("MagazineNotInstalled");
       if (profile.compatibility.status === "incompatible") throw new Error("IncompatibleAmmunition");
       if (profile.damage?.rules?.manualGuidance?.required &&
-          (globalThis.game?.user?.isGM !== true || profile.context?.manualGuidanceConfirmed !== true || amount !== 1))
-        throw Error("Ведущий должен разрешить проверку с ручным учётом наведения и полёта; за пуск расходуется одна ракета.");
+          (profile.context?.manualGuidanceConfirmed !== true || amount !== 1))
+        throw Error("Подтвердите ручной учёт наведения и полёта; за пуск расходуется одна ракета.");
       if (profile.compatibility.reasons?.some(r => r.code === "HT_IDENTITY_UNVERIFIED"))
         throw new Error("HTIdentityUnverified");
       if (profile.damage?.rules?.manualCyclingRequired && amount > 1) throw new Error("AmmunitionCyclingUnconfirmed");
@@ -447,7 +781,7 @@ export class AmmoService {
       if (ammunition?.type?.recipe && !profile.damage?.nativeSafe) throw new Error("IncompleteAmmunitionProfile");
       if (profile.ammunition?.recipe && !profile.damage?.nativeSafe)
         throw new Error("IncompleteAmmunitionProfile");
-      if (ammunition && (!whole(amount, 1) || amount > Math.min(ammunition.available, ammunition.total)))
+      if (ammunition && (!whole(physicalAmount, 1) || physicalAmount > Math.min(ammunition.available, ammunition.total)))
         throw new Error("InsufficientRounds");
       if (ammunition?.kind === "physical-magazine") validateResourceShot(weapon, ammunition.type,
         profile.binding?.confirmed?.modeId ?? profile.mode?.standaloneRef?.modeId);
@@ -455,23 +789,32 @@ export class AmmoService {
       const distance = profile.context?.shotgun?.physicalDistance ?? profile.context?.environment?.actualDistance;
       if (range && Number.isFinite(distance) && (distance < range.minimum || distance > range.maximum))
         throw new Error("OutsideAmmunitionRange");
-      const result = await execute(prepared);
+      const result = await execute({...prepared, profile});
       if (!result?.rolled) return { ...result, profile, spent: 0 };
       // Configuration writers can run while GGA awaits; retain their current settings.
       const current = clone(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY));
       const currentWeapon = current.weapons.find(entry => entry.id === weaponId);
       const latest = readAttackAmmunition(currentWeapon);
       if (JSON.stringify(latest) !== JSON.stringify(ammunition)) throw new Error("AmmunitionChangedDuringAttack");
-      const spent = ammunition && !deferConsumption ? amount : 0;
+      const currentPowerOwner=uawPowerOwner(current,currentWeapon);
+      if(htProfile&&unitCost!==(htProfile.kind==='flame'&&currentWeapon.htJetMode==='continuous'?htProfile.continuousUnits??1:1))throw Error('Режим струи изменился во время атаки.');
+      validateWeaponResources(uawWeaponView(current,currentWeapon),profile,latest);
+      if (power && !sameWeaponResource(readWeaponResource(currentPowerOwner,powerProfile),readWeaponResource(powerOwner,powerProfile)))
+        throw Error('BatteryChangedDuringAttack');
+      if(htSupplies.length)consumeHTSupplies(currentWeapon,htSupplies);
+      const spent = ammunition && !deferConsumption ? physicalAmount : 0;
       if (!deferConsumption && ammunition?.kind === "physical-magazine") {
-        applyInventoryOperation(currentWeapon, "consume", { magazineId: ammunition.magazineId, amount });
+        applyInventoryOperation(currentWeapon, "consume", { magazineId: ammunition.magazineId, amount:physicalAmount });
         projectAmmoInventory(currentWeapon);
       } else if (!deferConsumption && ammunition?.kind === "legacy") {
         currentWeapon.magazines[ammunition.legacyIndex] -= amount;
         currentWeapon.totalAmmo -= amount;
       }
+      if (power && !deferConsumption) consumeWeaponResource(currentPowerOwner,amount,powerProfile);
       const receipt = { attackId, weaponId, magazineId: ammunition?.magazineId ?? null,
         ammoKey: ammunition?.ammoKey ?? null, spent, messageId: result.message?.id ?? null,
+        ...(power ? {[powerProfile.receiptKey]:power} : {}),
+        ...(htProfile?{htSupplies,physicalUnits:physicalAmount}:{}),
         ...(resourceTiming === "suppression-activation" ? { profile } : {}) };
       current.shotReceipts ??= {};
       current.shotReceipts[attackId] = receipt;

@@ -2,6 +2,7 @@ import { HT_KINETIC_FAMILY_FACTS, HT_REVIEWED_PLATFORMS, HT_RIFLE_CARTRIDGE_IDS 
 import { applyHTSpecialEvidence, applyHTSubsonicExclusions } from "./ht-special-ammunition-evidence.js";
 import { HT_12G_CASE_CONSTRUCTIONS, reviewedShotshellConstruction } from "./ht-shotshell-source-data.js";
 import { reviewedNativePlusPBaseline } from "./ht-native-charge-profiles.js";
+import { HT_PROJECT_WEAPON_POLICIES } from './ht-source-corrections.js';
 // Reviewed source facts: exact catalog families plus class rules, never a caliber-based chamber join.
 export const AK47_MODE_ID = "W27s4Lm8QlkKVKUPn";
 export const AK47_AMMO_ID = "ht_7_62x39mm";
@@ -32,9 +33,10 @@ export function applyReviewedHTEvidence(facts, mode, ammo, selectedVariants = []
 
 function applyHTClassEvidence(facts, mode, ammo, selectedVariants) {
   const family = HT_KINETIC_FAMILY_FACTS[ammo?.id];
+  const projectIdentity=HT_PROJECT_WEAPON_POLICIES[mode?.weapon_mode_id]?.ammoId===ammo?.id;
   const baseline = family && ammo.ammunition_class === "small_arms_cartridge" && ammo.ammunition_construction === "fixed_cased" &&
     mode?.role === "attack" && !mode.hidden && mode.combat_type === "ranged" && mode.weapon_family === "firearm" &&
-    mode.ht_ammo_resolution?.status === "exact_chambering" && ammo.weapon_mode_ids?.includes(mode.weapon_mode_id) &&
+    (mode.ht_ammo_resolution?.status === "exact_chambering" || projectIdentity) && ammo.weapon_mode_ids?.includes(mode.weapon_mode_id) &&
     !ammo.native_linked_mode_ids?.length && !mode.resolution_flags?.length &&
     /^\d+(?:\.\d+)?d(?:[+-]\d+){0,2}(?:x\d+)? (pi-|pi|pi\+|pi\+\+)$/.test(mode.raw_calc?.damage ?? "");
   if (!baseline) {

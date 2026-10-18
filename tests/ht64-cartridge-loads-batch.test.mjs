@@ -97,7 +97,7 @@ test("legacy +P policy list is frozen; neither GM approval nor policy admits a n
   assert.equal(automatic.admission(p, { policy: "permissive" }).allowed, true);
   const shot = profile(modes.glock, "ht_plus_p");
   assert.deepEqual(shot.damage.rules.pressureAdmission, { legacyPolicyAdmission: true, ratingVerified: false,
-    ratingSource: null, basis: "preserved-legacy-policy" });
+    ratingSource: null, basis: "preserved-legacy-policy", userPressureAssumption: false });
   const fresh = structuredClone(p); fresh.facts.legacyPlusPAdmission = false;
   for (const policy of ["permissive", "strict"]) assert.deepEqual(automatic.admission(fresh, { policy, approval: { active: true } }), { allowed: false, authority: "pressure-proof-required" });
   fresh.facts.evidence.weapon_pressure_rating_verified = { value: true, source: "synthetic verified platform rating" };
@@ -146,7 +146,10 @@ test("P1 new labels and reason keys have exact RU/EN parity and real unavailable
     const locale=JSON.parse(fs.readFileSync('lang/'+lang+'.json','utf8'));
     for(const [key,text] of Object.entries(automaticAmmoMessages[lang]).filter(([key])=>key.startsWith('P1')))assert.equal(locale['OleGURPS.AutomaticAmmo.'+key],text);
     const types=ammunitionCandidates(f.actor,f.state().weapons[0],api,lang);
-    assert.ok(!availableAmmoTypes(f.actor,f.state().weapons[0],api,lang).some(t=>["ht_match_handloaded","ht_silent"].includes(t.recipe?.variantId)));
+    const selectable=availableAmmoTypes(f.actor,f.state().weapons[0],api,lang);
+    const conditional=selectable.find(t=>t.recipe?.variantId==='ht_match_handloaded');
+    assert.ok(conditional);assert.equal(conditional.unavailable,true);assert.equal(conditional.preparation.state,'incomplete');
+    assert.ok(!selectable.some(t=>t.recipe?.variantId==='ht_silent'));
     for(const id of ['ht_match_handloaded','ht_silent']) {const t=types.find(t=>t.recipe?.variantId===id);assert.equal(t.unavailable,true);assert.ok(t.label.includes(automaticAmmoText('P1'+id,lang)));
       assert.equal(t.reason,automaticAmmoText(id==='ht_silent'?'P1SilentEvidenceMissing':'P1HandloadEvidenceMissing',lang));}
   }

@@ -1,3 +1,4 @@
+import { canManageAmmunitionShot } from './ammunition-approval-service.js';
 // Read-only adapters for the approved F2 effects. No rolls, persistence or Actor writes.
 import { heshSpall, thermobaricDamage, tandemDamage } from "./explosive-attack-profiles.js";
 import { fragmentHitCount, parseFragmentDamage, fragmentTargetProfile, FRAGMENT_POSTURES } from "./explosion-fragmentation.js";
@@ -5,7 +6,6 @@ import { calculateHitsFromMargin } from "./prepared-gga-roll.js";
 import { f2Text } from "./ammunition-f2-localization.js";
 import { selfDestructDistanceReached } from "./fuze-tracer-ammunition.js";
 import { explosiveText } from "./explosive-ammunition-localization.js";
-import { appendInstructionSteps } from "../localization.js";
 
 const row = (variants, suffix, kind, component) => variants.split(" ").map(v => [v + ":" + suffix, { kind, component }]);
 export const F2_ROWS = Object.freeze(Object.fromEntries([
@@ -69,7 +69,7 @@ export const F2_FIELDS = Object.freeze({
 
 /** Local GM assertions are never facts added to the immutable shot. */
 export function calculateF2({ shot, source, role = "kinetic", messageId = source?.id }, id, input = {}, runtime = globalThis) {
-  if (!runtime.game?.user?.isGM || source?.visible !== true || source?.isContentVisible !== true ||
+  if (!canManageAmmunitionShot({source,shot},runtime) || source?.visible !== true || source?.isContentVisible !== true ||
       shot?.correlation?.attackMessageId !== source.id || !f2RowsForShot(shot).some(r => r.id === id)) return null;
   const descriptor = F2_ROWS[id], kind = descriptor.kind, damage = shot.profile.damage;
   const missing = fields => ({ status: "unresolved", fields });
@@ -142,19 +142,7 @@ export function appendF2Conditions(details, resolved, runtime, refresh, extensio
   let rows = f2RowsForShot(resolved?.shot);
   if (!rows.length && !extension.rows?.length) return;
   const doc = runtime.document, add = (parent, tag, text) => { const el = doc.createElement(tag); if (text !== undefined) el.textContent = text; parent.append(el); return el; };
-  const kinds = [...new Set(rows.map(r => r.kind))];
-  const previousLinked = details.textContent?.includes(explosiveText("P4LinkedFollowUp", runtime));
-  for (const kind of kinds) {
-    const primaryBlast = kind === "Linked" && !component(resolved.shot, "linked") &&
-      component(resolved.shot, "kinetic")?.relation === "linked-blast-primary";
-    appendInstructionSteps(details, f2Text(primaryBlast ? "LinkedPrimary" : kind === "Linked" && previousLinked ? "LinkedExtra" : kind, runtime), doc);
-  }
-  const facts = savedF2Facts(resolved, runtime), unknown = f2Text("Unknown", runtime);
-  add(details, "div", f2Text("Facts", runtime, Object.fromEntries(Object.entries(facts).map(([k, v]) => [k, v ?? unknown]))));
-  const formulas = resolved.shot.profile.damage.components?.filter(c => c.status === "resolved").map(c => `${f2Text("role" + c.role, runtime)}: ${c.formula}`) ?? [];
-  if (formulas.length) add(details, "div", f2Text("Components", runtime) + ": " + formulas.join("; "));
-  extension.instructions?.(details);
-  if (!runtime.game?.user?.isGM) return;
+  if (!canManageAmmunitionShot(resolved,runtime)) return;
   if (resolved.messageId !== resolved.source.id) rows = rows.filter(r => r.component === resolved.role ||
     r.kind === "Linked" && resolved.role === "kinetic" && component(resolved.shot, "kinetic")?.relation === "linked-blast-primary");
   rows.push(...(extension.rows ?? []).filter(r => resolved.messageId === resolved.source.id || r.components.includes(resolved.role)));
@@ -200,7 +188,7 @@ export function appendF2Conditions(details, resolved, runtime, refresh, extensio
   calculate.addEventListener("click", event => {
     event.preventDefault(); event.stopPropagation(); output.textContent = "";
     const current = refresh();
-    if (!runtime.game?.user?.isGM || !current || current.source.id !== resolved.source.id || current.shot.attackId !== resolved.shot.attackId || current.role !== resolved.role) { local.remove(); return; }
+    if (!canManageAmmunitionShot(current,runtime) || !current || current.source.id !== resolved.source.id || current.shot.attackId !== resolved.shot.attackId || current.role !== resolved.role) { local.remove(); return; }
     if (extension.fields?.(select.value)) {
       output.textContent = extension.calculate(current, select.value, controls);
       return;

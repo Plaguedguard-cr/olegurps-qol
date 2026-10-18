@@ -11,6 +11,12 @@ const completedG = [
   ["WgOt4XUnNzTOpdiAO", "ht_9x39mm"],
   ["W5biN11nvUhQ00ewl", "ht_13x92mmsr_mauser"]
 ];
+// HT117/120: APS cavitation-stabilized dart; HT134/137: KPV APHCI-T.
+// HT165 permits individually handloaded +P; OWNER decisions replace the old GM gate.
+export const ownerManualG = [
+  ["W10jqOZ0kjeSuoY3C", "ht_5_66x39mm"],
+  ["WK6cr08HEjTSsvYNS", "ht_14_5x114mm"]
+];
 // HT92/117/119: unproven old cartridge identities. MAS Pistolet Mle 1777 was already
 // outside the 363 world-ready pairs because it required a loading confirmation.
 const closed = [
@@ -25,7 +31,7 @@ export function assertPlusPReadyIdentities(rows) {
   const historical = readAuditFixture("ht-12g-case-correction").all.filter(row => row.ready);
   const expected = new Set(historical.map(key));
   assert.equal(expected.size, 363);
-  for (const [modeId, ammoId] of completedG) {
+  for (const [modeId, ammoId] of [...completedG, ...ownerManualG]) {
     assert(!expected.has(modeId + "/" + ammoId));
     expected.add(modeId + "/" + ammoId);
   }
@@ -35,5 +41,5 @@ export function assertPlusPReadyIdentities(rows) {
   assert.equal(new Set(rows.map(key)).size, 511, "unique native pair identities");
   assert.equal(new Set(actual).size, actual.length, "no duplicate ready pair");
   assert.deepEqual(actual.sort(), [...expected].sort(), "exact reviewed +P readiness boundary");
-  assert.equal(actual.length, 366); // 363 + 7 - 4, never 370 minus all five review entries.
+  assert.equal(actual.length, 368); // 363 + 7 + APS + KPV - 4; loading checks remain separate.
 }

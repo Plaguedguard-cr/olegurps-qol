@@ -204,7 +204,7 @@ test('shared melee prepared adapter keeps native template, bucket modifiers, tel
   assert.equal(result.rolled,true);assert.equal(chatdata.finaltarget,15);assert.equal(chatdata.isCritSuccess,false);
   assert.equal(chatdata.rof,null);assert.equal(chatdata.rofrcl,null);assert.equal(chatdata.chatthing,'Axe (Swing)');
   assert.ok(chatdata.followon.includes('D:'));assert.equal(messages[0].blind,true);assert.deepEqual(messages[0].whisper,['gm']);
-  assert.ok(messages[0].content.includes('<details class="olegurps-attack-context">'));
+  assert.ok(messages[0].content.includes('<details class="olegurps-attack-context olegurps-chat-details">'));
   assert.ok(messages[0].content.includes('Deceptive Attack: -1 defense'));assert.ok(!messages[0].content.includes('<details open'));
   const capped=await executePreparedGgaRoll({actor,combatType:'melee',attack:{name:'Axe',level:14},effectiveSkill:9,skillCap:9,deceptiveDefensePenalty:-1,physicalShots:1,effectiveRoF:1,rcl:1,consumeAction:false,runtime});
   assert.equal(capped.rollData.finaltarget,9);

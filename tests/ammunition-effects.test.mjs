@@ -109,8 +109,20 @@ test("normal load window exposes separate AP/APHC/HP stocks and blocks incomplet
   for (const lang of ["ru", "en"]) {
     const types = availableAmmoTypes({}, weapon, api, lang);
     const playable = types.filter(t => !t.unavailable);
-    assert.equal(playable.length, 7); assert.equal(new Set(playable.map(t => t.key)).size, 7);
-    assert.equal(types.find(t=>t.recipe?.variantId === "ht_plus_p").unavailable,true); // Fixture has no numeric weapon ST.
+    assert.deepEqual(playable.map(t => t.recipe?.variantId ?? "base").sort(),
+      ["base", "ht_ap", "ht_aphc", "ht_hollow_point", "ht_apds", "ht_sapfsds", "ht_subsonic_rifle", "ht_plus_p"].sort());
+    assert.equal(new Set(playable.map(t => t.key)).size, playable.length);
+    // A stock choice needs no Actor ST: the exact pre-package-6 +P pair retains admission,
+    // without claiming verified pressure safety or admitting a new, unverified pair.
+    const plusP = types.find(t => t.recipe?.variantId === "ht_plus_p");
+    assert.equal(plusP.preparation.state, "complete");
+    assert.equal(plusP.status, "undetermined");
+    assert.equal(plusP.preparation.facts.legacyPlusPAdmission, true);
+    assert.notEqual(plusP.preparation.facts.evidence.weapon_pressure_rating_verified?.value, true);
+    const newPair = structuredClone(plusP.preparation);
+    newPair.type = plusP; newPair.facts.legacyPlusPAdmission = false;
+    assert.deepEqual(api.automaticAmmunitionProfiles.admission(newPair),
+      { allowed: false, authority: "pressure-proof-required" });
     assert.ok(playable.some(t => t.recipe?.variantId === "ht_subsonic_rifle"));
     assert.ok(playable.some(t => t.recipe?.variantId === "ht_sapfsds"));
     for (const id of ["ht_apex", "ht_aphex"]) {
@@ -165,7 +177,10 @@ test("one understandable GM diagnostic per session; localization uses both actua
     const effectSource=await fs.readFile(new URL("../scripts/tools/ammunition-effects.js",import.meta.url),"utf8");
     const reasons=[...effectSource.matchAll(/unresolved\("([^"]+)"\)/g)].map(match=>match[1]);
     for(const reason of reasons){
-      const key=Object.keys(bundle).find(key=>key.endsWith("."+reason));
+      // Match ammoEffectText's own namespace first; shared reasons without an
+      // AmmoEffects entry use moduleMessage's existing cross-namespace fallback.
+      const effectKey="OleGURPS.AmmoEffects."+reason;
+      const key=Object.hasOwn(bundle,effectKey)?effectKey:Object.keys(bundle).find(key=>key.endsWith("."+reason));
       assert.ok(key,lang+" missing "+reason);
       assert.notEqual(ammoEffectText(reason,{},runtime),reason);
       assert.equal(ammoEffectText(reason,{},runtime),ru[key]);

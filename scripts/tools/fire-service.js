@@ -1,3 +1,4 @@
+import { validateProximityShot } from './ut-he-proximity.js';
 import { calculateHitsFromMargin, executePreparedGgaRoll } from "./prepared-gga-roll.js";
 import { f4Text } from "./ammunition-f4-localization.js";
 import { resolveRuntimeAttackProfile, newAttackId, pendingShotSnapshot, attackProfileError } from "./attack-profile-runtime.js";
@@ -7,6 +8,7 @@ import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 
 export function parseRateOfFire(value) {
   const text = String(value ?? "").trim();
+  if(/^Jet$/i.test(text))return {type:'jet',valid:true,source:text,baseRoF:1,projectileMultiplier:1,display:'Jet'};
   if (/^\d+\s*!(?:\s*\/\s*\d+\s*!)*$/u.test(text)) {
     const modes = Array.from(text.matchAll(/(\d+)\s*!/gu), (match, index) => {
       const fullRoF = Math.max(1, Number(match[1]));
@@ -401,8 +403,12 @@ export class FireService {
           physicalDistance: options.physicalDistance ?? null, halfDamageRange: options.halfDamageRange ?? null,
           extremelyClose: options.extremelyClose === true, closeDamageMultiplier: options.closeDamageMultiplier ?? null,
           damageApplication: "native-GGA-GM-selection" } } });
+    validateProximityShot(attackProfile);
+    validateWeaponShotPower(this.actor, attackProfile, options.physicalShots ?? 1, attack);
     const previewTracer = options.combatCalculation?.channels?.find(c => c.id === "ammunitionTracer")?.resolvedValue ?? 0;
     if (previewTracer !== (attackProfile.context?.f4?.tracerBonus ?? 0)) throw Error(f4Text("Stale"));
+    const previewConstruction=options.combatCalculation?.channels?.find(c=>c.id==='ammunitionConstruction')?.resolvedValue??0;
+    if(previewConstruction!==(attackProfile.damage.rules.attackBonus??0))throw Error('Профиль боеприпаса изменился. Обновите Fire Control.');
     if (attackProfile.compatibility.status === "incompatible") throw new Error(attackProfileError("IncompatibleAmmunition"));
     if (String(attackProfile.effective.rcl ?? "").includes("/") &&
         parseRecoil(attackProfile.effective.rcl, { projectileKind: attackProfile.effective.ammunitionProjectileKind }) === null)
@@ -557,3 +563,4 @@ export class FireService {
     return { ...result, appliedModifiers };
   }
 }
+import { validateWeaponShotResources as validateWeaponShotPower } from './weapon-resources.js';

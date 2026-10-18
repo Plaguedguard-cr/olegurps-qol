@@ -29,28 +29,30 @@ const typeFor = (variantId="ht_apex",id="recipe-A") => {
 };
 function approvalFixture() {
   let saved={};
-  const actor={id:"actor-A"},weapon={id:"weapon-A",attackRef:{path:"system.ranged.0"}};
+  let local={};const actor={id:"actor-A",isOwner:true,getFlag:()=>local,setFlag:async(_s,_k,v)=>{local=structuredClone(v);}},weapon={id:"weapon-A",attackRef:{path:"system.ranged.0"}};
   const runtime={game:{user:{id:"gm",isGM:true},settings:{get:()=>saved,set:async(_module,_key,value)=>{saved=structuredClone(value);}}},
     OleGURPSQOL:{catalogs,ammunitionCompatibility:compatibility,weaponCatalogBindings:{analyzeMode:()=>({status:"confirmed",binding:{modeId,confirmed:true}})}}};
-  return {actor,weapon,runtime,scope:type=>({actorId:actor.id,weaponId:weapon.id,modeId,type})};
+  return {actor,weapon,runtime,scope:type=>({actor,actorId:actor.id,weaponId:weapon.id,modeId,type})};
 }
 for(const id of ["ht_apex","ht_aphex"])test(id+" AK rifle remains undetermined, not forbidden by platform or caliber",()=>{
   const r=compatibility.checkCompatibility(modeId,id,{book:"ht",kind:"projectile-option",ammoItemId:"ht_7_62x39mm"});
   assert.equal(r.status,"undetermined");assert.ok(!r.eligibility.checks.some(c=>c.status==="incompatible"));
 });
-test("GM approval is scoped, revocable and never changes catalog status or permits a player grant",async()=>{
+test("owner decisions are scoped, never change catalog status and forbid foreign Actor writes",async()=>{
   const f=approvalFixture(),type=typeFor();
   await setAmmunitionApproval({...f,type,active:true},f.runtime);
   const approval=getAmmunitionApproval(f.scope(type),f.runtime),r=assessAmmunitionRecipe(compatibility,modeId,type,approval);
-  assert.equal(r.construction.status,"undetermined");assert.equal(r.authority,"gm-approved");assert.equal(r.applicationAllowed,true);
+  assert.equal(r.construction.status,"undetermined");assert.equal(r.authority,"user-defined");assert.equal(r.applicationAllowed,true);
   assert.equal(getAmmunitionApproval({...f.scope(type),weaponId:"weapon-B"},f.runtime),null);
   assert.equal(getAmmunitionApproval({...f.scope(type),actorId:"actor-B"},f.runtime),null);
   const edited=structuredClone(type);edited.recipe.parameters.ref=2;
   assert.equal(getAmmunitionApproval(f.scope(edited),f.runtime),null);
-  assert.equal(assessAmmunitionRecipe(compatibility,modeId,edited,approval).applicationAllowed,false);
+  assert.equal(assessAmmunitionRecipe(compatibility,modeId,edited,approval).applicationAllowed,true);
   await setAmmunitionApproval({...f,type,active:false},f.runtime);
   assert.equal(getAmmunitionApproval(f.scope(type),f.runtime),null);
   f.runtime.game.user.isGM=false;
+  await setAmmunitionApproval({...f,type,active:true},f.runtime);
+  f.actor.isOwner=false;
   await assert.rejects(setAmmunitionApproval({...f,type,active:true},f.runtime),/Permission/);
 });
 test("GM approval cannot bypass genuine prohibitions or UT loads",async()=>{
@@ -94,12 +96,12 @@ for(const [id,expected] of [["ht_apex","4d-1(2) pi-"],["ht_aphex","5d+1(2) pi-"]
   const resolver=new AttackProfileResolver({catalogs,compatibility}),raw={name:"AK",damage:"5d+1 pi"};
   const p=resolver.resolve({actorId:f.actor.id,weaponId:f.weapon.id,attack:raw,binding:{status:"confirmed",binding:{modeId,confirmed:true}},
     ammunition:{type,kind:"physical-magazine",magazineId:"mag",ammoKey:type.key},approval:getAmmunitionApproval(f.scope(type),f.runtime)});
-  assert.equal(p.construction.status,"undetermined");assert.equal(p.construction.authority,"gm-approved");assert.equal(p.damage.nativeSafe,true);
+  assert.equal(p.construction.status,"undetermined");assert.equal(p.construction.authority,"user-defined");assert.equal(p.damage.nativeSafe,true);
   assert.equal(p.effective.damage,expected);assert.equal(p.damage.components[1].formula,"1d-2 cr ex");assert.equal(p.damage.components[2].formula,"1d-2 cut");
   assert.equal(p.raw.damage,"5d+1 pi");assert.ok(Object.isFrozen(p.damage.model.parameters));
   type.recipe.parameters.explosiveMassG=1;assert.equal(p.damage.model.parameters.explosiveMassG,0.3);
   const other=resolver.resolve({actorId:f.actor.id,weaponId:"weapon-other",attack:raw,binding:{status:"confirmed",binding:{modeId,confirmed:true}},ammunition:{type},approval:getAmmunitionApproval(f.scope(typeFor(id)),f.runtime)});
-  assert.equal(other.damage.nativeSafe,false);
+  assert.equal(other.damage.nativeSafe,id==="ht_aphex"); // A valid owner recipe needs no approval; invalid APEX mass remains blocked.
 });
 test("custom stock identity separates parameter revisions without touching old loaded magazines",()=>{
   const a=typeFor(),b=typeFor("ht_apex","recipe-B"),weapon={id:"weapon",ammunitionInventory:{version:1,stocks:[{key:a.key,type:a,rounds:5}],magazines:[{id:"mag",weaponId:"weapon",capacity:30,rounds:4,ammoKey:a.key}],installedId:"mag"}};
