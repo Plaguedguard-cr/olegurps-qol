@@ -1,4 +1,4 @@
-import { CATALOG_DEFINITIONS } from "../catalog-service.js";
+import { CATALOG_DEFINITIONS, CatalogService } from "../catalog-service.js";
 import { validateInventory, migrateAmmoInventory, initializeInstalledMagazine, projectAmmoInventory } from "./ammo-inventory.js";
 import { LEMAT, lematBarrel } from "../ht-physical-ammunition-evidence.js";
 import { actorResourceWrites as queues, withActorResourceWrite } from "./actor-resource-writes.js";
@@ -57,12 +57,23 @@ export const standaloneMessages = Object.freeze({
 });
 export const standaloneText = key => moduleText("OleGURPS.Standalone." + key, {}, standaloneMessages[key]);
 
+const standaloneSearchIndexes = new WeakMap();
+const normalizeSearch = value => text(value).normalize("NFKC").toLowerCase().replace(/\u00d7/g, "x");
 export function searchStandaloneModels(catalogs, type, query = "", source = "") {
-  const normalize = value => text(value).normalize("NFKC").toLowerCase().replace(/\u00d7/g, "x");
-  const terms = normalize(query).split(/\s+/).filter(Boolean);
-  return (catalogs?.getCatalog("weapons")?.equipment ?? []).filter(e => (!source || e.source === source) &&
-    e.modes.some(m => m.combat_type === type && m.role === "attack" && !m.hidden) &&
-    terms.every(term => normalize([e.name, e.source, e.reference].join(" ")).includes(term)));
+  const catalog = catalogs?.getCatalog("weapons");
+  const terms = normalizeSearch(query).split(/\s+/).filter(Boolean);
+  // Only CatalogService's frozen data can be reused. Mutable injected catalogs
+  // retain fresh reads; a replacement catalog has a different WeakMap key.
+  const indexed = !!catalog && catalogs instanceof CatalogService && Object.isFrozen(catalog);
+  let rows = indexed && standaloneSearchIndexes.get(catalog);
+  if (!rows) {
+    rows = (catalog?.equipment ?? []).map(e => ({ equipment: e,
+      types: new Set(e.modes.filter(m => m.role === "attack" && !m.hidden).map(m => m.combat_type)),
+      text: normalizeSearch([e.name, e.source, e.reference].join(" ")) }));
+    if (indexed) standaloneSearchIndexes.set(catalog, rows);
+  }
+  return rows.filter(row => (!source || row.equipment.source === source) && row.types.has(type) &&
+    terms.every(term => row.text.includes(term))).map(row => row.equipment);
 }
 
 export function standaloneModeStats(mode) {

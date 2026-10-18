@@ -10,7 +10,7 @@ import { confirmBatteryReplacement } from './battery-replacement-dialog.js';
 import { batteryText } from './weapon-power.js';
 import { createFireControlContext, getTokenFireRangeContext } from "./fire-control-context.js";
 import {platformMotionError} from '../ht-specialized-platforms.js';
-import { WeaponAssistantApp, changedAmmunitionCards } from "./weapon-assistant-app.js";
+import { WeaponAssistantApp, changedAmmunitionCards, isAmmunitionHistoryOnlyUpdate } from "./weapon-assistant-app.js";
 import { installViewportBounds } from './application-viewport.js';
 import { FirePreparationApp } from "./fire-preparation-app.js";
 import { measureCanvasPointDistanceYards, measureTokenDistanceYards } from "./fire-control-context.js";
@@ -1032,7 +1032,7 @@ export async function openAmmoManager() {
       if (!charge) return false;
       const data = await DialogV2.input({window:{title:(fuel?lpText('Spend'):moduleText('OleGURPS.PaintBattery.Spend'))},
         content:`<label>${escapeHTML((fuel?lpText('Amount'):moduleText('OleGURPS.PaintBattery.Amount')))}<input type="number" name="charge" min="${fuel?0.25:1}" max="${charge}" step="${fuel?0.25:1}" required></label>`,
-        ok:{label:(fuel?lpText('Spend'):moduleText('OleGURPS.PaintBattery.Spend'))},rejectClose:false,modal:true});
+        ok:{label:(fuel?lpText('Spend'):moduleText('OleGURPS.PaintBattery.Spend'))},rejectClose:false,modal:false});
       if (!data) return false;
       const value = Number((data.object ?? data).charge);
       const updated = await (fuel?ammoService.spendLPFuel(weaponId,value):ammoService.spendWeaponCharge(weaponId, value));
@@ -1079,7 +1079,7 @@ export async function openAmmoManager() {
       `,
       ok: { label: "Списать", icon: "fa-solid fa-minus" },
       rejectClose: false,
-      modal: true
+      modal: false
     });
 
     if (!data) return false;
@@ -1240,7 +1240,7 @@ export async function openAmmoManager() {
       yes: { label: "Удалить", icon: "fa-solid fa-trash" },
       no: { label: "Отмена" },
       rejectClose: false,
-      modal: true
+      modal: false
     });
 
     if (!confirmed) return false;
@@ -1355,7 +1355,7 @@ export async function openAmmoManager() {
       `,
       ok: { label: "Сохранить", icon: "fa-solid fa-floppy-disk" },
       rejectClose: false,
-      modal: true
+      modal: false
     });
 
     if (!data) return false;
@@ -2321,6 +2321,7 @@ export async function openAmmoManager() {
     });
     actorHook = Hooks.on("updateActor", async (updatedActor, changes) => {
       if (updatedActor.id !== actor.id || !app.rendered) return;
+      if (isAmmunitionHistoryOnlyUpdate(changes)) return;
       try {
         const previous = structuredClone(app.managerState);
         persistentState = await loadState();

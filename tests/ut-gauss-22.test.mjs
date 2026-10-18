@@ -13,6 +13,7 @@ import { normalizeDamageDiceAdds } from '../scripts/tools/damage-dice-adds.js';
 import { confirmBatteryReplacement } from '../scripts/tools/battery-replacement-dialog.js';
 import { WeaponConfigurationDraft } from '../scripts/tools/weapon-configuration.js';
 import { utBriefInstructions } from '../scripts/tools/ammunition-chat-summary.js';
+import { campaignAmmunitionAdmission } from '../scripts/tools/ammunition-tech-level.js';
 
 for(const p of Object.values(GAUSS_PROFILES)) {
   test('Gauss physical stock/power/native GGA/reload: '+p.modeId,async()=>{
@@ -172,10 +173,40 @@ test('Gauss configuration preview and cancel write nothing; saved speed preserve
 
 test('Gauss campaign TL respects each physical recipe and Sniper optional family TL without changing the weapon',async()=>{
   const f=await gaussFixture('WkhAN9tcmB9eEkmY6');await f.actor.setFlag('olegurps-qol','campaignTL',9);
-  const types=f.candidates();assert.equal(types.some(t=>!t.unavailable),false);
+  const types=f.candidates(),base=types.find(t=>!t.recipe&&!t.unavailable);
+  assert.ok(base);assert.equal(base.ammoId,'7mm_em');
+  assert.equal(types.some(t=>t.recipe&&!t.unavailable),false);
+  assert.equal(f.weapon().totalAmmo,0);
+  await f.battery();await f.load(base,3);
+  const shot=await f.shoot();assert.equal(shot.rolled,true);assert.equal(shot.spent,1);
+  assert.equal(f.weapon().totalAmmo,2);assert.equal(f.actor.getFlag('olegurps-qol','campaignTL'),9);
+  assert.equal(f.actor.system.skills&&Object.keys(f.actor.system.skills).length,0);
+  const frozen=JSON.stringify(shot.snapshot);await f.actor.setFlag('olegurps-qol','campaignTL',8);
+  await assert.rejects(f.tx('add-stock',{ammoKey:base.key,amount:1}),/CampaignTLUnavailable/);
+  assert.equal(JSON.stringify(shot.snapshot),frozen);
   await f.actor.setFlag('olegurps-qol','campaignTL',10);assert.ok(f.candidates().some(t=>!t.recipe&&!t.unavailable));
   assert.equal(catalogs.getEquipmentForMode('WkhAN9tcmB9eEkmY6').tech_level,'9');
   assert.equal(f.candidates().some(t=>t.recipe?.variantId==='ut_aphd'&&!t.unavailable),false);
+});
+
+test('Sniper TL9 selection never grants campaign TL10 recipes, other EM families or other weapons',async()=>{
+  const id='WkhAN9tcmB9eEkmY6',f=await gaussFixture(id);
+  await f.actor.setFlag('olegurps-qol','campaignTL',10);
+  const base=f.candidates().find(t=>!t.recipe&&!t.unavailable);
+  const special=f.candidates().find(t=>t.recipe&&!t.unavailable);assert.ok(special);
+  assert.equal(campaignAmmunitionAdmission(base,catalogs,9).allowed,false);
+  assert.equal(campaignAmmunitionAdmission(base,catalogs,9,'WbvkCgoaLuWViWyKK').allowed,false);
+  for(const family of ['3mm_em','4mm_em','10mm_g'])
+    assert.equal(campaignAmmunitionAdmission({...base,ammoId:family},catalogs,9,id).allowed,false);
+  await f.actor.setFlag('olegurps-qol','campaignTL',9);
+  const before=JSON.stringify(f.state());
+  await assert.rejects(f.service.inventoryTransaction(f.weapon().id,'add-stock',
+    {ammoKey:special.key,type:special,amount:1},{allowedTypes:[special]}),/CampaignTLUnavailable/);
+  assert.equal(JSON.stringify(f.state()),before);
+  assert.equal(f.actor.getFlag('olegurps-qol','campaignTL'),9);
+  const other=await gaussFixture('WbvkCgoaLuWViWyKK');
+  await other.actor.setFlag('olegurps-qol','campaignTL',9);
+  assert.equal(other.candidates().some(t=>!t.unavailable),false);
 });
 
 test('new Tangler40/64 use their exact ST, DR and layers; legacy100 prose remains unchanged',()=>{

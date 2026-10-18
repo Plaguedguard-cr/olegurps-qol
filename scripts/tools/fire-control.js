@@ -24,6 +24,18 @@ const normalizeStandaloneValues = values => ({
   projectileMultiplier: String(values?.projectileMultiplier ?? "")
 });
 
+export function standaloneValueRecorder(initialValues, remember) {
+  let lastValues = JSON.stringify(normalizeStandaloneValues(initialValues));
+  let edited = false;
+  return (values, options = {}) => {
+    const normalized = JSON.stringify(normalizeStandaloneValues(values));
+    if (normalized === lastValues && (!options.immediate || !edited)) return;
+    lastValues = normalized;
+    edited = true;
+    return remember(values, options);
+  };
+}
+
 function getStandaloneTargetKey(token, actor, user) {
   const tokenUuid = token?.document?.uuid ?? token?.uuid ??
     (token?.id ? `Scene.${globalThis.canvas?.scene?.id ?? "unknown"}.Token.${token.id}` : null);
@@ -90,6 +102,8 @@ export async function openFireControl() {
   const actor = token?.actor ?? currentUser?.character ?? null;
   const standaloneTargetKey = getStandaloneTargetKey(token, actor, currentUser);
   const initialStandaloneValues = getSavedStandaloneValues(currentUser, standaloneTargetKey);
+  const rememberChangedValues = standaloneValueRecorder(initialStandaloneValues,
+    (values, options) => rememberStandaloneValues(currentUser, standaloneTargetKey, values, options));
   const service = new FireService({ actor, token });
   const context = createFireControlContext({ token, fireService: service, mode: "standalone" });
   const rangeBands = context.getRangeBands();
@@ -126,10 +140,10 @@ export async function openFireControl() {
     onTargetingServiceChange: currentTargetingService =>
       LAST_STANDALONE_BODYPLANS.set(targetSelectionKey, currentTargetingService.bodyplan),
     onStandaloneValuesChange: values =>
-      rememberStandaloneValues(currentUser, standaloneTargetKey, values),
+      rememberChangedValues(values),
     onClose: currentApp => {
       const values = currentApp.getStandaloneValues?.();
-      if (values) void rememberStandaloneValues(currentUser, standaloneTargetKey, values, { immediate: true });
+      if (values) void rememberChangedValues(values, { immediate: true });
     },
     onConfirm: async (values, currentTargetingService = targetingService) => {
       const baseSkill = Number(app.attack.level);

@@ -125,8 +125,21 @@ test("UT size-by-TL requires availability and explicit warhead class", () => {
   assert.equal(check(m, "mininuke", { availabilityTL: 12 }).status, "compatible");
   assert.equal(check(m, "plasma", { availabilityTL: 9 }).status, "incompatible");
 });
-test("UT ammo TL exception is not silently authorized", () => {
-  const m = "WkhAN9tcmB9eEkmY6"; assert.equal(check(m, "7mm_em").status, "undetermined");
+test("UT Sniper Railgun explicitly selected 7mm EM uses the approved scoped TL exception", () => {
+  const m = "WkhAN9tcmB9eEkmY6";
+  assert.equal(catalogs.getMode(m).ammunition_profile.native_weapon_tl, "9");
+  assert.equal(catalogs.getAmmoFamily("ut", "7mm_em").tl, 10);
+  assert.equal(check(m, "7mm_em").status, "compatible");
+  assert.notEqual(check(m, "4mm_em").status, "compatible");
+});
+test("UT Sniper Railgun family TL exception requires its explicit catalog authorization", async () => {
+  const m = "WkhAN9tcmB9eEkmY6";
+  const { service: s } = await loaded({ mutate: d => {
+    delete mode(d, m).ammunition_profile.user_authorized_ammo_tl_exception;
+  } });
+  const result = s.checkCompatibility(m, "7mm_em");
+  assert.equal(result.status, "undetermined");
+  assert.ok(result.reasons.some(r => r.code === "FAMILY_TL_EXCEPTION"));
 });
 for (const book of ["lt", "ht", "ut", "weapons"]) test("partial catalog availability: " + book, async () => {
   const { service: s } = await loaded({ unavailable: [book] });

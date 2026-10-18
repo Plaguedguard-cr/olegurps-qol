@@ -62,7 +62,7 @@ async function askInputs(hit, context, runtime) {
   const targets = context.targets;
   const options = targets.map((t, i) => `<option value="${i}">${escapeHTML(t.name)}</option>`).join('');
   const answer = await runtime.foundry.applications.api.DialogV2.wait({
-    window: { title: 'ST цели' }, position: { width: 390 }, modal: true, rejectClose: false,
+    window: { title: 'ST цели' }, position: { width: 390 }, modal: false, rejectClose: false,
     content: `${options ? `<label>Цель<select name="target"><option value="">Ввести ST вручную</option>${options}</select></label>` : ''}
       <label>ST цели<input name="strength" type="number" min="0.000001" step="any" required value="${context.strength ?? ''}"></label>
       ${hit.type === 'cut' ? '<label>Cutting: урон пробил DR?<select name="penetrated" required><option value="">Выберите условие</option><option value="no">Нет, DR остановила урон</option><option value="yes">Да, урон пробил DR</option></select></label>' : ''}`,
@@ -95,7 +95,7 @@ export async function reportDoubleKnockback(message, runtime = globalThis) {
   let hit = hits[0];
   if (hits.length > 1) {
     const answer = await runtime.foundry.applications.api.DialogV2.wait({
-      window: { title: 'Выберите попадание с dkb' }, modal: true, rejectClose: false,
+      window: { title: 'Выберите попадание с dkb' }, modal: false, rejectClose: false,
       content: `<label>Отдельное попадание / компонент<select name="hit" required><option value="">Выберите результат</option>${hits.map(h =>
         `<option value="${h.index}">№ ${h.index + 1}: ${h.damage} ${h.type} dkb</option>`).join('')}</select></label>`,
       buttons: [{ action: 'select', label: 'Выбрать', default: true,

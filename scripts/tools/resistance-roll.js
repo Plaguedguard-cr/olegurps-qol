@@ -162,7 +162,7 @@ export async function rollResistance(message,runtime=globalThis){
       captured={...result,base,modifier:conditions.modifier,bucketModifier:bucket,finalTarget:r.finaltarget,total:r.rtotal,margin:r.margin};
       matchedId=nativeMessage.id;
       const details=`<details class="olegurps-chat-details"><summary>Условия сопротивления</summary><p>${escape(effect.name)}; ${escape(effect.attribute)} ${base}, поправка эффекта и условий ${conditions.modifier}, Modifier Bucket и GGA ${bucket}, итог ${r.finaltarget}.</p><p>3d6: ${r.rtotal}. ${escape(result.marginText)}.</p>${conditions.lines.map(line=>'<p>'+escape(line)+'</p>').join('')}<p>${escape(effect.source)}</p></details>`;
-      nativeMessage.updateSource({content:nativeMessage.content+`<div class="olegurps-resistance-result"><strong>${escape(actor.name)}: ${escape(result.label)}</strong><p>${escape(result.consequence)}</p>${details}</div>`,
+      nativeMessage.updateSource({content:nativeMessage.content+`<div class="olegurps-resistance-result"><strong>${escape(result.label)}</strong><p>${escape(result.consequence)}</p>${details}</div>`,
         whisper:[],blind:false,
         [`flags.${SCOPE}.resistanceResult`]:{version:1,effectId:effect.id,attribute:effect.attribute,base,modifier:conditions.modifier,
           bucketModifier:bucket,finalTarget:r.finaltarget,total:r.rtotal,margin:r.margin,success:result.success,

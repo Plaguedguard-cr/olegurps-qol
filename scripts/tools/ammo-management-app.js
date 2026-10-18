@@ -1,4 +1,5 @@
 import { AmmoService } from "./ammo-service.js";
+import { isAmmunitionHistoryOnlyUpdate } from './weapon-assistant-app.js';
 import { stormMagazineOptions } from './ut-storm-feeds.js';
 import { baseAmmunition, escapeWeaponHTML as escape } from "./weapon-configuration.js";
 import { ammoTypeKey, isArchivedAmmoType, magazineFill, validateInventory } from "./ammo-inventory.js";
@@ -338,7 +339,7 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
   }
   const campaignTL = readCampaignTL(actor);
   return types.filter(type => {
-    const admitted = campaignAmmunitionAdmission(type, api?.catalogs, campaignTL);
+    const admitted = campaignAmmunitionAdmission(type, api?.catalogs, campaignTL, modeId);
     if (admitted.allowed) return true;
     const stock = inventory?.stocks?.find(s => s.key === type.key);
     if (!stock) return false;
@@ -528,6 +529,9 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
     this.ui.capacityLimit = magazinePolicy(this.weapon).capacity??lematBarrel(modeId)?.capacity;
     const inventory = this.weapon?.ammunitionInventory;
     const types = this.weapon ? displayedAmmoTypes(this.actor, this.weapon, undefined, this.ui.language) : [];
+    // One fresh list per context. Input capture only needs the defaults of the
+    // already displayed physical recipe; service operations still revalidate.
+    this._displayedTypes = new Map(types.map(type => [type.key, type]));
     if (!types.some(type => type.key === this.ui.ammoKey)) {
       const current=inventory?.magazines.find(m=>m.id===inventory.installedId)?.ammoKey;
       this.ui.ammoKey=types.find(type=>type.key===current)?.key??types[0]?.key??"";
@@ -550,8 +554,9 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
       },true);
       this.element.dataset.inventoryListeners = "true";
     }
-    if (this._hook === null) this._hook = Hooks.on("updateActor", actor => {
+    if (this._hook === null) this._hook = Hooks.on("updateActor", (actor, changes) => {
       if (actor.id !== this.actor.id || this._closed) return;
+      if (isAmmunitionHistoryOnlyUpdate(changes)) return;
       if (this.busy) this._pendingUpdate = true;
       else this.refresh().catch(error => console.error("OleGURPS ammunition refresh", error));
     });
@@ -584,7 +589,8 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
     const payload=root?.querySelector('[data-ut-payload]');
     if(payload) {
       const key=payload.dataset?.ammoKey||this.ui.ammoKey;
-      const selected=displayedAmmoTypes(this.actor,this.weapon,undefined,this.ui.language).find(t=>t.key===key);
+      const selected=this._displayedTypes ? this._displayedTypes.get(key) :
+        displayedAmmoTypes(this.actor,this.weapon,undefined,this.ui.language).find(t=>t.key===key);
       const current=key===this.ui.ammoKey;
       const prior=(current?this.ui.utPayloadDraft:this._utPayloadDrafts?.get(key)?.parameters)??selected?.recipe?.parameters??{};
       const radiusText=root.querySelector('[name="ut-radius"]')?.value.trim(),yards=radiusText?Number(radiusText):null;
@@ -816,6 +822,7 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
   }
   async close(options = {}) {
     this._closed = true;
+    this._displayedTypes = null;
     if (this._hook !== null) { Hooks.off("updateActor", this._hook); this._hook = null; }
     if (this._approvalHook != null) { Hooks.off("updateSetting", this._approvalHook); this._approvalHook = null; }
     this.element?.removeEventListener("change", this._change);

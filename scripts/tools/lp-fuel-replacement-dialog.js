@@ -6,7 +6,7 @@ export async function confirmLPFuelReplacement({actor,weaponId,ammoService,
   const weapon=actor.getFlag('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===weaponId);
   if(!lpProfile(weapon))throw Error(lpText('Unsupported'));
   const expectedFuel=structuredClone(weapon.lpFuel??null),requestId=crypto.randomUUID();
-  const answer=await DialogV2.wait({window:{title:lpText('Question')},position:{width:350},modal:true,rejectClose:false,
+  const answer=await DialogV2.wait({window:{title:lpText('Question')},position:{width:350},modal:false,rejectClose:false,
     content:`<p>${lpText('Question')}</p>`,buttons:[
       {action:'yes',label:lpText('Yes'),callback:()=>({confirmed:true})},
       {action:'no',label:lpText('No'),default:true,callback:()=>false}

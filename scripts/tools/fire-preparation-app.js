@@ -1,6 +1,7 @@
 import { lpProfile, lpFireMode, LP_FIRE_MODES, lpText } from './ut-liquid-propellant.js';
 import { gaussSpeedHTML } from './ut-gauss.js';
 import { AmmoService } from './ammo-service.js';
+import { isAmmunitionHistoryOnlyUpdate } from './weapon-assistant-app.js';
 import { moduleMessage, moduleText } from "../localization.js";
 import { isWeaponBondActive } from "./weapon-bond-service.js";
 import { projectAmmoInventory } from "./ammo-inventory.js";
@@ -1036,8 +1037,9 @@ export class FirePreparationApp extends ApplicationV2 {
     this._onTargetToken(globalThis.game?.user);
   }
 
-  _onActorUpdate(updated) {
+  _onActorUpdate(updated, changes) {
     if (updated?.id !== this.actor?.id) return;
+    if (isAmmunitionHistoryOnlyUpdate(changes)) return;
     this._captureFields();
     if (this.attack?.standaloneRef) {
       const ref = this.attack.standaloneRef;

@@ -39,16 +39,20 @@ function profile(type, {policy="permissive",approval=null,service=automatic,raw=
 test("four-catalog audit is read-only and distinguishes complete data from unknown rules",()=>{
   const before=JSON.stringify(data),r=automatic.audit();
   // The original source links still enumerate .42 against LeMat's central 18G barrel.
-  // The approved physical identity review rejects exactly those two old APEX/APHEX pairs.
+  // Signal-only and net launchers also reject both generic explosive constructions.
   const rejected = [];
   for (const ammo of catalogs.getCatalog("ht").ammo_items) for (const modeId of ammo.weapon_mode_ids)
     for (const variantId of ["ht_apex", "ht_aphex"]) {
       const result = automatic.prepare({ modeId, base: { ...ammo, ammoId: ammo.id, book: "ht", kind: "ammo-item" }, variantId });
       if (result.state === "incompatible") rejected.push([modeId, ammo.id, variantId]);
     }
-  assert.deepEqual(rejected, [["WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", "ht_apex"], ["WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", "ht_aphex"]]);
+  assert.deepEqual(rejected, [
+    ["WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", "ht_apex"], ["WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", "ht_aphex"],
+    ["WhcXEtCOb-yikzW5Z", "ht_26_5x103mmr", "ht_apex"], ["WhcXEtCOb-yikzW5Z", "ht_26_5x103mmr", "ht_aphex"],
+    ["WI9EWrbCRSJOCS_y4", "ht_37x122mmr", "ht_apex"], ["WI9EWrbCRSJOCS_y4", "ht_37x122mmr", "ht_aphex"]
+  ]);
   assert.equal(compatibility.checkCompatibility("WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", { book: "ht", kind: "ammo-item" }).status, "incompatible");
-  assert.deepEqual(r.ht,{combinations:1022,complete:10,incomplete:1010,incompatible:2,rules:{undetermined:1020,incompatible:2}});
+  assert.deepEqual(r.ht,{combinations:1022,complete:10,incomplete:1006,incompatible:6,rules:{undetermined:1016,incompatible:6}});
   // UT-DATA transcribed two previously absent UT142 weapons; the imported GCS stays intact.
   assert.equal(data.weapons.equipment.length,1152);
   assert.equal(r.catalogs.weapons.equipment,1154);assert.equal(r.catalogs.lt.items,134);
@@ -71,21 +75,21 @@ test("four-catalog audit is read-only and distinguishes complete data from unkno
     assert.equal(mode.ut_source_data.origin,"module-owned-source-transcription");
     assert.equal(mode.ut_source_data.revision,"ut-2007-1");
     assert.deepEqual(mode.ut_source_data.sources,["Ultra-Tech141","Ultra-Tech142","Ultra-Tech143"]);
-    assert.equal(mode.ut_source_data.readiness,"definition-only");
+    assert.equal(mode.ut_source_data.readiness,"implemented-gauss-resources");
     assert.equal(mode.ut_source_data.power_accounting_required,true);
     const aphex=compatibility.checkCompatibility(mid,"aphex",{book:"ut",kind:"warhead"});
-    assert.equal(aphex.status,"undetermined");
-    assert.ok(aphex.reasons.some(reason=>reason.code==="UT_VARIANT_NOT_IMPLEMENTED"));
+    assert.equal(aphex.status,"incompatible");
+    assert.ok(aphex.reasons.some(reason=>reason.code==="SIZE_RESTRICTION"));
   }
   assert.equal(r.catalogs.ht.items,263);assert.equal(r.catalogs.ut.families,36);assert.equal(r.catalogs.ut.aphexTableRows,7);
   assert.deepEqual(Object.fromEntries(Object.entries(r.ut).filter(([k])=>k!=="reasons")),
-    {combinations:87,compatible:52,undetermined:10,incompatible:25,sourceRowsMatched:52,automaticProfiles:0});
-  // Two new definitions and two explicit UT141/143 source conflicts stay unresolved;
-  // neither change creates an additional compatible APHEX pair.
+    {combinations:87,compatible:52,undetermined:6,incompatible:29,sourceRowsMatched:52,automaticProfiles:0});
+  // All four reviewed Gauss modes are too small for APHEX; retained source
+  // conflicts do not override the implemented physical size restriction.
   for(const mid of ["WJstukbcBFPxQFtJE","WbvkCgoaLuWViWyKK"]) {
     const result=compatibility.checkCompatibility(mid,"aphex",{book:"ut",kind:"warhead"});
-    assert.equal(result.status,"undetermined");
-    assert.ok(result.reasons.some(reason=>reason.code==="UT_SOURCE_CONFLICT"));
+    assert.equal(result.status,"incompatible");
+    assert.ok(result.reasons.some(reason=>reason.code==="SIZE_RESTRICTION"));
   }
   assert.equal(r.catalogs.weapons.candidates,667);assert.equal(r.catalogs.weapons.payloadTemplates,122);
   assert.equal(r.catalogs.lt.projectileOptions,38);assert.equal(r.catalogs.ut.warheads,37);

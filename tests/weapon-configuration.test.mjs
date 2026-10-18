@@ -56,6 +56,20 @@ function oldWeapon() {
 const editorValues = { skillLevel: "13", rof: "10", acc: "4", scopeBonus: "0", bulk: "-5", rcl: "2" };
 const parser = value => ({ valid: /^\d+/.test(value) });
 
+test("Sniper TL9 configuration exposes explicit 7mm EM selection without automatically choosing it", () => {
+  const modeId = "WkhAN9tcmB9eEkmY6", equipmentId = catalogs.getEquipmentForMode(modeId).equipment_id;
+  const f = fixture([row({modeId, equipmentId})]);
+  f.flags["olegurps-qol"] = {campaignTL:9};
+  const draft = f.makeDraft();
+  assert.equal(draft.current.target.modeId, modeId);
+  assert.equal(draft.current.ammo, null);
+  assert.match(weaponConfigurationHTML(draft), /7mm_em/);
+  draft.selectAmmo("7mm_em");
+  assert.equal(draft.current.ammo.ammoId, "7mm_em");
+  assert.equal(f.actor.getFlag("olegurps-qol", "campaignTL"), 9);
+  assert.equal(f.writes.length, 0);
+});
+
 test("convincing automatic model remains a proposal until Save explicitly confirms it", async () => {
   const f = fixture(), draft = f.makeDraft();
   assert.equal(draft.current.target.modeId, ak.modeId);

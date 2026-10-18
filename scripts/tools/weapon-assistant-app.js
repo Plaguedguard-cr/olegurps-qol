@@ -3,6 +3,19 @@ import { installViewportBounds, releaseViewportBounds } from './application-view
 import { uawGroup, activeUAWCarrier } from './ut-uaw.js';
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
+// Foundry's updateActor diff contains only changed leaves. Receipts are history,
+// never a source for an open assistant's calculations. Unknown/expanded changes
+// deliberately take the normal refresh path, including permissions and deletes.
+export function isAmmunitionHistoryOnlyUpdate(changes) {
+  if (!changes || Object.keys(changes).some(key => !['flags', '_stats', '_id'].includes(key))) return false;
+  const flags = changes.flags;
+  const world = flags?.world;
+  const ammo = world?.gurpsAmmoManager;
+  return !!ammo && typeof ammo === 'object' && !Array.isArray(ammo) &&
+    Object.keys(flags).length === 1 && Object.keys(world).length === 1 &&
+    Object.keys(ammo).length > 0 && Object.keys(ammo).every(key => key === 'shotReceipts' || key === '-=shotReceipts');
+}
+
 // An ammunition-only update can redraw its changed cards. Skill, definition,
 // campaign or unknown changes still invalidate the entire displayed model.
 export function changedAmmunitionCards(before, after, changes) {

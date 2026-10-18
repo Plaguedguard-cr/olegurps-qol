@@ -65,7 +65,7 @@ export async function openMeleeAttackEditor({ DialogV2, attack, escapeHTML, weap
       }
     ],
     rejectClose: false,
-    modal: true
+    modal: false
   });
   if (!result || result.action === "reset") return result;
   const validation = validateMeleeAttackOverride(result.values);

@@ -133,7 +133,7 @@ export async function openWeaponAttackEditor({ DialogV2, attack, escapeHTML = es
       search();
     },
     rejectClose: false,
-    modal: true
+    modal: false
   });
 
   if (!result || result.action === "reset") return result;

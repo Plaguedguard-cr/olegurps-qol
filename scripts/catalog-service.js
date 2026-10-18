@@ -398,6 +398,11 @@ function collectWarnings(book, data, indexes) {
  */
 export class CatalogService {
   #entries = new Map();
+  // Effective views depend only on this instance's immutable, single-load data.
+  // Cache only existing records: arbitrary query IDs cannot grow these maps.
+  #equipmentViews = new Map();
+  #modeViews = new Map();
+  #linkViews = new Map();
   #promise = null;
   #fetcher;
   #baseUrl;
@@ -542,12 +547,21 @@ export class CatalogService {
   getSourceCatalog(book) { return this.#ready(book)?.sourceData ?? null; }
   getRecord(book, collection, id) { return this.#ready(book)?.indexes.get(collection)?.get(id) ?? null; }
   getEquipment(id) {
+    if (this.#equipmentViews.has(id)) return this.#equipmentViews.get(id);
     const equipment = correctedHTLabel(this.getRecord("weapons", "equipment", id), "weapon");
-    return equipment ? freeze({ ...equipment,
-      modes: equipment.modes.map(mode => correctHTMode(mode, equipment)) }) : freeze(equipment);
+    if (!equipment) return equipment;
+    const view = freeze({ ...equipment,
+      modes: equipment.modes.map(mode => this.getMode(mode.weapon_mode_id)) });
+    this.#equipmentViews.set(id, view);
+    return view;
   }
   getMode(id) {
-    return freeze(correctHTMode(this.getRecord("weapons", "modes", id), this.#ready("weapons")?.parents.get(id)));
+    if (this.#modeViews.has(id)) return this.#modeViews.get(id);
+    const mode = this.getRecord("weapons", "modes", id);
+    if (!mode) return mode;
+    const view = freeze(correctHTMode(mode, this.#ready("weapons")?.parents.get(id)));
+    this.#modeViews.set(id, view);
+    return view;
   }
   getEquipmentForMode(id) { return this.getEquipment(this.#ready("weapons")?.parents.get(id)?.equipment_id); }
   getModesForEquipment(id) { return this.getEquipment(id)?.modes ?? EMPTY; }
@@ -577,6 +591,12 @@ export class CatalogService {
   }
   getVariant(book, id) { return this.getRecord(book, "variants", id); }
   getModeLinks(id) {
+    if (this.#linkViews.has(id)) return this.#linkViews.get(id);
+    const links = this.#readModeLinks(id);
+    if (links) this.#linkViews.set(id, links);
+    return links;
+  }
+  #readModeLinks(id) {
     const book = this.getEquipmentForMode(id)?.source.toLowerCase();
     const links = this.#ready(book)?.links.get(id) ?? null;
     const htItems=book==='ht'&&this.#ready(book)?.relationshipChecks.status==='passed'&&htPreGaussAmmoIds(id);

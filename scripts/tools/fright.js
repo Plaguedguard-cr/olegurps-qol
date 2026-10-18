@@ -83,7 +83,7 @@ export async function openFrightCheck() {
     buttons:[
       {action:"check",label:"Бросить",icon:"fa-solid fa-dice",default:true,callback:(_e,b)=>readAndSave(b,"check")},
       {action:"table",label:"Бросок по таблице",icon:"fa-solid fa-table-list",callback:(_e,b)=>readAndSave(b,"table")}
-    ], rejectClose:false, modal:true
+    ], rejectClose:false, modal:false
   });
   if(!data) return;
   const modifier=parseIntOr(data.modifier,0); if(!Number.isInteger(modifier)) return ui.notifications.error("Штрафы / бонусы должны быть целым числом.");

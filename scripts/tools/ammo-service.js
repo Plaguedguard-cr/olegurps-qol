@@ -488,7 +488,7 @@ export class AmmoService {
         requiredAmmunitionTL(existingType, catalogs) === requiredAmmunitionTL(proposed, catalogs) &&
         existingType.recipe?.parameters?.availabilityTL === proposed?.recipe?.parameters?.availabilityTL;
       if (['add-stock','save-recipe','edit-recipe'].includes(operation) && !preservesExisting &&
-          !campaignAmmunitionAdmission(proposed, catalogs, readCampaignTL(this.actor)).allowed)
+          !campaignAmmunitionAdmission(proposed, catalogs, readCampaignTL(this.actor), modeId).allowed)
         throw Error('CampaignTLUnavailable');
       if (needsAdmission && UT_CONVENTIONAL_DEFERRED[modeId]) throw new Error(UT_CONVENTIONAL_DEFERRED[modeId]);
       if(needsAdmission&&utSpecialReadiness(modeId))throw Error(utSpecialReadiness(modeId));

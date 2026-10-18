@@ -43,9 +43,18 @@ export function requiredAmmunitionTL(type, catalogs) {
   const known = [baseTL, minimum, selected, sensorTL, warheadTL].filter(tl => tl != null);
   return known.length ? Math.max(...known) : null;
 }
-export function campaignAmmunitionAdmission(type, catalogs, campaignTL) {
+export function campaignAmmunitionAdmission(type, catalogs, campaignTL, modeId = null) {
   const limit = parseCampaignTL(campaignTL);
   if (limit == null || isUserAmmunition(type)) return {allowed:true, requiredTL:null};
   const requiredTL = requiredAmmunitionTL(type, catalogs);
+  // Selection of this named base family is the catalog's explicit opt-in.
+  // No special recipe, other weapon, or automatic ammo suggestion inherits it.
+  if (modeId === 'WkhAN9tcmB9eEkmY6' && type?.source === 'catalog' &&
+      type.book === 'ut' && type.kind === 'ammo-family' && type.ammoId === '7mm_em' && !type.recipe) {
+    const exception = catalogs?.getMode(modeId)?.ammunition_profile?.user_authorized_ammo_tl_exception;
+    if (exception?.opt_in_required === true && exception.ammo_family_id === type.ammoId &&
+        exception.book_weapon_tl === 9 && exception.ammo_tl === 10 && requiredTL === 10 && limit >= 9)
+      return {allowed:true, requiredTL};
+  }
   return {allowed:requiredTL == null || requiredTL <= limit, requiredTL};
 }

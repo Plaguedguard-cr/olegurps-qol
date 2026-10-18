@@ -1,5 +1,6 @@
 import { moduleMessage } from "../localization.js";
 import { FirePreparationApp } from "./fire-preparation-app.js";
+import { isAmmunitionHistoryOnlyUpdate } from './weapon-assistant-app.js';
 import { getEvaluateStatusTurns } from "./aim-status-effects.js";
 import { checkHearingMinusTwo, meleeVisibilityRules, normalizeVisibility } from "./limited-visibility.js";
 import { TargetingService } from "./targeting-service.js";
@@ -680,9 +681,10 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _registerTargetHook() {}
 
-  _onActorUpdate(updated) {
+  _onActorUpdate(updated, changes) {
     if (updated?.id !== this.actor?.id) return;
-    if (!this.sourceAttacks?.some(attack => attack.standaloneRef)) return super._onActorUpdate(updated);
+    if (isAmmunitionHistoryOnlyUpdate(changes)) return;
+    if (!this.sourceAttacks?.some(attack => attack.standaloneRef)) return super._onActorUpdate(updated, changes);
     this._captureFields();
     this.sourceAttacks = [...this.sourceAttacks.filter(a => !a.standaloneRef), ...listStandaloneAttacks(this.actor, "melee")];
     this._refreshStandaloneAttack();

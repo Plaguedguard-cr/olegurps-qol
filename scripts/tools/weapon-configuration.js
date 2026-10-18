@@ -273,7 +273,7 @@ export class WeaponConfigurationDraft {
     const draft = this.current;
     const entry = baseAmmunition(this.ammunition, draft?.target?.modeId, this.catalogs, draft?.ammo)
       .find(row => (row.choiceKey === ammoId || row.ammoId === ammoId) &&
-        campaignAmmunitionAdmission({...row, source:'catalog'}, this.catalogs, this.campaignTL).allowed);
+        campaignAmmunitionAdmission({...row, source:'catalog'}, this.catalogs, this.campaignTL, draft?.target?.modeId).allowed);
     if (!draft) return;
     draft.ammoChanged = true;
     draft.ammo = entry ? this.ammoBinding(entry, draft.target.modeId) : ammoId === "stored" ? this.existing?.ammunitionBinding ?? null : null;
@@ -393,7 +393,7 @@ export function weaponModeFieldsHTML(model, draft = model.current) {
       `${draft.target?.modeId === target.modeId ? " selected" : ""}>${escapeWeaponHTML(label)}</option>`;
   }).join("");
   const ammo = baseAmmunition(model.ammunition, draft.target?.modeId, model.catalogs, draft.ammo).filter(entry =>
-    campaignAmmunitionAdmission({...entry, source:'catalog'}, model.catalogs, model.campaignTL).allowed);
+    campaignAmmunitionAdmission({...entry, source:'catalog'}, model.catalogs, model.campaignTL, draft.target?.modeId).allowed);
   const stored = draft.ammo && (!ammo.some(entry => sameAmmoBinding(entry, draft.ammo)) || draft.ammo.modeId !== draft.target?.modeId);
   const ammoOptions = (stored ? `<option value="stored" selected>${escapeWeaponHTML(draft.ammo.name)} (${escapeWeaponHTML(weaponText("Review"))})</option>` :
     draft.ammoType && !draft.ammo ? `<option value="stored" selected>${escapeWeaponHTML(draft.ammoType)} (${escapeWeaponHTML(weaponText("Stored"))})</option>` : "") +

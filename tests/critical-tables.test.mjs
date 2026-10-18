@@ -48,7 +48,7 @@ for (const [key, result] of [
 ]) test(`${key} rolls only after confirmation and posts the original table result`, async () => {
   const rt = runtime(), pending = openCriticalTables();
   assert.equal(rt.rolls, 0); assert.equal(rt.messages.length, 0);
-  assert.equal(rt.options.ok.label, "Бросить"); assert.equal(rt.options.modal, true);
+  assert.equal(rt.options.ok.label, "Бросить"); assert.equal(rt.options.modal, false);
   rt.finish({ object: { table: key } }); await pending;
   assert.equal(rt.rolls, 1); assert.equal(rt.messages.length, 1); assert.deepEqual(rt.errors, []);
   const originalName=key==="unarmed" ? "Критические провалы в рукопашном бою" : locales.ru["OleGURPS.Critical." + key];

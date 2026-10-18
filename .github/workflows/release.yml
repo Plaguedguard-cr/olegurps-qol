@@ -31,15 +31,9 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          git archive --format=zip --output="dist/${{ steps.metadata.outputs.archive }}" HEAD
-          node --input-type=module <<'NODE'
-          import fs from "node:fs";
-          const manifest = JSON.parse(fs.readFileSync("module.json", "utf8"));
-          manifest.download = `https://github.com/${process.env.GITHUB_REPOSITORY}/releases/download/v${manifest.version}/olegurps-qol-v${manifest.version}.zip`;
-          fs.writeFileSync("dist/module.json", JSON.stringify(manifest, null, 2) + "\n", "utf8");
-          NODE
+          git archive --format=zip --output="dist/${{ steps.metadata.outputs.archive }}" HEAD module.json scripts templates styles data assets lang packs README.md
+          cp module.json dist/module.json
           node .github/scripts/validate-release.mjs dist/module.json
-          zip -j "dist/${{ steps.metadata.outputs.archive }}" dist/module.json
 
       - name: Verify release archive
         shell: bash
@@ -53,7 +47,7 @@ jobs:
           grep -q "^packs/macros/" dist/archive-entries.txt
           grep -q "^assets/" dist/archive-entries.txt
 
-          if grep -Eq '(^|/)(\.git|\.github|node_modules|dist|release)(/|$)|(^|/)AGENTS\.md$|\.(bak|backup|tmp)$|~$' dist/archive-entries.txt; then
+          if grep -Eq '(^|/)(\.git|\.github|node_modules|dist|release)(/|$)|^(tests|docs|performance|tools)(/|$)|(^|/)AGENTS\.md$|\.(bak|backup|tmp)$|~$' dist/archive-entries.txt; then
             echo "Development-only files found in release archive"
             exit 1
           fi
