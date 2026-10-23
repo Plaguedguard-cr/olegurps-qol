@@ -1,5 +1,6 @@
 import { AmmoService } from "./ammo-service.js";
 import { resolveRuntimeAttackProfile, newAttackId, attackProfileError } from "./attack-profile-runtime.js";
+import {persistShotSnapshot} from './shot-history-storage.js';
 import { createShotSnapshot } from "./attack-profile-resolver.js";
 import { getSuppressionWeaponKey, getSuppressionRegionFlag } from "./suppression-fire-session-service.js";
 
@@ -194,11 +195,10 @@ export class SprayingFireSessionService {
         spent: cancelled ? 0 : execution.allocatedShots, resourceTiming: cancelled ? "spraying-cancelled" : "spraying-completion",
         resourceReceiptId: "spraying:" + session.sessionId, messageId: execution.messageId });
       try {
-        await message.setFlag("olegurps-qol", "shotSnapshot", clone(snapshot));
-        await message.setFlag("olegurps-qol", "burstReceipt", { id: "spraying:" + session.sessionId,
+        await persistShotSnapshot(message,snapshot,{burstReceipt:{ id: "spraying:" + session.sessionId,
           totalSpent: planned, magazineId: snapshot.magazineId,
           // Traverse waste belongs to the one burst receipt, never to another consumption call.
-          traverseSpent: Math.max(0, planned - session.attackExecutions.reduce((sum, entry) => sum + entry.allocatedShots, 0)) });
+          traverseSpent: Math.max(0, planned - session.attackExecutions.reduce((sum, entry) => sum + entry.allocatedShots, 0)) }});
       } catch (error) { console.error("OleGURPS QOL | Spraying shot metadata:", error); }
     }
   }

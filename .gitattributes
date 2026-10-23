@@ -8,3 +8,7 @@ scripts/audits export-ignore
 *.backup export-ignore
 *~ export-ignore
 packs/** binary
+# Immutable source catalogs and the extracted audit fixture have byte hashes.
+# Preserve their verified LF bytes in Windows checkouts as well as release ZIPs.
+data/catalogs/*.json text eol=lf
+tests/fixtures/ht-audit-contracts.json text eol=lf

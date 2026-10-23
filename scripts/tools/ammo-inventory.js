@@ -9,7 +9,8 @@ export const ammoTypeKey = binding => binding.source && binding.source !== "cata
   [binding.book, binding.kind, encodeURIComponent(binding.ammoId)].join(":") +
     (binding.recipe ? ":recipe-v1:" + encodeURIComponent(binding.recipe.variantId) +
       (binding.recipe.customId ? ":custom:" + encodeURIComponent(binding.recipe.customId) : "") : "") +
-    (binding.sealedPlatformModeId ? ":sealed-unit:" + encodeURIComponent(binding.sealedPlatformModeId) : "");
+    (binding.sealedPlatformModeId ? ":sealed-unit:" + encodeURIComponent(binding.sealedPlatformModeId) : "")+
+    (Number.isInteger(binding.projectileTL)?':projectile-tl:'+binding.projectileTL:'');
 export const whole = (value, minimum = 0) => Number.isSafeInteger(value) && value >= minimum;
 export const inventoryTotal = inventory => inventory.stocks.reduce((sum, entry) => sum + entry.rounds, 0) +
   inventory.magazines.reduce((sum, entry) => sum + entry.rounds, 0);

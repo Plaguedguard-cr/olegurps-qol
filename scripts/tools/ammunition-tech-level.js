@@ -1,6 +1,9 @@
+import {CHEMICAL_SUBSTANCES} from './biochemical-catalog.js';
+import {FLUID_FILLERS} from './ut-fluid.js';
 import { withActorResourceWrite } from './actor-resource-writes.js';
 import { UT_EXTENDED_SOURCE } from './ut-extended-source.js';
 import { UT_HOMING_SOURCE, UT_HOMING_GUIDANCE } from './ut-sefop.js';
+import {UT_REACTIONLESS_SOURCE} from './ut-missile-ammunition.js';
 
 // Campaign availability is separate from source/physical compatibility and historical ownership.
 import { parseCampaignTL, publishedTL } from './tech-level.js';
@@ -21,8 +24,13 @@ export function isUserAmmunition(type) {
 }
 export function requiredAmmunitionTL(type, catalogs) {
   if (!type || type.source !== 'catalog') return null;
+  if(type.book==='ht'&&type.kind==='chemical-dose'&&type.ammoId==='tear')return 7;
+  if(type.book==='ut'&&type.kind==='fluid-filler')return FLUID_FILLERS[type.ammoId]?.tl??null;
   const base = type.kind === 'ammo-family' ? catalogs?.getAmmoFamily(type.book, type.ammoId) : catalogs?.getAmmoItem(type.book, type.ammoId);
   let baseTL = recordTL(base);
+  const chemical=CHEMICAL_SUBSTANCES[type.recipe?.parameters?.chemicalId];
+  if(chemical)baseTL=Math.max(baseTL??0,chemical.tl);
+  if(type.book==='ut'&&['64mm_missile','100mm_missile'].includes(type.ammoId)&&Number.isInteger(type.projectileTL))baseTL=Math.max(baseTL??0,type.projectileTL);
   // Family TL is known only when every actual catalog member has a known TL.
   if (baseTL == null && type.kind === 'ammo-family' && base?.ammo_item_ids?.length) {
     const levels = base.ammo_item_ids.map(id => recordTL(catalogs?.getAmmoItem(type.book, id)));
@@ -30,7 +38,7 @@ export function requiredAmmunitionTL(type, catalogs) {
   }
   const id = type.recipe?.variantId;
   if (!id) return baseTL;
-  const source = UT_EXTENDED_SOURCE[id]??(id==='ut_homing'?UT_HOMING_SOURCE:null);
+  const source = UT_EXTENDED_SOURCE[id]??(id==='ut_homing'?UT_HOMING_SOURCE:id==='ut_reactionless'?UT_REACTIONLESS_SOURCE:null);
   const aliases = {ut_drugged_ice:'drugged_ice_sliver',ut_paint:'paint_pellet',ut_solid_slug:'solid_slug_25mm_tangler_gun'};
   const construction = source ?? catalogs?.getVariant(type.book, aliases[id] ?? (type.book === 'ut' ? id.replace(/^ut_/, '') : id));
   const minimum = recordTL(construction);
@@ -40,7 +48,7 @@ export function requiredAmmunitionTL(type, catalogs) {
   const sensorTL=sensor?Math.min(...Object.keys(sensor.minSizeByTL).map(Number)):null;
   const warheadTL=id==='ut_homing'&&type.recipe.parameters?.warheadVariant&&type.recipe.parameters.warheadVariant!==id?requiredAmmunitionTL(
     {...type,recipe:{...type.recipe,variantId:type.recipe.parameters.warheadVariant}},catalogs):null;
-  const known = [baseTL, minimum, selected, sensorTL, warheadTL].filter(tl => tl != null);
+  const known = [baseTL, minimum, selected, sensorTL, warheadTL,...(type.recipe?.parameters?.reactionless===true?[11]:[])].filter(tl => tl != null);
   return known.length ? Math.max(...known) : null;
 }
 export function campaignAmmunitionAdmission(type, catalogs, campaignTL, modeId = null) {

@@ -2,6 +2,7 @@ import { validateProximityShot } from './ut-he-proximity.js';
 import { calculateHitsFromMargin, executePreparedGgaRoll } from "./prepared-gga-roll.js";
 import { f4Text } from "./ammunition-f4-localization.js";
 import { resolveRuntimeAttackProfile, newAttackId, pendingShotSnapshot, attackProfileError } from "./attack-profile-runtime.js";
+import {persistShotSnapshot} from './shot-history-storage.js';
 import { createShotSnapshot } from "./attack-profile-resolver.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
@@ -409,6 +410,7 @@ export class FireService {
     if (previewTracer !== (attackProfile.context?.f4?.tracerBonus ?? 0)) throw Error(f4Text("Stale"));
     const previewConstruction=options.combatCalculation?.channels?.find(c=>c.id==='ammunitionConstruction')?.resolvedValue??0;
     if(previewConstruction!==(attackProfile.damage.rules.attackBonus??0))throw Error('Профиль боеприпаса изменился. Обновите Fire Control.');
+    if(attackProfile.damage.rules.fluid&&(options.combatCalculation?.channels?.find(c=>c.id==='fluidBounce')?.resolvedValue??0)!==-2*attackProfile.damage.rules.fluid.bounces)throw Error('Число рикошетов изменилось. Обновите Fire Control.');
     if (attackProfile.compatibility.status === "incompatible") throw new Error(attackProfileError("IncompatibleAmmunition"));
     if (String(attackProfile.effective.rcl ?? "").includes("/") &&
         parseRecoil(attackProfile.effective.rcl, { projectileKind: attackProfile.effective.ammunitionProjectileKind }) === null)
@@ -557,7 +559,7 @@ export class FireService {
       const finalSnapshot = createShotSnapshot(attackProfile, { attackId, spent: 0,
         resourceTiming: shotSnapshot.resourceTiming, resourceReceiptId: shotSnapshot.resourceReceiptId,
         messageId: result.message.id, outcome: result.rollData });
-      try { await result.message.setFlag("olegurps-qol", "shotSnapshot", structuredClone(finalSnapshot)); }
+      try { await persistShotSnapshot(result.message,finalSnapshot); }
       catch (error) { console.error("OleGURPS QOL | Shot metadata persistence:", error); }
     }
     return { ...result, appliedModifiers };

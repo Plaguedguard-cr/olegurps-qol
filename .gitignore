@@ -37,7 +37,9 @@ release/
 /docs/GURPS - 4E - High Tech.pdf
 
 # Historical evidence lives in the verified external document archive
-/docs/audit/
+/docs/audit/*
+!/docs/audit/ut-weapons-inventory.json
+!/docs/audit/ultra-tech-2007-errata.md
 /local-archive/
 /olegurps-qol-archive/
 /local-sources/

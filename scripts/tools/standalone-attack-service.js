@@ -1,3 +1,9 @@
+import {HT_TEAR_SPRAY_MODE} from './biochemical-integration.js';
+import {fluidProfile} from '../ut-fluid-source.js';
+import {plasmaGunProfile} from '../ut-plasma-gun-source.js';
+import {fixedFeedAvailable} from './ut-physical-feeds.js';
+import {physicalRangedProfile} from '../ut-physical-ranged-source.js';
+import { exoticBeamProfile, exoticBeamWeapon, exoticBeamReason } from '../ut-exotic-beam-source.js';
 import { standaloneModeStats, StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { resolveStandaloneSkill, standaloneSkillDescription } from "./standalone-skill-service.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
@@ -6,7 +12,12 @@ import { requiresUTPowerAccounting } from "../ut-source-data.js";
 import { beamWeapon, beamProfile } from '../ut-beam-source.js';
 import { htLaserProfile, htLaserWeapon } from '../ht-laser-source.js';
 import { utDazzlerProfile, utDazzlerWeapon, utDazzlerFormula } from '../ut-dazzler-source.js';
+import { electrolaserProfile, electrolaserWeapon, electrolaserUnits } from '../ut-electrolaser-source.js';
+import { microwaveProfile, microwaveFormula } from '../ut-microwave-source.js';
+import { ppbProfile, ppbWeapon, ppbUnits } from '../ut-plasma-particle-source.js';
+import { sonicNeuralProfile, sonicNeuralFormula, sonicNeuralReason, sonicNeuralWeapon, isSonic, neuralDesign } from '../ut-sonic-neural-source.js';
 import { readWeaponBattery } from './weapon-power.js';
+import {laserAvailableShots} from '../ut-laser-modifications.js';
 import { moduleText } from "../localization.js";
 import { utConventionalReadiness } from "./ut-conventional-ammunition.js";
 import { utSpecialReadiness } from './ut-special-ammunition.js';
@@ -44,9 +55,18 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   const ammunitionRange=platformRange(platformRules,stats.range);
   if(platformRules?.manualGuidance){stats.rof='1';stats.range=String(ammunitionRange?.maximum??stats.range);}
   const bulkMetadata = parseWeaponBulk(stats.bulk);
-  const skill = resolveStandaloneSkill({ actor, record, mode });
+  const ammoState=actor.getFlag('world', 'gurpsAmmoManager');
+  const carrier = uawWeaponView(ammoState,ammoState?.weapons?.find(w =>
+    w.standaloneWeaponId === record.id && w.standaloneModeId === mode.modeId));
+  const skillRecord=sonicNeuralWeapon(carrier)?.family==='neural'?{...record,equipmentSnapshot:{...record.equipmentSnapshot,tech_level:neuralDesign(carrier).tl+'^'}}:record;
+  const skill = resolveStandaloneSkill({ actor, record:skillRecord, mode });
   const data = { ...stats, name: record.name, mode: mode.snapshot.usage ?? "", level: skill.level };
-  if(beamProfile(mode.modeId)||htLaserProfile(mode.modeId)||utDazzlerProfile(mode.modeId))data.isBeamWeapon=true;
+  const physical=physicalRangedProfile(mode.modeId);
+  if(physical?.group==='plb'){
+    data.sourceRateOfFire=stats.rof;
+    data.rof=String(mode.modeId==='WIijXG9uGZ52T0eW2'?carrier?.splatSalvo??30:physical.rof);
+  }
+  if(plasmaGunProfile(mode.modeId)||exoticBeamProfile(mode.modeId)||sonicNeuralProfile(mode.modeId)||beamProfile(mode.modeId)||htLaserProfile(mode.modeId)||utDazzlerProfile(mode.modeId)||electrolaserProfile(mode.modeId)||microwaveProfile(mode.modeId)||ppbProfile(mode.modeId))data.isBeamWeapon=true;
   // Catalog defense values are modifiers, GGA attack values are complete defense levels.
   if (record.type === "melee" && skill.resolved) for (const field of ["parry", "block"]) {
     const match = String(stats[field] ?? "").match(/^([+-]?\d+)([A-Za-z]*)$/);
@@ -64,10 +84,12 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   const htProfile=record.source.source==='HT'&&htPreGaussProfile(mode.modeId);
   if(htLaserProfile(mode.modeId)&&stats.damage===`HT${htLaserProfile(mode.modeId).modifier} aff`)unsupportedDamage=false;
   if(utDazzlerProfile(mode.modeId)&&stats.damage===utDazzlerFormula(utDazzlerProfile(mode.modeId)))unsupportedDamage=false;
+  if(microwaveProfile(mode.modeId)&&stats.damage===microwaveFormula(microwaveProfile(mode.modeId)))unsupportedDamage=false;
+  if(exoticBeamProfile(mode.modeId)&&String(stats.damage).replace(/\s/g,'').replaceAll('×','x')===exoticBeamProfile(mode.modeId).damage.replace(/\s/g,''))unsupportedDamage=false;
+  if(sonicNeuralProfile(mode.modeId)&&String(stats.damage).replace(/\s/g,'')===sonicNeuralFormula(sonicNeuralProfile(mode.modeId)).replace(/\s/g,''))unsupportedDamage=false;
+  if(electrolaserProfile(mode.modeId)&&new RegExp('^HT'+electrolaserProfile(mode.modeId).modifier+'(?: \\(2\\))? aff$').test(stats.damage))unsupportedDamage=false;
+  if(fluidProfile(mode.modeId)||mode.modeId===HT_TEAR_SPRAY_MODE)unsupportedDamage=false;
   if(htProfile&&['squirt','net','signal'].includes(htProfile.kind)&&/^(?:Spec\.?|Special)$/i.test(stats.damage))unsupportedDamage=false;
-  const ammoState=actor.getFlag('world', 'gurpsAmmoManager');
-  const carrier = uawWeaponView(ammoState,ammoState?.weapons?.find(w =>
-    w.standaloneWeaponId === record.id && w.standaloneModeId === mode.modeId));
   const feed=stormFeed(carrier,carrier?.ammunitionInventory?.magazines.find(m=>m.id===carrier.ammunitionInventory.installedId));
   if(feed&&carrier.executionVariant!=='lp')data.shots=feed.sourceShots;
   const utReason = utSpecialReadiness(mode.modeId)??utConventionalReadiness(mode.modeId, stats);
@@ -85,7 +107,8 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
     ...(typeof record.settings?.weaponBond==='boolean'?{weaponBondSetting:record.settings.weaponBond}:{}),
     ...(platformRules?{platformRules,ammunitionRange,
       ammunitionConditions:platformRules.instruction?[{id:'SpecializedPlatform',text:platformRules.instruction}]:[]}:{}),
-    skillDescription: standaloneSkillDescription(skill), readinessReason: weaponPowerReason(carrier, 1, mode.modeId) ?? reason };
+    ...(electrolaserProfile(mode.modeId)?{preparationReadinessReason:weaponPowerReason({...carrier,electrolaserMode:'standard'},1,mode.modeId)??reason}:{}),
+    skillDescription: standaloneSkillDescription(skill), readinessReason: exoticBeamReason(carrier) ?? (!isSonic(sonicNeuralWeapon(carrier))?sonicNeuralReason(carrier):null) ?? weaponPowerReason(carrier, 1, mode.modeId) ?? reason };
 }
 export function listStandaloneAttacks(actor, type) {
   return new StandaloneWeaponService(actor).list(type).flatMap(record =>
@@ -117,7 +140,13 @@ export function standaloneCatalogBinding(attack, catalogs) {
       equipmentId: ref.source.equipmentId, source: "standalone-catalog-identity" } } : { status: "unavailable" };
 }
 export function standaloneAvailableRounds(weapon) {
-  if(beamWeapon(weapon)||htLaserWeapon(weapon)||utDazzlerWeapon(weapon))return readWeaponBattery(weapon)?.charge??0;
+  const fixed=fixedFeedAvailable(weapon);if(fixed!==null)return fixed;
+  if(exoticBeamWeapon(weapon))return readWeaponBattery(weapon)?.charge??0;
+  if(sonicNeuralWeapon(weapon))return readWeaponBattery(weapon)?.charge??0;
+  if(ppbWeapon(weapon))return Math.floor((readWeaponBattery(weapon)?.charge??0)/ppbUnits(weapon));
+  if(electrolaserWeapon(weapon))return Math.floor((readWeaponBattery(weapon)?.charge??0)/electrolaserUnits(weapon));
+  if(beamWeapon(weapon))return laserAvailableShots(weapon,readWeaponBattery(weapon)?.charge??0);
+  if(htLaserWeapon(weapon)||utDazzlerWeapon(weapon))return readWeaponBattery(weapon)?.charge??0;
   return weapon?.standaloneWeaponId && weapon.ammoUnconfigured && !weapon.ammunitionInventory && !weapon.magazines?.length
     ? Infinity : weapon?.magazines?.[weapon.loadedIndex] ?? 0;
 }

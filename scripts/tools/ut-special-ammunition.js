@@ -1,3 +1,5 @@
+import {CHEMICAL_SUBSTANCES,chemicalAllowed} from './biochemical-catalog.js';
+import {chemicalEditorHTML} from './biochemical-integration.js';
 import { utBriefInstructions } from './ammunition-chat-summary.js';
 import { UT_CONVENTIONAL_MODES, UT_CONVENTIONAL_RULES } from './ut-conventional-ammunition.js';
 import { moduleText } from '../localization.js';
@@ -7,6 +9,7 @@ import { UT_LIQUID_DOSES } from '../ut-errata.js';
 import { PARTISAN_NEEDLER, PARTISAN_EXTERNAL_DART } from '../ut-compatibility-policy.js';
 import { UT_SEFOP_GUIDANCE, UT_HOMING_SOURCE, reviewHoming } from './ut-sefop.js';
 import { GAUSS_FAMILIES } from '../ut-gauss-source.js';
+import {UT_GYROC_FAMILIES,UT_MISSILE_FAMILIES,UT_PLB_FAMILIES,physicalFamilyMatches,missileSourceTL} from '../ut-physical-ranged-source.js';
 // Ultra-Tech 4e, Version 1.0 (2007), printed pp. 139-140, 153, 155, 159-162.
 // Source identities only; a substance name is neither compatibility nor effect evidence.
 export const UT_SPECIAL_MODES = Object.freeze({
@@ -47,6 +50,7 @@ export function utPayloadEditorHTML(option,draft,escape,{open=false,campaignTL=n
     return minimum != null && (caliber == null || caliber >= minimum);
   });
   return `<details data-ut-payload data-ammo-key="${escape(option.key??'')}" ${open?'open':''}><summary>${escape(text('Content'))}</summary><div class="gam-payload-fields">`+
+    chemicalEditorHTML({...option,recipe:{...option.recipe,parameters:p}},p,escape,{campaignTL})+
     `<label>${escape(text(substance ? 'Note' : 'PlainNote'))}<input type="text" name="ut-note" maxlength="500" value="${escape(p?.note??'')}"></label>`+
     (definition?`<label>${escape(text('AvailabilityTL'))}<select name="ut-availabilityTL">`+
       (guided&&!levels.includes(p.availabilityTL)?`<option value="${escape(p.availabilityTL)}" selected disabled>TL${escape(p.availabilityTL)} — ${escape(text('HomingInvalidChoice'))}</option>`:'')+
@@ -73,19 +77,19 @@ export function utPayloadEditorHTML(option,draft,escape,{open=false,campaignTL=n
 }
 export { ammunitionChatHTML as utPayloadChatHTML } from './ammunition-chat-summary.js';
 export const UT_ALL_FAMILIES = Object.freeze({...UT_CONVENTIONAL_MODES,...UT_SPECIAL_MODES,...UT_ADDITIONAL_FAMILIES});
-export const UT_RUNTIME_FAMILIES=Object.freeze({...UT_ALL_FAMILIES,...GAUSS_FAMILIES});
+export const UT_RUNTIME_FAMILIES=Object.freeze({...UT_ALL_FAMILIES,...GAUSS_FAMILIES,...UT_GYROC_FAMILIES,...UT_MISSILE_FAMILIES,...UT_PLB_FAMILIES});
 const families = UT_RUNTIME_FAMILIES;
 const aerosol = {10:[null,1],15:[1,3],18.5:[1.5,5],25:[2,10],40:[4,40],64:[7,150],100:[10,300]};
 const liquid = {15:[1,1],18.5:[1.5,2],25:[2,4],40:[4,16],64:[9,UT_LIQUID_DOSES[64]],100:[18,UT_LIQUID_DOSES[100]]};
 export function reviewUTSpecial(catalogs,compatibility,modeId,base,variantId=null) {
-  const rule=UT_SPECIAL_RULES[variantId],family=families[modeId];
+  const rule=UT_SPECIAL_RULES[variantId],family=physicalFamilyMatches(modeId,base?.ammoId)?base.ammoId:families[modeId];
   const linked=compatibility?.checkCompatibility(modeId,base?.ammoId,{book:base?.book,kind:base?.kind});
   const record=catalogs?.getAmmoFamily('ut',family),mode=catalogs?.getMode(modeId);
   const verified=catalogs?.getCatalog('weapons')?.sources?.some(s=>s.code==='UT'&&s.sha256==='21f9ddb6ddc2936d74e5ad781af43a6d3787352172e0e1f74a80d85db7cbf5f1')&&
     catalogs?.getCatalog('ut')?.compatibility_pointer_source_sha256==='cc4d4286bce5eba3936081da60d77a62dee781630c0803cb73fa982fc7723933';
   const fail=(reason='UTVariantUnavailable',construction=null)=>({status:construction?.status??'undetermined',base:linked,construction,reason,facts:null});
   if(!verified||base?.source!=='catalog'||base.book!=='ut'||base.kind!=='ammo-family'||base.ammoId!==family||
-    mode?.ammunition_profile?.primary_ammo_family_id!==family||!record||linked?.status!=='compatible')return fail();
+    !(mode?.ammunition_profile?.primary_ammo_family_id===family||physicalFamilyMatches(modeId,family))||!record||linked?.status!=='compatible')return fail();
   if(variantId&&!rule)return fail();
   const construction=rule?compatibility.checkCompatibility(modeId,rule.id,{book:'ut',kind:rule.kind,availabilityTL:record.tl}):linked;
   if(construction.status!=='compatible')return fail('UTVariantUnavailable',construction);
@@ -95,7 +99,8 @@ export function reviewUTSpecial(catalogs,compatibility,modeId,base,variantId=nul
   if(variantId==='ut_tangler'&&![25,40,64,100].includes(record.caliber_mm))return fail();
   return {status:'compatible',base:linked,construction,reason:null,facts:{sourceEdition:'Ultra-Tech 2007',modeId,ammoId:family,
     ...(modeId===PARTISAN_NEEDLER&&variantId==='ut_drugged_dart'?{ammunitionSupply:PARTISAN_EXTERNAL_DART}:{}),
-    caliberMm:record.caliber_mm,availabilityTL:record.tl,baseCostPerShot:record.cps_usd,weightPerShotLb:record.wps_lb,
+    chemicalDelivery:variantId==='ut_biochemical_aerosol'?'aerosol':variantId==='ut_biochemical_liquid'?'liquid':['ut_drugged_dart','ut_drugged_ice'].includes(variantId)?'injection':null,
+    caliberMm:record.caliber_mm,availabilityTL:record.tl,baseCostPerShot:record.cps_usd,weightPerShotLb:record.wps_lb,...(record.missile_economics?{missileEconomics:record.missile_economics,projectileTL:missileSourceTL(modeId)}:{}),
     doses:row?.[1]??(['ut_drugged_dart','ut_drugged_ice'].includes(variantId)?1:null),radius:row?.[0]!=null?{applicable:true,yards:row[0],units:'yards',origin:'reference',
       effectKind:variantId==='ut_biochemical_aerosol'?'cloud':'area',source:'Ultra-Tech 2007, p. 153'}:null,
     ...(variantId==='ut_tangler'&&[40,64].includes(record.caliber_mm)?{tanglerST:record.caliber_mm===40?24:36,tanglerLayer:2,
@@ -107,6 +112,7 @@ export function utPayloadParameters(review, input={}) {
   if(!review.facts)throw Error('UTVariantUnavailable');
   const note=typeof input.note==='string'?input.note.trim():'';
   if(note.length>500)throw Error('UTPayloadInvalid');
+  if(input.chemicalId!=null&&input.chemicalId!==''&&!chemicalAllowed(CHEMICAL_SUBSTANCES[input.chemicalId],review.facts.chemicalDelivery))throw Error('UTPayloadInvalid');
   const published=review.facts.radius;
   let radius=published?{...published}:null;
   if(input.radius!=null){
@@ -118,13 +124,13 @@ export function utPayloadParameters(review, input={}) {
   for(const [key,limit]of [['savingThrow',500],['description',5000]])
     if(input[key]!=null&&(typeof input[key]!=='string'||input[key].length>limit))throw Error('UTPayloadInvalid');
   // Omit empty new fields so legacy recipe identities remain byte-for-byte stable.
-  return {note,radius,...(input.batchId?{batchId:input.batchId}:{}),
+  return {note,radius,...(input.chemicalId?{chemicalId:input.chemicalId}:{}),...(input.batchId?{batchId:input.batchId}:{}),
     ...(input.savingThrow?.trim()?{savingThrow:input.savingThrow}:{}),...(input.description?.trim()?{description:input.description}:{})};
 }
 export function resolveUTSpecialEffects({raw,variantId,baseStatus,constructionStatus,facts={},previousTransformations=[]}) {
   const rule=UT_SPECIAL_RULES[variantId],formula=String(raw?.damage??'');
   const fail=reason=>({status:'unresolved',nativeSafe:false,formula,rawFormula:formula,reason,transformations:[],components:[],rules:{}});
-  if(!rule||facts.sourceEdition!=='Ultra-Tech 2007'||families[facts.modeId]!==facts.ammoId||baseStatus!=='compatible'||
+  if(!rule||facts.sourceEdition!=='Ultra-Tech 2007'||!(families[facts.modeId]===facts.ammoId||physicalFamilyMatches(facts.modeId,facts.ammoId))||baseStatus!=='compatible'||
     constructionStatus!=='compatible'||!facts.payload)return fail('UTPayloadRequired');
   if(previousTransformations.some(t=>t.applied&&t.effectId===variantId)||raw?.linked||raw?.followup||raw?.followUp||raw?.components?.length)
     return fail('UTOriginalProfileRequired');

@@ -2,6 +2,12 @@
 
 Проверенная среда: Foundry VTT 14.364, GGA 0.18.23.
 
+Обновление 23.10.2026: новые атаки хранят один полный снимок; после подтверждённого
+расхода их временный pending-снимок удаляется. Старые сообщения читаются без миграции.
+Текущая схема хранения, замеры, проверка Foundry14 messageMode и результаты GM/OWNER:
+[отчёт об оптимизации истории](shot-history-performance-optimization-report.md).
+Ниже сохранено описание первоначальной интеграции; прежние числа проверок исторические.
+
 ## Фактический путь и адаптер
 
 Штатный `GurpsWiring.handleGurpslink` декодирует кнопку `D:"name(mode)"` и синхронно вызывает `GURPS.performAction(action, actor, event)`. Dispatch `attackdamage` заново находит атаку через `GURPS.findAttack` и читает Damage из Actor. Далее `damage` / `deriveddamage` выполняют штатные проверки `canRoll`, `roll-damage.js` показывает подтверждение, а `DamageChat.create` строит настоящие Roll и draggable sections.

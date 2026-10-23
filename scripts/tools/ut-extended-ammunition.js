@@ -2,25 +2,31 @@ import { utBriefInstructions } from './ammunition-chat-summary.js';
 import { UT_EXTENDED_SOURCE } from './ut-extended-source.js';
 import { UT_RUNTIME_FAMILIES as UT_ALL_FAMILIES, reviewUTSpecial, utPayloadParameters } from './ut-special-ammunition.js';
 import { gaussProfile } from '../ut-gauss-source.js';
+import {physicalFamilyMatches,physicalRangedProfile} from '../ut-physical-ranged-source.js';
+import {UT_REACTIONLESS_SOURCE} from './ut-missile-ammunition.js';
 import { reviewSEFOP, reviewHoming, UT_HOMING_SOURCE } from './ut-sefop.js';
 import { isUTConventionalVariant, reviewUTConventional } from './ut-conventional-ammunition.js';
 import { isUTSpecialVariant } from './ut-special-ammunition.js';
 import { HE_PROXIMITY } from './ut-he-proximity.js';
 import { UT_SWARM_MINIMUM_MM, ICE_GUN } from '../ut-compatibility-policy.js';
 // Extend the existing recipe/profile/component pipeline. No rolls, resource writes or target effects.
-export const UT_EXTENDED_RULES = Object.freeze(Object.fromEntries(Object.entries({...UT_EXTENDED_SOURCE,ut_homing:UT_HOMING_SOURCE}).map(([key,r])=>
+export const UT_EXTENDED_RULES = Object.freeze(Object.fromEntries(Object.entries({...UT_EXTENDED_SOURCE,ut_homing:UT_HOMING_SOURCE,ut_reactionless:UT_REACTIONLESS_SOURCE}).map(([key,r])=>
   [key,Object.freeze({id:r.id,kind:'warhead',label:r.name,note:true,source:r.source_ref,minTL:r.min_tl})])));
 export const isUTExtendedVariant = id => Object.hasOwn(UT_EXTENDED_RULES,id??'');
 export function reviewUTExtended(catalogs,compatibility,modeId,base,variantId,input={}) {
-  const source=UT_EXTENDED_SOURCE[variantId]??(variantId==='ut_homing'?UT_HOMING_SOURCE:null);
+  const source=UT_EXTENDED_SOURCE[variantId]??(variantId==='ut_homing'?UT_HOMING_SOURCE:variantId==='ut_reactionless'?UT_REACTIONLESS_SOURCE:null);
   const carrier=reviewUTSpecial(catalogs,compatibility,modeId,base);
   const fail=(reason='UTVariantUnavailable',status='undetermined')=>({status,base:carrier.base,reason,facts:null});
+  if(variantId==='ut_homing'&&physicalRangedProfile(modeId)?.group==='gyroc'&&base.ammoId!=='15mm_micromissile')return fail('UTHomingChargeRequired');
   if(variantId==='ut_homing'&&(modeId===ICE_GUN||base.ammoId==='3mm_ice'))return fail('UTIceHomingExcluded','incompatible');
   if(!source||carrier.status!=='compatible'||base.ammoId==='3mm_ice')return fail();
   if(variantId==='ut_he'&&!['impact','proximity'].includes(input.fuze??'impact'))return fail('UTPayloadInvalid');
   const availabilityTL=input.availabilityTL??source.min_tl;
   if(!Number.isInteger(availabilityTL)||availabilityTL<source.min_tl||availabilityTL>12)return fail('UTAvailabilityRequired');
   const mode=catalogs.getMode(modeId),family=catalogs.getAmmoFamily('ut',base.ammoId),c=source.compatibility;
+  if(input.reactionless!=null&&typeof input.reactionless!=='boolean')return fail('UTPayloadInvalid');
+  if((source.id==='reactionless'||input.reactionless===true)&&(physicalRangedProfile(modeId)?.group!=='missile'||availabilityTL<11))return fail('UTVariantUnavailable','incompatible');
+  if(source.id==='reactionless')return {status:'compatible',base:carrier.base,construction:carrier.base,reason:null,facts:{...carrier.facts,availabilityTL,definition:{id:'reactionless',source:'UT145'}}};
   const caliber=family.caliber_mm;
   if(variantId==='ut_homing'){
     if(Number.isInteger(family.tl)&&availabilityTL<family.tl)return fail('UTAvailabilityRequired');
@@ -49,7 +55,7 @@ export function reviewUTExtended(catalogs,compatibility,modeId,base,variantId,in
     // UT135/146 explicitly allow a sized guided round in these reviewed guns. The concrete recipe
     // supplies its sensor; the catalog's generic unguided carrier default is not that construction.
     if(['undetermined','incompatible'].includes(construction.status)&&construction.reasons?.length&&
-      mode.ammunition_profile.supports_exotic_warheads===true&&mode.ammunition_profile.platform_tags.includes('gun')&&
+      mode.ammunition_profile.supports_exotic_warheads===true&&(mode.ammunition_profile.platform_tags.includes('gun')||['gyroc','missile','plb'].includes(physicalRangedProfile(modeId)?.group))&&
       construction.reasons.every(r=>['HOMING_UNCONFIRMED','HOMING_REQUIRED'].includes(r.code)))
       construction={...construction,status:'compatible',manualSEFOP:sefop};
   }
@@ -71,6 +77,7 @@ export function reviewUTExtended(catalogs,compatibility,modeId,base,variantId,in
 export function utExtendedParameters(review,input={}) {
   const payload=utPayloadParameters(review,input),id=review.facts.definition.id;
   const result={...payload,availabilityTL:review.facts.availabilityTL};
+  if(id==='reactionless'||input.reactionless===true)result.reactionless=true;
   if(id==='homing')Object.assign(result,{homingGuidance:review.facts.homing.guidance,warheadVariant:review.facts.warheadVariant});
   if(id==='sefop')Object.assign(result,{sefopGuidance:review.facts.sefop.guidance,sefopMode:review.facts.sefop.mode,sefopAspect:review.facts.sefop.aspect});
   // Omit the historical Impact default to preserve existing recipe identities.
@@ -97,12 +104,17 @@ export function utAddPerDie(formula,enabled) {
 }
 export function resolveUTExtendedEffects({raw,variantId,baseStatus,constructionStatus,facts={},previousTransformations=[]},
     {parseKineticDamage,parseDamageRange,resolveEffects}) {
+  if(variantId==='ut_reactionless'){
+    if(physicalRangedProfile(facts.modeId)?.group!=='missile'||facts.availabilityTL<11||facts.payload?.reactionless!==true||baseStatus!=='compatible'||constructionStatus!=='compatible')return {status:'unresolved',nativeSafe:false,rawFormula:raw.damage,formula:raw.damage,reason:'UTVariantUnavailable',components:[],transformations:[],rules:{}};
+    const effect=resolveEffects({raw,baseStatus,constructionStatus});
+    return {...effect,variantId,rules:{...effect.rules,ammunitionSource:'UT145',componentOrder:effect.components.map(c=>c.role)}};
+  }
   if(variantId==='ut_homing'){
     const invalid=()=>({status:'unresolved',nativeSafe:false,rawFormula:raw?.damage,formula:raw?.damage,variantId,
       reason:'UTHomingInvalid',components:[],transformations:[],rules:{}});
     const h=reviewHoming({caliberMm:facts.caliberMm,availabilityTL:facts.availabilityTL,guidance:facts.payload?.homingGuidance});
     if(!h||JSON.stringify(h)!==JSON.stringify(facts.homing)||baseStatus!=='compatible'||constructionStatus!=='compatible'||
-      facts.sourceEdition!=='Ultra-Tech 2007'||UT_ALL_FAMILIES[facts.modeId]!==facts.ammoId||facts.ammoId==='3mm_ice'||
+      facts.sourceEdition!=='Ultra-Tech 2007'||!(UT_ALL_FAMILIES[facts.modeId]===facts.ammoId||physicalFamilyMatches(facts.modeId,facts.ammoId))||facts.ammoId==='3mm_ice'||
       ['ut_homing','ut_sefop','ut_shotshell'].includes(facts.warheadVariant)||!facts.payload)return invalid();
     const w=facts.warhead;
     if(facts.warheadVariant&&(!w||w.variantId!==facts.warheadVariant))return invalid();
@@ -116,7 +128,8 @@ export function resolveUTExtendedEffects({raw,variantId,baseStatus,constructionS
       availabilityTL:facts.availabilityTL,payload:structuredClone(facts.payload),physicalShotsPerAttack:1,
       weightPerShotLb:effect.rules.weightPerShotLb??facts.weightPerShotLb,guidanceCostFactor:1+h.guidanceSurcharge,
       warheadCostPerShot:effect.rules.costPerShot??facts.baseCostPerShot,
-      costPerShot:w?null:facts.baseCostPerShot*(1+h.guidanceSurcharge),
+      costPerShot:w?null:facts.ammoId==='15mm_micromissile'?facts.baseCostPerShot:facts.baseCostPerShot*(1+h.guidanceSurcharge),
+      ...(facts.ammoId==='15mm_micromissile'?{costSource:'UT145: published micromissile CPS includes guidance; no second sensor surcharge'}:{}),
       componentOrder:effect.rules.componentOrder??effect.components.map(c=>c.role),
       ammunitionSource:['UT146',chargeSource].filter(Boolean).join('; '),
       warheadBrief:chargeBrief.filter(line=>!/^(UT|HT)\d/.test(line))};
@@ -125,11 +138,12 @@ export function resolveUTExtendedEffects({raw,variantId,baseStatus,constructionS
   }
   const source=UT_EXTENDED_SOURCE[variantId],original=String(raw?.damage??'');
   const fail=reason=>({status:'unresolved',nativeSafe:false,rawFormula:original,formula:original,variantId,reason,components:[],transformations:[],rules:{}});
-  if(!source||facts.sourceEdition!=='Ultra-Tech 2007'||UT_ALL_FAMILIES[facts.modeId]!==facts.ammoId||
+  if(!source||facts.sourceEdition!=='Ultra-Tech 2007'||!(UT_ALL_FAMILIES[facts.modeId]===facts.ammoId||physicalFamilyMatches(facts.modeId,facts.ammoId))||
       baseStatus!=='compatible'||constructionStatus!=='compatible'||!facts.payload||facts.definition?.id!==source.id)return fail('UTVariantUnavailable');
   if(source.id==='swarm'&&(!Number.isFinite(facts.caliberMm)||facts.caliberMm<UT_SWARM_MINIMUM_MM))return fail('UTSwarmMinimum40');
   if(raw.linked||raw.followup||raw.followUp||raw.components?.length||previousTransformations.some(t=>t.applied&&t.effectId===variantId))return fail('UTOriginalProfileRequired');
-  const p=parseKineticDamage(original),range=parseDamageRange(raw.range),row=facts.row??{},tl=facts.availabilityTL;
+  const single=physicalRangedProfile(facts.modeId)?.group==='gyroc'?Number(String(raw.range).replaceAll(',','')):NaN;
+  const p=parseKineticDamage(original),range=parseDamageRange(raw.range)??(single>0?{halfDamage:single,maximum:single}:null),row=facts.row??{},tl=facts.availabilityTL;
   const sefop=source.id==='sefop'?reviewSEFOP({caliberMm:facts.caliberMm,availabilityTL:tl,input:facts.payload}):null;
   if(source.id==='sefop'&&(!sefop||JSON.stringify(sefop)!==JSON.stringify(facts.sefop)))return fail('UTSEFOPInvalid');
   const id=sefop?.mode==='aphex'?'aphex':source.id;

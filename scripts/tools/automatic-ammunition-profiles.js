@@ -1,3 +1,5 @@
+import {chemicalOptions} from './biochemical-integration.js';
+import {CHEMICAL_SUBSTANCES} from './biochemical-catalog.js';
 import { calculateExplosiveRecipe } from "./explosive-ammunition-model.js";
 import { campaignAmmunitionAdmission, readCampaignTL } from './ammunition-tech-level.js';
 import { ammoTypeKey } from "./ammo-inventory.js";
@@ -73,7 +75,7 @@ export class AutomaticAmmunitionProfileService {
     if (isUTConventionalVariant(variantId)) return this.prepareUT({ modeId, base, variantId, savedType });
     if (isCaseVariant(variantId)) return this.prepareCase({ modeId, base, variantId, savedType });
     if (isFuzeTracerVariant(variantId)) return this.prepareFuzeTracer({ modeId, base, variantId, savedType });
-    if (isEnvironmentVariant(variantId)) return this.prepareEnvironment({ modeId, base, variantId, savedType });
+    if (isEnvironmentVariant(variantId)) return this.prepareEnvironment({ modeId, base, variantId, savedType, parameters });
     if (isExplosiveVariant(variantId) && !["ht_apex","ht_aphex"].includes(variantId)) return this.prepareCompositeExplosive({ modeId, base, variantId, savedType });
     if (isMultishotVariant(variantId)) return this.prepareMultishot({ modeId, base, variantId, savedType, approval });
     if (HT_AUTOMATIC_KINETIC_RULES[variantId]) return this.prepareKinetic({ modeId, base, variantId, savedType, approval });
@@ -135,9 +137,9 @@ export class AutomaticAmmunitionProfileService {
       model:{version:1,kind:'ut-warhead',status:'resolved',rule:{...rule}}};
     const guidedLabel=variantId==='ut_homing'?'Homing '+facts.homing.attack+
       (facts.homing.superscience?'^':'')+(warhead?' / '+(UT_EXTENDED_RULES[warhead.variantId]??UT_SPECIAL_RULES[warhead.variantId]??UT_CONVENTIONAL_RULES[warhead.variantId]).label:''):rule.label;
-    const name=this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+guidedLabel+' (TL'+facts.availabilityTL+')'+
-      (payload.fuze==='proximity'?' — Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' — '+payload.note:'');
-    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,name,
+    const name=this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+guidedLabel+(payload.reactionless&&variantId!=='ut_reactionless'?' Reactionless':'')+' (TL'+facts.availabilityTL+')'+
+      (payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.fuze==='proximity'?' — Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' — '+payload.note:'');
+    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),name,
       recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:payload,autoProfile}};
     type.key=ammoTypeKey(type);
     const legacy=savedType&&approvedLegacyUTRecipe(savedType.recipe,type.recipe,canonical);
@@ -157,8 +159,8 @@ export class AutomaticAmmunitionProfileService {
     const autoProfile={version:1,id:'ut-2007:'+base.ammoId+':'+variantId,revision:1,origin,
       source:{kind:origin,edition:'Ultra-Tech 2007',note:review.facts.ammunitionSupply?.source??rule.source},facts,
       model:{version:1,kind:'ut-special',status:'resolved',rule:{...rule}}};
-    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,
-      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label+(payload.note?' — '+payload.note:''),
+    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),
+      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label+(payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.note?' — '+payload.note:''),
       recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:payload,autoProfile}};
     type.key=ammoTypeKey(type);
     const legacy=savedType&&approvedLegacyUTRecipe(savedType.recipe,type.recipe,canonical);
@@ -178,7 +180,7 @@ export class AutomaticAmmunitionProfileService {
     const autoProfile = {version:1,id:'ut-2007:'+base.ammoId+':'+variantId,revision:1,origin:'reference',
       source:{kind:'reference',edition:'Ultra-Tech 2007',note:rule.source},facts:review.facts,
       model:{version:1,kind:'ut-conventional',status:'resolved',rule:{...rule}}};
-    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,
+    const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),
       name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label,
       recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:{},autoProfile}};
     type.key=ammoTypeKey(type);
@@ -228,7 +230,7 @@ export class AutomaticAmmunitionProfileService {
       nativePreserved: !!definition.nativePreserved, type, facts: review.facts,
       model: { version: 1, kind: "fuze-tracer", status: "resolved", source: definition.source }, reasons: [] });
   }
-  prepareEnvironment({ modeId, base, variantId, savedType }) {
+  prepareEnvironment({ modeId, base, variantId, savedType, parameters=null }) {
     const baseline = this.compatibility?.checkCompatibility(modeId, base.ammoId, { book: base.book, kind: base.kind });
     const rules = this.compatibility?.checkCompatibility(modeId, variantId, { book: "ht", kind: "projectile-option", ammoItemId: base.ammoId });
     const fallback = { state: baseline?.status === "incompatible" || rules?.status === "incompatible" ? "incompatible" : "incomplete", origin: "incomplete",
@@ -242,6 +244,13 @@ export class AutomaticAmmunitionProfileService {
     const autoProfile = { version: 1, id: ammo.id + ":" + variantId + ":environment", revision: 1, origin: "reference", modeId, ammoId: base.ammoId, definition };
     const type = { source: "catalog", book: "ht", kind: "ammo-item", ammoId: base.ammoId, name: base.name + " " + ENVIRONMENT_VARIANTS[variantId],
       recipe: { version: 1, variantId, customId: "auto:" + canonical(autoProfile), parameters: {}, autoProfile } };
+    const selected=parameters??savedType?.recipe?.parameters??{};
+    if(selected.chemicalId){
+      if(!chemicalOptions(type).some(f=>f.id===selected.chemicalId))return snapshot({...fallback,reasons:['UTPayloadInvalid']});
+      type.recipe.parameters={chemicalId:selected.chemicalId,...(selected.batchId?{batchId:selected.batchId}:{})};
+      type.recipe.customId+=':chemical:'+selected.chemicalId+(selected.batchId?':batch:'+selected.batchId:'');
+      type.name+=' / '+CHEMICAL_SUBSTANCES[selected.chemicalId].name;
+    }
     type.key = ammoTypeKey(type);
     if (savedType && canonical(savedType.recipe) !== canonical(type.recipe)) return snapshot({ ...fallback, reasons: ["SavedProfileUnavailable"] });
     return snapshot({ ...fallback, state: "complete", origin: "reference", referenceConfirmed: true, nativePreserved: !!definition.nativePreserved, model, type, facts: review.facts, reasons: [] });

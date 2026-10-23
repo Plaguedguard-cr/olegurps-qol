@@ -127,6 +127,22 @@ export function htBrief(profile) {
 }
 
 export function ammunitionChatData(profile) {
+  if(profile?.damage?.rules?.chemical){
+    const rules=profile.damage.rules,c=rules.chemical,p=profile.ammunition?.recipe?.parameters??{},h=rules.manualHoming;
+    const lines=[c.brief];
+    if(rules.faceOnly)lines.push('Только попадание в лицо; облака нет. UT153.');
+    if(h)lines.push(`Homing (${h.attack}) ${h.projectileSkill}; наведение Artillery (Guided Missile), при успехе +Acc. Попадание — вручную. UT146.`);
+    return {name:profile.ammunition?.name??c.name,lines,source:unique([c.source,utSources[profile.damage.variantId??profile.ammunition?.recipe?.variantId]]).join('; '),
+      fields:[...(Number.isFinite(c.radius)?[{label:'Радиус',value:String(c.radius)}]:[]),
+        ...Object.entries({note:p.note,savingThrow:p.savingThrow,description:p.description}).filter(([,v])=>typeof v==='string'&&v.trim())
+          .map(([k,value])=>({label:{note:'Note',savingThrow:'Спасбросок',description:'Описание'}[k],value,description:k==='description'}))]};
+  }
+  if(profile?.damage?.rules?.fluid)return {name:profile.ammunition?.name??"",lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:profile.damage.rules.ammunitionSource};
+  if(profile?.damage?.rules?.plasmaGun)return {name:profile.ammunition?.name??'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:profile.damage.rules.ammunitionSource};
+  if(profile?.damage?.rules?.exoticBeam)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:profile.damage.rules.ammunitionSource};
+  if(profile?.damage?.rules?.sonicNeural)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:profile.damage.rules.ammunitionSource};
+  if(profile?.damage?.rules?.plasmaParticle)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:profile.damage.rules.ammunitionSource};
+  if(profile?.damage?.rules?.electrolaser)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:'UT119–120'};
   if(profile?.damage?.rules?.utDazzler)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:'UT113'};
   if(profile?.damage?.rules?.htLaser)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:'HT181'};
   if(profile?.damage?.rules?.beam)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:profile.damage.rules.beam.source};

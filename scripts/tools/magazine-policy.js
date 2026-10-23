@@ -1,3 +1,6 @@
+import {physicalRangedProfile} from '../ut-physical-ranged-source.js';
+import {utFixedFeed} from './ut-physical-feeds.js';
+import {plasmaGunProfile} from '../ut-plasma-gun-source.js';
 import { uawFeed } from './ut-uaw.js';
 import { LEMAT } from '../ht-physical-ammunition-evidence.js';
 import { LP_PROFILES } from './ut-liquid-propellant.js';
@@ -7,12 +10,14 @@ import { gaussProfile } from '../ut-gauss-source.js';
 // Count every object, including installed and empty containers. Legacy excess
 // is valid inventory; only additions/transfers are constrained.
 export function magazinePolicy(weapon){
+  const compartments=utFixedFeed(weapon);
+  if(compartments)return {limit:compartments.count,fixed:true,capacity:compartments.capacity};
   const modeId=weapon?.standaloneModeId??weapon?.catalogModeId;
   const uaw=uawFeed(modeId);
   const fixed=modeId===LEMAT.shotModeId||weapon?.physicalResource?.detachable===false||weapon?.ammunitionFeed?.kind==='fixed';
   const lp=LP_PROFILES[modeId];
   const converted=lp&&(weapon.lpConfigured||weapon.executionVariant==='lp');
-  return {limit:fixed?1:uaw||gaussProfile(modeId)?5:10,fixed,capacity:gaussProfile(modeId)?.feedCapacity??htPreGaussProfile(modeId)?.capacity??(isStorm(weapon)&&weapon.executionVariant!=='lp'?null:converted?
+  return {limit:fixed?1:uaw||gaussProfile(modeId)?5:10,fixed,capacity:physicalRangedProfile(modeId)?.shots??plasmaGunProfile(modeId)?.shots??gaussProfile(modeId)?.feedCapacity??htPreGaussProfile(modeId)?.capacity??(isStorm(weapon)&&weapon.executionVariant!=='lp'?null:converted?
     (weapon.executionVariant==='lp'?lp.nominalCapacity:lp.baseNominal)+lp.chamber:uaw?.capacity??null)};
 }
 export function assertMagazineAddition(weapon,amount){

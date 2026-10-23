@@ -1,3 +1,5 @@
+import {UT_PHYSICAL_RANGED_PROFILES} from '../ut-physical-ranged-source.js';
+import { EXOTIC_BEAM_PROFILES, exoticBeamProfile, exoticBeamWeapon, exoticBeamConfiguration, exoticBeamReason } from '../ut-exotic-beam-source.js';
 import { moduleText } from '../localization.js';
 import { ETC_PROFILES, etcBlocker, etcText } from './ut-etc.js';
 import { magazineFill } from './ammo-inventory.js';
@@ -7,10 +9,38 @@ import { gaussUnits, gaussSpeed } from './ut-gauss.js';
 import { BEAM_PROFILES, beamProfile } from '../ut-beam-source.js';
 import { HT_LASER_PROFILES, htLaserProfile } from '../ht-laser-source.js';
 import { UT_DAZZLER_PROFILES, utDazzlerProfile } from '../ut-dazzler-source.js';
+import { MICROWAVE_PROFILES, microwaveProfile } from '../ut-microwave-source.js';
+import { SONIC_NEURAL_PROFILES, sonicNeuralProfile, sonicNeuralWeapon, sonicNeuralConfiguration, sonicNeuralReason } from '../ut-sonic-neural-source.js';
+import { PPB_PROFILES, ppbProfile, ppbWeapon, ppbUnits, ppbConfiguration, validPPBConfiguration } from '../ut-plasma-particle-source.js';
+import { ELECTROLASER_PROFILES, electrolaserProfile, electrolaserWeapon, electrolaserUnits, electrolaserConfiguration, validElectrolaserConfiguration } from '../ut-electrolaser-source.js';
+import {laserShotUnits,laserConfiguration,laserAvailableModes,laserFaceOrEyes} from '../ut-laser-modifications.js';
 
 // Reviewed weapon profiles, not capacities inferred from a cell's size.
 // New weapon families must supply their own source-checked resource profile.
 export const WEAPON_POWER_PROFILES = Object.freeze({
+  ...Object.fromEntries(Object.values(UT_PHYSICAL_RANGED_PROFILES).filter(p=>p.group==='grav'&&p.cellSize).map(p=>[p.modeId,Object.freeze({
+    id:'ut-grav:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
+    stateKey:'gravBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set'})])),
+  ...Object.fromEntries(Object.values(EXOTIC_BEAM_PROFILES).map(p=>[p.modeId,Object.freeze({
+    id:'ut-exotic-beam:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
+    stateKey:'exoticBeamBattery',completeSet:true,...(p.cosmic?{cosmic:true,label:'Cosmic '+(p.cells>1?p.cells:'')+p.cellSize+(['E','F'].includes(p.cellSize)?'p':'')+' cell'}:{}),source:p.source,accounting:'published-shots-per-complete-source-set',
+    ...(!p.cosmic&&['D','E','F'].includes(p.cellSize)?{label:(p.cells>1?p.cells:'')+p.cellSize+'p — выносной комплект'}:{})})])),
+  ...Object.fromEntries(Object.values(SONIC_NEURAL_PROFILES).map(p=>[p.modeId,Object.freeze({
+    id:'ut-sonic-neural:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
+    stateKey:'sonicNeuralBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
+    ...(p.cellSize==='D'?{label:'Dp — D cell (выносная)'}:{})})])),
+  ...Object.fromEntries(Object.values(PPB_PROFILES).map(p=>[p.modeId,Object.freeze({
+    id:'ut-plasma-particle:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
+    stateKey:'plasmaParticleBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
+    ...(['D','E','F'].includes(p.cellSize)?{label:(p.cells>1?p.cells:'')+p.cellSize+'p — выносной комплект'}:{})})])),
+  ...Object.fromEntries(Object.values(MICROWAVE_PROFILES).map(p=>[p.modeId,Object.freeze({
+    id:'ut-microwave:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
+    stateKey:'microwaveBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
+    ...(p.cellSize==='D'?{label:'Dp — D cell (выносная)'}:{})})])),
+  ...Object.fromEntries(Object.values(ELECTROLASER_PROFILES).map(p=>[p.modeId,Object.freeze({
+    id:'electrolaser:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
+    stateKey:'electrolaserBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
+    ...(p.backpack?{label:'Dp — D cell (выносная)'}:{})})])),
   ...Object.fromEntries(Object.values(UT_DAZZLER_PROFILES).map(p=>[p.modeId,Object.freeze({
     id:'ut-dazzler:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'dazzlerBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set'})])),
@@ -48,9 +78,9 @@ export function newWeaponBattery(profile, nonRechargeable = false) {
     if(nonRechargeable)throw Error('Удвоение ёмкости UT не применяется к батареям HT.');
     return {type:profile.cellSize,standard:'HT13',capacity:profile.capacity,charge:profile.capacity};
   }
-  if((profile.oneShot||profile.chemical)&&nonRechargeable)throw Error('Для этого источника Non-Rechargeable не применяется.');
+  if((profile.cosmic||profile.oneShot||profile.chemical)&&nonRechargeable)throw Error('Для этого источника Non-Rechargeable не применяется.');
   const capacity = profile.capacity * (nonRechargeable ? 2 : 1);
-  return {type:profile.cellSize,nonRechargeable,capacity,charge:capacity,
+  return {type:profile.cellSize,...(profile.cosmic?{standard:'cosmic'}:{}),nonRechargeable,capacity,charge:capacity,
     ...(profile.completeSet?{cells:profile.cells}:{}),
     ...(profile.oneShot?{sealedUsed:false}:{}),
     ...(profile.unitsPerStandardShot?{cells:profile.cells,unitsPerStandardShot:profile.unitsPerStandardShot}:{})};
@@ -60,14 +90,15 @@ export function readWeaponBattery(weapon, profile = weaponPowerProfile(weapon)) 
   const b = weapon?.[profile.stateKey];
   if(profile.standard==='HT13')return b?.standard==='HT13'&&b.type===profile.cellSize&&b.capacity===profile.capacity&&
     !Object.hasOwn(b,'nonRechargeable')&&Number.isSafeInteger(b.charge)&&b.charge>=0&&b.charge<=b.capacity?b:null;
+  if(profile.cosmic&&(b?.standard!=='cosmic'||b.nonRechargeable!==false))return null;
   if (!b || Object.hasOwn(b,'nonRechargeable') && typeof b.nonRechargeable !== 'boolean') return null;
   if(profile.completeSet&&(b.cells!==profile.cells||
     (profile.chemical||profile.oneShot)&&b.nonRechargeable!==false||
     profile.oneShot&&(typeof b.sealedUsed!=='boolean'||b.sealedUsed&&b.charge!==0)))return null;
   if(profile.unitsPerStandardShot&&(b.cells!==profile.cells||b.unitsPerStandardShot!==profile.unitsPerStandardShot))return null;
   const capacity = profile.capacity * (b.nonRechargeable === true ? 2 : 1);
-  return b.type === profile.cellSize && b.capacity === capacity &&
-    Number.isSafeInteger(b.charge) && b.charge >= 0 && b.charge <= capacity ? b : null;
+  const exactCharge=profile.stateKey.startsWith('beam')?Number.isFinite(b.charge)&&Math.abs(b.charge*10-Math.round(b.charge*10))<1e-8:Number.isSafeInteger(b.charge);
+  return b.type === profile.cellSize && b.capacity === capacity && exactCharge && b.charge >= 0 && b.charge <= capacity ? b : null;
 }
 // Capture the whole saved battery, including an absent or damaged old state.
 // Comparison happens after entering the Actor resource queue.
@@ -81,22 +112,51 @@ export function weaponPowerReason(weapon, amount = 1, modeId = null) {
   const profile=weaponPowerProfile(weapon,modeId);
   if (!profile) return weapon?.executionVariant==='etc' ? etcBlocker(modeId??weapon.standaloneModeId??weapon.catalogModeId) : null;
   const b=readWeaponBattery(weapon,profile),cost=weaponPowerCost(weapon,amount,profile);
-  const key=!b?'Missing':b.charge===0?'Empty':!Number.isSafeInteger(amount)||amount<1||!Number.isSafeInteger(cost)||cost>b.charge?'Insufficient':null;
+  const exactCost=beamProfile(modeId??weapon?.standaloneModeId??weapon?.catalogModeId)?Number.isSafeInteger(Math.round(cost*10))&&Number.isFinite(cost)&&cost>=0:Number.isSafeInteger(cost);
+  const key=!b?'Missing':b.charge===0?'Empty':!Number.isSafeInteger(amount)||amount<1||!exactCost||Math.round(cost*10)>Math.round(b.charge*10)?'Insufficient':null;
   if(profile.standard==='HT13'&&key)return key==='Missing'?'Установите штатную батарею HT через «Заменить батарею».':'Недостаточно заряда батареи HT для выбранной очереди.';
+  if(profile.stateKey==='gravBattery'&&key)return key==='Missing'?'Установите штатный комплект батарей Grav через «Заменить батарею».':'Недостаточно энергии Grav для выбранной очереди.';
+  if(profile.cosmic&&key)return key==='Missing'?'Установите полный комплект Cosmic Cells через «Заменить батарею».':'Недостаточно импульсов Cosmic Cells для выбранной очереди.';
   if(profile.completeSet&&key)return profile.oneShot?'Кристалл использован или его заряд не подтверждён; нужен новый экземпляр.':
     profile.chemical?(key==='Missing'?'Установите новый полный химический источник через кнопку замены.':'Недостаточно химического топлива для выбранной очереди.'):
-    key==='Missing'?'Установите штатный комплект батарей через «Заменить батарею».':'Недостаточно энергии лазера для выбранной очереди.';
+    key==='Missing'?'Установите штатный комплект батарей через «Заменить батарею».':microwaveProfile(modeId??weapon?.standaloneModeId??weapon?.catalogModeId)?
+      'Недостаточно энергии Microwave для выстрела.':ppbProfile(modeId??weapon?.standaloneModeId??weapon?.catalogModeId)?
+        'Недостаточно энергии для выбранной очереди.':sonicNeuralWeapon(weapon)?'Недостаточно энергии для выбранной очереди.':'Недостаточно энергии лазера для выбранной очереди.';
   if(profile.unitsPerStandardShot&&key)return key==='Missing'?'Установите штатную батарею EM через «Заменить батарею».':
     key==='Empty'?'Батарея EM разряжена.':'Недостаточно энергии EM для выбранной скорости и очереди.';
   return key ? profile.id==='ut-paint-carbine' ? moduleText('OleGURPS.PaintBattery.'+key) :
     moduleText('OleGURPS.ETC.'+key,{cell:profile.cellSize}) : null;
 }
 export const weaponPowerCost = (weapon,amount,profile=weaponPowerProfile(weapon)) =>
-  amount*(profile?.unitsPerStandardShot?(gaussUnits(weapon)??NaN):profile?.chargePerPhysicalShot??1);
+  ppbWeapon(weapon)?amount*ppbUnits(weapon):
+  beamProfile(weapon?.standaloneModeId??weapon?.catalogModeId)?amount*laserShotUnits(weapon)/10:
+    amount*(electrolaserWeapon(weapon)?electrolaserUnits(weapon):profile?.unitsPerStandardShot?(gaussUnits(weapon)??NaN):profile?.chargePerPhysicalShot??1);
+// Opening Fire Control may select Standard with the last charge. Shot validation
+// still uses the saved mode and its full cost inside the Actor queue.
+export function weaponPreparationView(weapon){
+  if(ppbWeapon(weapon)?.family==='blaster')return {...weapon,blasterHotshot:false};
+  if(electrolaserWeapon(weapon))return {...weapon,electrolaserMode:'standard'};
+  if(!beamProfile(weapon?.standaloneModeId??weapon?.catalogModeId))return weapon;
+  const modes=laserAvailableModes(weapon),cheapest=modes.reduce((a,b)=>laserShotUnits({...weapon,laserMode:a})<=laserShotUnits({...weapon,laserMode:b})?a:b,modes[0]);
+  return {...weapon,laserMode:cheapest};
+}
+export function weaponPreparationReason(weapon,attack){
+  if(ppbWeapon(weapon))return weaponPowerReason(weaponPreparationView(weapon))??(attack?.readinessReason===weaponPowerReason(weapon)?null:attack?.readinessReason??null);
+  if(beamProfile(weapon?.standaloneModeId??weapon?.catalogModeId)){
+    return weaponPowerReason(weaponPreparationView(weapon))??attack?.preparationReadinessReason??
+      (attack?.readinessReason===weaponPowerReason(weapon)?null:attack?.readinessReason??null);
+  }
+  if(!electrolaserWeapon(weapon))return weaponPowerReason(weapon)??attack?.readinessReason??null;
+  return weaponPowerReason({...weapon,electrolaserMode:'standard'})??attack?.preparationReadinessReason??
+    (attack?.readinessReason===weaponPowerReason(weapon)?null:attack?.readinessReason??null);
+}
 export function weaponPowerEvidence(weapon, amount, spent = amount, profile = weaponPowerProfile(weapon)) {
   const b=readWeaponBattery(weapon,profile);
   const cost=weaponPowerCost(weapon,spent,profile);
-  return b?{type:b.type,capacity:b.capacity,before:b.charge,after:b.charge-cost,spent:cost,physicalShots:amount,
+  return b?{type:b.type,capacity:b.capacity,before:b.charge,after:beamProfile(weapon?.standaloneModeId??weapon?.catalogModeId)?(Math.round(b.charge*10)-Math.round(cost*10))/10:b.charge-cost,spent:cost,physicalShots:amount,
+    ...(beamProfile(weapon?.standaloneModeId??weapon?.catalogModeId)&&weapon.laserModifications?{
+      fireMode:laserConfiguration(weapon).mode,beforeUnits:Math.round(b.charge*10),afterUnits:Math.round(b.charge*10)-Math.round(cost*10),spentUnits:Math.round(cost*10),unitsPerStandardShot:10}:{}),
+    ...(electrolaserWeapon(weapon)?{fireMode:electrolaserConfiguration(weapon).mode,unitsPerShot:electrolaserUnits(weapon)}:{}),
     ...(profile.completeSet?{cells:profile.cells,oneShot:!!profile.oneShot,chemical:!!profile.chemical}:{}),
     ...(profile.unitsPerStandardShot?{cells:profile.cells,unitsPerStandardShot:4,unitsPerShot:gaussUnits(weapon),speed:gaussSpeed(weapon)}:{}),
     source:(b.nonRechargeable?'UT19;':'')+profile.source,accounting:profile.accounting,
@@ -106,6 +166,40 @@ export function weaponPowerEvidence(weapon, amount, spent = amount, profile = we
 }
 export function validateWeaponExecution(weapon, profile) {
   const modeId=profile?.binding?.confirmed?.modeId??profile?.mode?.standaloneRef?.modeId;
+  if(exoticBeamProfile(modeId)){
+    const saved=profile.damage?.rules?.exoticBeam,c=exoticBeamConfiguration(weapon);
+    if(!weapon||exoticBeamReason(weapon)||!profile.damage?.nativeSafe||saved?.modeId!==modeId||
+      !sameBattery(c,Object.fromEntries(Object.keys(c).map(k=>[k,saved[k]])))||
+      ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId))
+      throw Error('Конфигурация энергетического оружия изменилась. Подготовьте атаку заново.');
+  }
+  if(sonicNeuralProfile(modeId)){
+    const saved=profile.damage?.rules?.sonicNeural,c=sonicNeuralConfiguration(weapon);
+    if(!weapon||sonicNeuralReason(weapon)||!profile.damage?.nativeSafe||saved?.modeId!==modeId||
+      !sameBattery(c,Object.fromEntries(Object.keys(c).map(k=>[k,saved[k]])))||
+      ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId))
+      throw Error('Конфигурация Sonic/Neural изменилась. Подготовьте атаку заново.');
+  }
+  if(ppbProfile(modeId)){
+    const saved=profile.damage?.rules?.plasmaParticle,config=ppbConfiguration(weapon);
+    if(!weapon||!profile.damage?.nativeSafe||saved?.modeId!==modeId||!validPPBConfiguration(weapon)||
+      ppbProfile(modeId).family==='blaster'&&!sameBattery(config,Object.fromEntries(Object.keys(config).map(k=>[k,saved[k]])))||
+      ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId))
+      throw Error('Энергетический профиль изменился. Подготовьте атаку заново.');
+  }
+  if(microwaveProfile(modeId)&&(!weapon||!profile.damage?.nativeSafe||profile.damage.rules?.utMicrowave!==modeId||
+    ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId)))
+    throw Error('Конфигурация Microwave изменилась. Подготовьте атаку заново.');
+  if(beamProfile(modeId)){
+    const current=laserConfiguration(weapon),saved=profile.damage?.rules?.laserModifications;
+    if((weapon.laserModifications||weapon.laserMode||weapon.laserEnvironment||saved)&&!sameBattery(current,saved))throw Error('Лазерная конфигурация изменилась. Подготовьте атаку заново.');
+    if(current.mode==='dazzle'&&!laserFaceOrEyes(profile.context?.hitLocation))throw Error('Dazzle: выберите лицо или глаза цели. UT113.');
+  }
+  if(electrolaserProfile(modeId)&&(!weapon||!validElectrolaserConfiguration(weapon)||!profile.damage?.nativeSafe||
+    profile.damage.rules?.electrolaser?.modeId!==modeId||!sameBattery(electrolaserConfiguration(weapon),
+      Object.fromEntries(Object.keys(electrolaserConfiguration(weapon)).map(k=>[k,profile.damage.rules.electrolaser[k]])))||
+    ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId)))
+    throw Error('Конфигурация электролазера изменилась. Подготовьте атаку заново.');
   if(utDazzlerProfile(modeId)&&(!weapon||!profile.damage?.nativeSafe||profile.damage.rules?.utDazzler!==modeId||
     ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId)))
     throw Error('Конфигурация Dazzler изменилась. Подготовьте атаку заново.');

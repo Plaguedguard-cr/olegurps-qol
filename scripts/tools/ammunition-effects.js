@@ -12,6 +12,7 @@ import { isCaseVariant, resolveCaseEffects } from "./case-technology.js";
 import { isUTConventionalVariant, resolveUTConventionalEffects } from "./ut-conventional-ammunition.js";
 import { isUTSpecialVariant, resolveUTSpecialEffects } from './ut-special-ammunition.js';
 import { isUTExtendedVariant, resolveUTExtendedEffects } from './ut-extended-ammunition.js';
+import {withMissileTraits} from './ut-missile-ammunition.js';
 const piercing = ["pi-", "pi", "pi+", "pi++"];
 const rules = { ...HT_AUTOMATIC_KINETIC_RULES, ...HT_AUTOMATIC_SPECIAL_RULES,
   ht_ap: { factor: 0.7, divisor: 2, shift: -1, costFactor: 1.5, source: "HT 166-167" },
@@ -32,9 +33,9 @@ export function scaleRequiredStrength(value, factor = 1.1) {
 /** Input is always raw GGA data. No state writes or Rolls, even for secondary effects. */
 export function resolveAmmunitionEffects({ raw, variantId = null, baseStatus = "undetermined",
   constructionStatus = "undetermined", facts = {}, previousTransformations = [], secondary = null, explosiveParameters = null, preparedExplosiveModel = null, context = {} } = {}) {
-  if (isUTExtendedVariant(variantId)) return resolveUTExtendedEffects({raw,variantId,baseStatus,constructionStatus,facts,previousTransformations}, {parseKineticDamage,parseDamageRange,resolveEffects:resolveAmmunitionEffects});
-  if (isUTConventionalVariant(variantId)) return resolveUTConventionalEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations, context }, { parseKineticDamage, parseDamageRange, htDamageDice });
-  if (isUTSpecialVariant(variantId)) return resolveUTSpecialEffects({raw,variantId,baseStatus,constructionStatus,facts,previousTransformations});
+  if (isUTExtendedVariant(variantId)) return withMissileTraits(resolveUTExtendedEffects({raw,variantId,baseStatus,constructionStatus,facts,previousTransformations}, {parseKineticDamage,parseDamageRange,resolveEffects:resolveAmmunitionEffects}),facts,raw);
+  if (isUTConventionalVariant(variantId)) return withMissileTraits(resolveUTConventionalEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations, context }, { parseKineticDamage, parseDamageRange, htDamageDice }),facts,raw);
+  if (isUTSpecialVariant(variantId)) return withMissileTraits(resolveUTSpecialEffects({raw,variantId,baseStatus,constructionStatus,facts,previousTransformations}),facts,raw);
   if (isCaseVariant(variantId)) return resolveCaseEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations, context });
   if (isFuzeTracerVariant(variantId)) return resolveFuzeTracerEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations, context });
   if (isEnvironmentVariant(variantId)) return resolveEnvironmentEffects({ raw, variantId, baseStatus, constructionStatus, facts, previousTransformations },

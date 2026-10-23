@@ -6,6 +6,26 @@ export function attackProfilePresentation(profile) {
   const damage=profile?.damage;
   const etc=profile?.weaponConfiguration?.variant==='etc',lp=profile?.weaponConfiguration?.variant==='lp';
   if(!damage?.nativeSafe)return {etc,lp,damageText:text('Unknown')};
+  if(damage.rules?.chemical){
+    const checks=[...new Set(damage.rules.chemical.checks.map(c=>'HT'+(c.modifier<0?'−'+Math.abs(c.modifier):c.modifier>0?'+'+c.modifier:'')))];
+    const linked=(damage.components??[]).filter(c=>c.role==='linked'&&c.status==='resolved').map(c=>c.formula);
+    return {etc,lp,damageText:[damage.rules.instructionOnly?'Химический эффект':damage.formula,...checks,...linked].filter(Boolean).join(' · ')};
+  }
+  if(damage.rules?.plasmaGun)return {etc,lp,damageText:damage.formula+' · '+(damage.rules.plasmaGun.hot?'Hot Power Cartridge':'Plasma Power Cartridge')};
+  if(damage.rules?.exoticBeam)return {etc,lp,damageText:damage.effectiveChanges.damage+
+    (damage.rules.exoticBeam.family==='conversion'?' · Follow-Up '+damage.components.find(c=>c.role==='follow-up')?.formula+' rad sur':'')};
+  if(damage.rules?.sonicNeural?.family==='mindripper')return {etc,lp,damageText:damage.effectiveChanges.damage};
+  if(damage.rules?.laserModifications){
+    const c=damage.rules.laserModifications,e=damage.rules.resistanceEffect;
+    return {etc,lp,damageText:e?(c.mode==='dazzle'?'Ослепление':'Повреждение зрения')+`: HT${e.modifier} aff`:'Урон '+damage.formula};
+  }
+  if(damage.rules?.electrolaser){
+    const effect=damage.rules.resistanceEffect,kill=damage.rules.electrolaser.mode==='kill';
+    return {etc,lp,damageText:(effect?`HT${effect.modifier} (2) aff · `:'')+damage.formula,
+      electrolaser:{heading:effect?`${kill?'Смертельный разряд':'Оглушение'}: HT${effect.modifier<0?'−'+Math.abs(effect.modifier):'+'+effect.modifier} (${effect.armorDivisor})`:damage.formula,
+        hint:effect&&kill?'Heart Attack при провале на 5+':'',burn:damage.formula,linked:!!effect}};
+  }
+  if(damage.rules?.plasmaParticle)return {etc,lp,damageText:damage.rules.resistanceEffect?profile.effective.damage:damage.formula};
   if(damage.rules?.resistanceEffect)return {etc,lp,damageText:damage.rawFormula};
   if(damage.rules?.instructionOnly)return {etc,lp,damageText:text('Manual')};
   const primary=damage.rules?.primaryDamageRole??'kinetic';

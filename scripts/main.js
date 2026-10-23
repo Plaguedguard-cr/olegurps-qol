@@ -1,3 +1,4 @@
+import {installExoticBeamDamage} from './tools/exotic-beam-damage.js';
 import { developerApi, registerDeveloperModeMenu } from "./tools/developer-mode-app.js";
 import { registerWeaponSkillSettings } from "./tools/weapon-skill-settings-app.js";
 import { loadWeaponSkillTLTranslations } from "./tools/weapon-skill-tl-policy.js";
@@ -99,7 +100,7 @@ Hooks.once("ready", async () => {
   await loadExplosiveTranslations().catch(error => console.error("OleGURPS QOL | Explosive translations:", error));
   await loadAutomaticAmmoTranslations().catch(error => console.error("OleGURPS QOL | Automatic ammo translations:", error));
   warnGgaDamageCompatibility(diagnoseGgaDamageAdapters());
-  try { installDamageShotLink(); }
+  try { installExoticBeamDamage(); installDamageShotLink(); }
   catch (error) { console.error("OleGURPS QOL | Native damage linkage unavailable:", error); }
   try { installResistanceRoll(); }
   catch(error){console.error('OleGURPS QOL | Resistance hooks:',error);}

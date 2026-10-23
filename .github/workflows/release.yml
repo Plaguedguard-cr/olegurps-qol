@@ -41,6 +41,7 @@ jobs:
           ARCHIVE="dist/${{ steps.metadata.outputs.archive }}"
           unzip -t "$ARCHIVE"
           unzip -Z1 "$ARCHIVE" > dist/archive-entries.txt
+          node .github/scripts/validate-release-contents.mjs dist/archive-entries.txt
 
           grep -qx "module.json" dist/archive-entries.txt
           grep -qx "scripts/main.js" dist/archive-entries.txt

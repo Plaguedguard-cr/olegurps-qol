@@ -126,10 +126,18 @@ test('Squirt owner content supports empty Note, independent batches, edit and fr
   const html=ammoManagementHTML(fx.weapon(),{ammoKey:type.key,magazineId:fx.weapon().ammunitionInventory.installedId},fx.candidates());assert.match(html,/Содержимое жидкости/);
 });
 
-test('Zip-Gun follows approved .22 LR policy; NORINCO stays closed and historical source data are not edited',async()=>{
+test('Zip-Gun follows approved .22 LR policy; NORINCO uses finite HT resistance profiles and historical source data are not edited',async()=>{
   const zip=await fixture('WwlfY-FYthqkLvByK');assert.equal(zip.weapon().totalAmmo,0);assert.equal(zip.attack().readinessReason,null);
-  for(const id of ['WALzMQGej7znsQIsa','W46_tIuztoKnpftYj'])await assert.rejects(()=>fixture(id),/не удалось|Не удалось|Не подтверждён/);
-  const historical=JSON.parse(await readFile(new URL('../docs/audit/weapon-implementation-inventory.json',import.meta.url),'utf8'));
+  for(const [id,capacity,modifier] of [['WALzMQGej7znsQIsa',100,-5],['W46_tIuztoKnpftYj',1000,-10]]){
+    const fx=await fixture(id);assert.equal(fx.attack().readinessReason,null);
+    assert.equal(fx.weapon().htLaserBattery.charge,capacity);assert.deepEqual(fx.weapon().magazines,[]);
+    const shot=await shoot(fx);assert.equal(shot.rolled,true);assert.equal(shot.receipt.power.spent,1);
+    assert.equal(fx.weapon().htLaserBattery.charge,capacity-1);assert.equal(shot.profile.damage.formula,null);
+    const effect=shot.snapshot.profile.damage.rules.resistanceEffect;
+    assert.equal(effect.attribute,'HT');assert.equal(effect.modifier,modifier);
+    assert.equal(shot.profile.damage.rules.instructionOnly,true);
+  }
+  const historical=JSON.parse(await readFile(new URL('./fixtures/ht-pre-gauss-history.json',import.meta.url),'utf8'));
   assert.equal(historical.gaussTransition.criticalSharedBlockerCount,1);assert.equal(historical.records.filter(r=>r.book==='LT'&&r.status==='BROKEN').length,71);
   assert.equal(htPreGaussProfile('WqUeIOkvQIgCeKWou'),null);
 });

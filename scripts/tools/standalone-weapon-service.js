@@ -1,3 +1,9 @@
+import {HT_TEAR_SPRAY_MODE} from './biochemical-integration.js';
+import {fluidProfile} from '../ut-fluid-source.js';
+import {physicalRangedProfile} from '../ut-physical-ranged-source.js';
+import {utFixedFeed} from './ut-physical-feeds.js';
+import {plasmaGunProfile} from '../ut-plasma-gun-source.js';
+import { exoticBeamProfile } from '../ut-exotic-beam-source.js';
 import { CATALOG_DEFINITIONS, CatalogService } from "../catalog-service.js";
 import { validateInventory, migrateAmmoInventory, initializeInstalledMagazine, projectAmmoInventory } from "./ammo-inventory.js";
 import { LEMAT, lematBarrel } from "../ht-physical-ammunition-evidence.js";
@@ -16,6 +22,10 @@ import { HT_PROJECT_WEAPON_POLICIES, correctedHTModeStatistics } from '../ht-sou
 import { beamProfile } from '../ut-beam-source.js';
 import { htLaserProfile } from '../ht-laser-source.js';
 import { utDazzlerProfile } from '../ut-dazzler-source.js';
+import { electrolaserProfile } from '../ut-electrolaser-source.js';
+import { microwaveProfile } from '../ut-microwave-source.js';
+import { ppbProfile } from '../ut-plasma-particle-source.js';
+import { sonicNeuralProfile } from '../ut-sonic-neural-source.js';
 import { newWeaponBattery, weaponPowerProfile } from './weapon-power.js';
 
 export const STANDALONE_WEAPON_FLAG = "standaloneWeapons";
@@ -110,6 +120,15 @@ export class StandaloneWeaponService {
         for(const mode of record.modes??[]){
           applyUTErrataMode(mode.snapshot,{snapshot:true});
           const current=catalogs?.getMode(mode.modeId);
+          if(fluidProfile(mode.modeId)&&record.source.equipmentId===fluidProfile(mode.modeId).equipmentId)mode.snapshot=clone(current);
+          if(exoticBeamProfile(mode.modeId)&&current?.ut_exotic_beam_source&&record.source.equipmentId===exoticBeamProfile(mode.modeId).equipmentId)
+            for(const field of ['governing_skill','governing_skill_selection','defaults'])mode.snapshot[field]=clone(current[field]);
+          if(sonicNeuralProfile(mode.modeId)&&current?.ut_sonic_neural_source&&record.source.equipmentId===sonicNeuralProfile(mode.modeId).equipmentId)
+            for(const field of ['governing_skill','governing_skill_selection','defaults','attack_resolution'])mode.snapshot[field]=clone(current[field]);
+          if(ppbProfile(mode.modeId)&&current?.ut_plasma_particle_source&&record.source.equipmentId===ppbProfile(mode.modeId).equipmentId){
+            for(const field of ['governing_skill','governing_skill_selection','defaults'])mode.snapshot[field]=clone(current[field]);
+            mode.snapshot.stats.shots=current.stats.shots;
+          }
           if(beamProfile(mode.modeId)&&current?.beam_source&&record.source.equipmentId===beamProfile(mode.modeId).equipmentId)
             mode.snapshot.governing_skill=clone(current.governing_skill);
         }
@@ -170,7 +189,7 @@ export class StandaloneWeaponService {
           snapshot: clone(old && !draft.modelChanged ? old.modes.find(m => m.modeId === mode.weapon_mode_id)?.snapshot ?? mode : mode),
           overrides: clone(draft.overrides[mode.weapon_mode_id] ?? {}) })),
         settings: clone(old?.settings ?? {}), resourceLinks: clone(old?.resourceLinks ??
-          (draft.type === "ranged" ? { ammoWeaponId: id } : {})), readiness: "definition-only" };
+          (draft.type === "ranged"||modes.some(m=>m.weapon_mode_id===HT_TEAR_SPRAY_MODE) ? { ammoWeaponId: id } : {})), readiness: "definition-only" };
       if(draft.weaponBondChanged&&typeof draft.weaponBond==='boolean'&&hasWeaponBondPerk(this.actor))
         record.settings.weaponBond=draft.weaponBond;
       if (old) state.weapons[state.weapons.indexOf(old)] = record;
@@ -339,6 +358,7 @@ export class StandaloneWeaponDraft {
 }
 
 export function standaloneAmmoCarrier(record, existing = null) {
+  if(record.modes.some(m=>m.modeId===HT_TEAR_SPRAY_MODE)&&!record.resourceLinks.ammoWeaponId)record={...record,resourceLinks:{...record.resourceLinks,ammoWeaponId:record.id}};
   const carrier = { ...(existing ?? { id: record.resourceLinks.ammoWeaponId, totalAmmo: 0, capacity: 0,
     magazines: [], loadedIndex: -1, ammoUnconfigured: true, weaponBond: false }),
     name: record.name, standaloneWeaponId: record.id,
@@ -346,15 +366,16 @@ export function standaloneAmmoCarrier(record, existing = null) {
       ? existing.standaloneModeId : record.modes[0]?.modeId, attackRef: {} };
   if(typeof record.settings?.weaponBond==='boolean')carrier.weaponBond=record.settings.weaponBond;
   if (!existing && isPaintCarbine(carrier)) carrier.paintBattery = newPaintBattery();
-  if (!existing && (htLaserProfile(carrier.standaloneModeId)||utDazzlerProfile(carrier.standaloneModeId))){
+  if (!existing && (exoticBeamProfile(carrier.standaloneModeId)||sonicNeuralProfile(carrier.standaloneModeId)||htLaserProfile(carrier.standaloneModeId)||utDazzlerProfile(carrier.standaloneModeId)||electrolaserProfile(carrier.standaloneModeId)||microwaveProfile(carrier.standaloneModeId)||ppbProfile(carrier.standaloneModeId))){
     const power=weaponPowerProfile(carrier);carrier[power.stateKey]=newWeaponBattery(power);
   }
-  const beam=beamProfile(carrier.standaloneModeId)??htLaserProfile(carrier.standaloneModeId)??utDazzlerProfile(carrier.standaloneModeId);
+  const beam=exoticBeamProfile(carrier.standaloneModeId)??sonicNeuralProfile(carrier.standaloneModeId)??beamProfile(carrier.standaloneModeId)??htLaserProfile(carrier.standaloneModeId)??utDazzlerProfile(carrier.standaloneModeId)??electrolaserProfile(carrier.standaloneModeId)??microwaveProfile(carrier.standaloneModeId)??ppbProfile(carrier.standaloneModeId);
   if(beam){
     // A newly acquired crystal is a complete sealed device. Never replenish an existing instance.
     if(!existing&&beam.oneShot)carrier.beamCrystal=newWeaponBattery(weaponPowerProfile(carrier));
     return carrier;
   }
+  if(carrier.standaloneModeId===HT_TEAR_SPRAY_MODE){if(!existing){initializeEmptyCarrier(carrier,20);carrier.ammunitionInventory.magazines[0].fixedIndex=0;}return carrier;}
   const sourceMode=record.modes.find(m=>m.modeId===carrier.standaloneModeId);
   const htProfile=record.source.source==='HT'&&htPreGaussProfile(carrier.standaloneModeId);
   if(htProfile){
@@ -365,9 +386,15 @@ export function standaloneAmmoCarrier(record, existing = null) {
     const mode=record.modes.find(m=>m.modeId===carrier.standaloneModeId);
     const shots=String(mode?.overrides?.shots??mode?.snapshot?.stats?.shots??'');
     const capacity=Number(/^(\d{1,3}(?:,\d{3})+|\d+)(?=$|[+(\s])/.exec(shots)?.[1]?.replaceAll(',',''));
-    const feed=utConventionalFeed(mode?.modeId,shots)??(UT_SPECIAL_MODES[mode?.modeId]?parseUTSourceFeed(shots,'Ultra-Tech 2007, pp. 139-140'):null);
+    const feed=(physicalRangedProfile(mode?.modeId)?parseUTSourceFeed(shots,physicalRangedProfile(mode.modeId).source):null)??(plasmaGunProfile(mode?.modeId)?parseUTSourceFeed(shots,'UT128'):null)??utConventionalFeed(mode?.modeId,shots)??(UT_SPECIAL_MODES[mode?.modeId]?parseUTSourceFeed(shots,'Ultra-Tech 2007, pp. 139-140'):null);
     initializeEmptyCarrier(carrier,htProfile?.capacity ?? feed?.loadedCapacity ?? capacity);
     if(feed)carrier.ammunitionInventory.magazines[0].sourceFeed=feed;
+    const compartments=utFixedFeed(carrier);
+    if(compartments){
+      carrier.ammunitionInventory.magazines=Array.from({length:compartments.count},(_,fixedIndex)=>({id:crypto.randomUUID(),weaponId:carrier.id,capacity:compartments.capacity,rounds:0,ammoKey:null,fixedIndex}));
+      carrier.ammunitionInventory.installedId=carrier.ammunitionInventory.magazines[0].id;
+      projectAmmoInventory(carrier);
+    }
   }
   return carrier;
 }

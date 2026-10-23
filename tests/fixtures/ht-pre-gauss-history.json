@@ -1,0 +1,3770 @@
+{
+  "schema": "olegurps-pre-gauss-history-contract-v1",
+  "source": {
+    "path": "docs/audit/weapon-implementation-inventory.json",
+    "sha256": "e21bf2b28eaec48a8b42bba891aa3bc15c01200e4ef634e566c28b19a6425639",
+    "auditDate": "2026-10-18",
+    "projection": "gaussTransition.criticalSharedBlockerCount and records[].{book,status}; no runtime state"
+  },
+  "gaussTransition": {
+    "criticalSharedBlockerCount": 1
+  },
+  "records": [
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "HT",
+      "status": "COMPLETE"
+    },
+    {
+      "book": "HT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "PARTIAL"
+    },
+    {
+      "book": "LT",
+      "status": "PARTIAL"
+    },
+    {
+      "book": "LT",
+      "status": "PARTIAL"
+    },
+    {
+      "book": "LT",
+      "status": "PARTIAL"
+    },
+    {
+      "book": "LT",
+      "status": "PARTIAL"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "LT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "LT",
+      "status": "BROKEN"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "INTENTIONALLY_EXCLUDED"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "COMPLETE_WITH_MANUAL_RULES"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    },
+    {
+      "book": "UT",
+      "status": "DATA_ONLY"
+    }
+  ]
+}

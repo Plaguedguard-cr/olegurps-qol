@@ -1,8 +1,16 @@
+import {projectFluidCatalog} from './ut-fluid-source.js';
+import {projectPhysicalRanged} from './ut-physical-ranged-source.js';
+import {plasmaGunProfile,projectPlasmaGuns} from './ut-plasma-gun-source.js';
+import { exoticBeamProfile, projectExoticBeamCatalog } from './ut-exotic-beam-source.js';
 import { applyUTErrataCatalog, UT_ERRATA_DEFINITION_ONLY } from './ut-errata.js';
 import { applyUTCompatibilityPolicy } from './ut-compatibility-policy.js';
 import { gaussProfile, projectGaussCatalog } from './ut-gauss-source.js';
 import { beamProfile, projectBeamCatalog } from './ut-beam-source.js';
 import { utDazzlerProfile, projectDazzlerCatalog } from './ut-dazzler-source.js';
+import { electrolaserProfile, projectElectrolaserCatalog } from './ut-electrolaser-source.js';
+import { microwaveProfile, projectMicrowaveCatalog } from './ut-microwave-source.js';
+import { sonicNeuralProfile, projectSonicNeuralCatalog } from './ut-sonic-neural-source.js';
+import { ppbProfile, projectPPBCatalog } from './ut-plasma-particle-source.js';
 // Verified UT2007 data only, followed by approved errata. Original JSON/GCS bytes and Actor state are never written.
 export const UT_DATA_REVISION = "ut-2007-1";
 export const UT_STAT_CORRECTIONS = [
@@ -1216,7 +1224,7 @@ export const UT_POWER_MODE_IDS = ["WdI9_2mws5U3wSQl-", "W__0RKAth-4yvVBSl", "Wcl
 
 const UT_SOURCE_HASH = "21f9ddb6ddc2936d74e5ad781af43a6d3787352172e0e1f74a80d85db7cbf5f1";
 const powerModes = new Set(UT_POWER_MODE_IDS);
-export function requiresUTPowerAccounting(modeId) { return powerModes.has(modeId) && !gaussProfile(modeId) && !beamProfile(modeId) && !utDazzlerProfile(modeId); }
+export function requiresUTPowerAccounting(modeId) { return powerModes.has(modeId) && !plasmaGunProfile(modeId) && !gaussProfile(modeId) && !beamProfile(modeId) && !utDazzlerProfile(modeId) && !electrolaserProfile(modeId) && !microwaveProfile(modeId) && !ppbProfile(modeId) && !sonicNeuralProfile(modeId) && !exoticBeamProfile(modeId); }
 
 const pathValue = (object, path) => path.split(".").reduce((value, key) => value?.[key], object);
 function setPath(object, path, value) {
@@ -1320,5 +1328,5 @@ function correctedAmmunition(original) {
 }
 export function projectUTSourceData(book, original) {
   const data=book === "weapons" ? correctedWeapons(original) : book === "ut" ? correctedAmmunition(original) : original;
-  return projectDazzlerCatalog(book,projectBeamCatalog(book,projectGaussCatalog(book,applyUTCompatibilityPolicy(book,applyUTErrataCatalog(book,data)))));
+  return projectFluidCatalog(book,projectPhysicalRanged(book,projectPlasmaGuns(book,projectExoticBeamCatalog(book,projectSonicNeuralCatalog(book,projectPPBCatalog(book,projectMicrowaveCatalog(book,projectElectrolaserCatalog(book,projectDazzlerCatalog(book,projectBeamCatalog(book,projectGaussCatalog(book,applyUTCompatibilityPolicy(book,applyUTErrataCatalog(book,data)))))))))))));
 }

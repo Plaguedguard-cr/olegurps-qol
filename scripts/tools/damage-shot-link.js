@@ -1,3 +1,4 @@
+import {exoticDamageProvenance} from './exotic-beam-damage.js';
 import { immutableCopy, SHOT_FLAG_SCOPE } from "./attack-profile-resolver.js";
 import { diagnoseGgaDamageAdapters, warnGgaDamageCompatibility, ammoEffectText } from "./gga-damage-compatibility.js";
 import { appendInstructionSteps } from "../localization.js";
@@ -15,8 +16,21 @@ import {applyGyrojetDamageResult} from './gyrojet-range.js';
 import {isUTExtendedVariant,applyUTDamageResult} from './ut-extended-ammunition.js';
 import { manualProjectileGuidance } from './ut-sefop.js';
 import { ammunitionChatData } from './ammunition-chat-summary.js';
+import { screamerDamageLines } from '../ut-sonic-neural-source.js';
 
 const installations = new WeakMap();
+const presentationCaches=new WeakMap();
+function savedAmmunitionSummary(resolved,runtime){
+  if(!resolved||!readable(resolved.source))return null;
+  const compute=()=>ammunitionChatData({...resolved.shot.profile,ammunition:resolved.shot.ammunition});
+  if(!runtime.Hooks?.on)return compute();
+  let cache=presentationCaches.get(runtime.Hooks);
+  if(!cache){cache=new WeakMap();presentationCaches.set(runtime.Hooks,cache);
+    runtime.Hooks.on('updateChatMessage',m=>cache.delete(m));runtime.Hooks.on('deleteChatMessage',m=>cache.delete(m));}
+  const language=runtime.game?.i18n?.lang,old=cache.get(resolved.source);
+  if(old?.shot===resolved.shot&&old.language===language)return old.data;
+  const data=compute();cache.set(resolved.source,{shot:resolved.shot,language,data});return data;
+}
 const flag = message => message?.getFlag?.(SHOT_FLAG_SCOPE, "shotSnapshot") ?? message?.flags?.[SHOT_FLAG_SCOPE]?.shotSnapshot;
 const owned = message => !!(message?.flags?.[SHOT_FLAG_SCOPE]?.attackProfile ||
   message?.flags?.[SHOT_FLAG_SCOPE]?.pendingShotSnapshot || flag(message));
@@ -49,7 +63,7 @@ const identityCopy = shot => ({ version: shot.version, attackId: shot.attackId, 
   ...(shot.profile?.damage ? { damage: shot.profile.damage, damageAttack: shot.profile.effective,
     transformations: shot.profile.transformations, context: shot.profile.context } : {}) });
 const unlinked = reason => ({ status: "unlinked", reason });
-const explosiveShot = shot => isUTExtendedVariant(shot?.ammunition?.recipe?.variantId) || isExplosiveVariant(shot?.ammunition?.recipe?.variantId) || isEnvironmentVariant(shot?.ammunition?.recipe?.variantId) || isFuzeTracerVariant(shot?.ammunition?.recipe?.variantId);
+const explosiveShot = shot => !!(shot?.profile?.damage??shot?.damage)?.rules?.fluid || !!(shot?.profile?.damage??shot?.damage)?.rules?.backblast || ['ghost','conversion'].includes((shot?.profile?.damage??shot?.damage)?.rules?.exoticBeam?.family) || isUTExtendedVariant(shot?.ammunition?.recipe?.variantId) || isExplosiveVariant(shot?.ammunition?.recipe?.variantId) || isEnvironmentVariant(shot?.ammunition?.recipe?.variantId) || isFuzeTracerVariant(shot?.ammunition?.recipe?.variantId);
 const componentConditionIds = new Set(["P4LinkedFollowUp", "P4Fragmentation", "P4SAPLEReliability", "P4HESH", "P4Tandem", "P4Thermobaric"]);
 export function ammunitionConditionSource(message, runtime = globalThis) {
   // Permission checks precede even reading flags, for both the clicked message and its source.
@@ -118,7 +132,7 @@ export function ammunitionConditionTexts(conditions = [], language = globalThis.
 export function renderShotAmmunitionConditions(message, root, runtime = globalThis) {
   root?.querySelector?.("[data-olegurps-special-effects]")?.remove?.();
   const resolved = ammunitionConditionSource(message, runtime);
-  const data = resolved && ammunitionChatData({...resolved.shot.profile,ammunition:resolved.shot.ammunition});
+  const data = savedAmmunitionSummary(resolved,runtime);
   const conditions = data ? [] : shotAmmunitionConditions(message, runtime);
   if ((!data && !conditions.length && !f2RowsForShot(resolved?.shot).length && !f3RowsForShot(resolved?.shot).length && !f4RowsForShot(resolved?.shot).length) || !runtime.document) return null;
   const card = root?.querySelector?.(".roll-message.gga-chat-message, .damage-message");
@@ -158,7 +172,7 @@ export function shotDamageComponents(message, runtime = globalThis) {
   return roles.map(role => {
     const component = shot.profile.damage?.components?.find(c => c.role === role);
     const resolved = shot.profile.damage?.nativeSafe && component?.status === "resolved" && !!component.formula;
-    return { role, label: explosiveText({"linked":"P4Linked","main-charge":"P4MainCharge","follow-up":"Explosion","fragmentation":"Fragmentation"}[role], runtime),
+    return { role, label: role==='backblast'?'Обратная струя':role==='collateral'?'Побочный взрыв':explosiveText({"linked":"P4Linked","main-charge":"P4MainCharge","follow-up":"Explosion","fragmentation":"Fragmentation"}[role], runtime),
       formula: resolved ? component.formula : null, reason: resolved ? null : shot.profile.damage?.reason ?? "unconfirmed-compatibility" };
   });
 }
@@ -168,7 +182,7 @@ export function captureDamageSource(action, event, runtime = globalThis) {
   if (!event || action?.calcOnly) return null;
   const element = event.currentTarget ?? event.target;
   const component = element?.dataset?.olegurpsShotComponent;
-  const secondary = ["follow-up", "fragmentation", "linked", "main-charge"].includes(component);
+  const secondary = ["follow-up", "fragmentation", "linked", "main-charge", "collateral", "backblast"].includes(component);
   if (action?.type !== "attackdamage" && !(action?.type === "damage" && secondary)) return null;
   if (!element?.classList?.contains("gurpslink") || !element.closest?.(".roll-message.gga-chat-message")) return null;
   const messageId = element.dataset?.olegurpsShotDamageSource ?? element.closest("[data-message-id]")?.dataset?.messageId;
@@ -244,7 +258,7 @@ export function installDamageShotLink(runtime = globalThis) {
     let dispatched = action;
     if (context.status === "linked" && ["attackdamage", "damage"].includes(action?.type) && !action.calcOnly) {
       const damage = context.shot.damage;
-      if(damage?.rules?.instructionOnly)return false;
+      if(damage?.rules?.instructionOnly&&context.component!=='backblast'&&!(damage.rules.fluid&&context.component==='linked'))return false;
       const component = context.component && context.component !== "kinetic" ? damage?.components?.find(c=>c.role === context.component) : null;
       const formula = component ? component.formula : damage?.formula;
       if (explosiveShot(context.shot) && (!damage?.nativeSafe || (context.component !== "kinetic" &&
@@ -289,6 +303,7 @@ export function installDamageShotLink(runtime = globalThis) {
       draggableData=draggableData.map(d=>applyGyrojetDamageResult(d,context.shot.damage.rules?.gyrojetRange,context.component??'kinetic'));
     if(context?.status==='linked'&&actor?.id===context.shot.actorId&&context.shot.damage?.nativeSafe)
       draggableData=draggableData.map(d=>applyUTDamageResult(d,context.shot.damage.rules,context.component??'kinetic'));
+    const exotic=exoticDamageProvenance(context);if(exotic)draggableData=draggableData.map(d=>({...d,olegurpsExoticBeam:exotic}));
     if (context && roll && typeof roll === "object") {
       rolls.set(roll, context.status === "linked" && actor?.id !== context.shot.actorId
         ? unlinked("actor-mismatch") : context);
@@ -337,6 +352,12 @@ export function installDamageShotLink(runtime = globalThis) {
       // Foundry's expansion lets a nested `flags` object overwrite a flat `flags.gurps.transfer`.
       // Normalize that native key before adding our namespace, preserving the original transfer payload.
       delete prepared["flags.gurps.transfer"];
+      if(context.status==='linked'&&context.shot.damage?.rules?.sonicScreamer){
+        const targets=[...(runtime.game?.user?.targets??[])],target=targets.length===1?targets[0].actor:null;
+        const hp=target?.visible!==false&&target?.testUserPermission?.(runtime.game.user,'OBSERVER')?target.system?.HP?.max:null;
+        const lines=screamerDamageLines(transfer.payload,hp);
+        if(lines.length)prepared.content+='<details class="olegurps-chat-details"><summary>Последствия Screamer</summary>'+lines.map(l=>'<p>'+l+'</p>').join('')+'</details>';
+      }
     } catch (error) { warn(error); return originals.create.call(this, data, ...args); }
     creations.set(damageEventId, context);
     let creation;
@@ -356,11 +377,11 @@ export function installDamageShotLink(runtime = globalThis) {
     root?.querySelector?.("[data-olegurps-special-effects]")?.remove?.();
     if (!readable(message)) return;
     localizeOwnChat(root, runtime);
-    if (!owned(message) && !message?.flags?.[SHOT_FLAG_SCOPE]?.damageLink) return;
+    if (!readable(message)||!owned(message) && !message?.flags?.[SHOT_FLAG_SCOPE]?.damageLink) return;
     const shot = flag(message), ammunition = shot?.ammunition;
     const ammunitionName = completed(shot, message.id) && ammunition?.source === "catalog" &&
       ammunition.status === "confirmed" && typeof ammunition.name === "string" ?
-        (ammunitionChatData({...shot.profile,ammunition})?.name ?? ammunition.name).trim() : "";
+        (savedAmmunitionSummary({source:message,shot},runtime)?.name ?? ammunition.name).trim() : "";
     renderShotAmmunitionConditions(message, root, runtime);
     for (const element of root?.querySelectorAll(".roll-message.gga-chat-message .gurpslink") ?? []) {
       let action;
@@ -408,6 +429,7 @@ export function installDamageShotLink(runtime = globalThis) {
             }
             anchor.after(button); anchor = button;
           }
+          if(shot.profile.damage.rules.fluid)element.remove();
         }
       }
     }

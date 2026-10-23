@@ -1,4 +1,5 @@
 import { readWeaponSkillTLPolicy } from "./weapon-skill-tl-policy.js";
+import { publishedTL } from './tech-level.js';
 
 // Catalog defaults are directed rules. Never infer defaults from similar names or recurse through them.
 const clean = value => String(value ?? "").normalize("NFKC").trim();
@@ -54,7 +55,7 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   if (!required) return { resolved: false, level: null, tlPolicy, reason: "В источнике не определён требуемый навык. Укажите точный навык в настройках режима." };
   if (technical.has(required.family) && required.tl === null) {
     const tl = clean(record?.equipmentSnapshot?.tech_level);
-    required.tl = /^\d+$/.test(tl) ? Number(tl) : null;
+    required.tl = publishedTL(tl);
   }
   const name = explicit ? explicit.replace(/\s*\([^()]*\)\s*$/, "").replace(/\s*\/\s*TL\s*\d+\s*/iu, "") :
     attributeOnly ? required.name : sourceSkill.name;

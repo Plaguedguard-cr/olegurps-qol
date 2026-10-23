@@ -1,3 +1,4 @@
+import {CHEMICAL_SUBSTANCES} from './tools/biochemical-catalog.js';
 import { LEMAT, LEMAT_SHOT_CHARGE, correctHTMode, correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
 import { correctedHTLabel } from "./ht-source-corrections.js";
 import { projectUTSourceData } from "./ut-source-data.js";
@@ -564,6 +565,8 @@ export class CatalogService {
     return view;
   }
   getEquipmentForMode(id) { return this.getEquipment(this.#ready("weapons")?.parents.get(id)?.equipment_id); }
+  getBiochemicalSubstance(id) { return Object.hasOwn(CHEMICAL_SUBSTANCES,id??'') ? CHEMICAL_SUBSTANCES[id] : null; }
+  getBiochemicalSubstances() { return Object.values(CHEMICAL_SUBSTANCES); }
   getModesForEquipment(id) { return this.getEquipment(id)?.modes ?? EMPTY; }
   getAmmoItem(book, id) {
     if(book==='ht'&&this.#ready(book)?.relationshipChecks.status==='passed') {

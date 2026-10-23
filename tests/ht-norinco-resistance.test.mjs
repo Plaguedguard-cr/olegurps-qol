@@ -126,7 +126,7 @@ test('structured saved effects survive without current weapons; ordinary Damage 
   assert.equal(resistanceEffect({...htLaserEffect(q),attribute:'constructor'}),null);
   assert.equal(resistanceLabel({...htLaserEffect(q),attribute:'DX',modifier:2}),'Бросок DX+2');
 });
-function nativeRuntime({total=12,final=5,critSuccess=false,critFailure=false,failed=true}={}){
+function nativeRuntime({total=12,final=5,critSuccess=false,critFailure=false,failed=true,whisper=[],blind=false}={}){
   const hooks=new Map();let next=0;const created=[],calls=[];
   const actor={id:'defender',name:'Защитник',isOwner:true,system:{attributes:{HT:{value:10}}},update:()=>{throw Error('Actor write');}};
   const token={id:'controlled',actor,isOwner:true,update:()=>{throw Error('Token write');}};
@@ -136,7 +136,7 @@ function nativeRuntime({total=12,final=5,critSuccess=false,critFailure=false,fai
     __olegurpsResistanceConditions:async()=>choices,__olegurpsNativeResistanceLoader:async()=>({doRoll:async args=>{
       calls.push(args);rt.GURPS.lastTargetedRoll={thing:args.thing,fromUser:rt.game.user.id,actorid:actor.id,origtarget:args.origtarget,rtotal:total,finaltarget:final,
         margin:final-total,isCritSuccess:critSuccess,isCritFailure:critFailure,failure:failed};
-      const message={id:'native-'+created.length,author:{id:'owner'},speaker:{actor:actor.id},rolls:[{total}],flags:{},content:'<native-gga>',
+      const message={id:'native-'+created.length,author:{id:'owner'},speaker:{actor:actor.id},whisper:[...whisper],blind,rolls:[{total}],flags:{},content:'<native-gga>',
         updateSource(patch){for(const[k,v]of Object.entries(patch)){if(k.startsWith('flags.'))(this.flags[scope]??={})[k.split('.').at(-1)]=v;else this[k]=v;}}};
       for(const h of [...hooks.values()].filter(h=>h.name==='preCreateChatMessage'))h.fn(message);
       created.push(message);for(const h of [...hooks.values()].filter(h=>h.name==='createChatMessage'))h.fn(message);return !failed;
@@ -151,9 +151,9 @@ test('native GGA loader handles roll once, modifier once, author v14, descriptiv
   await rollResistance(msg(),h.rt);assert.equal(h.calls.length,2);assert.equal(h.created.length,2);
   assert.doesNotMatch(JSON.stringify(h.created[0].flags),/actorId|tokenId|targetId/);
 });
-test('resistance is public even from a private blind source; new ammo messages default to all, saved privacy is preserved',async()=>{
-  const h=nativeRuntime(),source={...msg(),blind:true};const r=await rollResistance(source,h.rt);
-  assert.deepEqual(r.message.whisper,[]);assert.equal(r.message.blind,false);
+test('resistance preserves native GGA privacy from a private blind source; new ammo messages default to all, saved privacy is preserved',async()=>{
+  const h=nativeRuntime({whisper:['owner'],blind:true}),source={...msg(),blind:true};const r=await rollResistance(source,h.rt);
+  assert.deepEqual(r.message.whisper,['owner']);assert.equal(r.message.blind,true);
   const service=new AmmoService(h.actor);assert.equal(service.defaultChatSettings().mode,'all');
   assert.equal(service.normalizeChatSettings({}).mode,'all');assert.equal(service.normalizeChatSettings({mode:'self'}).mode,'self');
   assert.equal(source.blind,true);assert.deepEqual(source.whisper,['owner']);

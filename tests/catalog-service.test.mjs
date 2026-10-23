@@ -7,6 +7,8 @@ import { runInNewContext } from "node:vm";
 import { CatalogService, CATALOG_DEFINITIONS } from "../scripts/catalog-service.js";
 import { WeaponCatalogBindingService } from "../scripts/weapon-catalog-binding-service.js";
 import { AmmunitionCompatibilityService } from "../scripts/ammunition-compatibility-service.js";
+import { DISINTEGRATOR_PROFILES } from "../scripts/ut-disintegrator-source.js";
+import { PLASMA_GUN_PROFILES } from "../scripts/ut-plasma-gun-source.js";
 
 const books = Object.keys(CATALOG_DEFINITIONS);
 const pointer = book => ({ catalog_kind: CATALOG_DEFINITIONS[book].kind,
@@ -45,6 +47,19 @@ function fixture() {
     warheads: [{ id: "ut-warhead", name: "Warhead" }]
   });
   for (const option of data.ht.projectile_options) option.eligibility_v1 = { contract: "ht-option-eligibility-v1", authority: "Test catalog", source_ref: "HT 166", rule_category: "projectile_options", conditions: {}, explicit_evidence_required: [], candidate_policy: "requires-platform-proof", on_missing_evidence: "undetermined", never_allow_by_caliber_name_or_tl_alone: true, do_not_reapply_native_effects: false, overlap_guard: null };
+  // Pre-existing derived identities let this deliberately tiny catalog exercise
+  // validation without requiring the six full UT130 chassis and their ammo.
+  data.weapons.equipment.push(...Object.values(DISINTEGRATOR_PROFILES)
+    .filter(profile => profile.family !== 'disintegrator')
+    .map(profile => ({equipment_id: profile.equipmentId, name: profile.name, source: 'UT', modes: []})));
+  // The UT projection always supplies twenty model-bound Plasma cartridges;
+  // their eleven mode endpoints must also exist in a valid synthetic catalog.
+  data.weapons.equipment.push(...Object.values(PLASMA_GUN_PROFILES).map(profile => ({
+    equipment_id: profile.equipmentId, name: profile.name, source: 'UT',
+    modes: [mode('ut', {weapon_mode_id: profile.modeId})]
+  })));
+  data.ut.indexes = {ammo_family_ids: ['ut-family'], ammo_family_ids_with_linked_weapons: ['ut-family'],
+    warhead_ids_requiring_notes: [], warhead_ids_by_min_tl: {}};
   return data;
 }
 function loader(data = fixture(), overrides = {}) {
@@ -71,7 +86,7 @@ test("all four real catalogs load with record-derived counts and symmetric links
   const { service, diagnostics } = await loaded(originals);
   assert.equal(diagnostics.state, "ready");
   const weaponModes = service.getCatalog("weapons").equipment.flatMap(e => e.modes);
-  assert.equal(diagnostics.catalogs.weapons.counts.equipment, originals.weapons.equipment.length + 2);
+  assert.equal(diagnostics.catalogs.weapons.counts.equipment, originals.weapons.equipment.length + 14);
   assert.equal(diagnostics.catalogs.weapons.counts.modes, weaponModes.length);
   for (const book of books) {
     const status = diagnostics.catalogs[book];
@@ -87,7 +102,7 @@ test("all four real catalogs load with record-derived counts and symmetric links
     assert.equal(status.relationships.forward, edges.length);
     assert.equal(status.relationships.reverse, edges.length);
     assert.equal(status.relationships.linkedModes, new Set(edges).size);
-    assert.equal(status.counts.ammo_families, originals[book].ammo_families.length);
+    assert.equal(status.counts.ammo_families, originals[book].ammo_families.length + (book === 'ut' ? 20 : 0));
     if (book !== "ut") assert.equal(status.counts.ammo_items, originals[book].ammo_items.length);
     assert.equal(status.relationships.status, "passed");
   }

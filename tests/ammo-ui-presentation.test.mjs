@@ -6,6 +6,7 @@ import { ammoWindowText, ammoDisplayName } from "../scripts/tools/ammo-managemen
 import { inventoryAmmoName, ammoStockRows, renderAmmunitionSummary, ammoCaption } from "../scripts/tools/ammo-caption.js";
 import { escapeWeaponHTML } from "../scripts/tools/weapon-configuration.js";
 import { bindingForGoverningSkill, listRangedGoverningSkills } from "../scripts/tools/ranged-governing-skill-service.js";
+import { utFixedFeed } from '../scripts/tools/ut-physical-feeds.js';
 
 globalThis.foundry = { utils: { deepClone: structuredClone }, applications: { api: { ApplicationV2: class {} } } };
 globalThis.game = { i18n: { lang: "ru", localize: key => key } };
@@ -15,8 +16,8 @@ const { ammoManagementHTML } = await import("../scripts/tools/ammo-management-ap
 // Exercise the manager's actual nested renderer without opening an Application in Node.
 const source = readFileSync(new URL("../scripts/tools/ammo.js", import.meta.url), "utf8");
 const body = source.match(/  function renderSingleMagazineBadges\(weapon,\{active=true,batterySelected=false\}=\{\}\) \{[\s\S]*?\n  \}/)[0];
-const renderBadges = new Function("escapeHTML", "ammoWindowText", "magazineFill", "inventoryAmmoName", body + "; return renderSingleMagazineBadges;")(
-  escapeWeaponHTML, ammoWindowText, magazineFill, inventoryAmmoName);
+const renderBadges = new Function("escapeHTML", "ammoWindowText", "magazineFill", "inventoryAmmoName", "utFixedFeed", body + "; return renderSingleMagazineBadges;")(
+  escapeWeaponHTML, ammoWindowText, magazineFill, inventoryAmmoName, utFixedFeed);
 
 test("each selectable magazine reflects its own rounds, capacity, smooth fill and ammunition tooltip", () => {
   const weapon = { id: "weapon", magazines: [30, 15, 1, 0, 20], loadedIndex: 2, capacity: 30, ammoType: "fallback",

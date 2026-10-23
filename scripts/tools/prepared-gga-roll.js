@@ -1,4 +1,6 @@
 import { validateProximityShot } from './ut-he-proximity.js';
+import {applyMessageMode} from './chat-message-mode.js';
+import {SHOT_STORAGE_VERSION} from './shot-history-storage.js';
 import { evaluatePreparedCheck, testRollNotice } from "./developer-roll-service.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { requiresUTPowerAccounting } from "../ut-source-data.js";
@@ -57,6 +59,7 @@ export function buildAttackModifierBreakdownHtml(modifiers = []) {
   return `<details class="olegurps-attack-modifiers olegurps-chat-details"><summary style="cursor:pointer"><strong>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b:</strong></summary><div>${lines}</div></details>`;
 }
 const ACTIVE_CHAT_MESSAGE_CAPTURES = new WeakMap();
+export {applyMessageMode as applyPreparedMessageMode} from './chat-message-mode.js';
 
 export async function createRollChatMessage(ChatMessage, messageData, options) {
   if (typeof ChatMessage?.create !== "function") throw new Error("ChatMessage.create недоступен.");
@@ -191,7 +194,7 @@ export async function executePreparedGgaRoll({
   const manualGuided=proximity||!!manualProjectileGuidance(attackProfile);
   const attackPrefix = combatType === "melee" ? "M" : "R";
   const chatthing = `[${actorPrefix}${attackPrefix}:"${quotedName}"]`;
-  const followon = attackProfile?.damage?.rules?.instructionOnly ? '' : `[${actorPrefix}D:"${quotedName}"]`;
+  const followon = attackProfile?.damage?.rules?.instructionOnly&&!(attackProfile.damage.rules.fluid&&attackProfile.damage.components.some(c=>c.role==='linked')) ? '' : `[${actorPrefix}D:"${quotedName}"]`;
   const action = {
     type: "attack",
     name: exactName,
@@ -239,7 +242,9 @@ export async function executePreparedGgaRoll({
   const total = Number(roll.total);
   const margin = finaltarget - total;
   const seventeen = total >= 17;
-  const failure = seventeen || margin < 0;
+  const hotCartridge=attackProfile?.damage?.rules?.plasmaGun?.hot===true;
+  const hotshotMalf=(attackProfile?.damage?.rules?.plasmaParticle?.hotshot===true||hotCartridge)&&total>=14;
+  const failure = seventeen || margin < 0 || hotshotMalf;
   const { isCritSuccess } = getCriticalState(total, finaltarget - Math.max(0, Number(telegraphicCriticalBonus) || 0));
   const { isCritFailure } = getCriticalState(total, finaltarget);
   const rollValues = roll.dice?.[0]?.results?.map(entry => entry.result) ?? [];
@@ -280,7 +285,7 @@ export async function executePreparedGgaRoll({
     followon:manualGuided?'':followon,
     optlabel: "",
     isBlind: false,
-    rof: combatType === "melee" ? null : displayRof,
+    rof: combatType === "melee" ? null : attackProfile?.damage?.rules?.plb&&attackProfile.damage.rules.physicalRanged.sourceRoF.includes('x')?attackProfile.damage.rules.physicalRanged.sourceRoF.replace('x','×'):displayRof,
     rcl: combatType === "melee" || attack?.platformRules?.rclNotApplicable ? null : safeRcl,
     rofrcl: combatType === "melee" || concealTargetDetails || manualGuided ? null : potentialHits,
     ...(manualGuided?{manualProjectileHit:true,projectileHit:'manual'}:{})
@@ -288,10 +293,30 @@ export async function executePreparedGgaRoll({
   GURPS.setLastTargetedRoll?.(chatdata, speaker.actor, speaker.token, true);
 
   let content = testRollNotice(testRoll, runtime) + await renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", chatdata);
+  if(attackProfile?.damage?.rules?.plasmaParticle?.hotshot)content+=`<p>${hotshotMalf?'Отказ Hotshot (Malf14). Последствия по B407 применяются вручную.':'Hotshot: Malf14; расход ×2. UT133.'}</p>`;
+  if(attackProfile?.damage?.rules?.utMicrowave)content+='<p>Конус: затронутые цели определяют вручную, в том числе при промахе.</p>';
+  if(attackProfile?.damage?.rules?.sonicNeural?.coneWidth)content+='<p>Конус: затронутые цели определяют вручную, в том числе при промахе.</p>';
+  if(failure&&(attackProfile?.damage?.rules?.sonicScreamer||attackProfile?.damage?.rules?.exoticBeam?.family==='ghost')){
+    const link=typeof GURPS.gurpslink==='function'?GURPS.gurpslink(followon):followon;
+    content+=`<div class="roll-message gga-chat-message olegurps-cone-damage">${link}</div>`;
+  }
+  if(hotCartridge&&hotshotMalf)content+='<p>\u041e\u0442\u043a\u0430\u0437 Hot Power Cartridge (Malf14); B407 \u2014 \u0432\u0440\u0443\u0447\u043d\u0443\u044e.</p>';
+  const electro=attackProfile?.damage?.rules?.electrolaser;
+  if(electro)content+=`<p>Режим: ${electro.mode==='kill'?'Kill':'Standard'}. Расход: ${electro.unitsPerShot} ${electro.unitsPerShot===1?'заряд':'заряда'} на выстрел.</p>`+
+    `<details class="olegurps-chat-details"><summary>Условия электролазера</summary><p>Смена Standard/Kill требует Ready (UT119). ${electro.mode==='kill'?'Kill: LC2.':''}</p>`+
+    `<p>${potentialHits} попаданий: ожог${attackProfile.damage.rules.resistanceEffect?' и независимое HT-сопротивление для каждого попадания':''}. ${electro.visibilityDR?'Добавочный DR лучу от видимости: '+electro.visibilityDR+'; учтите вручную при Damage.':''}</p></details>`;
   if(manualGuided){
     const damageLink=typeof GURPS.gurpslink==='function'?GURPS.gurpslink(followon):followon;
     content+=(proximity?'':`<p class="olegurps-sefop-outcome">${escapeModifierHtml(moduleText('OleGURPS.UTPayload.'+(manualSEFOP?'SEFOPManualOutcome':'HomingManualOutcome')))}</p>`)+
       `<div class="roll-message gga-chat-message olegurps-sefop-manual-damage">${damageLink}</div>`;
+  }
+  if(attackProfile?.damage?.rules?.backblast){
+    const b=attackProfile.damage.rules.backblast;let auxiliary='';
+    if(attackProfile.damage.rules.instructionOnly&&typeof GURPS.gurpslink==='function'&&runtime.document){
+      const template=runtime.document.createElement('template');template.innerHTML=GURPS.gurpslink('['+b.formula+']');
+      const link=template.content.querySelector('.gurpslink');if(link){link.dataset.olegurpsShotComponent='backblast';auxiliary='<div class="roll-message gga-chat-message">'+template.innerHTML+'</div>';}
+    }
+    content+=`<details class="olegurps-chat-details" data-ut-backblast><summary>Обратная струя</summary><p>${escapeModifierHtml(b.formula)}; конус ${b.coneYards} ярд. позади. Затронутые цели — вручную. UT145.</p>${auxiliary}</details>`;
   }
   if (contextLabel) {
     const safeContext = String(contextLabel).replace(/[&<>"']/g, character => ({
@@ -323,7 +348,7 @@ export async function executePreparedGgaRoll({
   const emConditions=gaussManualConditions((shotSnapshot?.profile??attackProfile)?.binding?.confirmed?.modeId);
   if(emConditions.length)content+=`<details class="olegurps-chat-details"><summary>Особенности оружия</summary>${emConditions.map(c=>escapeModifierHtml(c.text)).join('<br>')}</details>`;
   const reliability=(shotSnapshot?.profile ?? attackProfile)?.weaponReliability;
-  if(reliability)content+=`<details class="olegurps-chat-details"><summary>Особенности оружия</summary>Malf ${escapeModifierHtml(reliability.malf)} (${escapeModifierHtml(reliability.source)}). Проверка надёжности — вручную; поправки боеприпаса учитываются отдельно.</details>`;
+  if(reliability&&!hotCartridge&&!attackProfile?.damage?.rules?.plasmaParticle?.hotshot)content+=`<details class="olegurps-chat-details"><summary>Особенности оружия</summary>Malf ${escapeModifierHtml(reliability.malf)} (${escapeModifierHtml(reliability.source)}). Проверка надёжности — вручную; поправки боеприпаса учитываются отдельно.</details>`;
   const messageData = {
     // Payload text belongs to the selected shot only; never copy weapon/GCS Notes.
     user: game.user.id,
@@ -333,15 +358,13 @@ export async function executePreparedGgaRoll({
     sound: runtime.CONFIG?.sounds?.dice,
     ...((testRoll || attackProfile || shotSnapshot) ? { flags: { "olegurps-qol": {
       knockbackTargets: captureKnockbackTargets(runtime),
-      ...(attackProfile?.damage?.rules?.resistanceEffect?{resistanceEffect:{...structuredClone(attackProfile.damage.rules.resistanceEffect),eligible:!failure}}:{}),
-      ...(testRoll ? { testRoll } : {}), ...(attackProfile ? { attackProfile: structuredClone(attackProfile) } : {}),
+      ...(attackProfile?.damage?.rules?.resistanceEffect?{resistanceEffect:{...structuredClone(attackProfile.damage.rules.resistanceEffect),eligible:!!attackProfile.damage.rules.chemical||!!attackProfile.damage.rules.utMicrowave||!!attackProfile.damage.rules.sonicNeural?.coneWidth||!failure,...(electro?{hits:potentialHits}:{})}}:{}),
+      ...(testRoll ? { testRoll } : {}),
+      ...(shotSnapshot?.profile ? {shotStorageVersion:SHOT_STORAGE_VERSION} : attackProfile ? { attackProfile: structuredClone(attackProfile) } : {}),
       ...(shotSnapshot ? { [shotSnapshot.resourceTiming === "after-attack" || shotSnapshot.resourceTiming === "spraying-completion"
         ? "pendingShotSnapshot" : "shotSnapshot"]: structuredClone(shotSnapshot) } : {}) } } } : {})
   };
-  const rollMode = game.settings?.get?.("core", "rollMode");
-  if (rollMode) ChatMessage.applyRollMode?.(messageData, rollMode);
-  // HT vision-laser attacks and their resistance checks are public module messages.
-  if (attackProfile?.damage?.rules?.resistanceEffect) { messageData.whisper = []; messageData.blind = false; }
+  applyMessageMode(ChatMessage,messageData,game);
   const chatMessage = await createRollChatMessage(ChatMessage, messageData);
 
   const actorToken = canvas?.tokens?.placeables?.find(entry => entry.id === speaker.token);
@@ -410,8 +433,7 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
   const message = { user: runtime.game.user.id, speaker: runtime.ChatMessage.getSpeaker(actor ? { actor } : {}),
     content, rolls: [roll], sound: runtime.CONFIG?.sounds?.dice,
     ...(testRoll ? { flags: { "olegurps-qol": { testRoll } } } : {}) };
-  const rollMode = runtime.game.settings?.get?.("core", "rollMode");
-  if (rollMode) runtime.ChatMessage.applyRollMode?.(message, rollMode);
+  applyMessageMode(runtime.ChatMessage,message,runtime.game);
   const chatMessage = await createRollChatMessage(runtime.ChatMessage, message);
   return { rolled: true, rollData: data, roll, message: chatMessage };
 }

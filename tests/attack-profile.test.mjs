@@ -361,7 +361,8 @@ test("native message visibility is unchanged by profile metadata for GM/blind/wh
       physicalShots: 1, effectiveRoF: 1, rcl: 2, consumeAction: false, runtime });
     assert.equal(result.message.blind === true, mode === "blindroll");
     assert.deepEqual(result.message.whisper, mode === "publicroll" ? undefined : ["gm"]);
-    assert.equal(result.message.getFlag("olegurps-qol", "attackProfile").resource.magazineId, "mag-a");
+    assert.equal(result.message.getFlag("olegurps-qol", "shotSnapshot").profile.resource.magazineId, "mag-a");
+    assert.equal(result.message.getFlag("olegurps-qol", "attackProfile"),undefined);
   }
 });
 

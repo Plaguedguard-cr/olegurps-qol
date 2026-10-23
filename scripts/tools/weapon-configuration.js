@@ -1,4 +1,9 @@
+import { exoticBeamProfile, exoticBeamConfiguration, exoticBeamHardwareHTML } from '../ut-exotic-beam-source.js';
 import { LP_PROFILES, lpAdmission } from './ut-liquid-propellant.js';
+import {beamProfile} from '../ut-beam-source.js';
+import {laserModifications,laserModificationsHTML,validateLaserModifications,laserAvailableModes} from '../ut-laser-modifications.js';
+import {ppbProfile,ppbOmniHTML} from '../ut-plasma-particle-source.js';
+import {sonicNeuralProfile,sonicNeuralHardwareHTML,neuralDesign} from '../ut-sonic-neural-source.js';
 import { gaussProfile } from '../ut-gauss-source.js';
 import { listRangedGoverningSkills, resolveRangedGoverningSkill, bindingForGoverningSkill,
   getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
@@ -165,6 +170,10 @@ export class WeaponConfigurationDraft {
     this.gaussSpeed=executionOwner?.gaussSpeed??'standard';
     this.gaussSpeedChanged=false;
     this.executionChanged=false;
+    this.laserDrafts=new Map();
+    this.exoticBeamDrafts=new Map();
+    this.sonicNeuralDrafts=new Map();
+    this.omniBlaster=existing?.omniBlaster===true;this.omniChanged=false;
     this.standaloneService = new StandaloneWeaponService(actor, catalogs);
     this.standalone = Boolean(existing?.standaloneWeaponId);
     this.standaloneDraft = new StandaloneWeaponDraft({ catalogs, type: "ranged", actor,
@@ -189,6 +198,16 @@ export class WeaponConfigurationDraft {
       this.standaloneDraft.selectedModes[0]?.weapon_mode_id : this.current?.target?.modeId;
   }
   requestExecution(weapon) {
+    const exotic=this.exoticBeamDrafts.get(this.executionModeId);
+    if(exotic?.changed)weapon.exoticBeamHardwareRequest={psionicSettings:exotic.value.psionicSettings};
+    const sn=this.sonicNeuralDrafts.get(this.executionModeId);
+    if(sn?.changed)weapon.sonicNeuralHardwareRequest=sonicNeuralProfile(this.executionModeId)?.family==='neural'?{neuralSettings:sn.value.neuralSettings}:{sonicUnderwater:sn.value.sonicUnderwater};
+    if(this.omniChanged&&ppbProfile(this.executionModeId)?.family==='blaster')weapon.omniBlasterRequest=this.omniBlaster;
+    const laser=this.laserDrafts.get(this.executionModeId);
+    if(laser?.changed){
+      if(!weapon.standaloneModeId)weapon.catalogModeId=this.executionModeId;
+      weapon.laserModificationRequest=validateLaserModifications(this.executionModeId,laser.value);
+    }
     if(this.gaussSpeedChanged)weapon.gaussSpeedRequest=this.gaussSpeed;
     if(this.executionChanged)weapon.executionRequest={variant:this.executionVariant,modeId:this.executionModeId};
   }
@@ -196,6 +215,15 @@ export class WeaponConfigurationDraft {
     const mode=this.standaloneDraft.availableModes.find(m=>m.weapon_mode_id===modeId);
     const raw=this.standalone ? {...standaloneModeStats(mode),...this.standaloneDraft.overrides[modeId]} :
       {...this.attack?.data,...(this.current?.override?.action==='save'?this.current.override.value:{})};
+    if(beamProfile(modeId)){
+      const saved=this.state.weapons?.find(w=>w.id===this.existing?.id),value=this.laserDraft(modeId).value;
+      const carrier={...saved,id:'configuration-preview',catalogModeId:modeId,laserModifications:value};
+      if(!laserAvailableModes(carrier).includes(carrier.laserMode))carrier.laserMode=laserAvailableModes(carrier)[0];
+      const p=new AttackProfileResolver({catalogs:this.catalogs}).resolve({actorId:this.actor.id,weaponId:carrier.id,attack:{data:raw},rawAttack:raw,
+        state:{weapons:[carrier]},binding:{status:'confirmed',binding:{confirmed:true,modeId}}});
+      const derived=value.construction!=='standard'||value.dazzle||value.blinding||value.beamPulse;
+      return {stats:derived?{...raw,...p.damage.effectiveChanges}:raw,derivedFields:derived?['damage','range','rof',...(p.damage.effectiveChanges?.shots!==undefined?['shots']:[])]:[],resolvedDamage:p.damage.nativeSafe?p.effective.damage:null};
+    }
     const sharedETC=this.executionVariant==='etc'&&this.executionModeId==='WtM51JNSpOUIy3Eo1'&&modeId==='WRvS5pz3LMCzqQyiZ';
     if(gaussProfile(modeId)) {
       const carrier={id:'configuration-preview',catalogModeId:modeId,gaussSpeed:this.gaussSpeed};
@@ -226,6 +254,18 @@ export class WeaponConfigurationDraft {
       {...raw,damage:'—',range:'—'},derivedFields:this.executionVariant==='lp'?['damage','range','shots']:['damage','range']};
   }
   get attack() { return this.attacks.find(attack => attack.path === this.path) ?? null; }
+  laserDraft(id=this.executionModeId){
+    if(!this.laserDrafts.has(id))this.laserDrafts.set(id,{value:structuredClone(laserModifications(this.existing&&(this.existing.standaloneModeId??this.existing.catalogModeId)===id?this.existing:null)),changed:false});
+    return this.laserDrafts.get(id);
+  }
+  exoticBeamDraft(id=this.executionModeId){
+    if(!this.exoticBeamDrafts.has(id))this.exoticBeamDrafts.set(id,{value:structuredClone(this.existing&&(this.existing.standaloneModeId??this.existing.catalogModeId)===id?this.existing:{}),changed:false});
+    return this.exoticBeamDrafts.get(id);
+  }
+  sonicNeuralDraft(id=this.executionModeId){
+    if(!this.sonicNeuralDrafts.has(id))this.sonicNeuralDrafts.set(id,{value:structuredClone(this.existing&&(this.existing.standaloneModeId??this.existing.catalogModeId)===id?this.existing:{}),changed:false});
+    return this.sonicNeuralDrafts.get(id);
+  }
   get current() {
     if (!this.attack) return null;
     if (!this.modes.has(this.path)) {
@@ -288,6 +328,14 @@ export class WeaponConfigurationDraft {
 
   async commit({ id }) {
     if(this.actor.isOwner===false)throw Error(standaloneText('Owner'));
+    if(exoticBeamProfile(this.executionModeId)?.family==='psionic')exoticBeamConfiguration({...this.exoticBeamDraft().value,catalogModeId:this.executionModeId,psionicMode:this.exoticBeamDraft().value.psionicSettings?.[0]??'eraser'});
+    if(sonicNeuralProfile(this.executionModeId)?.family==='neural'){
+      const design=neuralDesign(this.sonicNeuralDraft().value);
+      const newlyInstalled=design.settings.some(s=>!this.existing?.neuralSettings?.includes(s));
+      if(!design.settings.length||newlyInstalled&&this.campaignTL!==null&&this.campaignTL!==undefined&&design.tl>this.campaignTL)throw Error('Выберите настройки Neural, доступные при ТУ кампании.');
+    }
+    // Reject invalid current/legacy laser hardware before writing a definition or Actor setting.
+    if(beamProfile(this.executionModeId))validateLaserModifications(this.executionModeId,this.laserDraft().value);
     if(this.executionChanged&&['etc','lp'].includes(this.executionVariant)) {
       const admission=(this.executionVariant==='lp'?lpAdmission:etcAdmission)(this.executionModeId,this.catalogs,this.campaignTL);
       if(!admission.allowed)throw Error(admission.reason);
@@ -376,7 +424,8 @@ export function weaponConfigurationHTML(model) {
     `${model.path ? "" : `<option value="">${escapeWeaponHTML(weaponText("SelectAttack"))}</option>`}${attackOptions}</select></label>
     <div data-weapon-mode-fields>${weaponModeFieldsHTML(model, draft)}</div></div>
     <div data-standalone-configuration ${model.standalone ? "" : "hidden"}>${standaloneConfigurationHTML(model.standaloneDraft)}</div>
-    <div data-weapon-execution>${executionConfigurationHTML(model.executionModeId,model.executionVariant,model.catalogs,model.campaignTL,escapeWeaponHTML,model.gaussSpeed)}</div></div>`;
+    <div data-weapon-execution>${executionConfigurationHTML(model.executionModeId,model.executionVariant,model.catalogs,model.campaignTL,escapeWeaponHTML,model.gaussSpeed)}</div>
+    <div data-weapon-laser>${laserModificationsHTML(model.executionModeId,model.laserDraft().value,escapeWeaponHTML)}${ppbOmniHTML(model.executionModeId,model.omniBlaster)}${sonicNeuralHardwareHTML(model.executionModeId,model.sonicNeuralDraft().value,escapeWeaponHTML)}${exoticBeamHardwareHTML(model.executionModeId,model.exoticBeamDraft().value,escapeWeaponHTML)}</div></div>`;
 }
 
 export function weaponModeFieldsHTML(model, draft = model.current) {
@@ -414,11 +463,12 @@ export function weaponModeFieldsHTML(model, draft = model.current) {
 
 export function bindWeaponConfiguration(root, model, edit) {
   const refreshExecution=()=>{
+    const laser=root.querySelector('[data-weapon-laser]');if(laser)laser.innerHTML=laserModificationsHTML(model.executionModeId,model.laserDraft().value,escapeWeaponHTML)+ppbOmniHTML(model.executionModeId,model.omniBlaster)+sonicNeuralHardwareHTML(model.executionModeId,model.sonicNeuralDraft().value,escapeWeaponHTML)+exoticBeamHardwareHTML(model.executionModeId,model.exoticBeamDraft().value,escapeWeaponHTML);
     const section=root.querySelector('[data-weapon-execution]');
     if(section)section.innerHTML=executionConfigurationHTML(model.executionModeId,model.executionVariant,model.catalogs,model.campaignTL,escapeWeaponHTML,model.gaussSpeed);
     for(const input of root.querySelectorAll('[data-standalone-stat]')) {
       const field=input.dataset.standaloneStat;
-      if(!['damage','range','shots'].includes(field))continue;
+      if(!['damage','range','shots','rof'].includes(field))continue;
       const preview=model.previewStats(input.dataset.modeId);
       input.value=preview.stats[field]??'';
       input.readOnly=preview.derivedFields.includes(field);
@@ -431,6 +481,28 @@ export function bindWeaponConfiguration(root, model, edit) {
     }
   };
   root.addEventListener('change',event=>{
+    if(event.target.name==='psionicSetting'){
+      const draft=model.exoticBeamDraft();draft.changed=true;draft.value.psionicSettings=[...root.querySelectorAll('[name=psionicSetting]:checked')].map(el=>el.value);
+      const price=root.querySelector('[data-psionic-price]'),p=exoticBeamProfile(model.executionModeId),multiplier=1+Math.max(0,draft.value.psionicSettings.length-1)*0.5;
+      if(price)price.textContent=draft.value.psionicSettings.length?`Цена: $${p.cost*multiplier}; ×${multiplier}.`:'Выберите хотя бы одну установленную настройку.';
+      return;
+    }
+    if(['neuralSetting','sonicUnderwater'].includes(event.target.name)){
+      const draft=model.sonicNeuralDraft();draft.changed=true;
+      if(event.target.name==='sonicUnderwater')draft.value.sonicUnderwater=event.target.checked;
+      else draft.value.neuralSettings=[...root.querySelectorAll('[name=neuralSetting]:checked')].map(el=>el.value);
+      const price=root.querySelector('[data-neural-price]');if(price){const c=neuralDesign({...draft.value,catalogModeId:model.executionModeId});price.textContent=`Цена: $${c.cost}; ×${c.costMultiplier}; TL${c.tl}^.`;}
+      return;
+    }
+    if(event.target.name==='omniBlaster'){model.omniBlaster=event.target.checked;model.omniChanged=true;return;}
+    if(event.target.name==='laserConstruction'||event.target.name?.startsWith('laserModification-')){
+      const draft=model.laserDraft();draft.changed=true;
+      if(event.target.name==='laserConstruction'){
+        draft.value.construction=event.target.value;
+        if(draft.value.construction!=='standard'){draft.value.dazzle=false;draft.value.blinding=false;}
+        if(draft.value.construction==='pulse')draft.value.beamPulse=false;
+      }else draft.value[event.target.name.slice('laserModification-'.length)]=event.target.checked;
+    }
     if(event.target.name==='gaussSpeed') {model.gaussSpeed=event.target.value;model.gaussSpeedChanged=true;}
     if(event.target.name==='weaponExecution') {model.executionVariant=event.target.value;model.executionChanged=true;}
     refreshExecution();

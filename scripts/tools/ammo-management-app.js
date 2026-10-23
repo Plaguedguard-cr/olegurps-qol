@@ -1,3 +1,10 @@
+import {HT_TEAR_SPRAY_MODE,chemicalOptions,chemicalEditorHTML,attachBiochemicalEffect} from './biochemical-integration.js';
+import {fluidProfile} from '../ut-fluid-source.js';
+import {fluidCandidates} from './ut-fluid.js';
+import {gyrocShotshellExcluded,GYROC_SHOTSHELL_REASON} from './gyroc-policy.js';
+import {physicalRangedProfile,physicalRangedType,missileSourceTL} from '../ut-physical-ranged-source.js';
+import {utFixedFeed,plbRecipeAllowed} from './ut-physical-feeds.js';
+import {plasmaGunProfile,plasmaCartridge} from '../ut-plasma-gun-source.js';
 import { AmmoService } from "./ammo-service.js";
 import { isAmmunitionHistoryOnlyUpdate } from './weapon-assistant-app.js';
 import { stormMagazineOptions } from './ut-storm-feeds.js';
@@ -48,6 +55,8 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
   const standalone = weapon.standaloneWeaponId ? readStandaloneAttack(actor, weapon.standaloneWeaponId, weapon.standaloneModeId) : null;
   const analysis = standalone ? standaloneCatalogBinding(standalone, api?.catalogs) : api?.weaponCatalogBindings?.analyzeMode(actor, weapon.attackRef?.path);
   const modeId = analysis?.status === "confirmed" ? analysis.binding?.modeId : null;
+  if(modeId===HT_TEAR_SPRAY_MODE)return readCampaignTL(actor)!=null&&readCampaignTL(actor)<7?[]:[{source:'catalog',book:'ht',kind:'chemical-dose',ammoId:'tear',key:'ht:chemical-dose:tear',name:'Tear Gas Spray \u2014 \u0437\u0430\u0440\u044f\u0434',label:'Tear Gas Spray \u2014 \u0437\u0430\u0440\u044f\u0434'}];
+  if(fluidProfile(modeId))return fluidCandidates(modeId,readCampaignTL(actor));
   const rawAttack = standalone?.data ?? weapon.attackRef?.path?.split(".").reduce((value, key) => value?.[key], actor);
   const utRawAttack=rawAttack && applyAttackOverride({...rawAttack,path:weapon.attackRef?.path,uuid:rawAttack.uuid??weapon.attackRef?.uuid,data:rawAttack},
     actor.getFlag?.('world','gurpsAmmoManager')??{});
@@ -58,6 +67,7 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
     .map(entry => {
       const type = { key: ammoTypeKey(entry), source: "catalog", name: entry.record.name,
         book: entry.book, kind: entry.kind, ammoId: entry.ammoId };
+      if(missileSourceTL(modeId)){type.projectileTL=missileSourceTL(modeId);type.key=ammoTypeKey(type);}
       type.name = ammoDisplayName(type, language);
       type.label = type.name + " — Базовый";
       if (SEALED_PLATFORM_UNITS[modeId]?.ammoId === type.ammoId && type.kind === "ammo-item") {
@@ -97,7 +107,7 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
       types.push(type);
     }
   }
-  for(const base of [...types])if(base.book==='ut'&&base.kind==='ammo-family'&&!base.recipe&&(UT_SPECIAL_MODES[modeId]||UT_CONVENTIONAL_MODES[modeId]||gaussProfile(modeId))) {
+  for(const base of [...types])if(base.book==='ut'&&base.kind==='ammo-family'&&!base.recipe&&(UT_SPECIAL_MODES[modeId]||UT_CONVENTIONAL_MODES[modeId]||gaussProfile(modeId)||['gyroc','missile','plb'].includes(physicalRangedProfile(modeId)?.group))) {
     const record=api.catalogs.getAmmoFamily('ut',base.ammoId);
     base.physical={weightPerShotLb:record?.wps_lb??null,costPerShot:record?.cps_usd??null};
     for(const variantId of Object.keys(UT_SPECIAL_RULES)) {
@@ -307,8 +317,26 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
   for (const stock of inventory?.stocks ?? []) if (stock.type.source === "catalog" && !types.some(type => type.key === stock.key) &&
       compatible.some(entry => entry.status === "compatible" && ammoTypeKey(entry) === stock.key))
     types.push({ ...stock.type, label: stock.type.name });
+  if(physicalRangedProfile(modeId)?.group==='missile')for(const base of [...types].filter(t=>t.recipe&&UT_EXTENDED_RULES[t.recipe.variantId]&&t.recipe.parameters.availabilityTL>=11&&!t.recipe.parameters.reactionless)){
+    const prepared=automatic.prepare({modeId,base,variantId:base.recipe.variantId,parameters:{...base.recipe.parameters,reactionless:true}});
+    if(!prepared.type||types.some(t=>t.key===prepared.type.key))continue;
+    const effect=resolveAmmunitionEffects({raw:utRawAttack,variantId:base.recipe.variantId,baseStatus:prepared.baseStatus,constructionStatus:prepared.rulesStatus,facts:prepared.facts});
+    types.push({...structuredClone(prepared.type),label:prepared.type.name,unavailable:!effect.nativeSafe,reason:effect.reason,
+      preparation:{...structuredClone(prepared),type:undefined,admission:automatic.admission(prepared)},physical:{weightPerShotLb:effect.rules.weightPerShotLb??null,costPerShot:effect.rules.costPerShot??null}});
+  }
   for (const type of types) {
-    if(type.book==='ut') {
+    if(physicalRangedProfile(modeId)?.group==='plb'&&!plbRecipeAllowed(modeId,type)){
+      type.unavailable=true;type.reason='Гранатная боевая часть отложена; используйте совместимый кинетический заряд.';
+    }
+    if(physicalRangedProfile(modeId)?.group==='gyroc'&&type.ammoId==='15mm_micromissile'&&!['ut_homing','ut_sefop'].includes(type.recipe?.variantId)){
+      type.unavailable=true;type.reason='Micromissile: выберите конкретную систему Homing (UT144–146).';
+    }
+    if(plasmaGunProfile(modeId)&&!plasmaCartridge(modeId,type)){type.unavailable=true;type.reason='Plasma Power Cartridge: UT127,133';}
+    if(physicalRangedProfile(modeId)?.group==='grav'){
+      type.unavailable=!physicalRangedType(modeId,type);
+      if(type.unavailable)type.reason='UT143: размер grav-снаряда не задан; совместимость специальных зарядов не подтверждена.';
+    }
+    if(type.book==='ut'&&!plasmaGunProfile(modeId)&&physicalRangedProfile(modeId)?.group!=='grav') {
       const review=isUTExtendedVariant(type.recipe?.variantId)?reviewUTExtended(api?.catalogs,api?.ammunitionCompatibility,modeId,type,type.recipe.variantId,type.recipe.parameters):
         isUTSpecialVariant(type.recipe?.variantId)||UT_SPECIAL_MODES[modeId]&&!type.recipe?reviewUTSpecial(api?.catalogs,api?.ammunitionCompatibility,modeId,type,type.recipe?.variantId):reviewUTConventional(api?.catalogs,api?.ammunitionCompatibility,modeId,type);
       const reason=utSpecialReadiness(modeId)??utConventionalReadiness(modeId,utRawAttack) ?? (review.status!=='compatible'?'UTPlatformDeferred':null);
@@ -337,7 +365,13 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
     const display = ammoDisplayName(type, language);
     if (display !== type.name && !isCaseVariant(type.recipe?.variantId)) type.label = display + (!type.recipe ? " — " + (type.substitution ? "Заменяющий" : "Базовый") : "");
   }
+  const chemicalBases=types.filter(t=>!t.unavailable&&['ut','ht'].includes(t.book)&&t.recipe&&!t.recipe.parameters?.chemicalId&&chemicalOptions(t).length);
+  for(const base of chemicalBases)for(const f of chemicalOptions(base)){
+    const prepared=automatic.prepare({modeId,base,variantId:base.recipe.variantId,parameters:{...base.recipe.parameters,chemicalId:f.id}});
+    if(prepared.state==='complete')types.push({...structuredClone(prepared.type),label:prepared.type.name,physical:{...base.physical,costPerShot:attachBiochemicalEffect({rules:{}},prepared.type).rules.costPerShot??null}});
+  }
   const campaignTL = readCampaignTL(actor);
+  for(const type of types)if(gyrocShotshellExcluded(type)){type.unavailable=true;type.reason=GYROC_SHOTSHELL_REASON;}
   return types.filter(type => {
     const admitted = campaignAmmunitionAdmission(type, api?.catalogs, campaignTL, modeId);
     if (admitted.allowed) return true;
@@ -444,10 +478,11 @@ export function ammoManagementHTML(weapon, ui, types) {
   const ammunition = inventory.stocks.find(entry => entry.key === magazine?.ammoKey)?.type;
   const name = ammoDisplayName(ammunition, ui.language ?? globalThis.game?.i18n?.lang ?? "en");
   const installed = magazine?.id === inventory.installedId;
+  const compartment=utFixedFeed(weapon);
   const button = (action, text, disabled = false) => `<button type="button" data-inventory-action="${action}" ${disabled ? "disabled" : ""}>${escape(t(text))}</button>`;
   const detail = magazine ? `<div class="gam-inventory-detail" data-magazine-detail>
     <div class="gam-inventory-parameters">
-      <strong>${escape(t("Magazine"))} №${inventory.magazines.indexOf(magazine) + 1}</strong>
+      <strong>${escape(compartment?.label??t("Magazine"))} №${inventory.magazines.indexOf(magazine) + 1}</strong>
       <span>${escape(t("Capacity"))}: ${escape(magazine.sourceFeed?.loadedCapacity===magazine.capacity ? magazine.sourceFeed.magazineCapacity+' + '+magazine.sourceFeed.chamberCapacity : magazine.capacity)}</span>
       <p>${escape(t("Ammo"))}: ${escape(name || t("Empty"))}</p>
     </div>
@@ -455,11 +490,12 @@ export function ammoManagementHTML(weapon, ui, types) {
     <div class="gam-inventory-line"><span>${installed ? escape(t("Installed")) : ""}</span><strong>${magazine.rounds}/${magazine.capacity}</strong></div>
     <div class="gam-inventory-bar" role="progressbar" aria-label="${escape(t("Magazine"))}" aria-valuemin="0" aria-valuemax="${magazine.capacity}" aria-valuenow="${magazine.rounds}"><span style="width:${fill.percent}%;background:hsl(${fill.hue} 78% 43%)"></span></div>
     <label>${escape(t("Quantity"))}<input type="number" name="magazineQuantity" min="1" step="1" value="${ui.magazineQuantity ?? resource?.capacity ?? Math.max(1, Math.min(magazine.capacity - magazine.rounds, stock?.rounds ?? 0))}"></label>
-    <div class="gam-inventory-actions">${button("load", "Load", !option || option.unavailable || magazine.sealedUsed || magazine.rounds >= magazine.capacity)}${button("unload", "Unload", !magazine.rounds)}${button("unload-all", "UnloadAll", !magazine.rounds)}${button("delete-magazine", "Delete")}</div>
+    <div class="gam-inventory-actions">${button("load", "Load", !option || option.unavailable || magazine.sealedUsed || magazine.rounds >= magazine.capacity)}${button("unload", "Unload", !magazine.rounds)}${button("unload-all", "UnloadAll", !magazine.rounds)}${compartment?'':button("delete-magazine", "Delete")}</div>
     </div>
   </div>` : `<p class="hint">${escape(t("NoMagazine"))}</p>`;
   return `<div class="standard-form gam-ammo-inventory">
     <h3 title="${escape(weapon.name)}">${escape(weapon.name)}</h3>
+    ${weapon.standaloneModeId==='WIijXG9uGZ52T0eW2'?`<div data-splat-salvo><label>Залп Splat (сейчас ${weapon.splatSalvo??30})<input type="number" name="splatSalvo" min="1" max="30" step="1" value="${weapon.splatSalvo??30}"></label><label><input type="checkbox" name="splatReady">Выполнена Ready для изменения залпа (UT136).</label><button type="button" data-inventory-action="splat-salvo">Установить залп после Ready</button></div>`:''}
     ${profile?.kind==='flame'?`<p class="hint">Один заряд — табличная струя ${profile.seconds} с с подготовленным зажиганием. Заправка, давление и безопасная подготовка — вручную. ${escape(profile.source)}</p>`:''}
     ${weapon?.standaloneModeId==='WjKzQQPbrfR6qChS8'?'<p class="hint">Зажигание LPO-50: 4×S. Наличие и состояние батарей учитываются вручную: HT180 не задаёт ресурс на комплект.</p>':''}
     ${htSupplyProfiles(weapon).map(p=>{const s=readHTSupply(weapon,p);return `<div class="gam-inventory-line" data-ht-supply="${p.id}"><span>${escape(p.label)}: ${p.manual?s?.remaining?'подключено':'не подключено':s?s.remaining+'/'+p.capacity:'не установлен'}</span><button type="button" data-inventory-action="replace-ht-supply" data-resource-id="${p.id}">${p.manual?s?.remaining?'Отключить':'Подтвердить подключение':'Установить новый ресурс'}</button></div>`;}).join('')}
@@ -475,6 +511,7 @@ export function ammoManagementHTML(weapon, ui, types) {
     ${types.some(type => type.ammoId === LEMAT.shotAmmoId) ? `<p class="hint" data-charge-economics>${escape(automaticAmmoText("LeMatEconomicsUnknown", ui.language))}</p>` : ""}
     <label>${escape(t("Quantity"))}<div class="gam-inventory-stock"><input type="number" name="stockQuantity" min="1" step="1" value="${ui.stockQuantity ?? resource?.capacity ?? 1}">${button("add-stock", "Add", !option || option.unavailable)}${button("remove-stock", "Remove", !stock?.rounds)}</div></label>
     ${recipeEditorHTML(ui, option, ui.language ?? "ru")}
+    ${option?.book==='ht'&&chemicalOptions(option).length?`<details data-biochemical-payload><summary>\u0425\u0438\u043c\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0441\u043e\u0441\u0442\u0430\u0432</summary>${chemicalEditorHTML(option,ui.utPayloadDraft,escape,{campaignTL:ui.campaignTL})}<button type="button" data-inventory-action="save-biochemical-batch">\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043e\u0442\u0434\u0435\u043b\u044c\u043d\u0443\u044e \u043f\u0430\u0440\u0442\u0438\u044e</button></details>`:''}
     ${utPayloadEditorHTML(option,ui.utPayloadDraft,escape,{open:ui.utPayloadOpen,campaignTL:ui.campaignTL,
       homingWarheads:types.filter(t=>t.book==='ut'&&t.recipe&&!t.unavailable&&!['ut_homing','ut_sefop','ut_shotshell'].includes(t.recipe.variantId)&&
         (t.recipe.parameters?.availabilityTL==null||t.recipe.parameters.availabilityTL===(ui.utPayloadDraft??option?.recipe?.parameters)?.availabilityTL))})}
@@ -484,7 +521,7 @@ export function ammoManagementHTML(weapon, ui, types) {
     ${duApprovalHTML(option, ui.language ?? "ru")}
     ${multishotApprovalHTML(option, ui.language ?? "ru")}
     <hr>
-    <label><span class="gam-inventory-line"><strong>${escape(t("Magazines"))}</strong><span>${escape(t("Total"))}: ${inventory.magazines.length}</span></span>
+    <label><span class="gam-inventory-line"><strong>${escape(compartment?(compartment.selectionOnly?'Каморы':'Стволы'):t("Magazines"))}</strong><span>${escape(t("Total"))}: ${inventory.magazines.length}</span></span>
       <select name="inventoryMagazine">${inventory.magazines.length ? inventory.magazines.map((entry, index) => `<option value="${escape(entry.id)}" ${entry.id === ui.magazineId ? "selected" : ""}>№${index + 1} · ${entry.capacity} · ${entry.rounds}/${entry.capacity}${entry.id === inventory.installedId ? " · " + escape(t("Installed")) : ""}</option>`).join("") : `<option value="">${escape(t("NoMagazine"))}</option>`}</select></label>
     ${detail}
     <details ${ui.addOpen ? "open" : ""} data-add-magazines><summary>${escape(t("AddMagazines"))}</summary><div class="gam-inventory-add">
@@ -594,7 +631,7 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
       const current=key===this.ui.ammoKey;
       const prior=(current?this.ui.utPayloadDraft:this._utPayloadDrafts?.get(key)?.parameters)??selected?.recipe?.parameters??{};
       const radiusText=root.querySelector('[name="ut-radius"]')?.value.trim(),yards=radiusText?Number(radiusText):null;
-      const parameters={...prior,note:root.querySelector('[name="ut-note"]')?.value??'',
+      const parameters={...prior,chemicalId:root.querySelector('[name="ut-chemicalId"]')?.value??prior.chemicalId,note:root.querySelector('[name="ut-note"]')?.value??'',
         savingThrow:root.querySelector('[name="ut-saving-throw"]')?.value??'',description:root.querySelector('[name="ut-description"]')?.value??'',
         radius:prior.radius?{...prior.radius,yards,...(yards!==prior.radius.yards?{origin:'manual',source:'owner-entered'}:{})}:null};
       for(const field of ['availabilityTL','durationSeconds']) {
@@ -676,14 +713,14 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
       }catch(error){this.ui.message=error.message;ui.notifications.error(error.message);}
       finally{this.busy=false;await this.refresh({capture:false});}return;
     }
-    if(['save-ut-payload','create-ut-batch'].includes(operation)) {
+    if(['save-ut-payload','create-ut-batch','save-biochemical-batch'].includes(operation)) {
       if(this.busy)return;
       this.busy=true;
       try {
         const api=globalThis.OleGURPSQOL,option=displayedAmmoTypes(this.actor,this.weapon,api,this.ui.language).find(t=>t.key===this.ui.ammoKey);
         const modeId=this.weapon.standaloneModeId??api.weaponCatalogBindings?.analyzeMode(this.actor,this.weapon.attackRef?.path)?.binding?.modeId;
         const stock=this.weapon.ammunitionInventory.stocks.find(s=>s.key===option?.key);
-        const parameters={...(this.ui.utPayloadDraft??option?.recipe?.parameters),batchId:operation==='create-ut-batch'?crypto.randomUUID():stock?.type.recipe.parameters.batchId??crypto.randomUUID()};
+        const parameters={...(this.ui.utPayloadDraft??option?.recipe?.parameters),...(operation==='save-biochemical-batch'?{chemicalId:this.element.querySelector('[name="ut-chemicalId"]')?.value}:{}),batchId:operation==='create-ut-batch'?crypto.randomUUID():stock?.type.recipe.parameters.batchId??crypto.randomUUID()};
         const prepared=api.automaticAmmunitionProfiles.prepare({modeId,base:option,variantId:option?.recipe?.variantId,parameters});
         if(prepared.state!=='complete')throw Error(prepared.reasons?.[0]??'UTPayloadRequired');
         const type=structuredClone(prepared.type);
@@ -793,6 +830,9 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
         ui.notifications.error(this.ui.message);
       } finally { this.busy = false; await this.refresh({ capture: false }); }
       return;
+    }
+    if(operation==='splat-salvo'){
+      await this._operate('splat-salvo',{amount:Number(this.element.querySelector('[name=splatSalvo]')?.value),readyConfirmed:this.element.querySelector('[name=splatReady]')?.checked===true,expectedSalvo:this.weapon.splatSalvo??30});return;
     }
     const entry = this.weapon?.ammunitionInventory?.magazines.find(item => item.id === this.ui.magazineId);
     await this._operate(operation === "unload-all" ? "unload" : operation, {

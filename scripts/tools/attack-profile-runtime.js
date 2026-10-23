@@ -84,12 +84,16 @@ export function withRuntimeAmmoStats(attack, actor, state) {
   if(!attack?.platformRules)delete cleanAttack.ammunitionRange;
   delete cleanAttack.ammunitionManualCycling;
   delete cleanAttack.ammunitionHitBonus;
+  delete cleanAttack.ammunitionFluid;
   delete cleanAttack.ammunitionHEProximity;
   delete cleanAttack.ammunitionReadinessReason;
   delete cleanAttack.ammunitionDisplay;
   try {
     const profile = resolveRuntimeAttackProfile({ actor, attack:cleanAttack, state });
     const ammunitionDisplay=attackProfilePresentation(profile);
+    if(profile.damage.rules.fluid&&!profile.damage.nativeSafe)return {...cleanAttack,ammunitionDisplay,ammunitionReadinessReason:profile.damage.reason};
+    if(['ut-exotic-beam','ut-sonic-neural'].includes(profile.weaponConfiguration?.variant)&&!profile.damage.nativeSafe)return {...cleanAttack,ammunitionDisplay,ammunitionReadinessReason:profile.damage.reason};
+    if(profile.weaponConfiguration?.variant==='beam'&&!profile.damage.nativeSafe)return {...cleanAttack,ammunitionDisplay,ammunitionReadinessReason:profile.damage.reason};
     const catalogs=globalThis.OleGURPSQOL?.catalogs,mode=catalogs?.getMode(profile.binding?.confirmed?.modeId);
     const familyId=profile.ammunition.familyId??mode?.ammunition_profile?.primary_ammo_family_id;
     const book=profile.ammunition.book??cleanAttack.standaloneRef?.source?.source?.toLowerCase()??
@@ -104,7 +108,9 @@ export function withRuntimeAmmoStats(attack, actor, state) {
     if (profile.damage.nativeSafe) {
       const changes = profile.damage.effectiveChanges ?? {};
       return { ...cleanAttack, ammunitionDisplay, ammunitionProjectileKind: profile.effective.ammunitionProjectileKind ?? null,
-        ammunitionHitBonus:profile.damage.rules.attackBonus??0,
+        ...(profile.damage.rules.electrolaser?{electrolaser:profile.damage.rules.electrolaser}:{}),
+        ammunitionHitBonus:profile.damage.rules.fluid?0:profile.damage.rules.attackBonus??0,
+        ...(profile.damage.rules.fluid?{ammunitionFluid:{...profile.damage.rules.fluid,vortex:profile.damage.components.some(c=>c.role==="linked")}}:{}),
         ...(profile.damage.rules.heProximity?{ammunitionHEProximity:profile.damage.rules.heProximity}:{}),
         ...(profile.ammunition.book==='ut'?{ammunitionSourceEdition:'Ultra-Tech 2007'}:{}),
         ...(profile.context?.platform ? {platformRules:profile.context.platform}:{}),

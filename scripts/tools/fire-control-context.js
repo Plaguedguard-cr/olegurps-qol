@@ -425,7 +425,9 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         closeHipShooting, closeHipLabel, moveAttackBase: moveAttackPenalty,
         closeCombatBulkBase },
       channels: [
+        ...(attack?.electrolaser?[{id:'electrolaserWeather',value:attack.electrolaser.weatherPenalty,label:'Среда электролазера (UT119)'}]:[]),
         { id: "ammunitionTracer", value: nextTurnTracer, label: f4Text("TracerBonus") },
+        { id: "fluidBounce", value: attack?.ammunitionFluid?.vortex?-2*Number(values?.fluidBounces??0):0, label: "\u0420\u0438\u043a\u043e\u0448\u0435\u0442\u044b Vortex" },
         { id: "ammunitionConstruction", value: attack?.ammunitionHitBonus??0, label: "Конструкция боеприпаса" },
         ...(fuzeBonus ? [{ id: "ammunitionAirburst", value: fuzeBonus, label: automaticAmmoText("P6ht_airburst") }] : []),
         { id: "requiredStrength", value: weaponStrengthPenalty(attack, token?.actor), label: automaticAmmoText("MinimumSTPenalty") },
@@ -445,7 +447,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         { id: "maneuverAttackBonus", value: allOutAttackBonus, label: "\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 (\u0422\u043e\u0447\u043d\u0430\u044f)", kind: "maneuver" },
         { id: "situational", value: manualModifier, label: "\u0411\u043e\u043d\u0443\u0441\u044b/\u0448\u0442\u0440\u0430\u0444\u044b" },
         { id: "visibility", value: visibility?.penalty ?? 0, label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c" },
-        { id: "hitLocation", value: locationPenalty, label: locationIgnored?'Зрение: прицеливание в глаза не требуется':hitLocationLabel }
+        { id: "hitLocation", value: locationPenalty, label: locationIgnored?(attack?.platformRules?.kind==='sonic-neural-cone'?'Конус: охват определяют вручную':'Зрение: прицеливание в глаза не требуется'):hitLocationLabel }
       ],
       rules: getCombatRules("ranged"),
       caps: visibility?.blind ? [{ maximum: 9, label: "Предел навыка при стрельбе вслепую: 9" }] : []

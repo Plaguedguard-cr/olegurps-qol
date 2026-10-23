@@ -1,4 +1,5 @@
 import { beamProfile, beamWeapon } from '../ut-beam-source.js';
+import {applyLaserModifications} from '../ut-laser-modifications.js';
 
 export function beamRange(value) {
   const m=String(value??'').replaceAll(',','').match(/^(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)(\s+mi\.?)?$/);
@@ -25,16 +26,17 @@ export function beamConditions(id) {
   }
   return lines.map(text=>({id:'BeamCondition',text}));
 }
-export function beamDamage(raw,id) {
+export function beamDamage(raw,id,weapon) {
   const p=beamProfile(id);if(!p)return null;
   const formula=String(raw.damage??'').replace(/burn\s*,\s*sur\s*$/,'burn sur');
   const nativeSafe=/^\d+d(?:[+-]\d+)?(?:[x×]\d+)?\((?:2|3|5|10)\) burn(?: sur)?$/.test(formula)&&!!beamRange(raw.range);
-  return {status:nativeSafe?'resolved':'unresolved',nativeSafe,reason:nativeSafe?null:'Нужны числовой лазерный Damage и корректный Range.',
+  const damage={status:nativeSafe?'resolved':'unresolved',nativeSafe,reason:nativeSafe?null:'Нужны числовой лазерный Damage и корректный Range.',
     rawFormula:raw.damage,formula,variantId:null,components:[{role:'kinetic',status:nativeSafe?'resolved':'unresolved',formula}],
     transformations:formula===raw.damage?[]:[{source:p.source,effectId:'gga-surge-syntax',from:raw.damage,to:formula,applied:true,order:1}],
     effectiveChanges:{damage:formula},support:{manual:beamConditions(id)},rules:{beam:{modeId:id,family:p.family,source:p.source,
       tightBeam:true,surge:['xray','graser'].includes(p.family),automaticEnvironment:false},
       ballisticRange:beamRange(raw.range),ammunitionSource:p.source}};
+  return applyLaserModifications(damage,raw,id,weapon);
 }
 export function beamResourceLabel(weapon) {
   const p=beamWeapon(weapon);if(!p)return null;

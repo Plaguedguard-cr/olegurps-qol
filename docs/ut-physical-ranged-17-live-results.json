@@ -1,0 +1,3975 @@
+{
+  "date": "2026-10-23",
+  "foundry": "14.364",
+  "gga": "0.18.23",
+  "module": "0.2.1",
+  "roles": [
+    "GM",
+    "PLAYER/OWNER"
+  ],
+  "language": "en",
+  "scenariosPassed": 313,
+  "uniqueAutomaticPassed": 766,
+  "fullSuiteRun": false,
+  "results": [
+    {
+      "client": "gm",
+      "suite": "-base",
+      "role": 4,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "name": "Gyroc Carbine, 15mm",
+          "group": "gyroc",
+          "role": 4,
+          "attack": "Ys98WMgyaY9hSHG3",
+          "damage": "vLESMoDsQLVeo2We",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "name": "Gyroc Launch Pistol, 15mm",
+          "group": "gyroc",
+          "role": 4,
+          "attack": "dcRDSAyDOMJJI4aA",
+          "damage": "lo1JTglxyKMElIGX",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "name": "Gyroc LSW, 15mm",
+          "group": "gyroc",
+          "role": 4,
+          "attack": "AFc3nDWEd5WyvawX",
+          "damage": "Q34ZhjpKJsjEwaId",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 10,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "name": "Gyroc Pistol, 15mm",
+          "group": "gyroc",
+          "role": 4,
+          "attack": "HMztuRxE68T10yv5",
+          "damage": "8tCb9DuEIDPXKTQg",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "3c31f53e-09ac-46dd-b1f9-b4622ac8f553",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:15mm_gyroc",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "name": "Holdout Gyroc, 15mm",
+          "group": "gyroc",
+          "role": 4,
+          "attack": "7sT7JSIkrl8OAo1J",
+          "damage": "ciruROfmqvEcNlHV",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "e6bb577a-4e8c-43be-ba9b-068b4c9adeac",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:15mm_gyroc",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "name": "Underbarrel Gyroc, 15mm",
+          "group": "gyroc",
+          "role": 4,
+          "attack": "WJ7XUxFPEa3yJxyl",
+          "damage": "60PZfpJ1Xrsa2gv1",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "name": "IML, 64mm",
+          "group": "missile",
+          "role": 4,
+          "attack": "G0RC8EH1qsE2D5B0",
+          "damage": "1PA3PkFHEaMWqcYd",
+          "formula": "6dx3 pi++",
+          "range": "500/4,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "18c4955d-e4f2-4a33-907d-0cb024af8a4e",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:9",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "name": "IML, 64mm",
+          "group": "missile",
+          "role": 4,
+          "attack": "WrmpzoZUi6TLQZ6N",
+          "damage": "83dNlk6idhp2uTBq",
+          "formula": "6dx5 pi++",
+          "range": "750/6,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "86366122-eccf-4c93-9461-0303f5e51ac0",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:10",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "name": "MLAWS, 64mm",
+          "group": "missile",
+          "role": 4,
+          "attack": "chWVyEqSzCcLNB8A",
+          "damage": "ZjfA0G1jJujSpFLi",
+          "formula": "6dx3 pi++",
+          "range": "500/4,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "8ea827fc-261b-4e0f-9e30-b508a4b6f1a1",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:9",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "name": "MLAWS, 64mm",
+          "group": "missile",
+          "role": 4,
+          "attack": "4aA0lEsFixTIYg3w",
+          "damage": "UanUKE08r51NC1kN",
+          "formula": "6dx5 pi++",
+          "range": "750/6,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "649d795a-e02f-44f5-8e87-1ed96b853897",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:10",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "name": "TML, 100mm",
+          "group": "missile",
+          "role": 4,
+          "attack": "cP0RJKdO1YyKSE40",
+          "damage": "7cgSNH2p0yW0PCmE",
+          "formula": "6dx30 pi++",
+          "range": "2,000/10,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "d566903f-ec21-4a3b-bbef-e7d26bea6a93",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:100mm_missile:projectile-tl:9",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "name": "TML, 100mm",
+          "group": "missile",
+          "role": 4,
+          "attack": "k3xPGu3bef8dCwTU",
+          "damage": "wA65YhkOX4fVZoMZ",
+          "formula": "6dx50 pi++",
+          "range": "3,000/15,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "460a16f6-0842-4626-b9db-74dd46db3aba",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:100mm_missile:projectile-tl:10",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "name": "Splat Gun, 15mmPLB",
+          "group": "plb",
+          "role": 4,
+          "attack": "HxXgQQzon3vjvWr0",
+          "damage": "3TpPoZtDQJJ8goZn",
+          "formula": "3d+2 pi++",
+          "range": "220/2,000",
+          "spent": 30,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "c4a92388-9aa0-4f59-9665-220295e772a4",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "5def1a31-f267-4636-997d-037fcb4b4469",
+              "index": 1,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "85c006f4-1a4d-4b81-9052-b64ec36c795e",
+              "index": 2,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "0312d8af-ef53-4d63-b1d9-3cb30f383443",
+              "index": 3,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "062ff3fb-de6a-44e9-b3da-b0f8472c2138",
+              "index": 4,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "bb80ff48-9bdc-42dd-a74f-513409a9cd48",
+              "index": 5,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "W5BEH4zTOtg2ds7is",
+          "name": "Underbarrel Grenade Launcher, 25mmPC",
+          "group": "plb",
+          "role": 4,
+          "attack": "Nhpq0cMSXk2QeBn9",
+          "damage": "g3pAaMz0USprESJ2",
+          "formula": "4d pi++",
+          "range": "360/2,200",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "b13dbe94-c414-42cf-99d9-961e826094fa",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:25mm_pc",
+              "before": 3,
+              "spent": 1,
+              "after": 2
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WATP5TU7jVQnEpqB0",
+          "name": "Underbarrel Grenade Launcher, 40mmPLB",
+          "group": "plb",
+          "role": 4,
+          "attack": "G5nGi5RKHqifdN7F",
+          "damage": "VHnoJLPGoZ1xm2OB",
+          "formula": "1d pi++",
+          "range": "75/450",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "9fc43e7a-3cf9-49f5-8f14-039d7c9889fd",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 5,
+              "spent": 3,
+              "after": 2
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "name": "Mortar Box, 40mmPLB",
+          "group": "plb",
+          "role": 4,
+          "attack": "56q3cCYWM4VVNrGL",
+          "damage": "6RD5lMGpDyG3owgJ",
+          "formula": "1d pi++",
+          "range": "75/450",
+          "spent": 16,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "0ad6a7dc-7c4e-41a7-8e1f-16e94a94f1b0",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            },
+            {
+              "magazineId": "d1d6c37d-2128-4d49-bc7f-1e729eb5f47c",
+              "index": 1,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            },
+            {
+              "magazineId": "0e7bdbe2-e810-4b50-9c2d-216e665cda19",
+              "index": 2,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            },
+            {
+              "magazineId": "4c39fb96-3deb-47d7-a0b4-6d81eedaaab6",
+              "index": 3,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "name": "Mortar Box, 64mmPLB",
+          "group": "plb",
+          "role": 4,
+          "attack": "nelwJ8tGV4JkGjcR",
+          "damage": "wItChNtkuNrx3u36",
+          "formula": "6dx2 pi++",
+          "range": "360/3,000",
+          "spent": 30,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "6aea6ebd-073b-4761-9254-028cf321fe48",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "0b0ae3b8-7042-4630-a1bd-812758f7c57e",
+              "index": 1,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "c1e71303-0f84-4799-bf47-04fb83f60c60",
+              "index": 2,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "ae66801d-69ca-4127-9eec-90fd426c5ad9",
+              "index": 3,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "74505687-5eab-4dd1-aed2-493bb20bd5de",
+              "index": 4,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "d808cfe9-7059-4136-a642-f1cd3677e2ca",
+              "index": 5,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        }
+      ]
+    },
+    {
+      "client": "gm",
+      "suite": "-specials",
+      "role": 4,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-1",
+          "role": 4,
+          "messageId": "9YEtEueCVrWQdtqJ",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            6
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-2",
+          "role": 4,
+          "messageId": "6RCC2UncX9UYuCUa",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            5
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-3",
+          "role": 4,
+          "messageId": "waSot3TMZFIW0QIf",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-10",
+          "role": 4,
+          "messageId": "xqPPpoi7GQ61BKaj",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            13
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-11",
+          "role": 4,
+          "messageId": "NEcJacFrVP6WOoPo",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            18
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-1",
+          "role": 4,
+          "messageId": "psPpvRZPRL5dzp9T",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            6
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-2",
+          "role": 4,
+          "messageId": "YZq9rl6iVl1w5bBx",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            8
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-3",
+          "role": 4,
+          "messageId": "eLQz1GmQ7PsXIbqd",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            11
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-10",
+          "role": 4,
+          "messageId": "B17UD4XGCfG3mE1n",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            8
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-11",
+          "role": 4,
+          "messageId": "JcSGh7oqtZuLmqF6",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            26
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-1",
+          "role": 4,
+          "messageId": "XQDxgoWUPJp0Lb0D",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            5
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-2",
+          "role": 4,
+          "messageId": "d3MvadMQGioqIUOU",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            5
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-3",
+          "role": 4,
+          "messageId": "2fUUUsLtk7mDnosQ",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-10",
+          "role": 4,
+          "messageId": "5N4QU5siP7L1RqFk",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            14
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-11",
+          "role": 4,
+          "messageId": "7g2TyqgWWozTrzrp",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            18
+          ],
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-1",
+          "role": 4,
+          "messageId": "a82N4QYEopZnzrpf",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            6
+          ],
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-2",
+          "role": 4,
+          "messageId": "RAW22eMU3AKjig6d",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            7
+          ],
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-3",
+          "role": 4,
+          "messageId": "rgBe6wsTdBhDKrUu",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-10",
+          "role": 4,
+          "messageId": "MfDjlHnkGMVzcBxT",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-11",
+          "role": 4,
+          "messageId": "MdpkYWCv2desozXU",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            22
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-1",
+          "role": 4,
+          "messageId": "r714AT29NpeYW1yH",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            5
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-2",
+          "role": 4,
+          "messageId": "3pF1fmYTnd0Q20El",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            9
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-3",
+          "role": 4,
+          "messageId": "B8DhZFVLabZv2SYN",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            11
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-10",
+          "role": 4,
+          "messageId": "dX8KoeMCyANcP9cf",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            12
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-11",
+          "role": 4,
+          "messageId": "xUUDzGTQuNrBRkxs",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            21
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-1",
+          "role": 4,
+          "messageId": "A2mxg0uVnafTcTTo",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            8
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-2",
+          "role": 4,
+          "messageId": "YQQsg1HcLVEFAVXF",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            5
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-3",
+          "role": 4,
+          "messageId": "81W7hOsUPKouEorU",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            7
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-10",
+          "role": 4,
+          "messageId": "UlorXGhoPBISaQOF",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            12
+          ],
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-11",
+          "role": 4,
+          "messageId": "khiZnQcc70GqT7nw",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            19
+          ],
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "chamber-1",
+          "role": 4,
+          "messageId": "ZlfgbGuRz82ahW9d",
+          "ammoId": "15mm_gyroc",
+          "variant": "ut_aphc",
+          "independent": true,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "chamber-2",
+          "role": 4,
+          "messageId": "qDklDmxUp0lwNEO8",
+          "ammoId": "15mm_gyroc",
+          "variant": "ut_apep",
+          "independent": true,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "chamber-3",
+          "role": 4,
+          "messageId": "3ow0q1KzqKLPCj0B",
+          "ammoId": "15mm_micromissile",
+          "variant": "ut_homing",
+          "independent": true,
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "manual-motor",
+          "role": 4,
+          "manual": true
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-infrared",
+          "role": 4,
+          "messageId": "nWn2DaPnHxuCw70I",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multispectralPassive",
+          "role": 4,
+          "messageId": "IanVrBLCsG9cZC12",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multispectralAntiradiation",
+          "role": 4,
+          "messageId": "nX0KHZQzGXj0Km19",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multispectralActive",
+          "role": 4,
+          "messageId": "mIuzCveYrMWQ06Ar",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multiscanner",
+          "role": 4,
+          "messageId": "H4Fg7FdDHLqvV7tM",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "reactionless",
+          "role": 4,
+          "messageId": "9XxBHQPEmGw1G9MZ",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "reactionless-homing",
+          "role": 4,
+          "messageId": "d62v7sZ2j44yXwc5",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-infrared",
+          "role": 4,
+          "messageId": "jUFGhieEcfbq93qy",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multispectralPassive",
+          "role": 4,
+          "messageId": "Z39a5O9oNPLvDpLe",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multispectralAntiradiation",
+          "role": 4,
+          "messageId": "RfDwNdJ6Pib0LZ4X",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multispectralActive",
+          "role": 4,
+          "messageId": "ZKKQ06YPJavASWjR",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multiscanner",
+          "role": 4,
+          "messageId": "EomCyXd64b1vQrnl",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "reactionless",
+          "role": 4,
+          "messageId": "RepP3yZcrfw0fdX4",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "reactionless-homing",
+          "role": 4,
+          "messageId": "T0bqZurAmqPpcLGk",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-infrared",
+          "role": 4,
+          "messageId": "TgrATrnQlBBBs5mS",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multispectralPassive",
+          "role": 4,
+          "messageId": "MccfnM2vEzXblB01",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multispectralAntiradiation",
+          "role": 4,
+          "messageId": "927VRttvVwvlb87Y",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multispectralActive",
+          "role": 4,
+          "messageId": "4l9zxbfYdL7rePBn",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multiscanner",
+          "role": 4,
+          "messageId": "xC5OkXKS0xZUo40B",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "reactionless",
+          "role": 4,
+          "messageId": "gP5qffReZtY8Frni",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "reactionless-homing",
+          "role": 4,
+          "messageId": "dhbIRmM6W8s95YFU",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-infrared",
+          "role": 4,
+          "messageId": "MpewEXxQVwvrkCPt",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multispectralPassive",
+          "role": 4,
+          "messageId": "3DQZNstNGXTJk8ub",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multispectralAntiradiation",
+          "role": 4,
+          "messageId": "1N2amh9vSWCXuWsB",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multispectralActive",
+          "role": 4,
+          "messageId": "fdM6jKu1iYuHg3jq",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multiscanner",
+          "role": 4,
+          "messageId": "OZaZfmRkkehge7GL",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "reactionless",
+          "role": 4,
+          "messageId": "yZHxLvvf0qIGRcAz",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "reactionless-homing",
+          "role": 4,
+          "messageId": "HxEmbZsmLjfmazs2",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-infrared",
+          "role": 4,
+          "messageId": "k7SweNPqCCX7bo1Y",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multispectralPassive",
+          "role": 4,
+          "messageId": "oPjQ68GnBGs4yLQi",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multispectralAntiradiation",
+          "role": 4,
+          "messageId": "gdwy9hJeC93w7eEC",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multispectralActive",
+          "role": 4,
+          "messageId": "7fXk8qJuWonPZLwL",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multiscanner",
+          "role": 4,
+          "messageId": "gyYWMESg5EtNYjCg",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "reactionless",
+          "role": 4,
+          "messageId": "zt4Kn6stjvYIheMK",
+          "range": "2000/50000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "reactionless-homing",
+          "role": 4,
+          "messageId": "11Hw59EvjzBwwu1B",
+          "range": "2000/50000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-infrared",
+          "role": 4,
+          "messageId": "q8JaXLtUtomT1d3c",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multispectralPassive",
+          "role": 4,
+          "messageId": "Bzr3osYSmGyh1mPG",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multispectralAntiradiation",
+          "role": 4,
+          "messageId": "yo9wBJhm6yt4ca8B",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multispectralActive",
+          "role": 4,
+          "messageId": "9mSSuX49fY7eAjZF",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multiscanner",
+          "role": 4,
+          "messageId": "2rCDo6iZAVwzrtHQ",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "reactionless",
+          "role": 4,
+          "messageId": "Z3gFDCBNJXfiovPj",
+          "range": "3000/75000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "reactionless-homing",
+          "role": 4,
+          "messageId": "9ElbALQAk4mTElt7",
+          "range": "3000/75000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "case": "ready-small-salvo",
+          "role": 4,
+          "messageId": "cIoGbGQFsBmUT5dB",
+          "ready": true,
+          "spent": 3
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "case": "reduced-salvo",
+          "role": 4,
+          "messageId": "qB2oT2xVaNdTiBOz",
+          "spent": 5
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "case": "reduced-salvo",
+          "role": 4,
+          "messageId": "6R5ChwmRDkIbGHHs",
+          "spent": 5
+        }
+      ]
+    },
+    {
+      "client": "gm",
+      "suite": "-history",
+      "role": 4,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "Ys98WMgyaY9hSHG3",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "dcRDSAyDOMJJI4aA",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "AFc3nDWEd5WyvawX",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "HMztuRxE68T10yv5",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "7sT7JSIkrl8OAo1J",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "WJ7XUxFPEa3yJxyl",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "G0RC8EH1qsE2D5B0",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "WrmpzoZUi6TLQZ6N",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "chWVyEqSzCcLNB8A",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "4aA0lEsFixTIYg3w",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "cP0RJKdO1YyKSE40",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "k3xPGu3bef8dCwTU",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "HxXgQQzon3vjvWr0",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W5BEH4zTOtg2ds7is",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "Nhpq0cMSXk2QeBn9",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WATP5TU7jVQnEpqB0",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "G5nGi5RKHqifdN7F",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "56q3cCYWM4VVNrGL",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "role": 4,
+          "case": "save-and-new-charge-history",
+          "messageId": "nelwJ8tGV4JkGjcR",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        }
+      ]
+    },
+    {
+      "client": "gm",
+      "suite": "-reload",
+      "role": 4,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "Ys98WMgyaY9hSHG3",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "dcRDSAyDOMJJI4aA",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "AFc3nDWEd5WyvawX",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "HMztuRxE68T10yv5",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "7sT7JSIkrl8OAo1J",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "WJ7XUxFPEa3yJxyl",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "G0RC8EH1qsE2D5B0",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "WrmpzoZUi6TLQZ6N",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "chWVyEqSzCcLNB8A",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "4aA0lEsFixTIYg3w",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "cP0RJKdO1YyKSE40",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "k3xPGu3bef8dCwTU",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "HxXgQQzon3vjvWr0",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W5BEH4zTOtg2ds7is",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "Nhpq0cMSXk2QeBn9",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WATP5TU7jVQnEpqB0",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "G5nGi5RKHqifdN7F",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "56q3cCYWM4VVNrGL",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "role": 4,
+          "case": "reload-history",
+          "messageId": "nelwJ8tGV4JkGjcR",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        }
+      ]
+    },
+    {
+      "client": "gm",
+      "suite": "-edges",
+      "role": 4,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "cancel-fire-control",
+          "role": 4
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "cancel-inventory-draft",
+          "role": 4
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "concurrent-duplicate-attackId",
+          "role": 4,
+          "spent": 1,
+          "nativeRolls": 1
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "concurrent-last-round",
+          "role": 4,
+          "spent": 1,
+          "rejections": 1
+        },
+        {
+          "id": "all-owned-test-attacks",
+          "case": "compact-closed-chat-sections",
+          "role": 4,
+          "cards": 97
+        }
+      ]
+    },
+    {
+      "client": "gm",
+      "suite": "-sefop",
+      "role": 4,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 4,
+          "messageId": "phcnAb5P2OSOOQUF",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "xmEJrtHqK77BcNAA",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 4,
+          "messageId": "lXTBLeR4FfpuH5uP",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "4LvtdKhN006V72Tg",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 4,
+          "messageId": "2wuqLhdyEDOteYpm",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "8P2mR3JDIiGNjJxd",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 4,
+          "messageId": "4HTMunPKt3But4yy",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "8k8KlgRKroT4iMsq",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 4,
+          "messageId": "xvTDaJdc0mV9rivy",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "jDaTsadXOFxhhCWI",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 4,
+          "messageId": "3XRNVD90ymAaISg7",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "MrFYxWuqWjQZj4w7",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 4,
+          "messageId": "hb3K7CAvLxvzLwfi",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "qPdoFqenAZ45uTuQ",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 4,
+          "messageId": "8zGKnifNImPBlLER",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "fNNWVG7q2i3SZZYK",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 4,
+          "messageId": "ei5cfRugZCAuagQh",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "QAeUEHctnSyL9h0f",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 4,
+          "messageId": "s7NfANg4Kc4mTzDp",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "wmL32zXD06deLOF0",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 4,
+          "messageId": "lPS6wy4Q9YQXm5D2",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "ids4dyQsQyFEBxA2",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 4,
+          "messageId": "CRcItIjsU1wU3JFw",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "9dKZWwYIlxgTmtkn",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 4,
+          "messageId": "3pKGBL4RjnUB0hjf",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "a5cTXj9FM3W3vUvk",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 4,
+          "messageId": "OL0cCt1M1ht94Wou",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "yLt1NyGVEZDZpC1S",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 4,
+          "messageId": "rmABGjHiBsVPxkuv",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "26NGjditDOsppL4a",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 4,
+          "messageId": "bNZyj8aGMqWq74Kc",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "tZK9lqOFEM2oZ3ae",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "family": "100mm_missile",
+          "case": "sefop-100mm_missile",
+          "role": 4,
+          "messageId": "z9BMwxGGScLxthzV",
+          "formula": "6dx10(3) cr inc",
+          "nativeDamage": "MYkl8TZhdymjsFEg",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "family": "100mm_missile",
+          "case": "sefop-100mm_missile",
+          "role": 4,
+          "messageId": "YEjupSS1XNJPtnwj",
+          "formula": "6dx10(3) cr inc",
+          "nativeDamage": "kfMqvBAbLTqemLRO",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "family": "15mm_plb",
+          "case": "sefop-15mm_plb",
+          "role": 4,
+          "messageId": "3QvvNpu8zxWuKNgh",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "gTnaWXmiPb1E8m6H",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        }
+      ]
+    },
+    {
+      "client": "gm",
+      "suite": "-aux",
+      "role": 4,
+      "rows": [
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "instruction-only-backblast",
+          "role": 4,
+          "spent": 1,
+          "primaryDamage": null,
+          "backblast": "2d burn",
+          "nativeDamage": "ut5079fsErmiQwor",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "instruction-only-backblast",
+          "role": 4,
+          "spent": 1,
+          "primaryDamage": null,
+          "backblast": "4d burn",
+          "nativeDamage": "RGGscpaBu6QUbMtJ",
+          "loaded": false
+        }
+      ]
+    },
+    {
+      "client": "owner",
+      "suite": "-base",
+      "role": 1,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "name": "Gyroc Carbine, 15mm",
+          "group": "gyroc",
+          "role": 1,
+          "attack": "EiVMCghigZRr4Bvs",
+          "damage": "Vysjv8l1iCL7Ssfa",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "name": "Gyroc Launch Pistol, 15mm",
+          "group": "gyroc",
+          "role": 1,
+          "attack": "OZDLI94vtbbHYTNI",
+          "damage": "SaJZdw6o2hkjteyQ",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "name": "Gyroc LSW, 15mm",
+          "group": "gyroc",
+          "role": 1,
+          "attack": "5A57eYAFORtZFZCg",
+          "damage": "ZfggJzJH68672Kx3",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 10,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "name": "Gyroc Pistol, 15mm",
+          "group": "gyroc",
+          "role": 1,
+          "attack": "5NOrokP3yTIen27e",
+          "damage": "luzdMg9UZFc1TPJv",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "3c31f53e-09ac-46dd-b1f9-b4622ac8f553",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:15mm_gyroc",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "name": "Holdout Gyroc, 15mm",
+          "group": "gyroc",
+          "role": 1,
+          "attack": "Qkte9yzgyU3sqIh6",
+          "damage": "ChDRQzq41ZTlH43P",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "e6bb577a-4e8c-43be-ba9b-068b4c9adeac",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:15mm_gyroc",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "name": "Underbarrel Gyroc, 15mm",
+          "group": "gyroc",
+          "role": 1,
+          "attack": "eehcVCyQ4NJcTFXf",
+          "damage": "ytxYYlyVLdvcEsMt",
+          "formula": "6d pi++",
+          "range": "1,900",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": null,
+          "backblast": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "name": "IML, 64mm",
+          "group": "missile",
+          "role": 1,
+          "attack": "AzlFYw2GDvfMt5wa",
+          "damage": "gk5oeOyd0tAyo8fz",
+          "formula": "6dx3 pi++",
+          "range": "500/4,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "18c4955d-e4f2-4a33-907d-0cb024af8a4e",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:9",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "name": "IML, 64mm",
+          "group": "missile",
+          "role": 1,
+          "attack": "g6skFcA0SwJVzkuU",
+          "damage": "2NyhUavl6S50xmhw",
+          "formula": "6dx5 pi++",
+          "range": "750/6,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "86366122-eccf-4c93-9461-0303f5e51ac0",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:10",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "name": "MLAWS, 64mm",
+          "group": "missile",
+          "role": 1,
+          "attack": "fseyKY4MJO6eVM1Y",
+          "damage": "KdNZOdqsxughYpt8",
+          "formula": "6dx3 pi++",
+          "range": "500/4,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "8ea827fc-261b-4e0f-9e30-b508a4b6f1a1",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:9",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "name": "MLAWS, 64mm",
+          "group": "missile",
+          "role": 1,
+          "attack": "izszVsOTDCTqVHOV",
+          "damage": "nfLzlViNFcfCmvZT",
+          "formula": "6dx5 pi++",
+          "range": "750/6,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "649d795a-e02f-44f5-8e87-1ed96b853897",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_missile:projectile-tl:10",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "name": "TML, 100mm",
+          "group": "missile",
+          "role": 1,
+          "attack": "nWYvU1FgQy8PAGzV",
+          "damage": "QQCtiCna5j7Gm8Yk",
+          "formula": "6dx30 pi++",
+          "range": "2,000/10,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "d566903f-ec21-4a3b-bbef-e7d26bea6a93",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:100mm_missile:projectile-tl:9",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "name": "TML, 100mm",
+          "group": "missile",
+          "role": 1,
+          "attack": "CQDcNCqZxqtWw99v",
+          "damage": "GgFHw2u4IObKmGlZ",
+          "formula": "6dx50 pi++",
+          "range": "3,000/15,000",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "460a16f6-0842-4626-b9db-74dd46db3aba",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:100mm_missile:projectile-tl:10",
+              "before": 1,
+              "spent": 1,
+              "after": 0
+            }
+          ],
+          "backblast": true
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "name": "Splat Gun, 15mmPLB",
+          "group": "plb",
+          "role": 1,
+          "attack": "0A18n822Hf7eFlM2",
+          "damage": "rkAeuGJlybcXmIe2",
+          "formula": "3d+2 pi++",
+          "range": "220/2,000",
+          "spent": 30,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "c4a92388-9aa0-4f59-9665-220295e772a4",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "5def1a31-f267-4636-997d-037fcb4b4469",
+              "index": 1,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "85c006f4-1a4d-4b81-9052-b64ec36c795e",
+              "index": 2,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "0312d8af-ef53-4d63-b1d9-3cb30f383443",
+              "index": 3,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "062ff3fb-de6a-44e9-b3da-b0f8472c2138",
+              "index": 4,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "bb80ff48-9bdc-42dd-a74f-513409a9cd48",
+              "index": 5,
+              "ammoKey": "ut:ammo-family:15mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "W5BEH4zTOtg2ds7is",
+          "name": "Underbarrel Grenade Launcher, 25mmPC",
+          "group": "plb",
+          "role": 1,
+          "attack": "F1LfYI6Jgxv3SmG5",
+          "damage": "OQQNRUgUypoGXvFi",
+          "formula": "4d pi++",
+          "range": "360/2,200",
+          "spent": 1,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "b13dbe94-c414-42cf-99d9-961e826094fa",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:25mm_pc",
+              "before": 3,
+              "spent": 1,
+              "after": 2
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WATP5TU7jVQnEpqB0",
+          "name": "Underbarrel Grenade Launcher, 40mmPLB",
+          "group": "plb",
+          "role": 1,
+          "attack": "0DMWDDZNpZEE5oT5",
+          "damage": "yp10URrPBN0wQQG9",
+          "formula": "1d pi++",
+          "range": "75/450",
+          "spent": 3,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "9fc43e7a-3cf9-49f5-8f14-039d7c9889fd",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 5,
+              "spent": 3,
+              "after": 2
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "name": "Mortar Box, 40mmPLB",
+          "group": "plb",
+          "role": 1,
+          "attack": "qHq0aoHTtdoihTF6",
+          "damage": "liQN4gENRDhWIzXb",
+          "formula": "1d pi++",
+          "range": "75/450",
+          "spent": 16,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "0ad6a7dc-7c4e-41a7-8e1f-16e94a94f1b0",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            },
+            {
+              "magazineId": "d1d6c37d-2128-4d49-bc7f-1e729eb5f47c",
+              "index": 1,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            },
+            {
+              "magazineId": "0e7bdbe2-e810-4b50-9c2d-216e665cda19",
+              "index": 2,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            },
+            {
+              "magazineId": "4c39fb96-3deb-47d7-a0b4-6d81eedaaab6",
+              "index": 3,
+              "ammoKey": "ut:ammo-family:40mm_plb",
+              "before": 4,
+              "spent": 4,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "name": "Mortar Box, 64mmPLB",
+          "group": "plb",
+          "role": 1,
+          "attack": "WBcXkhqZCfJLMBR5",
+          "damage": "i9ilD12WKS4vRqRE",
+          "formula": "6dx2 pi++",
+          "range": "360/3,000",
+          "spent": 30,
+          "loadedAttack": false,
+          "loadedDamage": false,
+          "feedPlan": [
+            {
+              "magazineId": "6aea6ebd-073b-4761-9254-028cf321fe48",
+              "index": 0,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "0b0ae3b8-7042-4630-a1bd-812758f7c57e",
+              "index": 1,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "c1e71303-0f84-4799-bf47-04fb83f60c60",
+              "index": 2,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "ae66801d-69ca-4127-9eec-90fd426c5ad9",
+              "index": 3,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "74505687-5eab-4dd1-aed2-493bb20bd5de",
+              "index": 4,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            },
+            {
+              "magazineId": "d808cfe9-7059-4136-a642-f1cd3677e2ca",
+              "index": 5,
+              "ammoKey": "ut:ammo-family:64mm_plb",
+              "before": 5,
+              "spent": 5,
+              "after": 0
+            }
+          ],
+          "backblast": false
+        }
+      ]
+    },
+    {
+      "client": "owner",
+      "suite": "-specials",
+      "role": 1,
+      "rows": [
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-11",
+          "role": 1,
+          "messageId": "5NOrokP3yTIen27e",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            13
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-11",
+          "role": 1,
+          "messageId": "Qkte9yzgyU3sqIh6",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            21
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-1",
+          "role": 1,
+          "messageId": "hS7bscgoqqUbAa2N",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            6
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-2",
+          "role": 1,
+          "messageId": "StSknQvzM98loGte",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            6
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-3",
+          "role": 1,
+          "messageId": "UPnkEZUlkrJ5HFHU",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-10",
+          "role": 1,
+          "messageId": "p8adxRPEZRJfleOf",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            11
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "distance-11",
+          "role": 1,
+          "messageId": "m66xT0MMp63mLWnI",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            29
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-1",
+          "role": 1,
+          "messageId": "ZWAI2KUa5RgZRn9W",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            7
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-2",
+          "role": 1,
+          "messageId": "HP3Z7tNk3M1z2Tqj",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            8
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-3",
+          "role": 1,
+          "messageId": "SXNqmpfVtpWQC2dx",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            13
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-10",
+          "role": 1,
+          "messageId": "Ge4838HQ1t8ZWN5G",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            8
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "case": "distance-11",
+          "role": 1,
+          "messageId": "BzTwzxReGmdo7qNr",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            26
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-1",
+          "role": 1,
+          "messageId": "b5vqNNlzsWlldaMz",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            6
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-2",
+          "role": 1,
+          "messageId": "6rNmz44T5g5mWluN",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            5
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-3",
+          "role": 1,
+          "messageId": "v62J0stFm5XcPlBL",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            9
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-10",
+          "role": 1,
+          "messageId": "HxCdtP1RFKFOa0LU",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "distance-11",
+          "role": 1,
+          "messageId": "lequo6Yqg4LHyFbY",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            22
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-1",
+          "role": 1,
+          "messageId": "Xox0hVTQHZ1QATHz",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            9
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-2",
+          "role": 1,
+          "messageId": "kQRqIRpDlaIltLMj",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            8
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-3",
+          "role": 1,
+          "messageId": "LqU3a72qQFDJuHEz",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "distance-10",
+          "role": 1,
+          "messageId": "qVM5WiNuPMCPJsWB",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            12
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-1",
+          "role": 1,
+          "messageId": "cqpNllzQzUZaVJu7",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            7
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-2",
+          "role": 1,
+          "messageId": "IAFd5ZIAdQ0r2PIF",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            6
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-3",
+          "role": 1,
+          "messageId": "fA9aWD8tS73PRYJE",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            14
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "case": "distance-10",
+          "role": 1,
+          "messageId": "7KS8qLMicTDELCTN",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-1",
+          "role": 1,
+          "messageId": "TXk6kFLem3gvQf4I",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            9
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-2",
+          "role": 1,
+          "messageId": "6bCYM795JSEbsUQj",
+          "divisor": 3,
+          "resultFormula": "floor((6d)/3) pi++",
+          "damage": [
+            5
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-3",
+          "role": 1,
+          "messageId": "tlXZS2j4pDWT17iT",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            11
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-10",
+          "role": 1,
+          "messageId": "No5Q1PA6GryCcU1W",
+          "divisor": 2,
+          "resultFormula": "floor((6d)/2) pi++",
+          "damage": [
+            10
+          ],
+          "loaded": false,
+          "recoveredFromActualMessages": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "case": "distance-11",
+          "role": 1,
+          "messageId": "yiPjdzqZxi5W9mxJ",
+          "divisor": 1,
+          "resultFormula": "6d pi++",
+          "damage": [
+            18
+          ],
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "chamber-1",
+          "role": 1,
+          "messageId": "OGyDXuxx0Jjmt3pU",
+          "ammoId": "15mm_gyroc",
+          "variant": "ut_aphc",
+          "independent": true,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "chamber-2",
+          "role": 1,
+          "messageId": "raCBJ9gBOoqZ1jAO",
+          "ammoId": "15mm_gyroc",
+          "variant": "ut_apep",
+          "independent": true,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "case": "chamber-3",
+          "role": 1,
+          "messageId": "SkB0f86vosX5Jfrz",
+          "ammoId": "15mm_micromissile",
+          "variant": "ut_homing",
+          "independent": true,
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "case": "manual-motor",
+          "role": 1,
+          "manual": true
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-infrared",
+          "role": 1,
+          "messageId": "aCK6OB2jSbIPB0gE",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multispectralPassive",
+          "role": 1,
+          "messageId": "bnH1grIWkRj1WL1I",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multispectralAntiradiation",
+          "role": 1,
+          "messageId": "s0YdqzT9fakgC914",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multispectralActive",
+          "role": 1,
+          "messageId": "7STBf7c7sywHDXpj",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "homing-multiscanner",
+          "role": 1,
+          "messageId": "tMok42KOIpanpLb3",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "reactionless",
+          "role": 1,
+          "messageId": "RO23J18qYr3OKHGM",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "reactionless-homing",
+          "role": 1,
+          "messageId": "7g6o7d3X7g10nbfP",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-infrared",
+          "role": 1,
+          "messageId": "O6SEvr501aYEMwGW",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multispectralPassive",
+          "role": 1,
+          "messageId": "Z9QFLFr655ZQpbAU",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multispectralAntiradiation",
+          "role": 1,
+          "messageId": "9MeyvEKmz7ENwRkZ",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multispectralActive",
+          "role": 1,
+          "messageId": "K6WKk40GaNRayiE9",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "homing-multiscanner",
+          "role": 1,
+          "messageId": "RRRoFFjKuZsphN1x",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "reactionless",
+          "role": 1,
+          "messageId": "38dzxWgeihUkYniq",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "case": "reactionless-homing",
+          "role": 1,
+          "messageId": "ADXnyp9935xsYpqa",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-infrared",
+          "role": 1,
+          "messageId": "zVpweo357g2L38GP",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multispectralPassive",
+          "role": 1,
+          "messageId": "BpdAi3VlVKwQDycI",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multispectralAntiradiation",
+          "role": 1,
+          "messageId": "QrDM2YcWsyXG1Lh2",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multispectralActive",
+          "role": 1,
+          "messageId": "H0rzytJjp9wX4hVd",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "homing-multiscanner",
+          "role": 1,
+          "messageId": "OuPXwxaFC7tUvcor",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "reactionless",
+          "role": 1,
+          "messageId": "EOH21js1vNx0QzPF",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "case": "reactionless-homing",
+          "role": 1,
+          "messageId": "rOFGMRJPXqTexMAa",
+          "range": "500/20000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-infrared",
+          "role": 1,
+          "messageId": "DrPbYHiWSNOZQOmr",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multispectralPassive",
+          "role": 1,
+          "messageId": "wRjidCrlWMfFC0dt",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multispectralAntiradiation",
+          "role": 1,
+          "messageId": "XhpwHpgFuBZGmjJ5",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multispectralActive",
+          "role": 1,
+          "messageId": "BODjcejemqjkr9r4",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "homing-multiscanner",
+          "role": 1,
+          "messageId": "C3yn0PVvKwLZkJBa",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "reactionless",
+          "role": 1,
+          "messageId": "chg2viOB30przwlz",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "case": "reactionless-homing",
+          "role": 1,
+          "messageId": "0tfFqH61Bq7lFnJk",
+          "range": "750/30000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-infrared",
+          "role": 1,
+          "messageId": "9xxELTRPWCad3Kdo",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multispectralPassive",
+          "role": 1,
+          "messageId": "kBLHhn1H1DyGIqXF",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multispectralAntiradiation",
+          "role": 1,
+          "messageId": "EITDhIX29pqGDZEM",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multispectralActive",
+          "role": 1,
+          "messageId": "dfS0IiTqEENAFCgM",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "homing-multiscanner",
+          "role": 1,
+          "messageId": "OX4UmQrIZx6ICfbp",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "reactionless",
+          "role": 1,
+          "messageId": "8iIJ386QIaGYXtru",
+          "range": "2000/50000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "reactionless-homing",
+          "role": 1,
+          "messageId": "9r4ZEfRyrq3PoGBs",
+          "range": "2000/50000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-infrared",
+          "role": 1,
+          "messageId": "F6th7UvqOwbDDSKK",
+          "manual": true,
+          "sensor": "infrared",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multispectralPassive",
+          "role": 1,
+          "messageId": "soJOj36zKYtMSsD9",
+          "manual": true,
+          "sensor": "multispectralPassive",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multispectralAntiradiation",
+          "role": 1,
+          "messageId": "ttbcTLovAULprxnP",
+          "manual": true,
+          "sensor": "multispectralAntiradiation",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multispectralActive",
+          "role": 1,
+          "messageId": "JCpgIWcUboSx85e8",
+          "manual": true,
+          "sensor": "multispectralActive",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "homing-multiscanner",
+          "role": 1,
+          "messageId": "sjHCd54oCM8OflTE",
+          "manual": true,
+          "sensor": "multiscanner",
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "reactionless",
+          "role": 1,
+          "messageId": "Zps7L37QKVPdaBlW",
+          "range": "3000/75000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "case": "reactionless-homing",
+          "role": 1,
+          "messageId": "iLiQU3ycg6xY4uXn",
+          "range": "3000/75000",
+          "noBackblast": true,
+          "loaded": false
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "case": "ready-small-salvo",
+          "role": 1,
+          "messageId": "QJkpSryfqHRC1Zdb",
+          "ready": true,
+          "spent": 3
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "case": "reduced-salvo",
+          "role": 1,
+          "messageId": "MOiEdS0fFuVZQj2q",
+          "spent": 5
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "case": "reduced-salvo",
+          "role": 1,
+          "messageId": "zHVSolyHJzD2eIs4",
+          "spent": 5
+        }
+      ],
+      "nativeMisses": []
+    },
+    {
+      "client": "owner",
+      "suite": "-history",
+      "role": 1,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "EiVMCghigZRr4Bvs",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "OZDLI94vtbbHYTNI",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "5A57eYAFORtZFZCg",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "5NOrokP3yTIen27e",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "Qkte9yzgyU3sqIh6",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "eehcVCyQ4NJcTFXf",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "AzlFYw2GDvfMt5wa",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "g6skFcA0SwJVzkuU",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "fseyKY4MJO6eVM1Y",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "izszVsOTDCTqVHOV",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "nWYvU1FgQy8PAGzV",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "CQDcNCqZxqtWw99v",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "0A18n822Hf7eFlM2",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W5BEH4zTOtg2ds7is",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "F1LfYI6Jgxv3SmG5",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WATP5TU7jVQnEpqB0",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "0DMWDDZNpZEE5oT5",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "qHq0aoHTtdoihTF6",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "role": 1,
+          "case": "save-and-new-charge-history",
+          "messageId": "WBcXkhqZCfJLMBR5",
+          "savePreserved": true,
+          "newCharge": true,
+          "noRepeatedConsumption": true
+        }
+      ]
+    },
+    {
+      "client": "owner",
+      "suite": "-reload",
+      "role": 1,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "EiVMCghigZRr4Bvs",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "OZDLI94vtbbHYTNI",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "5A57eYAFORtZFZCg",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "5NOrokP3yTIen27e",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "Qkte9yzgyU3sqIh6",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "eehcVCyQ4NJcTFXf",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "AzlFYw2GDvfMt5wa",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "g6skFcA0SwJVzkuU",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "fseyKY4MJO6eVM1Y",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "izszVsOTDCTqVHOV",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "nWYvU1FgQy8PAGzV",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "CQDcNCqZxqtWw99v",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "0A18n822Hf7eFlM2",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W5BEH4zTOtg2ds7is",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "F1LfYI6Jgxv3SmG5",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WATP5TU7jVQnEpqB0",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "0DMWDDZNpZEE5oT5",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "W_eUqH082RrEoTPPP",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "qHq0aoHTtdoihTF6",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        },
+        {
+          "id": "WYpXdcsWIyhNVC6x3",
+          "role": 1,
+          "case": "reload-history",
+          "messageId": "WBcXkhqZCfJLMBR5",
+          "inventoryPreserved": true,
+          "noRepeatedConsumption": true
+        }
+      ]
+    },
+    {
+      "client": "owner",
+      "suite": "-edges",
+      "role": 1,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "cancel-fire-control",
+          "role": 1
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "cancel-inventory-draft",
+          "role": 1
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "concurrent-duplicate-attackId",
+          "role": 1,
+          "spent": 1,
+          "nativeRolls": 1
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "case": "concurrent-last-round",
+          "role": 1,
+          "spent": 1,
+          "rejections": 1
+        },
+        {
+          "id": "NCT0DWZGwptwRqkc",
+          "case": "foreign-actor-owner-denial",
+          "role": 1,
+          "rejected": true
+        },
+        {
+          "id": "all-owned-test-attacks",
+          "case": "compact-closed-chat-sections",
+          "role": 1,
+          "cards": 98
+        }
+      ]
+    },
+    {
+      "client": "owner",
+      "suite": "-sefop",
+      "role": 1,
+      "rows": [
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 1,
+          "messageId": "hVtOvPGDeJVlJHp8",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "cMiC9vsWfFUr4Ryc",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WnaTVcm1lDzdUBdwA",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 1,
+          "messageId": "cuJgXHqeCJHzyMG4",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "CxS0zFX0i70lMRun",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 1,
+          "messageId": "LBC9QlbsOTGKhwoX",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "5T21P9GdJr1yIFOz",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WBP_BamKPzdsBHOnI",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 1,
+          "messageId": "jQ6OjXwrFWmlu3XB",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "fLN74nnWFvrg7gVs",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 1,
+          "messageId": "cRIPYMJD2E7uX3M9",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "FvPPt73eDKNvX1q5",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WqtpFn_3ogNM9oiHv",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 1,
+          "messageId": "hhQ5UwNM760EyVzX",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "V3W03NfENa2KUwkp",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 1,
+          "messageId": "6ITgwlTV3sBd3AMx",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "zVSDy0Uy7ZgVMUjJ",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "W7iIk_4lnXIP5JOOu",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 1,
+          "messageId": "yl776MzUZ3EUYNKu",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "W4kiPByQVZUoiUtR",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 1,
+          "messageId": "Yml4zUNPJOrnseV8",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "NixUcp2cm1rZKkFr",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WC9xrdk8qWqC3tsHh",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 1,
+          "messageId": "ef0s8GhG5WjVWZH3",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "V45ncFl3b8baCxR7",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "family": "15mm_gyroc",
+          "case": "sefop-15mm_gyroc",
+          "role": 1,
+          "messageId": "jKLGNgZLDOQ7arJ2",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "33GjuQvYFM8VbF4m",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WX57fdTm6ELTN3VdA",
+          "family": "15mm_micromissile",
+          "case": "sefop-15mm_micromissile",
+          "role": 1,
+          "messageId": "PCZdw46ka79aKbuj",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "I8xK56P9NGIQZ7CJ",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 1,
+          "messageId": "uL4UQQnV6PTSAwEe",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "agekc2X4QZ8kdqWL",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WuZRkhqwMzX3gyVWL",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 1,
+          "messageId": "6V9svsnzAsA9F6DK",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "BQeavcgNRnoTm3Yu",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WHv4EWlz3Tg6-cvQn",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 1,
+          "messageId": "ga6ZJvOQKt1XHeKe",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "dKAKUhc7mIlYS4d7",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "W7v0_whpuR9MtD4tH",
+          "family": "64mm_missile",
+          "case": "sefop-64mm_missile",
+          "role": 1,
+          "messageId": "ukKXksrnyJah82Co",
+          "formula": "6dx7(3) cr inc",
+          "nativeDamage": "hpHuszgeUrokT3tl",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "family": "100mm_missile",
+          "case": "sefop-100mm_missile",
+          "role": 1,
+          "messageId": "FyLqwbBZfYyoEVSA",
+          "formula": "6dx10(3) cr inc",
+          "nativeDamage": "1VwRzUiF6hypn1cA",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WNK4gk21iQ4le2Lxr",
+          "family": "100mm_missile",
+          "case": "sefop-100mm_missile",
+          "role": 1,
+          "messageId": "QxzxQMLuyR2t7u3s",
+          "formula": "6dx10(3) cr inc",
+          "nativeDamage": "Q5GuxDiQdfgjhupq",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        },
+        {
+          "id": "WIijXG9uGZ52T0eW2",
+          "family": "15mm_plb",
+          "case": "sefop-15mm_plb",
+          "role": 1,
+          "messageId": "pDxneW2InjEwAcva",
+          "formula": "4d(2) imp inc",
+          "nativeDamage": "xE9bZw3HiZbdLUxO",
+          "independentWarhead": true,
+          "spent": 1,
+          "loaded": false
+        }
+      ]
+    },
+    {
+      "client": "owner",
+      "suite": "-aux",
+      "role": 1,
+      "rows": [
+        {
+          "id": "WInB0nYjRLMJm5Ha-",
+          "case": "instruction-only-backblast",
+          "role": 1,
+          "spent": 1,
+          "primaryDamage": null,
+          "backblast": "2d burn",
+          "nativeDamage": "r3n5mR3T6qIGAxcW",
+          "loaded": false
+        },
+        {
+          "id": "WpvG7-bGWCtwNOPFf",
+          "case": "instruction-only-backblast",
+          "role": 1,
+          "spent": 1,
+          "primaryDamage": null,
+          "backblast": "4d burn",
+          "nativeDamage": "pbCZL5EGrRoLLlzx",
+          "loaded": false
+        }
+      ]
+    }
+  ],
+  "audits": [
+    {
+      "suite": "-base",
+      "actors": 18,
+      "tokens": 17,
+      "messages": 656,
+      "nativeAttacks": 195,
+      "nativeDamage": 270,
+      "loadedDice": 0,
+      "natural17or18": [
+        {
+          "id": "HuZdt83JD8z0b8jK",
+          "total": 17,
+          "role": 1
+        }
+      ],
+      "models": 17
+    },
+    {
+      "suite": "-sefop",
+      "actors": 13,
+      "tokens": 13,
+      "messages": 114,
+      "nativeAttacks": 38,
+      "nativeDamage": 38,
+      "loadedDice": 0,
+      "natural17or18": [],
+      "models": 13
+    },
+    {
+      "suite": "-aux",
+      "actors": 4,
+      "tokens": 4,
+      "messages": 21,
+      "nativeAttacks": 7,
+      "nativeDamage": 7,
+      "loadedDice": 0,
+      "natural17or18": [],
+      "models": 2
+    }
+  ],
+  "nativeAttacks": 240,
+  "nativeDamage": 315,
+  "loadedDice": 0,
+  "cleanup": {
+    "rounds": [
+      {
+        "suite": "-base",
+        "deleted": {
+          "actors": 17,
+          "tokens": 17,
+          "messages": 662,
+          "users": 2
+        },
+        "baseline": {
+          "actors": true,
+          "tokens": true,
+          "messages": true,
+          "users": true
+        },
+        "counts": {
+          "actors": 13,
+          "tokens": 4,
+          "messages": 21,
+          "users": 4
+        },
+        "leftovers": 1
+      },
+      {
+        "suite": "-sefop",
+        "deleted": {
+          "actors": 13,
+          "tokens": 13,
+          "messages": 120,
+          "users": 2
+        },
+        "baseline": {
+          "actors": true,
+          "tokens": true,
+          "messages": true,
+          "users": true
+        },
+        "counts": {
+          "actors": 12,
+          "tokens": 4,
+          "messages": 21,
+          "users": 4
+        },
+        "leftovers": 0
+      },
+      {
+        "suite": "-aux",
+        "deleted": {
+          "actors": 4,
+          "tokens": 4,
+          "messages": 27,
+          "users": 2
+        },
+        "baseline": {
+          "actors": true,
+          "tokens": true,
+          "messages": true,
+          "users": true
+        },
+        "counts": {
+          "actors": 12,
+          "tokens": 4,
+          "messages": 21,
+          "users": 4
+        },
+        "leftovers": 0
+      }
+    ],
+    "additionalForeignFixtureRemoval": {
+      "id": "NCT0DWZGwptwRqkc",
+      "name": "PR17-1792770501820 foreign-owner-check",
+      "deleted": true,
+      "leftovers": 0,
+      "counts": {
+        "actors": 12,
+        "tokens": 4,
+        "messages": 21,
+        "users": 4
+      }
+    },
+    "baselinePreserved": true,
+    "leftovers": 0,
+    "finalCounts": {
+      "actors": 12,
+      "tokens": 4,
+      "messages": 21,
+      "users": 4
+    }
+  },
+  "corrections": [
+    {
+      "case": "instruction-only-backblast",
+      "initialFailure": "Native burn rolled but lacked source link: auxiliary anchor was outside the GGA roll container.",
+      "fix": "Use the existing native component capture within the GGA roll container.",
+      "finalPasses": 4
+    }
+  ],
+  "notes": [
+    "Native attack/damage counts include real rolls made during diagnosis; they are not unique PASS scenario counts.",
+    "The natural 17 was preserved; outstanding Damage evidence used a later ordinary roll. No loaded dice.",
+    "Four grenade features remain deferred; all seventeen kinetic platforms are ready."
+  ]
+}

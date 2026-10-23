@@ -1,3 +1,5 @@
+import {HT_TEAR_SPRAY_MODE} from './biochemical-integration.js';
+import {AmmoService} from './ammo-service.js';
 import { createGgaDamageWithEasterEgg } from "./damage-result-easter-egg.js";
 import { buildAttackModifierBreakdownHtml, buildCompactAttackModifiers, executeWithCapturedRollMessage, executePreparedGgaRoll } from "./prepared-gga-roll.js";
 import { resolveRuntimeAttackProfile, newAttackId } from "./attack-profile-runtime.js";
@@ -43,6 +45,7 @@ function resolveMeleePass(options, deceptivePenalty = 0) {
     attack: options.attack, baseAttackLevel: baseSkill, governingSkill: options.governingSkill,
     attackSlot: options.attackSlot, context,
     channels: [
+      { id:'ammunitionConstruction',value:options.attack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE?2:0,label:'Широкая струя (HT180)' },
       { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
       { id: "situational", value: integer(options.manualModifier), label: "\u0411\u043e\u043d\u0443\u0441\u044b/\u0448\u0442\u0440\u0430\u0444\u044b" },
       { id: "evaluate", value: 0, label: "\u041e\u0446\u0435\u043d\u043a\u0430" },
@@ -236,6 +239,14 @@ async function performMeleeActionWithoutConfirmation(callback) {
 }
 
 export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0, damageOptions = {}, combatCalculation = null, skillCap = null } = {}) {
+  if(sourceAttack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE){
+    if(!actor?.isOwner||sourceAttack.readinessReason)throw Error(sourceAttack.readinessReason??'Permission');
+    const service=new AmmoService(actor);await service.loadState();const weapon=actor.getFlag('world','gurpsAmmoManager').weapons.find(w=>w.standaloneWeaponId===sourceAttack.standaloneRef.weaponId),attackId=newAttackId();
+    const result=await service.executeShot({weaponId:weapon.id,attackId,
+      prepare:({state,ammunition})=>({amount:1,profile:resolveRuntimeAttackProfile({actor,attack:sourceAttack,weaponId:weapon.id,state,ammunition,context:{kind:'melee',effectiveSkill}})}),
+      execute:({profile})=>executePreparedGgaRoll({actor,attack:sourceAttack,attackProfile:profile,shotSnapshot:createShotSnapshot(profile,{attackId}),baseSkill:sourceAttack.level,baseSkillName:sourceAttack.skillDescription,effectiveSkill,physicalShots:1,effectiveRoF:1,rcl:1,combatType:'melee',maneuver,combatCalculation,skillCap,attackContextHtml:overrideText||locationText})});
+    return {success:result.rolled,hit:result.rollData?!result.rollData.failure:false,message:result.message,rollData:result.rollData};
+  }
   if (sourceAttack?.standaloneRef) {
     if (!actor?.isOwner || sourceAttack.readinessReason) throw new Error(sourceAttack.readinessReason ?? "Нет прав на атаку.");
     const preparedDamage = await prepareEffectiveMeleeDamage({ ...damageOptions, actor, attack: sourceAttack });

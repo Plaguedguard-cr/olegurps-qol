@@ -1,5 +1,15 @@
+import {fluidProfile} from '../ut-fluid-source.js';
+import {fluidEffectiveRange,FLUID_FILLERS} from './ut-fluid.js';
+import { exoticBeamWeapon, exoticBeamControlsHTML, exoticBeamReason } from '../ut-exotic-beam-source.js';
+import {UT_GYROC_FAMILIES} from '../ut-physical-ranged-source.js';
 import { lpProfile, lpFireMode, LP_FIRE_MODES, lpText } from './ut-liquid-propellant.js';
 import { gaussSpeedHTML } from './ut-gauss.js';
+import { electrolaserWeapon, electrolaserUnits, electrolaserControlsHTML } from '../ut-electrolaser-source.js';
+import {ppbWeapon,ppbUnits,ppbControlsHTML} from '../ut-plasma-particle-source.js';
+import { sonicNeuralWeapon, sonicNeuralControlsHTML, sonicNeuralReason } from '../ut-sonic-neural-source.js';
+import {beamWeapon} from '../ut-beam-source.js';
+import {laserFireControlsHTML,laserAvailableShots,laserMode} from '../ut-laser-modifications.js';
+import { readWeaponBattery } from './weapon-power.js';
 import { AmmoService } from './ammo-service.js';
 import { isAmmunitionHistoryOnlyUpdate } from './weapon-assistant-app.js';
 import { moduleMessage, moduleText } from "../localization.js";
@@ -37,6 +47,8 @@ const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
 const FIRE_PREPARATION_CSS = `
   .olegurps-qol.fire-preparation > .window-content { container: olegurps-fire / inline-size; }
+  .olegurps-qol.fire-preparation:not(.melee-assistant) > .window-content { min-height:0; }
+  .olegurps-qol.fire-preparation:not(.melee-assistant) .gam-fire-preparation { min-height:0; flex:1 1 auto; scroll-padding-bottom:76px; }
   .gam-visibility { display: grid; gap: 4px; padding: 6px 8px; border: 1px solid rgba(153, 102, 255, .5); border-radius: 5px; }
   .gam-visibility-header { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
   .gam-visibility-header h4 { margin: 0; }
@@ -121,6 +133,18 @@ const FIRE_PREPARATION_CSS = `
   .gam-fire-lp-controls > label { display:flex; flex-wrap:wrap; align-items:center; gap:8px; width:fit-content; max-width:100%; margin:0; }
   .gam-fire-lp-controls select { flex:0 1 auto; width:auto; min-width:140px; max-width:100%; margin:0; }
   .gam-fire-lp-controls small { overflow-wrap:anywhere; }
+  .gam-fire-electrolaser-controls { display:grid; gap:3px; min-width:0; margin:0; }
+  .gam-fire-electrolaser-fields { display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; min-width:0; }
+  .gam-fire-electrolaser-fields label { display:inline-flex; align-items:center; gap:4px; max-width:100%; min-width:0; margin:0; }
+  .gam-fire-electrolaser-fields select, .gam-fire-electrolaser-fields input { min-width:0; max-width:100%; height:28px; margin:0; }
+  .gam-fire-electrolaser-fields [name="electrolaserMode"] { width:9em; flex-shrink:0; }
+  .gam-fire-electrolaser-fields [name="electrolaserEnvironment"] { width:10.5em; }
+  .gam-fire-electrolaser-fields [name="electrolaserVisibilityDR"] { width:4em; }
+  .gam-fire-electrolaser-controls small { line-height:1.2; overflow-wrap:anywhere; }
+  .gam-fire-electrolaser-hint { display:block; font-size:.82em; }
+  .gam-fire-electrolaser-hint[hidden] { display:none; }
+  .gam-fire-electrolaser-impact { font-size:.9em; }
+  .gam-fire-electrolaser-impact p { margin:3px 0; }
   .gam-fire-summary p { margin: 0; opacity: 0.82; }
   .gam-fire-attack-stats {
     min-width: 0;
@@ -1059,6 +1083,31 @@ export class FirePreparationApp extends ApplicationV2 {
     }
     if(!this.attack?.standaloneRef&&this.mode==="weapon")this.attack=withRuntimeAmmoStats(this.attack,this.actor);
     this.targetedAttackContext = createTargetedAttackContext({ actor: this.actor, attack: this.attack });
+    if(exoticBeamWeapon(this.weapon)){
+      const current=this.actor.getFlag('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===this.weapon.id);if(current)this.weapon=structuredClone(current);
+      const controls=this.element?.querySelector('[data-exotic-beam-controls]');if(controls)controls.outerHTML=exoticBeamControlsHTML(this.weapon,escapeHTML);
+      this.rateOfFireProfile=parseRateOfFire(this.attack.rof);this._syncShotLimits({clamp:true});this._updateRapidFirePreview();this._updateSkillPreview();return;
+    }
+    if(sonicNeuralWeapon(this.weapon)){
+      const current=this.actor.getFlag('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===this.weapon.id);if(current)this.weapon=structuredClone(current);
+      const controls=this.element?.querySelector('[data-sonic-neural-controls]');if(controls)controls.outerHTML=sonicNeuralControlsHTML(this.weapon,escapeHTML);
+      this.rateOfFireProfile=parseRateOfFire(this.attack.rof);this._syncShotLimits({clamp:true});this._updateRapidFirePreview();this._updateSkillPreview();return;
+    }
+    if(beamWeapon(this.weapon)){
+      const current=this.actor.getFlag('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===this.weapon.id);if(current)this.weapon=structuredClone(current);
+      this.rateOfFireProfile=parseRateOfFire(this.attack.rof);
+      const slot=this.element?.querySelector('[data-laser-fire-slot]');if(slot)slot.innerHTML=laserFireControlsHTML(this.weapon,escapeHTML);
+      this._syncShotLimits({clamp:true});this._updateRapidFirePreview();this._updateSkillPreview();return;
+    }
+    if(ppbWeapon(this.weapon)?.family==='blaster'){
+      const controls=this.element?.querySelector('[data-ppb-controls]');if(controls)controls.outerHTML=ppbControlsHTML(this.weapon,escapeHTML);
+      this._syncShotLimits({clamp:true});this._updateRapidFirePreview();this._updateSkillPreview();return;
+    }
+    if(electrolaserWeapon(this.weapon)){
+      const controls=this.element?.querySelector('[data-electrolaser-controls]');
+      if(controls)controls.outerHTML=electrolaserControlsHTML(this.weapon,escapeHTML);
+      this._syncShotLimits({clamp:true});this._updateRapidFirePreview();this._updateSkillPreview();return;
+    }
     this.render({ force: true });
   }
 
@@ -1135,8 +1184,11 @@ export class FirePreparationApp extends ApplicationV2 {
   _captureFields() {
     const root = this.element;
     if (!(root instanceof HTMLElement)) return;
+    this.fireState.fluidDoses=Number(root.querySelector('[name="fluidDoses"]')?.value??1);
+    this.fireState.fluidBounces=Number(root.querySelector('[name="fluidBounces"]')?.value??0);
     this.fireState.shots = root.querySelector('[name="shots"]')?.value ?? "";
     this.fireState.proximityDistance = root.querySelector('[name="proximityDistance"]')?.value ?? this.fireState.proximityDistance ?? '';
+    this.fireState.projectileDistance = root.querySelector('[name="projectileDistance"]')?.value ?? this.fireState.projectileDistance ?? '';
     this.fireState.manualGuidanceConfirmed = root.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
     this.fireState.attackEnvironment = root.querySelector('[name="attackEnvironment"]')?.value ?? "air";
     this.fireState.depthFeet = root.querySelector('[name="depthFeet"]')?.value ?? "";
@@ -1202,9 +1254,13 @@ export class FirePreparationApp extends ApplicationV2 {
     const targetDistance = center ? measureCanvasPointDistanceYards(this.token, center)
       : selectedToken ? measureTokenDistanceYards(this.token, selectedToken) : null;
     const proximity=this.attack?.ammunitionHEProximity;
-    const exact=proximity&&String(this.fireState.proximityDistance??'').trim()!=='';
-    const distance=exact?Number(this.fireState.proximityDistance):targetDistance;
+    const gyro=Object.hasOwn(UT_GYROC_FAMILIES,this.attack?.standaloneRef?.modeId??'')||!!fluidProfile(this.attack?.standaloneRef?.modeId);
+    const exactGyro=gyro&&String(this.fireState.projectileDistance??'').trim()!=='';
+    const exact=exactGyro||proximity&&String(this.fireState.proximityDistance??'').trim()!=='';
+    const distance=exact?Number(exactGyro?this.fireState.projectileDistance:this.fireState.proximityDistance):targetDistance;
     return {
+      fluidDoses:Number(this.element?.querySelector('[name="fluidDoses"]')?.value??this.fireState.fluidDoses??1),
+      fluidBounces:Number(this.element?.querySelector('[name="fluidBounces"]')?.value??this.fireState.fluidBounces??0),
       shots: this._getShotsValue(),
       manualGuidanceConfirmed:this.fireState.manualGuidanceConfirmed,
       rangedRapidStrike: this.fireState.rangedRapidStrike,
@@ -1386,9 +1442,15 @@ export class FirePreparationApp extends ApplicationV2 {
     const fallbackMax = Math.max(1, Math.trunc(Number(this.maximumShots) || 1));
     const minShots = fireState.rangedRapidStrike ? 1 : Math.max(1, Math.trunc(Number(calculated?.minShots) || 1));
     const unlimited = this.mode === "standalone" && calculated?.maxShots == null;
-    const maxShots = unlimited
+    let maxShots = unlimited
       ? null
       : Math.max(minShots, Math.trunc(Number(calculated?.maxShots) || fallbackMax));
+    const electro=electrolaserWeapon(this.weapon);
+    const ex=exoticBeamWeapon(this.weapon);if(ex)maxShots=Math.min(maxShots??ex.rof,ex.rof,readWeaponBattery(this.weapon)?.charge??0);
+    const sn=sonicNeuralWeapon(this.weapon);if(sn)maxShots=Math.min(maxShots??sn.rof,sn.rof,readWeaponBattery(this.weapon)?.charge??0);
+    if(ppbWeapon(this.weapon))maxShots=Math.min(maxShots??Infinity,Math.floor((readWeaponBattery(this.weapon)?.charge??0)/ppbUnits(this.weapon)));
+    if(electro)maxShots=Math.min(maxShots??electro.rof,electro.rof,Math.floor((readWeaponBattery(this.weapon)?.charge??0)/electrolaserUnits(this.weapon)));
+    if(beamWeapon(this.weapon))maxShots=Math.min(maxShots??Infinity,Number(this.attack?.rof)||1,laserAvailableShots(this.weapon,readWeaponBattery(this.weapon)?.charge??0));
     return { ...calculated, minShots, maxShots: fireState.rangedRapidStrike ? Math.max(1, maxShots - 1) : maxShots };
   }
 
@@ -1503,6 +1565,7 @@ export class FirePreparationApp extends ApplicationV2 {
 
 
   _getDisplayedRoF(fireMode) {
+    if(this.attack?.data?.sourceRateOfFire?.includes('x'))return this.attack.data.sourceRateOfFire.replace('x','×')+' (до '+this.attack.rof+' снарядов)';
     if (this.rateOfFireProfile?.type === "multiple-projectile" && fireMode?.extremelyClose) {
       return String(Math.max(1, Math.trunc(Number(this.rateOfFireProfile.baseRoF) || 1)));
     }
@@ -1524,8 +1587,8 @@ export class FirePreparationApp extends ApplicationV2 {
   _getAttackStatsText(displayedRoF, displayedAcc = this._getDisplayedAcc()) {
     const weapon=this.actor?.getFlag?.('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===this.weapon?.id)??this.weapon;
     return [
-      (this.attack?.ammunitionDisplay??attackProfilePresentation(null)).damageText,
-      ...(this.attack?.data?.range?['Range '+this.attack.data.range]:[]),
+      this.attack?.ammunitionDisplay?.electrolaser?.heading??(this.attack?.ammunitionDisplay??attackProfilePresentation(null)).damageText,
+      ...(this.attack?.data?.range?['Range '+(fluidProfile(this.attack?.standaloneRef?.modeId)?fluidEffectiveRange(fluidProfile(this.attack.standaloneRef.modeId),Number(this.fireState.fluidBounces??0)).join('/'):this.attack.data.range)]:[]),
       ...(beamResourceLabel(weapon)?[beamResourceLabel(weapon)]:this.attack?.standaloneRef && weapon.ammoUnconfigured && !weapon.magazines.length ?
         ["Без учёта боезапаса"] : [`${this.attack?.platformRules?.rofJet?'резервуар':'магазин'} ${weapon.magazines[weapon.loadedIndex]}/${weapon.capacity}`]),
       `RoF ${displayedRoF}`,
@@ -1552,7 +1615,13 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _updateAttackStats(fireMode = this._getRapidFireState()) {
     const conditions = this.element?.querySelector("[data-ammunition-conditions]");
-    if (conditions) conditions.innerHTML = this._ammunitionConditionsHTML(fireMode);
+    if (conditions) {
+      const impactOpen=conditions.querySelector('[data-electrolaser-impact]')?.open===true;
+      conditions.innerHTML = this._ammunitionConditionsHTML(fireMode);
+      const impact=conditions.querySelector('[data-electrolaser-impact]');if(impact&&impactOpen)impact.open=true;
+    }
+    const effectHint=this.element?.querySelector('[data-electrolaser-effect-hint]');
+    if(effectHint){effectHint.textContent=this.attack?.ammunitionDisplay?.electrolaser?.hint??'';effectHint.hidden=!effectHint.textContent;}
     if (this.mode === "standalone") {
       this._updateStandaloneHints();
       return;
@@ -1580,6 +1649,11 @@ export class FirePreparationApp extends ApplicationV2 {
   _proximityReason() {
     const state=this.actor?.getFlag?.('world','gurpsAmmoManager');
     const weapon = uawWeaponView(state,state?.weapons?.find(w=>w.id===this.weapon?.id) ?? this.weapon);
+    if(weapon?.standaloneModeId==='WIijXG9uGZ52T0eW2'&&Number(this.fireState?.shots)&&Number(this.fireState.shots)!==(weapon.splatSalvo??30))return 'Для другого залпа Splat выполните Ready и установите его в окне «Патроны».';
+    if(exoticBeamWeapon(weapon)&&(exoticBeamReason(weapon)||this.attack?.ammunitionReadinessReason))return exoticBeamReason(weapon)??this.attack.ammunitionReadinessReason;
+    if(sonicNeuralWeapon(weapon)&&(sonicNeuralReason(weapon)||this.attack?.ammunitionReadinessReason))return sonicNeuralReason(weapon)??this.attack.ammunitionReadinessReason;
+    if(beamWeapon(weapon)&&this.attack?.ammunitionReadinessReason)return this.attack.ammunitionReadinessReason;
+    if(beamWeapon(weapon)&&laserMode(weapon)==='dazzle'&&!['face','eye','eyes'].includes(this.fireState?.hitLocation?.zoneId))return 'Dazzle: выберите лицо или глаза цели. UT113.';
     return weaponPowerReason(weapon, Number(this.fireState?.shots) || 1, this.attack?.standaloneRef?.modeId) ??
       proximityRangeReason(this.attack?.ammunitionHEProximity,this._getRapidFireState()?.physicalDistance);
   }
@@ -1594,6 +1668,11 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _buildLPContent() {
     const weapon=this.actor?.getFlag?.('world','gurpsAmmoManager')?.weapons?.find(w=>w.id===this.weapon?.id)??this.weapon;
+    if(beamWeapon(weapon))return `<div data-laser-fire-slot>${laserFireControlsHTML(weapon,escapeHTML)}</div>`;
+    const ex=exoticBeamControlsHTML(weapon,escapeHTML);if(ex)return ex;
+    const sn=sonicNeuralControlsHTML(weapon,escapeHTML);if(sn)return sn;
+    const electro=electrolaserControlsHTML(weapon,escapeHTML);if(electro)return electro;
+    const ppb=ppbControlsHTML(weapon,escapeHTML);if(ppb)return ppb;
     const em=gaussSpeedHTML(weapon,escapeHTML);if(em)return em;
     if(!lpProfile(weapon))return '';
     const selected=lpFireMode(weapon),mode=LP_FIRE_MODES[selected];
@@ -1641,6 +1720,13 @@ export class FirePreparationApp extends ApplicationV2 {
       <small data-environment-hint style="flex-basis:100%">${escapeHTML(this._environmentHint())}</small></div>`;
   }
   _ammunitionConditionsHTML(fireMode) {
+    const fluid=fluidProfile(this.attack?.standaloneRef?.modeId);
+    if(fluid){
+      const range=fluidEffectiveRange(fluid,Number(this.fireState.fluidBounces??0)),filler=FLUID_FILLERS[this.attack?.ammunitionFluid?.fillerId];
+      return `<p class="hint">Полная длина пути: до ${range.at(-1)} ярдов${range.length===2?'; ½D '+range[0]+' ярдов':''}. ${fluid.vortex?'Косые рикошеты: −2 к атаке и −10% исходной дальности за каждый. Прямое столкновение раскрывает газовое кольцо.':'Струя без штрафа за дальность. Респираторный агент — в лицо без штрафа за зону; контактный — на тело.'}</p>`+
+        (fluid.modeId==='WXki2UKT5ScYY4QsY'?'<p class="hint">Баллон DR10: пробитие может выпустить весь запас как 100mm biochemical — вручную, UT134,153.</p>':'')+
+        `<details><summary>Наполнитель: ${escapeHTML(filler?.name??'не выбран')}</summary><p>${escapeHTML(filler?.brief??'')}</p></details>`;
+    }
     const language = globalThis.game?.i18n?.lang ?? "ru";
     const conditions = this.attack?.platformRules?.kind === 'vision-laser'
       ? this.attack.ammunitionConditions?.filter(condition => condition.id !== 'SpecializedPlatform')
@@ -1652,7 +1738,10 @@ export class FirePreparationApp extends ApplicationV2 {
       lines.push(automaticAmmoText("ProjectileRclRequired", language));
     if (fireMode?.extremelyClose) lines.push(automaticAmmoText("ShotgunCloseGM", language,
       { pellets: fireMode.profile.projectileMultiplier, factor: fireMode.closeDamageMultiplier }));
-    return lines.map(text => `<p class="hint">${escapeHTML(text)}</p>`).join("");
+    const impact=this.attack?.ammunitionDisplay?.electrolaser;
+    const html=lines.map(text => `<p class="hint">${escapeHTML(text)}</p>`).join("");
+    return impact?`<details class="gam-fire-electrolaser-impact" data-electrolaser-impact><summary>Воздействие</summary>`+
+      `<p>${escapeHTML(impact.linked?'Связанный ожог: '+impact.burn+'. Оба воздействия — одна атака.':'Лазерный ожог: '+impact.burn+'. Электрического эффекта нет.')}</p>${html}</details>`:html;
   }
 
   _updateSkillPreview() {
@@ -1791,6 +1880,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this._updateRrsHitLocationMarkers();
     this._updateTargetedAttackPreview();
     this._updateSkillPreview();
+    if(beamWeapon(this.weapon))this._updateProximityPreview();
   }
 
 
@@ -1890,6 +1980,44 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   async _onInput(event) {
+    if(['psionicMode','kineticStun'].includes(event.target.name)){
+      if(event.type!=='change')return;
+      const field=event.target;try{this._captureFields();await new AmmoService(this.actor).setExoticBeamConfiguration(this.weapon.id,{[field.name]:field.name==='kineticStun'?field.checked:field.value});this._onActorUpdate(this.actor);}
+      catch(error){globalThis.ui?.notifications?.error?.(error.message);this._onActorUpdate(this.actor);}return;
+    }
+    if(['neuralMode','sonicEnvironment','sonicPressure','sonicPhysicalContact'].includes(event.target.name)){
+      if(event.type!=='change')return;
+      const field=event.target;try{
+        this._captureFields();await new AmmoService(this.actor).setSonicNeuralConfiguration(this.weapon.id,{[field.name]:field.name==='sonicPhysicalContact'?field.checked:field.name==='sonicPressure'?(field.value.trim()===''?NaN:Number(field.value)):field.value});
+        this._onActorUpdate(this.actor);
+      }catch(error){globalThis.ui?.notifications?.error?.(error.message);this._onActorUpdate(this.actor);}return;
+    }
+    if(['laserMode','laserWater','laserPressure'].includes(event.target.name)){
+      if(event.type!=='change')return;
+      const field=event.target;
+      try{
+        this._captureFields();const changes=field.name==='laserMode'?{laserMode:field.value}:
+          {laserEnvironment:{...(this.weapon.laserEnvironment??{water:'air',pressure:1}),...(field.name==='laserWater'?{water:field.value}:{pressure:field.value.trim()===''?NaN:Number(field.value)})}};
+        await new AmmoService(this.actor).setLaserConfiguration(this.weapon.id,changes);this._onActorUpdate(this.actor);
+      }catch(error){globalThis.ui?.notifications?.error?.(error.message);this._onActorUpdate(this.actor);}return;
+    }
+    if(['blasterMode','blasterEnvironment','blasterHotshot'].includes(event.target.name)){
+      if(event.type!=='change')return;
+      const field=event.target;try{
+        this._captureFields();await new AmmoService(this.actor).setBlasterConfiguration(this.weapon.id,{[field.name]:field.name==='blasterHotshot'?field.checked:field.value});
+        this._onActorUpdate(this.actor);
+      }catch(error){globalThis.ui?.notifications?.error?.(error.message);this._onActorUpdate(this.actor);}return;
+    }
+    if(['electrolaserMode','electrolaserEnvironment','electrolaserVisibilityDR'].includes(event.target.name)){
+      if(event.type!=='change')return;
+      const field=event.target;
+      try{
+        this._captureFields();
+        await new AmmoService(this.actor).setElectrolaserConfiguration(this.weapon.id,{[field.name]:field.name==='electrolaserVisibilityDR'?(field.value.trim()===''?0:Number(field.value)):field.value});
+        this._onActorUpdate(this.actor);
+      }catch(error){globalThis.ui?.notifications?.error?.(error.message);this._onActorUpdate(this.actor);}
+      return;
+    }
     if(['lpFireMode','gaussSpeed'].includes(event.target.name)) {
       if(event.type!=='change')return;
       try {
@@ -1903,7 +2031,7 @@ export class FirePreparationApp extends ApplicationV2 {
 
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
-    if(field.name==='proximityDistance'){
+    if(['fluidDoses','fluidBounces','proximityDistance','projectileDistance'].includes(field.name)){
       this._captureFields();this._updateRapidFirePreview();this._updateSkillPreview();return;
     }
     if (["attackEnvironment", "depthFeet"].includes(field.name)) {
@@ -2613,7 +2741,12 @@ export class FirePreparationApp extends ApplicationV2 {
           <div class="gam-fire-summary-main">
             <h3 data-attack-title>${escapeHTML(this.mode === "standalone" ? "Fire Control" : this._getAttackTitle())}</h3>
             ${this.mode === "standalone" ? this._buildStandaloneStats(fireState) : `<p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>`}
+            ${this.attack?.ammunitionDisplay?.electrolaser?`<small class="gam-fire-electrolaser-hint" data-electrolaser-effect-hint${this.attack.ammunitionDisplay.electrolaser.hint?'':' hidden'}>${escapeHTML(this.attack.ammunitionDisplay.electrolaser.hint)}</small>`:''}
             ${this.attack?.platformRules?.manualGuidance ? `<p class="hint">${escapeHTML(this.attack.platformRules.instruction)}</p><label><input type="checkbox" name="manualGuidanceConfirmed" ${fireState.manualGuidanceConfirmed?'checked':''}>Подтверждаю ручной учёт наведения и полёта</label>` : ''}
+            ${this.attack?.platformRules?.kind==='manual-motor'?`<p class="hint" data-ut-manual-motor>${escapeHTML(this.attack.platformRules.instruction)}</p>`:''}
+            ${fluidProfile(this.attack?.standaloneRef?.modeId)?`<label>\u0414\u043b\u0438\u043d\u0430 \u043f\u0443\u0442\u0438, \u044f\u0440\u0434\u044b<input name="projectileDistance" type="number" min="0.1" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}"></label>`:''}
+            ${Object.hasOwn(UT_GYROC_FAMILIES,this.attack?.standaloneRef?.modeId??'')?`<label>Дистанция Gyroc, ярды<input name="projectileDistance" type="number" min="1" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}" placeholder="По цели или выбранной дистанции"></label>`:''}
+            ${this.attack?.standaloneRef?.modeId==='WIijXG9uGZ52T0eW2'?'<p class="hint" data-splat-ready>Размер залпа изменяется после Ready в окне «Патроны». UT136.</p>':''}
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
@@ -2628,6 +2761,8 @@ export class FirePreparationApp extends ApplicationV2 {
         <div class="gam-fire-layout">
           <div class="gam-fire-left">
             <div class="gam-fire-fields">
+              ${fluidProfile(this.attack?.standaloneRef?.modeId)?.maxDoses===3?`<label class="gam-fire-field"><span>Доз за применение</span><input type="number" name="fluidDoses" min="1" max="3" step="1" value="${escapeHTML(fireState.fluidDoses??1)}"></label>`:''}
+              ${fluidProfile(this.attack?.standaloneRef?.modeId)?.vortex?`<label class="gam-fire-field"><span>Рикошеты (−2 и −10% Range за каждый)</span><input type="number" name="fluidBounces" min="0" max="9" step="1" value="${escapeHTML(fireState.fluidBounces??0)}"></label>`:''}
               <label class="gam-fire-field">
                 <span data-shots-label>${shotsLabel}</span>
                 <input type="number" name="shots" value="${escapeHTML(fireState.shots)}" placeholder="${shotLimits.minShots}" min="${shotLimits.minShots}"${shotsMax} step="1" ${this.mode === "weapon" ? "autofocus" : ""}>

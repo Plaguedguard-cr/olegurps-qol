@@ -1,4 +1,6 @@
 import { lpProfile, readLPFuel, lpText } from './ut-liquid-propellant.js';
+import { electrolaserWeapon } from '../ut-electrolaser-source.js';
+import { weaponPreparationReason,weaponPreparationView } from './weapon-power.js';
 import { weaponResourceProfile, weaponResourceHTML } from './weapon-resources.js';
 import { resourceOnlyWeapon as beamWeapon, weaponResourceLabel as beamResourceLabel } from './weapon-resources.js';
 import { confirmLPFuelReplacement } from './lp-fuel-replacement-dialog.js';
@@ -57,6 +59,7 @@ import { WeaponConfigurationDraft, weaponConfigurationHTML, bindWeaponConfigurat
 import { standaloneText, StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { lematBarrel } from "../ht-physical-ammunition-evidence.js";
 import { readStandaloneAttack, standaloneAvailableRounds } from "./standalone-attack-service.js";
+import {utFixedFeed} from './ut-physical-feeds.js';
 import {
   applyAttackOverride,
   getAttackOverrideKey,
@@ -768,6 +771,7 @@ export async function openAmmoManager() {
     }
     return {
       shots,
+      fluidDoses:values.fluidDoses??1,fluidBounces:values.fluidBounces??0,
       physicalShots: shots,
       effectiveRoF: fireMode.effectiveRoF,
       rofProfile: fireMode.profile,
@@ -816,7 +820,7 @@ export async function openAmmoManager() {
       effectRangePenalty: Number.isFinite(effectRangePenalty) ? effectRangePenalty : null,
       hitLocationId: hitLocation.zoneId,
       hitRegionId: hitLocation.regionId,
-      hitLocationLabel: locationIgnored?'Зрение':hitLocation.label,
+      hitLocationLabel: locationIgnored?(attack?.ammunitionFluid?'\u041e\u0431\u043b\u0430\u0441\u0442\u044c':['microwave-cone','sonic-neural-cone'].includes(attack?.platformRules?.kind)?'Конус':'Зрение'):hitLocation.label,
       hitLocationModifierLabel: targetedAttack ? `${hitLocation.modifierLabel} (TA)` : hitLocation.modifierLabel,
       hitLocationPenalty: locationIgnored?0:targetedAttack?.effectivePenalty ?? hitLocation.penalty,
       randomHitLocation: !locationIgnored&&hitLocation.random
@@ -835,7 +839,7 @@ export async function openAmmoManager() {
     }
 
     if (shouldReportField(state, "shots")) {
-      lines.push(`Выстрелов: <strong>${payload.fired}</strong>`);
+      lines.push(`${payload.fluid?'Доз':'Выстрелов'}: <strong>${payload.fired}</strong>`);
     }
 
     if (shouldReportField(state, "hits")) {
@@ -937,7 +941,8 @@ export async function openAmmoManager() {
           rollAttack = preparedSnapshot?.attack ?? context.attack;
           const profile = resolveRuntimeAttackProfile({ actor, attack: rollAttack, weaponId,
             state: current, ammunition, context: { kind: preparedSnapshot ? "ranged-rapid-strike" : "normal",
-              tokenId: token.id, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
+              fluidDoses:shotOptions.fluidDoses??1,fluidBounces:shotOptions.fluidBounces??0,
+              tokenId: token.id, hitLocation: shotOptions.hitLocationLabel, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
               manualGuidanceConfirmed: rawShotOptions.manualGuidanceConfirmed === true,
               effectiveRoF: shotOptions.effectiveRoF, rcl: shotOptions.rcl,
               airburstTarget: shotOptions.airburstTarget ?? "point",
@@ -973,6 +978,13 @@ export async function openAmmoManager() {
 
     Object.assign(state, result.state);
     weapon = result.weapon;
+    if(result.profile.damage?.rules?.exoticBeam||result.profile.damage?.rules?.utMicrowave||result.profile.damage?.rules?.plasmaParticle||result.profile.damage?.rules?.sonicNeural){
+      // The native attack is the single cone card. Resistance rolls do not enter this path.
+      const label=beamResourceLabel(weapon);
+      if(label&&result.message)await result.message.update({content:result.message.content+
+        `<p class="olegurps-microwave-resource">${escapeHTML(label)}</p>`});
+      return true;
+    }
     const fired = result.profile.resource.kind === "unmanaged" ? shotOptions.physicalShots : result.spent;
     const firedAmmoType = result.profile.resource.kind === "unmanaged" ? null : ammoDisplayName(result.profile.ammunition) ?? weapon.ammoType;
 
@@ -993,6 +1005,7 @@ export async function openAmmoManager() {
     }
 
     const body = buildFireChatBody(state, {
+      fluid:!!result.profile.damage?.rules?.fluid,
       ammoType: firedAmmoType,
       fired,
       hits,
@@ -1413,10 +1426,10 @@ export async function openAmmoManager() {
             data-weapon-id="${weapon.id}"
             data-magazine-index="${index}"
             aria-pressed="${loaded && !batterySelected}"
-            aria-label="${loaded ? "Установленный" : "Установить"} магазин ${index + 1}: ${rounds} из ${capacity}, ${escapeHTML(ammoName)}"
+            aria-label="${utFixedFeed(weapon)?'Выбрать '+utFixedFeed(weapon).label:loaded ? 'Установленный магазин' : 'Установить магазин'} ${index + 1}: ${rounds} из ${capacity}, ${escapeHTML(ammoName)}"
             title="${escapeHTML(ammoName)}"
           >
-            <span class="gam-mag-label">${loaded ? "● " : ""}${index + 1}: ${rounds}/${capacity}</span>
+            <span class="gam-mag-label">${loaded ? "● " : ""}${utFixedFeed(weapon)?utFixedFeed(weapon).label+' ':''}${index + 1}: ${rounds}/${capacity}</span>
           </button>
         `;
       })
@@ -1433,10 +1446,9 @@ export async function openAmmoManager() {
       throw new Error(`Для «${weapon.name}» больше не найдена связанная дистанционная атака.`);
     }
 
-    if (attack.readinessReason) throw new Error(attack.readinessReason);
-    const powerReason = weaponPowerReason(weapon);
-    if (powerReason) throw Error(powerReason);
-    const loaded = standaloneAvailableRounds(weapon);
+    const preparationReason=weaponPreparationReason(weapon,attack);
+    if(preparationReason)throw Error(preparationReason);
+    const loaded = standaloneAvailableRounds(weaponPreparationView(weapon));
     if (loaded <= 0 || !beamWeapon(weapon)&&loaded !== Infinity && weapon.totalAmmo <= 0) {
       ui.notifications.warn(`«${weapon.name}»: установленный магазин пуст.`);
       return null;
@@ -2093,10 +2105,10 @@ export async function openAmmoManager() {
             const beam=beamWeapon(weapon);
             if(beam&&!beam.oneShot)selectedBatteries.add(weapon.id);
             const batterySelected = weaponResourceProfile(weapon) && selectedBatteries.has(weapon.id);
-            const powerReason = weaponPowerReason(weapon);
+            const preparationReason=weaponPreparationReason(weapon,attack);
 
             const levelText = attack?.level > 0 ? `Навык ${attack.level}` : "Навык не указан";
-            const rofText = attack?.rof ? `RoF ${escapeHTML(attack.rof)}` : "RoF не указан";
+            const rofText = attack?.rof ? `RoF ${escapeHTML(attack?.data?.sourceRateOfFire?.includes('x')?attack.data.sourceRateOfFire.replace('x','×'):attack.rof)}` : "RoF не указан";
             const rclText = attack?.rcl ? `Rcl ${escapeHTML(attack.rcl)}` : "Rcl не указан";
             const accText = Number.isFinite(Number(attack?.acc)) ? `Acc ${attack.acc}` : "Acc \u2014";
             const scopeText = `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(attack?.scopeBonus) || 0))}`;
@@ -2125,7 +2137,7 @@ export async function openAmmoManager() {
 
                 <div class="gam-actions">
                   ${weapon.standaloneWeaponId && lematBarrel(weapon.standaloneModeId) ? `<strong>${escapeHTML(attack?.data?.mode ?? "")}</strong><p class="hint">${escapeHTML(automaticAmmoText("BarrelSwitchReadyGM", globalThis.game?.i18n?.lang))}</p>` : weapon.standaloneWeaponId&&!uawGroup(weapon) ? `<select data-standalone-mode="${escapeHTML(weapon.id)}" aria-label="Режим атаки">${new StandaloneWeaponService(actor).get(weapon.standaloneWeaponId)?.modes.map(m => `<option value="${escapeHTML(m.modeId)}" ${m.modeId === weapon.standaloneModeId ? "selected" : ""}>${escapeHTML(m.snapshot.usage ?? "Основной режим")}</option>`).join("") ?? ""}</select>` : ""}
-                  <button type="button" data-ammo-action="fire-roll" data-weapon-id="${weapon.id}" title="${escapeHTML(powerReason ?? attack?.readinessReason ?? '')}" ${broken || powerReason || attack?.readinessReason || standaloneAvailableRounds(weapon) <= 0 ? "disabled" : ""}>
+                  <button type="button" data-ammo-action="fire-roll" data-weapon-id="${weapon.id}" title="${escapeHTML(preparationReason ?? '')}" ${broken || preparationReason || standaloneAvailableRounds(weaponPreparationView(weapon)) <= 0 ? "disabled" : ""}>
                     <i class="fa-solid fa-crosshairs"></i>
                     Огонь
                   </button>
@@ -2269,6 +2281,11 @@ export async function openAmmoManager() {
           return { changed: false, managerState: persistentState, message: "" };
         }
         if (action === "fire-roll") {
+          if (configured?.standaloneModeId === 'w6R_sr11lEsrygm0K') {
+            const {openMeleeAssistant} = await import('./melee-assistant.js');
+            await openMeleeAssistant();
+            return { changed: false, managerState: persistentState, message: "" };
+          }
           await openFirePreparation(persistentState, weaponId, managerApp);
           return { changed: false, managerState: persistentState, message: "" };
         }

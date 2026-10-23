@@ -1,3 +1,11 @@
+import {HT_TEAR_SPRAY_MODE,htTearSprayDamage,attachBiochemicalEffect} from './biochemical-integration.js';
+import {fluidProfile} from '../ut-fluid-source.js';
+import {fluidDamage} from './ut-fluid.js';
+import {gyrocShotshellExcluded,GYROC_SHOTSHELL_REASON} from './gyroc-policy.js';
+import {gravDamage,physicalRangedProfile,missileSourceTL} from '../ut-physical-ranged-source.js';
+import {utFixedFeed,plbRecipeAllowed} from './ut-physical-feeds.js';
+import {plasmaGunProfile,plasmaGunDamage} from '../ut-plasma-gun-source.js';
+import { exoticBeamProfile, exoticBeamDamage } from '../ut-exotic-beam-source.js';
 import { uawBarrelFacts, uawWeaponView } from './ut-uaw.js';
 import { getAttackOverride } from "./weapon-attack-overrides.js";
 import { assessAmmunitionRecipe } from "./ammunition-recipes.js";
@@ -37,6 +45,10 @@ import { beamProfile } from '../ut-beam-source.js';
 import { beamDamage } from './ut-beam.js';
 import { htLaserDamage } from '../ht-laser-source.js';
 import { utDazzlerDamage, utDazzlerProfile } from '../ut-dazzler-source.js';
+import { electrolaserDamage, electrolaserProfile } from '../ut-electrolaser-source.js';
+import { microwaveDamage, microwaveProfile } from '../ut-microwave-source.js';
+import { sonicNeuralDamage, sonicNeuralProfile } from '../ut-sonic-neural-source.js';
+import { ppbDamage, ppbProfile } from '../ut-plasma-particle-source.js';
 
 export const SHOT_PROFILE_VERSION = 1;
 export const SHOT_FLAG_SCOPE = "olegurps-qol";
@@ -278,12 +290,12 @@ export class AttackProfileResolver {
       damage.nativeSafe=false;damage.status='unresolved';damage.reason='AlternateLoadBallisticsRequired';
       damage.rules.alternateLoad={source:'HT178',physicalCompatibility:'confirmed',ballistics:'unresolved'};
     }
-    const gyrojet=compatibility.status==='compatible'&&gyrojetRangeRule(confirmedBinding?.modeId,identity.ammoId,raw.damage,
+    const gyrojet=compatibility.status==='compatible'&&!damage.rules.manualSEFOP&&gyrojetRangeRule(confirmedBinding?.modeId,identity.ammoId,physicalRangedProfile(confirmedBinding?.modeId)?.group==='gyroc'?damage.formula:raw.damage,
       context.shotgun?.physicalDistance??context.physicalDistance);
     if(gyrojet){
       damage.rules.gyrojetRange=gyrojet;
       // HT101 gives no physical minimum range. Below one yard only the damage rule is unresolved.
-      damage.rules.ballisticRange={minimum:null,maximum:1000,halfDamage:null,source:gyrojet.source};
+      damage.rules.ballisticRange={minimum:null,maximum:physicalRangedProfile(confirmedBinding?.modeId)?.group==='gyroc'?Number(String(damage.effectiveChanges?.range??raw.range).replaceAll(',','').split('/').at(-1)):1000,halfDamage:null,source:gyrojet.source};
       if(gyrojet.status!=='resolved'){
         damage.nativeSafe=false;damage.status='unresolved';damage.reason='GyrojetDistanceRequired';
       }else if(gyrojet.damageDivisor>1)damage.transformations.push({source:gyrojet.source,effectId:'gyrojet-range-division',
@@ -402,32 +414,144 @@ export class AttackProfileResolver {
     if(htDamage){damage=htDamage;if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
       if(context.platform)context={...context,platform:{...context.platform,instruction:null}};
     }
+    const exotic=exoticBeamProfile(utModeId);
+    if(exotic){
+      damage=exoticBeamDamage(raw,utModeId,carrier);
+      if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Оружие использует штатные ячейки без физических патронов, ETC и LP.';
+      }
+      compatibility={status:'compatible',reasons:[],relation:'exotic-beam-no-cartridges'};
+      Object.assign(identity,{status:'not-required',book:'ut',kind:exotic.family,name:exotic.name,source:'catalog'});
+      weaponConfiguration={variant:'ut-exotic-beam',...damage.rules.exoticBeam};
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
+    const sonicNeural=sonicNeuralProfile(utModeId);
+    if(sonicNeural){
+      damage=sonicNeuralDamage(raw,utModeId,carrier,context);
+      if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Sonic/Neural использует штатный источник, без патронов, ETC и LP.';
+      }
+      compatibility={status:'compatible',reasons:[],relation:'sonic-neural-no-cartridges'};
+      Object.assign(identity,{status:'not-required',book:'ut',kind:sonicNeural.family,name:sonicNeural.name,source:'catalog'});
+      weaponConfiguration={variant:'ut-sonic-neural',...damage.rules.sonicNeural};
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
+    const plasmaGun=plasmaGunProfile(utModeId);
+    if(plasmaGun){
+      damage=plasmaGunDamage(raw,utModeId,carrier,type);
+      if(identity.status!=='confirmed'||compatibility.status!=='compatible'){damage.nativeSafe=false;damage.status='unresolved';}
+      weaponConfiguration={variant:'plasma-gun',...damage.rules.plasmaGun};
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
+    const ppb=ppbProfile(utModeId);
+    if(ppb){
+      damage=ppbDamage(raw,utModeId,carrier);
+      if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Оружие использует штатный источник без физических патронов, ETC и LP.';
+      }
+      compatibility={status:'compatible',reasons:[],relation:'plasma-particle-no-cartridges'};
+      Object.assign(identity,{status:'not-required',book:'ut',kind:ppb.family,name:ppb.name,source:'catalog'});
+      weaponConfiguration={variant:'ut-plasma-particle',modeId:utModeId,...damage.rules.plasmaParticle};
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
     const beam=beamProfile(utModeId);
     if(beam){
-      damage=beamDamage(raw,utModeId);
+      damage=beamDamage(raw,utModeId,carrier);
       if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
         damage.nativeSafe=false;damage.status='unresolved';damage.reason='Лазер использует собственный источник, без патронов, ETC и LP.';
       }
       compatibility={status:'compatible',reasons:[],relation:'source-beam-no-physical-ammunition'};
       Object.assign(identity,{status:'not-required',book:'ut',kind:'beam',name:beam.name,source:'catalog'});
       weaponConfiguration={variant:'beam',modeId:utModeId,source:beam.source,family:beam.family};
+      if(damage.rules.laserModifications){
+        weaponConfiguration.laserModifications=damage.rules.laserModifications;
+        if(damage.rules.laserModifications.mode==='blinding')context={...context,platform:{...context.platform,hitLocationNotApplicable:true}};
+      }
       if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
     }
-    const dazzler=utDazzlerProfile(utModeId),laser=htLaserDamage(raw,utModeId)??utDazzlerDamage(raw,utModeId);
+    const microwave=microwaveProfile(utModeId),dazzler=utDazzlerProfile(utModeId),laser=htLaserDamage(raw,utModeId)??utDazzlerDamage(raw,utModeId)??microwaveDamage(raw,utModeId);
     if(laser){
       damage=laser;
       if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
-        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Лазер использует собственную батарею, без патронов, ETC и LP.';
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason=microwave?
+          'Microwave использует собственную батарею, без патронов, ETC и LP.':'Лазер использует собственную батарею, без патронов, ETC и LP.';
       }
-      compatibility={status:'compatible',reasons:[],relation:'source-ht-laser-no-cartridges'};
-      Object.assign(identity,{status:'not-required',book:dazzler?'ut':'ht',kind:'laser',name:attack?.name,source:'catalog'});
-      weaponConfiguration={variant:dazzler?'ut-dazzler':'ht-laser',modeId:utModeId,source:dazzler?'UT113':'HT181'};
+      compatibility={status:'compatible',reasons:[],relation:microwave?'microwave-no-physical-ammunition':'source-ht-laser-no-cartridges'};
+      Object.assign(identity,{status:'not-required',book:dazzler||microwave?'ut':'ht',kind:microwave?'microwave':'laser',name:attack?.name,source:'catalog'});
+      weaponConfiguration={variant:microwave?'ut-microwave':dazzler?'ut-dazzler':'ht-laser',modeId:utModeId,source:microwave?.source??(dazzler?'UT113':'HT181')};
     }
+    const electro=electrolaserProfile(utModeId);
+    if(electro){
+      damage=electrolaserDamage(raw,utModeId,carrier,context);
+      if(electro.underbarrel&&(context.platform?.installation!=='host'||!Number.isFinite(context.platform?.hostBulk)||context.platform.hostBulk>-3)){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Укажите параметры оружия-носителя подствольного электролазера.';
+      }
+      if(carrier?.executionVariant&&!['ordinary'].includes(carrier.executionVariant)||ammunition){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Электролазер использует собственную батарею, без патронов, ETC и LP.';
+      }
+      compatibility={status:'compatible',reasons:[],relation:'electrolaser-no-physical-ammunition'};
+      Object.assign(identity,{status:'not-required',book:'ut',kind:'beam',name:electro.name,source:'catalog'});
+      weaponConfiguration={variant:'electrolaser',modeId:utModeId,...damage.rules.electrolaser};
+    }
+    if(physicalRangedProfile(utModeId)?.group==='grav'){
+      damage=gravDamage(raw,utModeId,carrier,type);
+      compatibility={status:damage.nativeSafe?'compatible':'incompatible',reasons:[],relation:'UT143-exact-physical-family'};
+      weaponConfiguration={variant:'grav',modeId:utModeId,source:'UT143',externalPower:!physicalRangedProfile(utModeId).cellSize};
+    }
+    if(physicalRangedProfile(utModeId)?.group==='gyroc'){
+      const p=physicalRangedProfile(utModeId);
+      if(identity.status!=='confirmed'||compatibility.status!=='compatible'||![p.familyId,'15mm_micromissile'].includes(identity.ammoId)||
+        ![undefined,'ordinary'].includes(carrier?.executionVariant)||identity.ammoId==='15mm_micromissile'&&!damage.rules.manualHoming&&!damage.rules.manualSEFOP||
+        utModeId==='WX57fdTm6ELTN3VdA'&&attack?.platformRules?.installation!=='host'){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Gyroc: нужны совместимая ракета, подтверждённое наведение Micromissile и параметры носителя.';
+      }
+      damage.rules.physicalRanged={modeId:utModeId,group:'gyroc',familyId:identity.ammoId,source:p.source};
+      if(utModeId==='WqtpFn_3ogNM9oiHv')damage.rules.manualMotor={cell:'B',minutes:15,source:'UT144'};
+      weaponConfiguration={variant:'gyroc',modeId:utModeId,source:p.source};
+    }
+    if(physicalRangedProfile(utModeId)?.group==='missile'){
+      const p=physicalRangedProfile(utModeId);
+      if(identity.status!=='confirmed'||compatibility.status!=='compatible'||identity.ammoId!==p.familyId||type?.projectileTL!==missileSourceTL(utModeId)||![undefined,'ordinary'].includes(carrier?.executionVariant)){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='Ракетной установке нужна совместимая физическая ракета своего TL, без ETC/LP.';
+      }
+      identity.projectileTL=type?.projectileTL??null;
+      damage.rules.physicalRanged={modeId:utModeId,group:'missile',familyId:identity.ammoId,projectileTL:type?.projectileTL??null,source:p.source};
+      if(!identity.recipe){damage.rules.missileEconomics=record?.missile_economics;damage.rules.costPerShot=record?.cps_usd;damage.rules.weightPerShotLb=record?.wps_lb;}
+      const range=String(effective.range).replaceAll(',','').match(/^(\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)$/);
+      if(range)damage.rules.ballisticRange={minimum:null,maximum:Number(range[2]),halfDamage:damage.rules.manualHoming?null:Number(range[1]),...(damage.rules.manualHoming?{speedYardsPerSecond:Number(range[1])}:{}),source:'UT145-146; B413'};
+      if(!damage.rules.reactionless){
+        const large=p.familyId==='100mm_missile';
+        damage.rules.backblast={formula:large?'4d burn':'2d burn',coneYards:large?3:2,direction:'behind',application:'manual',source:'UT145'};
+        damage.components.push({role:'backblast',formula:damage.rules.backblast.formula,relation:'auxiliary',status:'resolved',source:'UT145'});
+        damage.rules.componentOrder=damage.components.map(c=>c.role);
+      }
+      weaponConfiguration={variant:'missile-launcher',modeId:utModeId,source:p.source};
+    }
+    if(physicalRangedProfile(utModeId)?.group==='plb'){
+      const p=physicalRangedProfile(utModeId),feed=utFixedFeed(utModeId),host=['W5BEH4zTOtg2ds7is','WATP5TU7jVQnEpqB0'].includes(utModeId);
+      if(identity.status!=='confirmed'||compatibility.status!=='compatible'||identity.ammoId!==p.familyId||!plbRecipeAllowed(utModeId,type)||
+        ![undefined,'ordinary'].includes(carrier?.executionVariant)||host&&attack?.platformRules?.installation!=='host'){
+        damage.nativeSafe=false;damage.status='unresolved';damage.reason='PLB: нужны совместимый кинетический заряд, собственная подача и параметры носителя; гранатная часть отложена.';
+      }
+      damage.rules.physicalRanged={modeId:utModeId,group:'plb',familyId:identity.ammoId,source:p.source,sourceRoF:this.catalogs.getMode(utModeId).stats.rate_of_fire};
+      damage.rules.plb={barrels:feed?.count??1,perBarrel:feed?.capacity??p.shots,physicalMaximum:p.rof,source:p.source,...(utModeId==='WIijXG9uGZ52T0eW2'?{selectedSalvo:carrier?.splatSalvo??30,changeRequiresReady:true}:{grenadeMechanicsDeferred:true})};
+      weaponConfiguration={variant:'plb',modeId:utModeId,source:p.source};
+    }
+    if(fluidProfile(utModeId)){
+      damage=fluidDamage(raw,utModeId,carrier,type,context,attack);
+      compatibility={status:damage.nativeSafe?"compatible":"incompatible",reasons:[],relation:"UT134-fluid-filler"};
+      Object.assign(identity,{status:damage.nativeSafe?"confirmed":"undetermined",book:"ut",kind:"fluid-filler",name:type?.name});
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
+    if(utModeId===HT_TEAR_SPRAY_MODE){damage=htTearSprayDamage(raw,type);compatibility={status:damage.nativeSafe?'compatible':'incompatible',reasons:[],relation:'HT180-source-aerosol'};Object.assign(identity,{status:damage.nativeSafe?'confirmed':'undetermined',source:'catalog',book:'ht',kind:'chemical-dose',name:type?.name});}
+    damage=attachBiochemicalEffect(damage,type);
+    if(gyrocShotshellExcluded(type)){damage.nativeSafe=false;damage.status="unresolved";damage.reason=GYROC_SHOTSHELL_REASON;}
     const diceAdds = applyDamageDiceAdds(damage, { policy: diceAddsPolicy,
       mode: this.catalogs?.getMode?.(confirmedBinding?.modeId),
       book: this.catalogs?.getEquipmentForMode?.(confirmedBinding?.modeId)?.source });
-    if (damage.nativeSafe) effective.damage = laser?raw.damage:damage.formula;
-    const weaponReliability=this.catalogs?.getMode(confirmedBinding?.modeId)?.weaponReliability;
+    if(damage.rules.gyrojetRange?.resultFormula){const r=damage.rules.gyrojetRange;r.resultFormula=r.damageDivisor>1?'floor(('+damage.formula.replace(/\s+pi.*$/,'')+')/'+r.damageDivisor+') '+damage.formula.match(/pi.*$/)[0]:damage.formula;}
+    if (damage.nativeSafe) effective.damage = damage.rules.exoticBeam?damage.effectiveChanges.damage:laser?raw.damage:(damage.rules.sonicNeural||damage.rules.plasmaParticle||damage.rules.laserModifications)&&damage.rules.resistanceEffect?damage.effectiveChanges.damage:damage.formula;
+    const weaponReliability=(damage.rules.plasmaParticle?.hotshot||damage.rules.plasmaGun?.hot)?{malf:14,source:'UT133'}:this.catalogs?.getMode(confirmedBinding?.modeId)?.weaponReliability;
     transformations.push(...damage.transformations.map(entry => ({ ...entry, order: transformations.length + entry.order })));
     return immutableCopy({ version: SHOT_PROFILE_VERSION, actorId, weaponId,
       mode: { uuid: attack?.uuid ?? null, path: attack?.path ?? null,

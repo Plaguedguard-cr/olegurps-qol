@@ -1,3 +1,4 @@
+import { exoticBeamWeapon } from '../ut-exotic-beam-source.js';
 import { weaponPowerProfile, readWeaponBattery, weaponPowerReason, weaponPowerEvidence,
   validateWeaponExecution, sameBattery, weaponBatteryHTML, weaponPowerCost } from './weapon-power.js';
 import { lpProfile, lpFireMode, LP_FIRE_MODES, lpFuelReason, readLPFuel, lpText, lpFeedReason } from './ut-liquid-propellant.js';
@@ -8,8 +9,12 @@ import { useSealedResource } from './ammunition-resource-contract.js';
 import { beamWeapon } from '../ut-beam-source.js';
 import { htLaserWeapon } from '../ht-laser-source.js';
 import { utDazzlerWeapon } from '../ut-dazzler-source.js';
+import { electrolaserWeapon } from '../ut-electrolaser-source.js';
+import { microwaveWeapon } from '../ut-microwave-source.js';
+import { ppbWeapon } from '../ut-plasma-particle-source.js';
+import { sonicNeuralWeapon } from '../ut-sonic-neural-source.js';
 
-export const resourceOnlyWeapon=weapon=>beamWeapon(weapon)??htLaserWeapon(weapon)??utDazzlerWeapon(weapon);
+export const resourceOnlyWeapon=weapon=>beamWeapon(weapon)??htLaserWeapon(weapon)??utDazzlerWeapon(weapon)??electrolaserWeapon(weapon)??microwaveWeapon(weapon)??ppbWeapon(weapon)??sonicNeuralWeapon(weapon)??exoticBeamWeapon(weapon);
 export function weaponResourceLabel(weapon){
   if(!resourceOnlyWeapon(weapon))return null;
   const p=weaponPowerProfile(weapon);if(!p)return null;
@@ -76,7 +81,8 @@ export function consumeWeaponResource(weapon,amount,profile=weaponResourceProfil
   if(profile?.kind==='fuel')weapon.lpFuel.remainingUnits-=amount*LP_FIRE_MODES[lpFireMode(weapon)].units;
   else if(profile){
     if(profile.oneShot)useSealedResource(weapon[profile.stateKey]);
-    weapon[profile.stateKey].charge-=weaponPowerCost(weapon,amount,profile);
+    if(beamWeapon(weapon))weapon[profile.stateKey].charge=(Math.round(weapon[profile.stateKey].charge*10)-Math.round(weaponPowerCost(weapon,amount,profile)*10))/10;
+    else weapon[profile.stateKey].charge-=weaponPowerCost(weapon,amount,profile);
   }
 }
 export function validateWeaponResources(weapon,profile,ammunition=null) {
