@@ -175,8 +175,21 @@ test('HT92 P11 uses sealed five-shot clusters; partial refill/unload/delete reje
   for(const [op,args]of [['load',{ammoKey:type.key,magazineId:'m',amount:1}],['unload',{magazineId:'m',amount:4}],['delete-magazine',{magazineId:'m'}]]){
     const before=JSON.stringify(w);assert.throws(()=>run(op,args),/SealedResource/);assert.equal(JSON.stringify(w),before);
   }
-  for(let i=0;i<4;i++)run('consume',{magazineId:'m',amount:1});assert.equal(inventoryTotal(w.ammunitionInventory),5);
+  for(let i=0;i<4;i++){
+    run('consume',{magazineId:'m',amount:1});
+    assert.equal(w.ammunitionInventory.magazines[0].rounds,3-i);
+    assert.equal(w.ammunitionInventory.magazines[0].sealedUsed,true);
+  }
+  assert.equal(inventoryTotal(w.ammunitionInventory),5);
+  const spent=JSON.stringify(w);
+  assert.throws(()=>run('load',{ammoKey:type.key,magazineId:'m',amount:5}),/SealedResourceSpent/);
+  assert.throws(()=>run('consume',{magazineId:'m',amount:1}),/InsufficientRounds/);
+  assert.equal(JSON.stringify(w),spent);
   run('delete-magazine',{magazineId:'m'});assert.equal(inventoryTotal(w.ammunitionInventory),5);
+  run('add-magazines',{capacity:5,amount:1});run('load',{ammoKey:type.key,magazineId:'m',amount:5});
+  assert.equal(w.ammunitionInventory.magazines[0].sealedUsed,undefined);
+  assert.equal(w.ammunitionInventory.magazines[0].rounds,5);
+  assert.equal(w.ammunitionInventory.stocks[0].rounds,0);
 });
 test('ordinary magazines still return rounds safely; labels never create a resource contract',()=>{
   const {type,w,run}=unit('ht_7_62x39mm');type.name='P11 AT4 HAFLA';assert.equal(ammunitionResourceContract(type),null);

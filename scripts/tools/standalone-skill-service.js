@@ -25,13 +25,14 @@ function learnedSkills(actor) {
   return result;
 }
 const sameSkill = (left, right) => left.family === right.family && left.specialty === right.specialty;
-const technical = new Set(["guns", "beam weapons", "gunner", "artillery", "liquid projector"]);
+const technical = new Set(["guns", "beam weapons", "gunner", "artillery", "liquid projector", "explosives", "chemistry"]);
 function tlPenalty(source, target) {
   if (source.family.endsWith("!")) return 0;
   if (!technical.has(target.family)) return 0;
   if (source.tl === null || target.tl === null) return source.tl === target.tl ? 0 : null;
   const difference = target.tl - source.tl;
-  if (target.family !== "artillery") return -Math.abs(difference); // DX-based technological skills, B168.
+  if (!["artillery","explosives","chemistry"].includes(target.family)) return -Math.abs(difference); // DX-based technological skills, B168.
+  if(target.family!=='artillery'&&difference>=4)return null;
   if (difference > 0) return -5 * difference;
   return difference < 0 ? -(2 * Math.abs(difference) - 1) : 0;
 }
@@ -41,6 +42,18 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   const explicit = clean(mode?.overrides?.governingSkill);
   const sourceSkill = snapshot?.governing_skill?.skill;
   const alternatives = snapshot?.governing_skill?.candidates ?? snapshot?.governing_skill_selection?.candidates;
+  if(snapshot?.governing_skill_selection?.strategy==='best-available-unmodified' && alternatives?.length>1) {
+    const permitted=alternatives.map(s=>parseStandaloneSkill(s.name,s.specialization));
+    const selected=explicit&&parseStandaloneSkill(explicit);
+    if(explicit&&(!selected||!permitted.some(s=>sameSkill(s,selected))))return {
+      resolved:false,level:null,tlPolicy,reason:'Выберите один из опубликованных навыков этого режима.'};
+    if(!explicit) {
+      const best=alternatives.map(s=>resolveStandaloneSkill({actor,record,mode:{...mode,overrides:{...mode.overrides,governingSkill:s.name+(s.specialization?' ('+s.specialization+')':'')}},user})).filter(s=>s.resolved).sort((a,b)=>b.level-a.level)[0];
+      if(best)return {...best,
+        selection:'best-available-unmodified'};
+      return {resolved:false,level:null,tlPolicy,reason:'Нет изученного допустимого навыка: '+alternatives.map(s=>s.name).join(' / ')+'.'};
+    }
+  }
   if (!explicit && !clean(sourceSkill?.name) && Array.isArray(alternatives) && alternatives.length > 1)
     return { resolved: false, level: null, tlPolicy, reason: "Допустимы несколько навыков: " +
       alternatives.map(s => clean(s?.name) + (s?.specialization ? " (" + clean(s.specialization) + ")" : "")).filter(Boolean).join(", ") +
@@ -73,8 +86,9 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   // A manual replacement without catalog rules may use an exact learned skill only.
   const original = snapshot?.governing_skill?.skill;
   const originalIdentity = original && parseStandaloneSkill(original.name, original.specialization);
+  const alternativeDefaults=snapshot?.governing_skill_selection?.strategy==='best-available-unmodified'?snapshot.governing_skill_selection.candidate_defaults?.find(s=>{const p=parseStandaloneSkill(s.name,s.specialization);return p&&sameSkill(p,required);})?.defaults:null;
   const rules = attributeOnly ? snapshot.governing_skill_selection.attribute_defaults.map(r=>({type:canonical(r.attribute),modifier:r.modifier})) :
-    !explicit || originalIdentity && sameSkill(originalIdentity, required) ? snapshot?.defaults ?? [] : [];
+    alternativeDefaults??(!explicit || originalIdentity && sameSkill(originalIdentity, required) ? snapshot?.defaults ?? [] : []);
   const candidates = [];
   for (const rule of rules) {
     const modifier = Number(rule.modifier);

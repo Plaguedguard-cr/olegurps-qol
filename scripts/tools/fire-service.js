@@ -1,3 +1,5 @@
+import { parseRecoil, recoilNotApplicable, validateAttackRecoil } from './weapon-recoil.js';
+export { parseRecoil } from './weapon-recoil.js';
 import { validateProximityShot } from './ut-he-proximity.js';
 import { calculateHitsFromMargin, executePreparedGgaRoll } from "./prepared-gga-roll.js";
 import { f4Text } from "./ammunition-f4-localization.js";
@@ -182,13 +184,6 @@ export function parseHalfDamageRange(value) {
   const range = Number(match[1].replace(",", "."));
   return Number.isFinite(range) && range > 0 ? range : null;
 }
-export function parseRecoil(value, { projectileKind = null } = {}) {
-  const match = String(value ?? "").trim().match(/^([1-9]\d*)(?:\s*\/\s*([1-9]\d*))?$/);
-  if (!match) return null;
-  const ordinary = Math.max(1, Number(match[1]));
-  if (!match[2]) return ordinary;
-  return projectileKind === "shot" ? ordinary : projectileKind === "slug" ? Number(match[2]) : null;
-}
 
 export function resolvePhysicalFireDistance({ selectedDistance, targetDistance, manualRangeSelected = false } = {}) {
   const selected = selectedDistance === null || selectedDistance === undefined || selectedDistance === ""
@@ -258,7 +253,7 @@ export class FireService {
   }
 
   parseAttackRcl(attack, options = {}) {
-    return parseRecoil(attack?.rcl, { projectileKind: attack?.ammunitionProjectileKind, ...options });
+    return recoilNotApplicable(attack) ? null : parseRecoil(attack?.rcl, { projectileKind: attack?.ammunitionProjectileKind, ...options });
   }
 
   calculateRapidFireBonus(shots) {
@@ -415,6 +410,7 @@ export class FireService {
     if (String(attackProfile.effective.rcl ?? "").includes("/") &&
         parseRecoil(attackProfile.effective.rcl, { projectileKind: attackProfile.effective.ammunitionProjectileKind }) === null)
       throw new Error(attackProfileError("ProjectileRclRequired"));
+    const activeRecoil=validateAttackRecoil(attack,attackProfile,options.rcl);
     const attackId = options.attackId ?? newAttackId();
     const shotSnapshot = options.shotSnapshot ?? pendingShotSnapshot(attackProfile, attackId,
       { resourceTiming: options.resourceTiming ?? "external", resourceReceiptId: options.resourceReceiptId ?? null });
@@ -525,12 +521,13 @@ export class FireService {
         shotSnapshot,
         baseSkill: options.baseSkill,
         baseSkillName: options.baseSkillName,
+        combatType: options.combatType??'ranged',
         combatCalculation: options.combatCalculation ?? null,
         effectiveSkill: options.effectiveSkill,
         physicalShots: options.physicalShots,
         effectiveRoF: options.effectiveRoF,
         extremelyClose: options.extremelyClose,
-        rcl: options.rcl,
+        rcl: activeRecoil,
         maximumHits: options.maximumHits,
         contextLabel: options.contextLabel,
         consumeAction: options.consumeAction !== false,

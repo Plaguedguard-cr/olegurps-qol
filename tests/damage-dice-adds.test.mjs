@@ -53,7 +53,8 @@ for(const book of ['HT','UT','LT'])test(book+' confirmed ranged firearm normaliz
   assert.equal(catalogs.getEquipmentForMode(modeId).source,book);
   const resolver=new AttackProfileResolver({catalogs,compatibility});
   const ammunition=book==='UT'?{kind:'physical-magazine',available:1,total:1,
-    type:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:'15mm_clp'}}:null;
+    type:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:'15mm_clp'}}:book==='LT'?{kind:'physical-magazine',available:1,total:1,
+      type:{source:'catalog',book:'lt',kind:'ammo-item',ammoId:'lt_arquebus_bullet_lt93',recipe:{version:1,variantId:'lt_early_load',parameters:{accounting:'prepared',loading:'loose',powder:'serpentine'}}}}:null;
   const p=resolver.resolve({attack:{data:{damage:'4d+5 pi'}},ammunition,binding:{status:'confirmed',binding:{confirmed:true,modeId}}});
   assert.equal(p.damage.formula,'5d+1 pi');assert.equal(p.effective.damage,'5d+1 pi');assert.equal(p.damage.components[0].formula,'5d+1 pi');
   assert.equal(p.diceAdds.enabled,true);assert.equal(p.diceAdds.applied,true);

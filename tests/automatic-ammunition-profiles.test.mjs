@@ -1,4 +1,5 @@
 import test from "node:test";
+import {assertProjectedUTCatalog} from './helpers/ut-projected-catalog-contract.mjs';
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { CatalogService, CATALOG_DEFINITIONS } from "../scripts/catalog-service.js";
@@ -55,12 +56,13 @@ test("four-catalog audit is read-only and distinguishes complete data from unkno
   assert.deepEqual(r.ht,{combinations:1022,complete:10,incomplete:1006,incompatible:6,rules:{undetermined:1016,incompatible:6}});
   // UT-DATA transcribed two previously absent UT142 weapons; the imported GCS stays intact.
   assert.equal(data.weapons.equipment.length,1152);
-  assert.equal(r.catalogs.weapons.equipment,1154);assert.equal(r.catalogs.lt.items,134);
+  const projected=assertProjectedUTCatalog(catalogs,data.weapons,data.ut);
+  assert.equal(r.catalogs.weapons.equipment,projected.equipment);assert.equal(r.catalogs.lt.items,300);
   const equipment=catalogs.getCatalog("weapons").equipment;
   const sourceIds=new Set(data.weapons.equipment.map(e=>e.equipment_id));
   const additions=equipment.filter(e=>!sourceIds.has(e.equipment_id));
   assert.deepEqual(additions.map(e=>e.equipment_id).sort(),
-    ["eUT2007GaussNeedler3mm","eUT2007GaussPDW4mm"].sort());
+    projected.extraEquipment);
   assert.equal(new Set(equipment.map(e=>e.equipment_id)).size,equipment.length);
   const modeIds=equipment.flatMap(e=>e.modes.map(m=>m.weapon_mode_id));
   assert.equal(new Set(modeIds).size,modeIds.length);
@@ -81,9 +83,9 @@ test("four-catalog audit is read-only and distinguishes complete data from unkno
     assert.equal(aphex.status,"incompatible");
     assert.ok(aphex.reasons.some(reason=>reason.code==="SIZE_RESTRICTION"));
   }
-  assert.equal(r.catalogs.ht.items,263);assert.equal(r.catalogs.ut.families,36);assert.equal(r.catalogs.ut.aphexTableRows,7);
+  assert.equal(r.catalogs.ht.items,263);assert.equal(r.catalogs.ut.families,projected.families);assert.equal(r.catalogs.ut.aphexTableRows,7);
   assert.deepEqual(Object.fromEntries(Object.entries(r.ut).filter(([k])=>k!=="reasons")),
-    {combinations:87,compatible:52,undetermined:6,incompatible:29,sourceRowsMatched:52,automaticProfiles:0});
+    {combinations:108,compatible:52,undetermined:6,incompatible:50,sourceRowsMatched:52,automaticProfiles:0});
   // All four reviewed Gauss modes are too small for APHEX; retained source
   // conflicts do not override the implemented physical size restriction.
   for(const mid of ["WJstukbcBFPxQFtJE","WbvkCgoaLuWViWyKK"]) {
@@ -92,7 +94,7 @@ test("four-catalog audit is read-only and distinguishes complete data from unkno
     assert.ok(result.reasons.some(reason=>reason.code==="SIZE_RESTRICTION"));
   }
   assert.equal(r.catalogs.weapons.candidates,667);assert.equal(r.catalogs.weapons.payloadTemplates,122);
-  assert.equal(r.catalogs.lt.projectileOptions,38);assert.equal(r.catalogs.ut.warheads,37);
+  assert.equal(r.catalogs.lt.projectileOptions,42);assert.equal(r.catalogs.ut.warheads,37);
   assert.ok(Object.values(r.catalogs).every(c=>c.structuredProfiles===0));assert.equal(JSON.stringify(data),before);
   assert.ok(Object.isFrozen(r));
 });

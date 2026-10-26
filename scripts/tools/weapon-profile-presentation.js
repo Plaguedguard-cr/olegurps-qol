@@ -6,6 +6,11 @@ export function attackProfilePresentation(profile) {
   const damage=profile?.damage;
   const etc=profile?.weaponConfiguration?.variant==='etc',lp=profile?.weaponConfiguration?.variant==='lp';
   if(!damage?.nativeSafe)return {etc,lp,damageText:text('Unknown')};
+  if(profile.attackResult)return {etc,lp,damageText:profile.attackResult.label+' — без обычного урона'};
+  if(damage.rules?.ltBow){
+    const b=damage.rules.ltBow,linked=(damage.components??[]).filter(c=>c.role==='linked'&&c.status==='resolved').map(c=>'Linked '+c.formula);
+    return {etc,lp,damageText:[(b.flightDamage==='zero'?'Урон 0 — Flight за ½D':text('Damage')+' '+damage.formula+(b.flight?' /2 результата':'')),...linked].join(' · ')};
+  }
   if(damage.rules?.chemical){
     const checks=[...new Set(damage.rules.chemical.checks.map(c=>'HT'+(c.modifier<0?'−'+Math.abs(c.modifier):c.modifier>0?'+'+c.modifier:'')))];
     const linked=(damage.components??[]).filter(c=>c.role==='linked'&&c.status==='resolved').map(c=>c.formula);

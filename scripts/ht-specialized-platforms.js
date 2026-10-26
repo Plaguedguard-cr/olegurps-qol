@@ -1,4 +1,7 @@
 import {HT_TEAR_SPRAY_MODE} from './tools/biochemical-integration.js';
+import {ltFlameProfile} from './lt-flame-source.js';
+import {sonicShuriken} from './ut-sonic-shuriken-source.js';
+import {nextElevenPlatform} from './ut-next-eleven-source.js';
 import {fluidProfile} from './ut-fluid-source.js';
 import { exoticBeamProfile } from './ut-exotic-beam-source.js';
 import { htPreGaussPlatform } from './ht-pre-gauss-profiles.js';
@@ -21,6 +24,10 @@ export const HOST_BULK_ADJUSTMENTS = Object.freeze({
   WHlBefAVM5F3s_Fhx:-1,WV56lTDugarCzOy27:-1,WGZlqJxbZOxd6FR4h:-2
 });
 export function specializedPlatform(mode, source) {
+  const ltFlame=source==='LT'&&ltFlameProfile(mode?.weapon_mode_id);
+  if(ltFlame)return {kind:'lt-flame',source:ltFlame.source,accNotApplicable:true,rclNotApplicable:true,...(ltFlame.jet?{rofJet:true}:{hitLocationNotApplicable:true})};
+  if(source==='UT'&&sonicShuriken(mode?.weapon_mode_id))return {kind:'sonic-shuriken',rclNotApplicable:true,source:'UT166'};
+  if(source==='UT'&&nextElevenPlatform(mode))return nextElevenPlatform(mode);
   if(source==='HT'&&mode?.weapon_mode_id===HT_TEAR_SPRAY_MODE)return {kind:'ht-tear-spray',source:'HT180',instruction:'\u0421\u0442\u0440\u0443\u044f +2 \u043a \u0430\u0442\u0430\u043a\u0435; \u043b\u0438\u0446\u043e \u22125. Reach1\u20132; 20 \u0437\u0430\u0440\u044f\u0434\u043e\u0432. \u0424\u0430\u043a\u0442\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u0432\u043e\u0437\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u044f\u0435\u0442\u0441\u044f \u0432\u0440\u0443\u0447\u043d\u0443\u044e.'};
   const fluid=source==='UT'&&fluidProfile(mode?.weapon_mode_id);
   if(fluid&&!fluid.underbarrel)return {kind:'fluid-projector',source:'UT134',hitLocationNotApplicable:true,...(!fluid.vortex?{rofJet:true,accNotApplicable:true}:{})};

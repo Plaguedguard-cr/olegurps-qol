@@ -8,8 +8,12 @@ import { MeleeAttackExecutionApp, executeMeleeAttackSnapshot } from "./melee-att
 import { getMeleeAttackSlots } from "./melee-attack-slots.js";
 import { createMeleeTargetedAttackContext } from "./targeted-attack-service.js";
 import { openMeleeAttackEditor } from "./melee-attack-editor.js";
+import { openStrengthEditor } from './strength-editor-app.js';
+import { isStrengthUpdate, sameStrengthActor } from './strength-service.js';
 import { openStandaloneWeaponLibrary } from "./standalone-weapon-configuration.js";
-import { standaloneText } from "./standalone-weapon-service.js";
+import { StandaloneWeaponDraft, StandaloneWeaponService } from "./standalone-weapon-service.js";
+import { HT_TEAR_SPRAY_MODE } from './biochemical-integration.js';
+import { inferMeleeDamageModel } from './melee-damage-model.js';
 import { readStandaloneAttack, listStandaloneAttacks } from "./standalone-attack-service.js";
 import { hasWeaponBondPerk } from "./weapon-bond-service.js";
 import {
@@ -359,7 +363,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
       this.attack = { ...this.attack, level: null, readinessReason: "Автономный режим удалён. Выберите другую атаку." };
       return;
     }
-    this.sourceAttack = this.attack = current;
+    this.sourceAttack = current;
+    this.attack = applyMeleeAttackOverride(current,this._meleeState);
     this.targetedAttackContext = createMeleeTargetedAttackContext({ actor: this.actor, attack: current });
   }
 
@@ -589,15 +594,16 @@ export class MeleeAssistantApp extends FirePreparationApp {
             <div class="gam-melee-attack-row">
               <select name="meleeAttackKey" class="gam-melee-attack-select" aria-label="Melee attack">${this._buildAttackOptions()}</select>
               <button type="button" class="gam-melee-icon-button" data-melee-action="edit" title="Редактировать параметры" aria-label="Редактировать параметры"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" class="gam-melee-icon-button" data-melee-action="strength" title="Временные поправки силы">ST</button>
+              <button type="button" class="gam-melee-icon-button" data-melee-action="standalone-library" title="Добавить оружие из библиотеки" aria-label="Добавить оружие из библиотеки">+</button>
               <button type="button" class="gam-melee-damage-button" data-melee-action="damage"><i class="fa-solid fa-burst"></i> Урон</button>
               <label class="gam-melee-dice-adds" title="Преобразование кубиков и прибавок, Basic Set, стр. 269">
                 <input type="checkbox" name="dicePlusAdds" ${fireState.dicePlusAdds ? "checked" : ""}>
-                <span>Кубики и прибавки</span>
+                <span>Dices&amp;Adds</span>
               </label>
             </div>
             <p class="gam-fire-attack-stats" data-melee-attack-meta title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>
             <div data-melee-governing>${this._buildGoverningSkillSelector(fireState)}</div>
-            <button type="button" data-melee-action="standalone-library">${escapeHTML(standaloneText("Library"))}</button>
           </div>
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
@@ -609,25 +615,26 @@ export class MeleeAssistantApp extends FirePreparationApp {
         <div class="gam-fire-layout">
           <div class="gam-fire-left gam-melee-left">
             <div class="gam-fire-fields gam-melee-fields">
-              <label class="gam-fire-field">
+              <label class="gam-fire-field gam-melee-manual">
                 <span>Бонусы/штрафы</span>
                 <input type="number" name="manualModifier" value="${escapeHTML(fireState.manualModifier)}" placeholder="0" step="1">
               </label>
-              <div class="gam-fire-field gam-fire-field-checkbox">
+              <div class="gam-fire-field gam-fire-field-checkbox gam-melee-move">
                 <span>Движение и атака</span>
                 <input type="checkbox" name="moveAndAttack" aria-label="Движение и атака" ${fireState.moveAndAttack ? "checked" : ""} ${fireState.rapidStrike ? "disabled" : ""}>
               </div>
               <div class="gam-fire-field gam-melee-rapid-strike">
-                <span>Rapid Strike</span>
-                <span class="gam-melee-rapid-controls">
+                <label class="gam-melee-maneuver-toggle">
                   <input type="checkbox" name="rapidStrike" aria-label="Rapid Strike" ${fireState.rapidStrike ? "checked" : ""}>
-                </span>
+                  <span>Rapid Strike</span>
+                </label>
               </div>
               <div class="gam-attack-slots gam-melee-attack-slots" data-melee-attack-slots></div>
               <div class="gam-fire-field gam-melee-all-out">
-                <span>Тотальная атака</span>
                 <span class="gam-melee-all-out-controls">
+                  <label class="gam-melee-maneuver-toggle">
                   <input type="checkbox" name="allOutAttack" aria-label="Тотальная атака" ${fireState.allOutAttack ? "checked" : ""}>
+                  <span>Тотальная атака</span></label>
                   <select name="allOutAttackMode" aria-label="Вариант тотальной атаки" ${fireState.allOutAttack ? "" : "disabled"}>
                     <option value="determined" ${fireState.allOutAttackMode === "determined" ? "selected" : ""}>Точная</option>
                     <option value="strong" ${fireState.allOutAttackMode === "strong" ? "selected" : ""}>Сильная</option>
@@ -682,12 +689,13 @@ export class MeleeAssistantApp extends FirePreparationApp {
   _registerTargetHook() {}
 
   _onActorUpdate(updated, changes) {
-    if (updated?.id !== this.actor?.id) return;
+    if (!sameStrengthActor(updated,this.actor)) return;
     if (isAmmunitionHistoryOnlyUpdate(changes)) return;
-    if (!this.sourceAttacks?.some(attack => attack.standaloneRef)) return super._onActorUpdate(updated, changes);
+    if(isStrengthUpdate(changes)){void this._updateEffectiveDamagePreview();return;}
     this._captureFields();
     this.sourceAttacks = [...this.sourceAttacks.filter(a => !a.standaloneRef), ...listStandaloneAttacks(this.actor, "melee")];
     this._refreshStandaloneAttack();
+    this.targetedAttackContext = createMeleeTargetedAttackContext({actor:this.actor,attack:this.attack});
     void this.render({ force: true });
   }
 
@@ -791,11 +799,13 @@ export class MeleeAssistantApp extends FirePreparationApp {
     return prepareEffectiveMeleeDamage(this._getEffectiveDamageOptions());
   }
 
-  _showEffectiveDamage(preparedDamage) {
+  _showEffectiveDamage(preparedDamage,reason='Формула урона не определена') {
     this._effectiveDamage = preparedDamage;
+    const button=this.element?.querySelector('[data-melee-action="damage"]');
+    if(button){button.disabled=!preparedDamage;button.title=preparedDamage?'Бросить текущий урон':reason;}
     const meta = this.element?.querySelector("[data-melee-attack-meta]");
     if (!meta) return;
-    const text = this._buildAttackStats(preparedDamage?.formula ?? this.attack?.damage);
+    const text = this._buildAttackStats(preparedDamage?.formula ?? reason);
     meta.textContent = text;
     meta.title = text;
   }
@@ -807,7 +817,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       if (revision === this._damagePreviewRevision) this._showEffectiveDamage(preparedDamage);
     } catch (error) {
       if (revision === this._damagePreviewRevision) {
-        this._showEffectiveDamage(null);
+        this._showEffectiveDamage(null,error.message);
         console.warn("Помощник ближнего боя damage preview:", error);
       }
     }
@@ -891,12 +901,13 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async _editAttack() {
-    if (this.attack?.standaloneRef) {
+    if(this.attack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE){
       await openStandaloneWeaponLibrary({actor:this.actor,type:'melee'});
       const key=this.selectedAttackKey;this.selectedAttackKey='';await this._selectAttack(key);return;
     }
     const result = await openMeleeAttackEditor({
       DialogV2: foundry.applications.api.DialogV2,
+      actor: this.actor,
       attack: this.attack,
       escapeHTML,
       weaponBondAvailable: hasWeaponBondPerk(this.actor),
@@ -910,10 +921,18 @@ export class MeleeAssistantApp extends FirePreparationApp {
         damage: String(this.attack.damage ?? "").trim(),
         reach: String(this.attack.reach ?? "").trim(),
         parry: String(this.attack.parry ?? "").trim() };
-      if (Object.keys(current).some(key => current[key] !== result.value[key])) {
+      const modelChanged=result.value.damageModel&&JSON.stringify(this.attack.damageModel??inferMeleeDamageModel(this.attack.damage))!==JSON.stringify(result.value.damageModel);
+      if (Object.keys(current).some(key => current[key] !== result.value[key])||modelChanged||
+        (this.attack.applyArmST===true)!==(result.value.applyArmST===true)) {
         setMeleeAttackOverride(this._meleeState, this.sourceAttack, result.value);
       }
-      setMeleeWeaponBond(this._meleeState, this.sourceAttack, result.weaponBond);
+      if(!this.attack.standaloneRef)setMeleeWeaponBond(this._meleeState, this.sourceAttack, result.weaponBond);
+      else if(hasWeaponBondPerk(this.actor)&&result.weaponBond!==getMeleeAttackSettings(this._meleeState,this.sourceAttack).weaponBond){
+        const catalogs=globalThis.OleGURPSQOL?.catalogs,service=new StandaloneWeaponService(this.actor,catalogs);
+        const existing=service.get(this.attack.standaloneRef.weaponId);
+        const draft=new StandaloneWeaponDraft({actor:this.actor,catalogs,type:'melee',existing});
+        draft.weaponBond=result.weaponBond;draft.weaponBondChanged=true;await service.save(draft);
+      }
     }
     await this._persistState();
     const currentKey = this.selectedAttackKey;
@@ -1224,6 +1243,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     event.preventDefault();
     event.stopPropagation();
     const action = button.dataset.meleeAction;
+    if (action === "strength") return openStrengthEditor(this.actor);
     if (action === "standalone-library") return openStandaloneWeaponLibrary({ actor: this.actor, type: "melee" });
     if (action === "blind-fighting") return this._checkBlindFighting(button);
     if (action === "cancel") return this.close();

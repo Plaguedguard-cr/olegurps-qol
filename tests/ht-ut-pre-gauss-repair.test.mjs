@@ -51,7 +51,9 @@ test('mixed incomplete/ambiguous/malformed skill records retain the valid UT att
   draft.selectModel(catalogs.getEquipmentForMode('WQiw6nornpsdGHCov').equipment_id);
   const bola=await service.save(draft),original=JSON.stringify(catalogs.getMode('WQiw6nornpsdGHCov'));
   let attacks=listStandaloneAttacks(fx.actor,'ranged');assert.equal(attacks.length,2);
-  assert.match(attacks.find(a=>a.standaloneRef.weaponId===bola.id).readinessReason,/несколько навыков/);
+  const bolaAttack=attacks.find(a=>a.standaloneRef.weaponId===bola.id);
+  assert.equal(bolaAttack.readinessReason,null);assert.equal(bolaAttack.level,14);
+  assert.equal(bolaAttack.standaloneRef.governingSkill.family,'sling');assert.equal(bolaAttack.standaloneRef.governingSkill.source,'attribute-default');
   assert.equal(attacks.find(a=>a.standaloneRef.weaponId===fx.record.id).governingSkillBinding.weaponId,fx.record.id);
   assert.equal(attacks.find(a=>a.standaloneRef.weaponId===fx.record.id).readinessReason,null);
   fx.actor.system.skills={s:{name:'Sling',level:17,points:1}};
@@ -63,6 +65,12 @@ test('mixed incomplete/ambiguous/malformed skill records retain the valid UT att
   assert.match(resolveStandaloneSkill({actor:fx.actor,record:bola,mode:absent}).reason,/не определён/);
   const flag=fx.actor.getFlag('olegurps-qol','standaloneWeapons');
   const bad=flag.weapons.find(w=>w.id===bola.id);bad.modes[0].snapshot.governing_skill={status:'resolved',skill:{name:'Bolas'}};bad.modes[0].snapshot.defaults={invalid:true};
+  await fx.actor.setFlag('olegurps-qol','standaloneWeapons',flag);
+  // Confirmed old LT source metadata is repaired in the detached P3 source view.
+  // The persisted malformed snapshot remains untouched; unknown revisions still diagnose.
+  attacks=listStandaloneAttacks(fx.actor,'ranged');assert.equal(attacks.find(a=>a.standaloneRef.weaponId===bola.id).level,17);
+  assert.deepEqual(fx.actor.getFlag('olegurps-qol','standaloneWeapons').weapons.find(w=>w.id===bola.id).modes[0].snapshot.defaults,{invalid:true});
+  bad.source.sourceHash='unknown-original-revision';bad.modes[0].snapshot.governing_skill_selection={strategy:'fixed',candidates:[]};
   await fx.actor.setFlag('olegurps-qol','standaloneWeapons',flag);
   const savedConsole=console.error,logs=[];console.error=(...v)=>logs.push(v);
   try{attacks=listStandaloneAttacks(fx.actor,'ranged');}finally{console.error=savedConsole;}

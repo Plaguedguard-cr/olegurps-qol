@@ -1,19 +1,20 @@
 import { moduleText } from '../localization.js';
+import {utSwarmType} from '../ut-swarm-source.js';
 
 // Presentation only: never read current stocks, recalculate damage or interpret user prose.
 const unique = values => [...new Set(values.filter(Boolean))];
 const text = key => moduleText('OleGURPS.UTPayload.' + key);
 export function compactAmmoSource(value) {
   const result = [];
-  for (const match of String(value ?? '').matchAll(/(Ultra-Tech(?:\s+2007)?|High-Tech|UT|HT)\s*,?\s*(?:pp?\.\s*)?(\d+(?:\s*[-–]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–]\s*\d+)?)*)/g)) {
-    result.push((/Ultra|UT/.test(match[1]) ? 'UT' : 'HT') + match[2].replace(/\s/g, '').replaceAll('-', '–'));
+  for (const match of String(value ?? '').matchAll(/(Ultra-Tech(?:\s+2007)?|High-Tech|Low-Tech|UT|HT|LT|B)\s*,?\s*(?:pp?\.\s*)?(\d+(?:\s*[-–]\s*\d+)?(?:\s*,\s*\d+(?:\s*[-–]\s*\d+)?)*)/g)) {
+    result.push((/Ultra|UT/.test(match[1]) ? 'UT' : /High|HT/.test(match[1])?'HT':/Low|LT/.test(match[1])?'LT':'B') + match[2].replace(/\s/g, '').replaceAll('-', '–'));
   }
   return unique(result).join('; ');
 }
 const utSources = {
   ut_aphc:'UT152',ut_apds:'UT152',ut_apep:'UT152',ut_hp:'UT154',ut_shotshell:'UT154',
   ut_drugged_dart:'UT139,161',ut_drugged_ice:'UT140',ut_paint:'UT139',ut_solid_slug:'UT139',
-  ut_biochemical_aerosol:'UT153',ut_biochemical_liquid:'UT153',ut_tangler:'UT155',ut_sefop:'UT146,154–155'
+  ut_biochemical_aerosol:'UT153',ut_biochemical_liquid:'UT153',ut_tangler:'UT155',ut_sefop:'UT146,154–155',ut_swarm:'UT156'
 };
 export function utBriefInstructions(variantId, { caliberMm, doses, ammunitionSupply, payload = {}, row = {}, source, rules = {} } = {}) {
   if(variantId==='ut_drugged_dart'&&(ammunitionSupply??rules.ammunitionSupply)?.supply==='external-prepared')return [
@@ -64,7 +65,8 @@ export function utBriefInstructions(variantId, { caliberMm, doses, ammunitionSup
       caliberMm === 100 ? 'Путы: ST60, DR20; +3 ST за слой. Освобождение: ST или Escape против ST пут.' :
       'Путы: ST15, DR5; +1 ST за слой. Освобождение: ST или Escape против ST пут.'
   };
-  const lines = [descriptions[id]];
+  const swarm=id==='swarm'?utSwarmType(payload.swarmType):null;
+  const lines = [descriptions[id],...(swarm?[swarm.brief+' '+text('SwarmManual')]:[])];
   if(id==='sefop'){
     const s=rules.manualSEFOP;
     lines.push(`Наведение и попадание — вручную: Artillery (Guided Missile), Homing ${s?.attack??''} ${s?.projectileSkill??''}.`);
@@ -77,7 +79,7 @@ export function utBriefInstructions(variantId, { caliberMm, doses, ammunitionSup
   if (id === 'message_psi_bomb') lines.push('Will−2: сообщение из Note и stun; провал 5+ — Moderate Pain на MoF минут после восстановления.');
   if (id === 'terror_psi_bomb') lines.push('Fright Check −5.');
   if (['psi_bomb','message_psi_bomb','terror_psi_bomb'].includes(id)) lines.push('Mind Shield помогает; Digital Mind и IQ0 не затрагиваются.');
-  return unique([...lines, utSources[variantId] ?? compactAmmoSource(source ?? rules.ammunitionSource)]);
+  return unique([...lines, ...(swarm?[swarm.source]:[]),utSources[variantId] ?? compactAmmoSource(source ?? rules.ammunitionSource)]);
 }
 
 export function htBrief(profile) {
@@ -127,6 +129,17 @@ export function htBrief(profile) {
 }
 
 export function ammunitionChatData(profile) {
+  if(profile?.damage?.rules?.sonicShuriken){
+    const f=profile.damage.rules.sonicFollowUp;
+    return {name:f?.name??'',lines:f?['Две дозы; follow-up — вручную после подтверждённого пробития.',...(f.brief?[f.brief]:[])]:[],
+      fields:f?.note?[{label:'Note',value:f.note}]:[],source:f?unique(['UT166',f.source]).join('; '):'UT166'};
+  }
+  if(profile?.damage?.rules?.robot){
+    const r=profile.damage.rules.robot,copy=structuredClone(profile);delete copy.damage.rules.robot;
+    const payload=ammunitionChatData(copy)??{lines:[],fields:[],source:''};
+    return {...payload,name:r.name,lines:[`Команды: Artillery (Guided Missile); поведение и попадание — вручную.`,...(r.id==='shuriken'?['Таран: половина обычного collision damage, cutting (B430); фактическую скорость определяют вручную.','C cell: 10 минут; возврат и замена батареи — вручную.']:[...(!profile.damage.formula?['Столкновение: HP робота и фактическая скорость, B430; модификаторы заряда применяются вручную.']:[]),...payload.lines])],source:[r.source,payload.source].filter(Boolean).join('; ')};
+  }
+  if(profile?.damage?.rules?.nextEleven)return {name:'',lines:profile.damage.support?.manual?.map(c=>c.text)??[],fields:[],source:profile.damage.rules.ammunitionSource};
   if(profile?.damage?.rules?.chemical){
     const rules=profile.damage.rules,c=rules.chemical,p=profile.ammunition?.recipe?.parameters??{},h=rules.manualHoming;
     const lines=[c.brief];
@@ -155,6 +168,9 @@ export function ammunitionChatData(profile) {
   const source = rules.ammunitionSource ?? ammo.recipe?.autoProfile?.source?.note ??
     ammo.recipe?.autoProfile?.definition?.source?.note ?? damage.transformations?.find(t => compactAmmoSource(t.source))?.source;
   let lines = ammo.book === 'ut' ? [] : htBrief(profile);
+  if(rules.ltBow)lines=rules.ltBow.brief??[];
+  if(rules.ltPersonal)lines=rules.ltPersonal.brief??[];
+  if(rules.ltEarly)lines=rules.ltEarly.brief??[];
   // Rebuild UT prose from numerical saved facts even for a historical, verbose snapshot.
   if (ammo.book === 'ut') {
     const facts = ammo.recipe?.autoProfile?.facts ?? {};
@@ -168,6 +184,7 @@ export function ammunitionChatData(profile) {
   if(profile.weaponConfiguration?.variant==='lp')lines.unshift(profile.weaponConfiguration.hearingModifier===-3?moduleText('OleGURPS.LP.Sound'):'LP '+(profile.weaponConfiguration.fireMode==='boosted'?'Boosted':'Standard')+' - UT139.');
   if(profile.weaponConfiguration?.variant==='etc') {lines.unshift('ETC — UT139.');}
   const fields = [];
+  if(utSwarmType(p.swarmType))fields.push({label:text('SwarmType'),value:utSwarmType(p.swarmType).name});
   if (p.note?.trim()) fields.push({label:text('Note'),value:p.note});
   if (radius?.applicable && Number.isFinite(radius.yards)) fields.push({label:radius.effectKind === 'illumination' ? text('Illumination') + ': ' + text('Radius') : text('Radius'),value:String(radius.yards) + (radius.origin === 'manual' ? ' (пользовательский)' : '')});
   if (p.savingThrow?.trim()) fields.push({label:text('SavingThrow'),value:p.savingThrow});

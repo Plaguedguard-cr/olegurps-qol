@@ -1,4 +1,10 @@
 import { CATALOG_DEFINITIONS } from "./catalog-service.js";
+import { ltBowPhysicalAdmission } from './lt-bow-source.js';
+import {isLTProcedureMode} from './lt-personal-source.js';
+import {ltEarlyPhysicalAdmission,ltEarlyProfile} from './lt-early-firearms-source.js';
+import {ltFlameProfile} from './lt-flame-source.js';
+import {ltArtilleryProfile,ltArtilleryFutureLoad} from './lt-artillery-source.js';
+import { LT_PHYSICAL_LOAD_RESTRICTIONS, LT_LEAD_BUNDLE_MODES, LT_OVERWEIGHT_MODES } from './lt-physical-ammunition-evidence.js';
 import { utCompatibilityDecision } from './ut-compatibility-policy.js';
 import { correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
 import { htIdentityNeedsReview } from "./ht-source-corrections.js";
@@ -83,7 +89,7 @@ export class AmmunitionCompatibilityService {
     if (!mode) return { error: reason("MODE_UNAVAILABLE", "Unknown mode ID or unavailable weapon catalog.") };
     if (!BOOKS.includes(book)) return { mode, equipment, book, error: reason("UNSUPPORTED_SOURCE", "Mode has no supported ammunition source.") };
     if (!links || !this.#index(book)) return { mode, equipment, book, error: reason("CATALOG_UNAVAILABLE", this.#catalogs.getStatus(book)?.unavailableReason ?? "Ammunition links are not available yet.") };
-    if (mode.role !== "attack" || mode.hidden || mode.combat_type !== "ranged") return { mode, equipment, book, links,
+    if (mode.role !== "attack" || mode.hidden || mode.combat_type !== "ranged"&&!isLTProcedureMode(mode)) return { mode, equipment, book, links,
       error: reason("UNSUPPORTED_MODE", "Only primary visible ranged attack modes can select ammunition; secondary effects are not ammunition.") };
     if (!(links.ammoItemIds.length || links.ammoFamilyIds.length)) return { mode, equipment, book, links,
       error: reason("NO_AMMUNITION_DATA", "No explicit ammunition link exists for this mode.") };
@@ -127,6 +133,7 @@ export class AmmunitionCompatibilityService {
   #check(ctx, entry, options) {
     const { record: r, kind } = entry;
     const fail = (code, message, status = "incompatible") => this.#result(ctx, entry, status, [reason(code, message)]);
+    if(ctx.book==='lt'&&ltFlameProfile(ctx.mode.weapon_mode_id)&&kind==='ammo-family')return fail('LT_FLAME_PHYSICAL_IDENTITY_REQUIRED','Нужна конкретная физическая партия огнемётного заряда; familyId не задаёт её состав.');
     if (ctx.book === "ut" && ctx.mode.ut_source_data?.source_conflict &&
         !['WbvkCgoaLuWViWyKK','WJstukbcBFPxQFtJE'].includes(ctx.mode.weapon_mode_id))
       return fail("UT_SOURCE_CONFLICT", moduleText("OleGURPS.UTData.SourceConflict"), "undetermined");
@@ -145,7 +152,26 @@ export class AmmunitionCompatibilityService {
       if (ids.includes(r.id)) {
         if (!reverse.some(mode => mode?.weapon_mode_id === ctx.mode.weapon_mode_id)) return fail("BROKEN_REVERSE_LINK", "Forward link lacks a validated reverse link.", "undetermined");
         if (r.rocket_contract?.compatible_equipment_ids && !r.rocket_contract.compatible_equipment_ids.includes(ctx.equipment.equipment_id)) return fail("PLATFORM_RESTRICTION", "Rocket contract excludes this equipment ID.");
-        if (ctx.book === "lt" && (r.requires_accessory || /^GM_/.test(r.status ?? ""))) return fail("LT_CONDITIONAL_AMMUNITION", r.status ?? "Required accessory is not confirmed.", "undetermined");
+        if (ctx.book === 'lt') {
+          if (kind === 'ammo-family') return this.#ltFamily(ctx, entry, options);
+            const early=ltEarlyPhysicalAdmission(ctx.mode.weapon_mode_id,r.id,kind,options.ltEarlyFit);
+            if(early)return this.#result(ctx,entry,early.status,early.reasons,{type:'lt-p4-physical-profile',source:'LT84-95'});
+          const bow=ltBowPhysicalAdmission(ctx.mode.weapon_mode_id,r.id,kind,options.ltBow);
+          if(bow&&(options.ltBow||!['lt_arrow_guide_dart','bow_arrow_guide_dart'].includes(r.id)))
+            return this.#result(ctx,entry,bow.status,bow.reasons,{type:'lt-p2-physical-profile',source:'LT74-78'});
+          const restriction = LT_PHYSICAL_LOAD_RESTRICTIONS.find(p => p.modeId === ctx.mode.weapon_mode_id &&
+            p.equipmentId === ctx.equipment.equipment_id && p.ammoId === r.id);
+          if (restriction) return this.#result(ctx, entry, restriction.status,
+            [reason(restriction.code, restriction.code === 'LT_BUNDLE_REQUIRES_SEPARATE_STONES' ?
+              'LT80–82: для этого режима нужна связка отдельных однофунтовых камней. Одиночный тяжёлый камень не подходит.' :
+              restriction.code === 'LT_BOMBARD_METAL_UNPROVEN' ?
+                'LT87–88: допустимость металлического ядра для этой каменной бомбарды не установлена. Новое снаряжение и выстрел закрыты.' :
+                'Подходящий состав, размер, количество или подготовка этого заряда ещё не подтверждаются состоянием оружия. Новое снаряжение и выстрел закрыты.')],
+            { type: 'source-physical-load-restriction', source: restriction.source });
+          if (r.requires_accessory || /^GM_/.test(r.status ?? '')) return fail('LT_CONDITIONAL_AMMUNITION',
+            r.requires_accessory ? 'LT78: для этого снаряда требуется подтверждённая направляющая Navak; наличие аксессуара пока не проверяется.' :
+              'Для этого заряда не подтверждены индивидуальная подгонка, конструкция или наполнитель. Семейство не заменяет физическую проверку.', 'undetermined');
+        }
         if (ctx.book === "ut") {
           const tl = this.#utFamilyTL(ctx, r);
           if (tl) return fail(tl.code, tl.message, "undetermined");
@@ -161,6 +187,25 @@ export class AmmunitionCompatibilityService {
     if (ctx.book === "lt") return this.#ltOption(ctx, entry, options);
     if (ctx.book === "ht") return this.#htOption(ctx, entry, options);
     return this.#utOption(ctx, entry, options);
+  }
+
+  #ltFamily(ctx, entry, options) {
+    const children = (entry.record.ammo_item_ids ?? []).filter(id => ctx.links.ammoItemIds.includes(id));
+    const selected = options.ammoItemId;
+    if (selected && !children.includes(selected)) return this.#result(ctx, entry, 'incompatible',
+      [reason('LT_FAMILY_ITEM_MISMATCH', 'Выбранный физический снаряд не принадлежит этому семейству или режиму.')]);
+    const results = (selected ? [selected] : children).map(id => {
+      const record = this.#catalogs.getAmmoItem('lt', id);
+      return record && this.#check(ctx, { book: 'lt', kind: 'ammo-item', record }, options);
+    }).filter(Boolean);
+    if (results.length === 1) {
+      const child = results[0];
+      return this.#result(ctx, entry, child.status, child.reasons,
+        { type: 'physical-family-member', ammoItemId: child.ammoId, source: child.relation?.source }, child.warnings);
+    }
+    if (results.length && results.every(r => r.status === 'incompatible')) return this.#result(ctx, entry, 'incompatible', results[0].reasons);
+    return this.#result(ctx, entry, 'undetermined', [reason('LT_PHYSICAL_ITEM_REQUIRED',
+      'Выберите конкретный физический снаряд: семейство не определяет его размер, состав и условия применения.')]);
   }
 
   #htOption(ctx, entry, options) {
@@ -247,13 +292,35 @@ export class AmmunitionCompatibilityService {
 
   #ltOption(ctx, entry, options) {
     const r = entry.record;
+    const early=ltEarlyProfile(ctx.mode.weapon_mode_id),artilleryMode=ltArtilleryProfile(ctx.mode.weapon_mode_id);
+    if(early&&['serpentine_powder','corned_powder'].includes(r.id)&&early.powder!==r.id.replace('_powder',''))
+      return this.#result(ctx,entry,'undetermined',[reason('LT_POWDER_INDIVIDUAL_SOURCE_REQUIRED','Сорт пороха и его баллистика должны быть подтверждены для этой модели LT; общий класс боеприпаса не задаёт замену навески.')]);
+    if(early&&!artilleryMode&&['chain_shot','grapeshot','heated_shot'].includes(r.id))
+      return this.#result(ctx,entry,'undetermined',[reason('LT_CANNON_OPTION_MODEL_UNPROVEN','LT88–89: у этого режима нет подтверждённого индивидуального профиля Chain/Grape/Heated; общий класс снаряда его не разрешает.')]);
     const items = ctx.links.ammoItemIds.map(id => this.#catalogs.getAmmoItem("lt", id)).filter(item => !options.ammoItemId || item.id === options.ammoItemId);
     if (!items.length) return this.#result(ctx, entry, "incompatible", [reason("UNLINKED_PROJECTILE", "Selected projectile is not linked to this mode.")]);
     if (!Array.isArray(r.applies_to)) return this.#result(ctx, entry, "undetermined", [reason("MISSING_APPLICABILITY", "Option has no structured projectile applicability.")]);
     const matching = items.filter(item => r.applies_to.some(type => (item.projectile_classes ?? [item.ammo_type]).includes(type)));
     if (!matching.length) return this.#result(ctx, entry, "incompatible", [reason("PROJECTILE_CLASS", "Option does not apply to any linked projectile class.")]);
+    if (r.id === 'artillery_lead' && !LT_LEAD_BUNDLE_MODES.includes(ctx.mode.weapon_mode_id))
+      return this.#result(ctx, entry, 'incompatible', [reason('LT_LEAD_BUNDLE_CONSTRUCTION',
+        'LT81: это правило только для подходящих баллист со связками однофунтовых свинцовых пуль; не для всех метательных машин.')]);
+    if (r.id === 'catapult_overweight' && !LT_OVERWEIGHT_MODES.includes(ctx.mode.weapon_mode_id))
+      return this.#result(ctx, entry, 'incompatible', [reason('LT_OVERWEIGHT_ONE_ARM_ONLY',
+        'LT83: эта таблица массы и дальности относится к однорычажным машинам. Другие пользовательские снаряды этим не запрещаются.')]);
+    if (options.ammoItemId) {
+      const physical = this.#check(ctx, { book: 'lt', kind: 'ammo-item', record: matching[0] }, {});
+      if (physical.status !== 'compatible') return this.#result(ctx, entry, physical.status, physical.reasons);
+    }
+    const artillery=ltArtilleryProfile(ctx.mode.weapon_mode_id),future=ltArtilleryFutureLoad(ctx.mode.weapon_mode_id,r.id);
+    if(future)return this.#result(ctx,entry,'undetermined',[reason(future.status==='BLOCKED'?'LT_ARTILLERY_DELIVERY_FUTURE':'LT_ARTILLERY_DEVICE_FIT_UNDETERMINED',future.reason)]);
+    if(artillery&&['artillery_lead','catapult_overweight','large_flaming_artillery_bolt','chain_shot','grapeshot','heated_shot'].includes(r.id))
+      return this.#result(ctx,entry,'undetermined',[reason('LT_ARTILLERY_PHYSICAL_LOAD_REQUIRED',
+        'Выберите отдельный подтверждённый физический заряд и подогнанную партию LT-P5. Общий модификатор не является готовым выстрелом.')]);
+    if (r.id === 'artillery_lead') return this.#result(ctx, entry, 'undetermined',
+      [reason('LT_PHYSICAL_LOAD_UNPROVEN', 'LT81: конструкция баллисты подходит, но отдельный физический заряд из однофунтовых свинцовых пуль пока не реализован.')]);
     const conditions = ["requires_accessory", "weapon_requires_accessory", "requires_skill", "requires_powder_cloth_bag"].filter(key => r[key]);
-    if (r.status || conditions.length) return this.#result(ctx, entry, "undetermined", [reason("LT_CONDITIONAL_OPTION", r.status ?? conditions.join(", "))]);
+    if (r.status || conditions.length) return this.#result(ctx, entry, "undetermined", [reason("LT_CONDITIONAL_OPTION", r.status==='SOURCE_CONFIGURATION_REQUIRED'?r.notes_ru:r.status ?? conditions.join(", "))]);
     if (numeric(options.availabilityTL) && numeric(r.min_tl) && options.availabilityTL < r.min_tl) return this.#result(ctx, entry, "incompatible", [reason("AVAILABILITY_TL", "Option exceeds the supplied ammunition availability TL.")]);
     return this.#result(ctx, entry, "compatible", [], { type: "explicit-projectile-class", path: "projectile_options.applies_to", ammoItemIds: matching.map(item => item.id) },
       [...(r.requires_external_rule ? [reason("EXTERNAL_RULE", "Compatibility is confirmed; full game rules are external to the catalog.")] : []),

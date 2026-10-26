@@ -13,7 +13,8 @@ import {WeaponConfigurationDraft} from '../scripts/tools/weapon-configuration.js
 import {AmmoService} from '../scripts/tools/ammo-service.js';
 import {ammoTypeKey} from '../scripts/tools/ammo-inventory.js';
 import {magazinePolicy} from '../scripts/tools/magazine-policy.js';
-import {requiresUTPowerAccounting} from '../scripts/ut-source-data.js';
+import {UT_POWER_MODE_IDS,requiresUTPowerAccounting} from '../scripts/ut-source-data.js';
+import {weaponPowerProfile,readWeaponBattery,batteryExpectation} from '../scripts/tools/weapon-power.js';
 import {readCampaignTL} from '../scripts/tools/ammunition-tech-level.js';
 import {buildUTMatrix,loadUTSourceContract,matrixURL} from '../tools/audit-ut-ammunition-completeness.mjs';
 import {ammunitionChatData,ammunitionChatHTML} from '../scripts/tools/ammunition-chat-summary.js';
@@ -119,10 +120,22 @@ test('5.7mmCL source WPS/CPS and inventory price display use errata without a re
   assert.equal(base.physical.weightPerShotLb,0.009);assert.equal(base.physical.costPerShot,0.18);const before=JSON.stringify(fx.state());
   const html=ammoManagementHTML(fx.weapon(),{ammoKey:base.key,magazineId:fx.weapon().ammunitionInventory.installedId,language:'ru'},types);assert.match(html,/\$2\.16/);assert.match(html,/0\.108 lb/);assert.equal(JSON.stringify(fx.state()),before);
 });
-test('Biochemical Liquid 64mm catalog is 65 doses without inventing a supported 64mm carrier',()=>{
+test('Biochemical Liquid 64mm uses the confirmed Mortar Box and 65 doses; unconfirmed carriers stay blocked',async()=>{
   assert.equal(catalogs.getCatalog('ut').warheads.find(w=>w.id==='biochemical_liquid').damage_table['64mm'].doses,65);
-  const p=automatic.prepare({modeId:'WYpXdcsWIyhNVC6x3',base:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:'64mm_plb'},variantId:'ut_biochemical_liquid'});
-  assert.notEqual(p.state,'complete');
+  const modeId='WYpXdcsWIyhNVC6x3',base={source:'catalog',book:'ut',kind:'ammo-family',ammoId:'64mm_plb'};
+  assert.equal(catalogs.getEquipmentForMode(modeId).name,'Mortar Box, 64mmPLB');
+  assert.equal(compatibility.checkCompatibility(modeId,base.ammoId,{book:'ut',kind:'ammo-family'}).status,'compatible');
+  const fx=await ready(modeId,'ut_biochemical_liquid',{note:'Mortar substance',description:'Manual application'}),before=fx.weapon().totalAmmo;
+  assert.equal(fx.profile().damage.rules.doses,65);
+  const result=await shoot(fx);
+  assert.equal(result.rolled,true);assert.equal(result.spent,1);assert.equal(fx.weapon().totalAmmo,before-1);
+  assert.equal(result.snapshot.profile.damage.rules.doses,65);assert.match(result.message.content,/Mortar substance/);
+  assert.ok(ammunitionChatData(result.snapshot.profile).lines.length<=3);
+  for(const unsupported of ['WOMuCBSS_c_nIstvm','W3Ggl5bTeg_44b_rU']){
+    assert.equal(compatibility.checkCompatibility(unsupported,base.ammoId,{book:'ut',kind:'ammo-family'}).status,'incompatible');
+    assert.notEqual(automatic.prepare({modeId:unsupported,base,variantId:'ut_biochemical_liquid'}).state,'complete');
+  }
+  assert.notEqual(automatic.prepare({modeId,base:{...base,ammoId:'64mm_unconfirmed'},variantId:'ut_biochemical_liquid'}).state,'complete');
 });
 for(const [id,doses]of [['WOMuCBSS_c_nIstvm',250]])test('Biochemical Liquid '+doses+' doses in catalog, recipe, concise chat and snapshot',async()=>{
   const fx=await ready(id,'ut_biochemical_liquid',{note:'Custom substance',description:'Own description',radius:{yards:17,origin:'manual',units:'yards'}}),p=fx.profile();
@@ -150,12 +163,47 @@ test('saved module source copies read errata without writes and explicit overrid
   assert.equal(new StandaloneWeaponService(fx.actor,catalogs).get(fx.record.id).modes[0].snapshot.stats.rate_of_fire,'10');assert.equal(JSON.stringify(fx.actor.getFlag('olegurps-qol','standaloneWeapons')),before);
   const custom={weapon_mode_id:shotgun,raw_calc:{damage:'99d pi++'},stats:{damage:{base:'99d',type:'pi++'}},attack_resolution:{raw:'99d pi++'}};applyUTErrataMode(custom,{snapshot:true});assert.equal(custom.raw_calc.damage,'99d pi++');
 });
-test('implemented lasers and Gauss require their own resources; other Beam remains deferred',async()=>{
-  const {beamProfile}=await import('../scripts/ut-beam-source.js');
-  for(const id of UT_ERRATA_DEFINITION_ONLY.filter(id=>!['WdZSw5CqcSq_d3eSV','WdV0VzMAch5j8pxdy','WegCPnwG-HS41cU29'].includes(id))){assert.equal(requiresUTPowerAccounting(id),!beamProfile(id));const fx=await fixture(id);assert.ok(fx.attack().readinessReason);if(beamProfile(id))assert.match(fx.attack().readinessReason,/батар/);}
-  assert.equal(requiresUTPowerAccounting('WX_LmRHi1yv6wEKcu'),true);
-  for(const id of ['WdZSw5CqcSq_d3eSV','WegCPnwG-HS41cU29']){assert.equal(requiresUTPowerAccounting(id),false);const fx=await fixture(id);assert.match(fx.attack().readinessReason,/батарею/);}
+test('implemented errata Beam and Gauss execute with their own resources and reject missing or exhausted power',async()=>{
+  const implemented=[
+    ['WAg2AcFXMlFlVMhp9','beamBattery','F',1,66],['Wkj-hXVqccdySMffW','beamBattery','F',10,83],
+    ['WX_LmRHi1yv6wEKcu','electrolaserBattery','C',2,72],['WdwCPV31W4KiCkUU4','beamBattery','C',2,28],
+    ['WtuI6BNF1hhgDXR_Q','beamBattery','D',1,83],['WWZwHBgeAlfdvGZb7','beamBattery','C',2,56]
+  ];
+  assert.deepEqual(implemented.map(row=>row[0]),[...UT_ERRATA_DEFINITION_ONLY]);
+  // This legacy source gate has no remaining deferred entries; the individual
+  // implementations below still enforce actual energy and physical ammunition.
+  assert.deepEqual(UT_POWER_MODE_IDS.filter(requiresUTPowerAccounting),[]);
+  const powered=[...implemented,['WdZSw5CqcSq_d3eSV','gaussBattery','C',1,100],['WegCPnwG-HS41cU29','gaussBattery','C',1,240]];
+  for(const [id,stateKey,cell,cells,capacity]of powered){
+    assert.equal(requiresUTPowerAccounting(id),false);
+    const fx=stateKey==='gaussBattery'?await ready(id):await fixture(id),power=weaponPowerProfile(fx.weapon());
+    assert.deepEqual([power.stateKey,power.cellSize,power.cells,power.capacity],[stateKey,cell,cells,capacity]);
+    if(stateKey==='electrolaserBattery')assert.equal(readWeaponBattery(fx.weapon()).charge,capacity);
+    else assert.match(fx.attack().readinessReason,/батар/);
+    const missing=fx.state();delete missing.weapons[0][stateKey];await fx.actor.setFlag('world','gurpsAmmoManager',missing);
+    const unchanged=JSON.stringify(fx.state());assert.match(fx.attack().readinessReason,/батар/);
+    await assert.rejects(shoot(fx),/батар/);assert.equal(JSON.stringify(fx.state()),unchanged);
+    await fx.service.replaceBattery(fx.carrier.id,{requestId:crypto.randomUUID(),expectedBattery:batteryExpectation(fx.weapon())});
+    assert.equal(fx.attack().readinessReason,null);
+    const ammoBefore=fx.weapon().totalAmmo,result=await shoot(fx),cost=stateKey==='gaussBattery'?4:1;
+    assert.equal(result.rolled,true);assert.equal(result.snapshot.profile.damage.nativeSafe,true);
+    assert.equal(result.spent,stateKey==='gaussBattery'?1:0);
+    assert.equal(fx.weapon().totalAmmo,ammoBefore-result.spent);
+    assert.equal(readWeaponBattery(fx.weapon()).charge,capacity-cost);
+    assert.equal(result.snapshot.profile.resource.power.spent,cost);
+    const history=JSON.stringify(result.snapshot);
+    await fx.service.spendWeaponCharge(fx.carrier.id,(capacity-cost)/cost);
+    assert.equal(readWeaponBattery(fx.weapon()).charge,0);
+    assert.ok(fx.attack().readinessReason);const exhausted=JSON.stringify(fx.state());
+    await assert.rejects(shoot(fx),/энерг|разряж/);assert.equal(JSON.stringify(fx.state()),exhausted);
+    assert.equal(JSON.stringify(result.snapshot),history);
+  }
+  // The reviewed 40mm Railgun uses external power, but still consumes a real projectile.
   assert.equal(requiresUTPowerAccounting('WdV0VzMAch5j8pxdy'),false);
+  const external=await ready('WdV0VzMAch5j8pxdy');assert.equal(weaponPowerProfile(external.weapon()),null);
+  assert.equal(external.attack().readinessReason,null);const before=external.weapon().totalAmmo,result=await shoot(external);
+  assert.equal(result.rolled,true);assert.equal(result.spent,1);assert.equal(external.weapon().totalAmmo,before-1);
+  assert.equal(result.snapshot.profile.resource.power,undefined);
   assert.equal(catalogs.getMode('WdZSw5CqcSq_d3eSV').ammunition_profile.primary_ammo_family_id,'10mm_g');assert.equal(catalogs.getAmmoFamily('ut','10mm_g').name,'10mm');assert.notEqual(compatibility.checkCompatibility('WdZSw5CqcSq_d3eSV','10mm_clp',{book:'ut',kind:'ammo-family'}).status,'compatible');
 });
 test('TL policy and owner rights survive errata and do not authorize another Actor',async()=>{

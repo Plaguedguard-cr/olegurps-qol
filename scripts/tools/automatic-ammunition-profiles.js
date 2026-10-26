@@ -1,4 +1,9 @@
 import {chemicalOptions} from './biochemical-integration.js';
+import {LT_HEAD_VARIANTS,ltBowRecipeAssessment} from './lt-bow.js';
+import {ltPersonalRecipeAssessment} from './lt-personal.js';
+import {utSwarmType} from '../ut-swarm-source.js';
+import {ROBOTS} from '../ut-next-eleven-source.js';
+import {robotAmmunitionAllowed} from './ut-robot-ammunition.js';
 import {CHEMICAL_SUBSTANCES} from './biochemical-catalog.js';
 import { calculateExplosiveRecipe } from "./explosive-ammunition-model.js";
 import { campaignAmmunitionAdmission, readCampaignTL } from './ammunition-tech-level.js';
@@ -70,6 +75,44 @@ export class AutomaticAmmunitionProfileService {
         method: "calculated", origin: "calculated", verified: true, source: inputs.source, parameters: inputs }].filter(Boolean);
   }
   prepare({ modeId, base, variantId, savedType = null, approval = null, parameters = null }) {
+    if (base?.book === 'lt') {
+      const personal=ltPersonalRecipeAssessment({modeId,type:{...base,recipe:{version:1,variantId}},catalogs:this.catalogs,compatibility:this.compatibility});
+      if(personal?.applicationAllowed){
+        const type={...base,recipe:{version:1,variantId,parameters:structuredClone(parameters??savedType?.recipe?.parameters??{})}};type.key=ammoTypeKey(type);
+        return snapshot({state:'complete',origin:variantId==='lt_personal_load'?'user':'reference',baseStatus:'compatible',rulesStatus:'compatible',referenceConfirmed:variantId!=='lt_personal_load',
+          model:{kind:'lt-personal-load',variantId},facts:personal.facts,type,reasons:[]});
+      }
+      if(LT_HEAD_VARIANTS.includes(variantId)){
+        const recipe={version:1,variantId,parameters:structuredClone(parameters??savedType?.recipe?.parameters??{})};
+        const probe=ltBowRecipeAssessment({modeId,type:{...base,recipe},compatibility:this.compatibility});
+        if(probe?.applicationAllowed){
+          const type={source:'catalog',book:'lt',kind:base.kind,ammoId:base.ammoId,recipe,
+            name:(this.catalogs?.getVariant('lt',variantId)?.name??variantId)+' — '+(base.name??base.ammoId)};
+          type.key=ammoTypeKey(type);
+          return snapshot({state:'complete',origin:'reference',baseStatus:'compatible',rulesStatus:'compatible',referenceConfirmed:true,
+            model:{kind:'lt-projectile-head',variantId,source:'LT73; B277'},facts:{modeId,ammoId:base.ammoId},type,reasons:[]});
+        }
+      }
+      const physical = this.compatibility?.checkCompatibility(modeId, base.ammoId, { book: 'lt', kind: base.kind });
+      const option = this.compatibility?.checkCompatibility(modeId, variantId,
+        { book: 'lt', kind: 'projectile-option', ...(base.kind === 'ammo-item' ? { ammoItemId: base.ammoId } : {}) });
+      const blocked = physical?.status !== 'compatible' ? physical : option?.status !== 'compatible' ? option : null;
+      return snapshot({ state: blocked?.status === 'incompatible' ? 'incompatible' : 'incomplete', type: null, model: null,
+        baseStatus: physical?.status ?? 'undetermined', rulesStatus: option?.status ?? 'undetermined',
+        reasons: blocked?.reasons?.map(r => r.code) ?? ['UnsupportedProfileRules'] });
+    }
+    if(base?.robot){
+      const unavailable={state:'incomplete',type:null,reasons:['RobotPayloadUnavailable']};
+      if(!robotAmmunitionAllowed(modeId,base))return snapshot(unavailable);
+      const plain=structuredClone(base);delete plain.robot;plain.key=ammoTypeKey(plain);
+      const saved=savedType?structuredClone(savedType):null;if(saved){delete saved.robot;saved.key=ammoTypeKey(saved);}
+      const prepared=this.prepare({modeId,base:plain,variantId,savedType:saved,approval,parameters});
+      if(!prepared.type)return prepared;
+      const type={...structuredClone(prepared.type),robot:structuredClone(base.robot)},p=ROBOTS[base.robot.id];
+      type.key=ammoTypeKey(type);type.name=p.name+' (TL'+base.robot.tl+') / '+type.name;
+      if(!robotAmmunitionAllowed(modeId,type))return snapshot(unavailable);
+      return snapshot({...prepared,type});
+    }
     if (isUTExtendedVariant(variantId)) return this.prepareUTExtended({modeId,base,variantId,savedType,parameters});
     if (isUTSpecialVariant(variantId)) return this.prepareUTSpecial({modeId,base,variantId,savedType,parameters});
     if (isUTConventionalVariant(variantId)) return this.prepareUT({ modeId, base, variantId, savedType });
@@ -138,7 +181,7 @@ export class AutomaticAmmunitionProfileService {
     const guidedLabel=variantId==='ut_homing'?'Homing '+facts.homing.attack+
       (facts.homing.superscience?'^':'')+(warhead?' / '+(UT_EXTENDED_RULES[warhead.variantId]??UT_SPECIAL_RULES[warhead.variantId]??UT_CONVENTIONAL_RULES[warhead.variantId]).label:''):rule.label;
     const name=this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+guidedLabel+(payload.reactionless&&variantId!=='ut_reactionless'?' Reactionless':'')+' (TL'+facts.availabilityTL+')'+
-      (payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.fuze==='proximity'?' — Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' — '+payload.note:'');
+      (payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.swarmType?' / '+utSwarmType(payload.swarmType).name:'')+(payload.fuze==='proximity'?' — Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' — '+payload.note:'');
     const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),name,
       recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:payload,autoProfile}};
     type.key=ammoTypeKey(type);

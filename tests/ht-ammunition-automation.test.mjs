@@ -12,6 +12,7 @@ import { withRuntimeAmmoStats } from "../scripts/tools/attack-profile-runtime.js
 import { resolveAmmunitionEffects } from "../scripts/tools/ammunition-effects.js";
 import { evaluateHTOptionEligibility } from "../scripts/ht-option-eligibility.js";
 import { createHash } from "node:crypto";
+import {HT_PROJECT_WEAPON_POLICIES} from '../scripts/ht-source-corrections.js';
 globalThis.foundry={utils:{deepClone:structuredClone},applications:{api:{ApplicationV2:class{}}}};
 globalThis.game={user:{id:"gm",isGM:true},i18n:{lang:"ru",localize:k=>k},settings:{get:()=>"permissive"}};
 const {availableAmmoTypes,ammunitionCandidates,ammoManagementHTML,openAmmoManagement}=await import("../scripts/tools/ammo-management-app.js");
@@ -134,23 +135,33 @@ test("coverage is read-only, compares every native pair, and keeps unsupported/e
   const history=JSON.parse(await fs.readFile(new URL('./fixtures/ht-coverage-history.json',import.meta.url),'utf8'));
   const keys=r.readyIdentities.map(row=>row.modeId+'/'+row.ammoId+'/'+row.variantId),restored=new Set(keys);
   assert.equal(restored.size,keys.length);
+  // The preserved historical checkpoint predates the user's exact Zip-Gun/.22 LR
+  // policy. Remove precisely its four current variants before replaying history.
+  const zip=r.readyIdentities.filter(row=>row.modeId==='WwlfY-FYthqkLvByK');
+  assert.deepEqual(zip.map(row=>[row.ammoId,row.variantId]).sort(),
+    ['ht_ap','ht_aphc','ht_plus_p','ht_subsonic_pistol'].map(v=>['ht_22_long_rifle_5_7x16mmr',v]).sort());
+  assert.equal(HT_PROJECT_WEAPON_POLICIES['WwlfY-FYthqkLvByK'].ammoId,'ht_22_long_rifle_5_7x16mmr');
+  assert.equal(HT_PROJECT_WEAPON_POLICIES['WwlfY-FYthqkLvByK'].physicalCartridgeRequired,true);
+  assert.equal(HT_PROJECT_WEAPON_POLICIES['WwlfY-FYthqkLvByK'].authority,'user-approved-project-policy');
+  assert.equal(compatibility.checkCompatibility('WwlfY-FYthqkLvByK','ht_22_long_rifle_5_7x16mmr').status,'compatible');
+  for(const row of zip)assert(restored.delete(row.modeId+'/'+row.ammoId+'/'+row.variantId));
   for(const {key} of history.added){assert(restored.delete(key),key);}
   for(const {key} of history.removed){assert(!restored.has(key),key);restored.add(key);}
   assert.equal(restored.size,history.baseCount);
   assert.equal(createHash('sha256').update([...restored].sort().join('\n')).digest('hex'),history.baseReadyIdentitiesSha256);
   assert.equal(r.inventory.items,263);assert.equal(r.inventory.families,262);assert.equal(r.inventory.projectileOptions,51);assert.equal(r.inventory.eligibilityOptions,64);
   assert.equal(r.special.total,32704);assert.equal(r.nativePairs,511);
-  assert.equal(r.special.ready,history.baseCount+history.added.length-history.removed.length);
-  assert.equal(r.special.ready,keys.length);assert.equal(r.special.ready,1356);
+  assert.equal(r.special.ready,history.baseCount+history.added.length-history.removed.length+4);
+  assert.equal(r.special.ready,keys.length);assert.equal(r.special.ready,1360);
   assert.deepEqual(Object.keys(r.familiesReady).sort(),[...history.baseFamilies,...history.addedFamilies].sort());
   assert.equal(Object.keys(r.familiesReady).length,121);
   assert.equal(r.variants.ht_apds.ready,96);
   assert.ok(r.variants.ht_apds.ready>1);assert.equal(r.variants.ht_apfsds.ready,2);assert.equal(r.variants.ht_sapfsds.ready>1,true);
-  assert.equal(r.variants.ht_frangible.ready,117);assert.equal(r.variants.ht_subsonic_rifle.ready,5);assert.equal(r.variants.ht_subsonic_pistol.ready,53);
-  assert.equal(r.variants.ht_match_grade.ready,6);assert.equal(r.variants.ht_plus_p.ready,368);assert.equal(r.variants.ht_he.ready,8);
-  assert.equal(r.variants.ht_plus_p.compatible,0);assert.equal(r.variants.ht_plus_p.support['GM-MEDIATED'],368);
+  assert.equal(r.variants.ht_frangible.ready,117);assert.equal(r.variants.ht_subsonic_rifle.ready,5);assert.equal(r.variants.ht_subsonic_pistol.ready,54);
+  assert.equal(r.variants.ht_match_grade.ready,6);assert.equal(r.variants.ht_plus_p.ready,369);assert.equal(r.variants.ht_he.ready,8);
+  assert.equal(r.variants.ht_plus_p.compatible,0);assert.equal(r.variants.ht_plus_p.support['GM-MEDIATED'],369);
   assert.equal(r.variants.ht_white_phosphorus.ready,2);assert.equal(r.variants.ht_beehive.ready,1);
-  assert.deepEqual(r.ordinary,{total:511,ready:506,unconfirmed:5});
+  assert.deepEqual(r.ordinary,{total:511,ready:507,unconfirmed:4});
   assert.equal(r.variants.ht_heat.nativePreservedSourceOverrides,13);
   assert.equal(r.variants.ht_ms_heat.nativePreservedSourceOverrides,1);
   assert.equal(r.variants.ht_beehive.nativePreservedSourceOverrides,1);

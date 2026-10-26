@@ -200,40 +200,44 @@
 .oq-crit .oq-crit-choice:has(input:checked) { border-color: var(--color-border-highlight, #ff6400); background: rgba(255,100,0,.16); box-shadow: inset 0 0 0 1px var(--color-border-highlight, #ff6400); }
 .oq-crit-choice:focus-within { outline: 2px solid var(--color-border-highlight, #ff6400); outline-offset: 2px; }
 
-/* Keep the module's long settings labels and controls on separate full-width rows. */
-.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]),
-.form-group:has(button[data-key="olegurps-qol.developer-mode"]) {
+/* Shared layout for every module setting, including native Foundry settings rows. */
+:is(.olegurps-settings, #settings-config) .form-group:is(
+  .olegurps-settings .form-group,
+  :has([name^="olegurps-qol."]),
+  :has([data-key^="olegurps-qol."])
+) {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-items: stretch;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px 12px;
 }
-.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) > label,
-.form-group:has(button[data-key="olegurps-qol.developer-mode"]) > label,
-.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) > .form-fields,
-.form-group:has(button[data-key="olegurps-qol.developer-mode"]) > .form-fields {
-  flex: 0 0 auto;
-  width: 100%;
+:is(.olegurps-settings, #settings-config) .form-group:is(
+  .olegurps-settings .form-group,
+  :has([name^="olegurps-qol."]),
+  :has([data-key^="olegurps-qol."])
+) > :is(label, .form-fields, .hint) {
+  flex: initial;
   min-width: 0;
-}
-.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) > .hint,
-.form-group:has(button[data-key="olegurps-qol.developer-mode"]) > .hint {
-  width: 100%;
-  min-width: 0;
+  width: auto;
   margin: 0;
   white-space: normal;
-  overflow-wrap: anywhere;
-}
-.form-group:has(select[name="olegurps-qol.preparedAmmoPolicy"]) label,
-.form-group:has(button[data-key="olegurps-qol.developer-mode"]) button {
-  white-space: normal;
-  overflow-wrap: anywhere;
+  word-break: normal;
+  overflow-wrap: break-word;
   line-height: 1.35;
 }
-.form-group select[name="olegurps-qol.preparedAmmoPolicy"] {
-  width: 100%;
-  min-width: 0;
-}
+:is(.olegurps-settings, #settings-config) .form-group:is(
+  .olegurps-settings .form-group,
+  :has([name^="olegurps-qol."]),
+  :has([data-key^="olegurps-qol."])
+) > .hint { grid-column: 1 / -1; text-indent: 0; }
+:is(.olegurps-settings, #settings-config) .form-group:has(
+  select[name^="olegurps-qol."], button[data-key^="olegurps-qol."], #oq-launcher-position, #oq-launcher-size
+) { grid-template-columns: minmax(0, 1fr); }
+:is(.olegurps-settings, #settings-config) .form-group:has(
+  select[name^="olegurps-qol."], button[data-key^="olegurps-qol."], #oq-launcher-position, #oq-launcher-size
+) :is(select, button, range-picker) { width: 100%; min-width: 0; white-space: normal; }
+.olegurps-settings .window-content > :first-child { margin-top: 0; }
+.olegurps-settings :is(p, label, .hint) { white-space: normal; text-indent: 0; }
 
 .gam-inventory-line { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .gam-inventory-detail { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 16px; align-items: start; }
@@ -355,7 +359,7 @@
 
 .melee-assistant .gam-melee-attack-row {
   display: grid;
-  grid-template-columns: minmax(210px, 1fr) 32px auto auto;
+  grid-template-columns: minmax(140px, 1fr) repeat(3,32px) auto auto;
   align-items: center;
   gap: 7px;
   margin-bottom: 5px;
@@ -402,11 +406,32 @@
 
 .melee-assistant .gam-melee-fields {
   align-content: start;
+  grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+  grid-template-areas: "manual move" "rapid deceptive" "allout evaluate" "slots slots" "martial martial";
+}
+.melee-assistant .gam-melee-manual { grid-area:manual; }
+.melee-assistant .gam-melee-move { grid-area:move; }
+.melee-assistant .gam-melee-fields > .gam-melee-rapid-strike { grid-area:rapid; width:auto; justify-self:stretch; }
+.melee-assistant .gam-melee-fields > .gam-melee-all-out { grid-area:allout; display:block; }
+.melee-assistant .gam-melee-fields > .gam-melee-deceptive { grid-area:deceptive; }
+.melee-assistant .gam-melee-fields > .gam-melee-evaluate { grid-area:evaluate; }
+.melee-assistant .gam-melee-fields > .gam-melee-attack-slots { grid-area:slots; }
+.melee-assistant .gam-melee-fields > .gam-melee-martial-options { grid-area:martial; }
+.melee-assistant .gam-melee-left { container-type:inline-size; container-name:melee-panel; }
+.melee-assistant .gam-melee-maneuver-toggle { display:flex; align-items:center; gap:6px; margin:0; white-space:normal; }
+.melee-assistant .gam-melee-maneuver-toggle input { flex:0 0 auto; width:auto; margin:0; }
+.gam-melee-editor [hidden] { display:none !important; }
+.gam-melee-editor [data-damage-structured] { display:grid; gap:6px; }
+.gam-melee-editor .gam-melee-editor-check { display:flex; align-items:center; gap:6px; margin:0; }
+.gam-melee-editor .gam-melee-editor-check input { width:auto; flex:0 0 auto; margin:0; }
+@container melee-panel (max-width:26rem) {
+  .melee-assistant .gam-melee-fields { grid-template-columns:minmax(0,1fr);
+    grid-template-areas:"manual" "move" "rapid" "deceptive" "allout" "evaluate" "slots" "martial"; }
 }
 
 .melee-assistant .gam-melee-all-out-controls {
   display: grid;
-  grid-template-columns: auto minmax(76px, 1fr);
+  grid-template-columns: minmax(0,1fr) minmax(76px,auto);
   align-items: center;
   gap: 6px;
   min-width: 0;
@@ -586,7 +611,7 @@
 
 @media (max-width: 850px) {
   .melee-assistant .gam-melee-attack-row {
-    grid-template-columns: minmax(180px, 1fr) 32px auto;
+    grid-template-columns: minmax(100px, 1fr) repeat(3,32px) auto;
   }
 
   .melee-assistant .gam-melee-dice-adds {
@@ -893,3 +918,64 @@ dialog.gam-roll-confirmation {
 .gam-fuel-bottle { position:relative; display:block; width:16px; height:28px; margin-top:4px; border:2px solid currentColor; border-radius:5px 5px 4px 4px; }
 .gam-fuel-bottle::before { content:""; position:absolute; z-index:1; top:-6px; left:3px; right:3px; height:5px; border:1px solid currentColor; border-radius:1px; }
 .gam-fuel-liquid { position:absolute; display:block; bottom:0; left:0; right:0; border-radius:0 0 2px 2px; }
+
+.olegurps-qol [data-lt-personal-batch] > label:has(textarea),
+.olegurps-qol [data-lt-personal-batch] > label:has(select),
+.olegurps-qol [data-lt-projectile-editor] > label:has(textarea),
+.olegurps-qol [data-lt-projectile-editor] > label:has(select),
+.olegurps-qol [data-lt-flame] .lt-flame-batch > label {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+  margin: 8px 0;
+  min-width: 0;
+}
+.olegurps-qol [data-lt-personal-batch] textarea,
+.olegurps-qol [data-lt-projectile-editor] textarea,
+.olegurps-qol [data-lt-flame] .lt-flame-batch textarea {
+  display: block;
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  resize: vertical;
+}
+.olegurps-qol [data-lt-flame] .lt-flame-batch > button {
+  margin-top: 8px;
+}
+/* Unified Launcher: standalone UI dock, independent of GGA and the hotbar. */
+#olegurps-launcher-button {
+  position: fixed;
+  width: var(--olegurps-launcher-size, 40px);
+  height: var(--olegurps-launcher-size, 40px);
+  min-width: var(--olegurps-launcher-size, 40px);
+  min-height: var(--olegurps-launcher-size, 40px);
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  z-index: var(--z-index-ui, 100);
+  pointer-events: auto;
+  touch-action: none;
+  border: calc(var(--olegurps-launcher-size, 40px) * .025) solid var(--color-border-dark, #666);
+  border-radius: calc(var(--olegurps-launcher-size, 40px) * .125);
+  background: var(--control-bg-color, #171923);
+  color: var(--control-icon-color, #eee);
+  box-shadow: 0 0 calc(var(--olegurps-launcher-size, 40px) * .15) #0008;
+  font: bold calc(var(--olegurps-launcher-size, 40px) * .425)/1 var(--font-primary, sans-serif);
+}
+#olegurps-launcher-button span { border-bottom: calc(var(--olegurps-launcher-size, 40px) * .05) solid #a83350; padding-bottom: calc(var(--olegurps-launcher-size, 40px) * .05); }
+#olegurps-launcher-button.is-draggable { cursor: grab; }
+#olegurps-launcher-button.is-draggable:active { cursor: grabbing; }
+.olegurps-launcher, .olegurps-launcher-settings { max-height: calc(100vh - 32px); max-width: calc(100vw - 16px); }
+.olegurps-launcher .window-content { display: flex; flex-direction: column; gap: 12px; min-height: 0; overflow: hidden; }
+.olegurps-launcher-list { min-height: 0; overflow-y: auto; }
+.olegurps-launcher-list section + section { margin-top: 14px; }
+.olegurps-launcher-list h3 { margin: 0 0 7px; font-size: 16px; line-height: 1.25; }
+.olegurps-launcher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr)); gap: 6px; }
+.olegurps-launcher-grid button { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; justify-content: stretch; gap: 9px; height: auto; min-height: 52px; padding: 5px 8px; text-align: center; white-space: normal; line-height: 1.25; }
+.olegurps-launcher-grid img { width: 40px; height: 40px; flex: 0 0 40px; object-fit: contain; border: 0; border-radius: 4px; }
+.olegurps-launcher-grid i { width: 40px; flex: 0 0 40px; text-align: center; font-size: 24px; }
+.olegurps-launcher-grid img, .olegurps-launcher-grid i { justify-self: start; margin: 0; }
+.olegurps-launcher-grid span { width: 100%; min-width: 0; text-align: center; overflow-wrap: break-word; }
+.olegurps-launcher .form-footer { flex: 0 0 auto; }
+.olegurps-launcher-settings .window-content { overflow-y: auto; }

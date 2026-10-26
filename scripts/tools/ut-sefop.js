@@ -22,7 +22,7 @@ export function reviewHoming({caliberMm,availabilityTL,guidance='infrared'}) {
     guidanceSurcharge:sensor.surcharge,superscience:!!sensor.superscience,
     source:'UT146',projectileHit:'manual',automaticGuidance:false};
 }
-export const manualProjectileGuidance = profile => profile?.damage?.rules?.manualHoming ?? profile?.damage?.rules?.manualSEFOP ?? null;
+export const manualProjectileGuidance = profile => profile?.damage?.rules?.manualHoming ?? profile?.damage?.rules?.manualSEFOP ?? profile?.damage?.rules?.manualArtillery ?? null;
 export function reviewSEFOP({caliberMm,availabilityTL,input={}}) {
   const guidance=input.sefopGuidance??'infrared',mode=input.sefopMode??'sefop',aspect=input.sefopAspect??'top';
   const reviewed=reviewHoming({caliberMm,availabilityTL,guidance});

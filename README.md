@@ -2,8 +2,12 @@
 
 Foundry VTT module for GURPS Game Aid.
 
-Текущая версия: **0.2.1a**. [Изменения релиза](docs/releases/v0.2.1a.md).
+Текущая версия: **0.2.1b**. [Изменения релиза](docs/releases/v0.2.1b.md).
 Установочный ZIP и manifest публикуются GitHub Actions по тегу версии.
+
+В этой версии: [дистанционное оружие Low-Tech](docs/low-tech.md),
+[Unified Launcher и персональная кнопка OG](docs/unified-launcher.md),
+расширения HT/UT и исправления общего оружейного интерфейса.
 
 ## Установка через Foundry VTT
 

@@ -1,0 +1,296 @@
+{
+  "pairs": [
+    {
+      "modeId": "W-RYCc6uU-OXKoBah",
+      "equipmentId": "eBb63oflrM1tY0UwT",
+      "ammoId": "lt_ballista_10_lb_stone_lt81",
+      "familyId": "ballista_10_lb_stone",
+      "before": "compatible",
+      "expected": "incompatible"
+    },
+    {
+      "modeId": "WKsEc93SimNUgXPWc",
+      "equipmentId": "eCmTyl83THlghtmEl",
+      "ammoId": "lt_ballista_15_lb_stone_lt81",
+      "familyId": "ballista_15_lb_stone",
+      "before": "compatible",
+      "expected": "incompatible"
+    },
+    {
+      "modeId": "WXMj2wr9SMXV2QbWx",
+      "equipmentId": "enYM4j919XyO2gc1T",
+      "ammoId": "lt_ballista_20_lb_stone_lt81",
+      "familyId": "ballista_20_lb_stone",
+      "before": "compatible",
+      "expected": "incompatible"
+    },
+    {
+      "modeId": "Wz7rrcb1JQBbvlq8t",
+      "equipmentId": "e2IA1J1m4TrMSre7r",
+      "ammoId": "lt_ballista_30_lb_stone_lt81",
+      "familyId": "ballista_30_lb_stone",
+      "before": "compatible",
+      "expected": "incompatible"
+    },
+    {
+      "modeId": "WER8WRUSBxLneb6MY",
+      "equipmentId": "el5X3eDOKEit1sOZX",
+      "ammoId": "lt_ballista_60_lb_stone_lt81",
+      "familyId": "ballista_60_lb_stone",
+      "before": "compatible",
+      "expected": "incompatible"
+    },
+    {
+      "modeId": "WdEDlxCiYeL4uSuUU",
+      "equipmentId": "emxvkBtlI5-FepMhq",
+      "ammoId": "lt_ballista_180_lb_stone_lt81",
+      "familyId": "ballista_180_lb_stone",
+      "before": "compatible",
+      "expected": "incompatible"
+    },
+    {
+      "modeId": "WX-yHEQghov5Xp29y",
+      "equipmentId": "ejqw-wvySletmQJqL",
+      "ammoId": "lt_bombard_metal_ball_lt87",
+      "familyId": "bombard_metal_ball",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "W3_f6uxd42Wb3ehoq",
+      "equipmentId": "e6WpgdLqh299llIej",
+      "ammoId": "lt_bombard_large_metal_ball_lt87",
+      "familyId": "bombard_large_metal_ball",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WadZ9BFUFoPATpyuT",
+      "equipmentId": "eKdPCJbGRc6pLynu-",
+      "ammoId": "lt_cannon_fitted_ball",
+      "familyId": "cannon_fitted_metal_ball",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "Wf9D7K1uIf9a1YFcF",
+      "equipmentId": "eAXVk_AXSV6SGXds2",
+      "ammoId": "lt_cheirosiphon_fuel",
+      "familyId": "cheirosiphon_fuel",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WWH0OQJ-rgb1mROw-",
+      "equipmentId": "ei-7pEkzpbZ6rVdVz",
+      "ammoId": "lt_eruptor_reload",
+      "familyId": "eruptor_reload",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WmWAtzBOn5-B5IvhJ",
+      "equipmentId": "e-uKG55FIFbCnAky_",
+      "ammoId": "lt_fire_lance_one_use",
+      "familyId": "fire_lance_whole_unit",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WOtCDhbkzhdvewbDK",
+      "equipmentId": "enkB2mLPJ3zmnmYrQ",
+      "ammoId": "lt_fire_siphon_fuel",
+      "familyId": "fire_siphon_fuel",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WS7SJUj_6I5AIBmpi",
+      "equipmentId": "efM7VE2ERRgdUpsAH",
+      "ammoId": "lt_gastraphetes_bolt_lt81",
+      "familyId": "gastraphetes_artillery_bolt",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "W4PRplvj0ypVOdY6s",
+      "equipmentId": "ei0N-icgR3T51RL0k",
+      "ammoId": "lt_iron_fire_lance_charge",
+      "familyId": "iron_fire_lance_reload",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WqUeIOkvQIgCeKWou",
+      "equipmentId": "ewTu5wIeeuRsiyO5l",
+      "ammoId": "lt_arrow_guide_dart",
+      "familyId": "bow_arrow_guide_dart",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "Wk0G5zIrN66TWDaod",
+      "equipmentId": "eEhkIZOjs7PhrvwwY",
+      "ammoId": "lt_multi_gonne_ball",
+      "familyId": "multi_shot_gonne_ball",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WnqU4wFdAaHmghhfn",
+      "equipmentId": "ethb_9uh_gX8DvHU6",
+      "ammoId": "lt_arrow_guide_dart",
+      "familyId": "bow_arrow_guide_dart",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "Wjy-E-qXjBlmT-V5z",
+      "equipmentId": "eEbv9yXUKqcIRJoRt",
+      "ammoId": "lt_arrow_guide_dart",
+      "familyId": "bow_arrow_guide_dart",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WCUkJUmXxsGLdGrEc",
+      "equipmentId": "etN6lwCl-IHVBA5AR",
+      "ammoId": "lt_arrow_guide_dart",
+      "familyId": "bow_arrow_guide_dart",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "W11eNBa3voVFCsgWv",
+      "equipmentId": "eUWsJGYIOS5hRIC3Z",
+      "ammoId": "lt_slurbow_dart_lt76",
+      "familyId": "slurbow_dart",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WFAwJH7XlIK-bIy0Q",
+      "equipmentId": "eUWsJGYIOS5hRIC3Z",
+      "ammoId": "lt_slurbow_dart_lt76",
+      "familyId": "slurbow_dart",
+      "before": "compatible",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WHHB1FrefOB5s-4aP",
+      "equipmentId": "eO0B7K0gkgSAdLyQR",
+      "ammoId": "lt_arrow_guide_dart",
+      "familyId": "bow_arrow_guide_dart",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WZsyvYVuMLMho_olT",
+      "equipmentId": "enxEQxvu3l4PJ3rWB",
+      "ammoId": "lt_multi_gonne_ball",
+      "familyId": "multi_shot_gonne_ball",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WtbxiVp4UnahK1ipb",
+      "equipmentId": "enxEQxvu3l4PJ3rWB",
+      "ammoId": "lt_multi_gonne_ball",
+      "familyId": "multi_shot_gonne_ball",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WtCjdhkE6xPYvdH_i",
+      "equipmentId": "enxEQxvu3l4PJ3rWB",
+      "ammoId": "lt_multi_gonne_ball",
+      "familyId": "multi_shot_gonne_ball",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WQHeXdJ-jVlDztUou",
+      "equipmentId": "enxEQxvu3l4PJ3rWB",
+      "ammoId": "lt_multi_gonne_ball",
+      "familyId": "multi_shot_gonne_ball",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "WBnarXoat3qLrySda",
+      "equipmentId": "enxEQxvu3l4PJ3rWB",
+      "ammoId": "lt_multi_gonne_ball",
+      "familyId": "multi_shot_gonne_ball",
+      "before": "undetermined",
+      "expected": "undetermined"
+    },
+    {
+      "modeId": "Wt-bMJQAZnEeMXWiA",
+      "equipmentId": "eThe4Cu9ga2pmfjJ2",
+      "ammoId": "lt_arrow_guide_dart",
+      "familyId": "bow_arrow_guide_dart",
+      "before": "undetermined",
+      "expected": "undetermined"
+    }
+  ],
+  "f20": [
+    "WVDXm1zp4eENVl-SF",
+    "WpoMAB2ff6sb8AoAB",
+    "W1qdiCJHVZnOkBFe6",
+    "Wfenu48zGIq5-aPpv",
+    "WbvTQ-Vl5wHmuFel0",
+    "WoJlf8jv3rl2lwDNy",
+    "WDgJJrXmNb2ltlJ8G",
+    "WIdMKJBBWBhs51_Vt",
+    "WujHSM90sHiX2IyRP",
+    "WYkHC34-KuQjgMNb-",
+    "W99LmoR-3mwDRYY_2",
+    "WQ-acgyhAxGxutQQq",
+    "WQazt507venteh0Yq",
+    "W6okrp1tUXYYdRJkW",
+    "WfBDjYyWLVcm9IqYO",
+    "W4PYHnE0if9L3zath",
+    "WyNOeQMG16apU0Jip",
+    "WseAzEHBPrff2YCJP",
+    "WUK8gvtaJNSdDQ4HE",
+    "WJE44M7Ljte5q0PJw",
+    "WXaJ_qgZAeRV_LccJ",
+    "WAjiOb3-A2JjSxsxf"
+  ],
+  "f21": [
+    "WVDXm1zp4eENVl-SF",
+    "WpoMAB2ff6sb8AoAB",
+    "W1qdiCJHVZnOkBFe6",
+    "Wfenu48zGIq5-aPpv",
+    "W-RYCc6uU-OXKoBah",
+    "WbvTQ-Vl5wHmuFel0",
+    "WKsEc93SimNUgXPWc",
+    "WoJlf8jv3rl2lwDNy",
+    "WXMj2wr9SMXV2QbWx",
+    "WDgJJrXmNb2ltlJ8G",
+    "Wz7rrcb1JQBbvlq8t",
+    "WIdMKJBBWBhs51_Vt",
+    "WER8WRUSBxLneb6MY",
+    "WujHSM90sHiX2IyRP",
+    "WdEDlxCiYeL4uSuUU",
+    "WyNOeQMG16apU0Jip",
+    "WseAzEHBPrff2YCJP"
+  ],
+  "f22": [
+    "WadZ9BFUFoPATpyuT",
+    "Wf9D7K1uIf9a1YFcF",
+    "WOtCDhbkzhdvewbDK",
+    "WqUeIOkvQIgCeKWou",
+    "Wk0G5zIrN66TWDaod",
+    "WnqU4wFdAaHmghhfn",
+    "Wjy-E-qXjBlmT-V5z",
+    "WCUkJUmXxsGLdGrEc",
+    "WHHB1FrefOB5s-4aP",
+    "WZsyvYVuMLMho_olT",
+    "WtbxiVp4UnahK1ipb",
+    "WtCjdhkE6xPYvdH_i",
+    "WQHeXdJ-jVlDztUou",
+    "WBnarXoat3qLrySda",
+    "Wt-bMJQAZnEeMXWiA"
+  ]
+}

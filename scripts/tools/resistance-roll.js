@@ -18,7 +18,8 @@ function validChemical(value){
 export function resistanceEffect(value){
   if(!value||value.version!==1||value.eligible===false||!Object.hasOwn(attributes,value.attribute)||
     !Number.isSafeInteger(value.modifier)||Math.abs(value.modifier)>1000||
-    !['none','vision-laser','electrolaser','microwave-mad','microwave-disruptor','omni-blaster',...Object.keys(afflictionOutcomes)].includes(value.condition)||!['temporary-blindness','crippling-blindness','electrical-stun','agony','shutdown','unconsciousness',...Object.values(afflictionOutcomes)].includes(value.outcome)||
+    !['none','reality-stabilizer','vision-laser','electrolaser','microwave-mad','microwave-disruptor','omni-blaster',...Object.keys(afflictionOutcomes)].includes(value.condition)||!['displacement','temporary-blindness','crippling-blindness','electrical-stun','agony','shutdown','unconsciousness',...Object.values(afflictionOutcomes)].includes(value.outcome)||
+    (value.condition==='reality-stabilizer')!==(value.outcome==='displacement')||value.condition==='reality-stabilizer'&&(value.attribute!=='HT'||value.modifier!==0)||
     Object.hasOwn(afflictionOutcomes,value.condition)&&(value.attribute!==(value.condition==='psionic'?'Will':'HT')||value.outcome!==afflictionOutcomes[value.condition]||!Number.isFinite(value.halfRange)||value.halfRange<0)||
     Object.values(afflictionOutcomes).includes(value.outcome)&&afflictionOutcomes[value.condition]!==value.outcome||
     value.condition==='neural'&&!neuralSettings.includes(value.setting)||
@@ -90,6 +91,10 @@ export function resistanceVisionDefaults(actor){
   return {distance:'within',protectedVision:protectedVision?'yes':'no',membrane:levels.length&&levels.every(n=>n===levels[0])&&Number.isSafeInteger(levels[0])?levels[0]:0};
 }
 export function visionResistanceModifier(effect,choices){
+  if(effect.condition==='reality-stabilizer'){
+    if(!Number.isSafeInteger(choices?.ht)||choices.ht<1||choices.ht>100000)throw Error('Укажите собственный HT Reality Stabilizer.');
+    return {applies:true,modifier:0,lines:['Собственный HT Reality Stabilizer: '+choices.ht+'; HT жертвы и обычная DR не используются. UT131.']};
+  }
   if(effect.condition==='fluid'){
     if(effect.chemical){
       const c=effect.chemical,check=c.checks.find(v=>v.id===(choices?.checkId??c.checks[0].id));
@@ -168,6 +173,9 @@ export function visionResistanceModifier(effect,choices){
       'Protected Vision: '+(pv?'+5':'нет (+0)'), 'Nictitating Membrane: +'+membrane]};
 }
 async function askConditions(effect,runtime,actor){
+  if(effect.condition==='reality-stabilizer')return runtime.foundry.applications.api.DialogV2.wait({window:{title:'Сопротивление Reality Stabilizer'},position:{width:420},modal:false,rejectClose:false,
+    content:'<p>Бросок только при наличии Reality Stabilizer или стабилизированного force screen. Используйте HT самого устройства (обычно 12), не HT жертвы. UT131.</p><label>HT стабилизатора<input name="ht" type="number" min="1" max="100000" step="1" value="12"></label>',
+    buttons:[{action:'roll',label:'Бросить',callback:(_event,button)=>({ht:Number(button.form.elements.ht.value)})},{action:'cancel',label:'Отмена',callback:()=>false}]});
   if(effect.condition==='fluid'){
     const checks=effect.chemical?.checks;
     if(!checks||checks.length===1)return checks?{checkId:checks[0].id}:{exposed:true,protected:false,immune:false};
@@ -362,7 +370,7 @@ export function resistanceOutcome(effect,native,choices={}){
     !success&&native.margin<0?'Степень провала: '+(-native.margin):
       label+' независимо от сравнения с итоговой характеристикой; разность характеристики и броска: '+native.margin;
   const recovery=`Каждый ход: HT${effect.modifier} для восстановления от оглушения, без бонуса DR. UT119; применяется вручную.`;
-  const consequence=Object.hasOwn(afflictionOutcomes,effect.condition)?profileAfflictionConsequence(effect,native,choices,success):effect.condition==='omni-blaster'?(success?'Воздействие Stun отражено.':
+  const consequence=effect.condition==='reality-stabilizer'?(success?'Reality Stabilizer защитил от переноса.':'Защита Reality Stabilizer не сработала. Габариты, область и назначение переноса разрешаются вручную. UT131.'):Object.hasOwn(afflictionOutcomes,effect.condition)?profileAfflictionConsequence(effect,native,choices,success):effect.condition==='omni-blaster'?(success?'Воздействие Stun отражено.':
     'Unconsciousness: '+(native.margin<0?-native.margin+' мин.':'длительность по степени автоматического провала определите вручную.')+' Применяется вручную. UT124.'):
     effect.condition==='microwave-mad'?(success?'Воздействие MAD отражено.':
     'Agony: пока цель находится в луче и ещё 1 секунду после выхода. Применяется вручную. UT120; B428.'):
@@ -384,7 +392,7 @@ export async function rollResistance(message,runtime=globalThis){
   busy.add(runtime);
   let preHook,createHook,timer,cleanupModifier;
   try{
-    const manual=effect.condition==='microwave-disruptor',controlled=runtime.canvas?.tokens?.controlled??[];
+    const manual=['microwave-disruptor','reality-stabilizer'].includes(effect.condition),controlled=runtime.canvas?.tokens?.controlled??[];
     if(manual&&controlled.length>1)throw Error('Выделите не более одного токена для сопротивления.');
     const token=manual?(controlled[0]?.actor?selectedResistanceToken(runtime):null):selectedResistanceToken(runtime),actor=token?.actor;
     const validate=()=>{if(actor)boundActor(token,actor,runtime);};

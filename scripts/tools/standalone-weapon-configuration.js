@@ -1,8 +1,15 @@
+import { sourceWeaponHandling, sourceBulkChoiceHTML } from './weapon-bulk.js';
 import { moduleMessage, moduleText } from "../localization.js";
+import {ladarProfile} from '../ut-next-eleven-source.js';
+import {sonicShuriken} from '../ut-sonic-shuriken-source.js';
+import {parseCampaignTL} from './tech-level.js';
 import {specializedPlatform} from '../ht-specialized-platforms.js';
 import {weaponBondCheckbox} from './weapon-bond-service.js';
 import {weaponText} from './weapon-localization.js';
 import { htPreGaussProfile } from '../ht-pre-gauss-profiles.js';
+import {ltBowProfile} from '../lt-bow-source.js';
+import {resolveLTBowBase} from './lt-bow.js';
+import {ltBowEditorHTML,bindLTBowEditor} from './lt-bow-editor.js';
 import { StandaloneWeaponDraft, StandaloneWeaponService, searchStandaloneModels,
   standaloneModeStats, standaloneText } from "./standalone-weapon-service.js";
 
@@ -11,7 +18,9 @@ const escape = value => String(value ?? "").replace(/[&<>"']/g,
 const caption = equipment => [equipment.name, equipment.source, equipment.reference].filter(Boolean).join(" — ");
 
 export function standaloneModelOptions(draft) {
-  const results = draft.query.trim() ? searchStandaloneModels(draft.catalogs, draft.type, draft.query, draft.source).slice(0, 100) : [];
+  const limit=parseCampaignTL(draft.actor?.getFlag?.('olegurps-qol','campaignTL'));
+  const results = draft.query.trim() ? searchStandaloneModels(draft.catalogs, draft.type, draft.query, draft.source).filter(e=>
+    !e.modes.some(m=>sonicShuriken(m.weapon_mode_id))||limit===null||limit>=10||e.equipment_id===draft.existing?.source.equipmentId).slice(0, 100) : [];
   const pinned = draft.equipment;
   if (pinned && !results.some(e => e.equipment_id === pinned.equipment_id)) results.unshift(pinned);
   return `<option value="">${escape(standaloneText(results.length || !draft.query ? "Select" : "NoResults"))}</option>` +
@@ -19,29 +28,38 @@ export function standaloneModelOptions(draft) {
 }
 
 export function standaloneModeFields(draft) {
+  const campaignTL=parseCampaignTL(draft.actor?.getFlag?.('olegurps-qol','campaignTL'));
   const keys = draft.type === "ranged" ? ["damage", "acc", "range", "rof", "shots", "rcl", "bulk", "st"] : ["damage", "reach", "parry", "st", "block"];
   const labels = { damage: "Damage", acc: "Acc", range: "Range", rof: "RoF", shots: "Shots", rcl: "Rcl", bulk: "Bulk", st: "ST", reach: "Reach", parry: "Parry", block: "Block" };
   return draft.availableModes.map(mode => {
     const id = mode.weapon_mode_id, stats = standaloneModeStats(mode), selected = draft.modeIds.has(id);
-    const preview=draft.statPreview?.(id);
+    let preview=draft.statPreview?.(id);
+    if(!preview&&ltBowProfile(id)){
+      const b=resolveLTBowBase({modeId:id,configuration:draft.ltBow,actor:draft.actor,sourceStats:draft.overrides[id]});
+      preview={stats:{...stats,damage:b.ready?b.dice+' '+b.type:'—',range:b.ready?b.range.join('/'):'—'},derivedFields:['damage','range']};
+    }
     const platform=specializedPlatform(mode,draft.equipment.source);
+    const handling=sourceWeaponHandling(mode,draft.overrides[id]?.bulkState,draft.overrides[id]?.bulk??null);
+    const skillChoices=mode.governing_skill_selection?.strategy==='best-available-unmodified'?mode.governing_skill_selection.candidates:null;
     const skill = mode.governing_skill?.status === "resolved" ? mode.governing_skill.skill : null;
     const skillName = skill ? skill.name + (skill.specialization ? " (" + skill.specialization + ")" : "") : standaloneText("Unknown");
     return `<fieldset class="gam-standalone-mode"><legend><label><input type="checkbox" data-standalone-mode="${escape(id)}" ${selected ? "checked" : ""}>${escape(mode.usage || draft.equipment.name)}</label></legend>` +
-      (skill ? `<p>${escape(standaloneText("Skill"))}: <strong>${escape(skillName)}</strong></p>` :
+      (skillChoices ? `<label>${escape(standaloneText("Skill"))}<select data-standalone-stat="governingSkill" data-mode-id="${escape(id)}"><option value="">Автоматически: лучший изученный</option>${skillChoices.map(s=>`<option value="${escape(s.name)}"${draft.overrides[id]?.governingSkill===s.name?' selected':''}>${escape(s.name)}</option>`).join('')}</select></label>` : skill ? `<p>${escape(standaloneText("Skill"))}: <strong>${escape(skillName)}</strong></p>` :
         selected ? `<label>${escape(standaloneText("Skill"))}<input type="text" data-standalone-stat="governingSkill" data-mode-id="${escape(id)}" value="${escape(draft.overrides[id]?.governingSkill ?? "")}" placeholder="${escape(standaloneText("MissingInput"))}" title="${escape(standaloneText("Missing"))}"></label>` :
           `<p>${escape(standaloneText("Skill"))}: ${escape(skillName)}</p>`) +
       (selected && platform?.kind==='host-dependent' ?
         (platform.stockConfiguration?`<label>Исполнение FN 303<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите исполнение</option><option value="stock"${draft.overrides[id]?.installation==='stock'?' selected':''}>С прикладом — Bulk −4</option><option value="host"${draft.overrides[id]?.installation==='host'?' selected':''}>Подствольное</option></select></label>`:'')+
         `<label>Bulk оружия-носителя<input data-standalone-stat="hostBulk" data-mode-id="${escape(id)}" value="${escape(draft.overrides[id]?.hostBulk??'')}" placeholder="Например, −5"></label><p class="hint">${platform.source}: к Bulk носителя прибавляется ${platform.hostBulkAdjustment}. Собственный носитель не изменяется.</p>`:'')+
       (selected && platform?.instruction?`<p class="hint">${escape(platform.instruction)}</p>`:'')+
+      (selected&&ladarProfile(id)?ladarProfile(id).size==='Smartskin'?`<label>Носитель<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите носитель</option>${campaignTL===null||campaignTL>=11||draft.overrides[id]?.installation==='nightwing-ut230'?`<option value="nightwing-ut230"${draft.overrides[id]?.installation==='nightwing-ut230'?' selected':''}>Nightwing — 10 миль, UT230</option>`:''}</select></label>`:`<label>TL сенсора<select data-standalone-stat="sensorTL" data-mode-id="${escape(id)}">${[9,10,11,12].filter(tl=>campaignTL===null||tl<=campaignTL||tl===Number(draft.overrides[id]?.sensorTL??9)).map(tl=>`<option value="${tl}"${Number(draft.overrides[id]?.sensorTL??9)===tl?' selected':''}>${tl}</option>`).join('')}</select></label>`:'')+
       (selected && htPreGaussProfile(id)?.continuousUnits?`<label>Струя Beattie M2-2<select data-standalone-stat="jetMode" data-mode-id="${escape(id)}"><option value="short" ${draft.overrides[id]?.jetMode!=='continuous'?'selected':''}>2 с — один подготовленный заряд</option><option value="continuous" ${draft.overrides[id]?.jetMode==='continuous'?'selected':''}>10 с — пять подготовленных зарядов</option></select></label>`:'')+
       (selected && platform?.blockedReason?`<p class="hint">${escape(platform.blockedReason)}</p>`:'')+
+      (selected&&sonicShuriken(id)?`<label>Конструкция<select data-standalone-stat="sonicChemical" data-mode-id="${escape(id)}"><option value="">Обычная — $400</option><option value="enabled" ${draft.overrides[id]?.sonicChemical==='enabled'?'selected':''}>Химическая — $450, две дозы отдельно</option></select></label>`:'')+
       (selected && platform?.terminalInstruction?`<p class="hint">${escape(platform.terminalInstruction)}</p>`:'')+
-      (selected ? `<div class="gam-standalone-stats">${keys.map(key => {
-        const value = preview?.stats[key] ?? draft.overrides[id]?.[key] ?? stats[key] ?? "";
-        const derived=preview?.derivedFields.includes(key);
-        if(key==='rcl'&&platform?.rclNotApplicable||key==='bulk'&&platform?.bulkNotApplicable||key==='acc'&&platform?.accNotApplicable)return `<label>${labels[key]}<input disabled value="Не применяется"></label>`;
+      (selected ? sourceBulkChoiceHTML(mode,draft.overrides[id]?.bulkState,escape,`data-standalone-stat="bulkState" data-mode-id="${escape(id)}"`)+`<div class="gam-standalone-stats">${keys.map(key => {
+        const value = key==='bulk'&&handling?.bulkMetadata?handling.bulkMetadata.numericBulk:preview?.stats[key] ?? draft.overrides[id]?.[key] ?? stats[key] ?? "";
+        const derived=preview?.derivedFields.includes(key)||key==='bulk'&&!!handling?.bulkMetadata&&!handling.bulkMetadata.manual;
+        if(key==='rcl'&&(platform?.rclNotApplicable||handling?.rclNotApplicable)||key==='bulk'&&platform?.bulkNotApplicable||key==='acc'&&platform?.accNotApplicable)return `<label>${labels[key]}<input disabled data-standalone-stat="${key}" data-mode-id="${escape(id)}" value="Не применяется"></label>`;
         return `<label>${labels[key]}<input type="text" ${derived?'readonly ':''}data-standalone-stat="${key}" data-mode-id="${escape(id)}" value="${escape(value)}" placeholder="${escape(standaloneText("MissingInput"))}" title="${escape(derived?weaponText('DerivedExecution'):stats[key] == null ? standaloneText("Missing") : standaloneText("Override"))}"></label>`;
       }).join("")}</div>` : "") +
       `<p class="hint" data-standalone-profile="${escape(id)}" ${!preview?.resolvedDamage||preview.resolvedDamage===preview.stats.damage?'hidden':''}>${escape(moduleText('OleGURPS.Weapon.ResolvedProfile',{damage:preview?.resolvedDamage??''}))}</p>`+
@@ -63,14 +81,27 @@ export function standaloneConfigurationHTML(draft) {
     <p class="hint">${escape(standaloneText("ChooseFirst"))}</p>
     <label>${escape(standaloneText("Model"))}<select name="standaloneModel">${standaloneModelOptions(draft)}</select></label>
     <div data-standalone-modes>${standaloneModeFields(draft)}</div>
-    ${weaponBondCheckbox({available:draft.weaponBondAvailable,checked:draft.weaponBond,name:'standaloneWeaponBond'})}</div>`;
+    <div data-standalone-lt-bow>${ltBowEditorHTML(draft.ltBow,draft.selectedModes[0]?.weapon_mode_id,draft.actor,escape)}</div>
+    <div data-standalone-weapon-bond>${weaponBondCheckbox({available:draft.weaponBondAvailable,checked:draft.weaponBond,name:'standaloneWeaponBond',manualAllowed:draft.type==='ranged'&&draft.equipment?.source==='LT'})}</div></div>`;
 }
 
 export function bindStandaloneConfiguration(root, draft) {
-  root.querySelector('[name="standaloneWeaponBond"]')?.addEventListener('change',event=>{
-    draft.weaponBond=event.target.checked;draft.weaponBondChanged=true;
+  root.addEventListener('change',event=>{
+    if(event.target.name!=='standaloneWeaponBond')return;draft.weaponBond=event.target.checked;draft.weaponBondChanged=true;
   });
   const models = root.querySelector('[name="standaloneModel"]'), modes = root.querySelector('[data-standalone-modes]');
+  const bowRoot=root.querySelector('[data-standalone-lt-bow]');
+  const bowMode=()=>draft.selectedModes[0]?.weapon_mode_id;
+  const refreshBow=()=>{if(bowRoot)bowRoot.innerHTML=ltBowEditorHTML(draft.ltBow,bowMode(),draft.actor,escape);
+    const bond=root.querySelector('[data-standalone-weapon-bond]');if(bond)bond.innerHTML=weaponBondCheckbox({available:draft.weaponBondAvailable,checked:draft.weaponBond,name:'standaloneWeaponBond',manualAllowed:draft.type==='ranged'&&draft.equipment?.source==='LT'});};
+  if(bowRoot){bowRoot._ltBowActor=draft.actor;bindLTBowEditor(bowRoot,{getModeId:bowMode,getConfiguration:()=>draft.ltBow,
+    setField:(key,value)=>{draft.ltBow[key]=value;},onChange:()=>{
+      for(const input of modes.querySelectorAll('[data-standalone-stat]')){
+        const id=input.dataset.modeId,key=input.dataset.standaloneStat;if(!ltBowProfile(id)||!['damage','range'].includes(key))continue;
+        const b=resolveLTBowBase({modeId:id,configuration:draft.ltBow,actor:draft.actor,sourceStats:draft.overrides[id]});
+        input.value=draft.statPreview?.(id)?.stats[key]??(b.ready?(key==='damage'?b.dice+' '+b.type:b.range.join('/')):'—');input.readOnly=true;
+      }
+    }});}
   const options = () => { models.innerHTML = standaloneModelOptions(draft); };
   root.querySelector('[name="standaloneQuery"]').addEventListener("input", event => { draft.query = event.target.value; options(); });
   root.querySelector('[name="standaloneSource"]').addEventListener("change", event => { draft.source = event.target.value; options(); });
@@ -78,14 +109,18 @@ export function bindStandaloneConfiguration(root, draft) {
     if(draft.refreshCatalogData()){options();modes.innerHTML=standaloneModeFields(draft);}
     else globalThis.ui?.notifications?.warn?.('Не удалось подтвердить исходную версию этой модели. Сохранённое оружие не изменено.');
   });
-  models.addEventListener("change", event => { draft.selectModel(event.target.value); modes.innerHTML = standaloneModeFields(draft); });
+  models.addEventListener("change", event => { draft.selectModel(event.target.value); modes.innerHTML = standaloneModeFields(draft);refreshBow(); });
   modes.addEventListener("change", event => {
     const field = event.target;
+    if(['bulkState','governingSkill'].includes(field.dataset.standaloneStat)){draft.setOverride(field.dataset.modeId,field.dataset.standaloneStat,field.value);modes.innerHTML=standaloneModeFields(draft);return;}
+    if(field.dataset.standaloneStat==='sonicChemical'){draft.setOverride(field.dataset.modeId,'sonicChemical',field.value);return;}
     if(field.dataset.standaloneStat==='jetMode'){draft.setOverride(field.dataset.modeId,'jetMode',field.value);return;}
     if(field.dataset.standaloneStat==='installation') {draft.setOverride(field.dataset.modeId,'installation',field.value);modes.innerHTML=standaloneModeFields(draft);return;}
+    if(field.dataset.standaloneStat==='sensorTL'){draft.setOverride(field.dataset.modeId,'sensorTL',field.value);modes.innerHTML=standaloneModeFields(draft);return;}
     if (field.dataset.standaloneMode) {
       if (field.checked) draft.modeIds.add(field.dataset.standaloneMode); else draft.modeIds.delete(field.dataset.standaloneMode);
       modes.innerHTML = standaloneModeFields(draft);
+      refreshBow();
     }
   });
   // Keep the draft current even when Save immediately follows typing in a field.

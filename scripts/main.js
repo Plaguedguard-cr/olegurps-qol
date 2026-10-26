@@ -1,6 +1,10 @@
 import {installExoticBeamDamage} from './tools/exotic-beam-damage.js';
+import { openUnifiedLauncher, registerLauncherSettings } from './unified-launcher.js';
+import { launcherActions, runLauncherAction } from './launcher-actions.js';
+import { launcherButton } from './launcher-button.js';
 import { developerApi, registerDeveloperModeMenu } from "./tools/developer-mode-app.js";
 import { registerWeaponSkillSettings } from "./tools/weapon-skill-settings-app.js";
+import {registerLTPersonalSettings} from './lt-personal-source.js';
 import { loadWeaponSkillTLTranslations } from "./tools/weapon-skill-tl-policy.js";
 import { registerAmmunitionApprovals } from "./tools/ammunition-approval-service.js";
 import { loadExplosiveTranslations } from "./tools/explosive-ammunition-localization.js";
@@ -57,6 +61,7 @@ const ammunitionCompatibility = new AmmunitionCompatibilityService(catalogs);
 const automaticAmmunitionProfiles = new AutomaticAmmunitionProfileService({ catalogs, compatibility: ammunitionCompatibility });
 
 const api = {
+  launcher: { open: openUnifiedLauncher, actions: launcherActions, run: runLauncherAction },
   catalogs,
   ammunitionCompatibility,
   automaticAmmunitionProfiles,
@@ -79,6 +84,7 @@ const api = {
 Object.defineProperty(api, "developer", { enumerable: true, get: () => globalThis.game?.user?.isGM ? developerApi : undefined });
 
 Hooks.once("init", () => {
+  registerLauncherSettings(() => launcherButton.refresh());
   registerAmmunitionApprovals();
   registerAutomaticAmmoPolicy();
   ensureModuleStylesheet();
@@ -89,6 +95,7 @@ Hooks.once("init", () => {
   registerReelingTiredSetting();
   registerDeveloperModeMenu();
   registerWeaponSkillSettings();
+  registerLTPersonalSettings();
   globalThis.OleGURPSQOL = api;
   void catalogs.load().catch(error =>
     console.error("OleGURPS QOL: catalog initialization failed.", error));
@@ -134,6 +141,7 @@ Hooks.once("ready", async () => {
   const module = game.modules.get(MODULE_ID);
   if (module) module.api = api;
   game.olegurpsQOL = api;
+  launcherButton.start();
   try {
     await ensureModuleMacros();
   } catch (error) {

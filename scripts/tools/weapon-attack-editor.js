@@ -1,21 +1,26 @@
 import { weaponText, weaponCatalogSearchState,
   weaponComparisonHTML, escapeWeaponHTML } from "./weapon-configuration.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
+import { recoilNotApplicable } from './weapon-recoil.js';
+import {ltFlameProfile} from '../lt-flame-source.js';
+const flameAccuracyNA=attack=>{const id=attack?.catalogModeId??attack?.standaloneRef?.modeId;return id?!!ltFlameProfile(id):attack?.platformRules?.kind==='lt-flame';};
 
 const text = value => String(value ?? "").trim();
 const integer = value => {
+  if(!text(value))return null;
   const number = Number(text(value).replace(",", "."));
   return Number.isInteger(number) ? number : null;
 };
 
-export function validateWeaponAttackOverride(values, parseRateOfFire) {
+export function validateWeaponAttackOverride(values, parseRateOfFire, attack = null) {
   const skillLevel = integer(values.skillLevel);
   const rof = text(values.rof);
-  const acc = integer(values.acc);
-  const scopeBonus = integer(values.scopeBonus);
+  const noAccuracy=flameAccuracyNA(attack),acc = noAccuracy?null:integer(values.acc);
+  const scopeBonus = noAccuracy?0:integer(values.scopeBonus);
   const bulkMetadata = parseWeaponBulk(values.bulk);
   const bulk = bulkMetadata?.numericBulk ?? null;
-  const rcl = text(values.rcl);
+  const noRecoil=recoilNotApplicable(attack);
+  const rcl = noRecoil?null:text(values.rcl);
   const errors = [];
 
   if (skillLevel === null || skillLevel < 0 || skillLevel > 999) {
@@ -25,7 +30,7 @@ export function validateWeaponAttackOverride(values, parseRateOfFire) {
   if (!rof || !rofProfile?.valid) {
     errors.push(weaponText("RofInvalid"));
   }
-  if (acc === null || acc < 0 || acc > 999) {
+  if (!noAccuracy&&(acc === null || acc < 0 || acc > 999)) {
     errors.push(weaponText("AccInvalid"));
   }
   if (scopeBonus === null || scopeBonus < 0 || scopeBonus > 999) {
@@ -34,7 +39,7 @@ export function validateWeaponAttackOverride(values, parseRateOfFire) {
   if (bulk === null || bulk < -999 || bulk > 999) {
     errors.push(weaponText("BulkInvalid"));
   }
-  if (!/^\d+(?:\s*\/\s*\d+)?$/u.test(rcl) || rcl.split("/").some(part => Number(part.trim()) < 1)) {
+  if (!noRecoil&&(!/^\d+(?:\s*\/\s*\d+)?$/u.test(rcl) || rcl.split("/").some(part => Number(part.trim()) < 1))) {
     errors.push(weaponText("RclInvalid"));
   }
 
@@ -47,6 +52,8 @@ export function validateWeaponAttackOverride(values, parseRateOfFire) {
 }
 
 export async function openWeaponAttackEditor({ DialogV2, attack, escapeHTML = escapeWeaponHTML, parseRateOfFire, configuration = null }) {
+  const noRecoil=recoilNotApplicable(attack);
+  const noAccuracy=flameAccuracyNA({...attack,catalogModeId:configuration?.target?.modeId??attack?.catalogModeId});
   const draft = configuration ? structuredClone({ target: configuration.target,
     catalogChanged: false }) : null;
   const catalogs = configuration?.catalogs;
@@ -70,21 +77,21 @@ export async function openWeaponAttackEditor({ DialogV2, attack, escapeHTML = es
         <div class="gam-attack-editor-accuracy">
           <label>
             <span>Acc</span>
-            <input type="number" name="acc" value="${escapeHTML(attack.acc ?? 0)}" min="0" max="999" step="1" required>
+            <input type="${noAccuracy?'text':'number'}" name="acc" value="${noAccuracy?'Не применяется':escapeHTML(attack.acc ?? '')}" min="0" max="999" step="1" ${noAccuracy?'disabled':'required'}>
           </label>
           <strong aria-hidden="true">+</strong>
           <label>
             <span>${escapeHTML(weaponText("Scope"))}</span>
-            <input type="number" name="scopeBonus" value="${escapeHTML(attack.scopeBonus ?? 0)}" min="0" max="999" step="1" required>
+            <input type="number" name="scopeBonus" value="${escapeHTML(attack.scopeBonus ?? 0)}" min="0" max="999" step="1" ${noAccuracy?'disabled':'required'}>
           </label>
         </div>
         <label class="gam-attack-editor-row">
           <span>Bulk</span>
-          <input type="text" name="bulk" value="${escapeHTML(attack.bulkMetadata?.rawBulk ?? attack.data?.bulk ?? attack.bulk ?? "")}" required>
+          <input type="text" name="bulk" value="${escapeHTML(attack.bulkMetadata?.sourceValues?attack.bulk:attack.bulkMetadata?.rawBulk ?? attack.data?.bulk ?? attack.bulk ?? "")}" ${attack.bulkMetadata?.sourceValues&&!attack.bulkMetadata.manual?'readonly':''} required>
         </label>
         <label class="gam-attack-editor-row">
           <span>Rcl</span>
-          <input type="text" name="rcl" value="${escapeHTML(attack.rcl)}" placeholder="2 / 2/1" required>
+          <input type="text" name="rcl" value="${noRecoil?'Не применяется':escapeHTML(attack.rcl)}" placeholder="2 / 2/1" ${noRecoil?'disabled':'required'}>
         </label>
       </div>
     `,
@@ -114,6 +121,9 @@ export async function openWeaponAttackEditor({ DialogV2, attack, escapeHTML = es
       const updateComparison = () => {
         comparison.innerHTML = weaponComparisonHTML(attack, catalogs?.getMode(draft.target?.modeId));
         select.title = select.selectedOptions?.[0]?.textContent ?? "";
+        const na=flameAccuracyNA({...attack,catalogModeId:draft.target?.modeId}),acc=root.querySelector('[name="acc"]'),scope=root.querySelector('[name="scopeBonus"]');
+        if(acc){acc.disabled=na;acc.required=!na;acc.type=na?'text':'number';if(na)acc.value='Не применяется';else if(!acc.value||acc.value==='Не применяется')acc.value=String(attack.acc??'');}
+        if(scope){scope.disabled=na;scope.required=!na;}
       };
       const search = () => {
         const state = weaponCatalogSearchState(catalogs, root.querySelector('[name="catalogSearch"]').value,
@@ -137,15 +147,16 @@ export async function openWeaponAttackEditor({ DialogV2, attack, escapeHTML = es
   });
 
   if (!result || result.action === "reset") return result;
-  const validation = validateWeaponAttackOverride(result.values, parseRateOfFire);
+  const validation = validateWeaponAttackOverride(result.values, parseRateOfFire, {...attack,catalogModeId:draft?.target?.modeId??attack?.catalogModeId});
   if (!validation.valid) {
     ui.notifications.error(`${weaponText("Invalid")}: ${validation.errors.join("; ")}.`);
     return null;
   }
-  const originalBulk = parseWeaponBulk(attack.bulkMetadata?.rawBulk ?? attack.data?.bulk ?? attack.bulk);
-  const original = { skillLevel: attack.level, rof: text(attack.rof), acc: attack.acc ?? 0,
-    scopeBonus: attack.scopeBonus ?? 0, bulk: originalBulk?.numericBulk ?? null, rcl: text(attack.rcl),
-    ...(originalBulk?.hasFoldingStock ? { bulkMetadata: originalBulk } : {}) };
+  if(attack.bulkMetadata?.sourceValues&&validation.value.bulk===attack.bulk)validation.value.bulkMetadata=structuredClone(attack.bulkMetadata);
+  const originalBulk = attack.bulkMetadata?.sourceValues?attack.bulkMetadata:parseWeaponBulk(attack.bulkMetadata?.rawBulk ?? attack.data?.bulk ?? attack.bulk);
+  const original = { skillLevel: attack.level, rof: text(attack.rof), acc: attack.acc ?? null,
+    scopeBonus: attack.scopeBonus ?? 0, bulk: originalBulk?.numericBulk ?? null, rcl: noRecoil?null:text(attack.rcl),
+    ...(originalBulk?.hasFoldingStock||originalBulk?.sourceValues ? { bulkMetadata: originalBulk } : {}) };
   const changed = JSON.stringify(validation.value) !== JSON.stringify(original);
   return { action: draft && !changed ? "configuration" : "save", value: validation.value, ...(draft ? { configuration: draft } : {}) };
 }

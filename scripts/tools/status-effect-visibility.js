@@ -20,7 +20,7 @@ export function applyStatusEffectVisibility(visibility = getStatusEffectVisibili
 export class StatusEffectVisibilityMenu extends ApplicationV2 {
   static DEFAULT_OPTIONS = {
     id: "olegurps-status-effect-visibility",
-    classes: ["olegurps-qol", "status-effect-visibility"],
+    classes: ["olegurps-qol", "olegurps-settings", "status-effect-visibility"],
     tag: "section",
     window: {
       title: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c \u044d\u0444\u0444\u0435\u043a\u0442\u043e\u0432 OleGURPS QOL",

@@ -7,6 +7,7 @@ import { executePreparedGgaRoll } from "../scripts/tools/prepared-gga-roll.js";
 import { calculateSuppressionFireHits } from "../scripts/tools/suppression-fire-service.js";
 import { AmmoService } from "../scripts/tools/ammo-service.js";
 import { ammoDisplayName } from "../scripts/tools/ammo-management-localization.js";
+import { weaponResourceLabel as beamResourceLabel } from '../scripts/tools/weapon-resources.js';
 import { resolveRuntimeAttackProfile, newAttackId, attackProfileError } from "../scripts/tools/attack-profile-runtime.js";
 
 // Use the production transaction boundary in the private-closure tests as well.
@@ -14,8 +15,9 @@ function attachAmmoState(actor, state, onSave = () => {}) {
   globalThis.foundry ??= { utils: { deepClone: structuredClone } };
   const weapon = state.weapons[0];
   actor.isOwner = true;
-  actor.getFlag = () => structuredClone(state);
-  actor.setFlag = async (_scope, _key, next) => {
+  actor.getFlag = (scope,key) => scope==='world'&&key==='gurpsAmmoManager'?structuredClone(state):undefined;
+  actor.setFlag = async (scope,key,next) => {
+    assert.equal(scope,'world');assert.equal(key,'gurpsAmmoManager');
     Object.assign(weapon, structuredClone(next.weapons[0]));
     Object.assign(state, structuredClone(next)); state.weapons[0] = weapon;
     onSave();
@@ -148,7 +150,7 @@ function shootingFixture(fx, scenario) {
   const execute = privateFunction("async function fireAndRoll(", "async function spendWithoutRoll(", {
     normalizeVisibility: () => null,
     ammoService, actor: fx.actor, token: { id: "source" }, newAttackId, ammoDisplayName,
-    resolveRuntimeAttackProfile, attackProfileError,
+    resolveRuntimeAttackProfile, attackProfileError, beamResourceLabel,
     repairState: async () => {}, getWeaponContext: () => ({ weapon, attack: fx.attack }),
     getRangeBands: () => [], getTaggedModifierSettings: () => null,
     parseShotOptions: () => options, getCloseDamageReport: () => null,

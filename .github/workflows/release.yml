@@ -62,6 +62,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: OleGURPS QOL v${{ steps.metadata.outputs.version }}
+          body_path: docs/releases/v${{ steps.metadata.outputs.version }}.md
           generate_release_notes: true
           make_latest: true
           files: |

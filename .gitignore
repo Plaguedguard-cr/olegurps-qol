@@ -40,6 +40,7 @@ release/
 /docs/audit/*
 !/docs/audit/ut-weapons-inventory.json
 !/docs/audit/ultra-tech-2007-errata.md
+!/docs/audit/olegurps-launcher-actions.json
 /local-archive/
 /olegurps-qol-archive/
 /local-sources/

@@ -8,6 +8,7 @@ export function plbRecipeAllowed(modeId,type){
  return kineticVariants.has(type.recipe.variantId);
 }
 export const UT_FIXED_FEEDS=Object.freeze({
+ WUTSmartShuriken:Object.freeze({count:1,capacity:1,selectionOnly:true,label:'Робот',source:'UT169'}),
  [HT_TEAR_SPRAY_MODE]:Object.freeze({count:1,capacity:20,selectionOnly:true,label:"\u0411\u0430\u043b\u043b\u043e\u043d",source:"HT180"}),
  ...Object.fromEntries(Object.values(UT_FLUID_PROFILES).map(p=>[p.modeId,Object.freeze({count:1,capacity:p.capacity,selectionOnly:true,label:"\u0420\u0435\u0437\u0435\u0440\u0432\u0443\u0430\u0440",source:"UT134"})])),
  WC9xrdk8qWqC3tsHh:Object.freeze({count:1,capacity:1,selectionOnly:true,label:'Камора',source:'UT145'}),

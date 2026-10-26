@@ -3,7 +3,10 @@ import {AmmoService} from './ammo-service.js';
 import { createGgaDamageWithEasterEgg } from "./damage-result-easter-egg.js";
 import { buildAttackModifierBreakdownHtml, buildCompactAttackModifiers, executeWithCapturedRollMessage, executePreparedGgaRoll } from "./prepared-gga-roll.js";
 import { resolveRuntimeAttackProfile, newAttackId } from "./attack-profile-runtime.js";
-import { createShotSnapshot } from "./attack-profile-resolver.js";
+import { AttackProfileResolver, createShotSnapshot } from "./attack-profile-resolver.js";
+import { resolveStrengthDamage } from './strength-service.js';
+import { getMeleeNativeDamageParser, parseCompleteMeleeDamage, inferMeleeDamageModel } from './melee-damage-model.js';
+import { installMeleeNativeDamage, numericMeleeDamageEvent } from './melee-native-damage.js';
 import { resolveCombatCalculation } from "./combat-calculation-engine.js";
 import { getCombatRules } from "./combat-technique-registry.js";
 import { isWeaponBondActive } from "./weapon-bond-service.js";
@@ -238,6 +241,19 @@ async function performMeleeActionWithoutConfirmation(callback) {
   }
 }
 
+export function freezeMeleeAttackProfile({actor,attack,preparedDamage,context={}}){
+  const profile=structuredClone(new AttackProfileResolver().resolve({actorId:actor?.id,
+    attack,rawAttack:{...attack?.data,damage:preparedDamage?.formula??attack?.damage},ammunition:null,context:{...context,kind:'melee'}}));
+  profile.effective.damage=preparedDamage?.formula??null;
+  profile.sources.raw=attack?.standaloneRef?'flags.olegurps-qol.standaloneWeapons':'Actor.system.melee';
+  profile.sources.overrides='world.olegurpsMeleeAssistant';
+  profile.damage={...profile.damage,formula:preparedDamage?.formula??null,nativeSafe:!!preparedDamage,
+    status:preparedDamage?'resolved':'unresolved',components:[],reason:preparedDamage?null:'melee-damage-unresolved',
+    rules:{meleeSnapshot:{version:1,action:preparedDamage?structuredClone(preparedDamage.action):null,
+      evidence:preparedDamage?.evidence??null}}};
+  return profile;
+}
+
 export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0, damageOptions = {}, combatCalculation = null, skillCap = null } = {}) {
   if(sourceAttack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE){
     if(!actor?.isOwner||sourceAttack.readinessReason)throw Error(sourceAttack.readinessReason??'Permission');
@@ -249,11 +265,12 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   }
   if (sourceAttack?.standaloneRef) {
     if (!actor?.isOwner || sourceAttack.readinessReason) throw new Error(sourceAttack.readinessReason ?? "Нет прав на атаку.");
-    const preparedDamage = await prepareEffectiveMeleeDamage({ ...damageOptions, actor, attack: sourceAttack });
+    const selectedAttack=damageOptions.attack??sourceAttack;
+    const preparedDamage = await prepareEffectiveMeleeDamage({ ...damageOptions, actor, attack: selectedAttack });
     if (!preparedDamage) throw new Error("Формула автономной атаки не распознана GGA.");
     const attack = { ...sourceAttack, data: { ...sourceAttack.data, damage: preparedDamage.formula } };
-    const profile = resolveRuntimeAttackProfile({ actor, attack, ammunition: null,
-      context: { kind: "melee", effectiveSkill, deceptiveDefensePenalty, telegraphicCriticalBonus } });
+    const profile = freezeMeleeAttackProfile({ actor, attack, preparedDamage,
+      context: { effectiveSkill, deceptiveDefensePenalty, telegraphicCriticalBonus } });
     const attackId = newAttackId();
     const result = await executePreparedGgaRoll({ actor, attack, attackProfile: profile,
       shotSnapshot: createShotSnapshot(profile, { attackId }), baseSkill: sourceAttack.level,
@@ -266,6 +283,11 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
       message: result.message, rollData: result.rollData };
   }
   if (typeof globalThis.GURPS?.performAction !== "function") throw new Error("GGA performAction недоступен.");
+  const selectedAttack=damageOptions.attack??sourceAttack;
+  const preparedDamage=await prepareEffectiveMeleeDamage({...damageOptions,actor,attack:selectedAttack});
+  const profile=freezeMeleeAttackProfile({actor,attack:selectedAttack,preparedDamage,
+    context:{effectiveSkill,deceptiveDefensePenalty,telegraphicCriticalBonus,maneuver}});
+  const attackId=newAttackId();
   const originalLevel = Number(sourceAttack?.level ?? sourceAttack?.import);
   if (!Number.isFinite(originalLevel) || !Number.isFinite(Number(effectiveSkill))) {
     throw new Error("Не удалось определить уровень выбранной melee-атаки.");
@@ -297,30 +319,41 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   const criticalName = name.replace(/\[[^\]]*\]/gu, "").replace(/ +/gu, " ").trim();
   const execute = () => withTelegraphicCriticalLimit(globalThis.GURPS, actor?.id,
     criticalName, telegraphicCriticalBonus, perform);
-  const execution = captureMessage
+  const execution = (captureMessage||preparedDamage)&&globalThis.ChatMessage
     ? await executeWithCapturedRollMessage({ ChatMessage: globalThis.ChatMessage, actorId: actor?.id, execute })
     : { result: await execute(), message: null };
+  if(execution.result&&execution.message?.setFlag)await execution.message.setFlag('olegurps-qol','shotSnapshot',
+    structuredClone(createShotSnapshot(profile,{attackId,messageId:execution.message.id})));
   return { success: !!execution.result, message: execution.message ?? null };
 }
 
 function materializeDamageAction(source, actor, { dicePlusAdds = false, allOutStrong = false,
-  committedStrong = false, defensiveAttack = false } = {}, overrideText = "") {
+  committedStrong = false, defensiveAttack = false, applyArmST = false } = {}, overrideText = "") {
   if (!source || !["damage", "deriveddamage"].includes(source.type)) return null;
   const action = { ...source };
   if (action.type === "deriveddamage") {
-    const base = /sw/i.test(action.derivedformula) ? actor?.system?.swing : actor?.system?.thrust;
-    const resolved = resolveDerivedDamageFormula(base, action.formula);
+    const mode = /sw/i.test(action.derivedformula) ? 'swing' : 'thrust';
+    const strength = resolveStrengthDamage(actor,mode,{applyArmST});
+    if(!strength.ready)throw Error(strength.reason);
+    const resolved = resolveDerivedDamageFormula(strength.baseFormula, action.formula);
     if (!resolved) return null;
     action.type = "damage";
     action.formula = resolved;
-    action.overridetxt = overrideText || action.orig || null;
+    action.overridetxt = resolved;
     delete action.derivedformula;
+    action.olegurpsStrength={effectiveST:strength.effectiveST,strengthKind:strength.strengthKind,
+      mode,baseFormula:strength.baseFormula,source:strength.source,applied:strength.applied??null,
+      modifiers:strength.strength.modifiers,ggaDamage:strength.strength.ggaDamage};
   }
   if (allOutStrong) action.formula = applyAllOutAttackStrong(action.formula);
   if (committedStrong || defensiveAttack) {
     action.formula = applyMartialArtsDamage(action.formula, { committedStrong, defensiveAttack });
   }
   if (dicePlusAdds) action.formula = modifyDicePlusAdds(action.formula);
+  if(source.next){
+    action.next=materializeDamageAction(source.next,actor,{dicePlusAdds,allOutStrong,committedStrong,defensiveAttack,applyArmST},source.next.orig??'');
+    if(!action.next)return null;
+  }
   return action;
 }
 
@@ -338,17 +371,6 @@ function structuredDamageAction(attack) {
     if (action && typeof action === "object" && ["damage", "deriveddamage"].includes(action.type)) return action;
   }
   return null;
-}
-
-let nativeDamageParserPromise = null;
-async function getNativeDamageParser() {
-  if (typeof globalThis.GURPS?.parseForRollOrDamage === "function") {
-    return globalThis.GURPS.parseForRollOrDamage.bind(globalThis.GURPS);
-  }
-  nativeDamageParserPromise ??= import("/systems/gurps/lib/parselink.js")
-    .then(module => module.parseForRollOrDamage)
-    .catch(() => null);
-  return nativeDamageParserPromise;
 }
 
 function fallbackDamageAction(expression) {
@@ -374,12 +396,12 @@ export async function buildMeleeDamageAction({ actor, attack, damage, dicePlusAd
   const hasDamageOverride = !!sourceExpression && expression !== sourceExpression;
   let action = hasDamageOverride ? null : structuredDamageAction(attack);
   if (!action && expression) {
-    const nativeParser = await getNativeDamageParser();
-    action = nativeParser?.(expression)?.action ?? fallbackDamageAction(expression);
+    const nativeParser = await getMeleeNativeDamageParser();
+    action = parseCompleteMeleeDamage(expression,nativeParser) ?? (!nativeParser?fallbackDamageAction(expression):null);
   }
   const applyStrong = allOutStrong && isStrengthBasedMeleeDamage(attack);
   return materializeDamageAction(action, actor,
-    { dicePlusAdds, allOutStrong: applyStrong, committedStrong, defensiveAttack }, expression);
+    { dicePlusAdds, allOutStrong: applyStrong, committedStrong, defensiveAttack, applyArmST:attack?.applyArmST===true }, expression);
 }
 
 export function formatMeleeDamageAction(action) {
@@ -394,13 +416,19 @@ export async function prepareEffectiveMeleeDamage({ actor, attack, dicePlusAdds 
   allOutStrong = false, committedStrong = false, defensiveAttack = false } = {}) {
   const action = await buildMeleeDamageAction({ actor, attack, dicePlusAdds, allOutStrong,
     committedStrong, defensiveAttack });
-  return action ? { action, formula: formatMeleeDamageAction(action) } : null;
+  if(!action)return null;
+  const components=[];for(let node=action;node;node=node.next)components.push(formatMeleeDamageAction(node));
+  return {action,formula:components.join(', '),
+    evidence:{version:1,sourceDamage:String(attack?.damage??''),damageModel:attack?.damageModel??inferMeleeDamageModel(attack?.damage),
+      applyArmST:attack?.applyArmST===true,strength:action.olegurpsStrength??null,
+      martial:{dicePlusAdds,allOutStrong:allOutStrong&&isStrengthBasedMeleeDamage(attack),committedStrong,defensiveAttack}}};
 }
 
 export async function executeNativeMeleeDamage({ actor, attack, dicePlusAdds = false, allOutStrong = false,
   committedStrong = false, defensiveAttack = false, preparedDamage = null } = {}) {
   const DamageChat = globalThis.GURPS?.DamageChat;
   if (typeof DamageChat?.create !== "function") throw new Error("GGA DamageChat недоступен.");
+  installMeleeNativeDamage();
   const applyStrong = allOutStrong && isStrengthBasedMeleeDamage(attack);
   let action = preparedDamage?.action
     ?? (await prepareEffectiveMeleeDamage({ actor, attack, dicePlusAdds, allOutStrong: applyStrong,
@@ -417,7 +445,7 @@ export async function executeNativeMeleeDamage({ actor, attack, dicePlusAdds = f
         actor,
         action.formula,
         action.damagetype,
-        { shiftKey: false, ctrlKey: false, data: {} },
+        numericMeleeDamageEvent(null,action),
         action.overridetxt ?? null,
         [...targets],
         action.extdamagetype ?? null,
@@ -425,8 +453,7 @@ export async function executeNativeMeleeDamage({ actor, attack, dicePlusAdds = f
       ]
     });
     rolled = true;
-    action = materializeDamageAction(action.next, actor,
-      { dicePlusAdds, allOutStrong: applyStrong, committedStrong, defensiveAttack }, action.next?.orig ?? "");
+    action = action.next;
   }
   return rolled;
 }

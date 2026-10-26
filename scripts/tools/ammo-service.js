@@ -1,4 +1,13 @@
 import {copyAmmoResources,writeAmmoResources,persistShotSnapshot,findPendingShot,reserveShotId,cancelShotId} from './shot-history-storage.js';
+import {ltBowProfile,ltBowUnits,ltBowCapacity,readLTBowConfiguration} from '../lt-bow-source.js';
+import {ltBowDamage,ltBowRecipeAssessment} from './lt-bow.js';
+import {ltPersonalProfile,ltPersonalConfiguration} from '../lt-personal-source.js';
+import {ltPersonalDamage,ltPersonalRecipeAssessment} from './lt-personal.js';
+import {ltEarlyProfile} from '../lt-early-firearms-source.js';
+import {runLTFlameCheck} from './lt-flame-check.js';
+import {applyLTEarlyOperation,initializeLTEarlyCarrier,ltEarlyAmmunition,ltEarlyReadiness,ltEarlyShotPlan,ltEarlyTypeAssessment,ltEarlyDamage,consumeLTEarlyShot} from './lt-early-firearms.js';
+import {normalizeDamageDiceAdds} from './damage-dice-adds.js';
+import {duckFootContextError} from './lt-duck-foot.js';
 import {HT_TEAR_SPRAY_MODE,htTearSprayType,htTearSprayDamage,biochemicalDelivery} from './biochemical-integration.js';
 import {CHEMICAL_SUBSTANCES,chemicalAllowed} from './biochemical-catalog.js';
 import {readStandaloneAttack} from './standalone-attack-service.js';
@@ -9,6 +18,8 @@ import {physicalRangedProfile,physicalRangedType,physicalFamilyMatches,missileSo
 import {utFixedFeed,fixedFeedAvailable,fixedFeedPlan,plbRecipeAllowed} from './ut-physical-feeds.js';
 import {plasmaGunProfile,plasmaCartridge,plasmaGunDamage} from '../ut-plasma-gun-source.js';
 import { exoticBeamProfile, exoticBeamWeapon, exoticBeamConfiguration, exoticBeamReason } from '../ut-exotic-beam-source.js';
+import {nextElevenProfile,nextElevenDamage,displacerProfile} from '../ut-next-eleven-source.js';
+import {robotAmmunitionAllowed} from './ut-robot-ammunition.js';
 import { uawGroup, uawFeed, activeUAWCarrier, uawExecutionOwner, uawWeaponView, uawPowerOwner } from './ut-uaw.js';
 import { assertMagazineAddition, magazinePolicy } from './magazine-policy.js';
 import { validateProximityShot } from './ut-he-proximity.js';
@@ -23,6 +34,8 @@ import { ppbProfile, ppbWeapon, ppbConfiguration, validPPBConfiguration } from '
 import { electrolaserProfile, electrolaserWeapon, validElectrolaserConfiguration } from '../ut-electrolaser-source.js';
 import {validateLaserModifications,laserConfiguration,laserAvailableModes,laserMode} from '../ut-laser-modifications.js';
 import { resourceOnlyWeapon } from './weapon-resources.js';
+import {sonicShuriken} from '../ut-sonic-shuriken-source.js';
+import {sonicShurikenDamage,sonicPayloadValid} from './ut-sonic-shuriken.js';
 import { gaussSpeed, GAUSS_SPEEDS } from './ut-gauss.js';
 import { weaponPowerCost } from './weapon-power.js';
 import { weaponPowerProfile, newWeaponBattery, batteryExpectation, sameBattery, batteryText,
@@ -32,7 +45,7 @@ import { adaptStormFeeds, stormFeed, stormMagazineOptions, isStorm } from './ut-
 import { lpProfile, lpAdmission, lpFireMode, LP_FIRE_MODES, LP_PROFILES, lpText, newLPFuel, readLPFuel, adaptLPFeed, lpFeedReason } from './ut-liquid-propellant.js';
 import { weaponResourceProfile, weaponResourceReason, weaponResourceEvidence, consumeWeaponResource,
   readWeaponResource, sameWeaponResource, validateWeaponResources } from './weapon-resources.js';
-import { normalizeAttackOverrides } from "./weapon-attack-overrides.js";
+import { normalizeAttackOverrides,getAttackOverride } from "./weapon-attack-overrides.js";
 import { resolveRangedGoverningSkill, bindingForGoverningSkill,
   getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
 import { migrateAmmoInventory, projectAmmoInventory, validateInventory, installedMagazine,
@@ -43,6 +56,7 @@ import { StandaloneWeaponService, standaloneAmmoCarriers } from "./standalone-we
 import { lematBarrel } from "../ht-physical-ammunition-evidence.js";
 import { readAmmunitionApproval } from "./ammunition-approval-service.js";
 import { validateResourceShot } from "./ammunition-resource-contract.js";
+import { validateLTPhysicalAmmunition, validateLTWeaponAmmunition } from './ammunition-resource-contract.js';
 import { ballisticsKey, validateLoadBallistics } from "./ammunition-ballistics.js";
 import { alternateLoadNeedsBallistics } from "../ht-published-loads.js";
 import { UT_CONVENTIONAL_READY_MODES as UT_CONVENTIONAL_MODES, UT_CONVENTIONAL_DEFERRED, utConventionalReadiness } from "./ut-conventional-ammunition.js";
@@ -63,6 +77,7 @@ function validateGaussType(weapon,type,api=globalThis.OleGURPSQOL) {
     throw Error('TypeUnavailable');
 }
 function validatePhysicalType(weapon,type,api=globalThis.OleGURPSQOL){
+  if(type?.robot&&!robotAmmunitionAllowed(weapon?.standaloneModeId??weapon?.catalogModeId,type))throw Error('Неподтверждённая пара robot / launcher / warhead.');
   if((weapon?.standaloneModeId??weapon?.catalogModeId)===HT_TEAR_SPRAY_MODE&&!htTearSprayType(type))throw Error('TypeUnavailable');
   if(type?.recipe?.parameters?.chemicalId&&!chemicalAllowed(CHEMICAL_SUBSTANCES[type.recipe.parameters.chemicalId],biochemicalDelivery(type)))throw Error('TypeUnavailable');
   if(gyrocShotshellExcluded(type))throw Error(GYROC_SHOTSHELL_REASON);
@@ -89,6 +104,7 @@ export function readAttackAmmunition(weapon) {
   if (!weapon) return null;
   if(resourceOnlyWeapon(weapon))return null;
   if (weapon.ammunitionReview) throw new Error("Review");
+  if(ltEarlyProfile(weapon)&&weapon.ammunitionInventory){if(!validateInventory(weapon.ammunitionInventory,weapon.id))throw Error('Review');return immutableCopy(ltEarlyAmmunition(weapon));}
   const inventory = weapon.ammunitionInventory;
   if (inventory) {
     if (!validateInventory(inventory, weapon.id)) throw new Error("Review");
@@ -219,6 +235,7 @@ export class AmmoService {
       const carriers = standaloneAmmoCarriers(record, current);
       for (const carrier of carriers) {
         const old = state.weapons.find(w => w.id === carrier.id);
+        if(old&&sonicShuriken(carrier)&&old.sonicChemical!==carrier.sonicChemical)carrierChanged=true;
         if (old) Object.assign(old, carrier); else { state.weapons.push(carrier); carrierChanged = true; }
       }
     }
@@ -300,7 +317,7 @@ export class AmmoService {
     for (const weapon of state.weapons ?? []) {
       const current = persisted?.weapons?.find(entry => entry.id === weapon.id);
       const priorExecution=current?.executionVariant;
-      if(!inventoryWrite&&current)for(const key of ['exoticBeamBattery','psionicSettings','psionicMode','kineticStun','sonicNeuralBattery','neuralSettings','neuralMode','sonicEnvironment','sonicPressure','sonicUnderwater','sonicPhysicalContact','plasmaParticleBattery','omniBlaster','blasterMode','blasterEnvironment','blasterHotshot']){
+      if(!inventoryWrite&&current)for(const key of ['sonicShurikenBattery','sonicThrownId','sonicPayload','sonicOperationId','sonicChemical','displacerBattery','sensorBattery','exoticBeamBattery','psionicSettings','psionicMode','kineticStun','sonicNeuralBattery','neuralSettings','neuralMode','sonicEnvironment','sonicPressure','sonicUnderwater','sonicPhysicalContact','plasmaParticleBattery','omniBlaster','blasterMode','blasterEnvironment','blasterHotshot']){
         if(Object.hasOwn(current,key))weapon[key]=clone(current[key]);else delete weapon[key];
       }
       if(!inventoryWrite&&weapon.omniBlasterRequest!==undefined){
@@ -520,10 +537,43 @@ export class AmmoService {
       const weapon = state.weapons.find(entry => entry.id === weaponId);
       if (!weapon) throw new Error("WeaponMissing");
       const before = JSON.stringify(weapon);
+      const earlyMode=weapon.standaloneModeId??globalThis.OleGURPSQOL?.weaponCatalogBindings?.analyzeMode(this.actor,weapon.attackRef?.path)?.binding?.modeId;
+      if(ltEarlyProfile(earlyMode)){
+        weapon.catalogModeId=earlyMode;
+        const proposed=args.type??weapon.ammunitionInventory?.stocks.find(s=>s.key===args.ammoKey)?.type;
+        if(['load','lt-early-component'].includes(operation)&&proposed&&!campaignAmmunitionAdmission(proposed,globalThis.OleGURPSQOL?.catalogs,readCampaignTL(this.actor),earlyMode).allowed)throw Error('CampaignTLUnavailable');
+        const earlyResult=await applyLTEarlyOperation(weapon,operation,args,{catalogs:globalThis.OleGURPSQOL?.catalogs,actor:this.actor,runCheck:request=>runLTFlameCheck(this.actor,request)});
+        if(earlyResult?.cancelled)return state;
+        if(earlyResult){
+          if(!projectAmmoInventory(weapon))throw Error('Review');
+          await writeAmmoResources(this.actor,state,{copy:clone});return state;
+        }
+      }
+      if(operation==='lt-personal-configure'){
+        if(!ltPersonalProfile(weapon))throw Error('Это не персональный режим LT-P3.');
+        const configuration=ltPersonalConfiguration({...weapon,ltPersonal:args.configuration});
+        if(configuration.ropeLengthYards!==null&&(!Number.isFinite(configuration.ropeLengthYards)||configuration.ropeLengthYards<=0))throw Error('Длина верёвки должна быть положительным числом.');
+        weapon.ltPersonal=configuration;await writeAmmoResources(this.actor,state,{copy:clone});return state;
+      }
+      if(operation==='lt-personal-return'){
+        if(!ltPersonalProfile(weapon)?.recoverable||typeof args.attackId!=='string'||!args.attackId||args.confirmed!==true)throw Error('Подтвердите возвращение конкретного готового предмета.');
+        const entry=weapon.ltObjects?.[args.attackId];if(!entry)return {duplicate:true,state};
+        if(args.ammoKey!==entry.ammoKey)throw Error('Партия возвращаемого предмета изменилась.');
+        let type=clone(entry.type),key=entry.ammoKey,stock=weapon.ammunitionInventory.stocks.find(s=>s.key===key);
+        if(stock&&JSON.stringify(stock.type.recipe??null)!==JSON.stringify(type.recipe??null)){
+          type={...type,recipe:{version:1,variantId:'lt_personal_load',customId:'lt-return-'+args.attackId,parameters:clone(type.recipe?.parameters??{})}};
+          key=ammoTypeKeyForLoad(type);type.key=key;stock=weapon.ammunitionInventory.stocks.find(s=>s.key===key);
+        }
+        if(!stock){stock={key,type,rounds:0};weapon.ammunitionInventory.stocks.push(stock);}
+        stock.rounds+=1;delete weapon.ltObjects[args.attackId];projectAmmoInventory(weapon);
+        await writeAmmoResources(this.actor,state,{copy:clone});return state;
+      }
+      if(sonicShuriken(weapon)&&operation==='initialize')return state;
       if(resourceOnlyWeapon(weapon))throw Error('Лазер не использует физические патроны и магазины.');
       initializeInstalledMagazine(weapon);
       const modeId = weapon.standaloneModeId ?? globalThis.OleGURPSQOL?.weaponCatalogBindings?.analyzeMode(this.actor, weapon.attackRef?.path)?.binding?.modeId;
       if(modeId)weapon.catalogModeId=modeId;else delete weapon.catalogModeId;
+      if(ltBowProfile(modeId))weapon.ltBow=clone(readLTBowConfiguration(this.actor,weapon));
       const htSource=htPreGaussProfile(modeId);
       const sourceFluid=fluidProfile(modeId);
       if(sourceFluid&&operation==='load'){
@@ -581,6 +631,22 @@ export class AmmoService {
       const proposed = args.type ?? existingType ?? (typeof options.allowedTypes === 'function' ? options.allowedTypes(weapon) : options.allowedTypes)?.find(t => t.key === args.ammoKey);
       if(needsAdmission)validateGaussType(weapon,proposed);
       if(needsAdmission)validatePhysicalType(weapon,proposed);
+      if (needsAdmission) {
+        const ltType = ['load', 'add-stock'].includes(operation) ? existingType ??
+          (typeof options.allowedTypes === 'function' ? options.allowedTypes(weapon) : options.allowedTypes)?.find(t => t.key === args.ammoKey) : proposed;
+        validateLTPhysicalAmmunition(modeId, ltType,undefined,weapon.ltBow);
+        if(ltEarlyProfile(modeId)&&(ltType?.recipe||ltEarlyProfile(modeId).kind==='flame')&&!ltEarlyTypeAssessment({modeId,type:ltType,catalogs,weapon})?.applicationAllowed)
+          throw Error('Состав / подгонка подготовленной партии LT не подтверждены.');
+        if(ltPersonalProfile(modeId)&&(ltType?.recipe||ltPersonalProfile(modeId).kind.startsWith('crossbow-'))&&!ltPersonalRecipeAssessment({modeId,type:ltType,weapon,catalogs:globalThis.OleGURPSQOL?.catalogs,compatibility:globalThis.OleGURPSQOL?.ammunitionCompatibility})?.applicationAllowed)
+          throw Error('Рецепт LT не соответствует конкретному физическому предмету.');
+        if(ltBowProfile(modeId)&&ltType?.recipe&&!ltBowRecipeAssessment({modeId,type:ltType,compatibility:globalThis.OleGURPSQOL?.ammunitionCompatibility,configuration:weapon.ltBow})?.applicationAllowed)
+          throw Error('Модификация не подтверждена для этого снаряда LT.');
+      }
+      if (operation === 'install') {
+        const magazine = weapon.ammunitionInventory?.magazines.find(m => m.id === args.magazineId);
+        if (magazine?.rounds) validateLTPhysicalAmmunition(modeId,
+          weapon.ammunitionInventory.stocks.find(s => s.key === magazine.ammoKey)?.type,undefined,weapon.ltBow);
+      }
       if(needsAdmission&&physicalRangedProfile(modeId)?.group==='grav'&&!physicalRangedType(modeId,proposed))throw Error('TypeUnavailable');
       if(needsAdmission&&plasmaGunProfile(modeId)&&!plasmaCartridge(modeId,proposed))throw Error('TypeUnavailable');
       const preservesExisting = operation === 'edit-recipe' && existingType &&
@@ -591,7 +657,7 @@ export class AmmoService {
         throw Error('CampaignTLUnavailable');
       if (needsAdmission && UT_CONVENTIONAL_DEFERRED[modeId]) throw new Error(UT_CONVENTIONAL_DEFERRED[modeId]);
       if(needsAdmission&&utSpecialReadiness(modeId))throw Error(utSpecialReadiness(modeId));
-      if(operation==='edit-recipe'&&!validHTLiquidRecipe(args.type)&&!isUTSpecialVariant(args.type?.recipe?.variantId)&&!isUTExtendedVariant(args.type?.recipe?.variantId)&&!FIRST_STAGE_VARIANTS.includes(args.type?.recipe?.variantId))throw Error('InvalidRecipe');
+      if(operation==='edit-recipe'&&!ltEarlyTypeAssessment({modeId,type:args.type,catalogs:globalThis.OleGURPSQOL?.catalogs,weapon})?.applicationAllowed&&!ltPersonalRecipeAssessment({modeId,type:args.type,catalogs:globalThis.OleGURPSQOL?.catalogs,compatibility:globalThis.OleGURPSQOL?.ammunitionCompatibility})?.applicationAllowed&&!ltBowRecipeAssessment({modeId,type:args.type,compatibility:globalThis.OleGURPSQOL?.ammunitionCompatibility,configuration:weapon.ltBow})?.applicationAllowed&&!validHTLiquidRecipe(args.type)&&!isUTSpecialVariant(args.type?.recipe?.variantId)&&!isUTExtendedVariant(args.type?.recipe?.variantId)&&!FIRST_STAGE_VARIANTS.includes(args.type?.recipe?.variantId))throw Error('InvalidRecipe');
       if(needsAdmission&&htLiquidRecipe(proposed)&&(!validHTLiquidRecipe(proposed)||htPreGaussProfile(modeId)?.kind!=='squirt'))throw Error('InvalidRecipe');
       if(['save-recipe','edit-recipe'].includes(operation)&&(isUTSpecialVariant(args.type?.recipe?.variantId)||isUTExtendedVariant(args.type?.recipe?.variantId))) {
         const prepared=globalThis.OleGURPSQOL?.automaticAmmunitionProfiles?.prepare({modeId,base:args.type,variantId:args.type.recipe.variantId,savedType:args.type});
@@ -635,6 +701,13 @@ export class AmmoService {
           session.ammoConsumed = true;
         }
         if(operation==='consume'&&htSupplyProfiles(weapon).length)consumeHTSupplies(weapon,htSupplyEvidence(weapon,args.amount));
+        if(operation==='load'&&ltBowProfile(modeId)){
+          const magazine=weapon.ammunitionInventory.magazines.find(m=>m.id===args.magazineId);
+          if(magazine){magazine.capacity=ltBowCapacity(modeId,weapon.ltBow);weapon.capacity=magazine.capacity;}
+        }
+        if(operation==='load'&&ltPersonalProfile(modeId)){
+          const magazine=weapon.ammunitionInventory.magazines.find(m=>m.id===args.magazineId);if(magazine){magazine.capacity=1;weapon.capacity=1;}
+        }
         applyInventoryOperation(weapon, operation, args, { ...options,
           allowedTypes });
         const group=uawGroup(weapon);
@@ -664,6 +737,11 @@ export class AmmoService {
       if(magazinePolicy(from).fixed||magazinePolicy(to).fixed)throw Error('FixedFeedLimit');
       const magazine=from.ammunitionInventory.magazines.find(m=>m.id===magazineId);
       if(!magazine)throw Error('MagazineMissing');
+      if(ltEarlyProfile(from)||ltEarlyProfile(to)){
+        if(ltEarlyProfile(from)?.kind!=='puckle'||ltEarlyProfile(to)?.kind!=='puckle')throw Error('FixedFeedLimit');
+        if(magazine.rounds)throw Error('Перед переносом разрядите цилиндр: его заряды подогнаны к исходному экземпляру Puckle.');
+        magazine.ltEarlyPlace=Math.max(-1,...to.ammunitionInventory.magazines.map(m=>m.ltEarlyPlace??-1))+1;
+      }
       if(magazinePolicy(to).capacity!==null&&magazine.capacity!==magazinePolicy(to).capacity)throw Error('CapacityExceeded');
       if(uawFeed(from.standaloneModeId)?.familyId!==uawFeed(to.standaloneModeId)?.familyId&&
         (uawFeed(from.standaloneModeId)||uawFeed(to.standaloneModeId)))throw Error('TypeUnavailable');
@@ -671,6 +749,7 @@ export class AmmoService {
         const source=from.ammunitionInventory.stocks.find(s=>s.key===magazine.ammoKey);
         validateGaussType(to,source?.type);
         validatePhysicalType(to,source?.type);
+        validateLTPhysicalAmmunition(to.standaloneModeId ?? globalThis.OleGURPSQOL?.weaponCatalogBindings?.analyzeMode(this.actor, to.attackRef?.path)?.binding?.modeId, source?.type);
         const grav=physicalRangedProfile(to.standaloneModeId??to.catalogModeId);
         if(grav?.group==='grav'&&!physicalRangedType(grav.modeId,source?.type))throw Error('TypeUnavailable');
         const plasma=plasmaGunProfile(to.standaloneModeId??to.catalogModeId);if(plasma&&!plasmaCartridge(plasma.modeId,source?.type))throw Error('TypeUnavailable');
@@ -812,6 +891,11 @@ export class AmmoService {
       const profile=weaponPowerProfile(weapon);
       if (!profile) throw Error('WeaponMissing');
       const spendView=ppbWeapon(weapon)?{...weapon,blasterHotshot:false}:weapon;
+      if(profile.sensorTime){
+        const b=readWeaponBattery(weapon,profile);
+        if(!b||!whole(amount,1)||amount>b.charge)throw Error('Недостаточно минут сенсорного питания.');
+        b.charge-=amount;await this.saveState(state,{inventoryWrite:true});return state;
+      }
       const reason = weaponPowerReason(spendView, amount);
       if (reason) throw Error(reason);
       consumeWeaponResource(spendView,amount,{...profile,kind:'power'});
@@ -841,6 +925,28 @@ export class AmmoService {
       weapon[profile.stateKey] = {...newWeaponBattery(profile,nonRechargeable),replacementId:requestId};
       await writeAmmoResources(this.actor,state,{copy:clone});
       return state;
+    });
+  }
+
+  sonicResourceOperation(weaponId,{operation,requestId,expectedThrownId,expectedPayload,chemicalId,note=''}={}) {
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Permission');
+      const state=copyAmmoResources(this.actor.getFlag(FLAG_SCOPE,FLAG_KEY)??this.defaultState(),clone);
+      const weapon=state.weapons.find(w=>w.id===weaponId);
+      if(!sonicShuriken(weapon)||!['return','payload'].includes(operation)||typeof requestId!=='string'||!requestId||requestId.length>100||expectedThrownId===undefined||expectedPayload===undefined)throw Error('Некорректная операция Sonic Shuriken.');
+      if(weapon.sonicOperationId===requestId)return state;
+      if(!sameBattery(weapon.sonicThrownId??null,expectedThrownId)||!sameBattery(weapon.sonicPayload??null,expectedPayload))throw Error('Состояние сюрикена изменилось. Откройте окно заново.');
+      if(operation==='return'){
+        if(!weapon.sonicThrownId)throw Error('Этот сюрикен уже в наличии.');
+        weapon.sonicThrownId=null;
+      }else{
+        const payload={chemicalId,note,doses:2,loadId:requestId},chemical=CHEMICAL_SUBSTANCES[chemicalId];
+        const campaignTL=readCampaignTL(this.actor);
+        if(weapon.sonicThrownId||weapon.sonicPayload||weapon.sonicChemical!=='enabled'||!sonicPayloadValid(payload)||
+          chemical&&Number.isInteger(campaignTL)&&chemical.tl>campaignTL)throw Error('Нужны свободный сюрикен с химической конструкцией и две допустимые дозы.');
+        weapon.sonicPayload=payload;
+      }
+      weapon.sonicOperationId=requestId;await writeAmmoResources(this.actor,state,{copy:clone});return state;
     });
   }
 
@@ -878,6 +984,9 @@ export class AmmoService {
       const weapon = state.weapons.find(entry => entry.id === weaponId);
       if (!weapon) throw new Error("WeaponMissing");
       const ammunition = readAttackAmmunition(weapon);
+      if(ltBowProfile(weapon))weapon.ltBow=clone(readLTBowConfiguration(this.actor,weapon));
+      validateLTWeaponAmmunition(this.actor, weapon);
+      if(ltEarlyProfile(weapon)?.kind==='flame'){const reason=ltEarlyReadiness(weapon);if(reason)throw Error(reason);}
       if(ammunition?.type?.recipe?.parameters?.chemicalId&&!chemicalAllowed(CHEMICAL_SUBSTANCES[ammunition.type.recipe.parameters.chemicalId],biochemicalDelivery(ammunition.type)))throw Error('TypeUnavailable');
       const prepared = await prepare({ state, weapon, ammunition });
       if (!prepared) return { rolled: false };
@@ -890,6 +999,13 @@ export class AmmoService {
         profile.ammunition?.ammoId!==uawFeed(weapon.standaloneModeId).familyId))throw Error('TypeUnavailable');
       validateProximityShot(profile);
       const utModeId=profile.binding?.confirmed?.modeId ?? profile.mode?.standaloneRef?.modeId;
+      if(sonicShuriken(weapon)){
+        const actual=readStandaloneAttack(this.actor,weapon.standaloneWeaponId,weapon.standaloneModeId);
+        const expected=sonicShurikenDamage(actual?.data??{},weapon);
+        if(!sonicShuriken(utModeId)||profile.actorId!==this.actor.id||profile.weaponId!==weapon.id||amount!==1||deferConsumption||ammunition||
+          !expected.nativeSafe||!profile.damage?.nativeSafe||!sameBattery(expected.rules,profile.damage.rules)||profile.damage.formula!==expected.formula||
+          profile.effective.range!==actual?.data.range||![undefined,'ordinary'].includes(weapon.executionVariant))throw Error('Профиль Sonic Shuriken изменился. Подготовьте бросок заново.');
+      }
       if((weapon.standaloneModeId??weapon.catalogModeId)===HT_TEAR_SPRAY_MODE){
         validatePhysicalType(weapon,ammunition?.type);
         const expected=htTearSprayDamage(profile.raw,ammunition?.type);
@@ -928,6 +1044,17 @@ export class AmmoService {
           throw Error('TypeUnavailable');
       }
       const beam=beamProfile(utModeId);
+      if(nextElevenProfile(utModeId)&&utModeId!=='WUTSmartShuriken'){
+        const attack=readStandaloneAttack(this.actor,weapon.standaloneWeaponId,utModeId);
+        const expected=nextElevenDamage(attack?.data,utModeId,attack?.nextElevenConfiguration);
+        if(!expected?.nativeSafe||!profile.damage?.nativeSafe||amount!==1||deferConsumption||ammunition||!resourceOnlyWeapon(weapon)||
+          profile.weaponId!==weapon.id||JSON.stringify(profile.damage.rules.nextEleven)!==JSON.stringify(expected.rules.nextEleven)||
+          profile.effective.range!==expected.effectiveChanges.range||profile.damage.formula!==null||profile.damage.components.length)
+          throw Error('Профиль устройства изменился или атака не подтверждена источником.');
+        if(displacerProfile(utModeId)&&(!Number.isFinite(profile.context?.areaPoint?.x)||!Number.isFinite(profile.context?.areaPoint?.y)||
+          profile.context.areaPoint.sceneId!==globalThis.canvas?.scene?.id||!Number.isFinite(profile.context.physicalDistance)||profile.context.physicalDistance<0||profile.context.physicalDistance>displacerProfile(utModeId).range))
+          throw Error('Выберите точку области Displacer на текущей сцене в пределах дальности.');
+      }
       if(ppbProfile(utModeId)&&(!whole(amount,1)||deferConsumption||amount>Number(profile.effective.rof)||
         !profile.damage?.nativeSafe||profile.damage.rules?.plasmaParticle?.modeId!==utModeId||!resourceOnlyWeapon(weapon)||ammunition))
         throw Error('Нужны штатный энергетический профиль, допустимый RoF и готовый источник.');
@@ -959,14 +1086,55 @@ export class AmmoService {
       const htProfile=htPreGaussProfile(utModeId);
       if(htProfile&&(!profile.damage?.nativeSafe||profile.damage.rules?.htSourceProfile!==utModeId))throw Error('Для этого режима нужен подтверждённый физический заряд HT.');
       if(htProfile&&(amount!==1||deferConsumption))throw Error('Для этого режима используется одна обычная атака; специальные очереди не применяются.');
-      const unitCost=fluid?profile.damage.rules.fluid.doses:htProfile?profile.damage.rules.physicalUnitsPerAttack??1:1;
+      const ltBow=ltBowProfile(weapon.standaloneModeId??weapon.catalogModeId);
+      const early=ltEarlyProfile(weapon),earlyPlan=early?ltEarlyShotPlan(weapon):null;
+      if(early){
+        if(early.kind==='duck'){
+          const distance=profile.context?.physicalDistance;if(!Number.isFinite(distance)||distance<0)throw Error('Укажите точную дистанцию Duck’s Foot.');
+          if(profile.context?.physicalShots!==undefined&&profile.context.physicalShots!==1||profile.context?.effectiveRoF!==undefined&&profile.context.effectiveRoF!==(distance>2?1:4))throw Error('Duck’s Foot: неверное число независимых выстрелов / попаданий.');
+          if(distance>2){const error=duckFootContextError(profile.context);if(error)throw Error(error);}
+        }
+        const reason=ltEarlyReadiness(weapon);if(reason)throw Error(reason);
+        const nativeEarly=weapon.attackRef?.path?.split('.').reduce((v,k)=>v?.[k],this.actor);
+        const actual=weapon.standaloneWeaponId?readStandaloneAttack(this.actor,weapon.standaloneWeaponId,early.modeId):{...nativeEarly,data:nativeEarly,path:weapon.attackRef?.path};
+        if(early.kind==='flame')actual.ltEarlyOverrides={...actual.ltEarlyOverrides,...Object.fromEntries(Object.entries(getAttackOverride(state,actual)??{}).filter(([key])=>['bulk'].includes(key)))};
+        const expected=ltEarlyDamage({modeId:early.modeId,actor:this.actor,raw:actual?.data??profile.raw,attack:actual??{},weapon,type:ammunition?.type,catalogs:globalThis.OleGURPSQOL?.catalogs,context:profile.context});
+        if(early.kind==='flame'&&(profile.context?.physicalShots!==undefined&&profile.context.physicalShots!==1||profile.context?.effectiveRoF!==undefined&&profile.context.effectiveRoF!==1))throw Error('Одна атака огнемётной системы использует одну секунду Jet или один заряд Blowpipe.');
+        if(amount!==1||deferConsumption||!expected.nativeSafe||!profile.damage?.nativeSafe||profile.actorId!==this.actor.id||profile.weaponId!==weapon.id||utModeId!==early.modeId||
+          profile.damage.formula!==(profile.diceAdds?.enabled&&profile.diceAdds.eligible?normalizeDamageDiceAdds(expected.formula):expected.formula)||JSON.stringify(profile.damage.rules.ltEarly)!==JSON.stringify(expected.rules.ltEarly)||!earlyPlan?.length||earlyPlan.some(s=>!s.charge))throw Error('Подготовленный профиль / состав заряда LT изменился. Откройте атаку заново.');
+        profile=immutableCopy({...profile,resource:{...profile.resource,ltEarlyCharges:earlyPlan,...(early.kind==='flame'?{ltFlame:{chargeId:earlyPlan[0].charge.id,secondsSpent:earlyPlan[0].secondsSpent,physicalUnitsSpent:earlyPlan[0].spent,before:earlyPlan[0].charge.flame.remaining,after:earlyPlan[0].charge.flame.remaining-1}}:{})}});
+      }
+      const personal=ltPersonalProfile(weapon);
+      if(personal){
+        const native=weapon.attackRef?.path?.split('.').reduce((v,k)=>v?.[k],this.actor);
+        const actual=weapon.standaloneWeaponId?readStandaloneAttack(this.actor,weapon.standaloneWeaponId,personal.modeId):{...native,data:native};
+        const expected=ltPersonalDamage({actor:this.actor,attack:actual??{},raw:actual?.data??profile.raw,modeId:personal.modeId,weapon,type:ammunition?.type,
+          catalogs:globalThis.OleGURPSQOL?.catalogs,compatibility:globalThis.OleGURPSQOL?.ammunitionCompatibility,context:profile.context});
+        if(amount!==1||deferConsumption||profile.context?.physicalShots!==undefined&&profile.context.physicalShots!==1||profile.context?.effectiveRoF!==undefined&&profile.context.effectiveRoF!==1||ammunition?.kind!=='physical-magazine'||!ammunition.magazineId||!expected.nativeSafe||!profile.damage?.nativeSafe||
+          profile.actorId!==this.actor.id||profile.weaponId!==weapon.id||utModeId!==personal.modeId||profile.damage.formula!==expected.formula||
+          JSON.stringify(profile.damage.rules.ltPersonal)!==JSON.stringify(expected.rules.ltPersonal)||JSON.stringify(profile.damage.rules.attackResult)!==JSON.stringify(expected.rules.attackResult))
+          throw Error('Профиль персональной атаки LT изменился. Подготовьте применение заново.');
+      }
+      if(ltBow){
+        const actual=readStandaloneAttack(this.actor,weapon.standaloneWeaponId,ltBow.modeId);
+        const expected=ltBowDamage({raw:actual?.data??profile.raw,modeId:ltBow.modeId,configuration:actual?.ltBowConfiguration??weapon.ltBow,
+          actor:this.actor,type:ammunition?.type,catalogs:globalThis.OleGURPSQOL?.catalogs,context:profile.context,sourceStats:actual?.ltBowOverrides});
+        if(amount!==1||deferConsumption||ammunition?.kind!=='physical-magazine'||!expected.nativeSafe||!profile.damage?.nativeSafe||
+          profile.actorId!==this.actor.id||profile.weaponId!==weapon.id||utModeId!==ltBow.modeId||profile.damage.formula!==expected.formula||
+          profile.effective.range!==expected.effectiveChanges.range||profile.damage.rules.attackBonus!==expected.rules.attackBonus||
+          JSON.stringify(profile.damage.rules.ltBow)!==JSON.stringify(expected.rules.ltBow))throw Error('Профиль LT изменился. Подготовьте выстрел заново.');
+      }
+      const unitCost=early?.kind==='duck'?4:ltBow?ltBowUnits(ltBow.modeId,weapon.ltBow):fluid?profile.damage.rules.fluid.doses:htProfile?profile.damage.rules.physicalUnitsPerAttack??1:1;
+      if(ammunition?.type?.robot&&(amount!==1||deferConsumption||!profile.damage?.nativeSafe||profile.damage.rules?.robot?.id!==ammunition.type.robot.id||
+        profile.actorId!==this.actor.id||profile.damage.rules.robot.selectedTL!==ammunition.type.robot.tl||profile.damage.rules.robot.launcherModeId!==utModeId||
+        JSON.stringify(profile.damage.rules.robot.warhead)!==JSON.stringify({ammoId:ammunition.type.ammoId,recipe:ammunition.type.recipe??null})))throw Error('Профиль робота изменился.');
       if(htProfile&&unitCost!==(htProfile.kind==='flame'&&weapon.htJetMode==='continuous'?htProfile.continuousUnits??1:1))throw Error('Режим струи изменился. Подготовьте атаку заново.');
       const physicalAmount=amount*unitCost;
       const feedPlan=fixedFeedPlan(weapon,physicalAmount);
       if(feedPlan)profile=immutableCopy({...profile,resource:{...profile.resource,feedPlan}});
       if(htProfile&&(!ammunition||ammunition.kind!=='physical-magazine'||!ammunition.magazineId))throw Error('MagazineNotInstalled');
       const htSupplies=htSupplyEvidence(weapon,amount);
-      if(htProfile)profile=immutableCopy({...profile,resource:{...profile.resource,physicalUnits:physicalAmount,htSupplies}});
+      if(htProfile||ltBow)profile=immutableCopy({...profile,resource:{...profile.resource,physicalUnits:physicalAmount,...(htProfile?{htSupplies}:{})}});
       const resourceView=uawWeaponView(state,weapon),powerOwner=uawPowerOwner(state,weapon);
       validateWeaponResources(resourceView,profile,ammunition);
       const powerProfile = weaponResourceProfile(resourceView) ?? weaponResourceProfile(resourceView,utModeId);
@@ -1018,10 +1186,11 @@ export class AmmoService {
       if (power && !sameWeaponResource(readWeaponResource(currentPowerOwner,powerProfile),readWeaponResource(powerOwner,powerProfile)))
         throw Error('BatteryChangedDuringAttack');
       if(htSupplies.length)consumeHTSupplies(currentWeapon,htSupplies);
-      const spent = ammunition && !deferConsumption ? physicalAmount : 0;
+      const spent = ammunition && !deferConsumption ? early?.kind==='flame'?earlyPlan[0].spent:physicalAmount : 0;
       if(fluid?.disposable)currentWeapon.fluidSpent=true;
       if (!deferConsumption && ammunition?.kind === "physical-magazine") {
-        if(feedPlan){
+        if(early){consumeLTEarlyShot(currentWeapon,earlyPlan);}
+        else if(feedPlan){
           if(JSON.stringify(fixedFeedPlan(currentWeapon,physicalAmount))!==JSON.stringify(feedPlan))throw Error('AmmunitionChangedDuringAttack');
           for(const entry of feedPlan){currentWeapon.ammunitionInventory.installedId=entry.magazineId;applyInventoryOperation(currentWeapon,'consume',{magazineId:entry.magazineId,amount:entry.spent});}
           currentWeapon.ammunitionInventory.installedId=ammunition.magazineId;
@@ -1032,10 +1201,19 @@ export class AmmoService {
         currentWeapon.totalAmmo -= amount;
       }
       if (power && !deferConsumption) consumeWeaponResource(currentPowerOwner,amount,powerProfile);
+      if(sonicShuriken(currentWeapon)){
+        currentWeapon.sonicThrownId=attackId;
+        currentWeapon.sonicPayload=null;
+      }
+      if(personal?.recoverable&&spent===1){
+        currentWeapon.ltObjects??={};currentWeapon.ltObjects[attackId]={ammoKey:ammunition.ammoKey,type:clone(ammunition.type),messageId:result.message?.id??null};
+      }
       const receipt = { attackId, weaponId, magazineId: ammunition?.magazineId ?? null,
         ...(reserved?{status:'committed'}:{}),
         ammoKey: ammunition?.ammoKey ?? null, spent, messageId: result.message?.id ?? null,
         ...(feedPlan?{feedPlan}:{}),
+        ...(early?.kind==='flame'?{ltFlame:profile.resource.ltFlame}:{}),
+        ...(earlyPlan?{ltEarlyCharges:earlyPlan,componentsDebitedAt:'load',...(early.kind==='artillery'?{physicalProjectilesSpent:earlyPlan.reduce((n,r)=>n+(r.charge?.artillery?.projectiles??1),0),stockUnitsSpent:earlyPlan.reduce((n,r)=>n+(r.charge?.stockUnits??1),0)}:{})}:{}),
         ...(power ? {[powerProfile.receiptKey]:power} : {}),
         ...(htProfile?{htSupplies,physicalUnits:physicalAmount}:{}),
         ...(resourceTiming === "suppression-activation" ? { profile } : {}) };

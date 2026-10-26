@@ -71,8 +71,8 @@ test("ranged weapon setting persists per configured weapon id without touching a
   globalThis.foundry = { utils: { deepClone: structuredClone } };
   const attackRef = { uuid: "ak-entry", path: "system.ranged.00001", name: "AK", mode: "" };
   let stored = null;
-  const actor = { system: { skills: {} }, getFlag: () => stored,
-    setFlag: async (_scope, _key, value) => { stored = structuredClone(value); } };
+  const actor = { system: { skills: {} }, getFlag: (scope,key) => scope==='world'&&key==='gurpsAmmoManager'?stored:undefined,
+    setFlag: async (scope,key,value) => { assert.equal(scope,'world');assert.equal(key,'gurpsAmmoManager');stored=structuredClone(value); } };
   try {
     const service = new AmmoService(actor);
     const state = service.defaultState();

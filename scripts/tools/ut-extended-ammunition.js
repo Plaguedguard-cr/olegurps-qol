@@ -1,4 +1,5 @@
 import { utBriefInstructions } from './ammunition-chat-summary.js';
+import {utSwarmType} from '../ut-swarm-source.js';
 import { UT_EXTENDED_SOURCE } from './ut-extended-source.js';
 import { UT_RUNTIME_FAMILIES as UT_ALL_FAMILIES, reviewUTSpecial, utPayloadParameters } from './ut-special-ammunition.js';
 import { gaussProfile } from '../ut-gauss-source.js';
@@ -141,6 +142,8 @@ export function resolveUTExtendedEffects({raw,variantId,baseStatus,constructionS
   if(!source||facts.sourceEdition!=='Ultra-Tech 2007'||!(UT_ALL_FAMILIES[facts.modeId]===facts.ammoId||physicalFamilyMatches(facts.modeId,facts.ammoId))||
       baseStatus!=='compatible'||constructionStatus!=='compatible'||!facts.payload||facts.definition?.id!==source.id)return fail('UTVariantUnavailable');
   if(source.id==='swarm'&&(!Number.isFinite(facts.caliberMm)||facts.caliberMm<UT_SWARM_MINIMUM_MM))return fail('UTSwarmMinimum40');
+  if(source.id==='swarm'&&facts.payload.swarmType!=null&&facts.payload.swarmType!==''&&(!utSwarmType(facts.payload.swarmType)||
+    utSwarmType(facts.payload.swarmType).tl>facts.availabilityTL))return fail('UTPayloadInvalid');
   if(raw.linked||raw.followup||raw.followUp||raw.components?.length||previousTransformations.some(t=>t.applied&&t.effectId===variantId))return fail('UTOriginalProfileRequired');
   const single=physicalRangedProfile(facts.modeId)?.group==='gyroc'?Number(String(raw.range).replaceAll(',','')):NaN;
   const p=parseKineticDamage(original),range=parseDamageRange(raw.range)??(single>0?{halfDamage:single,maximum:single}:null),row=facts.row??{},tl=facts.availabilityTL;

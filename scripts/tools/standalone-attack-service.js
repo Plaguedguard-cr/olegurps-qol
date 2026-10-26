@@ -1,4 +1,9 @@
 import {HT_TEAR_SPRAY_MODE} from './biochemical-integration.js';
+import {ltPersonalProfile} from '../lt-personal-source.js';
+import {ltEarlyProfile} from '../lt-early-firearms-source.js';
+import {ltArtillerySkill} from './lt-artillery.js';
+import {sonicShuriken,sonicShurikenStats} from '../ut-sonic-shuriken-source.js';
+import {nextElevenProfile,displacerProfile,ladarProfile,ladarRange} from '../ut-next-eleven-source.js';
 import {fluidProfile} from '../ut-fluid-source.js';
 import {plasmaGunProfile} from '../ut-plasma-gun-source.js';
 import {fixedFeedAvailable} from './ut-physical-feeds.js';
@@ -6,7 +11,7 @@ import {physicalRangedProfile} from '../ut-physical-ranged-source.js';
 import { exoticBeamProfile, exoticBeamWeapon, exoticBeamReason } from '../ut-exotic-beam-source.js';
 import { standaloneModeStats, StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { resolveStandaloneSkill, standaloneSkillDescription } from "./standalone-skill-service.js";
-import { parseWeaponBulk } from "./weapon-bulk.js";
+import { parseWeaponBulk, sourceWeaponHandling } from "./weapon-bulk.js";
 import {specializedPlatform,configuredPlatform,platformRange} from '../ht-specialized-platforms.js';
 import { requiresUTPowerAccounting } from "../ut-source-data.js";
 import { beamWeapon, beamProfile } from '../ut-beam-source.js';
@@ -45,6 +50,13 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   const mode = modeId ? record?.modes.find(m => m.modeId === modeId) : record?.modes[0];
   if (!record || !mode) return null;
   const stats = { ...standaloneModeStats(mode.snapshot), ...mode.overrides };
+  const weaponHandling = sourceWeaponHandling(mode.snapshot, mode.overrides?.bulkState, mode.overrides?.bulk ?? null);
+  if(weaponHandling?.rclNotApplicable)stats.rcl=null;
+  if(weaponHandling?.bulkMetadata)stats.bulk=String(weaponHandling.bulkMetadata.numericBulk);
+  if(sonicShuriken(mode.modeId))Object.assign(stats,sonicShurikenStats(actor,stats));
+  if(mode.modeId==='WUTSmartShuriken'){stats.damage='spec. (robot)';stats.rof='1';stats.rcl='1';}
+  const next=nextElevenProfile(mode.modeId),ladar=ladarProfile(mode.modeId),sensor=ladar&&ladarRange(ladar,mode.overrides);
+  if(sensor)stats.range=`${sensor.half}/${sensor.maximum}`;
   // UT137's dash shares the complete UAW's Bulk; never substitute another gun's Damage/Rcl.
   if(uawFeed(mode.modeId)?.id==='shotgun'&&(!stats.bulk||stats.bulk==='-'))
     stats.bulk=record.modes.find(m=>uawFeed(m.modeId)?.id==='main')?.overrides?.bulk??
@@ -54,13 +66,14 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   const platformRules=configured.platform;
   const ammunitionRange=platformRange(platformRules,stats.range);
   if(platformRules?.manualGuidance){stats.rof='1';stats.range=String(ammunitionRange?.maximum??stats.range);}
-  const bulkMetadata = parseWeaponBulk(stats.bulk);
+  const bulkMetadata = weaponHandling?.bulkMetadata ?? parseWeaponBulk(stats.bulk);
   const ammoState=actor.getFlag('world', 'gurpsAmmoManager');
   const carrier = uawWeaponView(ammoState,ammoState?.weapons?.find(w =>
     w.standaloneWeaponId === record.id && w.standaloneModeId === mode.modeId));
-  const skillRecord=sonicNeuralWeapon(carrier)?.family==='neural'?{...record,equipmentSnapshot:{...record.equipmentSnapshot,tech_level:neuralDesign(carrier).tl+'^'}}:record;
-  const skill = resolveStandaloneSkill({ actor, record:skillRecord, mode });
+  const skillRecord=sensor?{...record,equipmentSnapshot:{...record.equipmentSnapshot,tech_level:String(sensor.tl)}}:sonicNeuralWeapon(carrier)?.family==='neural'?{...record,equipmentSnapshot:{...record.equipmentSnapshot,tech_level:neuralDesign(carrier).tl+'^'}}:record;
+  const skill = ltArtillerySkill(actor,carrier)??resolveStandaloneSkill({ actor, record:skillRecord, mode });
   const data = { ...stats, name: record.name, mode: mode.snapshot.usage ?? "", level: skill.level };
+  if(displacerProfile(mode.modeId)||ladar)data.isBeamWeapon=true;
   const physical=physicalRangedProfile(mode.modeId);
   if(physical?.group==='plb'){
     data.sourceRateOfFire=stats.rof;
@@ -89,26 +102,34 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   if(sonicNeuralProfile(mode.modeId)&&String(stats.damage).replace(/\s/g,'')===sonicNeuralFormula(sonicNeuralProfile(mode.modeId)).replace(/\s/g,''))unsupportedDamage=false;
   if(electrolaserProfile(mode.modeId)&&new RegExp('^HT'+electrolaserProfile(mode.modeId).modifier+'(?: \\(2\\))? aff$').test(stats.damage))unsupportedDamage=false;
   if(fluidProfile(mode.modeId)||mode.modeId===HT_TEAR_SPRAY_MODE)unsupportedDamage=false;
+  const personal=ltPersonalProfile(mode.modeId);if(personal?.noDamage)unsupportedDamage=false;
+  if(displacerProfile(mode.modeId)||ladar||mode.modeId==='WUTSmartShuriken')unsupportedDamage=false;
   if(htProfile&&['squirt','net','signal'].includes(htProfile.kind)&&/^(?:Spec\.?|Special)$/i.test(stats.damage))unsupportedDamage=false;
   const feed=stormFeed(carrier,carrier?.ammunitionInventory?.magazines.find(m=>m.id===carrier.ammunitionInventory.installedId));
   if(feed&&carrier.executionVariant!=='lp')data.shots=feed.sourceShots;
   const utReason = utSpecialReadiness(mode.modeId)??utConventionalReadiness(mode.modeId, stats);
-  const reason = requiresUTPowerAccounting(mode.modeId) ? moduleText("OleGURPS.AttackProfile.UTPowerAccountingRequired") : utReason ? moduleText('OleGURPS.AttackProfile.'+utReason) : configured.reason ?? platformRules?.blockedReason ?? (!skill.resolved ? skill.reason : skill.level < 3 ? "Уровень навыка ниже 3: атака недоступна." : !stats.damage ? "В режиме не указан Damage." :
+  const deferred=ltDeferredExecutionReason(mode.modeId);
+  const reason = deferred ?? (sonicShuriken(mode.modeId)&&stats.damage==='thr(3) cut' ? 'Не заданы текущие ST и базовый thr персонажа в GGA.' : requiresUTPowerAccounting(mode.modeId) ? moduleText("OleGURPS.AttackProfile.UTPowerAccountingRequired") : utReason ? moduleText('OleGURPS.AttackProfile.'+utReason) : configured.reason ?? (weaponHandling?.jetDeferred ? "Для этого режима LT ещё не реализованы контракт Jet и расход топлива." : null) ?? platformRules?.blockedReason ?? (!skill.resolved ? skill.reason : skill.level < 3 ? "Уровень навыка ниже 3: атака недоступна." : !stats.damage ? "В режиме не указан Damage." :
     unsupportedDamage ? "Этот Damage не поддерживается штатным адаптером. Укажите одну распознаваемую GGA формулу урона." :
-    record.type === "ranged" && (!platformRules?.rofJet && !/\d/.test(String(stats.rof ?? "")) || !platformRules?.rclNotApplicable && !/^[1-9]\d*(?:\s*\/\s*[1-9]\d*)?$/.test(String(stats.rcl ?? "")) ||
-      !platformRules?.accNotApplicable && (stats.acc === null || !Number.isFinite(Number(String(stats.acc).split("+")[0]))) || !platformRules?.bulkNotApplicable && !bulkMetadata) ?
+    record.type === "ranged" && (!personal||personal.procedure==='ranged') && (!platformRules?.rofJet && !/\d/.test(String(stats.rof ?? "")) || !platformRules?.rclNotApplicable && !weaponHandling?.rclNotApplicable && !/^[1-9]\d*(?:\s*\/\s*[1-9]\d*)?$/.test(String(stats.rcl ?? "")) ||
+    !platformRules?.accNotApplicable && (stats.acc === null || !Number.isFinite(Number(String(stats.acc).split("+")[0]))) || !platformRules?.bulkNotApplicable && !bulkMetadata) ?
       "В режиме не хватает RoF, Rcl, Acc или Bulk. Заполните отсутствующие параметры в настройках." :
-    record.type === "melee" && !stats.reach ? "В режиме не указан Reach." : null);
+    record.type === "melee" && !stats.reach ? "В режиме не указан Reach." : null));
   return { ...data, path: "", uuid, key: "uuid:" + uuid, label: data.mode ? record.name + " — " + data.mode : record.name,
     acc: platformRules?.accNotApplicable || stats.acc === null ? null : Number(String(stats.acc).split("+")[0]),
     scopeBonus: Number(String(stats.acc ?? "").split("+")[1]) || 0,
-    bulk: bulkMetadata?.numericBulk ?? null, bulkMetadata, data, sourceDamage: stats.damage,
+    bulk: bulkMetadata?.numericBulk ?? null, bulkMetadata, ...(weaponHandling?{weaponHandling}:{}), data, sourceDamage: stats.damage,
     standaloneRef: reference, governingSkillBinding: { kind: "standalone", weaponId: record.id, modeId: mode.modeId },
+    ...(record.settings?.ltBow?{ltBowConfiguration:record.settings.ltBow,ltBowOverrides:mode.overrides}:{}),
+    ...(personal?{ltPersonalOverrides:mode.overrides,ltProcedure:personal.procedure,sourceCombatType:mode.snapshot.combat_type}:{}),
+    ...(ltEarlyProfile(mode.modeId)?{ltEarlyOverrides:{...(ltEarlyProfile(mode.modeId).kind==='flame'?{damage:stats.damage,range:stats.range}:{}),...mode.overrides}}:{}),
     ...(typeof record.settings?.weaponBond==='boolean'?{weaponBondSetting:record.settings.weaponBond}:{}),
+    ...(record.source.source==='LT'&&record.type==='ranged'&&record.settings?.weaponBondPerkConfirmed===true?{weaponBondPerkConfirmed:true}:{}),
     ...(platformRules?{platformRules,ammunitionRange,
       ammunitionConditions:platformRules.instruction?[{id:'SpecializedPlatform',text:platformRules.instruction}]:[]}:{}),
     ...(electrolaserProfile(mode.modeId)?{preparationReadinessReason:weaponPowerReason({...carrier,electrolaserMode:'standard'},1,mode.modeId)??reason}:{}),
-    skillDescription: standaloneSkillDescription(skill), readinessReason: exoticBeamReason(carrier) ?? (!isSonic(sonicNeuralWeapon(carrier))?sonicNeuralReason(carrier):null) ?? weaponPowerReason(carrier, 1, mode.modeId) ?? reason };
+    ...(next?{nextElevenConfiguration:mode.overrides}:{}),
+    skillDescription: standaloneSkillDescription(skill), readinessReason: (ladar&&!sensor?'Выберите источниковый носитель или TL сенсора в настройках.':null) ?? exoticBeamReason(carrier) ?? (!isSonic(sonicNeuralWeapon(carrier))?sonicNeuralReason(carrier):null) ?? weaponPowerReason(carrier, 1, mode.modeId) ?? reason };
 }
 export function listStandaloneAttacks(actor, type) {
   return new StandaloneWeaponService(actor).list(type).flatMap(record =>
@@ -140,6 +161,7 @@ export function standaloneCatalogBinding(attack, catalogs) {
       equipmentId: ref.source.equipmentId, source: "standalone-catalog-identity" } } : { status: "unavailable" };
 }
 export function standaloneAvailableRounds(weapon) {
+  if(sonicShuriken(weapon))return !weapon.sonicThrownId&&(readWeaponBattery(weapon)?.charge??0)>0?1:0;
   const fixed=fixedFeedAvailable(weapon);if(fixed!==null)return fixed;
   if(exoticBeamWeapon(weapon))return readWeaponBattery(weapon)?.charge??0;
   if(sonicNeuralWeapon(weapon))return readWeaponBattery(weapon)?.charge??0;
@@ -150,3 +172,4 @@ export function standaloneAvailableRounds(weapon) {
   return weapon?.standaloneWeaponId && weapon.ammoUnconfigured && !weapon.ammunitionInventory && !weapon.magazines?.length
     ? Infinity : weapon?.magazines?.[weapon.loadedIndex] ?? 0;
 }
+import {ltDeferredExecutionReason} from '../lt-ranged-execution-policy.js';

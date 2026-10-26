@@ -1,5 +1,8 @@
 import { recipeFingerprint } from "./ammunition-approval-service.js";
 import { isUTConventionalVariant, UT_CONVENTIONAL_RULES, UT_KINETIC_MODES } from "./ut-conventional-ammunition.js";
+import {ltBowRecipeAssessment} from './lt-bow.js';
+import {ltPersonalRecipeAssessment} from './lt-personal.js';
+import {ltEarlyTypeAssessment} from './lt-early-firearms.js';
 import { isUTExtendedVariant, UT_EXTENDED_RULES } from './ut-extended-ammunition.js';
 import { isUTSpecialVariant, UT_SPECIAL_RULES } from './ut-special-ammunition.js';
 import { HT_AUTOMATIC_KINETIC_RULES, HT_AUTOMATIC_SPECIAL_RULES, htVariantKind } from "./ht-kinetic-rules.js";
@@ -16,7 +19,10 @@ export const variantAbbreviation = id => UT_CONVENTIONAL_RULES[id]?.label ?? ({ 
 export function assessAmmunitionRecipe(compatibility, modeId, type, approval = null, automatic = null, preparedFacts = null) {
   const base = compatibility?.checkCompatibility(modeId, type.ammoId, { book: type.book, kind: type.kind });
   const recipe = type.recipe;
+  const personal=ltPersonalRecipeAssessment({modeId,type,catalogs:compatibility?.catalogs??globalThis.OleGURPSQOL?.catalogs,compatibility});if(personal)return personal;
+  const early=ltEarlyTypeAssessment({modeId,type,catalogs:compatibility?.catalogs??globalThis.OleGURPSQOL?.catalogs});if(early)return early;
   if (!recipe) return { base, construction: { status: base?.status ?? "undetermined" }, facts: null };
+  const lt=ltBowRecipeAssessment({modeId,type,compatibility});if(lt)return lt;
   if(htLiquidRecipe(type)){
     const allowed=validHTLiquidRecipe(type)&&htPreGaussProfile(modeId)?.kind==='squirt'&&base?.status==='compatible';
     return {base,construction:{status:allowed?'compatible':'incompatible'},applicationAllowed:allowed,authority:'user-defined',facts:{source:'HT180'}};

@@ -1,4 +1,5 @@
 import {CHEMICAL_SUBSTANCES,chemicalAllowed} from './biochemical-catalog.js';
+import {UT_SWARM_TYPES,utSwarmType} from '../ut-swarm-source.js';
 import {chemicalEditorHTML} from './biochemical-integration.js';
 import { utBriefInstructions } from './ammunition-chat-summary.js';
 import { UT_CONVENTIONAL_MODES, UT_CONVENTIONAL_RULES } from './ut-conventional-ammunition.js';
@@ -38,6 +39,7 @@ export function utPayloadEditorHTML(option,draft,escape,{open=false,campaignTL=n
   if(!rule?.note&&!option?.recipe?.parameters?.radius)return '';
   const p=draft??option.recipe.parameters, radius=p?.radius;
   const charge=guided?(Object.hasOwn(UT_EXTENDED_SOURCE,p.warheadVariant??'')?UT_EXTENDED_SOURCE[p.warheadVariant]:null):definition;
+  const swarm=charge?.id==='swarm',swarmType=swarm?utSwarmType(p.swarmType):null;
   const substance = ['ut_paint','ut_drugged_dart','ut_drugged_ice','ut_biochemical_aerosol','ut_biochemical_liquid']
     .includes(guided ? p.warheadVariant : option.recipe.variantId);
   const caliber = option.recipe?.autoProfile?.facts?.caliberMm;
@@ -52,6 +54,9 @@ export function utPayloadEditorHTML(option,draft,escape,{open=false,campaignTL=n
   return `<details data-ut-payload data-ammo-key="${escape(option.key??'')}" ${open?'open':''}><summary>${escape(text('Content'))}</summary><div class="gam-payload-fields">`+
     chemicalEditorHTML({...option,recipe:{...option.recipe,parameters:p}},p,escape,{campaignTL})+
     `<label>${escape(text(substance ? 'Note' : 'PlainNote'))}<input type="text" name="ut-note" maxlength="500" value="${escape(p?.note??'')}"></label>`+
+    (swarm?`<label>${escape(text('SwarmType'))}<select name="ut-swarmType"><option value="" ${!p.swarmType?'selected':''}>${escape(text('SwarmUnspecified'))}</option>`+
+      Object.values(UT_SWARM_TYPES).map(s=>`<option value="${s.id}" ${p.swarmType===s.id?'selected':''} ${s.tl>p.availabilityTL?'disabled':''}>${escape(s.name)} (TL${s.tl})</option>`).join('')+'</select></label>'+
+      (swarmType?`<p class="hint" data-ut-swarm-rule>${escape(swarmType.brief+' '+text('SwarmManual')+' '+swarmType.source+'.')}</p>`:''):'')+
     (definition?`<label>${escape(text('AvailabilityTL'))}<select name="ut-availabilityTL">`+
       (guided&&!levels.includes(p.availabilityTL)?`<option value="${escape(p.availabilityTL)}" selected disabled>TL${escape(p.availabilityTL)} — ${escape(text('HomingInvalidChoice'))}</option>`:'')+
       levels.map(tl=>`<option value="${tl}" ${p.availabilityTL===tl?'selected':''}>TL${tl}${definition.superscience?'^':''}</option>`).join('')+'</select></label>':'')+
@@ -123,9 +128,13 @@ export function utPayloadParameters(review, input={}) {
   if(input.batchId!=null&&!/^[A-Za-z0-9_-]{1,80}$/.test(input.batchId))throw Error('UTPayloadInvalid');
   for(const [key,limit]of [['savingThrow',500],['description',5000]])
     if(input[key]!=null&&(typeof input[key]!=='string'||input[key].length>limit))throw Error('UTPayloadInvalid');
+  const swarm=review.facts.definition?.id==='swarm'||review.facts.warheadVariant==='ut_swarm';
+  if(swarm&&input.swarmType!=null&&input.swarmType!==''&&
+    (!utSwarmType(input.swarmType)||utSwarmType(input.swarmType).tl>review.facts.availabilityTL))throw Error('UTPayloadInvalid');
   // Omit empty new fields so legacy recipe identities remain byte-for-byte stable.
   return {note,radius,...(input.chemicalId?{chemicalId:input.chemicalId}:{}),...(input.batchId?{batchId:input.batchId}:{}),
-    ...(input.savingThrow?.trim()?{savingThrow:input.savingThrow}:{}),...(input.description?.trim()?{description:input.description}:{})};
+    ...(input.savingThrow?.trim()?{savingThrow:input.savingThrow}:{}),...(input.description?.trim()?{description:input.description}:{}),
+    ...(swarm&&input.swarmType?{swarmType:input.swarmType}:{})};
 }
 export function resolveUTSpecialEffects({raw,variantId,baseStatus,constructionStatus,facts={},previousTransformations=[]}) {
   const rule=UT_SPECIAL_RULES[variantId],formula=String(raw?.damage??'');

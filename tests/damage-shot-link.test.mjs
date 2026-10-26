@@ -4,6 +4,47 @@ import { readFile } from "node:fs/promises";
 import { installDamageShotLink, captureDamageSource, resolveDamageShotLink, shotDamageComponents } from "../scripts/tools/damage-shot-link.js";
 import { AttackProfileResolver, createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { resolveAmmunitionEffects, parseKineticDamage } from "../scripts/tools/ammunition-effects.js";
+import {CatalogService} from '../scripts/catalog-service.js';
+import {LT_EARLY_PROFILES,ltEarlyImprovisedId} from '../scripts/lt-early-firearms-source.js';
+import {ltEarlyDamage} from '../scripts/tools/lt-early-firearms.js';
+import {LT_ARTILLERY_PROFILES} from '../scripts/lt-artillery-source.js';
+import {LT_FLAME_PROFILES} from '../scripts/lt-flame-source.js';
+
+test('LT-P6 all ten fuel/material/body pairs replay initial and linked frozen native Damage without resources',async()=>{
+ const catalogs=new CatalogService({logger:null,fetcher:async url=>({ok:true,json:async()=>JSON.parse(await readFile(new URL('../data/catalogs/'+url.split('/').at(-1),import.meta.url),'utf8'))})});await catalogs.load();let pairs=0,linked=0;
+ for(const p of Object.values(LT_FLAME_PROFILES))for(const fuel of p.fuels)for(const fragmentsMaterial of p.linked?['metal','pottery']:[null])for(const bodyMaterial of p.system==='disposable'?['paper','bamboo']:[null]){
+  const fx=fixture({effects:true}),s=fx.source(),profile=structuredClone(s.shot.profile),weapon={id:'p6-source',standaloneModeId:p.modeId,ltEarly:{settings:{}}};s.actor.system.attributes={ST:{value:14,import:14}};
+  const type={source:'catalog',book:'lt',kind:'ammo-item',ammoId:p.ammoId,recipe:{version:1,variantId:'lt_flame_load',parameters:{accounting:'prepared',fuel,bodyMaterial,volumePints:2,powderLb:0.2,fragmentsLb:0.1,fragmentsMaterial,resinLb:0.05,fit:{weaponId:weapon.id,equipmentId:p.equipmentId,barrels:[0]}}}};
+  const damage=ltEarlyDamage({modeId:p.modeId,actor:s.actor,attack:{standaloneRef:{modeId:p.modeId}},weapon,type,catalogs});assert.equal(damage.nativeSafe,true,damage.reason);
+  profile.ammunition={...profile.ammunition,...type,status:'confirmed'};profile.damage=damage;profile.effective.damage=damage.formula;
+  s.shot=createShotSnapshot(profile,{attackId:'attack-A',spent:0,messageId:'A'});s.message.flags[scope]={shotSnapshot:JSON.parse(JSON.stringify(s.shot))};
+  s.actor.system.attributes.ST.value=1;s.actor.system.ranged.Rifle.damage='99d pi';s.actor.inventory={rounds:0};const before=JSON.stringify(s.actor),saved=JSON.stringify(s.message.flags);
+  for(let n=0;n<2;n++){const result=await fx.damage(s);assert.equal(result.flags.gurps.transfer.payload[0].roll.formula,p.stats.damage);}
+  for(const component of shotDamageComponents(s.message,fx.runtime))for(let n=0;n<2;n++){
+   const event=fx.click(s);event.currentTarget.dataset.olegurpsShotDamageSource=s.message.id;event.currentTarget.dataset.olegurpsShotComponent=component.role;
+   await fx.runtime.GURPS.performAction(fx.runtime.GURPS.parselink(component.formula).action,s.actor,event);await Promise.all(fx.tasks);
+   assert.equal(fx.calls.at(-1).message.flags.gurps.transfer.payload[0].roll.formula,'1 pi-');linked++;
+  }
+  assert.equal(JSON.stringify(s.actor),before);assert.equal(JSON.stringify(s.message.flags),saved);pairs++;
+ }assert.equal(pairs,10);assert.equal(linked,8);
+});
+
+test('LT-P5 all149 physical pairs and linked fire replay frozen native Damage without resources',async()=>{
+ const catalogs=new CatalogService({logger:null,fetcher:async url=>({ok:true,json:async()=>JSON.parse(await readFile(new URL('../data/catalogs/'+url.split('/').at(-1),import.meta.url),'utf8'))})});await catalogs.load();let pairs=0,linked=0;
+ for(const p of Object.values(LT_ARTILLERY_PROFILES))for(const ammo of p.ammunition){
+  const fx=fixture({effects:true}),s=fx.source(),profile=structuredClone(s.shot.profile),weapon={id:'p5-fitted',standaloneModeId:p.modeId,ltEarly:{settings:{ignitionReady:true,crew:200}}};
+  const type={source:'catalog',book:'lt',kind:'ammo-item',ammoId:ammo.id,recipe:{version:1,variantId:'lt_artillery_load',parameters:{accounting:'components',loading:p.mechanical?'mechanical':ammo.kind==='heated'?'cloth':'loose',powder:p.powder,projectileMass:Math.min(p.roundMass/2,1),massFactor:ammo.kind==='overweight'?2:1,flamingReady:true,heatedReady:true,fit:{equipmentId:p.equipmentId,weaponId:weapon.id,barrels:[0]}}}};
+  const damage=ltEarlyDamage({modeId:p.modeId,attack:{standaloneRef:{modeId:p.modeId}},weapon,type,catalogs});assert.equal(damage.nativeSafe,true,ammo.id);
+  profile.mode.standaloneRef={weaponId:weapon.id,modeId:p.modeId,combatType:'ranged'};profile.ammunition={...profile.ammunition,...type,status:'confirmed'};profile.damage=damage;profile.effective.damage=damage.formula;
+  profile.resource.ltEarlyCharges=[{magazineId:'old-place',charge:{id:'old-charge',ammoId:ammo.id,artillery:damage.rules.ltArtillery.manifest}}];
+  s.shot=createShotSnapshot(profile,{attackId:'attack-A',spent:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:JSON.parse(JSON.stringify(s.shot))};
+  s.actor.system.ranged.Rifle.damage='99d pi';s.actor.inventory={rounds:0,party:'replacement'};const inventory=JSON.stringify(s.actor.inventory),history=JSON.stringify(s.message.flags);
+  for(let n=0;n<2;n++){const m=await fx.damage(s);assert.equal(m.flags.gurps.transfer.payload[0].roll.formula,damage.formula,p.modeId+':'+ammo.id);}
+  assert.equal(JSON.stringify(s.actor.inventory),inventory);assert.equal(JSON.stringify(s.message.flags),history);
+  const additional=shotDamageComponents(s.message,fx.runtime);assert.equal(additional.length,damage.components.length-1);
+  if(additional.length){assert.equal(additional[0].formula,ammo.kind==='heated'?'3d burn':'1 burn');linked++;}pairs++;
+ }assert.equal(pairs,149);assert.equal(linked,30);
+});
 
 test('ETC repeated native Damage uses frozen converted piercing and never spends or rechecks the live cell',async()=>{
   const f=fixture({effects:true}),s=f.source(),p=structuredClone(s.shot.profile);
@@ -24,6 +65,59 @@ test('ETC repeated native Damage uses frozen converted piercing and never spends
 });
 
 const scope = "olegurps-qol";
+
+test('LT-P4 all77 physical pairs dispatch frozen native Damage after their carrier and party are replaced',async()=>{
+ const catalogs=new CatalogService({logger:null,fetcher:async url=>({ok:true,json:async()=>JSON.parse(await readFile(new URL('../data/catalogs/'+url.split('/').at(-1),import.meta.url),'utf8'))})});await catalogs.load();let pairs=0;
+ for(const p of Object.values(LT_EARLY_PROFILES))for(const ammoId of [...p.ammoIds,...(p.usage==='Shoot Bolt'?[]:[ltEarlyImprovisedId(p)])]){
+  const fx=fixture({effects:true}),s=fx.source(),profile=structuredClone(s.shot.profile),weapon={id:'p4-fitted',standaloneModeId:p.modeId,ltEarly:{settings:{ignitionReady:true},face:0,progress:[0,0]}};
+  const type={source:'catalog',book:'lt',kind:'ammo-item',ammoId,recipe:{version:1,variantId:'lt_early_load',customId:'saved-party',parameters:{accounting:'components',loading:'loose',powder:p.powder,fit:{equipmentId:p.equipmentId,weaponId:weapon.id,barrels:Array.from({length:p.places},(_,n)=>n)}}}};
+  const damage=ltEarlyDamage({modeId:p.modeId,attack:{standaloneRef:{modeId:p.modeId}},weapon,type,catalogs,context:{physicalDistance:2}});assert.equal(damage.nativeSafe,true,ammoId);
+  profile.mode.standaloneRef={weaponId:weapon.id,modeId:p.modeId,combatType:'ranged'};profile.ammunition={...profile.ammunition,...type,status:'confirmed'};profile.damage=damage;profile.effective.damage=damage.formula;
+  profile.resource.ltEarlyCharges=[{magazineId:'saved-place',charge:{id:'saved-charge',ammoId,parameters:type.recipe.parameters}}];
+  s.shot=createShotSnapshot(profile,{attackId:'attack-A',spent:p.kind==='duck'?4:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:JSON.parse(JSON.stringify(s.shot))};
+  s.actor.system.ranged.Rifle.damage='99d pi';s.actor.inventory={rounds:0,party:'replacement',cylinder:'replacement'};const before=JSON.stringify(s.actor.inventory),history=JSON.stringify(s.message.flags);
+  const m=await fx.damage(s);assert.equal(m.flags.gurps.transfer.payload[0].roll.formula,damage.formula,p.modeId+':'+ammoId);assert.equal(m.getFlag(scope,'damageLink').shotSnapshot.resource.ltEarlyCharges[0].charge.ammoId,ammoId);
+  assert.equal(JSON.stringify(s.actor.inventory),before);assert.equal(JSON.stringify(s.message.flags),history);pairs++;
+ }assert.equal(pairs,77);
+});
+
+for(const [kind,formula]of [['single','2d+2 pi+'],['gonne-bolt','1d imp'],['ten-eyed','1d+2 pi++'],['duck','1d pi+'],['puckle','4d pi++'],['chinese-shot','1d-1 pi']])
+test('LT-P4 '+kind+' native Damage dispatch freezes formula and prepared charge across party, cylinder and user changes',async()=>{
+ const fx=fixture({effects:true}),s=fx.source(),p=structuredClone(s.shot.profile);
+ p.mode.standaloneRef={weaponId:'p4-test',modeId:'p4-'+kind,combatType:'ranged'};
+ p.damage=resolveAmmunitionEffects({raw:{damage:formula}});p.damage.rules.ltEarly={version:1,kind,physicalUnits:kind==='duck'?4:1};p.effective.damage=formula;
+ p.resource.ltEarlyCharges=[{magazineId:'old-cylinder',charge:{id:'old-charge',ammoId:'old-projectile',parameters:{powder:'serpentine'},components:[{kind:'propellant',quantity:1}]}}];
+ s.shot=createShotSnapshot(p,{attackId:'attack-A',spent:kind==='duck'?4:1,messageId:'A'});s.message.flags[scope]={shotSnapshot:JSON.parse(JSON.stringify(s.shot))};
+ const saved=JSON.stringify(s.message.flags);s.actor.system.ranged.Rifle.damage='99d pi';s.actor.inventory={cylinder:'replacement',powder:0,party:'new'};
+ for(const id of ['original-owner','other-owner']){
+  fx.runtime.game.user={id,getFlag:()=>false};const inventory=JSON.stringify(s.actor.inventory),m=await fx.damage(s);
+  assert.equal(m.flags.gurps.transfer.payload[0].roll.formula,formula);assert.equal(m.getFlag(scope,'damageLink').shotSnapshot.resource.ltEarlyCharges[0].charge.id,'old-charge');
+  assert.equal(JSON.stringify(s.actor.inventory),inventory);assert.equal(JSON.stringify(s.message.flags),saved);
+ }
+});
+
+test('melee snapshot replays exact numeric action and properties after ST and source changes',async()=>{
+  const fx=fixture({effects:true}),source=fx.source(),p=structuredClone(source.shot.profile);
+  const action={type:'damage',formula:'2d+4(2)!',damagetype:'cut',extdamagetype:'inc',
+    costs:'*Costs 1FP',next:{type:'damage',formula:'1d',damagetype:'burn'}};
+  p.damage={formula:'2d+4(2)! cut inc, 1d burn',nativeSafe:true,components:[],rules:{meleeSnapshot:{version:1,action,evidence:{strength:{effectiveST:15}}}}};
+  source.shot=createShotSnapshot(p,{attackId:'attack-A',messageId:'A'});source.message.flags[scope]={shotSnapshot:JSON.parse(JSON.stringify(source.shot))};
+  source.actor.system.swing='99d';source.actor.system.ranged.Rifle.damage='99d pi';
+  const before=JSON.stringify(source.message.flags),inventory=JSON.stringify(source.actor.inventory);
+  for(let i=0;i<2;i++){
+    const m=await fx.damage(source);assert.equal(m.flags.gurps.transfer.payload[0].roll.formula,'2d+4(2)! cut');
+    const stored=m.getFlag(scope,'damageLink').shotSnapshot.damage.rules.meleeSnapshot;
+    assert.equal(stored.action.next.formula,'1d');assert.equal(stored.evidence.strength.effectiveST,15);
+    assert.equal(JSON.stringify(source.message.flags),before);assert.equal(JSON.stringify(source.actor.inventory),inventory);
+  }
+});
+test('an unresolved new melee snapshot blocks historical Damage instead of re-reading live ST',async()=>{
+  const fx=fixture({effects:true}),source=fx.source(),p=structuredClone(source.shot.profile);
+  p.damage={formula:null,nativeSafe:false,components:[],rules:{meleeSnapshot:{version:1,action:null}}};
+  source.shot=createShotSnapshot(p,{attackId:'attack-A',messageId:'A'});source.message.flags[scope]={shotSnapshot:source.shot};
+  const result=await fx.runtime.GURPS.performAction(source.action,source.actor,fx.click(source));
+  assert.equal(result,false);assert.equal(fx.calls.length,0);
+});
 
 for (const [enabled, formula] of [[true, '5d+1 pi++'], [false, '4d+5 pi++'], [null, '4d+5 pi++']])
 test('B269 frozen native Damage ignores current and other-user preferences: ' + enabled, async () => {
@@ -338,6 +432,12 @@ function fixture({ effects = false } = {}) {
     runtime.GURPS.parselink = text => {
       if (text.startsWith("{")) return { action: JSON.parse(text) };
       const parsed = parseKineticDamage(text);
+      const constantPiercing=text.match(/^(\d+) (pi[+-]{0,2})$/);
+      if(constantPiercing)return {action:{type:'damage',formula:constantPiercing[1],damagetype:constantPiercing[2]}};
+      const artillery=text.match(/^(\d+(?:d(?:[+-]\d+)?(?:x\d+)?)?(?:\(0\.5\))?) (cr|imp|cut|burn)$/);
+      if(artillery)return {action:{type:'damage',formula:artillery[1],damagetype:artillery[2]}};
+      const imp=text.match(/^(\d+d(?:[+-]\d+)?) imp$/);
+      if(imp)return {action:{type:'damage',formula:imp[1],damagetype:'imp'}};
       const baton=text.match(/^(\d+d(?:[+-]\d+)?(?:x\d+)?\(0\.25\)) cr dkb$/);
       if(baton)return {action:{type:'damage',formula:baton[1],damagetype:'cr dkb'}};
       const monochain=text.match(/^(\d+d(?:[+-]\d+)?(?:x\d+)?\(10\)) cut$/);

@@ -1,0 +1,327 @@
+{
+  "module": "olegurps-qol",
+  "version": "0.2.1b",
+  "shippedMacroCount": 10,
+  "additionalRegisteredToolCount": 3,
+  "launcherActionCount": 10,
+  "playerActionCount": 10,
+  "sources": [
+    "scripts/main.js",
+    "scripts/module-macros.js",
+    "scripts/macro-labels.js",
+    "data/macros/olegurps-macros.json",
+    "packs/macros (live game.packs.getDocuments; 10 records)",
+    "scripts/tools/",
+    "assets/",
+    "module.json",
+    "lang/ru.json",
+    "lang/en.json"
+  ],
+  "uiLanguage": "Russian regardless of Foundry language, per AGENTS.md",
+  "actions": [
+    {
+      "id": "ammo",
+      "macroId": "OQshooting000001",
+      "names": {
+        "ru": "Помощник стрельбы",
+        "en": "Shooting Assistant"
+      },
+      "icon": "modules/olegurps-qol/assets/shooting-assistant.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.ammo.open();",
+      "publicHandler": "game.olegurpsQOL.ammo.open()",
+      "originalEntrypoint": "scripts/tools/ammo.js#openAmmoManager",
+      "settingsMenu": null,
+      "selectedToken": "exactly one owned token",
+      "access": "Actor OWNER (or GM), checked by existing entrypoint",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Combat"
+    },
+    {
+      "id": "fireControl",
+      "macroId": "OQfirecontrol001",
+      "names": {
+        "ru": "Огонь",
+        "en": "Fire Control"
+      },
+      "icon": "modules/olegurps-qol/assets/fire-control.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.fireControl.open();",
+      "publicHandler": "game.olegurpsQOL.fireControl.open()",
+      "originalEntrypoint": "scripts/tools/fire-control.js#openFireControl",
+      "settingsMenu": null,
+      "selectedToken": "optional; existing token/character/manual fallback",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Combat"
+    },
+    {
+      "id": "melee",
+      "macroId": "OQMeleeAssist001",
+      "names": {
+        "ru": "Помощник ближнего боя",
+        "en": "Melee Assistant"
+      },
+      "icon": "modules/olegurps-qol/assets/melee-assistant.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.melee.open();",
+      "publicHandler": "game.olegurpsQOL.melee.open()",
+      "originalEntrypoint": "scripts/tools/melee-assistant.js#openMeleeAssistant",
+      "settingsMenu": null,
+      "selectedToken": "exactly one owned token",
+      "access": "Actor OWNER (or GM), checked by existing entrypoint",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Combat"
+    },
+    {
+      "id": "damage",
+      "macroId": "OQDamageMacro001",
+      "names": {
+        "ru": "Урон",
+        "en": "Damage"
+      },
+      "icon": "modules/olegurps-qol/assets/damage.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.damage.open();",
+      "publicHandler": "game.olegurpsQOL.damage.open()",
+      "originalEntrypoint": "scripts/tools/damage.js#openDamageRoll",
+      "settingsMenu": null,
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Combat"
+    },
+    {
+      "id": "explosion",
+      "macroId": "OQexplosion00001",
+      "names": {
+        "ru": "Взрыв и осколки",
+        "en": "Explosion & Fragmentation"
+      },
+      "icon": "modules/olegurps-qol/assets/explosion-and-fragmentation.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.explosion.open();",
+      "publicHandler": "game.olegurpsQOL.explosion.open()",
+      "originalEntrypoint": "scripts/tools/explosion-fragmentation.js#openExplosionFragmentation",
+      "settingsMenu": null,
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Combat"
+    },
+    {
+      "id": "fright",
+      "macroId": "OQfright00000001",
+      "names": {
+        "ru": "Проверка страха",
+        "en": "Fright Check"
+      },
+      "icon": "modules/olegurps-qol/assets/fright-check.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.fright.open();",
+      "publicHandler": "game.olegurpsQOL.fright.open()",
+      "originalEntrypoint": "scripts/tools/fright.js#openFrightCheck",
+      "settingsMenu": null,
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Checks"
+    },
+    {
+      "id": "reaction",
+      "macroId": "OQreaction000001",
+      "names": {
+        "ru": "Реакция",
+        "en": "Reaction Roll"
+      },
+      "icon": "modules/olegurps-qol/assets/reaction-roll.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.reaction.open();",
+      "publicHandler": "game.olegurpsQOL.reaction.open()",
+      "originalEntrypoint": "scripts/tools/reaction.js#openReactionRoll",
+      "settingsMenu": null,
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Checks"
+    },
+    {
+      "id": "critical",
+      "macroId": "OQcritical000001",
+      "names": {
+        "ru": "Критические результаты",
+        "en": "Critical Tables"
+      },
+      "icon": "modules/olegurps-qol/assets/critical-table.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.critical.open();",
+      "publicHandler": "game.olegurpsQOL.critical.open()",
+      "originalEntrypoint": "scripts/tools/critical.js#openCriticalTables",
+      "settingsMenu": null,
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Checks"
+    },
+    {
+      "id": "luck",
+      "macroId": "OQLuckMacro00001",
+      "names": {
+        "ru": "Удача",
+        "en": "Luck"
+      },
+      "icon": "modules/olegurps-qol/assets/luck.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.luck.open();",
+      "publicHandler": "game.olegurpsQOL.luck.open()",
+      "originalEntrypoint": "scripts/tools/luck.js#openLuck",
+      "settingsMenu": null,
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original immediate two rolls and one ChatMessage; no window",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Checks"
+    },
+    {
+      "id": "falling",
+      "macroId": "OQfalling0000001",
+      "names": {
+        "ru": "Урон от падения",
+        "en": "Falling Damage"
+      },
+      "icon": "modules/olegurps-qol/assets/falling.png",
+      "iconSource": "original shipped and live compendium Macro.img",
+      "originalCommand": "game.olegurpsQOL.falling.open();",
+      "publicHandler": "game.olegurpsQOL.falling.open()",
+      "originalEntrypoint": "scripts/tools/falling.js#openFallingDamage",
+      "settingsMenu": null,
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": true,
+      "settingsOnly": false,
+      "section": "Tools"
+    },
+    {
+      "id": "weapon-settings",
+      "macroId": null,
+      "names": {
+        "ru": "Персональные настройки оружия",
+        "en": "Personal weapon settings"
+      },
+      "icon": "fas fa-user-gear",
+      "iconSource": "existing registered settings menu icon",
+      "originalCommand": "new (game.settings.menus.get('olegurps-qol.weapon-skills').type)().render({force:true})",
+      "publicHandler": "game.settings.menus.get('olegurps-qol.weapon-skills').type",
+      "originalEntrypoint": "scripts/tools/weapon-skill-settings-app.js#WeaponSkillSettingsApp",
+      "settingsMenu": "olegurps-qol.weapon-skills",
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": false,
+      "settingsOnly": true,
+      "section": null
+    },
+    {
+      "id": "effect-visibility",
+      "macroId": null,
+      "names": {
+        "ru": "Видимость эффектов",
+        "en": "Effect visibility"
+      },
+      "icon": "fas fa-eye",
+      "iconSource": "existing registered settings menu icon",
+      "originalCommand": "new (game.settings.menus.get('olegurps-qol.status-effect-visibility-menu').type)().render({force:true})",
+      "publicHandler": "game.settings.menus.get('olegurps-qol.status-effect-visibility-menu').type",
+      "originalEntrypoint": "scripts/tools/status-effect-visibility.js#StatusEffectVisibilityMenu",
+      "settingsMenu": "olegurps-qol.status-effect-visibility-menu",
+      "selectedToken": "not required",
+      "access": "all players; original tool validation retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": false,
+      "settingsOnly": true,
+      "section": null
+    },
+    {
+      "id": "developer",
+      "macroId": null,
+      "names": {
+        "ru": "Режим разработчика",
+        "en": "Developer mode"
+      },
+      "icon": "fas fa-flask",
+      "iconSource": "existing registered settings menu icon",
+      "originalCommand": "new (game.settings.menus.get('olegurps-qol.developer-mode').type)().render({force:true})",
+      "publicHandler": "game.olegurpsQOL.developer.open()",
+      "originalEntrypoint": "scripts/tools/developer-mode-app.js#openDeveloperMode",
+      "settingsMenu": "olegurps-qol.developer-mode",
+      "selectedToken": "not required",
+      "access": "GM only; original requireDeveloperGM retained",
+      "behavior": "original ApplicationV2 or DialogV2",
+      "inLauncher": false,
+      "settingsOnly": true,
+      "section": null
+    }
+  ],
+  "exclusions": {
+    "worldMacros": "Not enumerated for launcher actions; never imported, created, removed, or evaluated by launcher.",
+    "parameterizedServiceMethods": "Catalog, damageShots, resistance, developer arm/cancel and internal assistant controls remain in their existing tools; they are not separate shipped macros or standalone registered menu tools."
+  },
+  "preferences": {
+    "storage": "Foundry v14 server-backed Setting documents with scope=user and the current user id",
+    "visible": {
+      "key": "launcherVisible",
+      "type": "Boolean",
+      "default": true,
+      "config": false
+    },
+    "position": {
+      "key": "launcherPosition",
+      "type": "String",
+      "default": "bucket",
+      "choices": [
+        "bucket",
+        "hotbar-left",
+        "hotbar-right",
+        "controls",
+        "custom"
+      ],
+      "config": false
+    },
+    "coordinates": {
+      "key": "launcherCoordinates",
+      "type": "Object",
+      "default": null,
+      "config": false
+    },
+    "size": {
+      "key": "launcherSize",
+      "type": "Number",
+      "default": 40,
+      "min": 28,
+      "max": 72,
+      "step": 4,
+      "scope": "user",
+      "config": false
+    },
+    "settingsMenu": "olegurps-qol.launcher-settings",
+    "restricted": false
+  }
+}

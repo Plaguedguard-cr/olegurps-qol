@@ -31,17 +31,21 @@ export function parseAccuracyComponents(value) {
 export function normalizeAttackOverride(value) {
   if (!value || typeof value !== "object") return null;
   const skillLevel = asInteger(value.skillLevel);
-  const acc = asInteger(value.acc);
+  const acc = value.acc===null?null:asInteger(value.acc);
   const scopeBonus = asInteger(value.scopeBonus);
   const parsedBulk = parseWeaponBulk(value.bulk);
   const bulk = parsedBulk?.numericBulk ?? null;
   const bulkMetadata = parseWeaponBulk(value.bulkMetadata?.rawBulk ?? value.bulk);
+  const dual=value.bulkMetadata;
+  const dualValues=Array.isArray(dual?.sourceValues)&&dual.sourceValues.length===2&&dual.sourceValues.every(Number.isSafeInteger)&&
+    dual.rawBulk===dual.sourceValues.join('/')&&dual.numericBulk===bulk&&
+    (dual.manual===true||dual.sourceValues.includes(bulk)) ? structuredClone(dual) : null;
   const rof = asText(value.rof);
   const rcl = asText(value.rcl);
-  if (skillLevel === null || skillLevel < 0 || acc === null || acc < 0 ||
-      scopeBonus === null || scopeBonus < 0 || bulk === null || !rof || !rcl) return null;
-  return { skillLevel, rof, acc, scopeBonus, bulk, rcl,
-    ...(bulkMetadata?.hasFoldingStock && bulkMetadata.numericBulk === bulk ? { bulkMetadata } : {}) };
+  if (skillLevel === null || skillLevel < 0 || (acc===null?value.acc!==null:acc<0) ||
+      scopeBonus === null || scopeBonus < 0 || bulk === null || !rof || !rcl&&value.rcl!==null) return null;
+  return { skillLevel, rof, acc, scopeBonus, bulk, rcl:value.rcl===null?null:rcl,
+    ...(dualValues?{bulkMetadata:dualValues}:bulkMetadata?.hasFoldingStock && bulkMetadata.numericBulk === bulk ? { bulkMetadata } : {}) };
 }
 
 export function normalizeAttackOverrides(value) {

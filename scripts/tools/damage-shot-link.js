@@ -1,4 +1,7 @@
 import {exoticDamageProvenance} from './exotic-beam-damage.js';
+import {renderLTFlameBurn} from './lt-flame-burn.js';
+import {applyLTBowDamageResult} from './lt-bow.js';
+import { installMeleeNativeDamage, numericMeleeDamageEvent } from './melee-native-damage.js';
 import { immutableCopy, SHOT_FLAG_SCOPE } from "./attack-profile-resolver.js";
 import { diagnoseGgaDamageAdapters, warnGgaDamageCompatibility, ammoEffectText } from "./gga-damage-compatibility.js";
 import { appendInstructionSteps } from "../localization.js";
@@ -60,11 +63,13 @@ const completed = (shot, messageId) => shot?.version === 1 && !!shot.attackId &&
 const identityCopy = shot => ({ version: shot.version, attackId: shot.attackId, actorId: shot.actorId,
   mode: shot.mode, magazineId: shot.magazineId, ammunition: shot.ammunition, spent: shot.spent,
   resourceTiming: shot.resourceTiming, resourceReceiptId: shot.resourceReceiptId,
+  ...(shot.profile?.damage?.rules?.ltEarly?{resource:shot.profile.resource,...(shot.duckFootResult?{duckFootResult:shot.duckFootResult}:{})}:{}),
   ...(shot.profile?.damage ? { damage: shot.profile.damage, damageAttack: shot.profile.effective,
     transformations: shot.profile.transformations, context: shot.profile.context } : {}) });
 const unlinked = reason => ({ status: "unlinked", reason });
 const explosiveShot = shot => !!(shot?.profile?.damage??shot?.damage)?.rules?.fluid || !!(shot?.profile?.damage??shot?.damage)?.rules?.backblast || ['ghost','conversion'].includes((shot?.profile?.damage??shot?.damage)?.rules?.exoticBeam?.family) || isUTExtendedVariant(shot?.ammunition?.recipe?.variantId) || isExplosiveVariant(shot?.ammunition?.recipe?.variantId) || isEnvironmentVariant(shot?.ammunition?.recipe?.variantId) || isFuzeTracerVariant(shot?.ammunition?.recipe?.variantId);
 const componentConditionIds = new Set(["P4LinkedFollowUp", "P4Fragmentation", "P4SAPLEReliability", "P4HESH", "P4Tandem", "P4Thermobaric"]);
+const ltLinkedShot=shot=>{const r=(shot?.profile?.damage??shot?.damage)?.rules;return !!(r?.ltBow||r?.ltPersonal||r?.ltEarly);};
 export function ammunitionConditionSource(message, runtime = globalThis) {
   // Permission checks precede even reading flags, for both the clicked message and its source.
   if (!readable(message)) return null;
@@ -92,7 +97,7 @@ export function shotAmmunitionConditions(message, runtime = globalThis) {
   if (!damage?.nativeSafe) return [];
   // These new HT profiles already render their concise saved instructions in
   // ammunitionChatHTML. Do not generate a second copy in the legacy section.
-  if(damage.rules?.htSourceProfile)return [];
+  if(damage.rules?.htSourceProfile||damage.rules?.ltBow||damage.rules?.ltPersonal||damage.rules?.ltEarly)return [];
   const language = runtime.game?.i18n?.lang ?? "ru";
   const keys = ammunitionInstructionKeys(shot), excluded = new Set(keys), context = shot.profile.context;
   const replaced = {Linked:"P4LinkedFollowUp",Internal:"P4LinkedFollowUp",Fragments:"P4Fragmentation",
@@ -166,7 +171,9 @@ export function renderShotAmmunitionConditions(message, root, runtime = globalTh
 export function shotDamageComponents(message, runtime = globalThis) {
   if (!readable(message)) return [];
   const shot = flag(message);
-  if (!completed(shot, message.id) || !explosiveShot(shot)) return [];
+  if(shot?.profile?.attackResult)return [];
+  if (!completed(shot, message.id) || !explosiveShot(shot)&&!ltLinkedShot(shot)) return [];
+  if(shot.profile.damage?.rules?.ltEarly&&!shot.profile.damage.components.some(c=>c.role!=='kinetic'))return [];
   const composite=shot.profile.damage?.model?.kind==="published-composite" || !!shot.profile.damage?.rules?.componentOrder || !!shot.profile.damage?.rules?.fuzeTracer;
   const roles=composite ? shot.profile.damage.components.filter(c=>c.role!==(shot.profile.damage.rules?.primaryDamageRole??'kinetic')&&c.status==="resolved").map(c=>c.role) : ["follow-up","fragmentation"];
   return roles.map(role => {
@@ -222,10 +229,12 @@ export function resolveDamageShotLink(damage, runtime = globalThis) {
 export function installDamageShotLink(runtime = globalThis) {
   const { GURPS, ChatMessage, Hooks } = runtime;
   if (installations.has(GURPS)) return installations.get(GURPS);
+  const meleeNative=installMeleeNativeDamage(runtime);
   const prototype = GURPS?.DamageChat?.prototype;
   if (typeof GURPS?.performAction !== "function" || typeof prototype?._createChatMessage !== "function" ||
       typeof ChatMessage?.create !== "function" || !Hooks?.on) throw new Error("DamageShotLinkNativeAPIUnavailable");
   const events = new WeakMap(), rolls = new WeakMap(), creations = new Map();
+  const frozenMeleeAction = Symbol('frozenMeleeAction');
   const originals = { perform: GURPS.performAction, resolve: GURPS.resolveDamageRoll,
     render: prototype._createChatMessage, create: ChatMessage.create };
   const diagnostic = diagnoseGgaDamageAdapters(runtime);
@@ -256,12 +265,13 @@ export function installDamageShotLink(runtime = globalThis) {
     if (sourceMode?.standaloneRef && context.status !== "linked") return false;
     if (event?.currentTarget?.dataset?.olegurpsShotComponent && context.status !== "linked") return false;
     let dispatched = action;
-    if (context.status === "linked" && ["attackdamage", "damage"].includes(action?.type) && !action.calcOnly) {
+    if (context.status === "linked" && ["attackdamage", "damage"].includes(action?.type) && !action.calcOnly && !action[frozenMeleeAction]) {
       const damage = context.shot.damage;
       if(damage?.rules?.instructionOnly&&context.component!=='backblast'&&!(damage.rules.fluid&&context.component==='linked'))return false;
       const component = context.component && context.component !== "kinetic" ? damage?.components?.find(c=>c.role === context.component) : null;
       const formula = component ? component.formula : damage?.formula;
-      if (explosiveShot(context.shot) && (!damage?.nativeSafe || (context.component !== "kinetic" &&
+      if(damage?.rules?.attackResult){runtime.ui?.notifications?.warn?.('Это результат применения без обычного Damage.');return false;}
+      if ((explosiveShot(context.shot)||ltLinkedShot(context.shot)) && (!damage?.nativeSafe || (context.component !== "kinetic" &&
           (!component || component.status !== "resolved" || !formula)))) {
         runtime.ui?.notifications?.warn?.(explosiveText("Unavailable", runtime, runtime.game?.i18n?.lang ?? "ru",
           { reason: explosiveText(damage?.reason ?? "unconfirmed-compatibility", runtime) }));
@@ -274,21 +284,36 @@ export function installDamageShotLink(runtime = globalThis) {
         problems: ["GURPS.actionFuncs / DamageChat / parselink: " + ammoEffectText("ContractChanged", {}, runtime)] }, runtime);
       if (diagnostic.compatible && unchanged && damage?.nativeSafe) {
         // Use GGA's own parser and normal damage dispatch, including its access/modifier/confirmation path.
-        const parsed = GURPS.parselink(formula)?.action;
-        if (parsed?.type === "damage" && !parsed.next) dispatched = { ...parsed,
+        const frozen=damage.rules?.meleeSnapshot;
+        const parsed = frozen?structuredClone(frozen.action):GURPS.parselink(formula)?.action;
+        if (parsed?.type === "damage" && (frozen||!parsed.next)) dispatched = { ...parsed,
           costs: action.costs, mod: action.mod, desc: action.desc, blindroll: action.blindroll,
           att: structuredClone(context.shot.damageAttack), sourceId: context.shot.actorId };
         else runtime.ui?.notifications?.warn?.(ammoEffectText("Unresolved", {
           reason: ammoEffectText("native-parser-contract-changed", {}, runtime) }, runtime));
+        if(frozen&&dispatched!==action){
+          for(let node=dispatched;node;node=node.next){
+            if(node.type!=='damage')return false;
+            node[frozenMeleeAction]=true;
+            // A historical Damage replay never pays attack costs a second time.
+            delete node.costs;
+          }
+        }
       } else if (diagnostic.compatible && unchanged) runtime.ui?.notifications?.warn?.(ammoEffectText("Unresolved", {
         reason: ammoEffectText(damage?.reason ?? "snapshot-damage-unavailable", {}, runtime) }, runtime));
     }
+    if((context.shot?.damage?.rules?.meleeSnapshot||ltLinkedShot(context.shot))&&dispatched===action&&!action[frozenMeleeAction]&&!action.calcOnly&&
+      ['attackdamage','damage','deriveddamage'].includes(action?.type))return false;
     if ((context.component && context.component !== "kinetic" || sourceMode?.standaloneRef) && dispatched === action) {
       if (sourceMode?.standaloneRef) runtime.ui?.notifications?.warn?.("Урон автономной атаки недоступен: снимок или адаптер GGA не содержит поддерживаемой формулы.");
       return false;
     }
     // GGA's LastActor may belong to another window. Use this clicked source's Actor; native canRoll still runs.
-    return originals.perform.call(this, dispatched, context.actor ?? actor, forwardEvent(event, context), ...args);
+    let forwarded=forwardEvent(event,context);
+    if((context.shot?.damage?.rules?.meleeSnapshot||ltLinkedShot(context.shot))&&dispatched?.type==='damage'){
+      forwarded=numericMeleeDamageEvent(forwarded,dispatched);events.set(forwarded,context);
+    }
+    return originals.perform.call(this, dispatched, context.actor ?? actor, forwarded, ...args);
   };
   const resolve = function(event, actor, otf, ...args) {
     let context;
@@ -303,6 +328,8 @@ export function installDamageShotLink(runtime = globalThis) {
       draggableData=draggableData.map(d=>applyGyrojetDamageResult(d,context.shot.damage.rules?.gyrojetRange,context.component??'kinetic'));
     if(context?.status==='linked'&&actor?.id===context.shot.actorId&&context.shot.damage?.nativeSafe)
       draggableData=draggableData.map(d=>applyUTDamageResult(d,context.shot.damage.rules,context.component??'kinetic'));
+    if(context?.status==='linked'&&actor?.id===context.shot.actorId&&context.shot.damage?.nativeSafe)
+      draggableData=draggableData.map(d=>applyLTBowDamageResult(d,context.shot.damage.rules,context.component??'kinetic'));
     const exotic=exoticDamageProvenance(context);if(exotic)draggableData=draggableData.map(d=>({...d,olegurpsExoticBeam:exotic}));
     if (context && roll && typeof roll === "object") {
       rolls.set(roll, context.status === "linked" && actor?.id !== context.shot.actorId
@@ -383,6 +410,7 @@ export function installDamageShotLink(runtime = globalThis) {
       ammunition.status === "confirmed" && typeof ammunition.name === "string" ?
         (savedAmmunitionSummary({source:message,shot},runtime)?.name ?? ammunition.name).trim() : "";
     renderShotAmmunitionConditions(message, root, runtime);
+    renderLTFlameBurn(message,root,runtime);
     for (const element of root?.querySelectorAll(".roll-message.gga-chat-message .gurpslink") ?? []) {
       let action;
       try { action = element.dataset.otf && GURPS.parselink?.(element.dataset.otf)?.action; }
@@ -393,7 +421,7 @@ export function installDamageShotLink(runtime = globalThis) {
         // Only a completed, readable source with a confirmed saved identity may supply this label.
         if (ammunitionName && (!action.sourceId || action.sourceId === shot.actorId))
           element.textContent = "D:" + (shot.profile.damage.rules?.heProximity?explosiveText('Fragmentation',runtime)+' / ':'') + ammunitionName + (manualProjectileGuidance(shot.profile) ? ' — после ручного попадания' : '');
-        if (completed(shot, message.id) && explosiveShot(shot) && !element.dataset.olegurpsComponentsRendered && runtime.document) {
+        if (completed(shot, message.id) && (explosiveShot(shot)||ltLinkedShot(shot)) && !element.dataset.olegurpsComponentsRendered && runtime.document) {
           element.dataset.olegurpsComponentsRendered = "true";
           let anchor = element;
           for (const component of shotDamageComponents(message, runtime)) {
@@ -453,6 +481,7 @@ export function installDamageShotLink(runtime = globalThis) {
     if (GURPS.resolveDamageRoll === resolve) GURPS.resolveDamageRoll = originals.resolve;
     if (prototype._createChatMessage === render) prototype._createChatMessage = originals.render;
     if (ChatMessage.create === create) ChatMessage.create = originals.create;
+    meleeNative?.uninstall();
     for (const [name, id] of hooks) Hooks.off(name, id);
     installations.delete(GURPS);
   } };

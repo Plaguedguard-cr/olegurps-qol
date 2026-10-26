@@ -1,4 +1,9 @@
+import { sourceWeaponHandling, sourceBulkChoiceHTML } from './weapon-bulk.js';
+import {ltBowProfile,ltBowAmmoRule,normalizeLTBowConfiguration} from '../lt-bow-source.js';
+import {ltBowEditorHTML,bindLTBowEditor} from './lt-bow-editor.js';
+import {ltEarlyProfile} from '../lt-early-firearms-source.js';
 import { exoticBeamProfile, exoticBeamConfiguration, exoticBeamHardwareHTML } from '../ut-exotic-beam-source.js';
+import {ladarProfile,ladarRange} from '../ut-next-eleven-source.js';
 import { LP_PROFILES, lpAdmission } from './ut-liquid-propellant.js';
 import {beamProfile} from '../ut-beam-source.js';
 import {laserModifications,laserModificationsHTML,validateLaserModifications,laserAvailableModes} from '../ut-laser-modifications.js';
@@ -8,7 +13,7 @@ import { gaussProfile } from '../ut-gauss-source.js';
 import { listRangedGoverningSkills, resolveRangedGoverningSkill, bindingForGoverningSkill,
   getRangedGoverningAttackKey } from "./ranged-governing-skill-service.js";
 import { setAttackOverride, clearAttackOverride } from "./weapon-attack-overrides.js";
-import { hasWeaponBondPerk } from "./weapon-bond-service.js";
+import { hasWeaponBondPerk,weaponBondCheckbox } from "./weapon-bond-service.js";
 import { weaponText } from "./weapon-localization.js";
 import { StandaloneWeaponDraft, StandaloneWeaponService, standaloneAmmoCarriers, standaloneText } from "./standalone-weapon-service.js";
 import { standaloneConfigurationHTML, bindStandaloneConfiguration, updateStandaloneResolvedDamage } from "./standalone-weapon-configuration.js";
@@ -108,10 +113,10 @@ function equivalentAmmo(a, b) {
     JSON.stringify(stableRecord(left)) === JSON.stringify(stableRecord(right));
 }
 
-export function baseAmmunition(ammunition, modeId, catalogs, preferred = null) {
+export function baseAmmunition(ammunition, modeId, catalogs, preferred = null, options = {}) {
   if (!modeId || !ammunition) return [];
   const links = catalogs?.getModeLinks(modeId);
-  const entries = [...(ammunition.getCompatibleAmmunition(modeId)?.ammunition ?? [])]
+  const entries = [...(ammunition.getCompatibleAmmunition(modeId,options)?.ammunition ?? [])]
     .filter(entry => entry.status === "compatible" && ["ammo-item", "ammo-family"].includes(entry.kind))
     .sort((a, b) => {
       const rank = entry => entry.kind === "ammo-item" && links?.ammoItemIds?.includes(entry.ammoId) ? 0 :
@@ -167,6 +172,7 @@ export class WeaponConfigurationDraft {
       state.weapons?.find(w=>w.standaloneWeaponId===existing.standaloneWeaponId&&w.standaloneModeId==='WtM51JNSpOUIy3Eo1'):existing;
     this.executionVariant=executionOwner?.executionVariant??'ordinary';
     this.lpFireMode=executionOwner?.lpFireMode??'standard';
+    this.ltBulkState=existing?.ltBulkState==='giant'?'giant':'mounted';
     this.gaussSpeed=executionOwner?.gaussSpeed??'standard';
     this.gaussSpeedChanged=false;
     this.executionChanged=false;
@@ -180,6 +186,7 @@ export class WeaponConfigurationDraft {
       weaponBond:existing?.weaponBond,
       existing: this.standaloneService.get(existing?.standaloneWeaponId) });
     this.standaloneDraft.statPreview=modeId=>this.previewStats(modeId);
+    this.ltBow=structuredClone(existing?.ltBow??{});
     this.modes = new Map();
     this.analysis = new Map((bindings?.analyzeActor(actor)?.modes ?? []).map(entry => [entry.attack.path, entry]));
     const reference = existing?.attackRef;
@@ -198,6 +205,11 @@ export class WeaponConfigurationDraft {
       this.standaloneDraft.selectedModes[0]?.weapon_mode_id : this.current?.target?.modeId;
   }
   requestExecution(weapon) {
+    if(!this.standalone&&ltEarlyProfile(this.executionModeId))weapon.catalogModeId=this.executionModeId;
+    if(!this.standalone&&ltBowProfile(this.executionModeId)){
+      weapon.catalogModeId=this.executionModeId;weapon.ltBow=normalizeLTBowConfiguration(this.ltBow,this.executionModeId);
+    }
+    if(!this.standalone&&this.catalogs?.getMode(this.executionModeId)?.lt_ranged_contract?.bulkValues)weapon.ltBulkState=this.ltBulkState;
     const exotic=this.exoticBeamDrafts.get(this.executionModeId);
     if(exotic?.changed)weapon.exoticBeamHardwareRequest={psionicSettings:exotic.value.psionicSettings};
     const sn=this.sonicNeuralDrafts.get(this.executionModeId);
@@ -212,9 +224,30 @@ export class WeaponConfigurationDraft {
     if(this.executionChanged)weapon.executionRequest={variant:this.executionVariant,modeId:this.executionModeId};
   }
   previewStats(modeId=this.executionModeId) {
-    const mode=this.standaloneDraft.availableModes.find(m=>m.weapon_mode_id===modeId);
+    const mode=this.standaloneDraft.availableModes.find(m=>m.weapon_mode_id===modeId)??this.catalogs?.getMode(modeId);
     const raw=this.standalone ? {...standaloneModeStats(mode),...this.standaloneDraft.overrides[modeId]} :
       {...this.attack?.data,...(this.current?.override?.action==='save'?this.current.override.value:{})};
+    const handling=sourceWeaponHandling(mode,this.standalone?this.standaloneDraft.overrides[modeId]?.bulkState:this.ltBulkState,
+      this.standalone?this.standaloneDraft.overrides[modeId]?.bulk??null:this.current?.override?.value?.bulkMetadata?.sourceValues?null:this.current?.override?.value?.bulk??null);
+    if(handling?.rclNotApplicable)raw.rcl=null;
+    if(handling?.bulkMetadata)raw.bulk=handling.bulkMetadata.numericBulk;
+    if(ltBowProfile(modeId)){
+      const cfg=this.standalone?this.standaloneDraft.ltBow:this.ltBow;
+      const saved=this.state.weapons?.find(w=>w.id===this.existing?.id),carrier={...saved,id:'configuration-preview',catalogModeId:modeId,ltBow:cfg};
+      let ammunition=null;try{ammunition=readAttackAmmunition(saved);}catch{}
+      if(!ammunition?.type){
+        const ammoId=cfg.shotMode==='navak'?'lt_arrow_guide_dart':mode.lt_ammo_item_ids?.find(id=>ltBowAmmoRule(id)==='regular');
+        ammunition={kind:'preview',type:{source:'catalog',book:'lt',kind:'ammo-item',ammoId}};
+      }
+      const profile=new AttackProfileResolver({catalogs:this.catalogs,compatibility:this.ammunition??globalThis.OleGURPSQOL?.ammunitionCompatibility}).resolve({
+        actor:this.actor,actorId:this.actor.id,weaponId:carrier.id,state:{weapons:[carrier]},attack:{data:raw,ltBowOverrides:this.standalone?this.standaloneDraft.overrides[modeId]:null},
+        ammunition,binding:{status:'confirmed',binding:{confirmed:true,modeId}}});
+      return {stats:{...raw,...(profile.damage.nativeSafe?profile.damage.effectiveChanges:{damage:'—',range:'—'})},derivedFields:['damage','range'],resolvedDamage:profile.damage.nativeSafe?profile.damage.formula:null};
+    }
+    if(ladarProfile(modeId)){
+      const range=ladarRange(ladarProfile(modeId),this.standaloneDraft.overrides[modeId]);
+      return {stats:{...raw,range:range?`${range.half}/${range.maximum}`:'',damage:'HT-10 aff'},derivedFields:['range','damage'],resolvedDamage:'HT-10 aff'};
+    }
     if(beamProfile(modeId)){
       const saved=this.state.weapons?.find(w=>w.id===this.existing?.id),value=this.laserDraft(modeId).value;
       const carrier={...saved,id:'configuration-preview',catalogModeId:modeId,laserModifications:value};
@@ -241,7 +274,7 @@ export class WeaponConfigurationDraft {
       const family=mode?.ammunition_profile?.primary_ammo_family_id;
       if(!ammunition?.type&&family)ammunition={kind:'preview',type:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:family}};
       const profile=mode?new AttackProfileResolver({catalogs:this.catalogs,compatibility:this.ammunition??globalThis.OleGURPSQOL?.ammunitionCompatibility}).resolve({
-        actorId:this.actor.id,weaponId:carrier?.id,attack:{data:raw},rawAttack:raw,ammunition,
+        actor:this.actor,actorId:this.actor.id,weaponId:carrier?.id,state:{weapons:carrier?[carrier]:[]},attack:{data:raw,level:this.attack?.level,ltPersonalOverrides:this.standalone?this.standaloneDraft.overrides[modeId]:null},rawAttack:raw,ammunition,
         binding:{status:'confirmed',binding:{confirmed:true,modeId}}}):null;
       return {stats:raw,derivedFields:[],resolvedDamage:profile?.damage.nativeSafe?profile.damage.formula:null};
     }
@@ -328,6 +361,7 @@ export class WeaponConfigurationDraft {
 
   async commit({ id }) {
     if(this.actor.isOwner===false)throw Error(standaloneText('Owner'));
+    if(ltBowProfile(this.executionModeId))normalizeLTBowConfiguration(this.standalone?this.standaloneDraft.ltBow:this.ltBow,this.executionModeId);
     if(exoticBeamProfile(this.executionModeId)?.family==='psionic')exoticBeamConfiguration({...this.exoticBeamDraft().value,catalogModeId:this.executionModeId,psionicMode:this.exoticBeamDraft().value.psionicSettings?.[0]??'eraser'});
     if(sonicNeuralProfile(this.executionModeId)?.family==='neural'){
       const design=neuralDesign(this.sonicNeuralDraft().value);
@@ -367,9 +401,10 @@ export class WeaponConfigurationDraft {
       next.weapons.push(weapon);
     }
     Object.assign(weapon, { name: attack.label, attackRef: { path: attack.path, uuid: attack.uuid, name: attack.name, mode: attack.mode },
-      weaponBond: hasWeaponBondPerk(this.actor) ? draft.weaponBond : this.existing?.weaponBond === true,
+      weaponBond: hasWeaponBondPerk(this.actor)||this.catalogs?.getEquipmentForMode(draft.target?.modeId)?.source==='LT' ? draft.weaponBond : this.existing?.weaponBond === true,
       ammoType: !draft.ammoChanged && this.existing ? this.existing.ammoType : draft.ammo?.name ?? draft.ammoType ?? "" });
     if (draft.ammo) weapon.ammunitionBinding = { ...draft.ammo, confirmed: true };
+    weapon.weaponBondPerkConfirmed=this.catalogs?.getEquipmentForMode(draft.target?.modeId)?.source==='LT'&&weapon.weaponBond===true;
     this.requestExecution(weapon);
     if (!this.existing && isPaintCarbine(weapon, draft.target?.modeId)) {
       weapon.catalogModeId = draft.target.modeId;
@@ -424,6 +459,7 @@ export function weaponConfigurationHTML(model) {
     `${model.path ? "" : `<option value="">${escapeWeaponHTML(weaponText("SelectAttack"))}</option>`}${attackOptions}</select></label>
     <div data-weapon-mode-fields>${weaponModeFieldsHTML(model, draft)}</div></div>
     <div data-standalone-configuration ${model.standalone ? "" : "hidden"}>${standaloneConfigurationHTML(model.standaloneDraft)}</div>
+    <div data-native-lt-bow ${model.standalone?'hidden':''}>${ltBowEditorHTML(model.ltBow,model.executionModeId,model.actor,escapeWeaponHTML)}</div>
     <div data-weapon-execution>${executionConfigurationHTML(model.executionModeId,model.executionVariant,model.catalogs,model.campaignTL,escapeWeaponHTML,model.gaussSpeed)}</div>
     <div data-weapon-laser>${laserModificationsHTML(model.executionModeId,model.laserDraft().value,escapeWeaponHTML)}${ppbOmniHTML(model.executionModeId,model.omniBlaster)}${sonicNeuralHardwareHTML(model.executionModeId,model.sonicNeuralDraft().value,escapeWeaponHTML)}${exoticBeamHardwareHTML(model.executionModeId,model.exoticBeamDraft().value,escapeWeaponHTML)}</div></div>`;
 }
@@ -454,15 +490,18 @@ export function weaponModeFieldsHTML(model, draft = model.current) {
       <option value="">${escapeWeaponHTML(weaponText("NoBinding"))}</option>${options}</select>
       <button type="button" data-edit-attack-parameters title="${escapeWeaponHTML(weaponText("Edit"))}" aria-label="${escapeWeaponHTML(weaponText("Edit"))}"><i class="fa-solid fa-pencil" aria-hidden="true"></i></button></div>
     <p class="hint gam-catalog-status" role="status">${escapeWeaponHTML(weaponText(status))}</p>
-    <div class="gam-catalog-comparison" data-catalog-comparison>${weaponComparisonHTML(['etc','lp'].includes(model.executionVariant)?{...model.attack,data:model.previewStats().stats}:model.attack, model.catalogs?.getMode(draft.target?.modeId))}</div></div>
+    <div class="gam-catalog-comparison" data-catalog-comparison>${weaponComparisonHTML((['etc','lp'].includes(model.executionVariant)||model.catalogs?.getMode(model.executionModeId)?.lt_ranged_contract?.bulkValues)?{...model.attack,data:model.previewStats().stats}:model.attack, model.catalogs?.getMode(draft.target?.modeId))}</div></div>
+    ${sourceBulkChoiceHTML(model.catalogs?.getMode(draft.target?.modeId),model.ltBulkState,escapeWeaponHTML)}
     <label>${escapeWeaponHTML(weaponText("Ammo"))}<select name="ammunition"><option value="">${escapeWeaponHTML(weaponText("NoAmmo"))}</option>${ammoOptions}</select></label>
     <label>${escapeWeaponHTML(weaponText("Skill"))}<select name="governingSkillKey">${skillOptionsHTML(model.actor, draft.skillBinding)}</select></label>
-    <label class="gam-config-checkbox"><input type="checkbox" name="weaponBond" ${draft.weaponBond ? "checked" : ""} ${available ? "" : "disabled"}>
-      <span>Weapon Bond${available ? "" : ` <i class="fa-solid fa-lock" title="${escapeWeaponHTML(weaponText("BondRequired"))}"></i>`}</span></label>`;
+    ${weaponBondCheckbox({available,checked:draft.weaponBond,manualAllowed:model.catalogs?.getEquipmentForMode(draft.target?.modeId)?.source==='LT'})}`;
 }
 
 export function bindWeaponConfiguration(root, model, edit) {
+  const bowRoot=root.querySelector('[data-native-lt-bow]');
+  if(bowRoot){bowRoot._ltBowActor=model.actor;bindLTBowEditor(bowRoot,{getModeId:()=>model.executionModeId,getConfiguration:()=>model.ltBow,setField:(k,v)=>{model.ltBow[k]=v;}});}
   const refreshExecution=()=>{
+    if(bowRoot){bowRoot.hidden=model.standalone;bowRoot.innerHTML=ltBowEditorHTML(model.ltBow,model.executionModeId,model.actor,escapeWeaponHTML);}
     const laser=root.querySelector('[data-weapon-laser]');if(laser)laser.innerHTML=laserModificationsHTML(model.executionModeId,model.laserDraft().value,escapeWeaponHTML)+ppbOmniHTML(model.executionModeId,model.omniBlaster)+sonicNeuralHardwareHTML(model.executionModeId,model.sonicNeuralDraft().value,escapeWeaponHTML)+exoticBeamHardwareHTML(model.executionModeId,model.exoticBeamDraft().value,escapeWeaponHTML);
     const section=root.querySelector('[data-weapon-execution]');
     if(section)section.innerHTML=executionConfigurationHTML(model.executionModeId,model.executionVariant,model.catalogs,model.campaignTL,escapeWeaponHTML,model.gaussSpeed);
@@ -477,10 +516,11 @@ export function bindWeaponConfiguration(root, model, edit) {
     }
     if(!model.standalone&&model.current){
       const comparison=root.querySelector('[data-catalog-comparison]');
-      if(comparison)comparison.innerHTML=weaponComparisonHTML(['etc','lp'].includes(model.executionVariant)?{...model.attack,data:model.previewStats().stats}:model.attack,model.catalogs?.getMode(model.current.target?.modeId));
+      if(comparison)comparison.innerHTML=weaponComparisonHTML((['etc','lp'].includes(model.executionVariant)||model.catalogs?.getMode(model.executionModeId)?.lt_ranged_contract?.bulkValues)?{...model.attack,data:model.previewStats().stats}:model.attack,model.catalogs?.getMode(model.current.target?.modeId));
     }
   };
   root.addEventListener('change',event=>{
+    if(event.target.name==='ltBulkState'){model.ltBulkState=event.target.value==='giant'?'giant':'mounted';refreshExecution();return;}
     if(event.target.name==='psionicSetting'){
       const draft=model.exoticBeamDraft();draft.changed=true;draft.value.psionicSettings=[...root.querySelectorAll('[name=psionicSetting]:checked')].map(el=>el.value);
       const price=root.querySelector('[data-psionic-price]'),p=exoticBeamProfile(model.executionModeId),multiplier=1+Math.max(0,draft.value.psionicSettings.length-1)*0.5;

@@ -2,6 +2,7 @@ import { getAttackOverrideKey } from "./weapon-attack-overrides.js";
 import { listStandaloneAttacks } from "./standalone-attack-service.js";
 import { withActorResourceWrite } from "./actor-resource-writes.js";
 import { StandaloneWeaponService } from "./standalone-weapon-service.js";
+import { normalizeMeleeDamageModel } from './melee-damage-model.js';
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "olegurpsMeleeAssistant";
@@ -79,7 +80,10 @@ export function normalizeMeleeAttackOverride(value) {
   const reach = text(value.reach);
   const parry = text(value.parry);
   if (skillLevel === null || skillLevel < 0 || skillLevel > 999 || !damage || !reach) return null;
-  return { skillLevel, damage, reach, parry };
+  const damageModel=normalizeMeleeDamageModel(value.damageModel);
+  return { skillLevel, damage, reach, parry,
+    ...(damageModel?{damageModel}:{}),
+    ...(Object.hasOwn(value,'applyArmST')?{applyArmST:value.applyArmST===true}:{}) };
 }
 
 export function normalizeMeleeAssistantState(value) {
@@ -119,7 +123,6 @@ export function getMeleeAttackSettings(state, attack) {
 
 export function applyMeleeAttackOverride(attack, state) {
   if (!attack) return null;
-  if (attack.standaloneRef) return attack;
   const override = normalizeMeleeAttackOverride(getMeleeAttackSettings(state, attack).override);
   if (!override) return attack;
   return {
@@ -128,6 +131,8 @@ export function applyMeleeAttackOverride(attack, state) {
     damage: override.damage,
     reach: override.reach,
     parry: override.parry,
+    ...(override.damageModel?{damageModel:override.damageModel}:{}),
+    ...(Object.hasOwn(override,'applyArmST')?{applyArmST:override.applyArmST}:{}),
     data: {
       ...attack.data,
       level: override.skillLevel,

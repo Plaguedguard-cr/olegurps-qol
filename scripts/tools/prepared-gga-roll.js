@@ -1,3 +1,4 @@
+import { recoilNotApplicable, validateAttackRecoil } from './weapon-recoil.js';
 import { validateProximityShot } from './ut-he-proximity.js';
 import {applyMessageMode} from './chat-message-mode.js';
 import {SHOT_STORAGE_VERSION} from './shot-history-storage.js';
@@ -11,6 +12,8 @@ import { UT_SPECIAL_MODES, utSpecialReadiness, utPayloadChatHTML } from './ut-sp
 import { htPreGaussProfile } from '../ht-pre-gauss-profiles.js';
 import { captureKnockbackTargets } from './double-knockback.js';
 import { gaussManualConditions } from './ut-gauss.js';
+import {attackApplicationResult,attackApplicationHTML} from './attack-application-result.js';
+import {resolveDuckFootChecks,duckFootContextError,duckFootResultHTML} from './lt-duck-foot.js';
 
 function getRollMessages(result) {
   return Object.keys(result ?? {})
@@ -114,10 +117,12 @@ export function calculateHitsFromMargin(shots, rcl, margin, rollData = null) {
   if(rollData?.manualProjectileHit===true)return null;
   if (rollData?.failure === true || rollData?.success === false) return 0;
   const safeShots = Math.max(0, Math.trunc(Number(shots) || 0));
+  if(safeShots===0)return 0;
   if(safeShots===1&&Number.isInteger(margin))return margin>=0?1:0;
-  const safeRcl = Math.max(1, Math.trunc(Number(rcl) || 1));
+  const safeRcl = Number.isInteger(Number(rcl)) && Number(rcl)>0 ? Number(rcl) : null;
   if (!Number.isInteger(margin)) return null;
   if (margin < 0) return 0;
+  if(safeRcl===null)return null;
   return Math.min(safeShots, 1 + Math.floor(margin / safeRcl));
 }
 
@@ -162,7 +167,11 @@ export async function executePreparedGgaRoll({
   runtime = globalThis
 }) {
   validateProximityShot(attackProfile);
+  const ltProcedure=attackProfile?.damage?.rules?.ltPersonal?.procedure;
+  if(attackProfile?.damage?.rules?.ltEarly?.duckFar){const error=duckFootContextError(attackProfile.context);if(error)throw Error(error);}
+  if(ltProcedure==='melee-powder'&&combatType!=='melee'||ltProcedure==='utility'&&combatType!=='skill')throw Error('Для этого предмета LT нужна его отдельная процедура применения.');
   validateWeaponShotPower(actor, attackProfile, physicalShots ?? 1, attack);
+  const activeRecoil = combatType !== 'ranged' ? null : validateAttackRecoil(attack,attackProfile,rcl);
   if (requiresUTPowerAccounting(attackProfile?.binding?.confirmed?.modeId ?? attack?.standaloneRef?.modeId))
     throw Object.assign(new Error(moduleText("OleGURPS.AttackProfile.UTPowerAccountingRequired")),
       { code: "UTPowerAccountingRequired" });
@@ -190,17 +199,30 @@ export async function executePreparedGgaRoll({
   const quotedName = exactName.replaceAll("\\", "\\\\").replaceAll('"', '\\"');
   const actorPrefix = actor?.id ? `@${actor.id}@` : "";
   const manualSEFOP=!!attackProfile?.damage?.rules?.manualSEFOP;
+  const manualArtillery=!!attackProfile?.damage?.rules?.manualArtillery;
   const proximity=!!attackProfile?.damage?.rules?.heProximity;
   const manualGuided=proximity||!!manualProjectileGuidance(attackProfile);
-  const attackPrefix = combatType === "melee" ? "M" : "R";
+  const attackPrefix = combatType === "melee" ? "M" : combatType==='skill'?'S':"R";
   const chatthing = `[${actorPrefix}${attackPrefix}:"${quotedName}"]`;
   const followon = attackProfile?.damage?.rules?.instructionOnly&&!(attackProfile.damage.rules.fluid&&attackProfile.damage.components.some(c=>c.role==='linked')) ? '' : `[${actorPrefix}D:"${quotedName}"]`;
+  if(attackProfile?.damage?.rules?.robot){
+    const robot=attackProfile.damage.rules.robot;
+    if(actor?.isOwner===false&&!game.user?.isGM)throw Error('Нет прав владельца персонажа.');
+    const damageLink=followon&&typeof GURPS.gurpslink==='function'?GURPS.gurpslink(followon):followon;
+    const content=`<p><strong>${escapeModifierHtml(robot.name)} — запуск зарегистрирован.</strong></p><p>Поведение и попадание робота разрешаются вручную; броска попадания стрелка нет.</p>`+
+      (damageLink?`<div class="roll-message gga-chat-message olegurps-robot-manual-damage">${damageLink}</div>`:'')+utPayloadChatHTML(shotSnapshot?.profile??attackProfile,escapeModifierHtml);
+    const messageData={user:game.user.id,speaker:ChatMessage.getSpeaker({actor}),content,flags:{'olegurps-qol':{
+      shotStorageVersion:SHOT_STORAGE_VERSION,...(attackProfile.damage.rules.resistanceEffect?{resistanceEffect:structuredClone(attackProfile.damage.rules.resistanceEffect)}:{}),
+      ...(shotSnapshot?{[shotSnapshot.resourceTiming==='after-attack'?'pendingShotSnapshot':'shotSnapshot']:structuredClone(shotSnapshot)}:{attackProfile:structuredClone(attackProfile)})}}};
+    applyMessageMode(ChatMessage,messageData,game);
+    return {rolled:true,rollData:{manualProjectileHit:true,projectileHit:'manual',robotLaunch:true},message:await createRollChatMessage(ChatMessage,messageData)};
+  }
   const action = {
-    type: "attack",
+    type: combatType==='skill'?'skill-spell':"attack",
     name: exactName,
     orig: `${attackPrefix}:"${quotedName}"`,
     isMelee: combatType === "melee",
-    isRanged: combatType !== "melee",
+    isRanged: combatType === "ranged",
     ...(combatType === "melee" ? { deceptiveDefensePenalty: Math.trunc(Number(deceptiveDefensePenalty) || 0) } : {}),
     ...(maneuver ? { maneuver } : {})
   };
@@ -232,7 +254,7 @@ export async function executePreparedGgaRoll({
   const baseSkill = Math.trunc(Number.isFinite(selectedBase) ? selectedBase : Number(attack?.level) || 0);
   const preparedSkill = Math.trunc(Number(effectiveSkill));
   let finaltarget = Number.isFinite(preparedSkill) ? preparedSkill : baseSkill + modifier;
-  if (combatType === "melee" && Number.isFinite(preparedSkill)) finaltarget += modifier;
+  if (combatType !== "ranged" && Number.isFinite(preparedSkill)) finaltarget += modifier;
   if (skillCap !== null && Number.isFinite(Number(skillCap))) finaltarget = Math.min(finaltarget, Number(skillCap));
   if (Number.isFinite(maximumTarget)) finaltarget = Math.min(finaltarget, maximumTarget);
   finaltarget = Math.max(3, finaltarget);
@@ -255,15 +277,16 @@ export async function executePreparedGgaRoll({
   const hitCap = hasRequestedHitCap && Number.isFinite(requestedHitCap)
     ? Math.min(normalHitCap, Math.max(0, Math.trunc(requestedHitCap)))
     : normalHitCap;
-  const safeRcl = Math.max(1, Math.trunc(Number(rcl) || 1));
+  const safeRcl = activeRecoil;
   const potentialHits = calculateHitsFromMargin(hitCap, safeRcl, margin, { failure,manualProjectileHit:manualGuided });
-  const displayRof = !extremelyClose && attack?.rof && String(attack.rof).match(/[xX\u00d7*]/u)
+  const displaySourceRoF=attackProfile?.damage?.rules?.duckFoot?attackProfile.effective.rof:attack?.rof;
+  const displayRof = !extremelyClose && displaySourceRoF && String(displaySourceRoF).match(/[xX\u00d7*]/u)
     ? `${physicalShots}\u00d7${Math.max(1, Math.trunc(hitCap / Math.max(1, physicalShots)))}`
     : String(effectiveRoF ?? physicalShots ?? 1);
 
   const chatdata = {
     prefix: "",
-    chatthing: manualGuided ? escapeModifierHtml(exactName+' — '+moduleText('OleGURPS.UTPayload.'+(proximity?'ProximityRegistration':manualSEFOP?'SEFOPRegistration':'HomingRegistration'))) : attack?.standaloneRef ? escapeModifierHtml(exactName) : chatthing,
+    chatthing: manualGuided ? escapeModifierHtml(exactName+' — '+(manualArtillery?'регистрация непрямого выстрела':moduleText('OleGURPS.UTPayload.'+(proximity?'ProximityRegistration':manualSEFOP?'SEFOPRegistration':'HomingRegistration')))) : attack?.standaloneRef ? escapeModifierHtml(exactName) : chatthing,
     thing: cleanName,
     origtarget: baseSkill,
     fromUser: game.user.id,
@@ -285,14 +308,25 @@ export async function executePreparedGgaRoll({
     followon:manualGuided?'':followon,
     optlabel: "",
     isBlind: false,
-    rof: combatType === "melee" ? null : attackProfile?.damage?.rules?.plb&&attackProfile.damage.rules.physicalRanged.sourceRoF.includes('x')?attackProfile.damage.rules.physicalRanged.sourceRoF.replace('x','×'):displayRof,
-    rcl: combatType === "melee" || attack?.platformRules?.rclNotApplicable ? null : safeRcl,
-    rofrcl: combatType === "melee" || concealTargetDetails || manualGuided ? null : potentialHits,
+    rof: combatType !== "ranged" ? null : attackProfile?.damage?.rules?.plb&&attackProfile.damage.rules.physicalRanged.sourceRoF.includes('x')?attackProfile.damage.rules.physicalRanged.sourceRoF.replace('x','×'):displayRof,
+    rcl: combatType !== "ranged" || recoilNotApplicable(attack,attackProfile) ? null : safeRcl,
+    rofrcl: combatType !== "ranged" || concealTargetDetails || manualGuided ? null : potentialHits,
     ...(manualGuided?{manualProjectileHit:true,projectileHit:'manual'}:{})
   };
   GURPS.setLastTargetedRoll?.(chatdata, speaker.actor, speaker.token, true);
+  const duckResult=await resolveDuckFootChecks(attackProfile,chatdata,formula=>evaluatePreparedCheck(formula,runtime,'duck-b389'));
+  if(duckResult)chatdata.duckFoot={checks:duckResult.checks,primarySuccess:duckResult.primarySuccess,potentialHits:duckResult.potentialHits,maximumHits:4,defensesManual:true,source:duckResult.source};
 
   let content = testRollNotice(testRoll, runtime) + await renderTemplate("systems/gurps/templates/die-roll-chat-message.hbs", chatdata);
+  if(attackProfile?.damage?.rules?.ltBow?.manualSpreadHits&&!failure)content+='<p>Залп '+attackProfile.damage.rules.ltBow.physicalUnits+' снарядов: число попаданий определите вручную; опубликованного Rcl нет.</p>';
+  if(attackProfile?.damage?.rules?.nextEleven?.kind==='displacer'){
+    const point=attackProfile.context.areaPoint,distance=attackProfile.context.physicalDistance;
+    const deviation=failure?(attackProfile.context.areaSquaredScatter?Math.max(0,-margin)**2:Math.min(Math.max(0,-margin),Math.ceil(distance/2))):0;
+    const direction=failure?await Roll.create('1d6').evaluate():null;
+    chatdata.areaEffect={point:structuredClone(point),distance,radius:attackProfile.damage.rules.nextEleven.radius,scatterYards:deviation,direction:direction?.total??null,source:'B413–414'};
+    content+=`<p>Область Displacer: радиус ${attackProfile.damage.rules.nextEleven.radius} ярд. ${failure?'Промах: отклонение '+deviation+' ярд.; направление '+direction.total+' (1 — вперёд, далее по 60°).':'Область попала в выбранную точку.'}</p>`+
+      `<details class="olegurps-chat-details"><summary>Точка и область</summary><p>Точка: ${point.x}, ${point.y}; дистанция ${distance} ярд. B413–414. Цели и уход из области разрешаются вручную.</p></details>`;
+  }
   if(attackProfile?.damage?.rules?.plasmaParticle?.hotshot)content+=`<p>${hotshotMalf?'Отказ Hotshot (Malf14). Последствия по B407 применяются вручную.':'Hotshot: Malf14; расход ×2. UT133.'}</p>`;
   if(attackProfile?.damage?.rules?.utMicrowave)content+='<p>Конус: затронутые цели определяют вручную, в том числе при промахе.</p>';
   if(attackProfile?.damage?.rules?.sonicNeural?.coneWidth)content+='<p>Конус: затронутые цели определяют вручную, в том числе при промахе.</p>';
@@ -307,7 +341,7 @@ export async function executePreparedGgaRoll({
     `<p>${potentialHits} попаданий: ожог${attackProfile.damage.rules.resistanceEffect?' и независимое HT-сопротивление для каждого попадания':''}. ${electro.visibilityDR?'Добавочный DR лучу от видимости: '+electro.visibilityDR+'; учтите вручную при Damage.':''}</p></details>`;
   if(manualGuided){
     const damageLink=typeof GURPS.gurpslink==='function'?GURPS.gurpslink(followon):followon;
-    content+=(proximity?'':`<p class="olegurps-sefop-outcome">${escapeModifierHtml(moduleText('OleGURPS.UTPayload.'+(manualSEFOP?'SEFOPManualOutcome':'HomingManualOutcome')))}</p>`)+
+    content+=(proximity?'':`<p class="olegurps-sefop-outcome">${escapeModifierHtml(manualArtillery?'Выстрел зарегистрирован. Точка падения, scatter и попадание определяются вручную; Damage — после подтверждённого попадания.':moduleText('OleGURPS.UTPayload.'+(manualSEFOP?'SEFOPManualOutcome':'HomingManualOutcome')))}</p>`)+
       `<div class="roll-message gga-chat-message olegurps-sefop-manual-damage">${damageLink}</div>`;
   }
   if(attackProfile?.damage?.rules?.backblast){
@@ -344,6 +378,9 @@ export async function executePreparedGgaRoll({
   if (combatType === "melee" && attackContextHtml && !concealTargetDetails) {
     content += `<details class="olegurps-attack-context olegurps-chat-details"><summary>Подробности атаки</summary><div>${attackContextHtml}</div></details>`;
   }
+  const application=attackApplicationResult(attackProfile,chatdata,shotSnapshot?.attackId??null);
+  if(application){content+=attackApplicationHTML(application,escapeModifierHtml);chatdata.applicationResult=application;}
+  if(duckResult){content+=duckFootResultHTML(duckResult,escapeModifierHtml);if(failure&&duckResult.potentialHits&&followon&&typeof GURPS.gurpslink==='function')content+='<div class="roll-message gga-chat-message">'+GURPS.gurpslink(followon)+'</div>';}
   content += utPayloadChatHTML(shotSnapshot?.profile ?? attackProfile, escapeModifierHtml);
   const emConditions=gaussManualConditions((shotSnapshot?.profile??attackProfile)?.binding?.confirmed?.modeId);
   if(emConditions.length)content+=`<details class="olegurps-chat-details"><summary>Особенности оружия</summary>${emConditions.map(c=>escapeModifierHtml(c.text)).join('<br>')}</details>`;
@@ -354,11 +391,12 @@ export async function executePreparedGgaRoll({
     user: game.user.id,
     speaker,
     content,
-    rolls: [roll],
+    rolls: [roll,...(duckResult?.rolls??[])],
     sound: runtime.CONFIG?.sounds?.dice,
     ...((testRoll || attackProfile || shotSnapshot) ? { flags: { "olegurps-qol": {
       knockbackTargets: captureKnockbackTargets(runtime),
-      ...(attackProfile?.damage?.rules?.resistanceEffect?{resistanceEffect:{...structuredClone(attackProfile.damage.rules.resistanceEffect),eligible:!!attackProfile.damage.rules.chemical||!!attackProfile.damage.rules.utMicrowave||!!attackProfile.damage.rules.sonicNeural?.coneWidth||!failure,...(electro?{hits:potentialHits}:{})}}:{}),
+      ...(application?{applicationResult:application}:{}),
+      ...(attackProfile?.damage?.rules?.resistanceEffect?{resistanceEffect:{...structuredClone(attackProfile.damage.rules.resistanceEffect),eligible:attackProfile.damage.rules.nextEleven?.kind==='displacer'||!!attackProfile.damage.rules.chemical||!!attackProfile.damage.rules.utMicrowave||!!attackProfile.damage.rules.sonicNeural?.coneWidth||!failure,...(electro?{hits:potentialHits}:{})}}:{}),
       ...(testRoll ? { testRoll } : {}),
       ...(shotSnapshot?.profile ? {shotStorageVersion:SHOT_STORAGE_VERSION} : attackProfile ? { attackProfile: structuredClone(attackProfile) } : {}),
       ...(shotSnapshot ? { [shotSnapshot.resourceTiming === "after-attack" || shotSnapshot.resourceTiming === "spraying-completion"

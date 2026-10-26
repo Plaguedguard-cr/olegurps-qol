@@ -1,8 +1,11 @@
+import { recoilNotApplicable } from './weapon-recoil.js';
+import { openStrengthEditor } from './strength-editor-app.js';
 import { lpProfile, readLPFuel, lpText } from './ut-liquid-propellant.js';
 import { electrolaserWeapon } from '../ut-electrolaser-source.js';
 import { weaponPreparationReason,weaponPreparationView } from './weapon-power.js';
 import { weaponResourceProfile, weaponResourceHTML } from './weapon-resources.js';
 import { resourceOnlyWeapon as beamWeapon, weaponResourceLabel as beamResourceLabel } from './weapon-resources.js';
+import {sonicShuriken} from '../ut-sonic-shuriken-source.js';
 import { confirmLPFuelReplacement } from './lp-fuel-replacement-dialog.js';
 import { weaponResourceReason as weaponPowerReason } from './weapon-resources.js';
 import { uawGroup, activeUAWCarrier, uawManagerWeapons, renderUAWMagazineGroups, uawWeaponView } from './ut-uaw.js';
@@ -54,6 +57,8 @@ import {
 import { openWeaponAttackEditor } from "./weapon-attack-editor.js";
 import { openAmmoManagement } from "./ammo-management-app.js";
 import { installedMagazine, magazineFill } from "./ammo-inventory.js";
+import {ltFlameProfile} from '../lt-flame-source.js';
+import {ltFlameCharge} from './lt-flame.js';
 import { ammoText, ammoWindowText, ammoDisplayName } from "./ammo-management-localization.js";
 import { WeaponConfigurationDraft, weaponConfigurationHTML, bindWeaponConfiguration, weaponText } from "./weapon-configuration.js";
 import { standaloneText, StandaloneWeaponService } from "./standalone-weapon-service.js";
@@ -585,7 +590,8 @@ export async function openAmmoManager() {
   }
 
   function withWeaponBond(attack, weapon) {
-    return attack ? { ...attack, weaponBond: isWeaponBondActive(actor, attack.weaponBondSetting??weapon?.weaponBond) } : null;
+    const confirmed=attack?.weaponBondPerkConfirmed??weapon?.weaponBondPerkConfirmed;
+    return attack ? { ...attack, weaponBondPerkConfirmed:confirmed===true,weaponBond: isWeaponBondActive(actor, attack.weaponBondSetting??weapon?.weaponBond,confirmed) } : null;
   }
 
   function getWeaponContext(state, weaponId) {
@@ -765,7 +771,7 @@ export async function openAmmoManager() {
       attack, values, rangeBands, targetingService, targetedAttackContext);
     const effectiveSkill = skillDetails?.effectiveSkill ?? null;
     const rcl = fireService.parseAttackRcl(attack);
-    if (rcl === null && !(attack.platformRules?.rclNotApplicable && fireMode.effectiveRoF===1)) {
+    if (rcl === null && !recoilNotApplicable(attack)) {
       ui.notifications.warn(automaticAmmoText("ProjectileRclRequired"));
       return null;
     }
@@ -839,17 +845,18 @@ export async function openAmmoManager() {
     }
 
     if (shouldReportField(state, "shots")) {
-      lines.push(`${payload.fluid?'Доз':'Выстрелов'}: <strong>${payload.fired}</strong>`);
+      lines.push(`${payload.ltFlame?payload.ltFlame.system==='blowpipe'?'Зарядов':'Секунд атаки':payload.fluid?'Доз':'Выстрелов'}: <strong>${payload.fired}</strong>`);
     }
 
     if (shouldReportField(state, "hits")) {
+      const recoilText=payload.rcl==null?'':`; Rcl: <strong>${payload.rcl}</strong>`;
       const hitText = payload.heProximity ? moduleText('OleGURPS.UTPayload.ProximityManualOutcome') : payload.manualSEFOP ? 'Выстрел SEFOP зарегистрирован; наведение и попадание — вручную.' : payload.manualHoming ? moduleText('OleGURPS.UTPayload.HomingManualOutcome') : payload.artillery
         ? `Наведение: запас успеха <strong>${payload.margin}</strong>. Ведущий определяет рассеивание и попадание.`
         : payload.hits === null
-        ? `не удалось определить автоматически; Rcl: <strong>${payload.rcl}</strong>`
+        ? `не удалось определить автоматически${recoilText}`
         : payload.blindHex
-          ? `\u043f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435): <strong>${payload.hits}</strong>; \u0437\u0430\u043f\u0430\u0441 \u0443\u0441\u043f\u0435\u0445\u0430: <strong>${payload.margin}</strong>; Rcl: <strong>${payload.rcl}</strong>`
-        : `попаданий: <strong>${payload.hits}</strong>; запас успеха: <strong>${payload.margin}</strong>; Rcl: <strong>${payload.rcl}</strong>`;
+          ? `\u043f\u043e\u0442\u0435\u043d\u0446\u0438\u0430\u043b\u044c\u043d\u044b\u0445 \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439 (\u0435\u0441\u043b\u0438 \u0446\u0435\u043b\u044c \u0432 \u0433\u0435\u043a\u0441\u0435): <strong>${payload.hits}</strong>; \u0437\u0430\u043f\u0430\u0441 \u0443\u0441\u043f\u0435\u0445\u0430: <strong>${payload.margin}</strong>${recoilText}`
+        : `попаданий: <strong>${payload.hits}</strong>; запас успеха: <strong>${payload.margin}</strong>${recoilText}`;
       lines.push(`Результат попаданий: <strong>${hitText}</strong>`);
     }
 
@@ -877,12 +884,12 @@ export async function openAmmoManager() {
     if(payload.beamResource)lines.push(escapeHTML(payload.beamResource));
     if (payload.loadedAfter !== undefined && shouldReportField(state, "loadedMagazine")) {
       lines.push(
-        `Установленный магазин: <strong>${payload.loadedAfter}/${payload.capacity}</strong>`
+        payload.ltFlame?`Остаток ${payload.ltFlame.system==='blowpipe'?'заряда':'работы'}: <strong>${payload.ltFlame.remaining}/${payload.ltFlame.nominal} ${payload.ltFlame.system==='blowpipe'?'заряд':'с'}</strong>`:`Установленный магазин: <strong>${payload.loadedAfter}/${payload.capacity}</strong>`
       );
     }
 
     if (payload.loadedAfter !== undefined && shouldReportField(state, "totalAmmo")) {
-      lines.push(`Общий боезапас: <strong>${payload.totalAmmo}</strong>`);
+      lines.push(`${payload.ltFlame?'Всего физических единиц':'Общий боезапас'}: <strong>${payload.totalAmmo}</strong>`);
     }
 
     return `<div class="olegurps-fire-chat-body">${lines.map(line => `<div>${line}</div>`).join("")}</div>`;
@@ -944,6 +951,8 @@ export async function openAmmoManager() {
               fluidDoses:shotOptions.fluidDoses??1,fluidBounces:shotOptions.fluidBounces??0,
               tokenId: token.id, hitLocation: shotOptions.hitLocationLabel, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
               manualGuidanceConfirmed: rawShotOptions.manualGuidanceConfirmed === true,
+              duckArc:rawShotOptions.duckArc??null,
+              areaPoint:rawShotOptions.areaPoint??null,areaSquaredScatter:rawShotOptions.areaSquaredScatter===true,physicalDistance:shotOptions.physicalDistance,
               effectiveRoF: shotOptions.effectiveRoF, rcl: shotOptions.rcl,
               airburstTarget: shotOptions.airburstTarget ?? "point",
               ...(shotOptions.environment ? { environment: shotOptions.environment } : {}),
@@ -956,7 +965,7 @@ export async function openAmmoManager() {
         },
         execute: ({ profile }) => {
           const options = { ...shotOptions, attackProfile: profile, attackId, resourceTiming: "after-attack" };
-          return visibility?.mode === "unseen" && visibility.blindFireHex ||
+          return rollAttack?.platformRules?.areaAttack || visibility?.mode === "unseen" && visibility.blindFireHex ||
             visibility?.mode === "blind" && !visibility.knownLocation
             ? withClearedFoundryTargets(() => executeRangedAttack(rollAttack, options))
             : executeRangedAttack(rollAttack, options);
@@ -985,7 +994,7 @@ export async function openAmmoManager() {
         `<p class="olegurps-microwave-resource">${escapeHTML(label)}</p>`});
       return true;
     }
-    const fired = result.profile.resource.kind === "unmanaged" ? shotOptions.physicalShots : result.spent;
+    const fired = result.profile.damage?.rules?.ltFlame ? 1 : result.profile.resource.kind === "unmanaged" ? shotOptions.physicalShots : result.spent;
     const firedAmmoType = result.profile.resource.kind === "unmanaged" ? null : ammoDisplayName(result.profile.ammunition) ?? weapon.ammoType;
 
     const rcl = shotOptions.rcl;
@@ -1005,6 +1014,7 @@ export async function openAmmoManager() {
     }
 
     const body = buildFireChatBody(state, {
+      ltFlame:result.profile.damage?.rules?.ltFlame?{system:result.profile.damage.rules.ltFlame.system,remaining:result.profile.resource.ltFlame.after,nominal:result.profile.damage.rules.ltFlame.stateBefore.nominal}:null,
       fluid:!!result.profile.damage?.rules?.fluid,
       ammoType: firedAmmoType,
       fired,
@@ -1404,6 +1414,9 @@ export async function openAmmoManager() {
   }
   function renderSingleMagazineBadges(weapon,{active=true,batterySelected=false}={}) {
     if (weapon.ammunitionReview) return "";
+    const flame=ltFlameProfile(weapon);
+    if(flame){const remaining=ltFlameCharge(weapon)?.flame?.remaining??0,fill=magazineFill(remaining,flame.seconds);
+      return `<button type="button" class="gam-mag ${remaining?'loaded':'empty'}" style="--gam-mag-fill:${fill.percent}%;--gam-mag-hue:${fill.hue}" data-ammo-action="manage-load" data-weapon-id="${weapon.id}" title="Подготовка и физический ресурс"><span class="gam-mag-label">${remaining}/${flame.seconds} ${flame.jet?'с':'заряд'}</span></button>`;}
     return weapon.magazines
       .map((rounds, index) => {
         const loaded = active&&index === weapon.loadedIndex;
@@ -1455,6 +1468,10 @@ export async function openAmmoManager() {
     }
 
     const preparationKey = `${canvas?.scene?.id ?? "scene"}:${token.document?.id ?? token.id}:${weapon.id}`;
+    if(attack.ltProcedure&&attack.ltProcedure!=='ranged'){
+      const {openLTPersonalProcedure}=await import('./lt-personal-procedure.js');
+      return openLTPersonalProcedure({actor,token,weaponId:weapon.id,onUpdate:()=>managerApp?.render?.({force:true})});
+    }
     const existing = OPEN_FIRE_PREPARATIONS.get(preparationKey);
     if (existing?.rendered) {
       existing.placementApps = [managerApp];
@@ -2109,7 +2126,7 @@ export async function openAmmoManager() {
 
             const levelText = attack?.level > 0 ? `Навык ${attack.level}` : "Навык не указан";
             const rofText = attack?.rof ? `RoF ${escapeHTML(attack?.data?.sourceRateOfFire?.includes('x')?attack.data.sourceRateOfFire.replace('x','×'):attack.rof)}` : "RoF не указан";
-            const rclText = attack?.rcl ? `Rcl ${escapeHTML(attack.rcl)}` : "Rcl не указан";
+            const rclText = attack?.platformRules?.rclNotApplicable ? 'Rcl —' : attack?.rcl ? `Rcl ${escapeHTML(attack.rcl)}` : "Rcl не указан";
             const accText = Number.isFinite(Number(attack?.acc)) ? `Acc ${attack.acc}` : "Acc \u2014";
             const scopeText = `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(attack?.scopeBonus) || 0))}`;
             const bulkValue = attack?.data?.bulk ?? attack?.bulk;
@@ -2162,6 +2179,8 @@ export async function openAmmoManager() {
                     Настроить
                   </button>
 
+                  ${sonicShuriken(weapon)?`<button type="button" data-ammo-action="manage-load" data-weapon-id="${weapon.id}">Патроны — подбор и начинка</button>`:''}
+
                   <button
                     type="button"
                     class="gam-action-remove"
@@ -2203,9 +2222,8 @@ export async function openAmmoManager() {
             Настройки чата: ${modeText}
           </button>
 
-          <button type="button" data-ammo-action="refresh">
-            <i class="fa-solid fa-arrows-rotate"></i>
-            Обновить
+          <button type="button" data-ammo-action="strength" title="Временные поправки силы">
+            ST
           </button>
         </div>
 
@@ -2253,6 +2271,7 @@ export async function openAmmoManager() {
         if (actorHook !== null) { Hooks.off("updateActor", actorHook); actorHook = null; }
       },
       handleAction: async ({ action, weaponId, magazineIndex, app: managerApp }) => {
+        if(action==='strength'){await openStrengthEditor(actor);return {changed:false};}
         if (action === 'replace-battery') {
           if (!selectedBatteries.has(weaponId) || batteryReplacements.has(weaponId)) return {changed:false};
           batteryReplacements.add(weaponId);

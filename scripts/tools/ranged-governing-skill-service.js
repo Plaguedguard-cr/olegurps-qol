@@ -4,7 +4,7 @@ import { StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { resolveStandaloneSkill } from "./standalone-skill-service.js";
 
 const FAMILIES = new Set(["guns", "beam weapons", "gunner", "bow", "crossbow",
-  "sling", "blowpipe", "thrown weapon", "throwing", "innate attack",
+  "sling", "bolas", "blowpipe", "thrown weapon", "throwing", "innate attack",
   "artillery", "liquid projector"]);
 
 function parseSkill(entry) {

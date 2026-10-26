@@ -1,6 +1,6 @@
 // Shared, UI-independent resolution of attack channels and technique/option rules.
 const number = value => Number.isFinite(Number(value)) ? Number(value) : 0;
-const appliesTo = (rule, combatType) => !rule.combatType || rule.combatType === "both" || rule.combatType === combatType;
+const appliesTo = (rule, combatType) => !rule.combatType || rule.combatType === "both" && combatType !== "skill" || rule.combatType === combatType;
 
 export function resolveRelativeTechniqueLevel({ techniqueLevel, governingSkillLevel,
   relativeLevel, baseAttackLevel } = {}) {
@@ -23,7 +23,7 @@ export function resolveCombatCalculation({ combatType, actor = null, attack = nu
   const baseSkill = baseAttackLevel === null || baseAttackLevel === undefined || baseAttackLevel === ""
     ? Number.NaN : Number(baseAttackLevel);
   if (!Number.isFinite(baseSkill)) return null;
-  if (!new Set(["ranged", "melee"]).has(combatType)) throw new Error("Unknown combat type");
+  if (!new Set(["ranged", "melee", "skill"]).has(combatType)) throw new Error("Unknown combat type");
   const channelMap = new Map();
   for (const entry of channels) {
     if (!entry?.id || channelMap.has(entry.id)) throw new Error("Duplicate or missing combat channel");
@@ -109,7 +109,7 @@ export function resolveCombatCalculation({ combatType, actor = null, attack = nu
     Number(cap.maximum) === capValue || Number(cap.minimum) === floorValue)?.label ?? "Предел навыка",
     value: capAdjustment, baseValue: 0, resolvedValue: capAdjustment, source: "cap" });
   return {
-    combatType, baseSkill, baseSkillName: combatType === "ranged" ? "Базовый навык оружия" : "Базовый навык ближней атаки",
+    combatType, baseSkill, baseSkillName: combatType === "ranged" ? "Базовый навык оружия" : combatType === "skill" ? "Базовый навык" : "Базовый навык ближней атаки",
     governingSkill, attackSlot, channels: resolvedChannels, modifiers,
     activeRules: appliedRules.map(rule => ({ id: rule.id, kind: rule.kind, activation: rule.activation })),
     rejectedRules, metadata, uncappedSkill, effectiveSkill, capAdjustment,

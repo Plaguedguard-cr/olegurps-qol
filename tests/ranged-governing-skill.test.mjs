@@ -53,8 +53,8 @@ test("legacy specialty migrates per ranged attack and preserves distinct binding
     { id: "pistol", name: "Pistol", attackRef: { path: "system.ranged.00002" },
       governingSpecialty: "pistol", capacity: 10, magazines: [10], loadedIndex: 0, totalAmmo: 10 }
   ] };
-  actor.getFlag = () => state;
-  actor.setFlag = async (_scope, _key, value) => { Object.assign(state, value); };
+  actor.getFlag = (scope,key) => scope==='world'&&key==='gurpsAmmoManager'?state:undefined;
+  actor.setFlag = async (scope,key,value) => { assert.equal(scope,'world');assert.equal(key,'gurpsAmmoManager');Object.assign(state,value); };
   const priorFoundry = globalThis.foundry;
   globalThis.foundry = { utils: { deepClone: structuredClone } };
   try {

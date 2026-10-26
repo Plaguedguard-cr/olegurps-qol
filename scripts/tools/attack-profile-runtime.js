@@ -11,6 +11,8 @@ import { applyAttackOverride, parseAccuracyComponents } from "./weapon-attack-ov
 import { parseWeaponBulk } from "./weapon-bulk.js";
 import { attackProfilePresentation } from './weapon-profile-presentation.js';
 import { readDamageDiceAddsPolicy } from './damage-dice-adds.js';
+import {ltEarlyProfile,LT_TEN_EYED_MODES} from '../lt-early-firearms-source.js';
+import {ltArtillerySkill} from './lt-artillery.js';
 
 export const newAttackId = () => globalThis.crypto.randomUUID();
 const translationLoads = new Map();
@@ -38,8 +40,13 @@ export function resolveRuntimeAttackProfile({ actor, attack, weaponId = null, st
     try { binding = api.weaponCatalogBindings.analyzeMode(actor, attack.path); }
     catch { binding = { status: "undetermined" }; }
   }
+  const earlyCarrier=state.weapons?.find(w=>w.id===weaponId),boundEarly=ltEarlyProfile(binding?.binding?.modeId);
+  if(!attack?.standaloneRef&&boundEarly?.kind==='ten-eyed'&&earlyCarrier?.ltEarly){
+    const phase=earlyCarrier.ltEarly.progress?.[earlyCarrier.ltEarly.face??0]??0;
+    binding={...binding,binding:{...binding.binding,modeId:LT_TEN_EYED_MODES[Math.min(4,phase)],executionSource:'LT91-physical-sequence'}};
+  }
   return new AttackProfileResolver({ catalogs: api?.catalogs, compatibility: api?.ammunitionCompatibility })
-    .resolve({ actorId: actor?.id ?? null, weaponId, attack, rawAttack, state, binding, ammunition,
+    .resolve({ actorId: actor?.id ?? null, actor, weaponId, attack, rawAttack, state, binding, ammunition,
       context: { ...context, f4: { combat: captureF4Combat(actor?.id, context.tokenId, runtime),
         tracerBonus: tracerBonus(actor?.id, context.tokenId, runtime) } },
       profilePolicy: automaticAmmoPolicy(runtime),
@@ -77,7 +84,7 @@ export function withRuntimeAmmoStats(attack, actor, state) {
   }
   // An overlay may itself be the previous window value. Re-read the owned definition before applying this magazine.
   const source=attack?.standaloneRef ? readStandaloneAttack(actor,attack.standaloneRef.weaponId,attack.standaloneRef.modeId) : null;
-  if(source)for(const key of ['data','acc','scopeBonus','bulk','bulkMetadata','rof','rcl','platformRules','ammunitionRange','weaponBondSetting']) {
+  if(source)for(const key of ['data','acc','scopeBonus','bulk','bulkMetadata','rof','rcl','platformRules','ammunitionRange','weaponBondSetting','nextElevenConfiguration']) {
     if(Object.hasOwn(source,key))cleanAttack[key]=source[key];else delete cleanAttack[key];
   }
   delete cleanAttack.ammunitionFuzeTracer;
@@ -85,12 +92,32 @@ export function withRuntimeAmmoStats(attack, actor, state) {
   delete cleanAttack.ammunitionManualCycling;
   delete cleanAttack.ammunitionHitBonus;
   delete cleanAttack.ammunitionFluid;
+  delete cleanAttack.ammunitionLTBow;
+  delete cleanAttack.ammunitionLTPersonal;
+  delete cleanAttack.attackResult;
   delete cleanAttack.ammunitionHEProximity;
+  delete cleanAttack.ammunitionRobot;
   delete cleanAttack.ammunitionReadinessReason;
   delete cleanAttack.ammunitionDisplay;
   try {
     const profile = resolveRuntimeAttackProfile({ actor, attack:cleanAttack, state });
+    const artilleryCarrier=(state??actor.getFlag?.('world','gurpsAmmoManager'))?.weapons?.find(w=>w.id===profile.weaponId);
+    const artillerySkill=ltArtillerySkill(actor,artilleryCarrier);
+    if(artillerySkill){cleanAttack.level=artillerySkill.level;cleanAttack.data={...cleanAttack.data,level:artillerySkill.level};
+      cleanAttack.skillDescription=artillerySkill.name; if(!artillerySkill.resolved)cleanAttack.readinessReason=artillerySkill.reason;}
     const ammunitionDisplay=attackProfilePresentation(profile);
+    if(profile.weaponHandling) {
+      cleanAttack.weaponHandling=profile.weaponHandling;
+      for(const key of ['acc','bulk','rof','range','st','rcl'])if(profile.effective[key]!==profile.raw[key]) {
+        cleanAttack[key]=profile.effective[key];cleanAttack.data={...cleanAttack.data,[key]:profile.effective[key]};
+        if(key==='bulk')cleanAttack.bulkMetadata=parseWeaponBulk(profile.effective.bulk);
+      }
+      if(profile.weaponHandling.rclNotApplicable) { cleanAttack.rcl=null;cleanAttack.data={...cleanAttack.data,rcl:null}; }
+      if(profile.weaponHandling.bulkMetadata) {
+        cleanAttack.bulkMetadata=profile.weaponHandling.bulkMetadata;
+        cleanAttack.bulk=profile.effective.bulk;cleanAttack.data={...cleanAttack.data,bulk:profile.effective.bulk};
+      }
+    }
     if(profile.damage.rules.fluid&&!profile.damage.nativeSafe)return {...cleanAttack,ammunitionDisplay,ammunitionReadinessReason:profile.damage.reason};
     if(['ut-exotic-beam','ut-sonic-neural'].includes(profile.weaponConfiguration?.variant)&&!profile.damage.nativeSafe)return {...cleanAttack,ammunitionDisplay,ammunitionReadinessReason:profile.damage.reason};
     if(profile.weaponConfiguration?.variant==='beam'&&!profile.damage.nativeSafe)return {...cleanAttack,ammunitionDisplay,ammunitionReadinessReason:profile.damage.reason};
@@ -105,17 +132,24 @@ export function withRuntimeAmmoStats(attack, actor, state) {
       ammunitionDisplay,
       ...(profile.damage.rules.manualCyclingRequired?{rof:'1',data:{...cleanAttack.data,rof:'1'}}:{}),
       ammunitionConditions:[{id:'AlternateLoadBallisticsRequired',text:attackProfileError(profile.damage.reason)}]};
+    if (profile.damage.rules.ltPhysicalAdmission||(profile.damage.rules.ltBow||profile.damage.rules.ltPersonal||profile.damage.rules.ltEarly)&&!profile.damage.nativeSafe) return { ...cleanAttack, ammunitionDisplay,
+      ammunitionReadinessReason: profile.damage.reason };
     if (profile.damage.nativeSafe) {
       const changes = profile.damage.effectiveChanges ?? {};
       return { ...cleanAttack, ammunitionDisplay, ammunitionProjectileKind: profile.effective.ammunitionProjectileKind ?? null,
+        ...(profile.damage.rules.robot?{ammunitionRobot:profile.damage.rules.robot}:{}),
         ...(profile.damage.rules.electrolaser?{electrolaser:profile.damage.rules.electrolaser}:{}),
         ammunitionHitBonus:profile.damage.rules.fluid?0:profile.damage.rules.attackBonus??0,
+        ...(profile.damage.rules.ltBow?{ammunitionLTBow:profile.damage.rules.ltBow}:{}),
+        ...(profile.damage.rules.ltPersonal?{ammunitionLTPersonal:profile.damage.rules.ltPersonal,attackResult:profile.attackResult??null}:{}),
+        ...(profile.damage.rules.ltEarly?{ammunitionLTEarly:profile.damage.rules.ltEarly}:{}),
+        ...(profile.damage.rules.ltEarly?.kind==='ten-eyed'&&!cleanAttack.standaloneRef?{mode:ltEarlyProfile(profile.binding.confirmed.modeId).usage,label:cleanAttack.name+' — '+ltEarlyProfile(profile.binding.confirmed.modeId).usage}:{}),
         ...(profile.damage.rules.fluid?{ammunitionFluid:{...profile.damage.rules.fluid,vortex:profile.damage.components.some(c=>c.role==="linked")}}:{}),
         ...(profile.damage.rules.heProximity?{ammunitionHEProximity:profile.damage.rules.heProximity}:{}),
         ...(profile.ammunition.book==='ut'?{ammunitionSourceEdition:'Ultra-Tech 2007'}:{}),
         ...(profile.context?.platform ? {platformRules:profile.context.platform}:{}),
         ammunitionManualCycling: profile.damage.rules.manualCyclingRequired === true,
-        ...(profile.damage.rules.ballisticRange && !profile.damage.rules.htSourceProfile ? { ammunitionRange: profile.damage.rules.ballisticRange } : {}),
+        ...(profile.damage.rules.ballisticRange && !profile.damage.rules.htSourceProfile && !profile.damage.rules.sonicShuriken ? { ammunitionRange: profile.damage.rules.ballisticRange } : {}),
         ...(profile.damage.rules.projectiles ? { ammunitionB409Eligible: profile.damage.rules.projectiles.b409Eligible } : {}),
         ...(profile.environmentCapability ? { ammunitionEnvironment: profile.environmentCapability } : {}),
         ammunitionConditions: [...gaussManualConditions(profile.binding?.confirmed?.modeId), ...(profile.weaponReliability?[{id:'WeaponReliability',...profile.weaponReliability}]:[]), ...(profile.weaponConfiguration?.hearingModifier===-3?[{id:'lp-sound',text:moduleText('OleGURPS.LP.Sound')}]:[]), ...profile.damage.support?.manual ?? [], ...profile.context?.barrel?.manual ?? [],

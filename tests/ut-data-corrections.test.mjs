@@ -1,4 +1,5 @@
 import {UT_ERRATA_MODES,applyUTErrataCatalog} from '../scripts/ut-errata.js';
+import {assertProjectedUTCatalog} from './helpers/ut-projected-catalog-contract.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -59,15 +60,22 @@ test('protected source bytes, IDs, GCS hashes, unrelated modes and HT/LT retaine
   assert.deepEqual(catalogs.getCatalog('weapons').sources,raw.weapons.sources);
   for(const e of raw.weapons.equipment) {
     const projected=catalogs.getRecord('weapons','equipment',e.equipment_id);
-    assert.ok(projected);assert.deepEqual(projected.modes.map(m=>m.weapon_mode_id),e.modes.map(m=>m.weapon_mode_id));
-    if(e.source!=='UT')assert.deepEqual(projected,e);
+    assert.ok(projected);
+    const projectedIds=projected.modes.map(m=>m.weapon_mode_id);
+    if(e.source==='LT')for(const m of e.modes)assert.ok(projectedIds.includes(m.weapon_mode_id),'retained LT source identity '+m.weapon_mode_id);
+    else assert.deepEqual(projectedIds,e.modes.map(m=>m.weapon_mode_id));
+    if(e.source==='HT')assert.deepEqual(projected,e);
   }
   const projectedWarheads=structuredClone(catalogs.getCatalog('ut').warheads),swarm=projectedWarheads.find(w=>w.id==='swarm');
   assert.deepEqual(swarm.compatibility_decision,{revision:'ut-16-final-2026-10-18',sourceConflict:['UT152:25mm','UT156:40mm'],priority:'UT156',officialErratum:false});
   delete swarm.compatibility_decision;
   assert.deepEqual(projectedWarheads,applyUTErrataCatalog('ut',structuredClone(raw.ut)).warheads);
   assert.deepEqual(catalogs.getCatalog('ut').special_loads,raw.ut.special_loads);
-  assert.deepEqual(catalogs.getCatalog('ht'),raw.ht);assert.deepEqual(catalogs.getCatalog('lt'),raw.lt);
+  assert.deepEqual(catalogs.getCatalog('ht'),raw.ht);
+  // LT-P1–P7 deliberately project source corrections and additional physical
+  // recipes; the protected source stays byte-identical, as checked above.
+  assert.equal(catalogs.getCatalog('lt').ammo_items.length,300);
+  assert.equal(catalogs.getCatalog('lt').ammo_families.length,284);
   assert.throws(()=>{catalogs.getMode('WUT2007GaussPDW4mm').stats.shots='0';},TypeError);
 });
 
@@ -83,8 +91,9 @@ test('two source identities and exactly two reverse links; implemented Gauss war
     assert.equal(compatibility.checkCompatibility(mid,family==='3mm_em'?'3mm_n':'10mm_clp',{book:'ut',kind:'ammo-family'}).status,'incompatible');
     assert.equal(compatibility.checkCompatibility(mid,'aphd',{book:'ut',availabilityTL:12}).status,'compatible');
   }
-  assert.equal(catalogs.getStatus('ut').relationships.forward,87);
-  assert.equal(catalogs.getStatus('ut').relationships.linkedModes,81);
+  const projected=assertProjectedUTCatalog(catalogs,raw.weapons,raw.ut);
+  assert.equal(catalogs.getStatus('ut').relationships.forward,projected.edges);
+  assert.equal(catalogs.getStatus('ut').relationships.linkedModes,projected.linkedModes);
   for(const family of raw.ut.ammo_families)for(const link of family.linked_weapon_modes)
     assert.ok(catalogs.getAmmoFamily('ut',family.id).linked_weapon_modes.some(l=>l.equipment_id===link.equipment_id&&l.weapon_mode_id===link.weapon_mode_id));
 });

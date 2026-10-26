@@ -1,5 +1,42 @@
 import { moduleMessage } from "../localization.js";
 import { explosiveText } from "./explosive-ammunition-localization.js";
+
+const PREFERENCE_SCOPE = 'olegurps-qol';
+const PREFERENCE_KEY = 'explosionFragmentation';
+const preferenceWrites = new WeakMap();
+const DEFAULT_PREFERENCES = Object.freeze({ explosionDamage: '6d', fragmentDamage: '2d',
+  distance: '1', sm: '0', posture: 'standing', followUp: false, autoLocations: false });
+
+export function normalizeExplosionPreferences(value = {}) {
+  const result = { ...DEFAULT_PREFERENCES };
+  for (const key of ['explosionDamage', 'fragmentDamage', 'distance', 'sm']) {
+    if (typeof value?.[key] === 'string' || (typeof value?.[key] === 'number' && Number.isFinite(value[key]))) {
+      result[key] = String(value[key]);
+    }
+  }
+  if (Object.hasOwn(FRAGMENT_POSTURES, value?.posture)) result.posture = value.posture;
+  for (const key of ['followUp', 'autoLocations']) result[key] = value?.[key] === true;
+  return result;
+}
+
+export function readExplosionPreferences(user = globalThis.game?.user) {
+  return normalizeExplosionPreferences(user?.getFlag(PREFERENCE_SCOPE, PREFERENCE_KEY));
+}
+
+export function readExplosionFormPreferences(root) {
+  return Object.fromEntries(Object.keys(DEFAULT_PREFERENCES).map(key => {
+    const input = root.querySelector(`[name="${key}"]`);
+    return [key, typeof DEFAULT_PREFERENCES[key] === 'boolean' ? input?.checked === true : input?.value ?? DEFAULT_PREFERENCES[key]];
+  }));
+}
+
+export function saveExplosionPreferences(values, user = globalThis.game?.user) {
+  const snapshot = normalizeExplosionPreferences(values);
+  const previous = preferenceWrites.get(user) ?? Promise.resolve();
+  const next = previous.catch(() => {}).then(() => user.setFlag(PREFERENCE_SCOPE, PREFERENCE_KEY, snapshot));
+  preferenceWrites.set(user, next);
+  return next;
+}
 export function fragmentHitCount({ total, skill, inRange = true, followUp = false }) {
   const success = inRange && Number.isFinite(total) && (total <= 4 || (total < 17 && total <= skill));
   const ordinary = success ? 1 + Math.floor(Math.max(0, skill - total) / 3) : 0;
@@ -140,6 +177,10 @@ export async function openExplosionFragmentation() {
     );
     return;
   }
+
+  const user = game.user;
+  await preferenceWrites.get(user)?.catch(() => {});
+  const previous = readExplosionPreferences(user);
 
   const escapeHTML = (value) => {
     const text = String(value ?? "");
@@ -473,44 +514,44 @@ export async function openExplosionFragmentation() {
     <div class="gurps-exfrag-form">
       <div class="gurps-exfrag-row">
         <label><strong>Урон взрыва</strong></label>
-        <input type="text" name="explosionDamage" value="6d" placeholder="6d / 6к, 3d+2 / 3к+2, 6d×2">
+        <input type="text" name="explosionDamage" value="${escapeHTML(previous.explosionDamage)}" placeholder="6d / 6к, 3d+2 / 3к+2, 6d×2">
       </div>
 
       <div class="gurps-exfrag-row">
         <label><strong>Урон осколков</strong></label>
-        <input type="text" name="fragmentDamage" value="2d" placeholder="2d / 2к, 3d+1 / 3к+1">
+        <input type="text" name="fragmentDamage" value="${escapeHTML(previous.fragmentDamage)}" placeholder="2d / 2к, 3d+1 / 3к+1">
       </div>
 
       <div class="gurps-exfrag-row">
         <label><strong>Дистанция до центра взрыва</strong></label>
-        <input type="number" name="distance" value="1" min="0" step="0.1">
+        <input type="number" name="distance" value="${escapeHTML(previous.distance)}" min="0" step="0.1">
       </div>
       <div class="gurps-exfrag-hint">Ярды. Используется и для взрывной волны, и для попадания осколков.</div>
 
       <div class="gurps-exfrag-row">
         <label><strong>Поза цели</strong></label>
         <select name="posture">
-          <option value="standing" selected>Стоя (0)</option>
-          <option value="crouching">Пригнувшись (-2)</option>
-          <option value="kneeling">На коленях (-2)</option>
-          <option value="crawling">Ползком (-2)</option>
-          <option value="sitting">Сидя (-2)</option>
-          <option value="lying">Лёжа (-2)</option>
+          <option value="standing" ${previous.posture === 'standing' ? 'selected' : ''}>Стоя (0)</option>
+          <option value="crouching" ${previous.posture === 'crouching' ? 'selected' : ''}>Пригнувшись (-2)</option>
+          <option value="kneeling" ${previous.posture === 'kneeling' ? 'selected' : ''}>На коленях (-2)</option>
+          <option value="crawling" ${previous.posture === 'crawling' ? 'selected' : ''}>Ползком (-2)</option>
+          <option value="sitting" ${previous.posture === 'sitting' ? 'selected' : ''}>Сидя (-2)</option>
+          <option value="lying" ${previous.posture === 'lying' ? 'selected' : ''}>Лёжа (-2)</option>
         </select>
       </div>
 
       <div class="gurps-exfrag-row">
         <label><strong>SM цели</strong></label>
-        <input type="number" name="sm" value="0" step="1">
+        <input type="number" name="sm" value="${escapeHTML(previous.sm)}" step="1">
       </div>
 
       <label class="gurps-exfrag-check">
-        <input type="checkbox" name="followUp">
+        <input type="checkbox" name="followUp" ${previous.followUp ? 'checked' : ''}>
         <span>${escapeHTML(explosiveText("FollowUp"))}</span>
       </label>
       <div class="gurps-exfrag-hint">${escapeHTML(explosiveText("FollowUpHint"))}</div>
       <label class="gurps-exfrag-check">
-        <input type="checkbox" name="autoLocations">
+        <input type="checkbox" name="autoLocations" ${previous.autoLocations ? 'checked' : ''}>
         <span>Автоматически определить случайную зону для каждого попавшего осколка</span>
       </label>
       <div class="gurps-exfrag-hint">В этой версии используется таблица случайных зон человека/гуманоида.</div>
@@ -553,6 +594,11 @@ export async function openExplosionFragmentation() {
     return;
   }
 
+  const remember = () => saveExplosionPreferences(readExplosionFormPreferences(root), user)
+    .catch(error => console.warn('OleGURPS QOL | Explosion preferences:', error));
+  root.addEventListener('input', remember);
+  root.addEventListener('change', remember);
+
   root.addEventListener("click", async (event) => {
     const target = event.target instanceof Element ? event.target : null;
     const button = target?.closest("button[data-exfrag-action]");
@@ -566,6 +612,7 @@ export async function openExplosionFragmentation() {
     button.disabled = true;
 
     try {
+      await remember();
       if (action === "fragments") {
         await resolveFragments(values);
       } else if (action === "explosion") {

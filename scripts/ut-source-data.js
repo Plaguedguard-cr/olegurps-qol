@@ -1,4 +1,6 @@
 import {projectFluidCatalog} from './ut-fluid-source.js';
+import {projectSonicShuriken} from './ut-sonic-shuriken-source.js';
+import {projectNextElevenCatalog} from './ut-next-eleven-source.js';
 import {projectPhysicalRanged} from './ut-physical-ranged-source.js';
 import {plasmaGunProfile,projectPlasmaGuns} from './ut-plasma-gun-source.js';
 import { exoticBeamProfile, projectExoticBeamCatalog } from './ut-exotic-beam-source.js';
@@ -1328,5 +1330,5 @@ function correctedAmmunition(original) {
 }
 export function projectUTSourceData(book, original) {
   const data=book === "weapons" ? correctedWeapons(original) : book === "ut" ? correctedAmmunition(original) : original;
-  return projectFluidCatalog(book,projectPhysicalRanged(book,projectPlasmaGuns(book,projectExoticBeamCatalog(book,projectSonicNeuralCatalog(book,projectPPBCatalog(book,projectMicrowaveCatalog(book,projectElectrolaserCatalog(book,projectDazzlerCatalog(book,projectBeamCatalog(book,projectGaussCatalog(book,applyUTCompatibilityPolicy(book,applyUTErrataCatalog(book,data)))))))))))));
+  return projectSonicShuriken(book,projectNextElevenCatalog(book,projectFluidCatalog(book,projectPhysicalRanged(book,projectPlasmaGuns(book,projectExoticBeamCatalog(book,projectSonicNeuralCatalog(book,projectPPBCatalog(book,projectMicrowaveCatalog(book,projectElectrolaserCatalog(book,projectDazzlerCatalog(book,projectBeamCatalog(book,projectGaussCatalog(book,applyUTCompatibilityPolicy(book,applyUTErrataCatalog(book,data)))))))))))))));
 }

@@ -1,4 +1,10 @@
 import {UT_PHYSICAL_RANGED_PROFILES} from '../ut-physical-ranged-source.js';
+import {ltBowReadiness} from './lt-bow.js';
+import {ltPersonalProfile} from '../lt-personal-source.js';
+import {ltEarlyProfile} from '../lt-early-firearms-source.js';
+import {ltEarlyReadiness,ltEarlyShotPlan} from './lt-early-firearms.js';
+import {sonicShuriken,SONIC_SHURIKEN} from '../ut-sonic-shuriken-source.js';
+import {DISPLACERS,LADARS,nextElevenProfile} from '../ut-next-eleven-source.js';
 import { EXOTIC_BEAM_PROFILES, exoticBeamProfile, exoticBeamWeapon, exoticBeamConfiguration, exoticBeamReason } from '../ut-exotic-beam-source.js';
 import { moduleText } from '../localization.js';
 import { ETC_PROFILES, etcBlocker, etcText } from './ut-etc.js';
@@ -18,6 +24,9 @@ import {laserShotUnits,laserConfiguration,laserAvailableModes,laserFaceOrEyes} f
 // Reviewed weapon profiles, not capacities inferred from a cell's size.
 // New weapon families must supply their own source-checked resource profile.
 export const WEAPON_POWER_PROFILES = Object.freeze({
+  [SONIC_SHURIKEN.modeId]:Object.freeze({id:'sonic-shuriken',cellSize:'A',cells:1,capacity:1,chargePerPhysicalShot:1,stateKey:'sonicShurikenBattery',source:'UT166',accounting:'complete-cell-per-throw'}),
+  ...Object.fromEntries(Object.values(DISPLACERS).map(p=>[p.modeId,Object.freeze({id:'displacer:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:8,chargePerPhysicalShot:1,stateKey:'displacerBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',label:p.cells+' '+p.cellSize+(p.cellSize==='D'?'p':'')+' cell'})])),
+  ...Object.fromEntries(Object.values(LADARS).filter(p=>p.cellSize).map(p=>[p.modeId,Object.freeze({id:'military-ladar:'+p.modeId,cellSize:p.cellSize,cells:1,capacity:480,chargePerPhysicalShot:0,stateKey:'sensorBattery',completeSet:true,sensorTime:true,source:'UT64',accounting:'manual-operating-minutes-no-impulse-cost',label:p.cellSize+' cell · мин.'})])),
   ...Object.fromEntries(Object.values(UT_PHYSICAL_RANGED_PROFILES).filter(p=>p.group==='grav'&&p.cellSize).map(p=>[p.modeId,Object.freeze({
     id:'ut-grav:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'gravBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set'})])),
@@ -69,7 +78,7 @@ export const batteryText = key => moduleText('OleGURPS.WeaponBattery.' + key);
 const validProfile = profile => profile && (['AA','A','B','C','D','E','F'].includes(profile.cellSize)||
   profile.completeSet&&['chemical','integrated'].includes(profile.cellSize)||profile.standard==='HT13'&&['M','VL'].includes(profile.cellSize)) &&
   Number.isSafeInteger(profile.capacity) && profile.capacity > 0 && profile.capacity <= Number.MAX_SAFE_INTEGER / 2 &&
-  Number.isSafeInteger(profile.chargePerPhysicalShot) && profile.chargePerPhysicalShot > 0 &&
+  Number.isSafeInteger(profile.chargePerPhysicalShot) && (profile.chargePerPhysicalShot > 0 || profile.sensorTime===true&&profile.chargePerPhysicalShot===0) &&
   typeof profile.stateKey === 'string' && !!profile.stateKey;
 
 export function newWeaponBattery(profile, nonRechargeable = false) {
@@ -109,11 +118,15 @@ const ordered = value => Array.isArray(value) ? value.map(ordered) : value && ty
 export const sameBattery = (a, b) => JSON.stringify(ordered(a ?? null)) === JSON.stringify(ordered(b ?? null));
 
 export function weaponPowerReason(weapon, amount = 1, modeId = null) {
+  if(sonicShuriken(weapon)&&weapon.sonicThrownId)return 'Сюрикен брошен. Сначала подтвердите ручной подбор в окне «Патроны».';
   const profile=weaponPowerProfile(weapon,modeId);
   if (!profile) return weapon?.executionVariant==='etc' ? etcBlocker(modeId??weapon.standaloneModeId??weapon.catalogModeId) : null;
   const b=readWeaponBattery(weapon,profile),cost=weaponPowerCost(weapon,amount,profile);
   const exactCost=beamProfile(modeId??weapon?.standaloneModeId??weapon?.catalogModeId)?Number.isSafeInteger(Math.round(cost*10))&&Number.isFinite(cost)&&cost>=0:Number.isSafeInteger(cost);
   const key=!b?'Missing':b.charge===0?'Empty':!Number.isSafeInteger(amount)||amount<1||!exactCost||Math.round(cost*10)>Math.round(b.charge*10)?'Insufficient':null;
+  if(sonicShuriken(weapon)&&(key||amount!==1))return key==='Missing'?'Установите A cell через «Заменить батарею».':'A cell разряжена или запрошено больше одного броска.';
+  if(profile.sensorTime&&key)return key==='Missing'?'Установите батарею сенсора через «Заменить батарею».':'Время работы батареи сенсора исчерпано.';
+  if(nextElevenProfile(modeId??weapon?.standaloneModeId??weapon?.catalogModeId)?.radius&&key)return key==='Missing'?'Установите штатный комплект Displacer через «Заменить батарею».':'Недостаточно энергии Displacer для выстрела.';
   if(profile.standard==='HT13'&&key)return key==='Missing'?'Установите штатную батарею HT через «Заменить батарею».':'Недостаточно заряда батареи HT для выбранной очереди.';
   if(profile.stateKey==='gravBattery'&&key)return key==='Missing'?'Установите штатный комплект батарей Grav через «Заменить батарею».':'Недостаточно энергии Grav для выбранной очереди.';
   if(profile.cosmic&&key)return key==='Missing'?'Установите полный комплект Cosmic Cells через «Заменить батарею».':'Недостаточно импульсов Cosmic Cells для выбранной очереди.';
@@ -128,6 +141,7 @@ export function weaponPowerReason(weapon, amount = 1, modeId = null) {
     moduleText('OleGURPS.ETC.'+key,{cell:profile.cellSize}) : null;
 }
 export const weaponPowerCost = (weapon,amount,profile=weaponPowerProfile(weapon)) =>
+  sonicShuriken(weapon)?amount*(readWeaponBattery(weapon,profile)?.capacity??1):
   ppbWeapon(weapon)?amount*ppbUnits(weapon):
   beamProfile(weapon?.standaloneModeId??weapon?.catalogModeId)?amount*laserShotUnits(weapon)/10:
     amount*(electrolaserWeapon(weapon)?electrolaserUnits(weapon):profile?.unitsPerStandardShot?(gaussUnits(weapon)??NaN):profile?.chargePerPhysicalShot??1);
@@ -141,6 +155,9 @@ export function weaponPreparationView(weapon){
   return {...weapon,laserMode:cheapest};
 }
 export function weaponPreparationReason(weapon,attack){
+  if(ltEarlyProfile(weapon))return ltEarlyReadiness(weapon)??attack?.ammunitionReadinessReason??attack?.readinessReason??null;
+  if(ltPersonalProfile(weapon)&&attack?.ammunitionReadinessReason)return attack.ammunitionReadinessReason;
+  const bowReason=ltBowReadiness(weapon,attack);if(bowReason)return bowReason;
   if(ppbWeapon(weapon))return weaponPowerReason(weaponPreparationView(weapon))??(attack?.readinessReason===weaponPowerReason(weapon)?null:attack?.readinessReason??null);
   if(beamProfile(weapon?.standaloneModeId??weapon?.catalogModeId)){
     return weaponPowerReason(weaponPreparationView(weapon))??attack?.preparationReadinessReason??
@@ -166,6 +183,13 @@ export function weaponPowerEvidence(weapon, amount, spent = amount, profile = we
 }
 export function validateWeaponExecution(weapon, profile) {
   const modeId=profile?.binding?.confirmed?.modeId??profile?.mode?.standaloneRef?.modeId;
+  const deferred=ltDeferredExecutionReason(modeId??weapon?.standaloneModeId??weapon?.catalogModeId);if(deferred)throw Error(deferred);
+  if(ltEarlyProfile(modeId)){
+    const reason=ltEarlyReadiness(weapon,modeId);if(!weapon||reason||!profile.damage?.nativeSafe||!profile.resource?.ltEarlyCharges||JSON.stringify(profile.resource.ltEarlyCharges)!==JSON.stringify(ltEarlyShotPlan(weapon)))throw Error(reason??'Подготовленный физический состав LT не подтверждён для этого выстрела.');
+  }
+  if(nextElevenProfile(modeId)&&modeId!=='WUTSmartShuriken'&&(!weapon||!profile.damage?.nativeSafe||profile.damage.rules?.nextEleven?.modeId!==modeId||
+    ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId)))
+    throw Error('Нужен действующий источниковый профиль устройства, без ETC/LP.');
   if(exoticBeamProfile(modeId)){
     const saved=profile.damage?.rules?.exoticBeam,c=exoticBeamConfiguration(weapon);
     if(!weapon||exoticBeamReason(weapon)||!profile.damage?.nativeSafe||saved?.modeId!==modeId||
@@ -239,3 +263,4 @@ export function weaponBatteryHTML(weapon, selected, escape) {
     `<span class="gam-battery-icon" style="--gam-mag-hue:${magazineFill(charge,capacity).hue}" aria-hidden="true">${Array.from({length:10},(_,i)=>
       `<span class="gam-battery-segment ${charge>(9-i)*capacity/10?'filled':''}"></span>`).join('')}</span></button>`;
 }
+import {ltDeferredExecutionReason} from '../lt-ranged-execution-policy.js';

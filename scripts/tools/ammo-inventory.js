@@ -10,10 +10,12 @@ export const ammoTypeKey = binding => binding.source && binding.source !== "cata
     (binding.recipe ? ":recipe-v1:" + encodeURIComponent(binding.recipe.variantId) +
       (binding.recipe.customId ? ":custom:" + encodeURIComponent(binding.recipe.customId) : "") : "") +
     (binding.sealedPlatformModeId ? ":sealed-unit:" + encodeURIComponent(binding.sealedPlatformModeId) : "")+
-    (Number.isInteger(binding.projectileTL)?':projectile-tl:'+binding.projectileTL:'');
+    (Number.isInteger(binding.projectileTL)?':projectile-tl:'+binding.projectileTL:'')+
+    (binding.robot?':robot:'+encodeURIComponent(binding.robot.id)+':tl:'+binding.robot.tl:'');
 export const whole = (value, minimum = 0) => Number.isSafeInteger(value) && value >= minimum;
 export const inventoryTotal = inventory => inventory.stocks.reduce((sum, entry) => sum + entry.rounds, 0) +
-  inventory.magazines.reduce((sum, entry) => sum + entry.rounds, 0);
+  inventory.magazines.reduce((sum, entry) => sum + (entry.ltEarlyCharges?.length===entry.rounds?
+    entry.ltEarlyCharges.reduce((n,c)=>n+(c.stockUnits??1),0):entry.rounds), 0);
 export const installedMagazine = weapon => weapon.ammunitionInventory?.magazines.find(entry =>
   entry.id === weapon.ammunitionInventory.installedId) ?? null;
 
@@ -52,6 +54,7 @@ export function validateInventory(inventory, weaponId) {
     if (!magazine.id || ids.has(magazine.id) || magazine.weaponId !== weaponId ||
         !whole(magazine.capacity, 1) || !whole(magazine.rounds) || magazine.rounds > magazine.capacity ||
         magazine.rounds && !types.has(magazine.ammoKey)) return false;
+    if(Array.isArray(magazine.ltEarlyCharges)&&magazine.ltEarlyCharges.some(c=>c.stockUnits!==undefined&&!whole(c.stockUnits,1)))return false;
     ids.add(magazine.id);
   }
   return (inventory.installedId === null || ids.has(inventory.installedId)) && whole(inventoryTotal(inventory));
@@ -185,7 +188,9 @@ export function applyInventoryOperation(weapon, operation, args = {}, { allowedT
     if (entry.rounds < amount) fail("InsufficientRounds");
     const rule = ammunitionResourceContract(stockFor(entry.ammoKey).type);
     if (rule && (entry.capacity !== rule.capacity || entry.rounds > rule.capacity)) fail("SealedResourceReview");
-    if (rule) useSealedResource(entry);
+    // P11's sealed cluster contains five independently fired barrels. Mark its
+    // first use to prohibit refilling, then allow its remaining original shots.
+    if (rule && (rule.kind !== 'sealed-barrel-cluster' || !entry.sealedUsed)) useSealedResource(entry);
     entry.rounds -= amount;
     if (!entry.rounds) entry.ammoKey = null;
   } else fail("UnknownOperation");

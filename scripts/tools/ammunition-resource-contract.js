@@ -1,3 +1,10 @@
+import { AmmunitionCompatibilityService } from '../ammunition-compatibility-service.js';
+import { ltBowProfile,readLTBowConfiguration } from '../lt-bow-source.js';
+import {ltPersonalProfile} from '../lt-personal-source.js';
+import {ltEarlyProfile} from '../lt-early-firearms-source.js';
+import { LT_PHYSICAL_LOAD_RESTRICTIONS } from '../lt-physical-ammunition-evidence.js';
+import {ltDeferredExecutionReason} from '../lt-ranged-execution-policy.js';
+
 // Physical units, not projectile multipliers. IDs are existing source identities; no inventory migration.
 const tubes = new Set([
   'ht_specific_hafla_dm34_35mm_wp','ht_specific_at4_84mm_heat','ht_specific_pf30_150mm_heat',
@@ -32,4 +39,44 @@ export function validateResourceShot(weapon, type, modeId) {
   const rule=ammunitionResourceContract(type);if(!rule)return;
   const m=weapon.ammunitionInventory?.magazines.find(m=>m.id===weapon.ammunitionInventory.installedId);
   if(!m||m.capacity!==rule.capacity||m.rounds>rule.capacity||m.rounds<1)throw Error('SealedResourceReview');
+}
+const ltReferenceServices = new WeakMap();
+/** Revalidate an actual LT stock through the one shared compatibility service. Never writes or grants approvals. */
+export function ltPhysicalAmmunitionCheck(modeId, type, api = globalThis.OleGURPSQOL,configuration=null) {
+  const catalogs = api?.catalogs;
+  const source = catalogs?.getEquipmentForMode?.(modeId)?.source;
+  if (source !== 'LT' && type?.book !== 'lt') return null;
+  const links = catalogs?.getModeLinks?.(modeId);
+  const guarded = !!ltEarlyProfile(modeId)||!!ltBowProfile(modeId)||!!ltPersonalProfile(modeId)||LT_PHYSICAL_LOAD_RESTRICTIONS.some(r => r.modeId === modeId) ||
+    links?.ammoItemIds.some(id => { const r = catalogs.getAmmoItem('lt', id); return r?.requires_accessory || /^GM_/.test(r?.status ?? ''); });
+  const known = type?.ammoId && (catalogs?.getAmmoItem?.('lt', type.ammoId) || catalogs?.getAmmoFamily?.('lt', type.ammoId));
+  // Unrelated owner-defined projectiles do not acquire or lose a source modifier here.
+  if (!guarded && type?.source !== 'catalog' && !known) return null;
+  let service = api?.ammunitionCompatibility;
+  if (!service && catalogs) {
+    if (!ltReferenceServices.has(catalogs)) ltReferenceServices.set(catalogs, new AmmunitionCompatibilityService(catalogs));
+    service = ltReferenceServices.get(catalogs);
+  }
+  if (!service || !type?.ammoId || !['ammo-item', 'ammo-family'].includes(type.kind)) return {
+    status: 'undetermined', reasons: [{ code: 'LT_PHYSICAL_IDENTITY_REQUIRED',
+      message: 'Физический заряд LT не подтверждён. Выберите конкретный совместимый снаряд; прежние остатки сохраняются.' }] };
+  return service.checkCompatibility(modeId, type.ammoId, { book: type.book ?? 'lt', kind: type.kind,...(configuration?{ltBow:configuration}:{}),...(ltEarlyProfile(modeId)?{ltEarlyFit:type.recipe?.parameters?.fit}:{}) });
+}
+
+export function validateLTPhysicalAmmunition(modeId, type, api,configuration=null) {
+  const result = ltPhysicalAmmunitionCheck(modeId, type, api,configuration);
+  if (result && result.status !== 'compatible') throw Object.assign(
+    new Error(result.reasons?.[0]?.message ?? 'Допустимость физического заряда LT не подтверждена.'),
+    { code: result.reasons?.[0]?.code ?? 'LT_PHYSICAL_LOAD_UNPROVEN', compatibility: result.status });
+}
+
+/** The current carrier/party is authoritative, never the profile supplied by a caller. */
+export function validateLTWeaponAmmunition(actor, weapon, api = globalThis.OleGURPSQOL) {
+  if (!weapon) return;
+  const modeId = weapon.standaloneModeId ?? (ltEarlyProfile(weapon.catalogModeId)?weapon.catalogModeId:api?.weaponCatalogBindings?.analyzeMode(actor, weapon.attackRef?.path)?.binding?.modeId);
+  const deferred=ltDeferredExecutionReason(modeId??weapon.catalogModeId);if(deferred)throw Error(deferred);
+  const inventory = weapon.ammunitionInventory;
+  const magazine = inventory?.magazines.find(m => m.id === inventory.installedId);
+  const type = ltEarlyProfile(modeId)?magazine?.ltEarlyCharges?.[0]?.type??inventory?.stocks.find(s => s.key === magazine?.ammoKey)?.type:inventory?.stocks.find(s => s.key === magazine?.ammoKey)?.type;
+  validateLTPhysicalAmmunition(modeId, type, api,readLTBowConfiguration(actor,weapon));
 }

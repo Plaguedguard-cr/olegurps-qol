@@ -7,7 +7,7 @@ const escape = value => String(value).replace(/[&<>"']/g, char => ({ "&": "&amp;
 
 export class WeaponSkillSettingsApp extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS = {
-    id: "olegurps-weapon-skill-settings", classes: ["olegurps-qol"], tag: "form",
+    id: "olegurps-weapon-skill-settings", classes: ["olegurps-qol", "olegurps-settings"], tag: "form",
     window: { title: text("Title"), resizable: false },
     position: { width: 480, height: "auto" },
     form: { closeOnSubmit: true, handler: async function(_event, _form, formData) {

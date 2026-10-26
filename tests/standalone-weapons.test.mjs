@@ -33,10 +33,14 @@ function draft(type = 'ranged', name = 'Izhmash AK-47', existing = null) {
 }
 
 test('search spans LT/HT/UT, matches names and keeps melee and ranged distinct', () => {
+  // These LT delivery procedures intentionally live in the ranged library.
+  const procedures=new Set(['WLTP3BlowpipePowder','WLTP3MetsubushiPowder',
+    'WLTP3GrapplingHook','WLTP3PaddedGrapplingHook']);
   for (const source of ['LT', 'HT', 'UT']) for (const type of ['melee', 'ranged']) {
     const models = searchStandaloneModels(catalogs, type, '', source);
     assert.ok(models.length > 0);
-    assert.ok(models.every(e => e.source === source && e.modes.some(m => m.combat_type === type && m.role === 'attack' && !m.hidden)));
+    assert.ok(models.every(e => e.source === source && e.modes.some(m =>
+      (m.combat_type === type || (source === 'LT' && type === 'ranged' && procedures.has(m.weapon_mode_id))) && m.role === 'attack' && !m.hidden)));
   }
   assert.equal(searchStandaloneModels(catalogs, 'ranged', 'AK-47')[0].name.includes('AK-47'), true);
   assert.equal(searchStandaloneModels(catalogs, 'ranged', 'does-not-exist').length, 0);

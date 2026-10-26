@@ -1,4 +1,5 @@
 import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import {assertProjectedUTCatalog} from './helpers/ut-projected-catalog-contract.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -11,6 +12,11 @@ import { DISINTEGRATOR_PROFILES } from "../scripts/ut-disintegrator-source.js";
 import { PLASMA_GUN_PROFILES } from "../scripts/ut-plasma-gun-source.js";
 
 const books = Object.keys(CATALOG_DEFINITIONS);
+// The LT projection requires the complete LT source endpoints (sling skills,
+// flame fuels and physical reverse links), even in the small validation fixture.
+const ltSource = JSON.parse(await fs.readFile(new URL('../data/catalogs/' + CATALOG_DEFINITIONS.lt.filename, import.meta.url), 'utf8'));
+const ltEquipment = JSON.parse(await fs.readFile(new URL('../data/catalogs/' + CATALOG_DEFINITIONS.weapons.filename, import.meta.url), 'utf8'))
+  .equipment.filter(e => e.source === 'LT');
 const pointer = book => ({ catalog_kind: CATALOG_DEFINITIONS[book].kind,
   catalog_filename: CATALOG_DEFINITIONS[book].filename });
 const mode = (book, extra) => ({ weapon_mode_id: book + "-mode", combat_type: "ranged",
@@ -47,6 +53,10 @@ function fixture() {
     warheads: [{ id: "ut-warhead", name: "Warhead" }]
   });
   for (const option of data.ht.projectile_options) option.eligibility_v1 = { contract: "ht-option-eligibility-v1", authority: "Test catalog", source_ref: "HT 166", rule_category: "projectile_options", conditions: {}, explicit_evidence_required: [], candidate_policy: "requires-platform-proof", on_missing_evidence: "undetermined", never_allow_by_caliber_name_or_tl_alone: true, do_not_reapply_native_effects: false, overlap_guard: null };
+  data.weapons.equipment.push(...structuredClone(ltEquipment));
+  for (const field of ['ammo_items', 'ammo_families', 'projectile_options'])
+    data.lt[field].push(...structuredClone(ltSource[field]));
+  data.lt.other_referenced_options = structuredClone(ltSource.other_referenced_options);
   // Pre-existing derived identities let this deliberately tiny catalog exercise
   // validation without requiring the six full UT130 chassis and their ammo.
   data.weapons.equipment.push(...Object.values(DISINTEGRATOR_PROFILES)
@@ -86,7 +96,8 @@ test("all four real catalogs load with record-derived counts and symmetric links
   const { service, diagnostics } = await loaded(originals);
   assert.equal(diagnostics.state, "ready");
   const weaponModes = service.getCatalog("weapons").equipment.flatMap(e => e.modes);
-  assert.equal(diagnostics.catalogs.weapons.counts.equipment, originals.weapons.equipment.length + 14);
+  const projected=assertProjectedUTCatalog(service,originals.weapons,originals.ut);
+  assert.equal(diagnostics.catalogs.weapons.counts.equipment,projected.equipment);
   assert.equal(diagnostics.catalogs.weapons.counts.modes, weaponModes.length);
   for (const book of books) {
     const status = diagnostics.catalogs[book];
@@ -98,12 +109,12 @@ test("all four real catalogs load with record-derived counts and symmetric links
   for (const book of ["lt", "ht", "ut"]) {
     const status = diagnostics.catalogs[book];
     const edges = book === "ut" ? service.getCatalog("ut").ammo_families.flatMap(f => f.linked_weapon_modes.map(m => m.weapon_mode_id)) :
-      originals[book].ammo_items.flatMap(i => i.weapon_mode_ids);
+      service.getCatalog(book).ammo_items.flatMap(i => i.weapon_mode_ids);
     assert.equal(status.relationships.forward, edges.length);
     assert.equal(status.relationships.reverse, edges.length);
     assert.equal(status.relationships.linkedModes, new Set(edges).size);
-    assert.equal(status.counts.ammo_families, originals[book].ammo_families.length + (book === 'ut' ? 20 : 0));
-    if (book !== "ut") assert.equal(status.counts.ammo_items, originals[book].ammo_items.length);
+    assert.equal(status.counts.ammo_families,book==='ut'?projected.families:book==='lt'?284:originals[book].ammo_families.length);
+    if (book !== "ut") assert.equal(status.counts.ammo_items, book==='lt'?300:originals[book].ammo_items.length);
     assert.equal(status.relationships.status, "passed");
   }
   assert.equal(diagnostics.catalogs.weapons.version.revisionSource, "rules_audit_v5_6");
@@ -335,6 +346,7 @@ test("main init starts loading without blocking ready or changing existing tool 
   }
   dependencies.AmmunitionCompatibilityService = AmmunitionCompatibilityService;
   dependencies.WeaponCatalogBindingService = WeaponCatalogBindingService;
+  dependencies.launcherButton = {start() { calls.push('launcherButton.start'); }, refresh() {}};
   dependencies.CatalogService = function() {
     return new CatalogService({ logger: null, fetcher: async (...args) => { await gate; return io.fetcher(...args); } });
   };

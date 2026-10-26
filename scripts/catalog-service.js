@@ -2,6 +2,7 @@ import {CHEMICAL_SUBSTANCES} from './tools/biochemical-catalog.js';
 import { LEMAT, LEMAT_SHOT_CHARGE, correctHTMode, correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
 import { correctedHTLabel } from "./ht-source-corrections.js";
 import { projectUTSourceData } from "./ut-source-data.js";
+import { projectLTSourceData } from './lt-source-data.js';
 import { HT_PRE_GAUSS_AMMO, htPreGaussAmmoIds } from './ht-pre-gauss-profiles.js';
 // Reference data only: no Actor, Item, settings, attack or damage writes.
 export const CATALOG_DEFINITIONS = Object.freeze({
@@ -460,7 +461,7 @@ export class CatalogService {
       // Validate the protected source first; corrections must never repair malformed inputs.
       buildIndexes(book, data);
       entry.sourceData = freeze(structuredClone(data));
-      data = projectUTSourceData(book, data);
+      data = projectLTSourceData(book, projectUTSourceData(book, data));
       const built = buildIndexes(book, data);
       Object.assign(entry, built, { data });
       entry.counts = Object.fromEntries([...entry.indexes].map(([name, index]) => [name, index.size]));

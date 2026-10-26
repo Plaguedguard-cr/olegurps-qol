@@ -1,4 +1,12 @@
 import {HT_TEAR_SPRAY_MODE,htTearSprayDamage,attachBiochemicalEffect} from './biochemical-integration.js';
+import {ltBowProfile} from '../lt-bow-source.js';
+import {ltBowDamage} from './lt-bow.js';
+import {ltPersonalProfile} from '../lt-personal-source.js';
+import {ltEarlyProfile} from '../lt-early-firearms-source.js';
+import {ltEarlyDamage} from './lt-early-firearms.js';
+import {ltPersonalDamage} from './lt-personal.js';
+import {ltDeferredExecutionReason} from '../lt-ranged-execution-policy.js';
+import {attackApplicationResult} from './attack-application-result.js';
 import {fluidProfile} from '../ut-fluid-source.js';
 import {fluidDamage} from './ut-fluid.js';
 import {gyrocShotshellExcluded,GYROC_SHOTSHELL_REASON} from './gyroc-policy.js';
@@ -6,8 +14,15 @@ import {gravDamage,physicalRangedProfile,missileSourceTL} from '../ut-physical-r
 import {utFixedFeed,plbRecipeAllowed} from './ut-physical-feeds.js';
 import {plasmaGunProfile,plasmaGunDamage} from '../ut-plasma-gun-source.js';
 import { exoticBeamProfile, exoticBeamDamage } from '../ut-exotic-beam-source.js';
+import {nextElevenDamage} from '../ut-next-eleven-source.js';
+import {sonicShuriken} from '../ut-sonic-shuriken-source.js';
+import {sonicShurikenDamage} from './ut-sonic-shuriken.js';
+import {attachRobotProfile} from './ut-robot-ammunition.js';
 import { uawBarrelFacts, uawWeaponView } from './ut-uaw.js';
 import { getAttackOverride } from "./weapon-attack-overrides.js";
+import { ltPhysicalAmmunitionCheck } from './ammunition-resource-contract.js';
+import { sourceWeaponHandling } from './weapon-bulk.js';
+import { projectLTAttackStats } from '../lt-source-data.js';
 import { assessAmmunitionRecipe } from "./ammunition-recipes.js";
 import { resolveAmmunitionEffects } from "./ammunition-effects.js";
 import { AutomaticAmmunitionProfileService } from "./automatic-ammunition-profiles.js";
@@ -69,7 +84,7 @@ export class AttackProfileResolver {
     this.automaticProfiles = automaticProfiles ?? new AutomaticAmmunitionProfileService({ catalogs, compatibility });
   }
 
-  resolve({ actorId, weaponId = null, attack, rawAttack, state = {}, binding = null,
+  resolve({ actorId, actor = null, weaponId = null, attack, rawAttack, state = {}, binding = null,
     ammunition = null, context = {}, approval = null, profilePolicy = "strict",
     diceAddsPolicy = readDamageDiceAddsPolicy() }) {
     const raw = structuredClone(rawAttack ?? attack?.data ?? attack ?? {});
@@ -97,7 +112,12 @@ export class AttackProfileResolver {
     const confirmedBinding = binding?.status === "confirmed" && binding.binding?.confirmed
       ? binding.binding : null;
     const carrier=uawWeaponView(state,state.weapons?.find(w=>w.id===weaponId));
-    let convertedRaw=raw,weaponConfiguration=null,etcError=null;
+    const handlingMode=this.catalogs?.getMode(confirmedBinding?.modeId);
+    const sourceBulkOverride=overrides?.bulkMetadata?.sourceValues&&!overrides.bulkMetadata.manual&&
+      JSON.stringify(overrides.bulkMetadata.sourceValues)===JSON.stringify(handlingMode?.lt_ranged_contract?.bulkValues);
+    const weaponHandling = attack?.standaloneRef ? attack.weaponHandling :
+      sourceWeaponHandling(handlingMode,carrier?.ltBulkState,sourceBulkOverride?null:overrides?.bulk??null);
+    let convertedRaw=projectLTAttackStats(confirmedBinding?.modeId,raw,overrides),weaponConfiguration=null,etcError=null;
     const em=gaussProfile(confirmedBinding?.modeId);
     if(em) {
       const fireMode=gaussSpeed(carrier);
@@ -145,7 +165,7 @@ export class AttackProfileResolver {
       reasons: [], relation: null };
     if (confirmedBinding && identity.status === "confirmed" && this.compatibility) {
       const result = this.compatibility.checkCompatibility(confirmedBinding.modeId, identity.ammoId,
-        { book: identity.book, kind: identity.kind });
+        { book: identity.book, kind: identity.kind,...(ltEarlyProfile(confirmedBinding.modeId)?{ltEarlyFit:type?.recipe?.parameters?.fit}:{}) });
       compatibility = { status: result.status, reasons: result.reasons, relation: result.relation,
         warnings: result.warnings, capabilities: result.capabilities };
       if (result.reasons?.some(reason => ["CATALOG_UNAVAILABLE", "MODE_UNAVAILABLE"].includes(reason.code)))
@@ -192,7 +212,10 @@ export class AttackProfileResolver {
     const effective = { ...convertedRaw };
     // Preserve existing mode overrides before computing damage from the raw GGA source.
     for (const key of ["level", "acc", "scopeBonus", "rof", "rcl", "bulk"])
-      if (attack?.[key] !== undefined) effective[key] = attack[key];
+      if (attack?.[key] !== undefined) effective[key] = weaponHandling && overrides?.[key]===undefined &&
+        String(attack[key]??'')===String(raw[key]??'') && convertedRaw[key]!==raw[key] ? convertedRaw[key] : attack[key];
+    if(weaponHandling?.rclNotApplicable)effective.rcl=null;
+    if(weaponHandling?.bulkMetadata)effective.bulk=weaponHandling.bulkMetadata.numericBulk;
     const transformations = overrides ? Object.entries(overrides).map(([field, value], index) => ({
       id: "mode-override:" + field, source: "OleGURPS.attackOverrides", field,
       effectId: "mode-override:" + field, order: index + 1, applied: true, reason: "existing-mode-override",
@@ -481,6 +504,23 @@ export class AttackProfileResolver {
       weaponConfiguration={variant:microwave?'ut-microwave':dazzler?'ut-dazzler':'ht-laser',modeId:utModeId,source:microwave?.source??(dazzler?'UT113':'HT181')};
     }
     const electro=electrolaserProfile(utModeId);
+    if(sonicShuriken(utModeId)){
+      damage=sonicShurikenDamage(raw,carrier);
+      if(ammunition||![undefined,'ordinary'].includes(carrier?.executionVariant)){damage.nativeSafe=false;damage.status='unresolved';damage.reason='Sonic Shuriken не использует патроны, ETC или LP.';}
+      compatibility={status:damage.nativeSafe?'compatible':'incompatible',reasons:[],relation:'UT166-thrown-weapon'};
+      Object.assign(identity,{status:'not-required',book:'ut',kind:'thrown',name:attack?.name,source:'catalog'});
+      weaponConfiguration={variant:'sonic-shuriken',modeId:utModeId,source:'UT166'};
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
+    const eleven=nextElevenDamage(raw,utModeId,attack?.nextElevenConfiguration);
+    if(eleven){
+      damage=eleven;
+      if(ammunition||![undefined,'ordinary'].includes(carrier?.executionVariant)){damage.nativeSafe=false;damage.status='unresolved';damage.reason='Требуется собственный источник, без патронов, ETC и LP.';}
+      compatibility={status:'compatible',reasons:[],relation:'UT-source-device'};
+      Object.assign(identity,{status:'not-required',book:'ut',kind:'device',name:attack?.name,source:'catalog'});
+      weaponConfiguration={variant:'ut-next-eleven',...damage.rules.nextEleven};
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
     if(electro){
       damage=electrolaserDamage(raw,utModeId,carrier,context);
       if(electro.underbarrel&&(context.platform?.installation!=='host'||!Number.isFinite(context.platform?.hostBulk)||context.platform.hostBulk>-3)){
@@ -545,15 +585,51 @@ export class AttackProfileResolver {
     }
     if(utModeId===HT_TEAR_SPRAY_MODE){damage=htTearSprayDamage(raw,type);compatibility={status:damage.nativeSafe?'compatible':'incompatible',reasons:[],relation:'HT180-source-aerosol'};Object.assign(identity,{status:damage.nativeSafe?'confirmed':'undetermined',source:'catalog',book:'ht',kind:'chemical-dose',name:type?.name});}
     damage=attachBiochemicalEffect(damage,type);
+    if(type?.robot){
+      damage=attachRobotProfile(damage,type,utModeId);
+      identity.robot=structuredClone(type.robot);
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+    }
     if(gyrocShotshellExcluded(type)){damage.nativeSafe=false;damage.status="unresolved";damage.reason=GYROC_SHOTSHELL_REASON;}
+    const ltModeId=confirmedBinding?.modeId??attack?.standaloneRef?.modeId;
+    if(ltEarlyProfile(ltModeId)){
+      damage=ltEarlyDamage({modeId:ltModeId,actor,raw,attack:{...attack,ltEarlyOverrides:{...attack?.ltEarlyOverrides,
+        ...Object.fromEntries(['acc','bulk','rcl'].filter(k=>overrides?.[k]!==undefined).map(k=>[k,overrides[k]]))}},weapon:carrier,type,catalogs:this.catalogs,context});
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+      weaponConfiguration={variant:'lt-early-firearm',modeId:ltModeId,configuration:damage.rules.ltEarly.configuration??null,source:ltEarlyProfile(ltModeId).source};
+    }
+    const ltConfiguration=attack?.ltBowConfiguration??carrier?.ltBow;
+    if(ltPersonalProfile(ltModeId)){
+      damage=ltPersonalDamage({actor,attack,raw,modeId:ltModeId,weapon:carrier,type,catalogs:this.catalogs,compatibility:this.compatibility,context});
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+      weaponConfiguration={variant:'lt-personal',modeId:ltModeId,configuration:damage.rules.ltPersonal.configuration??null,source:ltPersonalProfile(ltModeId).source};
+    }
+    if(ltBowProfile(ltModeId)){
+      damage=ltBowDamage({raw,modeId:ltModeId,configuration:ltConfiguration,actor,type,catalogs:this.catalogs,context,sourceStats:attack?.ltBowOverrides});
+      compatibility=type?this.compatibility?.checkCompatibility(ltModeId,type.ammoId,{book:'lt',kind:type.kind,ltBow:ltConfiguration})??compatibility:compatibility;
+      if(damage.nativeSafe)Object.assign(effective,damage.effectiveChanges);
+      weaponConfiguration={variant:'lt-rated-bow',modeId:ltModeId,configuration:damage.rules.ltBow.configuration,
+        ratedST:damage.rules.ltBow.ratedST,effectiveDamageST:damage.rules.ltBow.effectiveDamageST,source:'LT74-78'};
+    }
+    const ltAdmission = ltPhysicalAmmunitionCheck(ltModeId, type,
+      { catalogs: this.catalogs, ammunitionCompatibility: this.compatibility },ltConfiguration);
+    if (ltAdmission && ltAdmission.status !== 'compatible') {
+      compatibility = { status: ltAdmission.status, reasons: ltAdmission.reasons, relation: ltAdmission.relation };
+      damage.nativeSafe = false; damage.status = 'unresolved';
+      damage.reason = ltAdmission.reasons?.[0]?.message ?? 'Допустимость физического заряда LT не подтверждена.';
+      damage.rules.ltPhysicalAdmission = { status: ltAdmission.status, code: ltAdmission.reasons?.[0]?.code };
+    }
+    const deferred=ltDeferredExecutionReason(ltModeId);
+    if(deferred){damage.nativeSafe=false;damage.status='unresolved';damage.reason=deferred;damage.rules.ltDeferred={modeId:ltModeId,source:'LT87'};}
     const diceAdds = applyDamageDiceAdds(damage, { policy: diceAddsPolicy,
       mode: this.catalogs?.getMode?.(confirmedBinding?.modeId),
       book: this.catalogs?.getEquipmentForMode?.(confirmedBinding?.modeId)?.source });
     if(damage.rules.gyrojetRange?.resultFormula){const r=damage.rules.gyrojetRange;r.resultFormula=r.damageDivisor>1?'floor(('+damage.formula.replace(/\s+pi.*$/,'')+')/'+r.damageDivisor+') '+damage.formula.match(/pi.*$/)[0]:damage.formula;}
-    if (damage.nativeSafe) effective.damage = damage.rules.exoticBeam?damage.effectiveChanges.damage:laser?raw.damage:(damage.rules.sonicNeural||damage.rules.plasmaParticle||damage.rules.laserModifications)&&damage.rules.resistanceEffect?damage.effectiveChanges.damage:damage.formula;
-    const weaponReliability=(damage.rules.plasmaParticle?.hotshot||damage.rules.plasmaGun?.hot)?{malf:14,source:'UT133'}:this.catalogs?.getMode(confirmedBinding?.modeId)?.weaponReliability;
+    if (damage.nativeSafe) effective.damage = damage.rules.robot||damage.rules.nextEleven||damage.rules.exoticBeam?damage.effectiveChanges.damage:laser?raw.damage:(damage.rules.sonicNeural||damage.rules.plasmaParticle||damage.rules.laserModifications)&&damage.rules.resistanceEffect?damage.effectiveChanges.damage:damage.formula;
+    const weaponReliability=damage.rules.ltQuality?.weaponReliability??((damage.rules.plasmaParticle?.hotshot||damage.rules.plasmaGun?.hot)?{malf:14,source:'UT133'}:this.catalogs?.getMode(confirmedBinding?.modeId)?.weaponReliability);
     transformations.push(...damage.transformations.map(entry => ({ ...entry, order: transformations.length + entry.order })));
     return immutableCopy({ version: SHOT_PROFILE_VERSION, actorId, weaponId,
+      ...(weaponHandling?{weaponHandling}:{}),
       mode: { uuid: attack?.uuid ?? null, path: attack?.path ?? null,
         ...(attack?.standaloneRef ? { standaloneRef: structuredClone(attack.standaloneRef) } : {}),
         name: attack?.name ?? raw.name ?? null, mode: attack?.mode ?? raw.mode ?? null },
@@ -565,11 +641,13 @@ export class AttackProfileResolver {
       resource: ammunition ? { kind: ammunition.kind, magazineId: ammunition.magazineId,
         legacyIndex: ammunition.legacyIndex ?? null, available: ammunition.available,
         total: ammunition.total, ammoKey: ammunition.ammoKey } : { kind: "unmanaged", magazineId: null },
+      ...(damage.rules.attackResult?{attackResult:damage.rules.attackResult}:{}),
       binding: { status: confirmedBinding ? "confirmed" : binding?.status ?? "undetermined",
         confirmed: confirmedBinding }, compatibility, construction, damage, diceAdds,
       sources: { raw: attack?.standaloneRef ? "flags.olegurps-qol.standaloneWeapons" : "Actor.system.ranged", overrides: "world.gurpsAmmoManager.attackOverrides",
         ammunition: "world.gurpsAmmoManager", catalog: identity.book,
-        catalogStatisticsApplied: false }, transformations, context });
+        catalogStatisticsApplied: !!weaponHandling && !attack?.standaloneRef &&
+          (JSON.stringify(convertedRaw)!==JSON.stringify(raw)||!!weaponHandling.bulkMetadata||weaponHandling.rclNotApplicable&&raw.rcl!=null) }, transformations, context });
   }
 }
 
@@ -577,6 +655,8 @@ export function createShotSnapshot(profile, { attackId, spent = 0, resourceTimin
   resourceReceiptId = null, messageId = null, outcome = null } = {}) {
   if (!attackId) throw new Error("AttackIdRequired");
   return immutableCopy({ version: SHOT_PROFILE_VERSION, attackId, profile,
+    ...(profile.attackResult?{applicationResult:attackApplicationResult(profile,outcome,attackId)}:{}),
+    ...(outcome?.duckFoot?{duckFootResult:structuredClone(outcome.duckFoot)}:{}),
     actorId: profile.actorId, mode: profile.mode, magazineId: profile.resource.magazineId,
     ammunition: profile.ammunition, spent, resourceTiming, resourceReceiptId,
     ...(fuzeTracerShotEvents(profile, outcome) ? { ammunitionEvents: fuzeTracerShotEvents(profile, outcome) } : {}),

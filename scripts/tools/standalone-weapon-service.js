@@ -1,4 +1,12 @@
+import { applyLTSourceMode } from '../lt-source-data.js';
 import {HT_TEAR_SPRAY_MODE} from './biochemical-integration.js';
+import {ltBowProfile,ltBowCapacity,normalizeLTBowConfiguration} from '../lt-bow-source.js';
+import {ltPersonalProfile,supportsStandaloneMode,isLTProcedureMode} from '../lt-personal-source.js';
+import {ltEarlyProfile,LT_TEN_EYED_MODES} from '../lt-early-firearms-source.js';
+import {initializeLTEarlyCarrier} from './lt-early-firearms.js';
+import {sonicShuriken} from '../ut-sonic-shuriken-source.js';
+import {nextElevenProfile,displacerProfile,ladarProfile,ladarRange} from '../ut-next-eleven-source.js';
+import {parseCampaignTL} from './tech-level.js';
 import {fluidProfile} from '../ut-fluid-source.js';
 import {physicalRangedProfile} from '../ut-physical-ranged-source.js';
 import {utFixedFeed} from './ut-physical-feeds.js';
@@ -78,8 +86,8 @@ export function searchStandaloneModels(catalogs, type, query = "", source = "") 
   let rows = indexed && standaloneSearchIndexes.get(catalog);
   if (!rows) {
     rows = (catalog?.equipment ?? []).map(e => ({ equipment: e,
-      types: new Set(e.modes.filter(m => m.role === "attack" && !m.hidden).map(m => m.combat_type)),
-      text: normalizeSearch([e.name, e.source, e.reference].join(" ")) }));
+      types: new Set(e.modes.filter(m => m.role === "attack" && !m.hidden).map(m => isLTProcedureMode(m)?'ranged':m.combat_type)),
+      text: normalizeSearch([e.name, e.source, e.reference,...(e.aliases??[])].join(" ")) }));
     if (indexed) standaloneSearchIndexes.set(catalog, rows);
   }
   return rows.filter(row => (!source || row.equipment.source === source) && row.types.has(type) &&
@@ -113,6 +121,27 @@ export class StandaloneWeaponService {
     const catalogs=this.catalogs??globalThis.OleGURPSQOL?.catalogs;
     const errataHash=catalogs?.getCatalog('weapons')?.sources?.find(s=>s.code==='UT')?.sha256;
     for(const record of result.weapons){
+      if(record.source?.source==='LT'&&record.source.equipmentId==='enxEQxvu3l4PJ3rWB'&&record.source.sourceHash===catalogs?.getSourceCatalog?.('weapons')?.sources?.find(s=>s.code==='LT')?.sha256)
+        for(const id of LT_TEN_EYED_MODES)if(!record.modes.some(m=>m.modeId===id))record.modes.push({modeId:id,snapshot:clone(catalogs.getMode(id)),overrides:{}});
+      if(record.source?.source==='LT' && record.source.sourceHash===catalogs?.getSourceCatalog?.('weapons')?.sources?.find(s=>s.code==='LT')?.sha256)
+        for(const mode of record.modes??[]){
+          applyLTSourceMode(mode.snapshot,{source:'LT',equipment_id:record.source.equipmentId});
+          const current=catalogs?.getMode(mode.modeId);
+          if((current?.lt_artillery_contract||current?.lt_flame_contract)&&record.source.equipmentId===(current.lt_artillery_contract??current.lt_flame_contract).equipmentId){
+            const originalEquipment=catalogs.getSourceCatalog('weapons').equipment.find(e=>e.equipment_id===record.source.equipmentId),original=originalEquipment?.modes.find(m=>m.weapon_mode_id===mode.modeId);
+            if(current.lt_flame_contract&&record.equipmentSnapshot.local_notes===originalEquipment?.local_notes)record.equipmentSnapshot.local_notes=current.lt_flame_contract.notes;
+            // Old source values may be projected; a direct legacy owner value remains manual.
+            for(const [key,value]of Object.entries(current.stats))if(JSON.stringify(mode.snapshot.stats[key])===JSON.stringify(original?.stats?.[key])||JSON.stringify(mode.snapshot.stats[key])===JSON.stringify(value))mode.snapshot.stats[key]=clone(value);
+            if(JSON.stringify(mode.snapshot.raw_calc)===JSON.stringify(original?.raw_calc)||JSON.stringify(mode.snapshot.raw_calc)===JSON.stringify(current.raw_calc))mode.snapshot.raw_calc=clone(current.raw_calc);
+            for(const key of ['lt_artillery_contract','lt_flame_contract','lt_ranged_contract','lt_ammo_item_ids','governing_skill','governing_skill_selection','defaults','combat_type'])
+              if(Object.hasOwn(current,key))mode.snapshot[key]=clone(current[key]);
+            continue;
+          }
+          if((current?.lt_personal_contract||current?.lt_early_contract||current?.lt_artillery_contract)&&record.source.equipmentId===(current.lt_personal_contract??current.lt_early_contract??current.lt_artillery_contract).equipmentId)
+            for(const key of ['stats','raw_calc','lt_personal_contract','lt_early_contract','lt_artillery_contract','lt_ranged_contract','lt_ammo_item_ids','governing_skill','governing_skill_selection','defaults','combat_type']){
+              if(Object.hasOwn(current,key))mode.snapshot[key]=clone(current[key]);else delete mode.snapshot[key];
+            }
+        }
       if(record.source?.source==='HT')for(const mode of record.modes??[])
         if(HT_PROJECT_WEAPON_POLICIES[mode.modeId]&&record.source.equipmentId===catalogs?.getEquipmentForMode(mode.modeId)?.equipment_id)
           mode.snapshot=correctedHTModeStatistics(mode.snapshot,{source:'HT',equipment_id:record.source.equipmentId});
@@ -161,9 +190,20 @@ export class StandaloneWeaponService {
       const old = draft.existing ? state.weapons.find(w => w.id === draft.existing.id) : null;
       if (draft.existing && (!old || old.revision !== draft.existing.revision)) throw new Error(standaloneText("Stale"));
       const equipment = draft.equipment;
-      const modes = draft.selectedModes;
+      const modes = draft.equipment?.equipment_id==='enxEQxvu3l4PJ3rWB'?LT_TEN_EYED_MODES.map(id=>this.catalogs.getMode(id)):draft.selectedModes;
+      if(modes.some(m=>sonicShuriken(m.weapon_mode_id))){
+        const limit=parseCampaignTL(this.actor.getFlag('olegurps-qol','campaignTL'));
+        if(limit!==null&&limit<10&&!old?.modes.some(m=>sonicShuriken(m.modeId)))throw Error('Sonic Shuriken требует TL10^; ТУ кампании ниже 10.');
+        const carrier=this.actor.getFlag('world','gurpsAmmoManager')?.weapons?.find(w=>w.standaloneWeaponId===old?.id&&sonicShuriken(w));
+        if(carrier?.sonicPayload&&draft.overrides[carrier.standaloneModeId]?.sonicChemical!=='enabled')throw Error('Сначала используйте снаряжённую начинку Sonic Shuriken.');
+      }
+      for(const mode of modes){
+        const p=ladarProfile(mode.weapon_mode_id);if(!p)continue;
+        const selected=ladarRange(p,draft.overrides[mode.weapon_mode_id]),previous=old?.modes?.find(m=>m.modeId===mode.weapon_mode_id),limit=parseCampaignTL(this.actor.getFlag('olegurps-qol','campaignTL'));
+        if(selected&&limit!==null&&selected.tl>limit&&(!previous||ladarRange(p,previous.overrides)?.tl!==selected.tl))throw Error('TL выбранного сенсора превышает ТУ кампании.');
+      }
       if (!equipment || !modes.length || !["ranged", "melee"].includes(draft.type) ||
-          modes.some(m => m.combat_type !== draft.type || m.role !== "attack" || m.hidden))
+          modes.some(m => !supportsStandaloneMode(m,draft.type) || m.role !== "attack" || m.hidden))
         throw new Error(standaloneText("SelectModes"));
       if(!old && equipment.source==='HT' && draft.type==='ranged') {
         const compatibility=new AmmunitionCompatibilityService(this.catalogs);
@@ -190,8 +230,12 @@ export class StandaloneWeaponService {
           overrides: clone(draft.overrides[mode.weapon_mode_id] ?? {}) })),
         settings: clone(old?.settings ?? {}), resourceLinks: clone(old?.resourceLinks ??
           (draft.type === "ranged"||modes.some(m=>m.weapon_mode_id===HT_TEAR_SPRAY_MODE) ? { ammoWeaponId: id } : {})), readiness: "definition-only" };
-      if(draft.weaponBondChanged&&typeof draft.weaponBond==='boolean'&&hasWeaponBondPerk(this.actor))
-        record.settings.weaponBond=draft.weaponBond;
+      const manualBond=draft.type==='ranged'&&equipment.source==='LT';
+      if((draft.weaponBondChanged||manualBond)&&typeof draft.weaponBond==='boolean'&&(hasWeaponBondPerk(this.actor)||manualBond)){
+        record.settings.weaponBond=draft.weaponBond;record.settings.weaponBondPerkConfirmed=manualBond&&draft.weaponBond;
+      }
+      if(!manualBond)delete record.settings.weaponBondPerkConfirmed;
+      if(modes.some(m=>ltBowProfile(m.weapon_mode_id)))record.settings.ltBow=normalizeLTBowConfiguration(draft.ltBow,modes.find(m=>ltBowProfile(m.weapon_mode_id)).weapon_mode_id);
       if (old) state.weapons[state.weapons.indexOf(old)] = record;
       else state.weapons.push(record);
       return record;
@@ -292,7 +336,7 @@ export class StandaloneWeaponService {
 
 export class StandaloneWeaponDraft {
   constructor({ catalogs, type, existing = null, actor = null, weaponBond = null }) {
-    Object.assign(this, { catalogs, type, existing });
+    Object.assign(this, { catalogs, type, existing, actor });
     this.modelId = existing?.source.equipmentId ?? "";
     this.query = existing?.name ?? "";
     this.source = existing?.source.source ?? "";
@@ -302,6 +346,7 @@ export class StandaloneWeaponDraft {
     this.weaponBondAvailable=hasWeaponBondPerk(actor);
     this.weaponBond=existing?.settings?.weaponBond ?? weaponBond ?? actor?.getFlag?.('world','gurpsAmmoManager')?.weapons?.find(w=>w.standaloneWeaponId===existing?.id)?.weaponBond ?? false;
     this.weaponBondChanged=false;
+    this.ltBow=clone(existing?.settings?.ltBow??{});
   }
   get equipment() {
     // Retain saved source data across catalog revisions and unavailable catalogs.
@@ -316,7 +361,7 @@ export class StandaloneWeaponDraft {
     }
     return this.catalogs?.getEquipment(this.modelId) ?? null;
   }
-  get availableModes() { return (this.equipment?.modes ?? []).filter(m => m.combat_type === this.type && m.role === "attack" && !m.hidden); }
+  get availableModes() { return (this.equipment?.modes ?? []).filter(m => supportsStandaloneMode(m,this.type) && m.role === "attack" && !m.hidden); }
   get selectedModes() {
     if(this.refreshing)return [...this.modeIds].map(id=>this.availableModes.find(m=>m.weapon_mode_id===id)).filter(Boolean);
     return this.availableModes.filter(m => this.modeIds.has(m.weapon_mode_id));
@@ -341,14 +386,17 @@ export class StandaloneWeaponDraft {
   selectModel(id) {
     if (id === this.modelId) return;
     const equipment = this.catalogs?.getEquipment(id);
-    if (equipment && !equipment.modes.some(m => m.combat_type === this.type && m.role === "attack" && !m.hidden)) return;
+    if (equipment && !equipment.modes.some(m => supportsStandaloneMode(m,this.type) && m.role === "attack" && !m.hidden)) return;
     this.modelId = equipment?.equipment_id ?? "";
     this.modelChanged = true;
-    this.modeIds = new Set((equipment?.modes ?? []).filter(m => m.combat_type === this.type && m.role === "attack" && !m.hidden).map(m => m.weapon_mode_id));
+    this.modeIds = new Set((equipment?.modes ?? []).filter(m => supportsStandaloneMode(m,this.type) && m.role === "attack" && !m.hidden).map(m => m.weapon_mode_id));
     this.overrides = {};
+    this.ltBow={};
   }
   setOverride(modeId, key, value) {
-    if ((!Object.hasOwn(fields, key) && !['installation','hostBulk','jetMode'].includes(key)) || !this.availableModes.some(m => m.weapon_mode_id === modeId)) return;
+    if ((!Object.hasOwn(fields, key) && !['installation','hostBulk','jetMode','sensorTL','sonicChemical','bulkState'].includes(key)) || !this.availableModes.some(m => m.weapon_mode_id === modeId)) return;
+    if(key==='bulkState'&&(!this.availableModes.find(m=>m.weapon_mode_id===modeId)?.lt_ranged_contract?.bulkValues||!['','mounted','giant'].includes(value)))return;
+    if(key==='sonicChemical'&&(!sonicShuriken(modeId)||!['','enabled'].includes(value)))return;
     if(key==='jetMode'&&(!htPreGaussProfile(modeId)?.continuousUnits||!['','short','continuous'].includes(value)))return;
     this.overrides[modeId] ??= {};
     const clean = text(value);
@@ -365,6 +413,35 @@ export function standaloneAmmoCarrier(record, existing = null) {
     standaloneModeId: record.modes.some(m => m.modeId === existing?.standaloneModeId)
       ? existing.standaloneModeId : record.modes[0]?.modeId, attackRef: {} };
   if(typeof record.settings?.weaponBond==='boolean')carrier.weaponBond=record.settings.weaponBond;
+  if(record.source?.source==='LT'&&record.type==='ranged'&&typeof record.settings?.weaponBondPerkConfirmed==='boolean')carrier.weaponBondPerkConfirmed=record.settings.weaponBondPerkConfirmed;
+  else delete carrier.weaponBondPerkConfirmed;
+  if(ltEarlyProfile(carrier))return initializeLTEarlyCarrier(carrier,{newCarrier:!existing});
+  if(ltPersonalProfile(carrier)){
+    carrier.ammunitionFeed={kind:'fixed',source:ltPersonalProfile(carrier).source};
+    if(!existing)initializeEmptyCarrier(carrier,1);
+    return carrier;
+  }
+  if(ltBowProfile(carrier)){
+    carrier.ltBow=clone(record.settings?.ltBow??{});
+    carrier.ammunitionFeed={kind:'fixed',source:'LT74-78'};
+    if(!existing)initializeEmptyCarrier(carrier,ltBowCapacity(carrier.standaloneModeId,carrier.ltBow));
+    return carrier;
+  }
+  if(sonicShuriken(carrier)){
+    carrier.sonicChemical=record.modes.find(m=>sonicShuriken(m.modeId))?.overrides?.sonicChemical??'';
+    if(existing?.sonicPayload)carrier.sonicChemical='enabled';
+    if(!existing){const power=weaponPowerProfile(carrier);carrier[power.stateKey]=newWeaponBattery(power);}
+    return carrier;
+  }
+  if(nextElevenProfile(carrier.standaloneModeId)){
+    if(nextElevenProfile(carrier.standaloneModeId).id==='shuriken'){
+      if(!existing){initializeEmptyCarrier(carrier,1);carrier.ammunitionInventory.magazines[0].fixedIndex=0;}
+      return carrier;
+    }
+    const power=weaponPowerProfile(carrier);
+    if(!existing&&power)carrier[power.stateKey]=newWeaponBattery(power);
+    return carrier;
+  }
   if (!existing && isPaintCarbine(carrier)) carrier.paintBattery = newPaintBattery();
   if (!existing && (exoticBeamProfile(carrier.standaloneModeId)||sonicNeuralProfile(carrier.standaloneModeId)||htLaserProfile(carrier.standaloneModeId)||utDazzlerProfile(carrier.standaloneModeId)||electrolaserProfile(carrier.standaloneModeId)||microwaveProfile(carrier.standaloneModeId)||ppbProfile(carrier.standaloneModeId))){
     const power=weaponPowerProfile(carrier);carrier[power.stateKey]=newWeaponBattery(power);

@@ -4,6 +4,7 @@ import { withActorResourceWrite } from './actor-resource-writes.js';
 import { UT_EXTENDED_SOURCE } from './ut-extended-source.js';
 import { UT_HOMING_SOURCE, UT_HOMING_GUIDANCE } from './ut-sefop.js';
 import {UT_REACTIONLESS_SOURCE} from './ut-missile-ammunition.js';
+import {ltCrossbowUtilityProfile} from '../lt-crossbow-utility-source.js';
 
 // Campaign availability is separate from source/physical compatibility and historical ownership.
 import { parseCampaignTL, publishedTL } from './tech-level.js';
@@ -28,6 +29,7 @@ export function requiredAmmunitionTL(type, catalogs) {
   if(type.book==='ut'&&type.kind==='fluid-filler')return FLUID_FILLERS[type.ammoId]?.tl??null;
   const base = type.kind === 'ammo-family' ? catalogs?.getAmmoFamily(type.book, type.ammoId) : catalogs?.getAmmoItem(type.book, type.ammoId);
   let baseTL = recordTL(base);
+  if(Number.isInteger(type.robot?.tl))baseTL=Math.max(baseTL??0,type.robot.tl);
   const chemical=CHEMICAL_SUBSTANCES[type.recipe?.parameters?.chemicalId];
   if(chemical)baseTL=Math.max(baseTL??0,chemical.tl);
   if(type.book==='ut'&&['64mm_missile','100mm_missile'].includes(type.ammoId)&&Number.isInteger(type.projectileTL))baseTL=Math.max(baseTL??0,type.projectileTL);
@@ -37,6 +39,10 @@ export function requiredAmmunitionTL(type, catalogs) {
     if (levels.every(tl => tl != null)) baseTL = Math.min(...levels);
   }
   const id = type.recipe?.variantId;
+  if(id==='lt_personal_load'&&ltCrossbowUtilityProfile(type.recipe.parameters?.utilityModeId))return Math.max(baseTL??0,2);
+  if(id==='lt_early_load')return Math.max(baseTL??0,type.recipe.parameters?.powder==='corned'||type.recipe.parameters?.loading==='paper'?4:3);
+  if(id==='lt_artillery_load')return type.recipe.parameters?.loading==='mechanical'?baseTL:
+    Math.max(baseTL??0,type.recipe.parameters?.powder==='corned'||type.recipe.parameters?.loading==='paper'?4:3);
   if (!id) return baseTL;
   const source = UT_EXTENDED_SOURCE[id]??(id==='ut_homing'?UT_HOMING_SOURCE:id==='ut_reactionless'?UT_REACTIONLESS_SOURCE:null);
   const aliases = {ut_drugged_ice:'drugged_ice_sliver',ut_paint:'paint_pellet',ut_solid_slug:'solid_slug_25mm_tangler_gun'};

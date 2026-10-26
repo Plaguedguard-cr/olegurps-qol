@@ -1,4 +1,6 @@
 import { exoticBeamWeapon } from '../ut-exotic-beam-source.js';
+import {sonicShuriken,SONIC_SHURIKEN} from '../ut-sonic-shuriken-source.js';
+import {nextElevenWeapon} from '../ut-next-eleven-source.js';
 import { weaponPowerProfile, readWeaponBattery, weaponPowerReason, weaponPowerEvidence,
   validateWeaponExecution, sameBattery, weaponBatteryHTML, weaponPowerCost } from './weapon-power.js';
 import { lpProfile, lpFireMode, LP_FIRE_MODES, lpFuelReason, readLPFuel, lpText, lpFeedReason } from './ut-liquid-propellant.js';
@@ -6,6 +8,7 @@ import { magazineFill } from './ammo-inventory.js';
 import { uawWeaponView } from './ut-uaw.js';
 import { htPreGaussProfile } from '../ht-pre-gauss-profiles.js';
 import { useSealedResource } from './ammunition-resource-contract.js';
+import { validateLTWeaponAmmunition } from './ammunition-resource-contract.js';
 import { beamWeapon } from '../ut-beam-source.js';
 import { htLaserWeapon } from '../ht-laser-source.js';
 import { utDazzlerWeapon } from '../ut-dazzler-source.js';
@@ -14,7 +17,7 @@ import { microwaveWeapon } from '../ut-microwave-source.js';
 import { ppbWeapon } from '../ut-plasma-particle-source.js';
 import { sonicNeuralWeapon } from '../ut-sonic-neural-source.js';
 
-export const resourceOnlyWeapon=weapon=>beamWeapon(weapon)??htLaserWeapon(weapon)??utDazzlerWeapon(weapon)??electrolaserWeapon(weapon)??microwaveWeapon(weapon)??ppbWeapon(weapon)??sonicNeuralWeapon(weapon)??exoticBeamWeapon(weapon);
+export const resourceOnlyWeapon=weapon=>(sonicShuriken(weapon)?SONIC_SHURIKEN:null)??(nextElevenWeapon(weapon)?.id==='shuriken'?null:nextElevenWeapon(weapon))??beamWeapon(weapon)??htLaserWeapon(weapon)??utDazzlerWeapon(weapon)??electrolaserWeapon(weapon)??microwaveWeapon(weapon)??ppbWeapon(weapon)??sonicNeuralWeapon(weapon)??exoticBeamWeapon(weapon);
 export function weaponResourceLabel(weapon){
   if(!resourceOnlyWeapon(weapon))return null;
   const p=weaponPowerProfile(weapon);if(!p)return null;
@@ -99,6 +102,7 @@ export function validateWeaponShotResources(actor,profile,amount=1,attack=null) 
   const modeId=profile?.binding?.confirmed?.modeId??profile?.mode?.standaloneRef?.modeId??attack?.standaloneRef?.modeId;
   const weapons=actor?.getFlag?.('world','gurpsAmmoManager')?.weapons??[];
   const weapon=uawWeaponView({weapons},weapons.find(w=>w.id===profile?.weaponId)??weapons.find(w=>w.standaloneWeaponId===attack?.standaloneRef?.weaponId&&w.standaloneModeId===modeId));
+  validateLTWeaponAmmunition(actor, weapon);
   validateWeaponResources(weapon,profile);
   const reason=weaponResourceReason(weapon,amount,modeId);if(reason)throw Error(reason);
 }

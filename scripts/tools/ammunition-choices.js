@@ -4,6 +4,9 @@ export function ammunitionChoiceGroup(type) {
   if (type.inventoryOnly) return type.unavailable ? 'historical' : 'existing';
   if (type.historical) return "historical";
   if (type.platformBlocked) return "hidden";
+  // A source-backed LT base is visible so its OWNER can prepare a fitted party.
+  // It stays unavailable for loading until the physical recipe is saved.
+  if(type.book==='lt'&&type.kind==='ammo-item'&&type.requiresPreparation===true&&!type.recipe)return 'conditional';
   if (!type.unavailable) return type.book === 'ut' ? type.recipe ? 'ut-special' : 'ut-base' : "available";
   const prepared=type.preparation;
   if(prepared?.baseStatus==='compatible'&&prepared.state!=='incompatible'&&
