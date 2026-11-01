@@ -155,7 +155,7 @@ test("511 recount preserves existing 363, all 27 confirmations and closed E/F; h
   const historical=readAuditFixture('ht-plus-p-blockers');
   const before=readAuditFixture('ht-12g-case-correction');
   const result=auditPlusPCategoryG({catalogs,compatibility,historical,before});
-  assert.equal(result.examined,511);assert.equal(result.rows.length,11);assert.equal(result.previousWorldReady,363);
+  assert.equal(result.examined,513);assert.equal(result.rows.length,11);assert.equal(result.previousWorldReady,363);
   assert.equal(result.existingReadyPreserved,false);assert.equal(result.existing27LoadingConfirmationsPreserved,false);
   const current=auditPlusPCategoryB({catalogs,compatibility,baseline:historical});
   assertPlusPReadyIdentities(current.all);
@@ -170,7 +170,7 @@ test("511 recount preserves existing 363, all 27 confirmations and closed E/F; h
   assert.deepEqual(pending.map(r=>[r.modeId,r.ammoId]),[["WdzSSShGT_yv4ctOi","olegurps_lemat_18g_shot_charge"]]);
   assert.equal(result.potentialAfterAllRequiredGMDecisions,result.worldPolicyReady+current.loadingChecks+pending.length);
   assert.equal(result.potentialAfterAllRequiredGMDecisions,397);assert.equal(result.incompleteG,1);
-  assert.deepEqual(result.officialStatuses,{undetermined:509,incompatible:2});
+  assert.deepEqual(result.officialStatuses,{undetermined:511,incompatible:2});
 });
 
 test("restricted special G exposes precise RU/EN reason without admitting stock or an approved bypass",()=>{

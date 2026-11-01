@@ -31,7 +31,7 @@ export function get3d6SuccessProbability(target) {
 export function getFireSkillPreview(value) {
   const calculated = value === null || value === undefined ? Number.NaN : Number(value);
   if (!Number.isFinite(calculated)) {
-    return { level: "\u2014", chance: "\u2014", probability: Number.NaN };
+    return { level: "\u2013", chance: "\u2013", probability: Number.NaN };
   }
   const level = Math.max(3, Math.trunc(calculated));
   const probability = get3d6SuccessProbability(level);

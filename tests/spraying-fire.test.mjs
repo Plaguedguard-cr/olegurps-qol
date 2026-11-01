@@ -9,7 +9,21 @@ globalThis.foundry = { utils: { deepClone: structuredClone, randomID: () => "ses
 globalThis.game = { user: { id: "user" } };
 globalThis.canvas = { scene: { id: "scene", regions: { contents: [] } }, grid: { size: 1 } };
 
-const point = (id, x, y) => ({ id, w: 1, h: 1, visible: true, document: { id, x, y, width: 1, height: 1 } });
+// Foundry 14 reports spaces separately from distance in the scene's units.
+// F18 intentionally uses distance, followed by the scene-unit conversion.
+function measurementGrid({ distance = 1, units = "yd", gridless = false } = {}) {
+  canvas.scene.grid = { distance, units, type: gridless ? 0 : 1 };
+  canvas.grid = {
+    size: 1, isGridless: gridless,
+    measurePath: ([a, b]) => {
+      const spaces = Math.hypot(a.x - b.x, a.y - b.y);
+      return { spaces: gridless ? 0 : spaces, distance: spaces * distance };
+    }
+  };
+}
+
+const point = (id, x, y) => ({ id, w: 1, h: 1, center: { x: x + 0.5, y: y + 0.5 },
+  visible: true, document: { id, x, y, width: 1, height: 1 } });
 const source = point("source", 0, 0);
 
 test("RoF parser and availability honor ordinary and full-auto minimums", () => {
@@ -77,7 +91,7 @@ function fixture() {
     }
   };
   const document = { id: "source", x: 0, y: 0, width: 1, height: 1, elevation: 0, getFlag: () => null };
-  const token = { id: "source", document, scene: { id: "scene" } };
+  const token = { id: "source", document, center: { x: 0.5, y: 0.5 }, scene: { id: "scene" } };
   const weapon = flags.world.gurpsAmmoManager.weapons[0];
   const service = new SprayingFireSessionService({ token, actor, weapon, attack: { rof: "100!", name: "Gun" } });
   return { actor, token, service, flags };
@@ -135,14 +149,13 @@ test("Spraying window enforces target order, passes effective Rcl, and delays am
   const { SprayingFireApp } = await import("../scripts/tools/spraying-fire-app.js");
   const { actor, token, service, flags } = fixture();
   const targets = [point("a", 10, -1), point("b", 10, 0), point("c", 10, 1)];
-  globalThis.canvas.grid.isGridless = false;
-  globalThis.canvas.grid.measurePath = ([a, b]) => ({ spaces: Math.hypot(a.x - b.x, a.y - b.y) });
+  measurementGrid();
   globalThis.canvas.tokens = { get: id => targets.find(entry => entry.id === id) };
   const session = await plannedSession(service);
   await service.save({ ...session, state: "planned", modeIndex: 0,
-    targets: targets.map((entry, index) => ({
+    targets: [targets[1], targets[2], targets[0]].map(entry => ({
       tokenId: entry.id, sceneId: "scene", name: "Target",
-      geometry: entry.document, shots: index + 1, modifier: 0,
+      geometry: entry.document, shots: targets.indexOf(entry) + 1, modifier: 0,
       manualDistance: null, heightOverride: null, highGroundOverride: null,
       completed: false, traverseDistance: 0, wastedShots: 0, usedSnapshot: null
     })) });
@@ -174,10 +187,32 @@ test("Spraying window enforces target order, passes effective Rcl, and delays am
     targetingService: {}, sessionService: service
   });
   const display = app._recompute();
+  assert.deepEqual(display.rows.map(row => row.target.tokenId), ["a", "b", "c"]);
   assert.deepEqual(display.rows.map(row => row.traverseDistance), [0, 1, 1]);
   assert.deepEqual(display.rows.map(row => row.wastedShots), [0, 2, 2]);
   assert.equal(display.plan.waste, display.rows.reduce((sum, row) => sum + row.wastedShots, 0));
   assert.equal(display.plannedAmmo, display.shots + display.plan.waste);
+  for (const gridless of [false, true]) {
+    for (const distance of [1, 5]) {
+      measurementGrid({ distance, gridless });
+      const scaled = app._recompute();
+      assert.equal(scaled.valid, true);
+      assert.deepEqual(scaled.rows.map(row => row.traverseDistance), [0, distance, distance]);
+      assert.deepEqual(scaled.rows.map(row => row.wastedShots), [0, 2 * distance, 2 * distance]);
+      assert.deepEqual(scaled.rows.map(row => row.effectiveRcl), [2, 3, 4]);
+      assert.equal(scaled.plannedAmmo, 6 + 4 * distance);
+    }
+  }
+  measurementGrid();
+  app.session.direction = "right-to-left";
+  assert.deepEqual(app._recompute().rows.map(row => row.target.tokenId), ["c", "b", "a"]);
+  app.session.direction = "left-to-right";
+  app._recompute();
+  const beforeUnavailable = structuredClone(app.session);
+  canvas.grid.measurePath = () => ({ spaces: 1 });
+  assert.equal(app._recompute().valid, false);
+  assert.deepEqual(app.session, beforeUnavailable, "unmeasurable geometry must preserve the saved plan");
+  measurementGrid();
   const cardStates = html => [...html.matchAll(/class="sf-card (?:active|waiting|done) (expanded|collapsed)"/g)].map(match => match[1]);
   const html = app._content();
   assert.doesNotMatch(html, /undefined/);
@@ -258,11 +293,30 @@ test("shared Fire Control accepts a per-target distance override", async () => {
     { shots: 5, rangeIndex: 0, targetDistanceOverride: 17 }, bands);
   assert.equal(mode.physicalDistance, 17);
   game.user.targets = new Set([point("ordinary-target", 25, 0)]);
-  canvas.grid.measurePath = ([a, b]) => ({ spaces: Math.hypot(a.x - b.x, a.y - b.y) });
+  measurementGrid();
   const ordinary = context.getFireModeState({ rof: "5" },
     { shots: 5, rangeIndex: 0, targetDistanceOverride: null }, bands);
   assert.equal(ordinary.physicalDistance, 25);
+  for (const gridless of [false, true]) {
+    for (const distance of [1, 5]) {
+      measurementGrid({ distance, gridless });
+      const measured = context.getFireModeState({ rof: "5" },
+        { shots: 5, rangeIndex: 0, targetDistanceOverride: null }, bands);
+      assert.equal(measured.physicalDistance, 25 * distance);
+    }
+  }
+  measurementGrid({ units: "hex" });
+  assert.equal(context.getFireModeState({ rof: "5" }, { shots: 5 }, bands).physicalDistance, null);
+  assert.equal(context.getFireModeState({ rof: "5" },
+    { shots: 5, targetDistanceOverride: 17 }, bands).physicalDistance, 17);
+  measurementGrid();
+  canvas.grid.measurePath = () => ({ spaces: 25 });
+  assert.equal(context.getFireModeState({ rof: "5" }, { shots: 5 }, bands).physicalDistance, null);
+  measurementGrid();
   game.user.targets = new Set();
+  assert.equal(context.getFireModeState({ rof: "5" }, { shots: 5 }, bands).physicalDistance, null);
+  assert.equal(context.getFireModeState({ rof: "5" },
+    { shots: 5, targetDistanceOverride: 17 }, bands).physicalDistance, 17);
 });
 test("ownership blocks a second user's session on the same source Token", async () => {
   const { actor, token, service } = fixture();
@@ -455,8 +509,7 @@ test("switching between full-auto RoF modes keeps a legal minimum allocation", a
   const { SprayingFireApp } = await import("../scripts/tools/spraying-fire-app.js");
   const { actor, token, service, flags } = fixture();
   const targets = [point("a", 10, -1), point("b", 10, 0), point("c", 10, 1)];
-  canvas.grid.isGridless = false;
-  canvas.grid.measurePath = ([a, b]) => ({ spaces: Math.hypot(a.x - b.x, a.y - b.y) });
+  measurementGrid();
   canvas.tokens = { get: id => targets.find(entry => entry.id === id) };
   const session = await plannedSession(service, { modeIndex: 1 });
   await service.save({ ...session, state: "planned", modeIndex: 1,
@@ -487,6 +540,57 @@ test("switching between full-auto RoF modes keeps a legal minimum allocation", a
   assert.equal(app.session.modeIndex, 1);
   assert.equal(app._recompute().plannedAmmo, 5);
   assert.deepEqual(app.session.targets.map(target => target.shots), [1, 1, 1]);
+  assert.equal(app._recompute().valid, true);
+  const previousUi = globalThis.ui;
+  const warnings = [];
+  globalThis.ui = { notifications: { warn: message => warnings.push(message) } };
+  const input = (field, value, index) => app._onInput({
+    type: field === "shots" ? "input" : "change",
+    target: { dataset: { field, ...(index === undefined ? {} : { index: String(index) }) }, value: String(value) }
+  });
+  try {
+    const legalLow = structuredClone(app.session);
+    const persistedLow = service.findExisting();
+    await input("shots", 9, 0);
+    assert.deepEqual(app.session, legalLow, "over-RoF edit must restore the entire plan");
+    assert.deepEqual(service.findExisting(), persistedLow);
+    assert.equal(warnings.length, 1);
+
+    flags.world.gurpsAmmoManager.weapons[0].magazines[0] = 24;
+    await input("modeIndex", 0);
+    assert.deepEqual(app.session, legalLow, "insufficient ammo must reject 10! to 100! without data loss");
+    assert.deepEqual(service.findExisting(), persistedLow);
+    assert.equal(warnings.length, 2);
+    flags.world.gurpsAmmoManager.weapons[0].magazines[0] = 40;
+
+    await input("modeIndex", 0);
+    assert.equal(app._recompute().valid, true);
+    assert.equal(app._recompute().plannedAmmo, 25);
+    const legalHigh = structuredClone(app.session);
+    const persistedHigh = service.findExisting();
+    measurementGrid({ distance: 5 });
+    await input("modeIndex", 1);
+    assert.deepEqual(app.session, legalHigh, "impossible traverse at 10! must preserve the 100! plan");
+    assert.deepEqual(service.findExisting(), persistedHigh);
+    assert.equal(warnings.length, 3);
+
+    measurementGrid();
+    canvas.grid.measurePath = () => ({ spaces: 1 });
+    await input("modeIndex", 1);
+    assert.deepEqual(app.session, legalHigh);
+    assert.deepEqual(service.findExisting(), persistedHigh);
+    assert.equal(warnings.length, 4);
+    measurementGrid();
+    await input("modeIndex", 1);
+    assert.equal(app._recompute().valid, true);
+    assert.equal(app._recompute().plannedAmmo, 5);
+    assert.deepEqual(app.session.targets.map(target => target.shots), [1, 1, 1]);
+    assert.equal(flags.world.gurpsAmmoManager.weapons[0].magazines[0], 40);
+    assert.equal(flags.world.gurpsAmmoManager.weapons[0].totalAmmo, 40);
+  } finally {
+    globalThis.ui = previousUi;
+    measurementGrid();
+  }
 });
 test("legacy selecting flag has no ownership and is removed before a new picker", async () => {
   const { actor, token, service, flags } = fixture();

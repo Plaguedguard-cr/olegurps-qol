@@ -1,0 +1,6911 @@
+{
+  "schema": "lt-shields-tools-m25-independent-v1",
+  "modes": [
+    {
+      "modeId": "w2Kcn0f4gHG7Xs_vz",
+      "equipmentId": "eLKDn4_JQf6yV8Pkh",
+      "modelId": "lt:argive-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "w2Kcn0f4gHG7Xs_vz",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT115"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25Spikew2Kcn0f4gHG7Xs_vz",
+      "equipmentId": "eLKDn4_JQf6yV8Pkh",
+      "modelId": "lt:argive-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikew2Kcn0f4gHG7Xs_vz",
+      "equipmentId": "eLKDn4_JQf6yV8Pkh",
+      "modelId": "lt:argive-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25Edgew2Kcn0f4gHG7Xs_vz",
+      "equipmentId": "eLKDn4_JQf6yV8Pkh",
+      "modelId": "lt:argive-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wNxN2KuElByp51MmT",
+      "equipmentId": "eEu2vQXan2xiLGFf8",
+      "modelId": "lt:comanche-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wNxN2KuElByp51MmT",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewNxN2KuElByp51MmT",
+      "equipmentId": "eEu2vQXan2xiLGFf8",
+      "modelId": "lt:comanche-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewNxN2KuElByp51MmT",
+      "equipmentId": "eEu2vQXan2xiLGFf8",
+      "modelId": "lt:comanche-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewNxN2KuElByp51MmT",
+      "equipmentId": "eEu2vQXan2xiLGFf8",
+      "modelId": "lt:comanche-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wqNzTaH6PhRlKtdHa",
+      "equipmentId": "eKUq1vap87PJexK6r",
+      "modelId": "lt:dueling-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wqNzTaH6PhRlKtdHa",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "1"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT116"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewqNzTaH6PhRlKtdHa",
+      "equipmentId": "eKUq1vap87PJexK6r",
+      "modelId": "lt:dueling-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewqNzTaH6PhRlKtdHa",
+      "equipmentId": "eKUq1vap87PJexK6r",
+      "modelId": "lt:dueling-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewqNzTaH6PhRlKtdHa",
+      "equipmentId": "eKUq1vap87PJexK6r",
+      "modelId": "lt:dueling-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wbr_iBGO9QK06x2dG",
+      "equipmentId": "eh4wim5anWaEyB5Rb",
+      "modelId": "lt:dueling-long-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield",
+          "Staff"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ],
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": -2,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 14,
+      "sourceBefore": {
+        "weapon_mode_id": "wbr_iBGO9QK06x2dG",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "resolution": "best-available-modified",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": null,
+              "modifier": -2
+            },
+            {
+              "name": "Staff",
+              "specialization": null,
+              "modifier": -4
+            }
+          ],
+          "basis": "Low-Tech/GCS data explicitly allow Shield-2 or Staff-4.",
+          "default_relation": {
+            "informational_only": true,
+            "per_candidate": true
+          },
+          "apply_relation_to_roll": false
+        },
+        "defaults": [
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Staff",
+            "specialization": null,
+            "modifier": -4
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "manual-or-default-only",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": null,
+              "modifier": -2
+            }
+          ],
+          "attribute_defaults": []
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT116"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25Spikewbr_iBGO9QK06x2dG",
+      "equipmentId": "eh4wim5anWaEyB5Rb",
+      "modelId": "lt:dueling-long-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield",
+          "Staff"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ],
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": -2,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 14,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewbr_iBGO9QK06x2dG",
+      "equipmentId": "eh4wim5anWaEyB5Rb",
+      "modelId": "lt:dueling-long-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield",
+          "Staff"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ],
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": -2,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 14,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25Edgewbr_iBGO9QK06x2dG",
+      "equipmentId": "eh4wim5anWaEyB5Rb",
+      "modelId": "lt:dueling-long-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield",
+          "Staff"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ],
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": -2,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 14,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wljCLBzAJeuiCuYSm",
+      "equipmentId": "eyIESVGXulfaCqV2n",
+      "modelId": "lt:heater-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wljCLBzAJeuiCuYSm",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT116"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewljCLBzAJeuiCuYSm",
+      "equipmentId": "eyIESVGXulfaCqV2n",
+      "modelId": "lt:heater-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewljCLBzAJeuiCuYSm",
+      "equipmentId": "eyIESVGXulfaCqV2n",
+      "modelId": "lt:heater-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewljCLBzAJeuiCuYSm",
+      "equipmentId": "eyIESVGXulfaCqV2n",
+      "modelId": "lt:heater-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wJwFZ0j7hPgANJCy6",
+      "equipmentId": "eyHMjAdvXz2S18ecs",
+      "modelId": "lt:homeric-buckler-large",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wJwFZ0j7hPgANJCy6",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT115"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewJwFZ0j7hPgANJCy6",
+      "equipmentId": "eyHMjAdvXz2S18ecs",
+      "modelId": "lt:homeric-buckler-large",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewJwFZ0j7hPgANJCy6",
+      "equipmentId": "eyHMjAdvXz2S18ecs",
+      "modelId": "lt:homeric-buckler-large",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewJwFZ0j7hPgANJCy6",
+      "equipmentId": "eyHMjAdvXz2S18ecs",
+      "modelId": "lt:homeric-buckler-large",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wuzq6jICulP14Fhj1",
+      "equipmentId": "eIej6GKa1Yxfz-rB1",
+      "modelId": "lt:homeric-buckler-medium",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wuzq6jICulP14Fhj1",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT115"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25Spikewuzq6jICulP14Fhj1",
+      "equipmentId": "eIej6GKa1Yxfz-rB1",
+      "modelId": "lt:homeric-buckler-medium",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewuzq6jICulP14Fhj1",
+      "equipmentId": "eIej6GKa1Yxfz-rB1",
+      "modelId": "lt:homeric-buckler-medium",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25Edgewuzq6jICulP14Fhj1",
+      "equipmentId": "eIej6GKa1Yxfz-rB1",
+      "modelId": "lt:homeric-buckler-medium",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wpwY_K8gu3ClTpKOl",
+      "equipmentId": "e82vlur9Jg7K79W9Q",
+      "modelId": "lt:kite-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wpwY_K8gu3ClTpKOl",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT116"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewpwY_K8gu3ClTpKOl",
+      "equipmentId": "e82vlur9Jg7K79W9Q",
+      "modelId": "lt:kite-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewpwY_K8gu3ClTpKOl",
+      "equipmentId": "e82vlur9Jg7K79W9Q",
+      "modelId": "lt:kite-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewpwY_K8gu3ClTpKOl",
+      "equipmentId": "e82vlur9Jg7K79W9Q",
+      "modelId": "lt:kite-shield",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wCqgQxsRG-V2xcTJA",
+      "equipmentId": "eE75n5IqjUbcK7sUS",
+      "modelId": "lt:large-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wCqgQxsRG-V2xcTJA",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewCqgQxsRG-V2xcTJA",
+      "equipmentId": "eE75n5IqjUbcK7sUS",
+      "modelId": "lt:large-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewCqgQxsRG-V2xcTJA",
+      "equipmentId": "eE75n5IqjUbcK7sUS",
+      "modelId": "lt:large-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewCqgQxsRG-V2xcTJA",
+      "equipmentId": "eE75n5IqjUbcK7sUS",
+      "modelId": "lt:large-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wD3uA-H1b4rrOev1E",
+      "equipmentId": "eOkiGUtUqzkRkrJrx",
+      "modelId": "lt:large-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wD3uA-H1b4rrOev1E",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewD3uA-H1b4rrOev1E",
+      "equipmentId": "eOkiGUtUqzkRkrJrx",
+      "modelId": "lt:large-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewD3uA-H1b4rrOev1E",
+      "equipmentId": "eOkiGUtUqzkRkrJrx",
+      "modelId": "lt:large-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewD3uA-H1b4rrOev1E",
+      "equipmentId": "eOkiGUtUqzkRkrJrx",
+      "modelId": "lt:large-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "w9A9CuCg38ugDmaPD",
+      "equipmentId": "eCGab_4FOc7eX-oaI",
+      "modelId": "lt:medium-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "w9A9CuCg38ugDmaPD",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25Spikew9A9CuCg38ugDmaPD",
+      "equipmentId": "eCGab_4FOc7eX-oaI",
+      "modelId": "lt:medium-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikew9A9CuCg38ugDmaPD",
+      "equipmentId": "eCGab_4FOc7eX-oaI",
+      "modelId": "lt:medium-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25Edgew9A9CuCg38ugDmaPD",
+      "equipmentId": "eCGab_4FOc7eX-oaI",
+      "modelId": "lt:medium-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wvIYmB-3MNTDxgckD",
+      "equipmentId": "eAC_bC78eyVqPgCWp",
+      "modelId": "lt:medium-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wvIYmB-3MNTDxgckD",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewvIYmB-3MNTDxgckD",
+      "equipmentId": "eAC_bC78eyVqPgCWp",
+      "modelId": "lt:medium-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewvIYmB-3MNTDxgckD",
+      "equipmentId": "eAC_bC78eyVqPgCWp",
+      "modelId": "lt:medium-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewvIYmB-3MNTDxgckD",
+      "equipmentId": "eAC_bC78eyVqPgCWp",
+      "modelId": "lt:medium-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wkKZcc55t55qJtIBV",
+      "equipmentId": "e2hF_R9vE532_PYrY",
+      "modelId": "lt:parrying-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wkKZcc55t55qJtIBV",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "1"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Buckler",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewkKZcc55t55qJtIBV",
+      "equipmentId": "e2hF_R9vE532_PYrY",
+      "modelId": "lt:parrying-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewkKZcc55t55qJtIBV",
+      "equipmentId": "e2hF_R9vE532_PYrY",
+      "modelId": "lt:parrying-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewkKZcc55t55qJtIBV",
+      "equipmentId": "e2hF_R9vE532_PYrY",
+      "modelId": "lt:parrying-buckler",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "defaults": {
+          "Shield (Buckler)": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "w_ba5IqxUJHkeuwxy",
+      "equipmentId": "en0UBIZvVnpiXFMq3",
+      "modelId": "lt:small-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "w_ba5IqxUJHkeuwxy",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25Spikew_ba5IqxUJHkeuwxy",
+      "equipmentId": "en0UBIZvVnpiXFMq3",
+      "modelId": "lt:small-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikew_ba5IqxUJHkeuwxy",
+      "equipmentId": "en0UBIZvVnpiXFMq3",
+      "modelId": "lt:small-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25Edgew_ba5IqxUJHkeuwxy",
+      "equipmentId": "en0UBIZvVnpiXFMq3",
+      "modelId": "lt:small-shield-heavy",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wK1PvIUHo-IHo2_xx",
+      "equipmentId": "eZQSoCM_oYThNMId6",
+      "modelId": "lt:small-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wK1PvIUHo-IHo2_xx",
+        "index": 0,
+        "usage": "Shield Bash",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Shield",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Buckler",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Force Shield",
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Shield",
+            "specialization": "Guige",
+            "modifier": -2
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "thr"
+          },
+          "strength": null,
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": null,
+          "block": "0"
+        },
+        "raw_calc": {
+          "damage": "thr cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Shield",
+              "specialization": "Shield",
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT114"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr cr"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25SpikewK1PvIUHo-IHo2_xx",
+      "equipmentId": "eZQSoCM_oYThNMId6",
+      "modelId": "lt:small-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-spike"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25LongSpikewK1PvIUHo-IHo2_xx",
+      "equipmentId": "eZQSoCM_oYThNMId6",
+      "modelId": "lt:small-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-long-spike"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wLTM25EdgewK1PvIUHo-IHo2_xx",
+      "equipmentId": "eZQSoCM_oYThNMId6",
+      "modelId": "lt:small-shield-light",
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "defaults": {
+          "Shield": [
+            [
+              "DX",
+              -4
+            ],
+            [
+              "Shield (Buckler)",
+              -2
+            ],
+            [
+              "Shield (Force)",
+              -2
+            ],
+            [
+              "Shield (Guige)",
+              -2
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": "shield-edge"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modeId": "wvKXs-4DyF0AGgvzI",
+      "equipmentId": "eaRFBpIq0BdQCOLUj",
+      "modelId": "lt:mining-hammer",
+      "sourcePages": [
+        "LT30",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "C",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "defaults": {
+          "Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Flail",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -3
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wvKXs-4DyF0AGgvzI",
+        "index": 0,
+        "usage": "Swung",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "attack_modifier": 0,
+          "basis": "LT30"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "modifier": -3
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cr",
+            "st": "sw"
+          },
+          "strength": "11",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "C",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "sw cr"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ]
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT30"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "sw+2 cr"
+        },
+        "melee_source_id": "wvKXs-4DyF0AGgvzI"
+      }
+    },
+    {
+      "modeId": "wzarqh4Rg6dL1ijIO",
+      "equipmentId": "eY_6OfCesGUVNO6uD",
+      "modelId": "lt:mining-pick-metal",
+      "sourcePages": [
+        "LT30",
+        "B271",
+        "MA111"
+      ],
+      "expected": {
+        "damage": "sw+1 imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "defaults": {
+          "Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Flail",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -3
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d+3 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wzarqh4Rg6dL1ijIO",
+        "index": 0,
+        "usage": "Swung",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "imp",
+            "st": "sw",
+            "base": "1"
+          },
+          "strength": "10",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "sw+1 imp"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT30,B271"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "sw+1 imp"
+        }
+      }
+    },
+    {
+      "modeId": "wNeDCGWvOQFGIICOd",
+      "equipmentId": "eCYxe2ABpDP6xesTH",
+      "modelId": "lt:mining-pick-antler-bone-or-wood",
+      "sourcePages": [
+        "LT30",
+        "B271",
+        "MA111"
+      ],
+      "expected": {
+        "damage": "sw imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "defaults": {
+          "Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Flail",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -3
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wNeDCGWvOQFGIICOd",
+        "index": 0,
+        "usage": "Swung",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "imp",
+            "st": "sw"
+          },
+          "strength": "11",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "sw imp"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT30,B271,B350"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "sw imp"
+        }
+      }
+    },
+    {
+      "modeId": "wGH3OK_UW8P6SwaW7",
+      "equipmentId": "e_lS2hphKAPenuN1w",
+      "modelId": "lt:scythe",
+      "sourcePages": [
+        "LT70",
+        "LT71"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "defaults": {
+          "Two-Handed Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Axe/Mace",
+              -3
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Two-Handed Flail",
+              -4
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 2,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wGH3OK_UW8P6SwaW7",
+        "index": 0,
+        "usage": "Swing",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ],
+        "hand_use": {
+          "value": "two-handed",
+          "basis": "governing-skill"
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cut",
+            "st": "sw",
+            "base": "3"
+          },
+          "strength": "11‡",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "sw+3 cut"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT61"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "sw+3 cut"
+        }
+      }
+    },
+    {
+      "modeId": "wqgoBcZQg1AcN0I_G",
+      "equipmentId": "e_lS2hphKAPenuN1w",
+      "modelId": "lt:scythe",
+      "sourcePages": [
+        "LT70",
+        "LT71"
+      ],
+      "expected": {
+        "damage": "sw+1 imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "defaults": {
+          "Two-Handed Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Axe/Mace",
+              -3
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Two-Handed Flail",
+              -4
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 2,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d+3 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wqgoBcZQg1AcN0I_G",
+        "index": 1,
+        "usage": "Point Swing",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ],
+        "hand_use": {
+          "value": "two-handed",
+          "basis": "governing-skill"
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "imp",
+            "st": "sw",
+            "base": "1"
+          },
+          "strength": "11‡",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "sw+1 imp"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT61"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "sw+1 imp"
+        }
+      }
+    },
+    {
+      "modeId": "ws-FCtrIpXXzHBHZs",
+      "equipmentId": "e_lS2hphKAPenuN1w",
+      "modelId": "lt:scythe",
+      "sourcePages": [
+        "LT70",
+        "LT71"
+      ],
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "defaults": {
+          "Two-Handed Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Axe/Mace",
+              -3
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Two-Handed Flail",
+              -4
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 2,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "ws-FCtrIpXXzHBHZs",
+        "index": 2,
+        "usage": "Thrust",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ],
+        "hand_use": {
+          "value": "two-handed",
+          "basis": "governing-skill"
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cut",
+            "st": "thr",
+            "base": "-1"
+          },
+          "strength": "11‡",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "thr-1 cut"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT61"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr-1 cut"
+        }
+      }
+    },
+    {
+      "modeId": "wcl8R5Iq8gg5a3LM_",
+      "equipmentId": "elh_eFb_-3ca-rEdE",
+      "modelId": "lt:sickle",
+      "sourcePages": [
+        "LT65",
+        "LT71",
+        "MA111"
+      ],
+      "expected": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "defaults": {
+          "Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Flail",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -3
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wcl8R5Iq8gg5a3LM_",
+        "index": 0,
+        "usage": "Swung",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cut",
+            "st": "sw"
+          },
+          "strength": "8",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "sw cut"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT62"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "sw cut"
+        }
+      }
+    },
+    {
+      "modeId": "wVJipkqV1Gfst2DOr",
+      "equipmentId": "elh_eFb_-3ca-rEdE",
+      "modelId": "lt:sickle",
+      "sourcePages": [
+        "LT65",
+        "LT71",
+        "MA111"
+      ],
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "defaults": {
+          "Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Flail",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -3
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wVJipkqV1Gfst2DOr",
+        "index": 1,
+        "usage": "Thrust",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "cut",
+            "st": "thr",
+            "base": "-2"
+          },
+          "strength": "8",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "thr-2 cut"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT62"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "thr-2 cut"
+        }
+      }
+    },
+    {
+      "modeId": "wKsAgyA9-dcaD8Q4y",
+      "equipmentId": "elh_eFb_-3ca-rEdE",
+      "modelId": "lt:sickle",
+      "sourcePages": [
+        "LT65",
+        "LT71",
+        "MA111"
+      ],
+      "expected": {
+        "damage": "sw imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "defaults": {
+          "Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Flail",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -3
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [
+          "defensive"
+        ],
+        "fitting": null
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "weapon_mode_id": "wKsAgyA9-dcaD8Q4y",
+        "index": 2,
+        "usage": "Swing",
+        "usage_notes": null,
+        "hidden": false,
+        "combat_type": "melee",
+        "role": "attack",
+        "governing_skill": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ],
+        "hand_use": {
+          "value": "unknown",
+          "basis": null
+        },
+        "weapon_family": "melee",
+        "action_hints": [],
+        "caliber_hint": null,
+        "resolution_flags": [],
+        "stats": {
+          "damage": {
+            "type": "imp",
+            "st": "sw"
+          },
+          "strength": "8",
+          "accuracy": null,
+          "range": null,
+          "rate_of_fire": null,
+          "shots": null,
+          "bulk": null,
+          "recoil": null,
+          "reach": "1",
+          "parry": "0U",
+          "block": null
+        },
+        "raw_calc": {
+          "damage": "sw imp"
+        },
+        "governing_skill_selection": {
+          "strategy": "fixed",
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "fallback_attribute": null
+        },
+        "mechanism": {
+          "action_system": "melee",
+          "trigger_mechanism": null,
+          "fire_capabilities": [],
+          "confidence": "high",
+          "basis": [
+            "catalog combat type"
+          ],
+          "source_reference": "LT62"
+        },
+        "technique_capabilities": {
+          "fast_firing": {
+            "eligible": false,
+            "max_rof_multiplier": null,
+            "confidence": "high",
+            "basis": "Fast-Firing technique applies to suitable RoF 2 or 3 weapons; current base RoF differs"
+          },
+          "fanning": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "two_handed_thumbing": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "not a single-action RoF 1 revolver"
+          },
+          "spraying_fire": {
+            "eligible": false,
+            "confidence": "high",
+            "basis": "requires real full-automatic fire; controlled-burst-only modes excluded"
+          },
+          "suppression_fire": {
+            "eligible": false,
+            "confidence": "unknown",
+            "basis": "RoF 5+; high-cyclic controlled-burst mode excluded"
+          }
+        },
+        "attack_resolution": {
+          "primary": "damage",
+          "resistance": null,
+          "geometry": null,
+          "linked_role": null,
+          "special_flags": [],
+          "raw": "sw imp"
+        }
+      }
+    },
+    {
+      "modeId": "wLTM25MiningHammerLarge",
+      "equipmentId": "eLTM25MiningHammerLarge",
+      "modelId": "lt:mining-hammer-large",
+      "sourcePages": [
+        "LT30"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "C",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "defaults": {
+          "Axe/Mace": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Flail",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -3
+            ]
+          ]
+        },
+        "directPenalty": 0,
+        "hands": 1,
+        "grips": [],
+        "fitting": null
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    }
+  ],
+  "manual": [
+    {
+      "modelId": "lt:mycenaean-shield",
+      "equipmentIds": [
+        "ei2hUTKx_vJBRCJP-"
+      ],
+      "modeIds": [
+        "wH-nDZ1EUdQv08N3h"
+      ],
+      "sourcePages": [
+        "LT113",
+        "LT114"
+      ],
+      "reason": "Guige-only cannot bash; existing GGA preserved"
+    },
+    {
+      "modelId": "lt:smithing-hammer",
+      "equipmentIds": [
+        "eqpjOokZCO2GTOjGS"
+      ],
+      "modeIds": [
+        "wCqJe4eYEWiuiI3MP"
+      ],
+      "sourcePages": [
+        "LT28",
+        "LT30"
+      ],
+      "reason": "No standalone ordinary combat profile with governing skill is published; working operation / GCS-only extrapolation preserved, no skill invented"
+    },
+    {
+      "modelId": "lt:smithing-shears",
+      "equipmentIds": [
+        "eT2gwPIlCPHhf7rFM"
+      ],
+      "modeIds": [
+        "wQxdsxj9DvlzzQiZY"
+      ],
+      "sourcePages": [
+        "LT28",
+        "LT30"
+      ],
+      "reason": "No standalone ordinary combat profile with governing skill is published; working operation / GCS-only extrapolation preserved, no skill invented"
+    },
+    {
+      "modelId": "lt:smithing-tongs",
+      "equipmentIds": [
+        "eNhVaVkLQvYVHlYMj"
+      ],
+      "modeIds": [
+        "wCAPwg7PhiO3kKqHL",
+        "wtEZ8vtOH2Auob5Cn"
+      ],
+      "sourcePages": [
+        "LT28",
+        "LT30"
+      ],
+      "reason": "No standalone ordinary combat profile with governing skill is published; working operation / GCS-only extrapolation preserved, no skill invented"
+    },
+    {
+      "modelId": "lt:metalworking-chisel",
+      "equipmentIds": [],
+      "modeIds": [],
+      "sourcePages": [
+        "LT28",
+        "LT30"
+      ],
+      "reason": "No standalone ordinary combat profile with governing skill is published; working operation / GCS-only extrapolation preserved, no skill invented"
+    },
+    {
+      "modelId": "lt:smithing-pliers",
+      "equipmentIds": [],
+      "modeIds": [],
+      "sourcePages": [
+        "LT28",
+        "LT30"
+      ],
+      "reason": "No standalone ordinary combat profile with governing skill is published; working operation / GCS-only extrapolation preserved, no skill invented"
+    }
+  ]
+}

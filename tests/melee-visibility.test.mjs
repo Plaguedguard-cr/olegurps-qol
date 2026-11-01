@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { meleeVisibilityRules } from "../scripts/tools/limited-visibility.js";
+import { blindFightingContextKey } from "../scripts/tools/blind-fighting-context.js";
 import { calculateMeleeEffectiveSkill, calculateMeleeSkillBeforeDeceptive,
   getMaximumDeceptiveAttackPenalty } from "../scripts/tools/melee-service.js";
 
@@ -86,12 +87,12 @@ test("unseen forces random location and suppresses Targeted Attack", () => {
 
 test("Blind Fighting success applies only to its slot and adds -2 for a chosen location", () => {
   const app = assistant({ visibility: { mode: "unseen" }, double: true, rapidStrike: true });
-  app._attackSlotStates[1].blindFighting = "success";
-  app._attackSlotStates[2].blindFighting = "failure";
+  app._activeAttackSlot=1;
+  app._blindFighting={context:blindFightingContextKey(app),result:'success',used:false};
   const snapshots = app._createAttackSnapshots();
   assert.deepEqual(snapshots.map(slot => slot.effectiveSkill), [9, 9, 8]);
   assert.deepEqual(snapshots.map(slot => slot.randomLocation), [true, false, true]);
-  assert.deepEqual(snapshots.map(slot => slot.blindFighting), [null, "success", "failure"]);
+  assert.deepEqual(snapshots.map(slot => slot.blindFighting), [null, "success", null]);
   assert.deepEqual(snapshots.map(slot => slot.visibility.mode), ["unseen", "unseen", "unseen"]);
   assert.equal(snapshots[1].modifierDetails.some(entry => entry.label.includes("Hit Location") && entry.value === -3), true);
   assert.equal(snapshots[1].modifierDetails.some(entry => entry.label === "Precision" && entry.value === -2), true);
@@ -122,7 +123,7 @@ test("empty blind hex executes without Token or Reach/distance access", async ()
   assert.deepEqual(targetNames, []);
 });
 
-test("Blind Fighting result is consumed in active and cached slots", () => {
+test("legacy cached Blind Fighting cannot restore a consumed attempt", () => {
   const app = assistant({ visibility: { mode: "unseen" }, double: true, rapidStrike: true });
   app._attackSlotStates[0].blindFighting = "success";
   app._attackSlotStates[1].blindFighting = "failure";
@@ -130,8 +131,8 @@ test("Blind Fighting result is consumed in active and cached slots", () => {
   app._blindFighting = "success";
   app._consumeBlindFighting();
   assert.equal(app._blindFighting, null);
-  assert.equal(app._attackSlotStates.every(slot => slot.blindFighting === null), true);
-  assert.equal(app._attackConfigurationCache.get("attack").blindFighting, null);
+  assert.equal(app._getBlindFightingAttempt(), null);
+  assert.equal(Object.hasOwn(app._cloneAttackConfiguration(app._attackConfigurationCache.get('attack')),'blindFighting'),false);
 });
 
 test("Hearing-2 uses the shared GGA callback for actor and manual values", async () => {
@@ -141,4 +142,13 @@ test("Hearing-2 uses the shared GGA callback for actor and manual values", async
   assert.equal(await checkHearingMinusTwo({ system: { hearing: 12 } }), true);
   assert.equal(await checkHearingMinusTwo({ system: {} }, 10), true);
   assert.deepEqual(calls, ["[Hearing -2]", "[Hearing10 -2]"]);
+});
+
+test('GGA preserves the selected actor skill even when a catalog profile names another skill',()=>{
+  const app=assistant();
+  app.attack.meleeProfile={skill:{name:'Axe/Mace',learned:true,source:'learned'}};
+  app.targetedAttackContext.specialtyOptions=[{value:'axe',label:'Axe/Mace'},{value:'sword',label:'Broadsword'}];
+  assert.equal(app._resolveGoverningSkill('sword'),'sword');
+  assert.equal(app._resolveGoverningSkill('axe'),'axe');
+  assert.equal(app._resolveGoverningSkill('deleted'),'');
 });

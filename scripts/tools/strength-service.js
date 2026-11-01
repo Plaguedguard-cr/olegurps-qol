@@ -70,7 +70,7 @@ export function readActorStrength(actor, adjustments=readStrengthAdjustments(act
 
 const normalizedDice=value=>String(value??'').trim().replace(/d6(?=[+-]|$)/,'d').replace(/\+0$/,'');
 /** Numeric base only. Never changes skill, aiming, Bulk, lifting, Actor.system or an inventory resource. */
-export function resolveStrengthDamage(actor, mode, {applyArmST=false}={}) {
+export function resolveStrengthDamage(actor, mode, {applyArmST=false,maximumST=null}={}) {
   const strength=readActorStrength(actor),base=strength.kinds.st;
   const result={ready:false,strength,effectiveST:null,strengthKind:'st',mode,baseFormula:null,source:'Basic Set B15-16'};
   const damageUnchanged=strength.modifiers.st===0&&strength.modifiers.striking===0&&
@@ -82,13 +82,16 @@ export function resolveStrengthDamage(actor, mode, {applyArmST=false}={}) {
   }
   const anchor=base.imported??base.baseCurrent,levels=strength.advantages.levels;
   const striking=levels.striking+strength.modifiers.striking,arm=applyArmST?levels.arm+strength.modifiers.arm:0;
-  const effectiveST=base.effective+striking+arm;
+  const uncappedST=base.effective+striking+arm;
+  const effectiveST=Number.isFinite(maximumST)&&maximumST>0?Math.min(uncappedST,maximumST):uncappedST;
   const importedPair=strength.ggaDamage;
   const anchors=[anchor,anchor+levels.striking,anchor+levels.striking+levels.arm,
     base.baseCurrent,base.baseCurrent+levels.striking,base.baseCurrent+levels.striking+levels.arm];
   const mismatch=!anchors.some(st=>['swing','thrust'].every(kind=>!importedPair[kind]||
     normalizedDice(importedPair[kind])===normalizedDice(basicStrengthDamage(st,kind))));
   if(mismatch){
+    if(maximumST&&uncappedST>maximumST)return {...result,
+      reason:'Импортированный урон не определяет точный профиль ST для применения предела B270. Проверьте исходную формулу.'};
     if(base.baseCurrent===anchor&&damageUnchanged&&/^\d+d(?:6)?(?:[+-]\d+)?$/.test(importedPair[mode]??''))
       return {...result,ready:true,strengthKind:'gga-imported-damage',baseFormula:importedPair[mode],source:'Actor.system.'+mode,
         reason:'Разновидность ST в импортированном уроне не определена; повторные бонусы не добавляются.'};
@@ -97,6 +100,7 @@ export function resolveStrengthDamage(actor, mode, {applyArmST=false}={}) {
   const formula=basicStrengthDamage(effectiveST,mode);
   if(!formula)return {...result,reason:'Нет точной проверенной строки урона для ST '+effectiveST+'. Интерполяция не применяется.'};
   return {...result,ready:true,effectiveST,strengthKind:applyArmST?'st+striking+arm':'st+striking',
+    ...(maximumST?{maximumST,uncappedST}:{}),
     applied:{st:base.effective,striking,arm,lifting:0,applyArmST},baseFormula:formula};
 }
 

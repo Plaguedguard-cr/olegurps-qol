@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 import { AttackProfileResolver, createShotSnapshot } from "./attack-profile-resolver.js";
 import { AmmoService } from "./ammo-service.js";
 import { gaussManualConditions } from './ut-gauss.js';
@@ -14,7 +15,7 @@ import { readDamageDiceAddsPolicy } from './damage-dice-adds.js';
 import {ltEarlyProfile,LT_TEN_EYED_MODES} from '../lt-early-firearms-source.js';
 import {ltArtillerySkill} from './lt-artillery.js';
 
-export const newAttackId = () => globalThis.crypto.randomUUID();
+export const newAttackId = () => generateId();
 const translationLoads = new Map();
 
 // Foundry can retain an older server-side module manifest with no languages registered.
@@ -143,7 +144,7 @@ export function withRuntimeAmmoStats(attack, actor, state) {
         ...(profile.damage.rules.ltBow?{ammunitionLTBow:profile.damage.rules.ltBow}:{}),
         ...(profile.damage.rules.ltPersonal?{ammunitionLTPersonal:profile.damage.rules.ltPersonal,attackResult:profile.attackResult??null}:{}),
         ...(profile.damage.rules.ltEarly?{ammunitionLTEarly:profile.damage.rules.ltEarly}:{}),
-        ...(profile.damage.rules.ltEarly?.kind==='ten-eyed'&&!cleanAttack.standaloneRef?{mode:ltEarlyProfile(profile.binding.confirmed.modeId).usage,label:cleanAttack.name+' — '+ltEarlyProfile(profile.binding.confirmed.modeId).usage}:{}),
+        ...(profile.damage.rules.ltEarly?.kind==='ten-eyed'&&!cleanAttack.standaloneRef?{mode:ltEarlyProfile(profile.binding.confirmed.modeId).usage,label:cleanAttack.name+' – '+ltEarlyProfile(profile.binding.confirmed.modeId).usage}:{}),
         ...(profile.damage.rules.fluid?{ammunitionFluid:{...profile.damage.rules.fluid,vortex:profile.damage.components.some(c=>c.role==="linked")}}:{}),
         ...(profile.damage.rules.heProximity?{ammunitionHEProximity:profile.damage.rules.heProximity}:{}),
         ...(profile.ammunition.book==='ut'?{ammunitionSourceEdition:'Ultra-Tech 2007'}:{}),

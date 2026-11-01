@@ -86,6 +86,7 @@ export class WeaponAssistantApp extends ApplicationV2 {
   }
 
   async close(options = {}) {
+    this._visibilityClosed = true;
     const result = await super.close(options);
     releaseViewportBounds(this);
     this.closeCallback?.(this);
@@ -144,18 +145,21 @@ export class WeaponAssistantApp extends ApplicationV2 {
     event.stopPropagation();
     const action = button.dataset.ammoAction;
     const weaponId = button.dataset.weaponId;
+    const visibilityAction = ['hide-weapon','restore-weapon','restore-all-weapons'].includes(action);
+    if (visibilityAction && this._visibilityBusy) return;
+    if (visibilityAction) this._visibilityBusy = true;
     button.disabled = true;
     try {
-      const result = await this.handleAction({ action, weaponId, magazineIndex: button.dataset.magazineIndex, app: this });
+      const result = await this.handleAction({ action, weaponId, magazineIndex: button.dataset.magazineIndex, visibilityId: button.dataset.visibilityId, app: this });
       if (result?.managerState) this.setManagerState(result.managerState);
       if (result?.message) this.setResult(result.message);
       // The disabled state is transient, not part of the rendered card model.
       if (button.isConnected) button.disabled = false;
-      if (result?.changed) await this.refreshContent({weaponIds:result.weaponIds ?? null});
+      if (result?.changed && !this._visibilityClosed) await this.refreshContent({weaponIds:result.weaponIds ?? null});
     } catch (error) {
       if (button.isConnected) button.disabled = false;
       console.error("GURPS Ammo Manager:", error);
       ui.notifications.error(moduleMessage(error));
-    }
+    } finally { if (visibilityAction) this._visibilityBusy = false; }
   }
 }

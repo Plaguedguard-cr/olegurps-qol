@@ -121,10 +121,10 @@ test('cancel, duplicate, custom recipe, full Note, changed ST, old snapshot and 
  assert.equal(ammunitionChatData(r.snapshot.profile).fields.find(x=>x.value==='x'.repeat(500)).value.length,500);
  f.actor.isOwner=false;const denied=JSON.stringify(f.actor.flags);await assert.rejects(f.tx('lt-personal-return',{attackId:'one',ammoKey:t.key,confirmed:true}),/Permission/);assert.equal(JSON.stringify(f.actor.flags),denied);
 });
-test('LT Weapon Bond accepts an explicit owner perk confirmation when discovery fails and applies only once',async()=>{
- const f=await fixture('Wt63kR2Ebkr9chL4b');assert.equal(hasWeaponBondPerk(f.actor),false);assert.equal(isWeaponBondActive(f.actor,true),false);
+test('LT Weapon Bond follows the explicit F40 manual choice without fabricating perk confirmation',async()=>{
+ const f=await fixture('Wt63kR2Ebkr9chL4b');assert.equal(hasWeaponBondPerk(f.actor),false);assert.equal(isWeaponBondActive(f.actor,true),true);assert.equal(isWeaponBondActive(f.actor,false,true),false);
  const draft=new StandaloneWeaponDraft({catalogs,type:'ranged',actor:f.actor,existing:f.definitions.get(f.record.id)});draft.weaponBond=true;draft.weaponBondChanged=true;await f.definitions.save(draft);
- const a=f.attack();assert.equal(a.weaponBondPerkConfirmed,true);assert.equal(isWeaponBondActive(f.actor,a.weaponBondSetting,a.weaponBondPerkConfirmed),true);
+ const a=f.attack();assert.notEqual(a.weaponBondPerkConfirmed,true);assert.equal(isWeaponBondActive(f.actor,a.weaponBondSetting,a.weaponBondPerkConfirmed),true);
  f.actor.system.ads={a:{name:'Localized perk',originalName:'Weapon Bond (Sling)'}};assert.equal(hasWeaponBondPerk(f.actor),true);assert.equal(isWeaponBondActive(f.actor,true,true),true);
  const other={...f.record,source:{...f.record.source,source:'UT'},settings:{weaponBond:true}};
  assert.equal(standaloneAmmoCarrier(other,{...f.current(),weaponBondPerkConfirmed:true}).weaponBondPerkConfirmed,undefined);

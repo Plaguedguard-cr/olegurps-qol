@@ -1,0 +1,2330 @@
+{
+  "basis": "LT65-70 PDF columns individually rechecked; LT56 narrative; LT78 and B272 throwing knives",
+  "actor": {
+    "ST": 12,
+    "DX": 12,
+    "learnedSkills": 16
+  },
+  "models": 45,
+  "modes": [
+    {
+      "modelId": "lt:backsword",
+      "equipmentId": "e7F8fHESvA-JfH4xM",
+      "modeId": "wXzMRSEvTL-CfNg90",
+      "sourcePages": [
+        "LT54",
+        "LT65"
+      ],
+      "damage": "thr cr",
+      "expectedDamageST12": "1d cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Brawling",
+        "DX"
+      ],
+      "hilt": true,
+      "printedFields": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "–"
+      }
+    },
+    {
+      "modelId": "lt:backsword",
+      "equipmentId": "e7F8fHESvA-JfH4xM",
+      "modeId": "whQGQCp1NY8G3zsGk",
+      "sourcePages": [
+        "LT54",
+        "LT66"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:backsword",
+      "equipmentId": "e7F8fHESvA-JfH4xM",
+      "modeId": "wrPDI-eEP9ACxbGfs",
+      "sourcePages": [
+        "LT54",
+        "LT66"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:balisong",
+      "equipmentId": "e63hCyhuUmjcmEsXd",
+      "modeId": "w79CszVvnU14n0HS2",
+      "sourcePages": [
+        "LT54",
+        "LT67"
+      ],
+      "damage": "sw-3 cut",
+      "expectedDamageST12": "1d-1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-3 cut",
+        "reach": "C, 1",
+        "parry": "-1",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:balisong",
+      "equipmentId": "e63hCyhuUmjcmEsXd",
+      "modeId": "wAIGP1vi1fHHfzIYC",
+      "sourcePages": [
+        "LT54",
+        "LT67"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:bastard-sword",
+      "equipmentId": "esigZu6fQ03Yb2mwP",
+      "modeId": "w7YvW6FWgvgetiStj",
+      "sourcePages": [
+        "LT54",
+        "LT65"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1, 2",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:bastard-sword",
+      "equipmentId": "esigZu6fQ03Yb2mwP",
+      "modeId": "wRnPDzwFZGMjBjyV9",
+      "sourcePages": [
+        "LT54",
+        "LT65"
+      ],
+      "damage": "thr+1 cr",
+      "expectedDamageST12": "1d cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 cr",
+        "reach": "2",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:bastard-sword",
+      "equipmentId": "esigZu6fQ03Yb2mwP",
+      "modeId": "w-F7LoaC6S8Qi6baI",
+      "sourcePages": [
+        "LT54",
+        "LT70"
+      ],
+      "damage": "sw+2 cut",
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+2 cut",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "10†"
+      }
+    },
+    {
+      "modelId": "lt:bastard-sword",
+      "equipmentId": "esigZu6fQ03Yb2mwP",
+      "modeId": "wCZv33FU9DE-xpZGh",
+      "sourcePages": [
+        "LT54",
+        "LT70"
+      ],
+      "damage": "thr+2 cr",
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+2 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "10†"
+      }
+    },
+    {
+      "modelId": "lt:bokken",
+      "equipmentId": "e1oB2xDuUqx4WqvmN",
+      "modeId": "wgTDZ2Y3DersjeDFK",
+      "sourcePages": [
+        "LT55",
+        "LT66"
+      ],
+      "damage": "sw+1 cr",
+      "expectedDamageST12": "1d+3 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:bokken",
+      "equipmentId": "e1oB2xDuUqx4WqvmN",
+      "modeId": "wb2wDuD6s7HoS9_bj",
+      "sourcePages": [
+        "LT55",
+        "LT66"
+      ],
+      "damage": "thr+1 cr",
+      "expectedDamageST12": "1d cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:bokken",
+      "equipmentId": "e1oB2xDuUqx4WqvmN",
+      "modeId": "wCvhT_0eM2yPePvW4",
+      "sourcePages": [
+        "LT55",
+        "LT70"
+      ],
+      "damage": "sw+2 cr",
+      "expectedDamageST12": "1d+4 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "9†"
+      }
+    },
+    {
+      "modelId": "lt:bokken",
+      "equipmentId": "e1oB2xDuUqx4WqvmN",
+      "modeId": "wvyT7GkxL9y52BVPa",
+      "sourcePages": [
+        "LT55",
+        "LT70"
+      ],
+      "damage": "thr+1 cr",
+      "expectedDamageST12": "1d cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "9†"
+      }
+    },
+    {
+      "modelId": "lt:broadsword",
+      "equipmentId": "eDbHVjWyENcCBtzP_",
+      "modeId": "wQujs7XdsAnMYkKNf",
+      "sourcePages": [
+        "LT55",
+        "LT65"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:broadsword",
+      "equipmentId": "eDbHVjWyENcCBtzP_",
+      "modeId": "wKZBx7G4Z3ye7xh8L",
+      "sourcePages": [
+        "LT55",
+        "LT65"
+      ],
+      "damage": "thr+1 cr",
+      "expectedDamageST12": "1d cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:cavalry-saber",
+      "equipmentId": "espQ32t5diJ_nTjVT",
+      "modeId": "wkwvG3CIwCN4l78XM",
+      "sourcePages": [
+        "LT56",
+        "LT66"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:cavalry-saber",
+      "equipmentId": "espQ32t5diJ_nTjVT",
+      "modeId": "wL4sLEK_4j0dU5iu6",
+      "sourcePages": [
+        "LT56",
+        "LT66"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:cutlass",
+      "equipmentId": "ewqtnwgy4C8-NVr65",
+      "modeId": "wR5bu7VYWnjvWmbvA",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "sw cut",
+      "expectedDamageST12": "1d+2 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:cutlass",
+      "equipmentId": "ewqtnwgy4C8-NVr65",
+      "modeId": "wuoxbzN9YqDC3cU5s",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:cutlass",
+      "equipmentId": "ewqtnwgy4C8-NVr65",
+      "modeId": "wLKJHZ9YmkNGWSLZ1",
+      "sourcePages": [
+        "LT56",
+        "LT65"
+      ],
+      "damage": "thr cr",
+      "expectedDamageST12": "1d cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Brawling",
+        "DX"
+      ],
+      "hilt": true,
+      "printedFields": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "–"
+      }
+    },
+    {
+      "modelId": "lt:dagger",
+      "equipmentId": "eEkk6WpqrCj5KoCNQ",
+      "modeId": "wC7kwiuwzalnQQgh-",
+      "sourcePages": [
+        "LT56",
+        "LT67"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:dao",
+      "equipmentId": "ejv_7yhIWr-w7FdOC",
+      "modeId": "wyxeu4qONtzPB_UaL",
+      "sourcePages": [
+        "LT56",
+        "LT66"
+      ],
+      "damage": "sw+2 cut",
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:dao",
+      "equipmentId": "ejv_7yhIWr-w7FdOC",
+      "modeId": "wbTCe3V11yvKYbVMy",
+      "sourcePages": [
+        "LT56",
+        "LT66"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:dress-smallsword",
+      "equipmentId": "ekfM7nhB56uunM59T",
+      "modeId": "w07JOdWjhIVwOzwFo",
+      "sourcePages": [
+        "LT62",
+        "LT69"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Smallsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C, 1",
+        "parry": "0F",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:dusack",
+      "equipmentId": "em06hmNq249FOlUp7",
+      "modeId": "w94xgTw21awfpL7pO",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "sw cr",
+      "expectedDamageST12": "1d+2 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:dusack",
+      "equipmentId": "em06hmNq249FOlUp7",
+      "modeId": "wh20nqKhTCa-2UNRh",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "thr cr",
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:edged-rapier",
+      "equipmentId": "e4g-va5KWviMGyE6F",
+      "modeId": "w56MDBXwOak_1QxaW",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "sw cut",
+      "expectedDamageST12": "1d+2 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Rapier",
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw cut",
+        "reach": "1, 2",
+        "parry": "0F",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:edged-rapier",
+      "equipmentId": "e4g-va5KWviMGyE6F",
+      "modeId": "w7tiFqttK_IsnH_ox",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Rapier",
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1, 2",
+        "parry": "0F",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:estoc",
+      "equipmentId": "eVsq-INlRIDzirMJa",
+      "modeId": "w3KTjelathsARN_pu",
+      "sourcePages": [
+        "LT56",
+        "LT66"
+      ],
+      "damage": "thr+2 imp",
+      "expectedDamageST12": "1d+1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+2 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:estoc",
+      "equipmentId": "eVsq-INlRIDzirMJa",
+      "modeId": "wxoWXwnUTp-KIULNh",
+      "sourcePages": [
+        "LT56",
+        "LT66"
+      ],
+      "damage": "sw+1 cr",
+      "expectedDamageST12": "1d+3 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:falchion",
+      "equipmentId": "eRv_rs5osGxWCFftz",
+      "modeId": "wNHtL77GGOTUrERFY",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:falchion",
+      "equipmentId": "eRv_rs5osGxWCFftz",
+      "modeId": "wACR8Gph0MCxX8_l2",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "thr-2 imp",
+      "expectedDamageST12": "1d-3 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-2 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:greatsword",
+      "equipmentId": "eaRul78h0fhq10cXt",
+      "modeId": "wnDOACzBDQIrJ9e7w",
+      "sourcePages": [
+        "LT56",
+        "LT70"
+      ],
+      "damage": "sw+3 cut",
+      "expectedDamageST12": "1d+5 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+3 cut",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "12†"
+      }
+    },
+    {
+      "modelId": "lt:greatsword",
+      "equipmentId": "eaRul78h0fhq10cXt",
+      "modeId": "w65xL2MSjB7I5k9qy",
+      "sourcePages": [
+        "LT56",
+        "LT70"
+      ],
+      "damage": "thr+2 cr",
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+2 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "12†"
+      }
+    },
+    {
+      "modelId": "lt:jian",
+      "equipmentId": "evVFy7uca9O8D1KNp",
+      "modeId": "wbSb-CF4yYBqCG0s9",
+      "sourcePages": [
+        "LT57",
+        "LT66"
+      ],
+      "damage": "sw cut",
+      "expectedDamageST12": "1d+2 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword",
+        "Rapier"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:jian",
+      "equipmentId": "evVFy7uca9O8D1KNp",
+      "modeId": "wu4pvgk8neNTGwwdU",
+      "sourcePages": [
+        "LT57",
+        "LT66"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword",
+        "Rapier"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:katana",
+      "equipmentId": "eSH8jtUi7O-Eztex1",
+      "modeId": "w3aIh6qOStiRQOkOQ",
+      "sourcePages": [
+        "LT57",
+        "LT66"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:katana",
+      "equipmentId": "eSH8jtUi7O-Eztex1",
+      "modeId": "wikkqnutJTGtZmXiP",
+      "sourcePages": [
+        "LT57",
+        "LT66"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:katana",
+      "equipmentId": "eSH8jtUi7O-Eztex1",
+      "modeId": "w1MJqOQtymEUbMPpc",
+      "sourcePages": [
+        "LT57",
+        "LT70"
+      ],
+      "damage": "sw+2 cut",
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+2 cut",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "10†"
+      }
+    },
+    {
+      "modelId": "lt:katana",
+      "equipmentId": "eSH8jtUi7O-Eztex1",
+      "modeId": "wFp0g_8TGGs4OEJIX",
+      "sourcePages": [
+        "LT57",
+        "LT70"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10†"
+      }
+    },
+    {
+      "modelId": "lt:katar",
+      "equipmentId": "eR5Uz8oeA0ZD2Y6_O",
+      "modeId": "wGi1SKSvh2Fd0lFFF",
+      "sourcePages": [
+        "LT57",
+        "LT67"
+      ],
+      "damage": "sw-3 cut",
+      "expectedDamageST12": "1d-1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-3 cut",
+        "reach": "C, 1",
+        "parry": "-1",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:katar",
+      "equipmentId": "eR5Uz8oeA0ZD2Y6_O",
+      "modeId": "wiI30yAAM_X052yQI",
+      "sourcePages": [
+        "LT57",
+        "LT67"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:khopesh",
+      "equipmentId": "eWVF0CbipL6RQ2sB0",
+      "modeId": "wKPtQScfJKNLG7P4d",
+      "sourcePages": [
+        "LT57",
+        "LT65"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Axe/Mace",
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:khopesh",
+      "equipmentId": "eWVF0CbipL6RQ2sB0",
+      "modeId": "wDarLLleugEGfrLUQ",
+      "sourcePages": [
+        "LT57",
+        "LT65"
+      ],
+      "damage": "thr-2 cut",
+      "expectedDamageST12": "1d-3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Axe/Mace",
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:kukri",
+      "equipmentId": "e0tmeOQw5QoeJJL-Y",
+      "modeId": "wQkwvCfloNAgfqiy3",
+      "sourcePages": [
+        "LT58",
+        "LT67"
+      ],
+      "damage": "sw-1 cut",
+      "expectedDamageST12": "1d+1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-1 cut",
+        "reach": "C, 1",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:kukri",
+      "equipmentId": "e0tmeOQw5QoeJJL-Y",
+      "modeId": "wG4kCWRXQyqb7CLDJ",
+      "sourcePages": [
+        "LT58",
+        "LT67"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:large-falchion",
+      "equipmentId": "eK17o5feHeURAy5d9",
+      "modeId": "wrvPlLfqn7-lKSkM7",
+      "sourcePages": [
+        "LT56",
+        "LT65"
+      ],
+      "damage": "sw+2 cut",
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:large-falchion",
+      "equipmentId": "eK17o5feHeURAy5d9",
+      "modeId": "wOn9TKw_JhbnLHpsQ",
+      "sourcePages": [
+        "LT56",
+        "LT65"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:large-katar",
+      "equipmentId": "eBvYYD-dieC5iol_L",
+      "modeId": "wPVlKQm4cwP1iQSBW",
+      "sourcePages": [
+        "LT57",
+        "LT69"
+      ],
+      "damage": "sw-1 cut",
+      "expectedDamageST12": "1d+1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:large-katar",
+      "equipmentId": "eBvYYD-dieC5iol_L",
+      "modeId": "wDvNK7Xe3WVA4ITfW",
+      "sourcePages": [
+        "LT57",
+        "LT69"
+      ],
+      "damage": "thr+2 imp",
+      "expectedDamageST12": "1d+1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+2 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:large-knife",
+      "equipmentId": "e4Cqh4R-bWl7CS7dQ",
+      "modeId": "wX7eODgqipAOT5M25",
+      "sourcePages": [
+        "LT58",
+        "LT67"
+      ],
+      "damage": "sw-2 cut",
+      "expectedDamageST12": "1d cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-2 cut",
+        "reach": "C, 1",
+        "parry": "-1",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:large-knife",
+      "equipmentId": "e4Cqh4R-bWl7CS7dQ",
+      "modeId": "wHh4b6lYKhc7xjiCp",
+      "sourcePages": [
+        "LT58",
+        "LT67"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:large-throwing-knife",
+      "equipmentId": "eE8_Dy15zRaLiEs45",
+      "modeId": "w3avhLUUsfJFo2rD_",
+      "sourcePages": [
+        "LT75",
+        "LT78",
+        "B272"
+      ],
+      "damage": "sw-2 cut",
+      "expectedDamageST12": "1d cut",
+      "expectedLevel": 14,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-2 cut",
+        "reach": "C, 1",
+        "parry": "-2",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:large-throwing-knife",
+      "equipmentId": "eE8_Dy15zRaLiEs45",
+      "modeId": "wAknh3bLiN-z2FcXJ",
+      "sourcePages": [
+        "LT75",
+        "LT78",
+        "B272"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 14,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-2",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:late-katana",
+      "equipmentId": "ezTmezdXy1DpJpNW1",
+      "modeId": "waTQcNnSbyxVLJTLF",
+      "sourcePages": [
+        "LT57",
+        "LT66"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:late-katana",
+      "equipmentId": "ezTmezdXy1DpJpNW1",
+      "modeId": "wsK7j6dJBohe4n8sa",
+      "sourcePages": [
+        "LT57",
+        "LT66"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:late-katana",
+      "equipmentId": "ezTmezdXy1DpJpNW1",
+      "modeId": "w6rmo17icCDNB8pwN",
+      "sourcePages": [
+        "LT57",
+        "LT70"
+      ],
+      "damage": "sw+2 cut",
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "9†"
+      }
+    },
+    {
+      "modelId": "lt:late-katana",
+      "equipmentId": "ezTmezdXy1DpJpNW1",
+      "modeId": "wRCDB3TogGahkj8hi",
+      "sourcePages": [
+        "LT57",
+        "LT70"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "9†"
+      }
+    },
+    {
+      "modelId": "lt:light-edged-rapier",
+      "equipmentId": "ewpF8TAvUV_1xpjXO",
+      "modeId": "wEOI8tZV3TfAuLnYL",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "sw-1 cut",
+      "expectedDamageST12": "1d+1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Rapier"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-1 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:light-edged-rapier",
+      "equipmentId": "ewpF8TAvUV_1xpjXO",
+      "modeId": "w7Od9gGJ58vOv-oC7",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Rapier"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:light-rapier",
+      "equipmentId": "e9lnfC0mIL30gEZH3",
+      "modeId": "wbUrBUfm6vAN5BS8d",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Rapier"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:long-knife",
+      "equipmentId": "e2nWZSbk5ADtbp5FG",
+      "modeId": "wa8kc-6P6aJ9jfnmS",
+      "sourcePages": [
+        "LT56",
+        "LT67"
+      ],
+      "damage": "sw-1 cut",
+      "expectedDamageST12": "1d+1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-1 cut",
+        "reach": "C, 1",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:long-knife",
+      "equipmentId": "e2nWZSbk5ADtbp5FG",
+      "modeId": "wE0lzQQVszFLQXwve",
+      "sourcePages": [
+        "LT56",
+        "LT67"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife",
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C, 1",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:long-knife",
+      "equipmentId": "e2nWZSbk5ADtbp5FG",
+      "modeId": "wfDUwTsioV9N8dJiJ",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "sw-1 cut",
+      "expectedDamageST12": "1d+1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:long-knife",
+      "equipmentId": "e2nWZSbk5ADtbp5FG",
+      "modeId": "wiA7o63kK_43igjgB",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword",
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C, 1",
+        "parry": "0",
+        "st": "7"
+      }
+    },
+    {
+      "modelId": "lt:longsword",
+      "equipmentId": "e140WNiazx7pJ3WTT",
+      "modeId": "w0djXNfWD-9ebEkWu",
+      "sourcePages": [
+        "LT58",
+        "LT66"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:longsword",
+      "equipmentId": "e140WNiazx7pJ3WTT",
+      "modeId": "wkePG9X2bhubKRddv",
+      "sourcePages": [
+        "LT58",
+        "LT66"
+      ],
+      "damage": "thr+2 imp",
+      "expectedDamageST12": "1d+1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+2 imp",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:longsword",
+      "equipmentId": "e140WNiazx7pJ3WTT",
+      "modeId": "wGApQlZiPGbslK8yU",
+      "sourcePages": [
+        "LT58",
+        "LT70"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "9†"
+      }
+    },
+    {
+      "modelId": "lt:longsword",
+      "equipmentId": "e140WNiazx7pJ3WTT",
+      "modeId": "wSyyMVFZwpR_0-Gfi",
+      "sourcePages": [
+        "LT58",
+        "LT70"
+      ],
+      "damage": "thr+3 imp",
+      "expectedDamageST12": "1d+2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+3 imp",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "9†"
+      }
+    },
+    {
+      "modelId": "lt:main-gauche",
+      "equipmentId": "ectaYaLbAkCo8RdZ-",
+      "modeId": "w4u4u0o25at0Ju-Am",
+      "sourcePages": [
+        "LT59",
+        "LT67"
+      ],
+      "damage": "sw-3 cut",
+      "expectedDamageST12": "1d-1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Main-Gauche",
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-3 cut",
+        "reach": "C, 1",
+        "parry": "0F",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:main-gauche",
+      "equipmentId": "ectaYaLbAkCo8RdZ-",
+      "modeId": "wUbyroNVVs8tKm2_I",
+      "sourcePages": [
+        "LT59",
+        "LT67"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Main-Gauche"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C, 1",
+        "parry": "0F",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:main-gauche",
+      "equipmentId": "ectaYaLbAkCo8RdZ-",
+      "modeId": "wEmB25gfSXv7e3k95",
+      "sourcePages": [
+        "LT59",
+        "LT67"
+      ],
+      "damage": "sw-3 cut",
+      "expectedDamageST12": "1d-1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife",
+        "Main-Gauche"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-3 cut",
+        "reach": "C, 1",
+        "parry": "0",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:main-gauche",
+      "equipmentId": "ectaYaLbAkCo8RdZ-",
+      "modeId": "wumg2JAvAPBaRDqSC",
+      "sourcePages": [
+        "LT59",
+        "LT67"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "0",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:pata",
+      "equipmentId": "eVFFo97xJS4l_aVcY",
+      "modeId": "wQTzxzVCkGBlSZwU2",
+      "sourcePages": [
+        "LT60",
+        "LT65"
+      ],
+      "damage": "sw cut",
+      "expectedDamageST12": "1d+2 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:pata",
+      "equipmentId": "eVFFo97xJS4l_aVcY",
+      "modeId": "w_k2EXcrqJeAiw25K",
+      "sourcePages": [
+        "LT60",
+        "LT65"
+      ],
+      "damage": "thr+3 imp",
+      "expectedDamageST12": "1d+2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:rapier",
+      "equipmentId": "egIzYm2hrjhoVpPTN",
+      "modeId": "wpruFvHXqsYCIZer7",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Rapier"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1, 2",
+        "parry": "0F",
+        "st": "9"
+      }
+    },
+    {
+      "modelId": "lt:rondel-dagger",
+      "equipmentId": "exp433xr3rkUj9Wuk",
+      "modeId": "wl_T_sGUxAQKcfS2Q",
+      "sourcePages": [
+        "LT56",
+        "LT67"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife",
+        "Main-Gauche"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:rondel-dagger",
+      "equipmentId": "exp433xr3rkUj9Wuk",
+      "modeId": "wy8JQukvdXJpwTeXE",
+      "sourcePages": [
+        "LT56",
+        "LT67"
+      ],
+      "damage": "thr imp",
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Main-Gauche",
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "0F",
+        "st": "6"
+      }
+    },
+    {
+      "modelId": "lt:saber",
+      "equipmentId": "e2uQrabbceGyYIDmM",
+      "modeId": "wIlbejwC6UmIndsah",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "sw-1 cut",
+      "expectedDamageST12": "1d+1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Saber"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-1 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:saber",
+      "equipmentId": "e2uQrabbceGyYIDmM",
+      "modeId": "wVTmfof1YAbmwCzMQ",
+      "sourcePages": [
+        "LT61",
+        "LT68"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Saber"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:shortsword",
+      "equipmentId": "ez4ZjutUoKa4ORnkj",
+      "modeId": "w5_EGLvZdGVziKIeD",
+      "sourcePages": [
+        "LT61",
+        "LT69"
+      ],
+      "damage": "sw cut",
+      "expectedDamageST12": "1d+2 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:shortsword",
+      "equipmentId": "ez4ZjutUoKa4ORnkj",
+      "modeId": "w9VqY3etaLshEIIy0",
+      "sourcePages": [
+        "LT61",
+        "LT69"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:shotel",
+      "equipmentId": "eFwe9c7n36mOngrR1",
+      "modeId": "wZNMkUX7_Izf1ow99",
+      "sourcePages": [
+        "LT62",
+        "LT65"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 14,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:shotel",
+      "equipmentId": "eFwe9c7n36mOngrR1",
+      "modeId": "w1nWTdlKSBUvMOLxB",
+      "sourcePages": [
+        "LT62",
+        "LT65"
+      ],
+      "damage": "sw-1 cut",
+      "expectedDamageST12": "1d+1 cut",
+      "expectedLevel": 14,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-1 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:small-falchion",
+      "equipmentId": "edQFaHvX_nrGL4ra6",
+      "modeId": "wm7mOrXQJ4zu2TBSP",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "sw cut",
+      "expectedDamageST12": "1d+2 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:small-falchion",
+      "equipmentId": "edQFaHvX_nrGL4ra6",
+      "modeId": "weACtf6r_LsIgLqXP",
+      "sourcePages": [
+        "LT56",
+        "LT69"
+      ],
+      "damage": "thr-2 imp",
+      "expectedDamageST12": "1d-3 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-2 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "8"
+      }
+    },
+    {
+      "modelId": "lt:small-knife",
+      "equipmentId": "ee1kRIRXHzUdofj74",
+      "modeId": "w15rp5vyxzBzsSWwK",
+      "sourcePages": [
+        "LT58",
+        "LT67"
+      ],
+      "damage": "sw-3 cut",
+      "expectedDamageST12": "1d-1 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-3 cut",
+        "reach": "C, 1",
+        "parry": "-1",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:small-knife",
+      "equipmentId": "ee1kRIRXHzUdofj74",
+      "modeId": "wHGmPC_2ji_0bPaq8",
+      "sourcePages": [
+        "LT58",
+        "LT67"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:small-throwing-knife",
+      "equipmentId": "emViZt-5rQnxGAIVU",
+      "modeId": "wEFexZ_P6Y7B0Yhyn",
+      "sourcePages": [
+        "LT75",
+        "LT78",
+        "B272"
+      ],
+      "damage": "sw-3 cut",
+      "expectedDamageST12": "1d-1 cut",
+      "expectedLevel": 14,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw-3 cut",
+        "reach": "C, 1",
+        "parry": "-2",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:small-throwing-knife",
+      "equipmentId": "emViZt-5rQnxGAIVU",
+      "modeId": "wbJlLT2OmOHM-e7m4",
+      "sourcePages": [
+        "LT75",
+        "LT78",
+        "B272"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 14,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-2",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:smallsword",
+      "equipmentId": "eJdmG2XPlfFC_C8B9",
+      "modeId": "wW5SH263ihTw2_Cd4",
+      "sourcePages": [
+        "LT61",
+        "LT69"
+      ],
+      "damage": "thr+1 imp",
+      "expectedDamageST12": "1d imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Smallsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0F",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:stiletto",
+      "equipmentId": "ehWLoxON1p8yydZwT",
+      "modeId": "wSX8z_LtxMkmixQBc",
+      "sourcePages": [
+        "LT62",
+        "LT67"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Knife",
+        "Main-Gauche"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:stiletto",
+      "equipmentId": "ehWLoxON1p8yydZwT",
+      "modeId": "wGcH0SjyyoDVdadue",
+      "sourcePages": [
+        "LT62",
+        "LT67"
+      ],
+      "damage": "thr-1 imp",
+      "expectedDamageST12": "1d-2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Main-Gauche",
+        "Knife"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "0F",
+        "st": "5"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-bastard-sword",
+      "equipmentId": "eZ5VeRUQ_ElV7L2cl",
+      "modeId": "wZw_vLo8ik2bvxx4K",
+      "sourcePages": [
+        "LT54",
+        "LT66"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1, 2",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-bastard-sword",
+      "equipmentId": "eZ5VeRUQ_ElV7L2cl",
+      "modeId": "w83g2u0G5r1-hRrGh",
+      "sourcePages": [
+        "LT54",
+        "LT66"
+      ],
+      "damage": "thr+2 imp",
+      "expectedDamageST12": "1d+1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+2 imp",
+        "reach": "2",
+        "parry": "0U",
+        "st": "11"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-bastard-sword",
+      "equipmentId": "eZ5VeRUQ_ElV7L2cl",
+      "modeId": "wK3XKb55KmQG9dKAq",
+      "sourcePages": [
+        "LT54",
+        "LT70"
+      ],
+      "damage": "sw+2 cut",
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+2 cut",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "10†"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-bastard-sword",
+      "equipmentId": "eZ5VeRUQ_ElV7L2cl",
+      "modeId": "wksr-kvhYKVTQ_2zT",
+      "sourcePages": [
+        "LT54",
+        "LT70"
+      ],
+      "damage": "thr+3 imp",
+      "expectedDamageST12": "1d+2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+3 imp",
+        "reach": "2",
+        "parry": "0",
+        "st": "10†"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-broadsword",
+      "equipmentId": "eTZgf42cuj04t5Sej",
+      "modeId": "wFPg5nfFuttYPOx2m",
+      "sourcePages": [
+        "LT55",
+        "LT65"
+      ],
+      "damage": "sw+1 cut",
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-broadsword",
+      "equipmentId": "eTZgf42cuj04t5Sej",
+      "modeId": "wYOBxn9NJwkZPg_oW",
+      "sourcePages": [
+        "LT55",
+        "LT65"
+      ],
+      "damage": "thr+2 imp",
+      "expectedDamageST12": "1d+1 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+2 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-greatsword",
+      "equipmentId": "eKOnhuOmt2tBEfyeK",
+      "modeId": "wtC9X9dh9HGS3rEFu",
+      "sourcePages": [
+        "LT56",
+        "LT70"
+      ],
+      "damage": "sw+3 cut",
+      "expectedDamageST12": "1d+5 cut",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "sw+3 cut",
+        "reach": "1, 2",
+        "parry": "0",
+        "st": "12†"
+      }
+    },
+    {
+      "modelId": "lt:thrusting-greatsword",
+      "equipmentId": "eKOnhuOmt2tBEfyeK",
+      "modeId": "wwqpD5QdjCCHn-McW",
+      "sourcePages": [
+        "LT56",
+        "LT70"
+      ],
+      "damage": "thr+3 imp",
+      "expectedDamageST12": "1d+2 imp",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Two-Handed Sword"
+      ],
+      "hilt": false,
+      "printedFields": {
+        "damage": "thr+3 imp",
+        "reach": "2",
+        "parry": "0",
+        "st": "12†"
+      }
+    },
+    {
+      "modelId": "lt:haladie",
+      "equipmentId": "eLTM21Haladie",
+      "modeId": "wLTM21HaladieSwing",
+      "damage": "sw-2 cut",
+      "sourcePages": [
+        "LT56",
+        "LT67"
+      ],
+      "expectedDamageST12": "1d cut",
+      "expectedLevel": 15,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false
+    },
+    {
+      "modelId": "lt:haladie",
+      "equipmentId": "eLTM21Haladie",
+      "modeId": "wLTM21HaladieThrust",
+      "damage": "thr imp",
+      "sourcePages": [
+        "LT56",
+        "LT67"
+      ],
+      "expectedDamageST12": "1d-1 imp",
+      "expectedLevel": 15,
+      "primarySkills": [
+        "Knife"
+      ],
+      "hilt": false
+    },
+    {
+      "modelId": "lt:falchion",
+      "equipmentId": "eRv_rs5osGxWCFftz",
+      "modeId": "wLTM21FalchionBlunt",
+      "damage": "thr-2 cr",
+      "sourcePages": [
+        "LT56"
+      ],
+      "expectedDamageST12": "1d-3 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false
+    },
+    {
+      "modelId": "lt:large-falchion",
+      "equipmentId": "eK17o5feHeURAy5d9",
+      "modeId": "wLTM21LargeFalchionBlunt",
+      "damage": "thr-1 cr",
+      "sourcePages": [
+        "LT56"
+      ],
+      "expectedDamageST12": "1d-2 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Broadsword"
+      ],
+      "hilt": false
+    },
+    {
+      "modelId": "lt:small-falchion",
+      "equipmentId": "edQFaHvX_nrGL4ra6",
+      "modeId": "wLTM21SmallFalchionBlunt",
+      "damage": "thr-2 cr",
+      "sourcePages": [
+        "LT56"
+      ],
+      "expectedDamageST12": "1d-3 cr",
+      "expectedLevel": 16,
+      "primarySkills": [
+        "Shortsword"
+      ],
+      "hilt": false
+    }
+  ]
+}

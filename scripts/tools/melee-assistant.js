@@ -10,6 +10,7 @@ import {
 import { TargetingService } from "./targeting-service.js";
 import { createMeleeTargetedAttackContext } from "./targeted-attack-service.js";
 import { openStandaloneWeaponLibrary } from "./standalone-weapon-configuration.js";
+import {WeaponListVisibility, meleeVisibilityEntries} from './weapon-list-visibility.js';
 
 const OPEN_MELEE_ASSISTANTS = new Map();
 const LAST_MELEE_BODYPLANS = new Map();
@@ -41,6 +42,7 @@ export async function openMeleeAssistant() {
   const actor = token.actor;
   if (!actor) return ui.notifications.error("У выбранного токена нет связанного персонажа.");
   if (!actor.isOwner) return ui.notifications.error("У вас нет прав на использование атак персонажа «" + actor.name + "».");
+  await new WeaponListVisibility(actor).verifyLegacyStamp();
 
   const windowKey = String(globalThis.canvas?.scene?.id ?? "scene") + ":" + token.id;
   const existing = OPEN_MELEE_ASSISTANTS.get(windowKey);
@@ -48,22 +50,22 @@ export async function openMeleeAssistant() {
     existing.sourceAttacks = collectMeleeAttacks(actor);
     const state = await existing.stateService.load();
     if (state.selectedAttackKey) await existing._selectAttack(state.selectedAttackKey);
-    await existing.render({ force: true });
+    await existing._refreshVisibleWeapons();
     existing.bringToTop?.();
     return existing;
   }
 
   const sourceAttacks = collectMeleeAttacks(actor);
-  if (!sourceAttacks.length) return openStandaloneWeaponLibrary({ actor, type: "melee" });
 
   const stateService = new MeleeAssistantStateService(actor);
   let state = await stateService.load();
-  const sourceAttack = sourceAttacks.find(entry => entry.key === state.selectedAttackKey) ?? sourceAttacks[0];
-  if (state.selectedAttackKey !== sourceAttack.key) {
+  const visible = new WeaponListVisibility(actor).visible(meleeVisibilityEntries(actor, sourceAttacks)).map(e => e.source);
+  const sourceAttack = visible.find(entry => entry.key === state.selectedAttackKey) ?? visible[0] ?? sourceAttacks[0] ?? {key:'',name:'',level:0,damage:'',data:{}};
+  if (visible.length && state.selectedAttackKey !== sourceAttack.key) {
     setSelectedMeleeAttack(state, sourceAttack);
     state = await stateService.save(state);
   }
-  const attack = applyMeleeAttackOverride(sourceAttack, state);
+  const attack = applyMeleeAttackOverride(sourceAttack, state, actor);
   const targetedAttackContext = createMeleeTargetedAttackContext({ actor, attack });
   let savedGoverningSkill = getMeleeAttackSettings(state, sourceAttack).governingSkill ?? "";
   if (savedGoverningSkill && !targetedAttackContext.specialtyOptions.some(option => option.value === savedGoverningSkill)) {

@@ -12,9 +12,9 @@ export function normalizeLTQuality(value={}, {missile=false,balanceAllowed=true}
 export function validLTQuality(value,options={}){try{normalizeLTQuality(value,options);return true;}catch{return false;}}
 export function ltQualityHTML(value, prefix, escape, {missile=false,balanceAllowed=true}={}) {
  const v=value??{},select=(key,label,options)=>`<label style="display:flex;flex-direction:column;gap:4px">${label}<select name="${prefix}-${key}" data-lt-quality="${key}">${options.map(([id,label])=>`<option value="${id}" ${(v[key]??'normal')===id?'selected':''}>${escape(label)}</option>`).join('')}</select></label>`;
- return select('quality','Качество — LT59',[['normal','Обычное'],['cheap','Дешёвое'],['fine','Хорошее'],...missile?[]:[['very-fine','Отличное'],['silver','Цельное серебро']]])+
- (balanceAllowed?select('balance','Баланс — LT59',[['normal','Обычный'],['balanced','Сбалансированное'],['poor','Плохо сбалансированное']]):'')+
- `<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" name="${prefix}-silverCoated" data-lt-quality="silverCoated" ${v.silverCoated?'checked':''}>Серебряное покрытие; действие на цель — вручную</label>`+
+ return select('quality','Качество – LT59',[['normal','Обычное'],['cheap','Дешёвое'],['fine','Хорошее'],...missile?[]:[['very-fine','Отличное'],['silver','Цельное серебро']]])+
+ (balanceAllowed?select('balance','Баланс – LT59',[['normal','Обычный'],['balanced','Сбалансированное'],['poor','Плохо сбалансированное']]):'')+
+ `<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" name="${prefix}-silverCoated" data-lt-quality="silverCoated" ${v.silverCoated?'checked':''}>Серебряное покрытие; действие на цель – вручную</label>`+
  (missile?['reducedAcc','cheapMalfunctions'].map((key,i)=>`<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" name="${prefix}-${key}" data-lt-quality="${key}" ${v[key]?'checked':''}>${['Опционально LT75: Acc /2 вниз','Опционально LT75: отказы дешёвого лука / пращи / арбалета'][i]}</label>`).join(''):'');
 }
 export function captureLTQuality(root,prefix){

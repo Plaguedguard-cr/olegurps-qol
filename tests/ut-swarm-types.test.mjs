@@ -26,7 +26,7 @@ test(`${caliber}mm Swarm / ${swarm.name}: physical lot, optional Note, manual pr
   assert.equal(profile.ammunition.recipe.parameters.swarmType,swarm.id);assert.equal(profile.damage.rules.payload.swarmType,swarm.id);
   const data=ammunitionChatData(profile),html=ammunitionChatHTML(profile,escapePayload);
   assert.ok(data.lines.length<=3);assert.ok(data.lines.join(' ').length<400);assert.match(html,new RegExp(swarm.name));
-  assert.match(html,/Воздействие — вручную/);assert.match(html,new RegExp(swarm.source));assert.match(html,/UT156/);
+  assert.match(html,/Воздействие – вручную/);assert.match(html,new RegExp(swarm.source));assert.match(html,/UT156/);
   assert.doesNotMatch(html,/B461|Swarm Controller|батаре|реализ|<script|<details[^>]*\bopen/);
   if(parameters.note)assert.match(html,new RegExp(escapePayload(parameters.note)));
   else assert.ok(!data.fields.some(f=>f.label==='Note'));

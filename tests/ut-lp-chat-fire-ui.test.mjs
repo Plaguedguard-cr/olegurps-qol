@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {fixture,load,catalogs,escapePayload} from './helpers/ut-ammunition-fixture.mjs';
+import {fixture,load,prepareArbalest,catalogs,escapePayload} from './helpers/ut-ammunition-fixture.mjs';
 import {executePreparedGgaRoll} from '../scripts/tools/prepared-gga-roll.js';
 import {createShotSnapshot} from '../scripts/tools/attack-profile-resolver.js';
 import {resolveCombatCalculation} from '../scripts/tools/combat-calculation-engine.js';
@@ -16,7 +16,14 @@ const amr='WlstnlxI_Mm-2UJf0',magnum='WIAo1otMCstnbi4Dv',main='WtM51JNSpOUIy3Eo1
 const ht=catalogs.getCatalog('weapons').equipment.find(e=>e.source==='HT'&&e.name==='AI AW, 7.62x51mm').modes.find(m=>m.combat_type==='ranged').weapon_mode_id;
 const lt='W4gnbkfxzHAYre3kO';
 const configure=async(fx,variant)=>{const s=fx.state();s.weapons[0].executionRequest={variant,modeId:fx.carrier.standaloneModeId};await fx.service.saveState(s);};
-const ready=async(id=amr,variant='ordinary')=>{const fx=await fixture(id);if(variant!=='ordinary')await configure(fx,variant);await load(fx,fx.candidates().find(t=>!t.recipe&&!t.unavailable));return fx;};
+const ready=async(id=amr,variant='ordinary')=>{
+  const fx=await fixture(id);if(variant!=='ordinary')await configure(fx,variant);
+  const ammo=id===lt?await prepareArbalest(fx):fx.candidates().find(t=>!t.recipe&&!t.unavailable);
+  await load(fx,ammo);
+  // Loading clears mechanism readiness; the owner explicitly readies it next.
+  if(id===lt)await fx.transaction('lt-early-configure',{settings:{...fx.weapon().ltEarly.settings,ignitionReady:true}});
+  return fx;
+};
 function appFor(fx){const app=Object.create(FirePreparationApp.prototype);Object.assign(app,{actor:fx.actor,weapon:fx.weapon(),attack:withRuntimeAmmoStats(fx.attack(),fx.actor),mode:'weapon',fireState:{}});return app;}
 function runtime(actor){const messages=[];let native;
   return {messages,get native(){return native;},value:{game:{user:game.user,settings:{get:()=>null}},canvas:{tokens:{placeables:[]}},
@@ -61,7 +68,7 @@ test('Weapon Bond is still a single +1 through the shared Fire Control calculati
 for(const [variant,damage,range,suffix]of [['ordinary','15d pi+','2,000/9,000',''],['etc','6dx4 pi+','3000/13500',' - ETC'],['lp','6dx3 pi+','2600/11700',' - LP']])
 test(variant+' title owns caliber/execution while stats keep exact Damage and Range',async()=>{
   const fx=await ready(amr,variant);if(variant==='lp')await fx.service.setLPFireMode(fx.carrier.id,'boosted');const app=appFor(fx),name=fx.weapon().name,before=JSON.stringify(fx.state());
-  const title='Anti-Materiel Rifle, 15mmCL'+suffix;for(let i=0;i<4;i++){assert.equal(app._getAttackTitle(),title);assert.equal(app.title,'Огонь — '+title);app.attack=withRuntimeAmmoStats(app.attack,fx.actor);}
+  const title='Anti-Materiel Rifle, 15mmCL'+suffix;for(let i=0;i<4;i++){assert.equal(app._getAttackTitle(),title);assert.equal(app.title,'Огонь – '+title);app.attack=withRuntimeAmmoStats(app.attack,fx.actor);}
   const stats=app._getAttackStatsText('3');assert.ok(stats.includes(damage));assert.ok(stats.includes('Range '+range));assert.match(stats,/магазин/);assert.match(stats,/RoF 3/);assert.match(stats,/Acc 6/);assert.match(stats,/Прицел 3/);assert.match(stats,/Bulk -6/);assert.match(stats,/Rcl 4/);
   assert.doesNotMatch(stats,/15mmCL| - ETC| - LP/);assert.equal(JSON.stringify(fx.state()),before);assert.equal(fx.weapon().name,name);
 });

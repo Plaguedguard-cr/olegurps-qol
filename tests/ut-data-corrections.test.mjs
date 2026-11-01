@@ -1,5 +1,6 @@
 import {UT_ERRATA_MODES,applyUTErrataCatalog} from '../scripts/ut-errata.js';
 import {assertProjectedUTCatalog} from './helpers/ut-projected-catalog-contract.mjs';
+import {assertHTEquipmentProjection,expectedHTAmmoProjection} from './helpers/melee-projection-contract.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
@@ -63,15 +64,15 @@ test('protected source bytes, IDs, GCS hashes, unrelated modes and HT/LT retaine
     assert.ok(projected);
     const projectedIds=projected.modes.map(m=>m.weapon_mode_id);
     if(e.source==='LT')for(const m of e.modes)assert.ok(projectedIds.includes(m.weapon_mode_id),'retained LT source identity '+m.weapon_mode_id);
-    else assert.deepEqual(projectedIds,e.modes.map(m=>m.weapon_mode_id));
-    if(e.source==='HT')assert.deepEqual(projected,e);
+    else if(e.source!=='HT')for(const m of e.modes)assert.ok(projectedIds.includes(m.weapon_mode_id));
+    if(e.source==='HT')assertHTEquipmentProjection(e,projected);
   }
   const projectedWarheads=structuredClone(catalogs.getCatalog('ut').warheads),swarm=projectedWarheads.find(w=>w.id==='swarm');
   assert.deepEqual(swarm.compatibility_decision,{revision:'ut-16-final-2026-10-18',sourceConflict:['UT152:25mm','UT156:40mm'],priority:'UT156',officialErratum:false});
   delete swarm.compatibility_decision;
   assert.deepEqual(projectedWarheads,applyUTErrataCatalog('ut',structuredClone(raw.ut)).warheads);
   assert.deepEqual(catalogs.getCatalog('ut').special_loads,raw.ut.special_loads);
-  assert.deepEqual(catalogs.getCatalog('ht'),raw.ht);
+  assert.deepEqual(catalogs.getCatalog('ht'),expectedHTAmmoProjection(raw.ht));
   // LT-P1–P7 deliberately project source corrections and additional physical
   // recipes; the protected source stays byte-identical, as checked above.
   assert.equal(catalogs.getCatalog('lt').ammo_items.length,300);

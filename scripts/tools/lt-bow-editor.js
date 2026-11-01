@@ -5,17 +5,17 @@ import {ltQualityHTML} from './lt-quality.js';
 export function ltBowEditorHTML(configuration,modeId,actor,esc){
  const p=ltBowProfile(modeId);if(!p)return '';
  const c=configuration??{},option=(value,label)=>p.kind==='repeating'&&value!=='hand'?'':`<option value="${value}" ${c.drawMethod===value||!c.drawMethod&&value===(p.kind==='steel'?'cranequin':p.kind==='belly'?'belly':'hand')?'selected':''}>${p.kind==='repeating'?'Одноручный рычаг':label}</option>`;
- return `<fieldset class="gam-lt-bow-settings"><legend>Rated ST экземпляра — LT74–78</legend>
+ return `<fieldset class="gam-lt-bow-settings"><legend>Rated ST экземпляра – LT74–78</legend>
   <div style="display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center">
   <label>Rated ST <input type="number" data-lt-bow-field="ratedST" name="ltBow-ratedST" step="1" min="${p.minRatedST}" value="${esc(c.ratedST??'')}" placeholder="Не задана" style="width:6em"></label>
   <small>Минимум ${p.minRatedST} (LT75–76); верхний конструкционный предел не опубликован.</small></div>
-  ${p.modeId==='WFAwJH7XlIK-bIy0Q'?`<label>Снаряжение Slurbow<select data-lt-bow-field="shotMode" name="ltBow-shotMode"><option value="ordinary" ${c.shotMode!=='single-small'?'selected':''}>Пять малых дротиков</option><option value="single-small" ${c.shotMode==='single-small'?'selected':''}>Один малый дротик — LT74</option></select></label>`:''}
-  ${p.kind==='bow'?`<label>Режим <select data-lt-bow-field="shotMode" name="ltBow-shotMode">${[['ordinary','Обычная стрела'],['navak','Navak — короткий дротик'],['panjagan5','Panjagan — пять стрел'],['panjagan10','Panjagan — десять стрел (кинематографично)']].map(([v,t])=>`<option value="${v}" ${(c.shotMode??'ordinary')===v?'selected':''}>${t}</option>`).join('')}</select></label>
+  ${p.modeId==='WFAwJH7XlIK-bIy0Q'?`<label>Снаряжение Slurbow<select data-lt-bow-field="shotMode" name="ltBow-shotMode"><option value="ordinary" ${c.shotMode!=='single-small'?'selected':''}>Пять малых дротиков</option><option value="single-small" ${c.shotMode==='single-small'?'selected':''}>Один малый дротик – LT74</option></select></label>`:''}
+  ${p.kind==='bow'?`<label>Режим <select data-lt-bow-field="shotMode" name="ltBow-shotMode">${[['ordinary','Обычная стрела'],['navak','Navak – короткий дротик'],['panjagan5','Panjagan – пять стрел'],['panjagan10','Panjagan – десять стрел (кинематографично)']].map(([v,t])=>`<option value="${v}" ${(c.shotMode??'ordinary')===v?'selected':''}>${t}</option>`).join('')}</select></label>
   <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-lt-bow-field="arrowGuideInstalled" name="ltBow-arrowGuideInstalled" ${c.arrowGuideInstalled?'checked':''}> Установлена физическая направляющая Navak ($50; 0,5 lb)</label>
   <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-lt-bow-field="panjaganInstalled" name="ltBow-panjaganInstalled" ${c.panjaganInstalled?'checked':''}> Имеется крепёж Panjagan ($10; вес пренебрежим)</label>`:''}
   <label>Натяжение / взвод <select data-lt-bow-field="drawMethod" name="ltBow-drawMethod">${option('hand','Руками')}${option('one-leg','С упором одной ногой')}${option('two-legs','С упором двумя ногами')}${p.kind==='bow'?'':option('goats-foot','Козья нога')}${p.cranequin?option('cranequin','Штатный кранекин ×'+p.cranequin):''}${p.kind==='belly'?option('belly','Брюшной упор Gastraphetes'):''}</select></label>
   <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-lt-bow-field="applyArmST" name="ltBow-applyArmST" ${c.applyArmST?'checked':''}> При ручном натяжении применять Arm ST</label>
-  <details><summary>Качество оружия — LT59</summary>${ltQualityHTML(c.quality,'lt-bow-quality',esc,{missile:true})}</details>
+  <details><summary>Качество оружия – LT59</summary>${ltQualityHTML(c.quality,'lt-bow-quality',esc,{missile:true})}</details>
   <p data-lt-bow-summary role="status">${esc(ltBowEditorSummary(c,modeId,actor))}</p></fieldset>`;
 }
 export function ltBowEditorSummary(configuration,modeId,actor){

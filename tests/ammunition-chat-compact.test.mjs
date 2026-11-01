@@ -37,8 +37,10 @@ test('HT normal, AP, APEX, APHEX, +P, tracer, HE and manual effects retain charg
     assert.equal(data.source,source);if(unique)assert.ok(html.includes(unique));assert.doesNotMatch(html,forbidden);assert.equal(JSON.stringify(profile),before);
     assert.ok(data.lines.join(' ').length<240);
   }
-  assert.equal(compactAmmoSource('Ultra-Tech 2007, pp. 153-154; B414–415'),'UT153–154');
-  assert.equal(compactAmmoSource('HT 165; B408'),'HT165');
+  // Retain explicit page references; common prose is filtered separately.
+  assert.equal(compactAmmoSource('Ultra-Tech 2007, pp. 153-154; B414–415'),'UT153–154; B414–415');
+  assert.equal(compactAmmoSource('HT 165; B408'),'HT165; B408');
+  assert.equal(compactAmmoSource('HT 165; HT165; user text'),'HT165');
 });
 test('user Note, resistance and long multiline description survive exactly once; empty fields and removed radius stay absent',()=>{
   const note='Моё вещество <test>',description=('Авторская запись без сокращений.\n').repeat(80);

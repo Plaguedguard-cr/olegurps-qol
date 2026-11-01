@@ -15,7 +15,7 @@ test("own damage selector localizes tooltips without altering native damage type
   const native={lang:"en",localize:()=>"Native English"};
   globalThis.GURPS={DamageTables:tables};globalThis.game={i18n:native};
   try {
-    assert.deepEqual(getGgaDamageTypes().map(t=>({type:t.type,label:t.label})),[{type:"cr",label:"cr — дробящий"},{type:"pi",label:"pi — пробивающий"}]);
+    assert.deepEqual(getGgaDamageTypes().map(t=>({type:t.type,label:t.label})),[{type:"cr",label:"cr – дробящий"},{type:"pi",label:"pi – пробивающий"}]);
     assert.equal(tables.woundModifiers.cr.label,"Crushing");assert.equal(game.i18n,native);assert.equal(native.lang,"en");
   }finally{globalThis.GURPS=oldGurps;globalThis.game=oldGame;}
 });

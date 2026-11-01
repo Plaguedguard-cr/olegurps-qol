@@ -63,10 +63,10 @@ for (const id of Object.keys(FUZE_TRACER_VARIANTS)) test(id + " general sourced 
   assert.equal(resolveAmmunitionEffects({ raw: { damage: s.definition.baseDamage, range: "100/1000" }, variantId: id,
     baseStatus: "undetermined", constructionStatus: "world-policy", facts: s.review.facts }).nativeSafe, false);
 });
-test("Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 area +4 only", () => {
+test("Airburst mutually exclusive TL5/6 area +3 or air +1; TL7/8 both +4 (HT174)", () => {
   for (const tl of [5,6,7,8]) {
     const s = numerical("ht_airburst", { availabilityTL: tl, fuseTL: tl });
-    for (const [target, bonus] of [["area",tl<7?3:4],["air",tl<7?1:0],["point",0],["unknown",0]]) {
+    for (const [target, bonus] of [["area",tl<7?3:4],["air",tl<7?1:4],["point",0],["unknown",0]]) {
       assert.equal(airburstAttackBonus(s.definition,s.option.mechanics,target),bonus);
       assert.equal(s.resolve({ airburstTarget:target }).rules.fuzeTracer.bonus,bonus);
     }
@@ -90,7 +90,7 @@ test("Airburst shared Fire Control channel adds bonus once and point choice remo
     ammunitionFuzeTracer:{definition:s.definition,mechanics:s.option.mechanics} };
   const fire = createFireControlContext({token:null,fireService:new FireService({})});
   const bands=[{index:0,max:10,penalty:0,label:"isolated zero range penalty"}],targeting={getSelection:()=>({zoneId:"torso",label:"Torso",penalty:0})};
-  for (const [target,skill] of [["point",13],["area",17],["air",13],["area",17]]) {
+  for (const [target,skill] of [["point",13],["area",17],["air",17],["area",17]]) {
     const r=fire.calculateEffectiveFireSkillDetails(attack,{airburstTarget:target,rangeIndex:0,shots:1,aimSeconds:0,manualModifier:0},bands,targeting);
     assert.equal(r.effectiveSkill,skill);assert.equal(r.combatCalculation.rollModifiers.filter(m=>m.channel==="ammunitionAirburst").length,skill===17?1:0);
   }

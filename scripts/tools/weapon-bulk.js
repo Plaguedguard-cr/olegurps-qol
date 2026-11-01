@@ -24,7 +24,7 @@ export function sourceWeaponHandling(mode, bulkState = 'mounted', manualBulk = n
 export function sourceBulkChoiceHTML(mode, state, escape, attributes = 'name="ltBulkState"') {
   const values = mode?.lt_ranged_contract?.bulkValues;
   if (!values) return '';
-  return `<label>Использование машины — Bulk ${escape(values.join('/'))}<select ${attributes}>` +
-    `<option value="mounted"${state !== 'giant' ? ' selected' : ''}>Обычная установка — Bulk ${values[0]}</option>` +
-    `<option value="giant"${state === 'giant' ? ' selected' : ''}>Гигант держит как оружие — Bulk ${values[1]}</option></select></label>`;
+  return `<label>Использование машины – Bulk ${escape(values.join('/'))}<select ${attributes}>` +
+    `<option value="mounted"${state !== 'giant' ? ' selected' : ''}>Обычная установка – Bulk ${values[0]}</option>` +
+    `<option value="giant"${state === 'giant' ? ' selected' : ''}>Гигант держит как оружие – Bulk ${values[1]}</option></select></label>`;
 }

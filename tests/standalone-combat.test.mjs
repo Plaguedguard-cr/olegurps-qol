@@ -15,7 +15,7 @@ import { findCloseHipShooting } from "../scripts/tools/close-hip-shooting-servic
 import { resolveRuntimeAttackProfile, withRuntimeAmmoStats } from "../scripts/tools/attack-profile-runtime.js";
 import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js";
 import { AmmoService } from "../scripts/tools/ammo-service.js";
-import { collectMeleeAttacks } from "../scripts/tools/melee-assistant-state.js";
+import {collectMeleeAttacksWithBodyContract as collectMeleeAttacks} from './helpers/melee-body-collection.mjs';
 import { executePreparedGgaRoll } from "../scripts/tools/prepared-gga-roll.js";
 
 const catalogs = new CatalogService({ logger:null, fetcher:async url=>({ok:true,json:async()=>JSON.parse(await fs.readFile(new URL('../data/catalogs/'+url.split('/').at(-1),import.meta.url),'utf8'))}) });

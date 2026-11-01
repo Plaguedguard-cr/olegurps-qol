@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 import {ltFlameProfile,ltFlameConfiguration,LT_FLAME_FUELS,LT_FLAME_FUEL_REFERENCE} from '../lt-flame-source.js';
 import {ltFlameCharge,ltFlameRequirements,ltFlameTypeAssessment} from './lt-flame.js';
 import {ammoTypeKey} from './ammo-inventory.js';
@@ -35,7 +36,7 @@ export function ltFlameManagementHTML(weapon,ui,types,escape){
   (p.system==='liquid'?input('volumePints','Измеренный объём одной заправки, пинты',q.volumePints??'','type="number" min="0" step="any"'):
    p.system==='blowpipe'?input('resinLb','Измеренная масса смолы в заряде, lb',q.resinLb??'','type="number" min="0" step="any"'):
    input('powderLb','Измеренная масса пороха, lb',q.powderLb??'','type="number" min="0" step="any"')+(p.linked?'<label>Материал частиц<select name="ltFlame-fragmentsMaterial"><option value="metal" '+(q.fragmentsMaterial!=='pottery'?'selected':'')+'>Металл</option><option value="pottery" '+(q.fragmentsMaterial==='pottery'?'selected':'')+'>Керамика</option></select></label>'+input('fragmentsLb','Измеренная масса частиц, lb',q.fragmentsLb??'','type="number" min="0" step="any"'):''))+
-  (p.system==='liquid'?`<p>Опубликовано на пинту: $${LT_FLAME_FUEL_REFERENCE[q.fuel]?.costPerPint??'—'}, 1 lb (LT84). Объём заправки — измерение владельца, без пересчёта в секунды.</p>`:'')+
+  (p.system==='liquid'?`<p>Опубликовано на пинту: ${LT_FLAME_FUEL_REFERENCE[q.fuel]?.costPerPint??'–'}, 1 lb (LT84). Объём заправки – измерение владельца, без пересчёта в секунды.</p>`:'')+
   ['note','savingThrow','description'].map((n,k)=>`<label>${['Note / содержимое','Спасбросок / ручные условия','Краткое описание'][k]}<textarea rows="2" name="ltFlame-${n}">${escape(q[n]??'')}</textarea></label>`).join('')+
   button('save-batch','Сохранить новую партию с запасом 0')+'<p>Количество компонентов задаёт владелец; книга не устанавливает перевод пинт или массы в секунды подачи.</p></details>'+
   (selected?.recipe?.customId?`<button type="button" data-inventory-action="delete-recipe" ${(stock?.rounds??0)>0||weapon.ammunitionInventory.magazines.some(m=>m.rounds&&m.ammoKey===selected.key)?'disabled':''}>Удалить пустую партию</button>`:'')+
@@ -58,7 +59,7 @@ export async function handleLTFlameAction(app,operation,button){
   const tx=(op,args)=>app.service.inventoryTransaction(app.weaponId,op,args,{allowedTypes:[type]});
   if(action==='save-batch'){
    const parameters={...(app.ui.ltFlameDrafts?.[app.ui.ammoKey]??{}),fit:{weaponId:w.id,equipmentId:p.equipmentId,barrels:[0]}};
-   const next={source:'catalog',book:'lt',kind:'ammo-item',ammoId:p.ammoId,name:p.name+' — '+LT_FLAME_FUELS[parameters.fuel]+' (партия владельца)',recipe:{version:1,variantId:'lt_flame_load',customId:crypto.randomUUID(),parameters}};next.key=ammoTypeKey(next);
+   const next={source:'catalog',book:'lt',kind:'ammo-item',ammoId:p.ammoId,name:p.name+' – '+LT_FLAME_FUELS[parameters.fuel]+' (партия владельца)',recipe:{version:1,variantId:'lt_flame_load',customId:generateId(),parameters}};next.key=ammoTypeKey(next);
    if(!ltFlameTypeAssessment({modeId:p.modeId,type:next,catalogs:globalThis.OleGURPSQOL.catalogs,weapon:w}).applicationAllowed)throw Error('Укажите состав и положительное измеренное количество компонентов.');await tx('save-recipe',{type:next});app.ui.ammoKey=next.key;
   }else if(action==='stock-add'||action==='stock-remove')await tx(action==='stock-add'?'add-stock':'remove-stock',{ammoKey:app.ui.ammoKey,amount:o.quantity});
   else if(action==='component-add'||action==='component-remove')await tx('lt-early-component',{type,kind:button.dataset.component,amount:action==='component-add'?o.quantity:-o.quantity});

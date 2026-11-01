@@ -113,7 +113,7 @@ test("actual RU EN translation loading refreshes F2 cache, key parity and interp
     const before=structuredClone(i18n.translations);
     await loadAutomaticAmmoTranslations({game:{i18n},fetch:async()=>{calls++;return{ok:true,json:async()=>json}},location:{},foundry:{utils:{setProperty:(o,k,v)=>o[k]=v}}});assert.equal(calls,0);
     assert.deepEqual(i18n.translations,before);
-    for(const [k,v]of Object.entries(f3Messages.ru)){assert.ok(json["OleGURPS.AutomaticAmmo.F3"+k]);assert.equal(f3Text(k,{game:{i18n}}),v.replace(/\{\w+\}/g,"\u2014"));}
+    for(const [k,v]of Object.entries(f3Messages.ru)){assert.ok(json["OleGURPS.AutomaticAmmo.F3"+k]);assert.equal(f3Text(k,{game:{i18n}}),v.replace(/\{\w+\}/g,"\u2013"));}
     assert(f3Text("Visibility",{game:{i18n}},{penalty:-10}).includes("-10"));
   }
 });

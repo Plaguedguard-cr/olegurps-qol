@@ -92,7 +92,7 @@ export class TrademarkMoveExecutionApp extends ApplicationV2 {
   }
   _formatSkillPreview(preview) {
     return preview ? `\u042d\u0444\u0444. ${preview.effectiveSkill} (${preview.successChance}%)`
-      : "\u042d\u0444\u0444. \u2014 (\u2014%)";
+      : "\u042d\u0444\u0444. \u2013 (\u2013%)";
   }
   async _refreshPreviews() {
     const generation = ++this._previewGeneration;

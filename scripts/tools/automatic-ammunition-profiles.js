@@ -87,7 +87,7 @@ export class AutomaticAmmunitionProfileService {
         const probe=ltBowRecipeAssessment({modeId,type:{...base,recipe},compatibility:this.compatibility});
         if(probe?.applicationAllowed){
           const type={source:'catalog',book:'lt',kind:base.kind,ammoId:base.ammoId,recipe,
-            name:(this.catalogs?.getVariant('lt',variantId)?.name??variantId)+' — '+(base.name??base.ammoId)};
+            name:(this.catalogs?.getVariant('lt',variantId)?.name??variantId)+' – '+(base.name??base.ammoId)};
           type.key=ammoTypeKey(type);
           return snapshot({state:'complete',origin:'reference',baseStatus:'compatible',rulesStatus:'compatible',referenceConfirmed:true,
             model:{kind:'lt-projectile-head',variantId,source:'LT73; B277'},facts:{modeId,ammoId:base.ammoId},type,reasons:[]});
@@ -181,7 +181,7 @@ export class AutomaticAmmunitionProfileService {
     const guidedLabel=variantId==='ut_homing'?'Homing '+facts.homing.attack+
       (facts.homing.superscience?'^':'')+(warhead?' / '+(UT_EXTENDED_RULES[warhead.variantId]??UT_SPECIAL_RULES[warhead.variantId]??UT_CONVENTIONAL_RULES[warhead.variantId]).label:''):rule.label;
     const name=this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+guidedLabel+(payload.reactionless&&variantId!=='ut_reactionless'?' Reactionless':'')+' (TL'+facts.availabilityTL+')'+
-      (payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.swarmType?' / '+utSwarmType(payload.swarmType).name:'')+(payload.fuze==='proximity'?' — Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' — '+payload.note:'');
+      (payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.swarmType?' / '+utSwarmType(payload.swarmType).name:'')+(payload.fuze==='proximity'?' – Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' – '+payload.note:'');
     const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),name,
       recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:payload,autoProfile}};
     type.key=ammoTypeKey(type);
@@ -203,7 +203,7 @@ export class AutomaticAmmunitionProfileService {
       source:{kind:origin,edition:'Ultra-Tech 2007',note:review.facts.ammunitionSupply?.source??rule.source},facts,
       model:{version:1,kind:'ut-special',status:'resolved',rule:{...rule}}};
     const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),
-      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label+(payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.note?' — '+payload.note:''),
+      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label+(payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.note?' – '+payload.note:''),
       recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:payload,autoProfile}};
     type.key=ammoTypeKey(type);
     const legacy=savedType&&approvedLegacyUTRecipe(savedType.recipe,type.recipe,canonical);

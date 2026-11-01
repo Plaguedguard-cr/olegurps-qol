@@ -31,8 +31,8 @@ export function renderAmmunitionSummary(actor, weapon, escapeHTML, presentation 
   if (inventory && (!magazine?.rounds || !magazine.ammoKey))
     return `<div class="gam-ammo-stock-row">${escapeHTML(moduleText('OleGURPS.Ammo.NoSelectedType'))}</div>`;
   const rows = ammoStockRows(weapon);
-  if (!rows.length) return `<div class="gam-ammo-stock-row"><strong>${escapeHTML(executionAmmoCaption(ammoCaption(actor, weapon),presentation))}</strong> — всего ${weapon.totalAmmo}, свободно ${Math.max(0, weapon.totalAmmo - weapon.magazines.reduce((n, rounds) => n + rounds, 0))}</div>`;
-  return rows.filter(row => row.key === magazine?.ammoKey).map(row => `<div class="gam-ammo-stock-row" data-ammo-stock-key="${escapeHTML(row.key)}"><strong>${escapeHTML(executionAmmoCaption(row.name,presentation))}</strong> — всего ${row.total}, в магазинах ${row.loaded}, свободно ${row.loose}</div>`).join('');
+  if (!rows.length) return `<div class="gam-ammo-stock-row"><strong>${escapeHTML(executionAmmoCaption(ammoCaption(actor, weapon),presentation))}</strong> – всего ${weapon.totalAmmo}, свободно ${Math.max(0, weapon.totalAmmo - weapon.magazines.reduce((n, rounds) => n + rounds, 0))}</div>`;
+  return rows.filter(row => row.key === magazine?.ammoKey).map(row => `<div class="gam-ammo-stock-row" data-ammo-stock-key="${escapeHTML(row.key)}"><strong>${escapeHTML(executionAmmoCaption(row.name,presentation))}</strong> – всего ${row.total}, в магазинах ${row.loaded}, свободно ${row.loose}</div>`).join('');
 }
 
 /** Display only: exact saved identity first; never parse a weapon name for a caliber. */

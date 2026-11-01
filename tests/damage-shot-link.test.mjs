@@ -111,6 +111,17 @@ test('melee snapshot replays exact numeric action and properties after ST and so
     assert.equal(JSON.stringify(source.message.flags),before);assert.equal(JSON.stringify(source.actor.inventory),inventory);
   }
 });
+test('M2.8 Sedgley frozen linked bullet keeps native parser metadata and source identity without another Attack',async()=>{
+  const fx=fixture({effects:true,nativeMetadata:true}),s=fx.source(),p=structuredClone(s.shot.profile);
+  p.damage={formula:'1d-1 cr',nativeSafe:true,components:[{role:'kinetic',status:'resolved',formula:'1d-1 cr'},{role:'linked',status:'resolved',formula:'2d-1 pi'}],rules:{componentOrder:['kinetic','linked'],meleeSnapshot:{version:1,action:{type:'damage',formula:'1d-1',damagetype:'cr'}},htSpecial:{manualLinkedAction:{type:'damage',formula:'2d-1',damagetype:'pi'}}}};
+  s.shot=createShotSnapshot(p,{attackId:'attack-A',messageId:'A'});s.message.flags[scope]={shotSnapshot:s.shot};
+  const saved=JSON.stringify(s.shot),inventory=JSON.stringify(s.actor.inventory),event=fx.click(s);event.currentTarget.dataset.olegurpsShotComponent='linked';
+  assert.equal(shotDamageComponents(s.message,fx.runtime)[0].label,'Связанная пуля');
+  await fx.runtime.GURPS.performAction(fx.runtime.GURPS.parselink('2d-1 pi').action,s.actor,event);await Promise.all(fx.tasks);
+  assert.equal(fx.calls.length,1);assert.equal(fx.calls[0].message.rolls[0].formula,'2d-1 pi');assert.equal(fx.calls[0].message.getFlag(scope,'damageLink').originatingAttackMessageId,'A');
+  assert.equal(JSON.stringify(s.shot),saved);assert.equal(JSON.stringify(s.actor.inventory),inventory);
+});
+
 test('an unresolved new melee snapshot blocks historical Damage instead of re-reading live ST',async()=>{
   const fx=fixture({effects:true}),source=fx.source(),p=structuredClone(source.shot.profile);
   p.damage={formula:null,nativeSafe:false,components:[],rules:{meleeSnapshot:{version:1,action:null}}};
@@ -367,7 +378,7 @@ test("P4 linked and tandem stage Damage stays native, source-bound and resource-
   assert.equal(fx.calls.length,4);assert.equal(JSON.stringify(source.actor.inventory),inventory);
   source.message.isContentVisible=false;assert.equal(shotDamageComponents(source.message,fx.runtime).length,0);
 });
-function fixture({ effects = false } = {}) {
+function fixture({ effects = false, nativeMetadata = false } = {}) {
   let sequence = 0;
   const messages = new Map(), actors = new Map(), handlers = new Map(), tasks = [], calls = [], errors = [];
   const user = { id: "gm", isGM: true };
@@ -477,6 +488,11 @@ function fixture({ effects = false } = {}) {
     const element = { dataset: {}, classList: { contains: name => name === "gurpslink" },
       closest: selector => selector === "[data-message-id]" ? { dataset: { messageId: source.message.id } } : {} };
     return { currentTarget: element, target: element, preventDefault() {}, ...extra };
+  }
+  if(nativeMetadata){
+    const parser=runtime.GURPS.parselink,perform=runtime.GURPS.performAction;
+    runtime.GURPS.parselink=text=>{const p=parser(text);if(p.action)p.action.orig=text;return p;};
+    runtime.GURPS.performAction=function(action,actor,event){if(action.type==='damage')assert.equal(typeof action.orig,'string','Native GGA canRoll reads action.orig.includes');return perform.call(this,action,actor,event);};
   }
   const installation = installDamageShotLink(runtime);
   const damage = async (source, extra = {}, actor = source.actor) => {

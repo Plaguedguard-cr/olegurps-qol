@@ -63,8 +63,8 @@ export function ppbDamage(raw,id,weapon={}){
  const changes={damage:stun?`HT${effectModifier} (3) aff`:formula};
  if(vacuum&&range){changes.range=Number(range[1])/5+'/'+Number(range[2])/5;const a=/^(\d+)(\+\d+)?$/.exec(String(raw.acc??''));if(a){changes.acc=Math.ceil(Number(a[1])/2);changes.scopeBonus=Number(a[2]??0);}}
  const instructions=p.family==='flamer'?['Поджог и последствия ожога применяются по обычным правилам. UT127.']:
-  p.family==='pulsar'?['Взрыв: дополнительные цели разрешаются штатным GGA вручную; radiation и surge — по UT124.']:
-  [stun?'Stun: Ready для смены режима; провал HT — Unconsciousness на минуты по степени провала. UT124.':'Surge против Electrical применяется вручную. UT123.',
+  p.family==='pulsar'?['Взрыв: дополнительные цели разрешаются штатным GGA вручную; radiation и surge – по UT124.']:
+  [stun?'Stun: Ready для смены режима; провал HT – Unconsciousness на минуты по степени провала. UT124.':'Surge против Electrical применяется вручную. UT123.',
    ...(c.hotshot?['Hotshot: Malf14; при отказе последствия по B407 вручную. UT133.']:[])];
  return {status:valid?'resolved':'unresolved',nativeSafe:valid,reason:valid?null:'Проверьте штатный энергетический профиль и дальность.',
   rawFormula:raw.damage,formula,components:stun?[]:[{role:'kinetic',status:valid?'resolved':'unresolved',formula}],transformations:[],effectiveChanges:changes,

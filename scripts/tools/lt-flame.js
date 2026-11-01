@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 import {ltFlameProfile,ltFlameAdmission,ltFlameConfiguration,LT_FLAME_FUEL_REFERENCE} from '../lt-flame-source.js';
 import {ammoTypeKey} from './ammo-inventory.js';
 import {readActorStrength} from './strength-service.js';
@@ -55,7 +56,7 @@ export function consumeLTFlameShot(weapon,plan){
  if(!c.flame.remaining){m.rounds=0;m.ammoKey=null;m.ltEarlyCharges=[];weapon.ltEarly.flameUsed=true;}
 }
 /** Runs inside AmmoService's existing Actor queue. Component portions have an explicit measured composition. */
-export async function applyLTFlameOperation(weapon,operation,args,{catalogs,actor,makeId=()=>crypto.randomUUID(),runCheck}={}){
+export async function applyLTFlameOperation(weapon,operation,args,{catalogs,actor,makeId=()=>generateId(),runCheck}={}){
  const p=ltFlameProfile(weapon);if(!p)return false;
  const e=weapon.ltEarly,i=weapon.ammunitionInventory,m=slot(weapon),c=ltFlameCharge(weapon),f=c?.flame;
  const assertCurrent=()=>{if(!c||!f||args.chargeId!==c.id||args.revision!==f.revision)throw Error('Заряд уже изменился. Откройте его состояние заново.');};
@@ -127,7 +128,7 @@ export async function applyLTFlameOperation(weapon,operation,args,{catalogs,acto
   if(partial&&p.system!=='liquid')throw Error('Подготовленный горящий заряд не возвращается как новый.');
   if(partial){
    if(!positive(args.remainingVolumePints)||args.remainingVolumePints>c.parameters.volumePints)throw Error('Измерьте фактический остаток жидкости; автоматического перевода секунд в пинты нет.');
-   const type=copy(c.type);Object.assign(type.recipe.parameters,{accounting:'prepared',volumePints:args.remainingVolumePints,remainingSeconds:f.remaining,recovered:true,sourceChargeId:c.id});type.recipe.customId='lt-residual-'+c.id;type.name+=' — измеренный остаток';type.key=ammoTypeKey(type);i.stocks.push({key:type.key,type,rounds:1});
+   const type=copy(c.type);Object.assign(type.recipe.parameters,{accounting:'prepared',volumePints:args.remainingVolumePints,remainingSeconds:f.remaining,recovered:true,sourceChargeId:c.id});type.recipe.customId='lt-residual-'+c.id;type.name+=' – измеренный остаток';type.key=ammoTypeKey(type);i.stocks.push({key:type.key,type,rounds:1});
   }else{
    for(const r of c.componentDebits??(c.accounting==='components'?c.components:[])){let s=e.components.find(s=>s.key===r.key);if(!s){s={...r,rounds:0};e.components.push(s);}s.rounds++;}
    let stock=i.stocks.find(s=>s.key===c.ammoKey&&same(s.type,c.type));if(!stock){const type=copy(c.type);type.recipe.customId='lt-unloaded-'+c.id;type.key=ammoTypeKey(type);stock={key:type.key,type,rounds:0};i.stocks.push(stock);}stock.rounds++;

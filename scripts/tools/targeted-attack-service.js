@@ -495,9 +495,17 @@ function meleeTechniqueMatches(technique, skill, attack) {
 }
 
 export function createMeleeTargetedAttackContext({ actor, attack } = {}) {
-  if (attack?.standaloneRef) {
-    const skill = attack.standaloneRef.governingSkill;
-    const context = createMeleeTargetedAttackContext({ actor, attack: { ...attack, standaloneRef: null } });
+  if(attack?.unarmedRef){
+    const skill=attack.meleeProfile?.skill;
+    const context=createMeleeTargetedAttackContext({actor,attack:{...attack,unarmedRef:null}});
+    const exact=context.specialtyOptions.find(o=>meleeIdentity(o.label)===meleeIdentity(skill?.name));
+    return {...context,automaticSpecialty:exact?.value??null,requiresSelection:false,
+      specialtyOptions:exact?[exact]:[],getSkillLevel:()=>skill?.level??attack.level,
+      resolve:options=>exact?context.resolve({...options,specialty:exact.value}):null};
+  }
+  if (attack?.standaloneRef||attack?.equipmentRef?.virtual) {
+    const skill = attack.standaloneRef?.governingSkill??attack.equipmentRef.governingSkill;
+    const context = createMeleeTargetedAttackContext({ actor, attack: { ...attack, standaloneRef: null,equipmentRef:null } });
     const exact = context.specialtyOptions.find(option => meleeIdentity(option.label) === meleeIdentity(skill?.name));
     return { ...context, automaticSpecialty: skill?.key, requiresSelection: false,
       specialtyOptions: skill?.resolved ? [{ value: skill.key, label: skill.name, level: skill.level }] : [],

@@ -1,3 +1,6 @@
+import { generateId } from "../random-id.js";
+import { readGgaWeaponModes } from "../weapon-catalog-binding-service.js";
+import {UT_MELEE_RESOURCE_FLAG,utMeleeResourceContext,utMeleeResourceReason,newUTMeleeResource,utMeleeResourcePlan,utMeleeSameResource} from './ut-melee-resources.js';
 import {copyAmmoResources,writeAmmoResources,persistShotSnapshot,findPendingShot,reserveShotId,cancelShotId} from './shot-history-storage.js';
 import {ltBowProfile,ltBowUnits,ltBowCapacity,readLTBowConfiguration} from '../lt-bow-source.js';
 import {ltBowDamage,ltBowRecipeAssessment} from './lt-bow.js';
@@ -122,7 +125,7 @@ export function readAttackAmmunition(weapon) {
 }
 
 const clone = value => foundry?.utils?.deepClone?.(value) ?? structuredClone(value);
-const randomId = () => foundry?.utils?.randomID?.(16) ?? crypto.randomUUID();
+const randomId = () => generateId(globalThis, { preferFoundry: true });
 const parseNumber = (value, fallback = 0) => {
   const text = String(value ?? "").trim().replace(",", ".");
   if (text === "") return fallback;
@@ -222,6 +225,15 @@ export class AmmoService {
     if (!queued) return withActorResourceWrite(this.actor, () => this.loadState({ queued: true, includeHistory }));
     const saved = this.actor.getFlag(FLAG_SCOPE, FLAG_KEY);
     const state = saved && typeof saved === "object" ? (includeHistory?clone(saved):copyAmmoResources(saved,clone)) : this.defaultState();
+    if (state.rebuildFromCharacter === true && this.actor.isOwner) {
+      state.weapons = readGgaWeaponModes(this.actor).filter(mode => mode.type === 'ranged').map(mode => ({
+        id: generateId(), name: mode.usage ? `${mode.name} – ${mode.usage}` : mode.name,
+        attackRef: {path: mode.path, uuid: mode.uuid, name: mode.name, mode: mode.usage},
+        totalAmmo: 0, capacity: 0, magazines: [], loadedIndex: -1, ammoUnconfigured: true
+      }));
+      state.rebuildFromCharacter = false;
+      await writeAmmoResources(this.actor, state, {copy: clone});
+    }
     state.version = STATE_VERSION;
     state.chatSettings = this.normalizeChatSettings(state.chatSettings);
     state.attackOverrides = normalizeAttackOverrides(state.attackOverrides);
@@ -285,6 +297,8 @@ export class AmmoService {
     if (!inventoryWrite && !queued) return withActorResourceWrite(this.actor, () =>
       this.saveState(state, { preserveSprayingSessions, inventoryWrite, queued: true, receipt }));
     const persisted = this.actor.getFlag(FLAG_SCOPE, FLAG_KEY);
+    if ((persisted?.assistantResetId ?? null) !== (state.assistantResetId ?? null))
+      throw Error('Состояние помощника устарело после сброса. Откройте его заново.');
     const definitions = new StandaloneWeaponService(this.actor).list();
     const removed = (state.weapons ?? []).filter(w => w.standaloneWeaponId && !definitions.some(d => d.id === w.standaloneWeaponId));
     // A closed/deleted definition cannot be resurrected by an old configuration window.
@@ -906,6 +920,68 @@ export class AmmoService {
 
   // Explicit replacement only. Share the attack/inventory queue and reread live
   // state; do not normalize inventory or rewrite any other weapon field.
+  replaceMeleeResource(attack,{modeId,requestId,expectedResource,nonRechargeable=false,payload=null}={}) {
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Нет прав на ресурс экземпляра.');
+      const c=utMeleeResourceContext(this.actor,attack,modeId);
+      if(c?.bindingError)throw Error(c.bindingError);
+      if(!c||typeof requestId!=='string'||!requestId||requestId.length>100||typeof nonRechargeable!=='boolean'||expectedResource===undefined)throw Error('Некорректная замена ресурса.');
+      if(c.saved?.replacementId===requestId)return c.saved;
+      if(c.saved?.pending||!utMeleeSameResource(c.saved,expectedResource))throw Error('Ресурс уже изменился. Откройте окно заново.');
+      if(c.p.payload&&payload!==null&&(typeof payload!=='string'||!payload.trim()||payload.length>2000))throw Error('Укажите фактически установленную дозу.');
+      const all=structuredClone(this.actor.getFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG)??{});
+      all[c.key]={...newUTMeleeResource(c,nonRechargeable),replacementId:requestId,...(c.p.payload?{payload:payload??c.saved?.payload??null}:{}),receipts:[],pending:null,reservation:null};
+      await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);return all[c.key];
+    });
+  }
+  executeMeleeResource({attack,modeId,attackId,execute,amount=1}={}) {
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Нет прав на ресурс экземпляра.');
+      if(typeof attackId!=='string'||!attackId||attackId.length>100||typeof execute!=='function')throw Error('Некорректное действие.');
+      const c=utMeleeResourceContext(this.actor,attack,modeId);
+      if(!c)return execute(null);
+      if(c.saved?.receipts?.includes(attackId))throw Error('Это действие уже выполнено.');
+      const reason=utMeleeResourceReason(this.actor,attack,modeId);if(reason)throw Error(reason);
+      if(c.p.water&&c.selection.waterConnected!==true)throw Error('Подтвердите реальное подключение воды в настройках экземпляра.');
+      const {after,evidence}=utMeleeResourcePlan(c,amount),all=structuredClone(this.actor.getFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG)??{});
+      // Reserve durably before GGA: an uncertain native outcome cannot grant a free repeat.
+      all[c.key]={...after,pending:attackId,reservation:{attackId,before:c.saved}};await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);
+      let result;
+      try{result=await execute(evidence);}catch(error){throw Object.assign(error,{utMeleePending:attackId});}
+      if(!result?.rolled){all[c.key]={...c.saved,pending:null,reservation:null};await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);return result;}
+      if(c.p.payload&&result.rollData?.failure){
+        all[c.key]={...c.saved,pending:null,reservation:null,receipts:[...(c.saved.receipts??[]).slice(-63),attackId]};
+        await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);return {...result,utMeleeResourceEvidence:{...evidence,after:evidence.before,spent:0,delivered:false}};
+      }
+      all[c.key]={...after,pending:null,reservation:null,receipts:[...(c.saved.receipts??[]).slice(-63),attackId]};
+      await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);return {...result,utMeleeResourceEvidence:evidence};
+    });
+  }
+  setMeleePayload(attack,{modeId,requestId,expectedResource,payload}={}){
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Нет прав на ресурс экземпляра.');
+      const c=utMeleeResourceContext(this.actor,attack,modeId);
+      if(c?.bindingError)throw Error(c.bindingError);
+      if(!c?.p.payload||typeof requestId!=='string'||!requestId||typeof payload!=='string'||!payload.trim()||payload.length>2000||expectedResource===undefined)throw Error('Нужна одна фактически установленная внешняя доза.');
+      if(c.saved?.payloadRequestId===requestId)return c.saved;
+      if(c.saved?.pending||!utMeleeSameResource(c.saved,expectedResource))throw Error('Ресурс изменился. Откройте окно заново.');
+      if(c.saved?.payload)throw Error('Сначала используйте или извлеките прежнюю дозу.');
+      if(c.p.resource?.id!=='dose'&&!c.value)throw Error('Сначала установите воздушный ресурс.');
+      const all=structuredClone(this.actor.getFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG)??{});
+      all[c.key]={...(c.p.resource?.id==='dose'?{capacity:1,remaining:1,replacementId:requestId,receipts:[],pending:null,reservation:null}:c.saved),payload,payloadRequestId:requestId};
+      await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);return all[c.key];
+    });
+  }
+  settleMeleeResource(attack,{modeId,expectedResource,completed}={}){
+    return withActorResourceWrite(this.actor,async()=>{
+      if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Нет прав на ресурс экземпляра.');
+      const c=utMeleeResourceContext(this.actor,attack,modeId);
+      if(!c?.saved?.pending||c.saved.reservation?.attackId!==c.saved.pending||typeof completed!=='boolean'||!utMeleeSameResource(c.saved,expectedResource))throw Error('Резерв изменился или отсутствует.');
+      const all=structuredClone(this.actor.getFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG)??{}),id=c.saved.pending;
+      all[c.key]=completed?{...c.saved,receipts:[...(c.saved.receipts??[]).slice(-63),id]}:c.saved.reservation.before;
+      all[c.key]={...all[c.key],pending:null,reservation:null};await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);return all[c.key];
+    });
+  }
   replaceBattery(weaponId, options = {}) {
     return withActorResourceWrite(this.actor, async () => {
       if (this.actor.isOwner !== true && !globalThis.game?.user?.isGM) throw Error('Permission');

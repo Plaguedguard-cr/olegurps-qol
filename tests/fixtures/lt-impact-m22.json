@@ -1,0 +1,5791 @@
+{
+  "version": 1,
+  "source": "BooksCodex LT54-71; B182,203,270-275; MA111-112",
+  "models": [
+    {
+      "modelId": "lt:axe",
+      "equipmentId": "eVXaW9Nwr6YM5IlMJ",
+      "name": "Axe"
+    },
+    {
+      "modelId": "lt:baton",
+      "equipmentId": "e9kI7mSnBTZp5aJTA",
+      "name": "Baton"
+    },
+    {
+      "modelId": "lt:blackjack",
+      "equipmentId": "e807FJw5TXekIwGGG",
+      "name": "Blackjack"
+    },
+    {
+      "modelId": "lt:gada",
+      "equipmentId": "e27aWpcH_kJVEabBj",
+      "name": "Gada"
+    },
+    {
+      "modelId": "lt:great-axe",
+      "equipmentId": "e994PyUFWJuCfqon9",
+      "name": "Great Axe"
+    },
+    {
+      "modelId": "lt:hatchet",
+      "equipmentId": "eVGqW67Wj3KmybMVN",
+      "name": "Hatchet"
+    },
+    {
+      "modelId": "lt:jo",
+      "equipmentId": "etp2byFFRfqZTt7r-",
+      "name": "Jo"
+    },
+    {
+      "modelId": "lt:jutte",
+      "equipmentId": "e-oPpoFdQIShtYaTT",
+      "name": "Jutte"
+    },
+    {
+      "modelId": "lt:knobbed-club",
+      "equipmentId": "ehU1DG5wUKyG5_0ih",
+      "name": "Knobbed Club"
+    },
+    {
+      "modelId": "lt:light-club",
+      "equipmentId": "eZe9VUPLkzHhS8G_J",
+      "name": "Light Club"
+    },
+    {
+      "modelId": "lt:long-axe",
+      "equipmentId": "ehGvmGqOMR06bLeCk",
+      "name": "Long Axe"
+    },
+    {
+      "modelId": "lt:long-staff",
+      "equipmentId": "esV8iv4IW3nZ11GsD",
+      "name": "Long Staff"
+    },
+    {
+      "modelId": "lt:mace",
+      "equipmentId": "en-fdeTeZmFoFeRDl",
+      "name": "Mace"
+    },
+    {
+      "modelId": "lt:maul",
+      "equipmentId": "ey_8MkQ9Fj9IUl8hf",
+      "name": "Maul"
+    },
+    {
+      "modelId": "lt:pick",
+      "equipmentId": "eKwMCDo2RNpVfe8g6",
+      "name": "Pick"
+    },
+    {
+      "modelId": "lt:quarterstaff",
+      "equipmentId": "eNAbv7FBdpbO8-1Ov",
+      "name": "Quarterstaff"
+    },
+    {
+      "modelId": "lt:round-mace",
+      "equipmentId": "eNROYfnjT1DYJkdkS",
+      "name": "Round Mace"
+    },
+    {
+      "modelId": "lt:short-baton",
+      "equipmentId": "eUmoObBLpgPBL9Pef",
+      "name": "Short Baton"
+    },
+    {
+      "modelId": "lt:short-staff",
+      "equipmentId": "eujyRcBZwKblZxbKM",
+      "name": "Short Staff"
+    },
+    {
+      "modelId": "lt:small-axe",
+      "equipmentId": "eugTcxhNAMzqvlt9K",
+      "name": "Small Axe"
+    },
+    {
+      "modelId": "lt:small-mace",
+      "equipmentId": "eOJFIXvUSkQk5KC2f",
+      "name": "Small Mace"
+    },
+    {
+      "modelId": "lt:small-round-mace",
+      "equipmentId": "euFuvEaABw1ncQz2M",
+      "name": "Small Round Mace"
+    },
+    {
+      "modelId": "lt:small-throwing-axe",
+      "equipmentId": "elbJwTmAPdiWFj-Mg",
+      "name": "Small Throwing Axe"
+    },
+    {
+      "modelId": "lt:tetsubo",
+      "equipmentId": "eJ1aIpfPamQPxpY4l",
+      "name": "Tetsubo"
+    },
+    {
+      "modelId": "lt:throwing-axe",
+      "equipmentId": "ek2DWesEupFg8hTVR",
+      "name": "Throwing Axe"
+    },
+    {
+      "modelId": "lt:tonfa",
+      "equipmentId": "ecUULGohIZt65tziP",
+      "name": "Tonfa"
+    },
+    {
+      "modelId": "lt:warhammer",
+      "equipmentId": "eAcLA_uoBCUNnhqZ6",
+      "name": "Warhammer"
+    },
+    {
+      "modelId": "lt:brass-knuckles",
+      "equipmentId": "eN_f8tX490hHeJC52",
+      "name": "Brass Knuckles"
+    },
+    {
+      "modelId": "lt:cestus",
+      "equipmentId": "e15Zg7FmhzZBH34BF",
+      "name": "Cestus"
+    },
+    {
+      "modelId": "lt:combat-fan",
+      "equipmentId": "ewsHxS6FKDlJFd_kf",
+      "name": "Combat Fan"
+    },
+    {
+      "modelId": "lt:macuahuilzoctli",
+      "equipmentId": "e5MufJotezd4kJRgV",
+      "name": "Macuahuilzoctli"
+    },
+    {
+      "modelId": "lt:macuahuitl",
+      "equipmentId": "eeieywVt5JyxmHN-A",
+      "name": "Macuahuitl"
+    },
+    {
+      "modelId": "lt:myrmex",
+      "equipmentId": "ejf-JHLsTLDXHwdtX",
+      "name": "Myrmex"
+    },
+    {
+      "modelId": "lt:two-handed-macuahuitl",
+      "equipmentId": "e9i4ODyXdgWFkDz6w",
+      "name": "Two-Handed Macuahuitl"
+    }
+  ],
+  "modes": [
+    {
+      "modelId": "lt:axe",
+      "equipmentId": "eVXaW9Nwr6YM5IlMJ",
+      "modeId": "wseA0_41AcVRwc1Lf",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Axe",
+          "damage": "sw+2 cut",
+          "reach": "1",
+          "parry": "0U",
+          "st": "11",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$50",
+          "weight": "4",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:axe",
+      "equipmentId": "eVXaW9Nwr6YM5IlMJ",
+      "modeId": "weiWzhbVzaUanz_k_",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Axe",
+          "damage": "sw+3 cut",
+          "reach": "1",
+          "parry": "0U",
+          "st": "10†",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$50",
+          "weight": "4",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+3 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10†",
+        "usage": "Swing - two handed",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+5 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:baton",
+      "equipmentId": "e9kI7mSnBTZp5aJTA",
+      "modeId": "wZOAYw4rp9DEQ56j7",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Baton",
+          "damage": "sw cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "6",
+          "skill": "SHORTSWORD (DX-5, Broadsword-2, Force Sword-4, Jitte/Sai-3, Knife-4, Saber-4, Smallsword-4, or Tonfa-3)",
+          "cost": "$20",
+          "weight": "1",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shortsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+2 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:baton",
+      "equipmentId": "e9kI7mSnBTZp5aJTA",
+      "modeId": "wqLC_L_KHU8dGUJfJ",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Baton",
+          "damage": "thr cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "6",
+          "skill": "SHORTSWORD (DX-5, Broadsword-2, Force Sword-4, Jitte/Sai-3, Knife-4, Saber-4, Smallsword-4, or Tonfa-3)",
+          "cost": "$20",
+          "weight": "1",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shortsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:blackjack",
+      "equipmentId": "e807FJw5TXekIwGGG",
+      "modeId": "wDPF92m0nWie6y4pp",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Blackjack",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "7",
+          "skill": "BRAWLING or DX",
+          "cost": "$20",
+          "weight": "1",
+          "notes": "[5]"
+        },
+        {
+          "page": 65,
+          "name": "Blackjack",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "7",
+          "skill": "BRAWLING or DX",
+          "cost": "$20",
+          "weight": "1",
+          "notes": "[5]"
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Brawling",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Brawling",
+          "DX"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": true,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:gada",
+      "equipmentId": "e27aWpcH_kJVEabBj",
+      "modeId": "wz9Hu3ldn-hEcFsuA",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Gada",
+          "damage": "sw+6 cr",
+          "reach": "1, 2*",
+          "parry": "0U",
+          "st": "16‡",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$100",
+          "weight": "15",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+6 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "16‡",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+6 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "16‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+8 cr",
+      "expectedLevelST12": 12
+    },
+    {
+      "modelId": "lt:gada",
+      "equipmentId": "e27aWpcH_kJVEabBj",
+      "modeId": "wLS55exDz8kXd-T1V",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Gada",
+          "damage": "thr+2 cr",
+          "reach": "1*",
+          "parry": "0",
+          "st": "15†",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$100",
+          "weight": "15",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+2 cr",
+        "reach": "1*",
+        "parry": "0U",
+        "st": "15†",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1*",
+        "parry": "0",
+        "st": "15†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 13
+    },
+    {
+      "modelId": "lt:great-axe",
+      "equipmentId": "e994PyUFWJuCfqon9",
+      "modeId": "wmQJA6jdoq_qMAqLg",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Great Axe",
+          "damage": "sw+4 cut",
+          "reach": "1, 2*",
+          "parry": "0U",
+          "st": "12‡",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$100",
+          "weight": "8",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+4 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12‡",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+4 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+6 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:hatchet",
+      "equipmentId": "eVGqW67Wj3KmybMVN",
+      "modeId": "w5_RDw9gTBE_eXbu1",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Hatchet",
+          "damage": "sw cut",
+          "reach": "1",
+          "parry": "0",
+          "st": "8",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$40",
+          "weight": "2",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+2 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jo",
+      "equipmentId": "etp2byFFRfqZTt7r-",
+      "modeId": "wwf6tpLuKn2PprpZP",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Jo",
+          "damage": "sw cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "9",
+          "skill": "BROADSWORD (DX-5, Force Sword-4, Rapier-4, Saber-4, Shortsword-2, or Two-Handed Sword-4)",
+          "cost": "$10",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "9",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Broadsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "9",
+        "skills": [
+          "Broadsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+2 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jo",
+      "equipmentId": "etp2byFFRfqZTt7r-",
+      "modeId": "wGKvxbtA7FiPVRQJ1",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Jo",
+          "damage": "thr cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "9",
+          "skill": "BROADSWORD (DX-5, Force Sword-4, Rapier-4, Saber-4, Shortsword-2, or Two-Handed Sword-4)",
+          "cost": "$10",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "9",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Broadsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "9",
+        "skills": [
+          "Broadsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jo",
+      "equipmentId": "etp2byFFRfqZTt7r-",
+      "modeId": "wH11wy30Xy19IhYZO",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Jo",
+          "damage": "sw+1 cr",
+          "reach": "1",
+          "parry": "+2",
+          "st": "6†",
+          "skill": "STAFF (DX-5, Polearm-4, or Spear-2)",
+          "cost": "$10",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "2",
+        "st": "6†",
+        "usage": "Staff Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Staff",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Spear",
+            "specialization": null,
+            "modifier": -2
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "2",
+        "st": "6†",
+        "skills": [
+          "Staff"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jo",
+      "equipmentId": "etp2byFFRfqZTt7r-",
+      "modeId": "w2pp8VqDXHe9Rs8Xu",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Jo",
+          "damage": "thr+1 cr",
+          "reach": "1",
+          "parry": "+2",
+          "st": "6†",
+          "skill": "STAFF (DX-5, Polearm-4, or Spear-2)",
+          "cost": "$10",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "2",
+        "st": "6†",
+        "usage": "Staff Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Staff",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Spear",
+            "specialization": null,
+            "modifier": -2
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "2",
+        "st": "6†",
+        "skills": [
+          "Staff"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jo",
+      "equipmentId": "etp2byFFRfqZTt7r-",
+      "modeId": "wOl13KSiMnTdP4OYI",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Jo",
+          "damage": "sw+1 cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "8†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$10",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8†",
+        "usage": "Sword Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Sword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jo",
+      "equipmentId": "etp2byFFRfqZTt7r-",
+      "modeId": "wpErUadpuBiPHnjsv",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Jo",
+          "damage": "thr+1 cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "8†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$10",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8†",
+        "usage": "Sword Thrust",
+        "skills": {
+          "status": "none",
+          "skill": null,
+          "candidates": [],
+          "basis": "no skill default"
+        },
+        "defaults": []
+      },
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jutte",
+      "equipmentId": "e-oPpoFdQIShtYaTT",
+      "modeId": "wNUoip8faip2p8ZWq",
+      "sourceRows": [
+        {
+          "page": 66,
+          "name": "Jutte",
+          "damage": "sw cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "6",
+          "skill": "JITTE/SAI (DX-5, Force Sword-4, Main-Gauche-4, or Shortsword-3)",
+          "cost": "$40",
+          "weight": "1",
+          "notes": "[11]"
+        },
+        {
+          "page": 67,
+          "name": "Jutte",
+          "damage": "sw cr",
+          "reach": "1",
+          "parry": "0F",
+          "st": "6",
+          "skill": "MAIN-GAUCHE (DX-5, Jitte/Sai-4, Knife-4, Rapier-3, Saber-3, or Smallsword-3)",
+          "cost": "$40",
+          "weight": "1",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "resolution": "best-available",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Jitte/Sai",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Main-Gauche",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "Both Jitte/Sai and Main-Gauche are source-supported ways to use the weapon.",
+          "default_relation": null,
+          "apply_relation_to_roll": false
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Main-Gauche",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Jitte/Sai",
+          "Main-Gauche"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+2 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:jutte",
+      "equipmentId": "e-oPpoFdQIShtYaTT",
+      "modeId": "wYQYMiGXgxny6m3qi",
+      "sourceRows": [
+        {
+          "page": 66,
+          "name": "Jutte",
+          "damage": "thr cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "6",
+          "skill": "JITTE/SAI (DX-5, Force Sword-4, Main-Gauche-4, or Shortsword-3)",
+          "cost": "$40",
+          "weight": "1",
+          "notes": ""
+        },
+        {
+          "page": 67,
+          "name": "Jutte",
+          "damage": "thr cr",
+          "reach": "1",
+          "parry": "0F",
+          "st": "6",
+          "skill": "MAIN-GAUCHE (DX-5, Jitte/Sai-4, Knife-4, Rapier-3, Saber-3, or Smallsword-3)",
+          "cost": "$40",
+          "weight": "1",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "resolution": "best-available",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Jitte/Sai",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Main-Gauche",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "Both Jitte/Sai and Main-Gauche are source-supported ways to use the weapon.",
+          "default_relation": null,
+          "apply_relation_to_roll": false
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Main-Gauche",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Jitte/Sai",
+          "Main-Gauche"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:knobbed-club",
+      "equipmentId": "ehU1DG5wUKyG5_0ih",
+      "modeId": "w9gtH6sXm4Luqd-aO",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Knobbed Club",
+          "damage": "sw+1 cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "8",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$20",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:light-club",
+      "equipmentId": "eZe9VUPLkzHhS8G_J",
+      "modeId": "wrdwSAqzcb2G6SYD-",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Light Club",
+          "damage": "sw+1 cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "10",
+          "skill": "BROADSWORD (DX-5, Force Sword-4, Rapier-4, Saber-4, Shortsword-2, or Two-Handed Sword-4)",
+          "cost": "$5",
+          "weight": "3",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Broadsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:light-club",
+      "equipmentId": "eZe9VUPLkzHhS8G_J",
+      "modeId": "w5DEx25BYMdpSKAfe",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Light Club",
+          "damage": "thr+1 cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "10",
+          "skill": "BROADSWORD (DX-5, Force Sword-4, Rapier-4, Saber-4, Shortsword-2, or Two-Handed Sword-4)",
+          "cost": "$5",
+          "weight": "3",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Broadsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:long-axe",
+      "equipmentId": "ehGvmGqOMR06bLeCk",
+      "modeId": "wauPK5qLVh1z7NEfg",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Long Axe",
+          "damage": "sw+3 cut",
+          "reach": "1, 2*",
+          "parry": "0U",
+          "st": "11‡",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$75",
+          "weight": "6",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+3 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "11‡",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "11‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+5 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:long-staff",
+      "equipmentId": "esV8iv4IW3nZ11GsD",
+      "modeId": "wk4ty2OdpeeoKr0i0",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Long Staff",
+          "damage": "sw+2 cr",
+          "reach": "2, 3",
+          "parry": "+2",
+          "st": "10†",
+          "skill": "STAFF (DX-5, Polearm-4, or Spear-2)",
+          "cost": "$15",
+          "weight": "5",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+2 cr",
+        "reach": "2-3",
+        "parry": "2",
+        "st": "10†",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Staff",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Spear",
+            "specialization": null,
+            "modifier": -2
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "2-3",
+        "parry": "2",
+        "st": "10†",
+        "skills": [
+          "Staff"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:long-staff",
+      "equipmentId": "esV8iv4IW3nZ11GsD",
+      "modeId": "w0NzxuVK3RGLJd5mz",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Long Staff",
+          "damage": "thr+2 cr",
+          "reach": "2, 3",
+          "parry": "+2",
+          "st": "10†",
+          "skill": "STAFF (DX-5, Polearm-4, or Spear-2)",
+          "cost": "$15",
+          "weight": "5",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+2 cr",
+        "reach": "2-3",
+        "parry": "2",
+        "st": "10†",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Staff",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Spear",
+            "specialization": null,
+            "modifier": -2
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "2-3",
+        "parry": "2",
+        "st": "10†",
+        "skills": [
+          "Staff"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:mace",
+      "equipmentId": "en-fdeTeZmFoFeRDl",
+      "modeId": "wHh3nMClto3bcuttd",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Mace",
+          "damage": "sw+3 cr",
+          "reach": "1",
+          "parry": "0U",
+          "st": "12",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$50",
+          "weight": "5",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "12",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "12",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+5 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:mace",
+      "equipmentId": "en-fdeTeZmFoFeRDl",
+      "modeId": "wqUM4szyHWiR89g50",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Mace",
+          "damage": "sw+4 cr",
+          "reach": "1",
+          "parry": "0U",
+          "st": "11†",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$50",
+          "weight": "5",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+4 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11†",
+        "usage": "Swing - two handed",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+6 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:maul",
+      "equipmentId": "ey_8MkQ9Fj9IUl8hf",
+      "modeId": "w58mAioCCxiLCg3XJ",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Maul",
+          "damage": "sw+5 cr",
+          "reach": "1, 2*",
+          "parry": "0U",
+          "st": "13‡",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$80",
+          "weight": "12",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+5 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "13‡",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+5 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+7 cr",
+      "expectedLevelST12": 15
+    },
+    {
+      "modelId": "lt:pick",
+      "equipmentId": "eKwMCDo2RNpVfe8g6",
+      "modeId": "wD-3HLza5qkobxe05",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Pick",
+          "damage": "sw+1 imp",
+          "reach": "1",
+          "parry": "0U",
+          "st": "10",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$70",
+          "weight": "3",
+          "notes": "[3, 4]"
+        }
+      ],
+      "before": {
+        "damage": "sw+1 imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 imp",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:quarterstaff",
+      "equipmentId": "eNAbv7FBdpbO8-1Ov",
+      "modeId": "wDlS-2lWtNFw_hedE",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Quarterstaff",
+          "damage": "sw+2 cr",
+          "reach": "1, 2",
+          "parry": "+2",
+          "st": "7†",
+          "skill": "STAFF (DX-5, Polearm-4, or Spear-2)",
+          "cost": "$10",
+          "weight": "4",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "2",
+        "st": "7†",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Staff",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Spear",
+            "specialization": null,
+            "modifier": -2
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "2",
+        "st": "7†",
+        "skills": [
+          "Staff"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:quarterstaff",
+      "equipmentId": "eNAbv7FBdpbO8-1Ov",
+      "modeId": "wXyCJ18_keVRhEiNT",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Quarterstaff",
+          "damage": "thr+2 cr",
+          "reach": "1, 2",
+          "parry": "+2",
+          "st": "7†",
+          "skill": "STAFF (DX-5, Polearm-4, or Spear-2)",
+          "cost": "$10",
+          "weight": "4",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "2",
+        "st": "7†",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Staff",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Staff",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Spear",
+            "specialization": null,
+            "modifier": -2
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "2",
+        "st": "7†",
+        "skills": [
+          "Staff"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:quarterstaff",
+      "equipmentId": "eNAbv7FBdpbO8-1Ov",
+      "modeId": "wAYus3-957M-3WGv0",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Quarterstaff",
+          "damage": "sw+2 cr",
+          "reach": "1, 2",
+          "parry": "0",
+          "st": "9†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$10",
+          "weight": "4",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "9†",
+        "usage": "Sword Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Sword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "9†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:quarterstaff",
+      "equipmentId": "eNAbv7FBdpbO8-1Ov",
+      "modeId": "weF9Ne-wWV4oRtItv",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Quarterstaff",
+          "damage": "thr+1 cr",
+          "reach": "2",
+          "parry": "0",
+          "st": "9†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$10",
+          "weight": "4",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+1 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "usage": "Sword Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Sword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:round-mace",
+      "equipmentId": "eNROYfnjT1DYJkdkS",
+      "modeId": "wUghzcAAhlP05GEYz",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Round Mace",
+          "damage": "sw+2 cr",
+          "reach": "1",
+          "parry": "0U",
+          "st": "12",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$35",
+          "weight": "5",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "12",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "12",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:short-baton",
+      "equipmentId": "eUmoObBLpgPBL9Pef",
+      "modeId": "wvVgsh0M0tX0RSFAa",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Short Baton",
+          "damage": "sw-1 cr",
+          "reach": "C, 1",
+          "parry": "-1",
+          "st": "5",
+          "skill": "SHORTSWORD (DX-5, Broadsword-2, Force Sword-4, Jitte/Sai-3, Knife-4, Saber-4, Smallsword-4, or Tonfa-3)",
+          "cost": "$10",
+          "weight": "0.5",
+          "notes": ""
+        },
+        {
+          "page": 67,
+          "name": "Short Baton",
+          "damage": "sw-1 cr",
+          "reach": "C, 1",
+          "parry": "-1",
+          "st": "5",
+          "skill": "KNIFE (DX-4, Force Sword-3, Main-Gauche-3, or Shortsword-3)",
+          "cost": "$10",
+          "weight": "0.5",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw-1 cr",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "5",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "resolution": "best-available",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Shortsword",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Knife",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "Both Shortsword and Knife are source-supported unmodified modes.",
+          "default_relation": null,
+          "apply_relation_to_roll": false
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Main-Gauche",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw-1 cr",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Shortsword",
+          "Knife"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:short-baton",
+      "equipmentId": "eUmoObBLpgPBL9Pef",
+      "modeId": "wOgJwfBJKojphYVml",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Short Baton",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "-1",
+          "st": "5",
+          "skill": "SHORTSWORD (DX-5, Broadsword-2, Force Sword-4, Jitte/Sai-3, Knife-4, Saber-4, Smallsword-4, or Tonfa-3)",
+          "cost": "$10",
+          "weight": "0.5",
+          "notes": ""
+        },
+        {
+          "page": 67,
+          "name": "Short Baton",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "-1",
+          "st": "5",
+          "skill": "KNIFE (DX-4, Force Sword-3, Main-Gauche-3, or Shortsword-3)",
+          "cost": "$10",
+          "weight": "0.5",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "resolution": "best-available",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Shortsword",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Knife",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "Both Shortsword and Knife are source-supported unmodified modes.",
+          "default_relation": null,
+          "apply_relation_to_roll": false
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Main-Gauche",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Shortsword",
+          "Knife"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:short-staff",
+      "equipmentId": "eujyRcBZwKblZxbKM",
+      "modeId": "wyxvV6sALMObn8IJA",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Short Staff",
+          "damage": "sw cr",
+          "reach": "1",
+          "parry": "0F",
+          "st": "6",
+          "skill": "SMALLSWORD (DX-5, Main-Gauche-3, Rapier-3, Saber-3, or Shortsword-4)",
+          "cost": "$20",
+          "weight": "1",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Smallsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Main-Gauche",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "skills": [
+          "Smallsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+2 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:short-staff",
+      "equipmentId": "eujyRcBZwKblZxbKM",
+      "modeId": "wfsaRbh2ooDjI32u3",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Short Staff",
+          "damage": "thr cr",
+          "reach": "1",
+          "parry": "0F",
+          "st": "6",
+          "skill": "SMALLSWORD (DX-5, Main-Gauche-3, Rapier-3, Saber-3, or Shortsword-4)",
+          "cost": "$20",
+          "weight": "1",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Smallsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Main-Gauche",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "skills": [
+          "Smallsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:small-axe",
+      "equipmentId": "eugTcxhNAMzqvlt9K",
+      "modeId": "wgb3Ju97lvDtfALPo",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Small Axe",
+          "damage": "sw+1 cut",
+          "reach": "1",
+          "parry": "0U",
+          "st": "10",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$45",
+          "weight": "3",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:small-mace",
+      "equipmentId": "eOJFIXvUSkQk5KC2f",
+      "modeId": "wQBoSaHBpHA4-tG_N",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Small Mace",
+          "damage": "sw+2 cr",
+          "reach": "1",
+          "parry": "0U",
+          "st": "10",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$35",
+          "weight": "3",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:small-round-mace",
+      "equipmentId": "euFuvEaABw1ncQz2M",
+      "modeId": "wHwj4ykYjVnll9Gfr",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Small Round Mace",
+          "damage": "sw+1 cr",
+          "reach": "1",
+          "parry": "0U",
+          "st": "10",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$25",
+          "weight": "3",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:small-throwing-axe",
+      "equipmentId": "elbJwTmAPdiWFj-Mg",
+      "modeId": "wPi44LBbJHoqD3NwK",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Small Throwing Axe",
+          "damage": "sw+1 cut",
+          "reach": "1",
+          "parry": "0U",
+          "st": "10",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$50",
+          "weight": "3",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:tetsubo",
+      "equipmentId": "eJ1aIpfPamQPxpY4l",
+      "modeId": "w296XTVzFYO58OOwj",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Tetsubo",
+          "damage": "sw+5 cr",
+          "reach": "1, 2*",
+          "parry": "0U",
+          "st": "13‡",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$100",
+          "weight": "10",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+5 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "13‡",
+        "usage": "Axe Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+5 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+7 cr",
+      "expectedLevelST12": 15
+    },
+    {
+      "modelId": "lt:tetsubo",
+      "equipmentId": "eJ1aIpfPamQPxpY4l",
+      "modeId": "wUdXjGI-mnuS2bUZA",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Tetsubo",
+          "damage": "thr+2 cr",
+          "reach": "1, 2*",
+          "parry": "0",
+          "st": "12†",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$100",
+          "weight": "10",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+2 cr",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "12†",
+        "usage": "Axe Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "12†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:tetsubo",
+      "equipmentId": "eJ1aIpfPamQPxpY4l",
+      "modeId": "wffvI7Qk6KjABsvO6",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Tetsubo",
+          "damage": "sw+3 cr",
+          "reach": "1, 2",
+          "parry": "0U",
+          "st": "13†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$100",
+          "weight": "10",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+3 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "13†",
+        "usage": "Sword Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Sword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "13†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+5 cr",
+      "expectedLevelST12": 15
+    },
+    {
+      "modelId": "lt:tetsubo",
+      "equipmentId": "eJ1aIpfPamQPxpY4l",
+      "modeId": "wWnO9KBaPyI80_a9M",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Tetsubo",
+          "damage": "thr+2 cr",
+          "reach": "2",
+          "parry": "0",
+          "st": "12†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$100",
+          "weight": "10",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+2 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "12†",
+        "usage": "Sword Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Sword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "12†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:throwing-axe",
+      "equipmentId": "ek2DWesEupFg8hTVR",
+      "modeId": "wSMiEzxNWV9UWNheq",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Throwing Axe",
+          "damage": "sw+2 cut",
+          "reach": "1",
+          "parry": "0U",
+          "st": "11",
+          "skill": "AXE/MACE (DX-5, Flail-4, or Two-Handed Axe/Mace-3)",
+          "cost": "$60",
+          "weight": "4",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Flail",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:throwing-axe",
+      "equipmentId": "ek2DWesEupFg8hTVR",
+      "modeId": "wjvIBm8oJoW_BbGOh",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Throwing Axe",
+          "damage": "sw+3 cut",
+          "reach": "1",
+          "parry": "0U",
+          "st": "10†",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$60",
+          "weight": "4",
+          "notes": "[1]"
+        }
+      ],
+      "before": {
+        "damage": "sw+3 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10†",
+        "usage": "Swung - two handed",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+5 cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:tonfa",
+      "equipmentId": "ecUULGohIZt65tziP",
+      "modeId": "w_bOTXsao1U_Dvy9O",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Tonfa",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BRAWLING, KARATE, or DX",
+          "cost": "$40",
+          "weight": "1.5",
+          "notes": "Butt jab. [5]"
+        },
+        {
+          "page": 65,
+          "name": "Tonfa",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BRAWLING, KARATE, or DX",
+          "cost": "$40",
+          "weight": "1.5",
+          "notes": "Butt jab. [5]"
+        },
+        {
+          "page": 65,
+          "name": "Tonfa",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BRAWLING, KARATE, or DX",
+          "cost": "$40",
+          "weight": "1.5",
+          "notes": "Butt jab. [5]"
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "usage": "Butt jab",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Brawling",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": true,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:tonfa",
+      "equipmentId": "ecUULGohIZt65tziP",
+      "modeId": "wdoS9GN3yP-rx0QUf",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Tonfa",
+          "damage": "sw cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "7",
+          "skill": "TONFA (DX-5 or Shortsword-3)",
+          "cost": "$40",
+          "weight": "1.5",
+          "notes": "[12]"
+        }
+      ],
+      "before": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Tonfa",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Tonfa"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+2 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:tonfa",
+      "equipmentId": "ecUULGohIZt65tziP",
+      "modeId": "wj6pE50-5KRpVquln",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Tonfa",
+          "damage": "thr cr",
+          "reach": "C, 1",
+          "parry": "0",
+          "st": "7",
+          "skill": "TONFA (DX-5 or Shortsword-3)",
+          "cost": "$40",
+          "weight": "1.5",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C,1",
+        "parry": "0",
+        "st": "7",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Tonfa",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C,1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Tonfa"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:warhammer",
+      "equipmentId": "eAcLA_uoBCUNnhqZ6",
+      "modeId": "wLrG7BtaQ4ofJ9yZP",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Warhammer",
+          "damage": "sw+4 imp",
+          "reach": "1, 2*",
+          "parry": "0U",
+          "st": "12‡",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$100",
+          "weight": "7",
+          "notes": "[3, 4]"
+        }
+      ],
+      "before": {
+        "damage": "sw+4 imp",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12‡",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Axe/Mace",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Axe/Mace",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Axe/Mace",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Polearm",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Flail",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+4 imp",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+6 imp",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:brass-knuckles",
+      "equipmentId": "eN_f8tX490hHeJC52",
+      "modeId": "wFrA_h5gC4PZ1uxLj",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Brass Knuckles",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$10",
+          "weight": "0.25",
+          "notes": "[5]"
+        },
+        {
+          "page": 65,
+          "name": "Brass Knuckles",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$10",
+          "weight": "0.25",
+          "notes": "[5]"
+        },
+        {
+          "page": 65,
+          "name": "Brass Knuckles",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$10",
+          "weight": "0.25",
+          "notes": "[5]"
+        },
+        {
+          "page": 65,
+          "name": "Brass Knuckles",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$10",
+          "weight": "0.25",
+          "notes": "[5]"
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "usage": "Punch",
+        "skills": {
+          "status": "resolved",
+          "resolution": "best-available",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Boxing",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Brawling",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Karate",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "Basic Set permits Boxing, Brawling, Karate, or DX.",
+          "default_relation": null,
+          "apply_relation_to_roll": false,
+          "attribute_fallback": {
+            "attribute": "DX",
+            "modifier": 0
+          }
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Boxing",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Karate",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Boxing",
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": true,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:cestus",
+      "equipmentId": "e15Zg7FmhzZBH34BF",
+      "modeId": "wYWcmbVmBexLdT8_i",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Cestus",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$50",
+          "weight": "1",
+          "notes": "[5, 6]"
+        },
+        {
+          "page": 65,
+          "name": "Cestus",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$50",
+          "weight": "1",
+          "notes": "[5, 6]"
+        },
+        {
+          "page": 65,
+          "name": "Cestus",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$50",
+          "weight": "1",
+          "notes": "[5, 6]"
+        },
+        {
+          "page": 65,
+          "name": "Cestus",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$50",
+          "weight": "1",
+          "notes": "[5, 6]"
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "usage": "Punch",
+        "skills": {
+          "status": "resolved",
+          "resolution": "best-available",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Boxing",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Brawling",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Karate",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "Martial Arts/GCS data permit Boxing, Brawling, Karate, or DX.",
+          "default_relation": null,
+          "apply_relation_to_roll": false,
+          "attribute_fallback": {
+            "attribute": "DX",
+            "modifier": 0
+          }
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Boxing",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Karate",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Boxing",
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": true,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:combat-fan",
+      "equipmentId": "ewsHxS6FKDlJFd_kf",
+      "modeId": "woI_oGfIWaUBTMf1F",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Combat Fan",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "7",
+          "skill": "BRAWLING or DX",
+          "cost": "$40",
+          "weight": "1",
+          "notes": "[5]"
+        },
+        {
+          "page": 65,
+          "name": "Combat Fan",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "7",
+          "skill": "BRAWLING or DX",
+          "cost": "$40",
+          "weight": "1",
+          "notes": "[5]"
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "usage": "Punch",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Brawling",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Brawling",
+          "DX"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": true,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:combat-fan",
+      "equipmentId": "ewsHxS6FKDlJFd_kf",
+      "modeId": "waZu4HqLAqQ70yfYF",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Combat Fan",
+          "damage": "thr-2 cut",
+          "reach": "C",
+          "parry": "0",
+          "st": "6",
+          "skill": "BRAWLING or DX",
+          "cost": "$40",
+          "weight": "1",
+          "notes": "-2 to hit."
+        },
+        {
+          "page": 65,
+          "name": "Combat Fan",
+          "damage": "thr-2 cut",
+          "reach": "C",
+          "parry": "0",
+          "st": "6",
+          "skill": "BRAWLING or DX",
+          "cost": "$40",
+          "weight": "1",
+          "notes": "-2 to hit."
+        }
+      ],
+      "before": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": "6",
+        "usage": "Swing",
+        "skills": {
+          "status": "none",
+          "skill": null,
+          "candidates": [],
+          "basis": "no skill default"
+        },
+        "defaults": []
+      },
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Brawling",
+          "DX"
+        ],
+        "directPenalty": -2,
+        "hands": 1
+      },
+      "unarmedBonus": true,
+      "added": false,
+      "expectedDamageST12": "1d-2 cut",
+      "expectedLevelST12": 14
+    },
+    {
+      "modelId": "lt:macuahuilzoctli",
+      "equipmentId": "e5MufJotezd4kJRgV",
+      "modeId": "wYsCFYJDbz5W15_eX",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Macuahuilzoctli",
+          "damage": "sw+1(0.5) cut",
+          "reach": "1",
+          "parry": "0",
+          "st": "8",
+          "skill": "SHORTSWORD (DX-5, Broadsword-2, Force Sword-4, Jitte/Sai-3, Knife-4, Saber-4, Smallsword-4, or Tonfa-3)",
+          "cost": "$350",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+1(0.5) cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "usage": "Swung",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shortsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+1(0.5) cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+3(0.5) cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:macuahuilzoctli",
+      "equipmentId": "e5MufJotezd4kJRgV",
+      "modeId": "wHvomd2Y3z1hPWHxm",
+      "sourceRows": [
+        {
+          "page": 69,
+          "name": "Macuahuilzoctli",
+          "damage": "thr cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "8",
+          "skill": "SHORTSWORD (DX-5, Broadsword-2, Force Sword-4, Jitte/Sai-3, Knife-4, Saber-4, Smallsword-4, or Tonfa-3)",
+          "cost": "$350",
+          "weight": "2",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Shortsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Jitte/Sai",
+            "specialization": null,
+            "modifier": -3
+          },
+          {
+            "type": "skill",
+            "name": "Knife",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Smallsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Tonfa",
+            "specialization": null,
+            "modifier": -3
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d-1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:macuahuitl",
+      "equipmentId": "eeieywVt5JyxmHN-A",
+      "modeId": "w7wsHywncPn-NCUWz",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Macuahuitl",
+          "damage": "sw+2(0.5) cut",
+          "reach": "1",
+          "parry": "0",
+          "st": "10",
+          "skill": "BROADSWORD (DX-5, Force Sword-4, Rapier-4, Saber-4, Shortsword-2, or Two-Handed Sword-4)",
+          "cost": "$500",
+          "weight": "3",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+2(0.5) cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Broadsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+2(0.5) cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+4(0.5) cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:macuahuitl",
+      "equipmentId": "eeieywVt5JyxmHN-A",
+      "modeId": "wX45FsaP1LRlLSkRa",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Macuahuitl",
+          "damage": "thr+1 cr",
+          "reach": "1",
+          "parry": "0",
+          "st": "10",
+          "skill": "BROADSWORD (DX-5, Force Sword-4, Rapier-4, Saber-4, Shortsword-2, or Two-Handed Sword-4)",
+          "cost": "$500",
+          "weight": "3",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Broadsword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Rapier",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Saber",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Shortsword",
+            "specialization": null,
+            "modifier": -2
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:myrmex",
+      "equipmentId": "ejf-JHLsTLDXHwdtX",
+      "modeId": "wRJ5QqpGlLDl05ESd",
+      "sourceRows": [
+        {
+          "page": 65,
+          "name": "Myrmex",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$20",
+          "weight": "0.25",
+          "notes": "[5, 6]"
+        },
+        {
+          "page": 65,
+          "name": "Myrmex",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$20",
+          "weight": "0.25",
+          "notes": "[5, 6]"
+        },
+        {
+          "page": 65,
+          "name": "Myrmex",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$20",
+          "weight": "0.25",
+          "notes": "[5, 6]"
+        },
+        {
+          "page": 65,
+          "name": "Myrmex",
+          "damage": "thr cr",
+          "reach": "C",
+          "parry": "0",
+          "st": "–",
+          "skill": "BOXING, BRAWLING, KARATE, or DX",
+          "cost": "$20",
+          "weight": "0.25",
+          "notes": "[5, 6]"
+        }
+      ],
+      "before": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "usage": "Punch",
+        "skills": {
+          "status": "resolved",
+          "resolution": "best-available",
+          "skill": null,
+          "candidates": [
+            {
+              "name": "Boxing",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Brawling",
+              "specialization": null,
+              "modifier": 0
+            },
+            {
+              "name": "Karate",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "Martial Arts permits Brawling, Karate, or DX; Boxing is retained from the GCS library where applicable.",
+          "default_relation": null,
+          "apply_relation_to_roll": false,
+          "attribute_fallback": {
+            "attribute": "DX",
+            "modifier": 0
+          }
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Boxing",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Brawling",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Karate",
+            "specialization": null,
+            "modifier": 0
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Boxing",
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "directPenalty": 0,
+        "hands": 1
+      },
+      "unarmedBonus": true,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:two-handed-macuahuitl",
+      "equipmentId": "e9i4ODyXdgWFkDz6w",
+      "modeId": "w-L3A2u02WwBcyqaP",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Two-Handed Macuahuitl",
+          "damage": "sw+3(0.5) cut",
+          "reach": "1, 2",
+          "parry": "0",
+          "st": "12†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$650",
+          "weight": "5",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "sw+3(0.5) cut",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "12†",
+        "usage": "Swing",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Sword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "sw+3(0.5) cut",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "12†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+5(0.5) cut",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:two-handed-macuahuitl",
+      "equipmentId": "e9i4ODyXdgWFkDz6w",
+      "modeId": "w_BUr9pNBp8hnurec",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Two-Handed Macuahuitl",
+          "damage": "thr+2 cr",
+          "reach": "2",
+          "parry": "0",
+          "st": "12†",
+          "skill": "TWO-HANDED SWORD (DX-5, Broadsword-4, or Force Sword-4)",
+          "cost": "$650",
+          "weight": "5",
+          "notes": ""
+        }
+      ],
+      "before": {
+        "damage": "thr+2 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "12†",
+        "usage": "Thrust",
+        "skills": {
+          "status": "resolved",
+          "skill": {
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          "candidates": [
+            {
+              "name": "Two-Handed Sword",
+              "specialization": null,
+              "modifier": 0
+            }
+          ],
+          "basis": "unique unmodified skill default"
+        },
+        "defaults": [
+          {
+            "type": "dx",
+            "modifier": -5
+          },
+          {
+            "type": "skill",
+            "name": "Two-Handed Sword",
+            "specialization": null,
+            "modifier": 0
+          },
+          {
+            "type": "skill",
+            "name": "Broadsword",
+            "specialization": null,
+            "modifier": -4
+          },
+          {
+            "type": "skill",
+            "name": "Force Sword",
+            "specialization": null,
+            "modifier": -4
+          }
+        ]
+      },
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "2",
+        "parry": "0",
+        "st": "12†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": false,
+      "expectedDamageST12": "1d+1 cr",
+      "expectedLevelST12": 16
+    },
+    {
+      "modelId": "lt:round-mace",
+      "equipmentId": "eNROYfnjT1DYJkdkS",
+      "modeId": "wLTM22RoundMaceTwoHanded",
+      "sourceRows": [
+        {
+          "page": 70,
+          "name": "Round Mace",
+          "damage": "sw+3 cr",
+          "reach": "1",
+          "parry": "0U",
+          "st": "11†",
+          "skill": "TWO-HANDED AXE/MACE (DX-5, Axe/Mace-3, Polearm-4, or Two-Handed Flail-4)",
+          "cost": "$35",
+          "weight": "5",
+          "notes": "[1]"
+        }
+      ],
+      "before": null,
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "directPenalty": 0,
+        "hands": 2
+      },
+      "unarmedBonus": false,
+      "added": true,
+      "expectedDamageST12": "1d+5 cr",
+      "expectedLevelST12": 16
+    }
+  ]
+}

@@ -118,7 +118,7 @@ export function f3Extension(resolved, runtime) {
       return F3_FIELDS[row.kind].map(key => {
         const choices = booleans.has(key) ? ["yes", "no"] : key === "sensor" ? ["optical", "infrared", "hyperspectral", "laser", "radar", "imagingRadar"] :
           key === "outcome" ? ["success", "failure"] : key === "consequence" ? ["cough", "blind", ...(id.startsWith("ht_tear_gas_vomit:") ? ["retch"] : [])] : null;
-        return { key, label: f3Text(key, runtime), wide: !!choices, choices: choices ? [["", "\u2014"], ...choices.map(c => [c, f3Text(c, runtime)])] : null };
+        return { key, label: f3Text(key, runtime), wide: !!choices, choices: choices ? [["", "\u2013"], ...choices.map(c => [c, f3Text(c, runtime)])] : null };
       });
     },
     calculate(current, id, controls) {

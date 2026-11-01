@@ -51,17 +51,17 @@ function withRangedRuntime(callback) {
   finally { globalThis.game = prior.game; globalThis.GURPS = prior.GURPS; }
 }
 
-test("Weapon Bond perk lookup unlocks a visible checkbox but does not select a weapon by name", () => {
+test("Weapon Bond stays manual regardless of perk presence and never auto-selects", () => {
   const absent = { system: { ads: { one: { name: "Weapon Bonded" } } } };
   const present = bondActor();
   assert.equal(hasWeaponBondPerk(absent), false);
   assert.equal(hasWeaponBondPerk({ system: { ads: { one: { name: "Weapon Bond" } } } }), true);
   assert.equal(hasWeaponBondPerk(present), true);
-  assert.equal(isWeaponBondActive(absent, true), false);
+  assert.equal(isWeaponBondActive(absent, true), true);
   assert.equal(isWeaponBondActive(present, false), false);
-  assert.match(weaponBondCheckbox({ available: false, checked: true }), /disabled/);
-  assert.match(weaponBondCheckbox({ available: false }), /fa-lock/);
-  assert.doesNotMatch(weaponBondCheckbox({ available: false, checked: true }), / checked/);
+  assert.doesNotMatch(weaponBondCheckbox({ available: false, checked: true }), /disabled/);
+  assert.doesNotMatch(weaponBondCheckbox({ available: false }), /fa-lock/);
+  assert.match(weaponBondCheckbox({ available: false, checked: true }), / checked/);
   assert.match(weaponBondCheckbox({ available: true, checked: true }), / checked/);
   assert.doesNotMatch(weaponBondCheckbox({ available: true }), /disabled|fa-lock/);
 });
@@ -108,7 +108,7 @@ test("Weapon Bond adds one independent modifier to Quick-Shot, TA, CQB and Close
   assert.equal(unbonded.combatCalculation.channels.find(x => x.id === "weaponBond").resolvedValue, 0);
   const noPerk = f.details({ ...f.attack, weaponBond: true });
   delete f.actor.system.ads;
-  assert.equal(f.details().effectiveSkill, 8);
+  assert.equal(f.details().effectiveSkill, 9);
   assert.equal(noPerk.effectiveSkill, 9);
 }));
 
@@ -191,6 +191,7 @@ test("checking melee Weapon Bond alone does not create a skill-level override", 
     const { MeleeAssistantApp } = await import("../scripts/tools/melee-assistant-app.js");
     const app = Object.create(MeleeAssistantApp.prototype);
     app.actor = bondActor();
+    app.actor.system.ads = {};
     app.sourceAttack = { uuid: "axe-entry", path: "system.melee.00001", name: "Axe" };
     app.attack = { ...app.sourceAttack, label: "Axe", level: 13,
       damage: "1d cut", reach: "1", parry: "0" };

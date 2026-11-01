@@ -176,7 +176,7 @@ export function appendF2Conditions(details, resolved, runtime, refresh, extensio
       const choices = booleanFields.has(key) ? ["", "yes", "no"] : key === "posture" ? ["", "standing", "crouching", "kneeling", "crawling", "sitting", "lying"] : null;
       const control = add(label, choices ? "select" : "input");
       control.name = key;
-      if (choices) for (const choice of choices) { const option = add(control, "option", choice ? f2Text(choice, runtime) : "\u2014"); option.value = choice; }
+      if (choices) for (const choice of choices) { const option = add(control, "option", choice ? f2Text(choice, runtime) : "\u2013"); option.value = choice; }
       else { control.type = key === "target" ? "text" : "number"; control.step = "any"; }
       // User values remain properties of this GM-only DOM, never value attributes or message HTML.
       control.addEventListener("input", () => { output.textContent = ""; });

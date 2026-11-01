@@ -107,8 +107,8 @@ test("manual Range drives CQB without a Target and reacts to every range change"
   const prior = { game: globalThis.game, GURPS: globalThis.GURPS, canvas: globalThis.canvas };
   globalThis.game = { user: { targets: new Set() }, settings: { get: () => null } };
   globalThis.GURPS = { ModifierBucket: { modifierStack: { modifierList: [] } } };
-  globalThis.canvas = { tokens: { get: () => null }, grid: {
-    isGridless: false, measurePath: ([, target]) => ({ spaces: target.yards }),
+  globalThis.canvas = { scene: {grid: {distance: 1, units: 'yd'}}, tokens: { get: () => null }, grid: {
+    isGridless: false, measurePath: ([, target]) => ({ spaces: target.yards, distance: target.yards }),
     getCenterPoint: hex => ({ x: hex.x, y: hex.y })
   } };
   try {
@@ -231,8 +231,8 @@ test("ranged technique distance uses the selected hex and each RRS slot's manual
     A: { id: "A", document: { yards: 15 } },
     B: { id: "B", document: { yards: 5 } }
   };
-  globalThis.canvas = { tokens: { get: id => targets[id] }, grid: {
-    isGridless: false, measurePath: ([, target]) => ({ spaces: target.yards ?? 8.4 }),
+  globalThis.canvas = { scene: {grid: {distance: 1, units: 'yd'}}, tokens: { get: id => targets[id] }, grid: {
+    isGridless: false, measurePath: ([, target]) => ({ spaces: target.yards ?? 8.4, distance: target.yards ?? 8.4 }),
     getCenterPoint: () => ({ x: 8, y: 4 })
   } };
   try {
@@ -287,8 +287,8 @@ test("RRS slots measure their own targets and TA, Quick-Shot, Trademark Move fol
   const far = { id: "far", document: { yards: 20 } };
   globalThis.game = { user: { targets: new Set() }, settings: { get: () => null } };
   globalThis.GURPS = { ModifierBucket: { modifierStack: { modifierList: [] } } };
-  globalThis.canvas = { tokens: { get: id => ({ near, far })[id] }, grid: {
-    isGridless: false, measurePath: ([, target]) => ({ spaces: target.yards })
+  globalThis.canvas = { scene: {grid: {distance: 1, units: 'yd'}}, tokens: { get: id => ({ near, far })[id] }, grid: {
+    isGridless: false, measurePath: ([, target]) => ({ spaces: target.yards, distance: target.yards })
   } };
   try {
     const actor = actorWith(10, [guns("Rifle", 13), cqb("Rifle", 17),

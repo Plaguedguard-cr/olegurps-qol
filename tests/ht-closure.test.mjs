@@ -143,8 +143,8 @@ test('new error messages remain Russian for Foundry en and ru',()=>{
 });
 test('hex target measurement uses document centers, retaining gridless and unit conversion paths',()=>{
  const source={document:{x:0,y:0,getCenterPoint:()=>({x:50,y:50})}},target={document:{x:100,y:0,getCenterPoint:()=>({x:150,y:50})}};
- const runtime={canvas:{grid:{isGridless:false,measurePath(points){assert.deepEqual(points,[{x:50,y:50},{x:150,y:50}]);return {spaces:1,distance:100};}}}};
- assert.equal(measureTokenDistanceYards(source,target,runtime),1);
+ const runtime={canvas:{scene:{grid:{units:'yd'}},grid:{isGridless:false,measurePath(points){assert.deepEqual(points,[{x:50,y:50},{x:150,y:50}]);return {spaces:1,distance:100};}}}};
+ assert.equal(measureTokenDistanceYards(source,target,runtime),100);
  runtime.canvas.grid.isGridless=true;assert.equal(measureTokenDistanceYards(source,target,runtime),100);
  assert.equal(measureTokenDistanceYards(source,source,runtime),null);
 });

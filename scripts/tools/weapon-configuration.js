@@ -59,7 +59,7 @@ export function weaponComparisonHTML(attack, mode) {
 export function catalogTargetLabel(catalogs, target) {
   const equipment = catalogs?.getEquipment(target?.equipmentId);
   const mode = catalogs?.getMode(target?.modeId);
-  return equipment ? [equipment.name, equipment.source, mode?.usage].filter(Boolean).join(" \u2014 ") : "";
+  return equipment ? [equipment.name, equipment.source, mode?.usage].filter(Boolean).join(" \u2013 ") : "";
 }
 
 export function searchWeaponCatalog(catalogs, query = "") {
@@ -69,7 +69,7 @@ export function searchWeaponCatalog(catalogs, query = "") {
     equipment.modes.filter(mode => mode.role === "attack" && !mode.hidden && mode.combat_type === "ranged")
       .map(mode => ({ equipmentId: equipment.equipment_id, modeId: mode.weapon_mode_id,
         caliber: mode.caliber_hint ?? equipment.caliber ?? "",
-        label: [equipment.name, equipment.source, mode.usage].filter(Boolean).join(" \u2014 ") })))
+        label: [equipment.name, equipment.source, mode.usage].filter(Boolean).join(" \u2013 ") })))
     .filter(target => terms.every(term => searchText(target.label + " " + target.caliber + " " + target.equipmentId + " " + target.modeId).includes(term)));
 }
 
@@ -145,7 +145,7 @@ export function baseAmmunition(ammunition, modeId, catalogs, preferred = null, o
       if (sameQualifier.length > 1 || !field) qualifier += " \u00b7 " + entry.ammoId;
     }
     return { ...entry, choiceKey: ammunitionChoiceKey(entry),
-      label: entry.record.name + " \u2014 " + weaponText("Base") + (qualifier ? " \u00b7 " + qualifier : "") };
+      label: entry.record.name + " \u2013 " + weaponText("Base") + (qualifier ? " \u00b7 " + qualifier : "") };
   });
 }
 
@@ -242,7 +242,7 @@ export class WeaponConfigurationDraft {
       const profile=new AttackProfileResolver({catalogs:this.catalogs,compatibility:this.ammunition??globalThis.OleGURPSQOL?.ammunitionCompatibility}).resolve({
         actor:this.actor,actorId:this.actor.id,weaponId:carrier.id,state:{weapons:[carrier]},attack:{data:raw,ltBowOverrides:this.standalone?this.standaloneDraft.overrides[modeId]:null},
         ammunition,binding:{status:'confirmed',binding:{confirmed:true,modeId}}});
-      return {stats:{...raw,...(profile.damage.nativeSafe?profile.damage.effectiveChanges:{damage:'—',range:'—'})},derivedFields:['damage','range'],resolvedDamage:profile.damage.nativeSafe?profile.damage.formula:null};
+      return {stats:{...raw,...(profile.damage.nativeSafe?profile.damage.effectiveChanges:{damage:'–',range:'–'})},derivedFields:['damage','range'],resolvedDamage:profile.damage.nativeSafe?profile.damage.formula:null};
     }
     if(ladarProfile(modeId)){
       const range=ladarRange(ladarProfile(modeId),this.standaloneDraft.overrides[modeId]);
@@ -284,7 +284,7 @@ export class WeaponConfigurationDraft {
       binding:{status:'confirmed',binding:{confirmed:true,modeId}},
       ammunition:{kind:'preview',type:{source:'catalog',book:'ut',kind:'ammo-family',ammoId:(this.executionVariant==='lp'?LP_PROFILES:ETC_PROFILES)[modeId]?.familyId}}});
     return {stats:profile.damage.nativeSafe ? {...raw,damage:profile.effective.damage,range:profile.effective.range,...(this.executionVariant==='lp'?{shots:profile.effective.shots}:{})} :
-      {...raw,damage:'—',range:'—'},derivedFields:this.executionVariant==='lp'?['damage','range','shots']:['damage','range']};
+      {...raw,damage:'–',range:'–'},derivedFields:this.executionVariant==='lp'?['damage','range','shots']:['damage','range']};
   }
   get attack() { return this.attacks.find(attack => attack.path === this.path) ?? null; }
   laserDraft(id=this.executionModeId){
@@ -401,10 +401,9 @@ export class WeaponConfigurationDraft {
       next.weapons.push(weapon);
     }
     Object.assign(weapon, { name: attack.label, attackRef: { path: attack.path, uuid: attack.uuid, name: attack.name, mode: attack.mode },
-      weaponBond: hasWeaponBondPerk(this.actor)||this.catalogs?.getEquipmentForMode(draft.target?.modeId)?.source==='LT' ? draft.weaponBond : this.existing?.weaponBond === true,
+      weaponBond: draft.weaponBond===true,
       ammoType: !draft.ammoChanged && this.existing ? this.existing.ammoType : draft.ammo?.name ?? draft.ammoType ?? "" });
     if (draft.ammo) weapon.ammunitionBinding = { ...draft.ammo, confirmed: true };
-    weapon.weaponBondPerkConfirmed=this.catalogs?.getEquipmentForMode(draft.target?.modeId)?.source==='LT'&&weapon.weaponBond===true;
     this.requestExecution(weapon);
     if (!this.existing && isPaintCarbine(weapon, draft.target?.modeId)) {
       weapon.catalogModeId = draft.target.modeId;
@@ -439,7 +438,7 @@ export function skillOptionsHTML(actor, binding) {
   return `<option value="">${escapeWeaponHTML(weaponText("SelectSkill"))}</option>` +
     (binding && !current ? `<option value="stored" selected>${escapeWeaponHTML(binding.name || binding.key)} (${escapeWeaponHTML(weaponText("Review"))})</option>` : "") +
     skills.map(skill => `<option value="${escapeWeaponHTML(skill.key)}" title="${escapeWeaponHTML(skill.name)}"` +
-      `${current?.key === skill.key ? " selected" : ""}>${escapeWeaponHTML(skill.name)} \u2014 ${skill.level}</option>`).join("");
+      `${current?.key === skill.key ? " selected" : ""}>${escapeWeaponHTML(skill.name)} \u2013 ${skill.level}</option>`).join("");
 }
 
 export function weaponConfigurationHTML(model) {
@@ -447,7 +446,7 @@ export function weaponConfigurationHTML(model) {
   const attackOptions = model.attacks.map(attack => {
     const details = [attack.level > 0 ? `${weaponText("Level")} ${attack.level}` : "",
       ...["rof", "shots", "rcl"].filter(field => attack[field]).map(field => `${statLabels[field]} ${attack[field]}`)].filter(Boolean).join(", ");
-    const label = attack.label + (details ? " \u2014 " + details : "");
+    const label = attack.label + (details ? " \u2013 " + details : "");
     return `<option value="${escapeWeaponHTML(attack.path)}" title="${escapeWeaponHTML(label)}"` +
       `${attack.path === model.path ? " selected" : ""}>${escapeWeaponHTML(label)}</option>`;
   }).join("");

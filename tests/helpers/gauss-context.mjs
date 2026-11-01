@@ -46,7 +46,7 @@ export async function gaussFixture(modeId,{host=true,profileContext={},type='ran
   const shoot=(amount=1,{attackId=crypto.randomUUID(),execute=null,cancel=false}={})=>service.executeShot({weaponId:weapon().id,attackId,
     prepare:()=>({amount,profile:profile()}),execute:execute??(cancel?async()=>({rolled:false}):({profile:p})=>executePreparedGgaRoll({
       actor,attack:attack(),attackProfile:p,shotSnapshot:createShotSnapshot(p,{attackId}),effectiveSkill:14,physicalShots:amount,
-      effectiveRoF:amount*(p.damage.rules.projectiles?.count??1),rcl:Number(p.effective.rcl),consumeAction:false,runtime}))});
+      effectiveRoF:amount*(p.damage.rules.projectiles?.count??1),rcl:Number(p.effective.rcl),combatType:type,consumeAction:false,runtime}))});
   return {actor,flags,writes,service,definitions,record,draft,state,weapon,attack,candidates,tx,load,battery,profile,shoot,
     power:()=>weaponPowerProfile(weapon())};
 }

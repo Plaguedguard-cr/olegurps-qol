@@ -27,7 +27,22 @@ const closed = [
 ];
 const key = row => row.modeId + "/" + (row.ammoId ?? row.ammoItemId);
 
+// HT199 and HT91: the same AM-402 12G firing action in the AM-402T Tonfa.
+// The physical links do not imply a pressure rating or a new +P approval.
+export const condorTonfaPairs=['ht_12_gauge_2_75_18_5x70mmr','ht_12_gauge_2_75_18_5x70mmr_heavy_load']
+ .map(ammoId=>['WHTM28CondorTonfaFired',ammoId]);
+export function assertCurrentHTNativePairs(catalogs){
+ const pairs=book=>catalogs[book==='source'?'getSourceCatalog':'getCatalog']('ht').ammo_items.flatMap(a=>a.weapon_mode_ids.map(id=>id+'/'+a.id));
+ const original=pairs('source'),actual=pairs('effective');assert.equal(original.length,511);
+ assert.deepEqual(actual.toSorted(),[...original,...condorTonfaPairs.map(([m,a])=>m+'/'+a)].toSorted());
+ assert.equal(new Set(actual).size,513);return actual;
+}
+
 export function assertPlusPReadyIdentities(rows) {
+  const later=rows.filter(row=>row.modeId==='WHTM28CondorTonfaFired');
+  assert.deepEqual(later.map(row=>[row.modeId,row.ammoId??row.ammoItemId]).sort(),condorTonfaPairs.toSorted());
+  assert.ok(later.every(row=>row.ready===false),'new physical links grant no +P readiness');
+  rows=rows.filter(row=>row.modeId!=='WHTM28CondorTonfaFired');
   const historical = readAuditFixture("ht-12g-case-correction").all.filter(row => row.ready);
   const expected = new Set(historical.map(key));
   assert.equal(expected.size, 363);

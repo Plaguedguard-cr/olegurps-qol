@@ -21,7 +21,7 @@ function localizedDamageTypeLabel(type, definition) {
   const label = ({cr:"дробящий",cut:"режущий",imp:"пронзающий",burn:"ожог",cor:"коррозия",
     tox:"токсичный",fat:"усталость",pi:"пробивающий","pi-":"малый пробивающий",
     "pi+":"большой пробивающий","pi++":"огромный пробивающий"})[type] ?? type;
-  return label === type ? type : `${type} \u2014 ${label}`;
+  return label === type ? type : `${type} \u2013 ${label}`;
 }
 
 export function getGgaDamageTypes() {

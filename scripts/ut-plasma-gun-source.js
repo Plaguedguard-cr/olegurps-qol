@@ -19,7 +19,7 @@ export const plasmaGunProfile=id=>Object.hasOwn(PLASMA_GUN_PROFILES,id??'')?PLAS
 export const plasmaGunWeapon=w=>plasmaGunProfile(w?.standaloneModeId??w?.catalogModeId);
 const cartridgeId=(p,hot=false)=>'olegurps:plasma-cartridge:'+p.modeId+(hot?':hot':':standard');
 export const PLASMA_CARTRIDGES=Object.freeze(Object.fromEntries(Object.values(PLASMA_GUN_PROFILES).flatMap(p=>[false,...(p.hotAllowed?[true]:[])].map(hot=>{
- const id=cartridgeId(p,hot);return [id,Object.freeze({id,name:(hot?'Hot Power Cartridge':'Plasma Power Cartridge')+' — '+p.name,
+ const id=cartridgeId(p,hot);return [id,Object.freeze({id,name:(hot?'Hot Power Cartridge':'Plasma Power Cartridge')+' – '+p.name,
   category:'plasma-power-cartridge',plasmaGunModeId:p.modeId,hot,tl:p.tl,caliber_mm:null,cps_usd:null,wps_lb:null,
   source_ref:hot?'UT127,133':'UT127–128',linked_weapon_modes:[{equipment_id:p.equipmentId,weapon_mode_id:p.modeId}],linked_weapon_mode_count:1,
   provenance:{officialTableRow:false,identity:'module-model-bound-cartridge',interchangeability:'not-established',physicalCostWeight:'not-published'}})];
@@ -53,8 +53,8 @@ export function plasmaGunDamage(raw,id,weapon,type){
   !weapon?.blasterHotshot&&!weapon?.omniBlaster&&[undefined,'normal'].includes(weapon?.blasterMode);
  const adds=Number(m[2]??0)+Number(m[1]);
  const formula=c?.hot?m[1]+'d+'+adds+(m[3]?'x'+m[3]:'')+'(2) burn ex':p.damage;
- const instructions=[...(c?.hot?['Hot Power Cartridge: +1 за исходный куб; Malf14, последствия отказа — вручную. UT133.']:[]),
-  'Воздействие плазмы на Electrical — вручную. UT127.'];
+ const instructions=[...(c?.hot?['Hot Power Cartridge: +1 за исходный куб; Malf14, последствия отказа – вручную. UT133.']:[]),
+  'Воздействие плазмы на Electrical – вручную. UT127.'];
  return {status:valid?'resolved':'unresolved',nativeSafe:valid,reason:valid?null:'Нужен совместимый Plasma Power Cartridge и штатный профиль без ETC, LP или Hotshot.',
   rawFormula:raw.damage,formula,components:[{role:'kinetic',status:valid?'resolved':'unresolved',formula}],transformations:[],effectiveChanges:{damage:formula},
   rules:{plasmaGun:{family:'plasma-gun',modeId:id,cartridgeId:c?.id??null,hot:c?.hot??false,physicalUnitsPerShot:1,source:p.source},ammunitionSource:c?.hot?'UT127–128,133':p.source,

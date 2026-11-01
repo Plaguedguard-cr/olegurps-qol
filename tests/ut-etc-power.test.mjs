@@ -256,7 +256,7 @@ test('compact closed ETC chat keeps all manual fields and does not expose batter
   const p=automatic.prepare({modeId:fx.carrier.standaloneModeId,base,variantId:'ut_biochemical_liquid',parameters:{note:'Full note '.repeat(30),savingThrow:'Custom HT',description:'Full description '.repeat(30),radius:{yards:33,units:'yards',origin:'manual'}}});
   assert.equal(p.state,'complete');await fx.transaction('save-recipe',{type:p.type});await load(fx,p.type);await configure(fx);
   for(const lang of ['ru','en']){game.i18n.lang=lang;const html=utPayloadChatHTML(fx.profile(),escapePayload);
-    assert.match(html,/ETC — UT139/);assert.match(html,/<details/);assert.doesNotMatch(html,/<details[^>]*\bopen|capacity|module-10x|Батарея|Basic Set/);
+    assert.match(html,/ETC – UT139/);assert.match(html,/<details/);assert.doesNotMatch(html,/<details[^>]*\bopen|capacity|module-10x|Батарея|Basic Set/);
     assert.ok(html.includes(p.type.recipe.parameters.note));assert.ok(html.includes(p.type.recipe.parameters.description));assert.match(html,/Custom HT/);assert.match(html,/33/);
   }game.i18n.lang='ru';
 });

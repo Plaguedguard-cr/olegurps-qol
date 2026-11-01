@@ -1,4 +1,4 @@
-import { moduleMessage } from "../localization.js";
+import { moduleMessage, moduleText } from "../localization.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { executeNativeMeleeAttack } from "./melee-service.js";
 import { withClearedFoundryTargets } from "./foundry-targets.js";
@@ -11,6 +11,14 @@ const escapeHTML = value => globalThis.foundry?.utils?.escapeHTML
     })[character]);
 
 export async function executeMeleeAttackSnapshot(snapshot) {
+  const attempt=snapshot.blindFightingAttempt;
+  if (attempt?.result === 'success' &&
+      (attempt.used || snapshot.isBlindFightingCurrent && !snapshot.isBlindFightingCurrent())) {
+    throw Error(moduleText('OleGURPS.Melee.BlindFightingUsed'));
+  }
+  if(attempt)attempt.used=true;
+  let result;
+  try {
   const roll = () => executeNativeMeleeAttack({
     actor: snapshot.actor,
     sourceAttack: snapshot.sourceAttack,
@@ -25,7 +33,7 @@ export async function executeMeleeAttackSnapshot(snapshot) {
     damageOptions: snapshot.damageOptions, combatCalculation: snapshot.combatCalculation,
     skillCap: snapshot.skillCap
   });
-  const result = snapshot.clearTargets ? await withClearedFoundryTargets(roll) : await roll();
+  result = snapshot.clearTargets ? await withClearedFoundryTargets(roll) : await roll();
   if (result.success && result.hit !== false && snapshot.randomLocation) {
     try {
       const random = await snapshot.targetingService.resolveRandomHitLocation();
@@ -45,6 +53,7 @@ export async function executeMeleeAttackSnapshot(snapshot) {
     }
   }
   return { ...result, completed: result.success || !!result.message };
+  } finally {if(attempt&&!result?.success&&!result?.message)attempt.used=false;}
 }
 
 export class MeleeAttackExecutionApp extends ApplicationV2 {

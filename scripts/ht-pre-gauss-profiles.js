@@ -32,11 +32,11 @@ export const HT_PRE_GAUSS_AMMO = Object.freeze([
   ammunition('olegurps_ht_sling_lead','Свинцовый снаряд Slingshot',idsByKind('slingshot'),'HT201',{minimum_tech_level:2,cost_per_shot_usd:0.1,weight_per_shot_lb:0.05,book_cost_weight_verified:true}),
   ammunition('olegurps_ht_sling_steel','Стальной шар Slingshot',idsByKind('slingshot'),'HT201',{minimum_tech_level:5,cost_per_shot_usd:0.1,weight_per_shot_lb:0.05,book_cost_weight_verified:true}),
   ammunition('olegurps_ht_speargun_spear','Гарпун Speargun',idsByKind('speargun'),'HT201',{cost_per_shot_usd:10,weight_per_shot_lb:0.4,book_cost_weight_verified:true}),
-  ammunition('olegurps_ht_squirt_liquid','Жидкость Squirt Carbine — 1 пинта',idsByKind('squirt'),'HT180'),
+  ammunition('olegurps_ht_squirt_liquid','Жидкость Squirt Carbine – 1 пинта',idsByKind('squirt'),'HT180'),
   ...idsByKind('flame').map(id=>ammunition('olegurps_ht_flame_'+id,
-    (id==='W073XWePe7F0ZsLMX'?'Одноразовый DWM FmW46 — ':'Подготовленный струйный заряд — ')+HT_PRE_GAUSS_PROFILES[id].seconds+' с', [id],HT_PRE_GAUSS_PROFILES[id].source)),
+    (id==='W073XWePe7F0ZsLMX'?'Одноразовый DWM FmW46 – ':'Подготовленный струйный заряд – ')+HT_PRE_GAUSS_PROFILES[id].seconds+' с', [id],HT_PRE_GAUSS_PROFILES[id].source)),
   ...idsByKind('flame').filter(id=>!['W4BiP2tlnGAJKo8W5','W073XWePe7F0ZsLMX'].includes(id)).map(id=>ammunition('olegurps_ht_flame_'+id+'_unthickened',
-    'Незагущённое топливо — подготовленная струя '+HT_PRE_GAUSS_PROFILES[id].seconds+' с',[id],'HT178-180',{fuelStyle:'unthickened'}))
+    'Незагущённое топливо – подготовленная струя '+HT_PRE_GAUSS_PROFILES[id].seconds+' с',[id],'HT178-180',{fuelStyle:'unthickened'}))
 ]);
 export function htPreGaussAmmoIds(modeId) {
   return HT_PRE_GAUSS_AMMO.filter(a=>a.weapon_mode_ids.includes(modeId)).map(a=>a.id);
@@ -61,17 +61,17 @@ export function validHTLiquidRecipe(type) {
 export function htPreGaussInstructions(modeId,weapon=null) {
   const p=htPreGaussProfile(modeId);if(!p)return [];
   if(p.kind==='flame')return [
-    `Струя ${p.seconds*(weapon?.htJetMode==='continuous'?p.continuousUnits??1:1)} с; 3d burn/с. Два Ready; последующие проверки попадания — вручную.`,
+    `Струя ${p.seconds*(weapon?.htJetMode==='continuous'?p.continuousUnits??1:1)} с; 3d burn/с. Два Ready; последующие проверки попадания – вручную.`,
     `Горение 2d×5 с (за ½D: 1d×5 с), 1d burn/с; негерметичный DR /5.`,
-    `AOA Jet: полоса до 3 ярдов; урон и время / ширина, отдельные проверки целей — вручную. ${p.source}`];
+    `AOA Jet: полоса до 3 ярдов; урон и время / ширина, отдельные проверки целей – вручную. ${p.source}`];
   if(p.kind==='squirt')return [`Содержимое действует вручную; едкие жидкости непригодны. Заправка 10 с или замена резервуара два Ready, затем накачка ${p.pressurizeSeconds} с. HT180`];
   if(p.kind==='speargun')return ['Под водой Range10/15; длина штатного линя обычно не более 10 ярдов. Среду и линь учитывайте вручную. HT201'];
-  if(p.kind==='net')return ['Сеть 10×10 футов, цель до SM0; захват и оглушение — вручную. При дистанции менее 5 футов применяется отдельный удар снарядом. HT143–145'];
-  if(p.kind==='signal')return ['Сигнал или освещение: радиус 100 ярдов, 30 с. Эффект выбранного сигнала и контакт с горящей ракетой — вручную. HT142,145'];
+  if(p.kind==='net')return ['Сеть 10×10 футов, цель до SM0; захват и оглушение – вручную. При дистанции менее 5 футов применяется отдельный удар снарядом. HT143–145'];
+  if(p.kind==='signal')return ['Сигнал или освещение: радиус 100 ярдов, 30 с. Эффект выбранного сигнала и контакт с горящей ракетой – вручную. HT142,145'];
   if(p.kind==='nail')return [p.externalPower?'Нужны компрессор, шланг и внешнее питание; наличие и соединение проверяются владельцем. HT28':
     p.supplies.length===2?'Гвозди, топливный баллон и аккумулятор зажигания расходуются отдельно. HT28':
     'Один гвоздь и один холостой заряд на выстрел; десять зарядов в ленте. HT28',
-    'Для стрельбы нужно обойти контактный предохранитель; удержание второй рукой или подготовка блокировки — вручную. HT28'];
+    'Для стрельбы нужно обойти контактный предохранитель; удержание второй рукой или подготовка блокировки – вручную. HT28'];
   return [];
 }
 export function htPreGaussPlatform(modeId) {

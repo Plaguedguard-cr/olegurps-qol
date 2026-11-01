@@ -13,7 +13,7 @@ export function utCompatibilityDecision(modeId,candidateId,{caliberMm}={}){
     ...result('undetermined','UT139: LP для существующего 18.5mmPC не доказан; пользователь окончательно исключил эту конверсию.','user-exclusion'),
     implementationExcluded:true,availabilityTL:9};
   if(candidateId==='swarm'&&caliberMm<UT_SWARM_MINIMUM_MM)return {
-    ...result('incompatible','UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.','UT156-priority-over-UT152',['source-conflict','specific-rule-priority']),availabilityTL:10};
+    ...result('incompatible','UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.','UT156-priority-over-UT152',['source-conflict','specific-rule-priority']),availabilityTL:10};
   if(modeId===PARTISAN_NEEDLER&&candidateId==='drugged_dart')return {
     ...result('conditional','Готовый внешний Drugged Dart 3mmN разрешён пользователем; литейка UT140 создаёт только обычные металлические иглы.','user-approved-conditional',['external-prepared-dart','owner-payload','manual-effect']),
     availabilityTL:9,ammunitionSupply:PARTISAN_EXTERNAL_DART};

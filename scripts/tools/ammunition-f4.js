@@ -121,7 +121,7 @@ export function appendF4Conditions(details,resolved,runtime,refresh) {
     const kind=F4_ROWS[select.value],keys=kind==="Hearing"?["listener","distance",...(select.value.startsWith("ht_silent:")?[]:["distanceModifier","otherModifier","suppressor","included"])]:
       kind==="Reliability"?["malf","tl","quality","action","confirmed"]:kind==="Tracer"?["confirmed"]:[];
     for(const key of keys){const label=add(fields,"label",f4Text(kind==="Tracer"&&key==="confirmed"?"ConfirmTracer":key));const choices={included:["yes","no"],confirmed:["yes","no"],quality:["cheap","normal"],action:["automatic","self_loading","other"]}[key];
-      const c=add(label,choices?"select":"input");c.name=key;if(choices){for(const v of ["",...choices]){const o=add(c,"option",v?f4Text(v):"—");o.value=v;}}
+      const c=add(label,choices?"select":"input");c.name=key;if(choices){for(const v of ["",...choices]){const o=add(c,"option",v?f4Text(v):"–");o.value=v;}}
       else{c.type=key==="listener"?"text":"number";c.step="any";}c.addEventListener("input",()=>{out.textContent="";});controls.set(key,c);}
   };select.addEventListener("change",build);build();
   const button=add(local,"button",f4Text("Calculate"));button.type="button";

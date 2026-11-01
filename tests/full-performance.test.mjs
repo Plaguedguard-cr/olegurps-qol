@@ -35,12 +35,13 @@ test('all effective equipment and mode views preserve corrections and reuse immu
 
 test('indexed searches preserve IDs and order for every source, type, Unicode and empty queries',()=>{
   const normalize=v=>String(v??'').trim().normalize('NFKC').toLowerCase().replace(/\u00d7/g,'x');
+  const procedures=new Set(['WLTP3BlowpipePowder','WLTP3MetsubushiPowder','WLTP3GrapplingHook','WLTP3PaddedGrapplingHook']);
   for(const type of ['ranged','melee','effect','missing'])for(const source of ['','HT','UT','LT','missing'])
     for(const q of ['', '  ', 'rifle', 'Ｃｏｌｔ', 'LASER', '12G', '2\u00d79', 'gauss rifle','not-a-model']){
       const terms=normalize(q).split(/\s+/).filter(Boolean);
       const expected=catalogs.getCatalog('weapons').equipment.filter(e=>(!source||e.source===source)&&
-        e.modes.some(m=>m.combat_type===type&&m.role==='attack'&&!m.hidden)&&
-        terms.every(t=>normalize([e.name,e.source,e.reference].join(' ')).includes(t)));
+        e.modes.some(m=>(procedures.has(m.weapon_mode_id)?type==='ranged':m.combat_type===type)&&m.role==='attack'&&!m.hidden)&&
+        terms.every(t=>normalize([e.name,e.source,e.reference,...(e.aliases??[])].join(' ')).includes(t)));
       assert.deepEqual(searchStandaloneModels(catalogs,type,q,source),expected);
     }
   const first=searchStandaloneModels(catalogs,'ranged');first.length=0;

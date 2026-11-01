@@ -26,16 +26,17 @@ const { getMeleeAttackSlots } = await import("../scripts/tools/melee-attack-slot
 
 function assistant({ level = 20, rapidStrike = false, double = false } = {}) {
   const app = Object.create(MeleeAssistantApp.prototype);
-  app.actor = { id: "actor", system: {} };
+  app.actor = { id: "actor", system: {swing:'3d',thrust:'1d'} };
   app.sourceAttack = { name: "Sword", mode: "Swing", level };
-  app.attack = { ...app.sourceAttack, damage: "3d+1 cut", damageAction: {
-    type: "damage", formula: "3d+1", damagetype: "cut"
+  app.attack = { ...app.sourceAttack, parry:'12', damage: "sw+1 cut", damageAction: {
+    type: "deriveddamage",derivedformula:'sw', formula: "+1", damagetype: "cut"
   } };
+  app.sourceAttack=structuredClone(app.attack);
   app.fireState = {
     allOutAttack: double, allOutAttackMode: double ? "double" : "determined",
     rapidStrike, rapidStrikeMastery: false, moveAndAttack: false,
     committedAttack: false, committedMode: "determined", committedSteps: false,
-    defensiveAttack: false, defensiveBonus: "parry", telegraphicAttack: false,
+    defensiveAttack: false, telegraphicAttack: false,
     manualModifier: "0", deceptiveAttack: "0", evaluate: "0",
     governingSpecialty: "Sword", dicePlusAdds: false,
     hitLocation: { zoneId: "torso", regionId: null }
@@ -104,19 +105,19 @@ test("Committed Determined, Strong, two steps and Defensive damage use shared he
     committedMode: "determined" }), 16);
   assert.equal(calculateMeleeEffectiveSkill({ baseSkill: 14, committedAttack: true,
     committedMode: "determined", committedSteps: true }), 14);
-  assert.equal(applyMartialArtsDamage("1d+3", { committedStrong: true }), "1d+4");
+  assert.equal(applyMartialArtsDamage("1d+3", { committedStrong: true, strengthBased:true }), "1d+4");
   assert.equal(applyMartialArtsDamage("1d+3", { defensiveAttack: true }), "1d+1");
   assert.equal(applyMartialArtsDamage("3d+1", { defensiveAttack: true }), "3d-2");
-  const actor = { id: "actor", system: {} };
-  const attack = { damage: "3d+1 cut", damageAction: {
-    type: "damage", formula: "3d+1", damagetype: "cut"
+  const actor = { id: "actor", system: {swing:'3d',thrust:'1d'} };
+  const attack = { damage: "sw+1 cut", damageAction: {
+    type: "deriveddamage",derivedformula:'sw', formula: "+1", damagetype: "cut"
   } };
   assert.equal((await prepareEffectiveMeleeDamage({ actor, attack,
     committedStrong: true })).formula, "3d+2 cut");
   assert.equal((await prepareEffectiveMeleeDamage({ actor, attack,
     defensiveAttack: true })).formula, "3d-2 cut");
-  const oneDie = { damage: "1d+3 cut", damageAction: {
-    type: "damage", formula: "1d+3", damagetype: "cut"
+  const oneDie = { damage: "thr+3 cut", damageAction: {
+    type: "deriveddamage",derivedformula:'thr', formula: "+3", damagetype: "cut"
   } };
   assert.equal((await prepareEffectiveMeleeDamage({ actor, attack: oneDie,
     committedStrong: true, dicePlusAdds: true })).formula, "2d cut");
@@ -152,10 +153,10 @@ test("Telegraphic is per slot; Committed and Defensive enter every snapshot", ()
   app.fireState.defensiveAttack = true;
   app.fireState.defensiveBonus = "block";
   slots = app._createAttackSnapshots();
-  assert.equal(slots.every(slot => slot.defensiveAttack && slot.defensiveBonus === "block"), true);
+  assert.equal(slots.every(slot => slot.defensiveAttack && !Object.hasOwn(slot,'defensiveBonus')), true);
   assert.equal(slots.every(slot => slot.damageData.defensiveAttack), true);
   assert.equal(slots.every(slot => slot.maneuver.type === "defensiveAttack"), true);
-  assert.equal(slots.every(slot => slot.martialSummary.includes("Block +1")), true);
+  assert.equal(slots.every(slot => !Object.hasOwn(slot,'defensiveEffect') && !/Parry|Block/.test(slot.martialSummary)), true);
 });
 
 test("maneuver selection clears incompatible choices and Telegraphic clears Deceptive", async () => {
@@ -208,5 +209,5 @@ test("Committed Strong applies to every Rapid Strike snapshot", () => {
   const slots = app._createAttackSnapshots();
   assert.deepEqual(slots.map(slot => slot.effectiveSkill), [14, 14]);
   assert.equal(slots.every(slot => slot.damageData.committedStrong), true);
-  assert.equal(slots.every(slot => slot.overrideText.includes("+1 damage")), true);
+  assert.equal(slots.every(slot => slot.overrideText.includes("+1 к ST-based Damage")), true);
 });

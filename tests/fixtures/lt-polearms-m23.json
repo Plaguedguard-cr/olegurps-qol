@@ -1,0 +1,4972 @@
+{
+  "schema": "lt-polearms-m23-independent-v1",
+  "source": "BooksCodex LT54-71, MA111-112; printed pages verified",
+  "modes": [
+    {
+      "modelId": "lt:bill",
+      "equipmentId": "eHHMfw0Ejfy2dP2o6",
+      "modeId": "wUQqxh49hWWdJQluY",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11‡",
+        "damage": "sw+3 cut",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:bill",
+      "equipmentId": "eHHMfw0Ejfy2dP2o6",
+      "modeId": "wYdv9U3LbMt3K083q",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "11†",
+        "damage": "thr+3 imp / thr-1 cut",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:bill",
+      "equipmentId": "eHHMfw0Ejfy2dP2o6",
+      "modeId": "w5VMVjJN0p3nryNOy",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "11†",
+        "damage": "thr-1 cut",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:dueling-bill",
+      "equipmentId": "eVhGQufj6f7oBBPEf",
+      "modeId": "wVgZsXrBQnxri6dI5",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "sw+2 cut",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:dueling-bill",
+      "equipmentId": "eVhGQufj6f7oBBPEf",
+      "modeId": "wixYrYdqGWjIdY_BF",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:dueling-bill",
+      "equipmentId": "eVhGQufj6f7oBBPEf",
+      "modeId": "w7LQ6T1CaH1Voey4j",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "thr-1 cut",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:dueling-glaive",
+      "equipmentId": "eVb05bP5OVf7r8oFa",
+      "modeId": "wlGoMJUz8cG3GWYy6",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "sw+2 cut",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:dueling-glaive",
+      "equipmentId": "eVb05bP5OVf7r8oFa",
+      "modeId": "wgqHEMbQiQw2Huosj",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:dueling-halberd",
+      "equipmentId": "e9rE4EWHfOH3teNlk",
+      "modeId": "wOMKWT_PIN6GImvah",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+4 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+6 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "damage": "sw+4 cut",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:dueling-halberd",
+      "equipmentId": "e9rE4EWHfOH3teNlk",
+      "modeId": "wTwqpUkwIpwGq14gD",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "11†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:dueling-halberd",
+      "equipmentId": "e9rE4EWHfOH3teNlk",
+      "modeId": "wvmDxK5Nx_G_YZq0B",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+3 imp",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+5 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "damage": "sw+3 imp",
+        "usage": "Swing"
+      }
+    },
+    {
+      "modelId": "lt:glaive",
+      "equipmentId": "eQ9TsDoaAcFhqFOsz",
+      "modeId": "wthCLUKUjHwpj-WuX",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11‡",
+        "damage": "sw+3 cut",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:glaive",
+      "equipmentId": "eQ9TsDoaAcFhqFOsz",
+      "modeId": "wtBRzrnPvduajooh-",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "11†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:halberd",
+      "equipmentId": "e82t4LhU-kGAvefT5",
+      "modeId": "w5G3HFfwCR2n7rypk",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+5 cut",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "13‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+7 cut",
+      "levelST12": 15,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11‡",
+        "damage": "sw+5 cut",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:halberd",
+      "equipmentId": "e82t4LhU-kGAvefT5",
+      "modeId": "wlzHFNibogMjGOvkt",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "12†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:halberd",
+      "equipmentId": "e82t4LhU-kGAvefT5",
+      "modeId": "w935QbmldL-LypfB6",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+4 imp",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "13‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+6 imp",
+      "levelST12": 15,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "13‡",
+        "damage": "sw+4 imp",
+        "usage": "Spike Thrust"
+      }
+    },
+    {
+      "modelId": "lt:heavy-horse-cutter",
+      "equipmentId": "e5HOg0BpWoTUeuLRT",
+      "modeId": "wLiLilKimPTXuJa4A",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+5 cut",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "13‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+7 cut",
+      "levelST12": 15,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "13‡",
+        "damage": "sw+5 cut",
+        "usage": "Swing"
+      }
+    },
+    {
+      "modelId": "lt:heavy-horse-cutter",
+      "equipmentId": "e5HOg0BpWoTUeuLRT",
+      "modeId": "wAnPqRCyxSEum7Bfs",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-3*",
+        "parry": "0U",
+        "st": "12†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:heavy-spear",
+      "equipmentId": "eZvux6XVosjUF7JXf",
+      "modeId": "wCNzz9EDD3L8DuQlK",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+4 imp",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+3 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11†",
+        "damage": "thr+4 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:heavy-spear",
+      "equipmentId": "eZvux6XVosjUF7JXf",
+      "modeId": "w84XpgTqIWGVVc_86",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+3 cut",
+        "reach": "3",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11†",
+        "damage": "thr+3 cut",
+        "usage": "Thrust - tip slash"
+      }
+    },
+    {
+      "modelId": "lt:javelin",
+      "equipmentId": "ekHIDinjTY_Oqkw2K",
+      "modeId": "wxQwFPWfIo1mgb8bU",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "damage": "thr+1 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:javelin-w-thong",
+      "equipmentId": "ezjgs0iC8JAk19X0Z",
+      "modeId": "wpNS81DeRCvuTGank",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "damage": "thr+1 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:lajatang",
+      "equipmentId": "ei4EXAkpdfA2GCpdC",
+      "modeId": "waZrlGVy5mnSf4Y91",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "10†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "10†",
+        "damage": "sw+2 cut",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:lajatang",
+      "equipmentId": "ei4EXAkpdfA2GCpdC",
+      "modeId": "wmeCuuTgObl2gsYCV",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+2 cut",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "10†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "10†",
+        "damage": "thr+2 cut",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:lance",
+      "equipmentId": "et5VY28qv31Ge64za",
+      "modeId": "wgntlCLj80J2cQR-m",
+      "page": "LT67",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "4",
+        "parry": "No",
+        "st": "12",
+        "hands": 1,
+        "skills": [
+          "Lance"
+        ],
+        "defaults": {
+          "Lance": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -3
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "4",
+        "parry": null,
+        "st": "12",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:light-horse-cutter",
+      "equipmentId": "ej7cFR0hzK5VZ3O4t",
+      "modeId": "wErLyjXeidTrVF7it",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+4 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "11‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+6 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "11‡",
+        "damage": "sw+4 cut",
+        "usage": "Swing"
+      }
+    },
+    {
+      "modelId": "lt:light-horse-cutter",
+      "equipmentId": "ej7cFR0hzK5VZ3O4t",
+      "modeId": "wprg8o5ZDUkdCBZpV",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "11†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:long-spear",
+      "equipmentId": "efr98pPwDlkxJX1fv",
+      "modeId": "wfhY-R4mNeOArjxEe",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 imp",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "11",
+        "damage": "thr+2 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:long-spear",
+      "equipmentId": "efr98pPwDlkxJX1fv",
+      "modeId": "wd4bSNmB6cqsdI8-T",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "2-3*",
+        "parry": "0",
+        "st": "10†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0",
+        "st": "10†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust - two hands"
+      }
+    },
+    {
+      "modelId": "lt:monk-s-spade",
+      "equipmentId": "enRjgElZfQg12bu8s",
+      "modeId": "wiUNM7wtQq9yyQkTY",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+1 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+3 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "sw+1 cut",
+        "usage": "Swing Spade"
+      }
+    },
+    {
+      "modelId": "lt:monk-s-spade",
+      "equipmentId": "enRjgElZfQg12bu8s",
+      "modeId": "wgacPo_7VEAePKhz-",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+2 cut",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "thr+2 cut",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:monk-s-spade",
+      "equipmentId": "enRjgElZfQg12bu8s",
+      "modeId": "wKz26OHCZeib2bBSW",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "sw+2 cr",
+        "usage": "Swing"
+      }
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "wHP1x8pe8O0xdzZBC",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "sw+2 cut",
+        "usage": "Polearm Swing"
+      }
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "wkXZJn6qnHtokVicu",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "damage": "thr+3 imp",
+        "usage": "Polearm Thrust"
+      }
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "weTsSfSDzDBpSaUz2",
+      "page": "LT70",
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "2",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "defaults": {
+          "Two-Handed Sword": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Broadsword",
+              -4
+            ],
+            [
+              "Force Sword",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2",
+        "parry": "0U",
+        "st": "9†",
+        "damage": "sw+3 cut",
+        "usage": "Sword Swing"
+      }
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "wYTRig40SRDSasYeQ",
+      "page": "LT70",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "defaults": {
+          "Two-Handed Sword": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Broadsword",
+              -4
+            ],
+            [
+              "Force Sword",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "damage": "thr+3 imp",
+        "usage": "Sword Thrust"
+      }
+    },
+    {
+      "modelId": "lt:pike",
+      "equipmentId": "e68ynUhBIItsvRXGy",
+      "modeId": "wMEsHCEHg4xRT4-td",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "4-5*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "4-5*",
+        "parry": "0U",
+        "st": "12†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:poleaxe",
+      "equipmentId": "ehric7NRa13oOCpVe",
+      "modeId": "wJdFRt-pwkVSg50Sf",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+4 cut",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "12‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+6 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "12‡",
+        "damage": "sw+4 cut",
+        "usage": "Blade Swing"
+      }
+    },
+    {
+      "modelId": "lt:poleaxe",
+      "equipmentId": "ehric7NRa13oOCpVe",
+      "modeId": "w10kJeZfzylC-sKK3",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "12‡",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "2-3*",
+        "parry": "0U",
+        "st": "12‡",
+        "damage": "sw+4 cr",
+        "usage": "Hammer Swing"
+      }
+    },
+    {
+      "modelId": "lt:pollaxe",
+      "equipmentId": "e1-kupYR57Dmtk-K1",
+      "modeId": "wLNiZ9MWpz2uJ7ALi",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "damage": "sw+4 cr",
+        "usage": "Axe Swing"
+      }
+    },
+    {
+      "modelId": "lt:pollaxe",
+      "equipmentId": "e1-kupYR57Dmtk-K1",
+      "modeId": "w_qjx_oZvBHqzUCwl",
+      "page": "LT68",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "11†",
+        "damage": "thr+3 imp",
+        "usage": "Spike Thrust"
+      }
+    },
+    {
+      "modelId": "lt:pollaxe",
+      "equipmentId": "e1-kupYR57Dmtk-K1",
+      "modeId": "wux6SpBUbF14Tw3re",
+      "page": "LT68",
+      "expected": {
+        "damage": "sw+3 imp",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+5 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12†",
+        "damage": "sw+3 imp",
+        "usage": "Spike Swing"
+      }
+    },
+    {
+      "modelId": "lt:short-spear",
+      "equipmentId": "ecKNdB9BdSK-c_FDO",
+      "modeId": "wSgVFWlImMAldbKKW",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "damage": "thr+1 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:short-spear",
+      "equipmentId": "ecKNdB9BdSK-c_FDO",
+      "modeId": "wmbwe9vfEb50cRVgG",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "damage": "thr cut",
+        "usage": "Thrust - tip slash"
+      }
+    },
+    {
+      "modelId": "lt:sodegarami",
+      "equipmentId": "e38ON6vscOBSE2xbN",
+      "modeId": "w5plXSVJ_FutwxprB",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "7†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2",
+        "parry": "0",
+        "st": "7†",
+        "damage": "sw+2 cr",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:sodegarami",
+      "equipmentId": "e38ON6vscOBSE2xbN",
+      "modeId": "w0_KIVTm44GPSOmS8",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "7†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2",
+        "parry": "0",
+        "st": "7†",
+        "damage": "thr+2 cr",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:sodegarami",
+      "equipmentId": "e38ON6vscOBSE2xbN",
+      "modeId": "wFUTDP0Dt11D0n250",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "7†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "7†",
+        "damage": "thr-1 cut",
+        "usage": "Hook Thrust"
+      }
+    },
+    {
+      "modelId": "lt:spear",
+      "equipmentId": "eyvtiiimEqgyXYWaU",
+      "modeId": "wxMjDbyVMoR20JSB5",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 imp",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "damage": "thr+2 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:spear",
+      "equipmentId": "eyvtiiimEqgyXYWaU",
+      "modeId": "wCpgORe2Si2QGIVZF",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust - two hands"
+      }
+    },
+    {
+      "modelId": "lt:spear-w-thong",
+      "equipmentId": "enjD63xIeaGU_03QB",
+      "modeId": "wUg49tN7DWvq5Z8LV",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 imp",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "damage": "thr+2 imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:spear-w-thong",
+      "equipmentId": "enjD63xIeaGU_03QB",
+      "modeId": "w7Md3yMK0OAXqz3-E",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "damage": "thr+3 imp",
+        "usage": "Thrust - two hands"
+      }
+    },
+    {
+      "modelId": "lt:trident",
+      "equipmentId": "ezzOYj-J1IwXY-ERY",
+      "modeId": "w2AuBANQhig4Kq7IG",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+3(0.5) imp",
+        "reach": "1*",
+        "parry": "0U",
+        "st": "11",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": -2
+      },
+      "formulaST12": "1d+2(0.5) imp",
+      "levelST12": 14,
+      "sourceBefore": {
+        "reach": "1*",
+        "parry": "0U",
+        "st": "11",
+        "damage": "thr+3(0.5) imp",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:trident",
+      "equipmentId": "ezzOYj-J1IwXY-ERY",
+      "modeId": "wmiyMIKahFDNHoCMT",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+4(0.5) imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "10†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": -2
+      },
+      "formulaST12": "1d+3(0.5) imp",
+      "levelST12": 14,
+      "sourceBefore": {
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "10†",
+        "damage": "thr+4(0.5) imp",
+        "usage": " Thrust - two hands"
+      }
+    },
+    {
+      "modelId": "lt:dueling-bill",
+      "equipmentId": "eVhGQufj6f7oBBPEf",
+      "modeId": "wLTM23DuelingBillStaffSwing",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-bill",
+      "equipmentId": "eVhGQufj6f7oBBPEf",
+      "modeId": "wLTM23DuelingBillStaffThrust",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-glaive",
+      "equipmentId": "eVb05bP5OVf7r8oFa",
+      "modeId": "wLTM23DuelingGlaiveStaffSwing",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-glaive",
+      "equipmentId": "eVb05bP5OVf7r8oFa",
+      "modeId": "wLTM23DuelingGlaiveStaffThrust",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-halberd",
+      "equipmentId": "e9rE4EWHfOH3teNlk",
+      "modeId": "wLTM23DuelingHalberdStaffSwing",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-halberd",
+      "equipmentId": "e9rE4EWHfOH3teNlk",
+      "modeId": "wLTM23DuelingHalberdStaffThrust",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:light-horse-cutter",
+      "equipmentId": "ej7cFR0hzK5VZ3O4t",
+      "modeId": "wLTM23LightHorseCutterStaffSwing",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:light-horse-cutter",
+      "equipmentId": "ej7cFR0hzK5VZ3O4t",
+      "modeId": "wLTM23LightHorseCutterStaffThrust",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "wLTM23NaginataStaffSwing",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "wLTM23NaginataStaffThrust",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pollaxe",
+      "equipmentId": "e1-kupYR57Dmtk-K1",
+      "modeId": "wLTM23PollaxeStaffSwing",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1-2",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pollaxe",
+      "equipmentId": "e1-kupYR57Dmtk-K1",
+      "modeId": "wLTM23PollaxeStaffThrust",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2",
+        "parry": "0",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:ankus",
+      "equipmentId": "eLTM23Ankus",
+      "modeId": "wLTM23AnkusSwing",
+      "page": "LT54",
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Shortsword"
+        ],
+        "defaults": {
+          "Shortsword": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Broadsword",
+              -2
+            ],
+            [
+              "Force Sword",
+              -4
+            ],
+            [
+              "Jitte/Sai",
+              -3
+            ],
+            [
+              "Knife",
+              -4
+            ],
+            [
+              "Saber",
+              -4
+            ],
+            [
+              "Smallsword",
+              -4
+            ],
+            [
+              "Tonfa",
+              -3
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:ankus",
+      "equipmentId": "eLTM23Ankus",
+      "modeId": "wLTM23AnkusThrust",
+      "page": "LT54",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Shortsword"
+        ],
+        "defaults": {
+          "Shortsword": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Broadsword",
+              -2
+            ],
+            [
+              "Force Sword",
+              -4
+            ],
+            [
+              "Jitte/Sai",
+              -3
+            ],
+            [
+              "Knife",
+              -4
+            ],
+            [
+              "Saber",
+              -4
+            ],
+            [
+              "Smallsword",
+              -4
+            ],
+            [
+              "Tonfa",
+              -3
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:ankus",
+      "equipmentId": "eLTM23Ankus",
+      "modeId": "wLTM23AnkusSpikeThrust",
+      "page": "LT54",
+      "expected": {
+        "damage": "thr imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Shortsword"
+        ],
+        "defaults": {
+          "Shortsword": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Broadsword",
+              -2
+            ],
+            [
+              "Force Sword",
+              -4
+            ],
+            [
+              "Jitte/Sai",
+              -3
+            ],
+            [
+              "Knife",
+              -4
+            ],
+            [
+              "Saber",
+              -4
+            ],
+            [
+              "Smallsword",
+              -4
+            ],
+            [
+              "Tonfa",
+              -3
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:tuja",
+      "equipmentId": "eLTM23Tuja",
+      "modeId": "wLTM23TujaSwing",
+      "page": "LT61",
+      "expected": {
+        "damage": "sw(0.5) cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "hands": 1,
+        "skills": [
+          "Jitte/Sai",
+          "Main-Gauche"
+        ],
+        "defaults": {
+          "Jitte/Sai": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Force Sword",
+              -4
+            ],
+            [
+              "Main-Gauche",
+              -4
+            ],
+            [
+              "Shortsword",
+              -3
+            ]
+          ],
+          "Main-Gauche": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Jitte/Sai",
+              -4
+            ],
+            [
+              "Knife",
+              -4
+            ],
+            [
+              "Rapier",
+              -3
+            ],
+            [
+              "Saber",
+              -3
+            ],
+            [
+              "Smallsword",
+              -3
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2(0.5) cr",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:tuja",
+      "equipmentId": "eLTM23Tuja",
+      "modeId": "wLTM23TujaThrust",
+      "page": "LT61",
+      "expected": {
+        "damage": "thr(0.5) imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "hands": 1,
+        "skills": [
+          "Jitte/Sai",
+          "Main-Gauche"
+        ],
+        "defaults": {
+          "Jitte/Sai": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Force Sword",
+              -4
+            ],
+            [
+              "Main-Gauche",
+              -4
+            ],
+            [
+              "Shortsword",
+              -3
+            ]
+          ],
+          "Main-Gauche": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Jitte/Sai",
+              -4
+            ],
+            [
+              "Knife",
+              -4
+            ],
+            [
+              "Rapier",
+              -3
+            ],
+            [
+              "Saber",
+              -3
+            ],
+            [
+              "Smallsword",
+              -3
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1(0.5) imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pike",
+      "equipmentId": "eLTM23Pike4Y",
+      "modeId": "wLTM23Pike4YThrust",
+      "page": "LT60",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "3-4*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pike",
+      "equipmentId": "eLTM23Pike6Y",
+      "modeId": "wLTM23Pike6YThrust",
+      "page": "LT60",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "5-6*",
+        "parry": "0U",
+        "st": "13†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 15,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:bill",
+      "equipmentId": "eHHMfw0Ejfy2dP2o6",
+      "modeId": "wLTM23TipwYdv9U3LbMt3K083q",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "3*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-bill",
+      "equipmentId": "eVhGQufj6f7oBBPEf",
+      "modeId": "wLTM23TipwixYrYdqGWjIdY_BF",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-glaive",
+      "equipmentId": "eVb05bP5OVf7r8oFa",
+      "modeId": "wLTM23TipwgqHEMbQiQw2Huosj",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:dueling-halberd",
+      "equipmentId": "e9rE4EWHfOH3teNlk",
+      "modeId": "wLTM23TipwTwqpUkwIpwGq14gD",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:glaive",
+      "equipmentId": "eQ9TsDoaAcFhqFOsz",
+      "modeId": "wLTM23TipwtBRzrnPvduajooh-",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "3*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:halberd",
+      "equipmentId": "e82t4LhU-kGAvefT5",
+      "modeId": "wLTM23TipwlzHFNibogMjGOvkt",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "3*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:heavy-horse-cutter",
+      "equipmentId": "e5HOg0BpWoTUeuLRT",
+      "modeId": "wLTM23TipwAnPqRCyxSEum7Bfs",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "3*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:javelin",
+      "equipmentId": "ekHIDinjTY_Oqkw2K",
+      "modeId": "wLTM23TipwxQwFPWfIo1mgb8bU",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:javelin-w-thong",
+      "equipmentId": "ezjgs0iC8JAk19X0Z",
+      "modeId": "wLTM23TipwpNS81DeRCvuTGank",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:lance",
+      "equipmentId": "et5VY28qv31Ge64za",
+      "modeId": "wLTM23TipwgntlCLj80J2cQR-m",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "4",
+        "parry": "No",
+        "st": "12",
+        "hands": 1,
+        "skills": [
+          "Lance"
+        ],
+        "defaults": {
+          "Lance": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -3
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:light-horse-cutter",
+      "equipmentId": "ej7cFR0hzK5VZ3O4t",
+      "modeId": "wLTM23Tipwprg8o5ZDUkdCBZpV",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:long-spear",
+      "equipmentId": "efr98pPwDlkxJX1fv",
+      "modeId": "wLTM23TipwfhY-R4mNeOArjxEe",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "3*",
+        "parry": "0U",
+        "st": "11",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:long-spear",
+      "equipmentId": "efr98pPwDlkxJX1fv",
+      "modeId": "wLTM23Tipwd4bSNmB6cqsdI8-T",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "3*",
+        "parry": "0",
+        "st": "10†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "wLTM23TipwkXZJn6qnHtokVicu",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:naginata",
+      "equipmentId": "egKG0gxFsV8-qjuFY",
+      "modeId": "wLTM23TipwYTRig40SRDSasYeQ",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "defaults": {
+          "Two-Handed Sword": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Broadsword",
+              -4
+            ],
+            [
+              "Force Sword",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pike",
+      "equipmentId": "e68ynUhBIItsvRXGy",
+      "modeId": "wLTM23TipwMEsHCEHg4xRT4-td",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "5*",
+        "parry": "0U",
+        "st": "12†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pollaxe",
+      "equipmentId": "e1-kupYR57Dmtk-K1",
+      "modeId": "wLTM23Tipw_qjx_oZvBHqzUCwl",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Polearm"
+        ],
+        "defaults": {
+          "Polearm": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Spear",
+              -4
+            ],
+            [
+              "Staff",
+              -4
+            ],
+            [
+              "Two-Handed Axe/Mace",
+              -4
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:spear",
+      "equipmentId": "eyvtiiimEqgyXYWaU",
+      "modeId": "wLTM23TipwxMjDbyVMoR20JSB5",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:spear",
+      "equipmentId": "eyvtiiimEqgyXYWaU",
+      "modeId": "wLTM23TipwCpgORe2Si2QGIVZF",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:spear-w-thong",
+      "equipmentId": "enjD63xIeaGU_03QB",
+      "modeId": "wLTM23TipwUg49tN7DWvq5Z8LV",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:spear-w-thong",
+      "equipmentId": "enjD63xIeaGU_03QB",
+      "modeId": "wLTM23Tipw7Md3yMK0OAXqz3-E",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:trident",
+      "equipmentId": "ezzOYj-J1IwXY-ERY",
+      "modeId": "wLTM23Tipw2AuBANQhig4Kq7IG",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1(0.5) cut",
+        "reach": "1*",
+        "parry": "0U",
+        "st": "11",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": -2
+      },
+      "formulaST12": "1d(0.5) cut",
+      "levelST12": 14,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:trident",
+      "equipmentId": "ezzOYj-J1IwXY-ERY",
+      "modeId": "wLTM23TipwmiyMIKahFDNHoCMT",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+2(0.5) cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "10†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": -2
+      },
+      "formulaST12": "1d+1(0.5) cut",
+      "levelST12": 14,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:ankus",
+      "equipmentId": "eLTM23Ankus",
+      "modeId": "wLTM23TipwLTM23AnkusSpikeThrust",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "hands": 1,
+        "skills": [
+          "Shortsword"
+        ],
+        "defaults": {
+          "Shortsword": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Broadsword",
+              -2
+            ],
+            [
+              "Force Sword",
+              -4
+            ],
+            [
+              "Jitte/Sai",
+              -3
+            ],
+            [
+              "Knife",
+              -4
+            ],
+            [
+              "Saber",
+              -4
+            ],
+            [
+              "Smallsword",
+              -4
+            ],
+            [
+              "Tonfa",
+              -3
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:tuja",
+      "equipmentId": "eLTM23Tuja",
+      "modeId": "wLTM23TipwLTM23TujaThrust",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr-2(0.5) cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "hands": 1,
+        "skills": [
+          "Jitte/Sai",
+          "Main-Gauche"
+        ],
+        "defaults": {
+          "Jitte/Sai": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Force Sword",
+              -4
+            ],
+            [
+              "Main-Gauche",
+              -4
+            ],
+            [
+              "Shortsword",
+              -3
+            ]
+          ],
+          "Main-Gauche": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Jitte/Sai",
+              -4
+            ],
+            [
+              "Knife",
+              -4
+            ],
+            [
+              "Rapier",
+              -3
+            ],
+            [
+              "Saber",
+              -3
+            ],
+            [
+              "Smallsword",
+              -3
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-3(0.5) cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pike",
+      "equipmentId": "eLTM23Pike4Y",
+      "modeId": "wLTM23TipwLTM23Pike4YThrust",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "4*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pike",
+      "equipmentId": "eLTM23Pike6Y",
+      "modeId": "wLTM23TipwLTM23Pike6YThrust",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "6*",
+        "parry": "0U",
+        "st": "13†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 15,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:qian-kun-ri-yue-dao",
+      "equipmentId": "ewhgkn7b3TlISAntZ",
+      "modeId": "wMphv8HvAXX0Z_jH9",
+      "page": "LT65",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "hands": 1,
+        "skills": [
+          "Brawling",
+          "DX"
+        ],
+        "defaults": {
+          "Brawling": [
+            [
+              "DX",
+              0
+            ]
+          ],
+          "DX": [
+            [
+              "DX",
+              0
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourceBefore": {
+        "damage": "thr-1 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "usage": "Hilt Punch"
+      }
+    },
+    {
+      "modelId": "lt:qian-kun-ri-yue-dao",
+      "equipmentId": "ewhgkn7b3TlISAntZ",
+      "modeId": "wLmjOS2hYANMkZ0Up",
+      "page": "LT69",
+      "expected": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "2",
+        "st": "7†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": -1
+      },
+      "formulaST12": "1d+3 cut",
+      "levelST12": 15,
+      "sourceBefore": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "2",
+        "st": "7†",
+        "usage": "Swung"
+      }
+    },
+    {
+      "modelId": "lt:qian-kun-ri-yue-dao",
+      "equipmentId": "ewhgkn7b3TlISAntZ",
+      "modeId": "wHO-fGThErRbNviKC",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "2",
+        "st": "7†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": -1
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 15,
+      "sourceBefore": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "2",
+        "st": "7†",
+        "usage": "Thrust"
+      }
+    },
+    {
+      "modelId": "lt:qian-kun-ri-yue-dao",
+      "equipmentId": "ewhgkn7b3TlISAntZ",
+      "modeId": "wjf6imApz51wMim8w",
+      "page": "LT69",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1",
+        "parry": "2",
+        "st": "7†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": -1
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 15,
+      "sourceBefore": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "2",
+        "st": "7†",
+        "usage": "Cut"
+      }
+    },
+    {
+      "modelId": "lt:qian-kun-ri-yue-dao",
+      "equipmentId": "ewhgkn7b3TlISAntZ",
+      "modeId": "wLTM23QianTipSlash",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "2",
+        "st": "7†",
+        "hands": 2,
+        "skills": [
+          "Staff"
+        ],
+        "defaults": {
+          "Staff": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Spear",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": -1
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 15,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pilum",
+      "equipmentId": "eLTP3Pilum",
+      "modeId": "wLTM23PilumOneThrust",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr+2 imp",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pilum",
+      "equipmentId": "eLTP3Pilum",
+      "modeId": "wLTM23PilumOneTipSlash",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pilum",
+      "equipmentId": "eLTP3Pilum",
+      "modeId": "wLTM23PilumTwoThrust",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:pilum",
+      "equipmentId": "eLTP3Pilum",
+      "modeId": "wLTM23PilumTwoTipSlash",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:angon",
+      "equipmentId": "eLTP3Angon",
+      "modeId": "wLTM23AngonOneThrust",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr+2 imp",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:angon",
+      "equipmentId": "eLTP3Angon",
+      "modeId": "wLTM23AngonOneTipSlash",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:angon",
+      "equipmentId": "eLTP3Angon",
+      "modeId": "wLTM23AngonTwoThrust",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:angon",
+      "equipmentId": "eLTP3Angon",
+      "modeId": "wLTM23AngonTwoTipSlash",
+      "page": "LT73",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": 0
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:harpoon",
+      "equipmentId": "eLMadXvd-l99hQHlD",
+      "modeId": "wLTM23HarpoonThrust",
+      "page": "LT72",
+      "expected": {
+        "damage": "thr+4 imp",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": -2
+      },
+      "formulaST12": "1d+3 imp",
+      "levelST12": 14,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:harpoon",
+      "equipmentId": "eLMadXvd-l99hQHlD",
+      "modeId": "wLTM23HarpoonTipSlash",
+      "page": "LT72",
+      "expected": {
+        "damage": "thr+3 cut",
+        "reach": "2",
+        "parry": "0U",
+        "st": "11†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "swing",
+        "modifier": -2
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 14,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:crescent-headed-spear",
+      "equipmentId": "eLTM23CrescentSpear",
+      "modeId": "wLTM23CrescentSpearOne",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+2 cut",
+        "reach": "1*",
+        "parry": "0",
+        "st": "10",
+        "hands": 1,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+1 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    },
+    {
+      "modelId": "lt:crescent-headed-spear",
+      "equipmentId": "eLTM23CrescentSpear",
+      "modeId": "wLTM23CrescentSpearTwo",
+      "page": "LT62",
+      "expected": {
+        "damage": "thr+3 cut",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "9†",
+        "hands": 2,
+        "skills": [
+          "Spear"
+        ],
+        "defaults": {
+          "Spear": [
+            [
+              "DX",
+              -5
+            ],
+            [
+              "Polearm",
+              -4
+            ],
+            [
+              "Staff",
+              -2
+            ]
+          ]
+        },
+        "motion": "thrust",
+        "modifier": 0
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 16,
+      "sourceBefore": null
+    }
+  ]
+}

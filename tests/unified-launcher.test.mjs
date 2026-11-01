@@ -16,7 +16,7 @@ class ApplicationV2 {
   async close() { this.rendered = false; instances.delete(this.id); }
 }
 globalThis.foundry = { applications: { api: { ApplicationV2 }, instances } };
-const { UnifiedLauncher, LauncherSettingsApp, openUnifiedLauncher, registerLauncherSettings } = await import('../scripts/unified-launcher.js');
+const { UnifiedLauncher, LauncherSettingsApp, openUnifiedLauncher, toggleUnifiedLauncher, registerLauncherSettings } = await import('../scripts/unified-launcher.js');
 const { LauncherButton } = await import('../scripts/launcher-button.js');
 
 function runtime() {
@@ -33,6 +33,23 @@ function runtime() {
   } }, foundry: globalThis.foundry, records, definitions, writes };
   registerLauncherSettings(() => {}, r);
   return r;
+}
+
+function positionPreview(r, position = 'custom') {
+  r.AbortController = AbortController;
+  r.document = { querySelector: () => null, querySelectorAll: () => [] };
+  const controller = new LauncherButton(r), capture = new Set();
+  controller.started = true; controller.observed = new Set();
+  controller.button = { style: { setProperty() {} }, classList: { toggle() {} }, isConnected: true,
+    getBoundingClientRect: () => ({ left: 100, top: 100 }),
+    setPointerCapture: id => capture.add(id), hasPointerCapture: id => capture.has(id), releasePointerCapture: id => capture.delete(id) };
+  controller.measurements = () => ({ viewport: { width: 500, height: 400 }, size: { width: 40, height: 40 } });
+  controller.schedule = () => controller.layout();
+  const picker = new EventTarget(), select = new EventTarget(), app = new LauncherSettingsApp();
+  picker.value = '40'; select.value = position;
+  app.element = { querySelector: selector => selector === '#oq-launcher-size' ? picker : select };
+  controller.bindSizePreview(app);
+  return { controller, app, select };
 }
 
 test('all shipped modern and legacy macros have exactly one launcher action with original artwork and command', () => {
@@ -89,6 +106,8 @@ test('labels exist in RU and EN dictionaries while module UI stays Russian with 
     assert.equal(html.includes('data-action="preferences"'), false);
     assert.equal(html.includes('data-tool="weapon-settings"'), false);
     for (const a of LAUNCHER_ACTIONS) { assert.ok(html.includes(moduleText(a.labelKey))); if (a.image) assert.ok(html.includes(a.image)); }
+    const settingsHTML = await new LauncherSettingsApp()._renderHTML(normalizeLauncherPreferences());
+    assert.ok(settingsHTML.includes(moduleText('OleGURPS.Launcher.PersonalHint')));
     assert.equal(game.i18n.lang, lang);
   }
 });
@@ -98,6 +117,31 @@ test('singleton launcher handles concurrent opens, raises without rerender, and 
   assert.equal(a, b); assert.equal(b, c); assert.equal(a.renders, 1);
   assert.equal(await openUnifiedLauncher(), a); assert.equal(a.renders, 1); assert.ok(a.raised);
   await a.close(); assert.equal(await openUnifiedLauncher(), a); assert.equal(a.renders, 2);
+});
+
+test('OG closes an open launcher, reopens it after either close path, and preserves the open API', async () => {
+  const app = await openUnifiedLauncher();
+  assert.equal(await toggleUnifiedLauncher(), app); assert.equal(app.rendered, false);
+  assert.equal(await toggleUnifiedLauncher(), app); assert.equal(app.rendered, true);
+  assert.equal(await openUnifiedLauncher(), app); assert.equal(app.rendered, true);
+  await app.close();
+  assert.equal(await toggleUnifiedLauncher(), app); assert.equal(app.rendered, true);
+  await app.close();
+});
+
+test('rapid OG clicks wait for opening and closing before the next toggle', async () => {
+  const app = await openUnifiedLauncher(); await app.close();
+  const originalClose = app.close;
+  app.close = async function() { await new Promise(resolve => setTimeout(resolve, 5)); return originalClose.call(this); };
+  try {
+    const opening = openUnifiedLauncher();
+    await toggleUnifiedLauncher(); await opening;
+    assert.equal(app.rendered, false);
+    await Promise.all([toggleUnifiedLauncher(), toggleUnifiedLauncher()]);
+    assert.equal(app.rendered, false);
+    await Promise.all([toggleUnifiedLauncher(), toggleUnifiedLauncher(), toggleUnifiedLauncher()]);
+    assert.equal(app.rendered, true); assert.equal(instances.size, 1);
+  } finally { app.close = originalClose; await app.close(); }
 });
 
 test('standard settings are server-persisted per-user, editable by players, with correct defaults', () => {
@@ -189,8 +233,9 @@ test('button submenu renders and saves visibility, position and size once, prese
   for (const name of ['visible','position','size']) assert.equal((html.match(new RegExp(`name="${name}"`, 'g')) ?? []).length, 1);
   assert.match(html, /<range-picker[^>]*name="size"[^>]*value="56"[^>]*min="28"[^>]*max="72"[^>]*step="4"/);
   assert.ok(html.includes('value="custom" selected'));
+  app.launcherPositionDraft = { x: 111, y: 222 };
   const previousGame = globalThis.game; globalThis.game = r.game;
-  try { await LauncherSettingsApp.DEFAULT_OPTIONS.form.handler(null, null, { object: { visible: true, position: 'hotbar-right', size: '72' } }); }
+  try { await LauncherSettingsApp.DEFAULT_OPTIONS.form.handler.call(app, null, null, { object: { visible: true, position: 'hotbar-right', size: '72' } }); }
   finally { globalThis.game = previousGame; }
   assert.deepEqual(readLauncherPreferences(r), { visible: true, size: 72, position: 'hotbar-right', custom: { x: 330, y: 160 } });
 });
@@ -218,19 +263,109 @@ test('custom position is clamped after resize, including tiny viewports and miss
   assert.deepEqual(clampLauncherPosition({ x: 900, y: 900 }, { width: 320, height: 200, left: 100, top: 50 }, size), { x: 380, y: 210 });
 });
 
-test('drag threshold distinguishes click from drag and saves only custom coordinates on release', async () => {
+test('custom placement chooses the nearest available hotbar edge with an eight pixel gap', () => {
+  const hotbar = { left: 400, top: 560, right: 1000, bottom: 704 }, viewport = { width: 1280, height: 900 };
+  for (const dimension of [28, 40, 56, 72]) {
+    const size = { width: dimension, height: dimension };
+    for (const [point, expected] of [
+      [{ x: 400 - dimension / 2, y: 620 }, { x: 400 - dimension - 8, y: 620 }],
+      [{ x: 990, y: 620 }, { x: 1008, y: 620 }],
+      [{ x: 700, y: 550 }, { x: 700, y: 560 - dimension - 8 }],
+      [{ x: 700, y: 695 }, { x: 700, y: 712 }]
+    ]) assert.deepEqual(launcherPosition({ position: 'custom', custom: point }, { hotbar }, viewport, size), expected);
+  }
+});
+
+test('saved custom placement avoids the bottom hotbar after resizing without rewriting coordinates', () => {
+  const hotbar = { left: 60, top: 560, right: 1000, bottom: 704 }, size = { width: 64, height: 64 };
+  const preferences = { position: 'custom', custom: { x: 60, y: 640 } }, baseline = structuredClone(preferences);
+  const point = launcherPosition(preferences, { hotbar }, { width: 1280, height: 720 }, size);
+  assert.deepEqual(point, { x: 60, y: 488 });
+  assert.deepEqual(preferences, baseline);
+  const clear = { x: 200, y: 200 };
+  assert.deepEqual(launcherPosition({ position: 'custom', custom: clear }, { hotbar }, { width: 1280, height: 720 }, size), clear);
+  const smallHotbar = { left: 0, top: 180, right: 320, bottom: 240 };
+  const smaller = launcherPosition(preferences, { hotbar: smallHotbar }, { width: 320, height: 240 }, size);
+  assert.equal(smaller.y + size.height, 172); assert.ok(smaller.x >= 0 && smaller.x + size.width <= 320);
+  assert.deepEqual(preferences, baseline);
+});
+
+test('position editing keeps drag threshold and viewport bounds, saving only when the form is submitted', async () => {
   const r = runtime(); await saveLauncherPreferences({ position: 'custom' }, r);
-  const controller = new LauncherButton(r), capture = new Set();
-  controller.button = { style: {}, getBoundingClientRect: () => ({ left: 100, top: 100 }),
-    setPointerCapture: id => capture.add(id), hasPointerCapture: id => capture.has(id), releasePointerCapture: id => capture.delete(id) };
-  controller.measurements = () => ({ viewport: { width: 500, height: 400 }, size: { width: 40, height: 40 } });
+  const { controller, app } = positionPreview(r);
+  r.writes.length = 0;
   const event = { button: 0, pointerId: 1, clientX: 110, clientY: 110 };
   controller.pointerDown(event); controller.pointerMove({ ...event, clientX: 112 });
   assert.equal(controller.drag.moved, false);
   controller.pointerMove({ ...event, clientX: 900, clientY: 900 });
-  assert.equal(controller.drag.moved, true); assert.deepEqual(controller.button.style, { left: '460px', top: '360px' });
-  controller.pointerEnd(event); await saveLauncherPreferences({}, r);
-  assert.ok(controller.suppressClick); assert.deepEqual(readLauncherPreferences(r).custom, { x: 460, y: 360 });
+  assert.equal(controller.drag.moved, true); assert.equal(controller.button.style.left, '460px'); assert.equal(controller.button.style.top, '360px');
+  controller.pointerEnd(event);
+  assert.ok(controller.suppressClick); assert.deepEqual(app.launcherPositionDraft, { x: 460, y: 360 });
+  assert.equal(readLauncherPreferences(r).custom, null); assert.deepEqual(r.writes, []);
+  const previousGame = globalThis.game; globalThis.game = r.game;
+  try { await LauncherSettingsApp.DEFAULT_OPTIONS.form.handler.call(app, null, null, { object: { visible: true, position: 'custom', size: '40' } }); }
+  finally { globalThis.game = previousGame; }
+  controller.clearSizePreview(app);
+  assert.deepEqual(readLauncherPreferences(r).custom, { x: 460, y: 360 });
+  controller.pointerDown(event); assert.equal(controller.drag, null);
+  const reloaded = new LauncherButton(r);
+  reloaded.pointerDown(event); assert.equal(reloaded.drag, undefined);
+  assert.deepEqual(readLauncherPreferences(r).custom, { x: 460, y: 360 });
+  r.game.user = { id: 'gm', isGM: true }; assert.equal(readLauncherPreferences(r).custom, null);
+});
+
+test('closing settings discards draft coordinates and disables further movement', async () => {
+  const r = runtime(); await saveLauncherPreferences({ position: 'custom', custom: { x: 100, y: 100 } }, r);
+  const { controller, app } = positionPreview(r), event = { button: 0, pointerId: 1, clientX: 110, clientY: 110 };
+  r.writes.length = 0;
+  controller.pointerDown(event); controller.pointerMove({ ...event, clientX: 210 }); controller.pointerEnd(event);
+  assert.deepEqual(app.launcherPositionDraft, { x: 200, y: 100 });
+  controller.clearSizePreview(app);
+  assert.equal(controller.button.style.left, '100px'); assert.equal(controller.button.style.top, '100px');
+  assert.equal(app.launcherPositionDraft, undefined); assert.deepEqual(r.writes, []);
+  controller.pointerDown(event); assert.equal(controller.drag, null);
+});
+
+test('selecting custom position enables editing only until another position or closing settings', async () => {
+  const r = runtime(), { controller, app, select } = positionPreview(r, 'bucket');
+  const event = { button: 0, pointerId: 1, clientX: 110, clientY: 110 };
+  controller.pointerDown(event); assert.equal(controller.drag, null);
+  select.value = 'custom'; select.dispatchEvent(new Event('change'));
+  const initialPoint = { ...app.launcherPositionDraft };
+  controller.pointerDown(event); assert.ok(controller.drag);
+  controller.pointerMove({ ...event, clientX: 210 }); controller.pointerEnd(event, true);
+  assert.deepEqual(app.launcherPositionDraft, initialPoint); assert.deepEqual(r.writes, []);
+  select.value = 'hotbar-right'; select.dispatchEvent(new Event('change'));
+  controller.pointerDown(event); assert.equal(controller.drag, null);
+  controller.clearSizePreview(app);
+  select.value = 'custom'; select.dispatchEvent(new Event('change'));
+  assert.equal(controller.positionApp, null);
+});
+
+test('saving custom position without dragging freezes the current location and locks the button', async () => {
+  const r = runtime(), { controller, app } = positionPreview(r);
+  assert.deepEqual(app.launcherPositionDraft, { x: 100, y: 100 });
+  const previousGame = globalThis.game; globalThis.game = r.game;
+  try { await LauncherSettingsApp.DEFAULT_OPTIONS.form.handler.call(app, null, null, { object: { visible: true, position: 'custom', size: '40' } }); }
+  finally { globalThis.game = previousGame; }
+  controller.clearSizePreview(app);
+  assert.deepEqual(readLauncherPreferences(r).custom, { x: 100, y: 100 });
+  controller.pointerDown({ button: 0, pointerId: 1, clientX: 110, clientY: 110 });
+  assert.equal(controller.drag, null);
+});
+
+test('dragging over the hotbar snaps the preview clear before saving', () => {
+  const r = runtime(), { controller, app } = positionPreview(r);
+  const hotbar = { left: 60, top: 250, right: 480, bottom: 390, width: 420, height: 140 };
+  r.document.querySelector = selector => selector === '#hotbar' ? { getBoundingClientRect: () => hotbar, isConnected: true } : null;
+  controller.resize = { observe() {} };
+  const event = { button: 0, pointerId: 1, clientX: 110, clientY: 110 };
+  controller.pointerDown(event); controller.pointerMove({ ...event, clientX: 210, clientY: 310 });
+  assert.equal(controller.button.style.top, '202px');
+  controller.pointerEnd(event);
+  assert.deepEqual(app.launcherPositionDraft, { x: 200, y: 202 });
+  assert.deepEqual(r.writes, []);
+  controller.clearSizePreview(app);
 });
 
 test('hiding the launcher removes only its own button and retains API/settings', async () => {

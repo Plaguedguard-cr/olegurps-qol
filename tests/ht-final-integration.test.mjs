@@ -8,7 +8,7 @@ import {printedAccuracyZero,expectedPrintedFields} from './fixtures/ht-printed-s
 
 test('printed zero accuracy survives effective catalog and standalone selection; overrides and raw records preserved',()=>{
   for(const [id,source]of Object.entries(printedAccuracyZero)) {
-    const equipment=catalogs.getEquipmentForMode(id),raw=catalogs.getCatalog('weapons').equipment.flatMap(e=>e.modes).find(m=>m.weapon_mode_id===id);
+    const equipment=catalogs.getEquipmentForMode(id),raw=catalogs.getSourceCatalog('weapons').equipment.flatMap(e=>e.modes).find(m=>m.weapon_mode_id===id);
     const before=JSON.stringify(raw), effective=catalogs.getMode(id);
     for(const [field,value]of Object.entries(expectedPrintedFields(id))) {
       assert.equal(raw.stats[field],null,id+': '+field);assert.equal(effective.stats[field],value,id+': '+source);

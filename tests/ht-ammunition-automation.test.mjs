@@ -1,4 +1,5 @@
 import test from "node:test";
+import {assertCurrentHTNativePairs} from './fixtures/ht-plus-p-ready-identities.mjs';
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { CatalogService, CATALOG_DEFINITIONS } from "../scripts/catalog-service.js";
@@ -145,14 +146,18 @@ test("coverage is read-only, compares every native pair, and keeps unsupported/e
   assert.equal(HT_PROJECT_WEAPON_POLICIES['WwlfY-FYthqkLvByK'].authority,'user-approved-project-policy');
   assert.equal(compatibility.checkCompatibility('WwlfY-FYthqkLvByK','ht_22_long_rifle_5_7x16mmr').status,'compatible');
   for(const row of zip)assert(restored.delete(row.modeId+'/'+row.ammoId+'/'+row.variantId));
+  const tonfa=r.readyIdentities.filter(row=>row.modeId==='WHTM28CondorTonfaFired');
+  assert.deepEqual(tonfa,[{modeId:'WHTM28CondorTonfaFired',ammoId:'ht_12_gauge_2_75_18_5x70mmr',variantId:'ht_light_case'}]);
+  assert(restored.delete('WHTM28CondorTonfaFired/ht_12_gauge_2_75_18_5x70mmr/ht_light_case'));
   for(const {key} of history.added){assert(restored.delete(key),key);}
   for(const {key} of history.removed){assert(!restored.has(key),key);restored.add(key);}
   assert.equal(restored.size,history.baseCount);
   assert.equal(createHash('sha256').update([...restored].sort().join('\n')).digest('hex'),history.baseReadyIdentitiesSha256);
   assert.equal(r.inventory.items,263);assert.equal(r.inventory.families,262);assert.equal(r.inventory.projectileOptions,51);assert.equal(r.inventory.eligibilityOptions,64);
-  assert.equal(r.special.total,32704);assert.equal(r.nativePairs,511);
-  assert.equal(r.special.ready,history.baseCount+history.added.length-history.removed.length+4);
-  assert.equal(r.special.ready,keys.length);assert.equal(r.special.ready,1360);
+  assertCurrentHTNativePairs(catalogs);
+  assert.equal(r.special.total,32832);assert.equal(r.nativePairs,513);
+  assert.equal(r.special.ready,history.baseCount+history.added.length-history.removed.length+4+1);
+  assert.equal(r.special.ready,keys.length);assert.equal(r.special.ready,1361);
   assert.deepEqual(Object.keys(r.familiesReady).sort(),[...history.baseFamilies,...history.addedFamilies].sort());
   assert.equal(Object.keys(r.familiesReady).length,121);
   assert.equal(r.variants.ht_apds.ready,96);
@@ -161,7 +166,7 @@ test("coverage is read-only, compares every native pair, and keeps unsupported/e
   assert.equal(r.variants.ht_match_grade.ready,6);assert.equal(r.variants.ht_plus_p.ready,369);assert.equal(r.variants.ht_he.ready,8);
   assert.equal(r.variants.ht_plus_p.compatible,0);assert.equal(r.variants.ht_plus_p.support['GM-MEDIATED'],369);
   assert.equal(r.variants.ht_white_phosphorus.ready,2);assert.equal(r.variants.ht_beehive.ready,1);
-  assert.deepEqual(r.ordinary,{total:511,ready:507,unconfirmed:4});
+  assert.deepEqual(r.ordinary,{total:513,ready:509,unconfirmed:4});
   assert.equal(r.variants.ht_heat.nativePreservedSourceOverrides,13);
   assert.equal(r.variants.ht_ms_heat.nativePreservedSourceOverrides,1);
   assert.equal(r.variants.ht_beehive.nativePreservedSourceOverrides,1);

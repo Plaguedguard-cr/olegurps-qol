@@ -30,7 +30,7 @@ const report = auditPlusPCategoryB({ catalogs, compatibility, baseline });
 // Keep the immutable historical checkpoint; test the single approved delta separately.
 const historicalBoundary=rows=>rows.map(r=>r.modeId==='WwlfY-FYthqkLvByK'?{...r,ready:false}:r);
 test("B boundary preserves historical 85/21, closed E/F and the two source-verified OWNER manual G additions", async() => {
-  assert.equal(report.examined,511); assert.equal(report.rows.length,106); assert.equal(report.previousReady,284);
+  assert.equal(report.examined,513); assert.equal(report.rows.length,106); assert.equal(report.previousReady,284);
   assert.equal(report.newNumericProfiles,105); assert.equal(report.newReadyWithoutLoadingConfirmation,79);
   assert.equal(report.readyWithoutLoadingConfirmation,369); assert.equal(report.readyAfterRequiredGMConfirmations,389);
   assertPlusPReadyIdentities(historicalBoundary(report.all));

@@ -22,10 +22,10 @@ export function ltBowDrawing(actor,modeId,configuration){
  const strength=base===null?null:base+arm;
  const ratio=method==='cranequin'?p.cranequin:method==='belly'?1.3:method==='goats-foot'?[1.3,1.4]:method==='one-leg'?[1.1,1.2]:method==='two-legs'?[1.2,1.3]:null;
  let ready=p.kind==='bow'?'Стрела: Ready 1 с; натянуть 1 с; выстрел 1 с.':p.kind==='repeating'?'Цикл рычага 1 с, выстрел 1 с; подача болта автоматическая.':
-  p.kind==='slurbow'?'Взвести по LT74; размещение каждого дротика — 2 Ready.':'Взвод вручную 2 с, подготовка и размещение болта ещё 2 с.';
+  p.kind==='slurbow'?'Взвести по LT74; размещение каждого дротика – 2 Ready.':'Взвод вручную 2 с, подготовка и размещение болта ещё 2 с.';
  if(method==='belly')ready='Брюшной упор: предел ST +30%; выдвинуть ползун 2 с, поднять 2 с, взвести 2 с, подготовить и вложить болт 2 с (LT79).';
  if(method==='cranequin')ready='Кранекин ×'+p.cranequin+'; опубликованное снаряжение '+({WVvwyyO4VoyeTryRo:8,WEG0MRykkKI4AzUzD:13,WPn4rW6HE64VST_pm:32,Wak71wpexyuS6wOgQ:50}[modeId])+' Ready (LT76/78).';
- else if(method==='one-leg'||method==='two-legs')ready='Натянуть ногами 3 с; ST '+(method==='one-leg'?'+10–20%':'+20–30%')+'. Приготовиться: стремя 2 с, одна стопа на луке 3 с, обе 4 с; последующие циклы с земли — 2 с. Снаряды отдельно (LT74).';
+ else if(method==='one-leg'||method==='two-legs')ready='Натянуть ногами 3 с; ST '+(method==='one-leg'?'+10–20%':'+20–30%')+'. Приготовиться: стремя 2 с, одна стопа на луке 3 с, обе 4 с; последующие циклы с земли – 2 с. Снаряды отдельно (LT74).';
  else if(method==='goats-foot')ready='Козья нога: взвод 20 с; предел ST +30–40%; снаряд готовится отдельно (LT79).';
  else if(strength!==null&&p.kind!=='bow'&&p.kind!=='repeating'&&configuration.ratedST>strength){
   const deficit=configuration.ratedST-strength;
@@ -38,7 +38,7 @@ export function ltBowDrawing(actor,modeId,configuration){
   allowed:strength!==null&&number(configuration.ratedST)!==null&&Number(configuration.ratedST)>0&&configuration.ratedST<=strength,preparationOnly:true,automaticCocking:false}:null;
  return {strength,base:state.kinds.st.effective,lifting:state.advantages.levels.lifting+state.modifiers.lifting,arm,striking:0,method,ratio,ready,
   ...(selfCocking?{selfCocking,sourceDecision:LT_REPEATING_COCKING_POLICY}:{}),
-  note:p.kind==='repeating'?'Предел самостоятельного взвода — 100% применимой ST ('+strength+'): '+(selfCocking.allowed?'взвод доступен.':'взвод недоступен.')+' Уже взведённым арбалетом можно стрелять. LT73; решение пользователя, не официальная эррата.':
+  note:p.kind==='repeating'?'Предел самостоятельного взвода – 100% применимой ST ('+strength+'): '+(selfCocking.allowed?'взвод доступен.':'взвод недоступен.')+' Уже взведённым арбалетом можно стрелять. LT73; решение пользователя, не официальная эррата.':
    p.kind==='bow'?'Достаточность силы и подготовку проверяет владелец по LT74; новых ST-штрафов к попаданию нет.':'Натяжение учитывается вручную; уже взведённый арбалет может выстрелить у более слабого стрелка.'};
 }
 export function resolveLTBowBase({modeId,configuration,actor=null,sourceStats=null}={}){
@@ -101,18 +101,18 @@ export function ltBowDamage({raw={},modeId,configuration,actor=null,type=null,ca
  if(rule==='blunt')damageType='cr';
  if(['cutting','bowel_raker'].includes(rule))damageType='cut';
  if(['bowel_raker','fire_arrow','fire_cage','humming_bulb','flaming_humming'].includes(rule)){acc-=1;multipliers=multipliers.map(n=>n-5);}
- if(['humming_bulb','flaming_humming'].includes(rule)){damageType='cr';divisor='0.5';brief.push('Свистящий наконечник; сигнальный эффект — вручную.');}
+ if(['humming_bulb','flaming_humming'].includes(rule)){damageType='cr';divisor='0.5';brief.push('Свистящий наконечник; сигнальный эффект – вручную.');}
  if(['barbed','bowel_raker'].includes(rule))brief.push('Выдёргивание наносит половину ранее причинённой раны.');
  if(rule==='fire_cage'){damageType='pi-';rules.attackBonus-=2;linked.push('1d-3 burn');brief.push('Поджечь вручную; linked burn применяется только при горящем наполнителе.');}
- if(rule==='fire_arrow'){linked.push('1d-1 cr ex');brief.push('Перед выстрелом: Ready и источник огня; сырость может испортить заряд. Взрыв — отдельный linked Damage.');}
- if(['flaming','flaming_humming'].includes(rule)){rules.attackBonus-=2;linked.push('1 burn');brief.push('Подготовка 10 с; использовать за 3 с. Linked burn — только для подожжённой стрелы.');rules.ammunitionSource='B410; LT73';}
+ if(rule==='fire_arrow'){linked.push('1d-1 cr ex');brief.push('Перед выстрелом: Ready и источник огня; сырость может испортить заряд. Взрыв – отдельный linked Damage.');}
+ if(['flaming','flaming_humming'].includes(rule)){rules.attackBonus-=2;linked.push('1 burn');brief.push('Подготовка 10 с; использовать за 3 с. Linked burn – только для подожжённой стрелы.');rules.ammunitionSource='B410; LT73';}
  if(rule==='flight'){multipliers=multipliers.map(n=>n*2);rules.ltBow.flight=true;brief.push('Результат Damage /2 до ½D; далее урона нет.');}
  let range=multipliers.map(n=>n*base.rangeST*(panjagan?0.5:1));
  const dice=addDice(base.baseFormula,bonus),formula=dice+(divisor?'('+divisor+')':'')+(base.minimum?'!':'')+' '+damageType+(base.extension?' '+base.extension:'');
  const distance=number(context.physicalDistance??context.shotgun?.physicalDistance);
  if(rule==='flight'){rules.ltBow.flightDamage=distance!==null&&distance>range[0]?'zero':'half';rules.ltBow.distance=distance;rules.ltBow.halfDamage=range[0];}
- if(panjagan){rules.ltBow.cinematic=c.shotMode==='panjagan10';brief.push(c.shotMode==='panjagan10'?'Кинематографический Panjagan: десять стрел; подготовка и число попаданий — вручную. LT78.':'Panjagan: пять стрел; Fast-Draw (Arrow) −3, подготовка вручную.');}
- if(navak)brief.push('Дротик: взять, уложить в направляющую, натянуть — 3 Ready.');
+ if(panjagan){rules.ltBow.cinematic=c.shotMode==='panjagan10';brief.push(c.shotMode==='panjagan10'?'Кинематографический Panjagan: десять стрел; подготовка и число попаданий – вручную. LT78.':'Panjagan: пять стрел; Fast-Draw (Arrow) −3, подготовка вручную.');}
+ if(navak)brief.push('Дротик: взять, уложить в направляющую, натянуть – 3 Ready.');
  if(ltBowUnits(modeId,c)>1)rules.ltBow.manualSpreadHits=true;
  rules.ballisticRange={minimum:null,halfDamage:range[0],maximum:range[1],source:'LT74-78'};
  const components=[{role:'kinetic',formula,status:'resolved',relation:'primary',source:rules.ammunitionSource},

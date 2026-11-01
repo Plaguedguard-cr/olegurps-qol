@@ -1,4 +1,6 @@
+import {readGgaShieldAttack} from './shield-equipment-adapter.js';
 import { moduleMessage } from "../localization.js";
+import {WeaponListVisibility, meleeVisibilityEntries, hiddenWeaponsHTML, visibilityText} from './weapon-list-visibility.js';
 import { FirePreparationApp } from "./fire-preparation-app.js";
 import { isAmmunitionHistoryOnlyUpdate } from './weapon-assistant-app.js';
 import { getEvaluateStatusTurns } from "./aim-status-effects.js";
@@ -14,10 +16,16 @@ import { openStandaloneWeaponLibrary } from "./standalone-weapon-configuration.j
 import { StandaloneWeaponDraft, StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { HT_TEAR_SPRAY_MODE } from './biochemical-integration.js';
 import { inferMeleeDamageModel } from './melee-damage-model.js';
+import { committedStrongEligible, defensiveAttackContext, meleeMartialText } from './melee-martial-rules.js';
+import {blindFightingContextKey} from './blind-fighting-context.js';
+import {executeWithCapturedRollMessage} from './prepared-gga-roll.js';
+import { MeleeProfileService } from './melee-profile-service.js';
+import { meleeCombatControls, meleeCombatControlsHTML, saveMeleeCombatControl, selectMeleeCombatMode,meleePhysicalAttackGroups,meleeOutcomeLabel } from './melee-combat-controls.js';
+import {utMeleeResourceReason,utMeleeResourceLabel} from './ut-melee-resources.js';
 import { readStandaloneAttack, listStandaloneAttacks } from "./standalone-attack-service.js";
-import { hasWeaponBondPerk } from "./weapon-bond-service.js";
 import {
   applyMeleeAttackOverride,
+  collectMeleeAttacks,
   clearMeleeAttackOverride,
   getMeleeAttackSettings,
   normalizeMeleeAssistantState,
@@ -26,6 +34,7 @@ import {
   setMeleeGoverningSkill,
   setMeleeRapidStrikeMastery,
   setMeleeWeaponBond,
+  setMeleeVisibility,
   setSelectedMeleeAttack
 } from "./melee-assistant-state.js";
 import {
@@ -49,9 +58,7 @@ const escapeHTML = value => globalThis.foundry?.utils?.escapeHTML
     })[character]);
 
 const MARTIAL_ARTS_HINTS = Object.freeze({
-  telegraphic: "+4 \u043a \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044e; +2 \u043a \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0439 \u0437\u0430\u0449\u0438\u0442\u0435 \u0446\u0435\u043b\u0438. \u041d\u0435 \u0441\u043e\u0447\u0435\u0442\u0430\u0435\u0442\u0441\u044f \u0441 Deceptive Attack.",
-  committed: "Determined: +2 \u043a \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044e. Strong: +1 \u043a \u0443\u0440\u043e\u043d\u0443. \u0420\u0430\u0437\u0440\u0435\u0448\u0451\u043d\u043d\u044b\u0435 \u0430\u043a\u0442\u0438\u0432\u043d\u044b\u0435 \u0437\u0430\u0449\u0438\u0442\u044b: -2. Retreat \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u0435\u043d.",
-  defensive: "-2 \u043a \u0443\u0440\u043e\u043d\u0443 \u0438\u043b\u0438 -1 \u0437\u0430 \u043a\u0443\u0431, \u0447\u0442\u043e \u0445\u0443\u0436\u0435; +1 \u043a Parry \u0438\u043b\u0438 Block."
+  telegraphic: "+4 \u043a \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044e; +2 \u043a \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0439 \u0437\u0430\u0449\u0438\u0442\u0435 \u0446\u0435\u043b\u0438. \u041d\u0435 \u0441\u043e\u0447\u0435\u0442\u0430\u0435\u0442\u0441\u044f \u0441 Deceptive Attack."
 });
 
 export class MeleeAssistantApp extends FirePreparationApp {
@@ -65,8 +72,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   constructor({ token, actor, sourceAttacks, state, stateService, selectedAttackKey,
     targetingService, targetedAttackContext, initialGoverningSkill = "", onBodyplanChange, onClose }, options = {}) {
-    const sourceAttack = sourceAttacks.find(entry => entry.key === selectedAttackKey) ?? sourceAttacks[0];
-    const attack = applyMeleeAttackOverride(sourceAttack, state);
+    const sourceAttack = sourceAttacks.find(entry => entry.key === selectedAttackKey) ?? sourceAttacks[0] ?? {key:'',name:'',level:0,damage:'',data:{}};
+    const attack = applyMeleeAttackOverride(sourceAttack, state, actor);
     super({
       mode: "melee",
       token,
@@ -96,6 +103,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       window: { title: "Помощник ближнего боя - " + actor.name, resizable: true, ...(options.window ?? {}) }
     });
     this.actor = actor;
+    this.weaponVisibility = new WeaponListVisibility(actor);
     this._evaluateManuallyEdited = false;
     this._lastEvaluateStatusTurns = this._getStatusEvaluateTurns();
     this.sourceAttacks = sourceAttacks;
@@ -105,6 +113,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this.selectedAttackKey = sourceAttack.key;
     this.sourceAttack = sourceAttack;
     this.attack = attack;
+    this.visibility = normalizeVisibility(getMeleeAttackSettings(state, sourceAttack).visibility);
     this.calculateEffectiveSkill = () => this._calculateEffectiveSkill();
     this.fireState.evaluate = this._lastEvaluateStatusTurns ? String(this._lastEvaluateStatusTurns) : "";
     this.fireState.dicePlusAdds = state.dicePlusAdds === true;
@@ -116,7 +125,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this.fireState.committedMode = "determined";
     this.fireState.committedSteps = false;
     this.fireState.defensiveAttack = false;
-    this.fireState.defensiveBonus = "parry";
     this.fireState.governingSpecialty = this._resolveGoverningSkill(initialGoverningSkill);
     this.fireState.rapidStrikeMastery =
       getMeleeAttackSettings(state, sourceAttack).rapidStrikeMastery === true;
@@ -128,6 +136,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this._executionWindows = new Set();
     this._effectiveDamage = null;
     this._damagePreviewRevision = 0;
+    if (!this._visibleAttacks().length) this.selectedAttackKey = '';
   }
 
   _resolveGoverningSkill(savedValue = "") {
@@ -141,8 +150,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       manualModifier: String(this.fireState.manualModifier ?? ""),
       deceptiveAttack: String(this.fireState.deceptiveAttack ?? "0"),
       telegraphicAttack: this.fireState.telegraphicAttack === true,
-      hitLocation: { ...(this.fireState.hitLocation ?? this.targetingService.getDefaultSelection()) },
-      blindFighting: this._blindFighting ?? null
+      hitLocation: { ...(this.fireState.hitLocation ?? this.targetingService.getDefaultSelection()) }
     };
   }
 
@@ -151,15 +159,13 @@ export class MeleeAssistantApp extends FirePreparationApp {
       manualModifier: String(configuration?.manualModifier ?? ""),
       deceptiveAttack: String(configuration?.deceptiveAttack ?? "0"),
       telegraphicAttack: configuration?.telegraphicAttack === true,
-      hitLocation: { ...(configuration?.hitLocation ?? this.targetingService.getDefaultSelection()) },
-      blindFighting: configuration?.blindFighting ?? null
+      hitLocation: { ...(configuration?.hitLocation ?? this.targetingService.getDefaultSelection()) }
     };
   }
 
   _applyAttackConfiguration(configuration) {
     const state = this._cloneAttackConfiguration(configuration);
     const selection = this.targetingService.getSelection(state.hitLocation.zoneId, state.hitLocation.regionId);
-    this._blindFighting = state.blindFighting;
     this.fireState.manualModifier = state.manualModifier;
     this.fireState.deceptiveAttack = state.deceptiveAttack;
     this.fireState.telegraphicAttack = state.telegraphicAttack;
@@ -203,7 +209,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
       const source = existing ??
         aliases[slot.type].map(type => previous.get(type) ?? this._attackConfigurationCache.get(type)).find(Boolean) ?? fallback;
       const configuration = this._cloneAttackConfiguration(source);
-      if (!existing) configuration.blindFighting = null;
       return configuration;
     });
     this._activeAttackSlot = Math.max(0, this._attackSlots.findIndex(slot => slot.type === previousActive));
@@ -262,7 +267,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this.fireState.committedMode = root.querySelector('[name="committedMode"]')?.value ?? this.fireState.committedMode;
     this.fireState.committedSteps = !!root.querySelector('[name="committedSteps"]')?.checked;
     this.fireState.defensiveAttack = !!root.querySelector('[name="defensiveAttack"]')?.checked;
-    this.fireState.defensiveBonus = root.querySelector('[name="defensiveBonus"]')?.value ?? this.fireState.defensiveBonus;
     this.fireState.governingSpecialty = root.querySelector('[name="governingSpecialty"]')?.value ?? this.fireState.governingSpecialty;
     this.fireState.rapidStrikeMastery =
       !!root.querySelector('[name="rapidStrikeMastery"]')?.checked;
@@ -286,7 +290,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
       committedMode: this.fireState.committedMode,
       committedSteps: this.fireState.committedSteps,
       defensiveAttack: this.fireState.defensiveAttack,
-      defensiveBonus: this.fireState.defensiveBonus,
       rapidStrike: this.fireState.rapidStrike,
       attackSlot: this._attackSlots[this._activeAttackSlot]?.type,
       bodyplanId: this.fireState.bodyplanId,
@@ -302,7 +305,14 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   _getMeleeVisibilityRules() {
-    return meleeVisibilityRules(this.visibility, this._blindFighting === "success");
+    return meleeVisibilityRules(this.visibility, this._getBlindFightingAttempt()?.result === "success");
+  }
+
+  _getBlindFightingAttempt() {
+    if(!this._blindFighting||this._blindFighting.used||this._blindFighting.context!==blindFightingContextKey(this)){
+      if(this._buildingAttackSnapshots&&!this._blindFighting?.used)return null;
+      this._blindFighting=null;return null;
+    }return this._blindFighting;
   }
 
   _hasBlindFighting() {
@@ -310,12 +320,14 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async _checkBlindFighting(button) {
-    if (this._blindFighting || !this.visibility) return;
+    if (this._getBlindFightingAttempt() || !this.visibility) return;
     button.disabled = true;
     try {
-      const success = !!(await globalThis.GURPS.executeOTF("[S:Blind Fighting]", false, null, this.actor));
-      this._blindFighting = success ? "success" : "failure";
-      this._saveActiveAttackConfiguration();
+      const context=blindFightingContextKey(this);
+      const result=await executeWithCapturedRollMessage({actorId:this.actor.id,
+        execute:()=>globalThis.GURPS.executeOTF("[S:Blind Fighting]",false,null,this.actor)});
+      if(!result.message||context!==blindFightingContextKey(this))return;
+      this._blindFighting={context,result:result.result?'success':'failure',used:false};
       await this.render({ force: true });
     } finally {
       if (button.isConnected) button.disabled = false;
@@ -329,10 +341,10 @@ export class MeleeAssistantApp extends FirePreparationApp {
     const before = calculateMeleeSkillBeforeDeceptive({
       ...this._getMeleeCalculationOptions(), visibilityPenalty: 0, visibilityCap: false
     });
-    return `<span>\u0420\u0430\u0441\u0447\u0451\u0442: ${before ?? "\u2014"}</span>
+    return `<span>\u0420\u0430\u0441\u0447\u0451\u0442: ${before ?? "\u2013"}</span>
       <span>\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c: ${rules.penalty}</span>
       ${rules.cap ? "<span>Cap: 9</span>" : ""}
-      <strong>\u0418\u0442\u043e\u0433: ${final ?? "\u2014"}</strong>`;
+      <strong>\u0418\u0442\u043e\u0433: ${final ?? "\u2013"}</strong>`;
   }
 
   _buildVisibilityRuleHint() {
@@ -343,9 +355,10 @@ export class MeleeAssistantApp extends FirePreparationApp {
   _buildVisibilityContent() {
     const content = super._buildVisibilityContent();
     if (!content) return "";
+    const blindAttempt=this._getBlindFightingAttempt();
     const blindFighting = this._hasBlindFighting()
-      ? `<div class="gam-melee-blind-fighting"><button type="button" data-melee-action="blind-fighting" ${this._blindFighting ? "disabled" : ""}>Blind Fighting</button>
-        <span>${this._blindFighting === "success" ? "\u0423\u0441\u043f\u0435\u0445: \u0448\u0442\u0440\u0430\u0444 \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u0438 \u0441\u043d\u044f\u0442" : this._blindFighting === "failure" ? "\u041f\u0440\u043e\u0432\u0430\u043b: \u043e\u0431\u044b\u0447\u043d\u044b\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u0438" : ""}</span></div>`
+      ? `<div class="gam-melee-blind-fighting"><button type="button" data-melee-action="blind-fighting" ${blindAttempt ? "disabled" : ""}>Blind Fighting</button>
+        <span>${blindAttempt?.result === "success" ? "\u0423\u0441\u043f\u0435\u0445: \u0448\u0442\u0440\u0430\u0444 \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u0438 \u0441\u043d\u044f\u0442" : blindAttempt?.result === "failure" ? "\u041f\u0440\u043e\u0432\u0430\u043b: \u043e\u0431\u044b\u0447\u043d\u044b\u0435 \u043f\u0440\u0430\u0432\u0438\u043b\u0430 \u0432\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u0438" : ""}</span></div>`
       : "";
     return content.replace(/<\/section>$/, `${blindFighting}</section>`);
   }
@@ -357,15 +370,17 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _refreshStandaloneAttack() {
     const ref = this.sourceAttack?.standaloneRef;
-    if (!ref) return;
-    const current = readStandaloneAttack(this.actor, ref.weaponId, ref.modeId);
+    const current = ref ? readStandaloneAttack(this.actor, ref.weaponId, ref.modeId) : this.sourceAttack?.equipmentRef?readGgaShieldAttack(this.actor,this.sourceAttack):this.sourceAttack;
     if (!current) {
       this.attack = { ...this.attack, level: null, readinessReason: "Автономный режим удалён. Выберите другую атаку." };
       return;
     }
     this.sourceAttack = current;
-    this.attack = applyMeleeAttackOverride(current,this._meleeState);
-    this.targetedAttackContext = createMeleeTargetedAttackContext({ actor: this.actor, attack: current });
+    this.attack = applyMeleeAttackOverride(current,this._meleeState,this.actor);
+    if (ref || this.attack.meleeProfile) {
+      this.targetedAttackContext = createMeleeTargetedAttackContext({ actor: this.actor, attack: this.attack });
+      this.fireState.governingSpecialty = this._resolveGoverningSkill(this.fireState.governingSpecialty);
+    }
   }
 
   _getLocationResult() {
@@ -404,9 +419,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
       actor: this.actor,
       attack: this.attack,
       attackSlot: this._attackSlots[this._activeAttackSlot]?.type ?? null,
-      governingSkill: this.attack?.standaloneRef?.governingSkill ?? (governing ? { name: governing.label, level: governing.level } : null),
+      governingSkill: this.attack?.unarmedRef ? this.attack.meleeProfile?.skill : this.attack?.standaloneRef?.governingSkill ?? this.attack?.equipmentRef?.governingSkill ?? (governing ? { name: governing.label, level: governing.level } : null),
       baseSkill: this._getBaseSkillLevel(),
-      weaponBond: getMeleeAttackSettings(this._meleeState, this.sourceAttack).weaponBond === true,
+      weaponBond: !this.attack?.unarmedRef && getMeleeAttackSettings(this._meleeState, this.sourceAttack).weaponBond === true,
       manualModifier: this.fireState.manualModifier,
       evaluate: this.fireState.evaluate,
       moveAndAttack: this.fireState.moveAndAttack,
@@ -434,9 +449,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
     }
     if (!["determined", "strong"].includes(this.fireState.committedMode)) {
       this.fireState.committedMode = "determined";
-    }
-    if (!["parry", "block"].includes(this.fireState.defensiveBonus)) {
-      this.fireState.defensiveBonus = "parry";
     }
     if (this.fireState.rapidStrike) this.fireState.moveAndAttack = false;
     if (this.fireState.moveAndAttack) {
@@ -508,39 +520,31 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _buildAttackStats(damage = this._effectiveDamage?.formula ?? this.attack?.damage) {
     const values = [
-      "Урон " + (damage || "-"),
+      meleeOutcomeLabel(this.attack,damage),
       "Reach " + (this.attack?.reach || "-"),
       "Parry " + (this.attack?.parry || "-")
     ];
+    const resource=utMeleeResourceLabel(this.actor,this.attack);
+    if(resource)values.push(resource);
+    const unarmed=this.attack?.meleeProfile?.unarmed;
+    if(unarmed)values.push(unarmed.alreadyIncluded?'Исходный Damage GGA':unarmed.manualDamage?'Ручной Damage':unarmed.selectedSkill+' +'+unarmed.bonusPerDie+'/куб thrust'+(unarmed.naturalPerDie?' · естественное оружие +'+unarmed.naturalPerDie+'/куб':''));
     return values.join(" · ");
   }
 
   _buildGoverningSkillSelector(fireState = this.fireState) {
     this._refreshStandaloneAttack();
-    if (this.attack?.standaloneRef) return `<p class="gam-standalone-skill" data-standalone-skill>${escapeHTML(this.attack.skillDescription)}</p>`;
-    const skills = this.targetedAttackContext?.specialtyOptions ?? [];
-    const options = skills.map(skill => '<option value="' + escapeHTML(skill.value) + '" ' +
-      (fireState.governingSpecialty === skill.value ? "selected" : "") + '>' +
-      escapeHTML(skill.label) + '</option>').join("");
-    return '<div class="gam-melee-governing-controls">' +
-      '<label class="gam-fire-governing-skill">' +
-      '<span>Основной навык:</span>' +
-      '<select name="governingSpecialty" required aria-label="Основной навык" ' + (skills.length ? "" : "disabled") + '>' +
-      '<option value="">' + (skills.length ? "Выберите навык" : "Навыки не найдены") + '</option>' +
-      options +
-      '</select>' +
-      '</label>' +
-      '<label class="gam-melee-rapid-mastery" title="Weapon Master / Trained by a Master для выбранной melee-атаки">' +
-      '<input type="checkbox" name="rapidStrikeMastery" ' +
-      (fireState.rapidStrikeMastery ? "checked" : "") + '>' +
-      '<span>WM / TBaM</span>' +
-      '</label>' +
-      '<span class="gam-melee-visibility-separator" aria-hidden="true">|</span>' +
-      '<label class="gam-melee-visibility-toggle"><input type="checkbox" name="meleeVisibility" ' +
-      (this.visibility ? "checked" : "") + '> <span>\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c</span></label>' +
-      '</div>';
+    return meleeCombatControlsHTML(meleeCombatControls(this.actor, this.sourceAttack,{attacks:this.sourceAttacks}), {
+      mastery: fireState.rapidStrikeMastery, visibility: !!this.visibility,
+      ...(!this.attack?.unarmedRef&&!this.attack?.standaloneRef&&!this.attack?.equipmentRef?.virtual?{governingSkills:this.targetedAttackContext?.specialtyOptions??[],
+        governingSpecialty:fireState.governingSpecialty}:{})
+    }, escapeHTML);
   }
+  _getDefensiveContext() {
+    return defensiveAttackContext(this.attack);
+  }
+
   _buildMartialArtsOptions(fireState = this.fireState) {
+    const defense=this._getDefensiveContext();
     return `<div class="gam-melee-martial-options">
       <div class="gam-melee-martial-row">
         <label><input type="checkbox" name="telegraphicAttack" ${fireState.telegraphicAttack ? "checked" : ""}>Telegraphic Attack</label>
@@ -549,7 +553,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       </div>
       <div class="gam-melee-martial-row">
         <label><input type="checkbox" name="committedAttack" ${fireState.committedAttack ? "checked" : ""}>Committed Attack</label>
-        <span class="gam-melee-martial-help" title="${escapeHTML(MARTIAL_ARTS_HINTS.committed)}" aria-label="${escapeHTML(MARTIAL_ARTS_HINTS.committed)}">(?)</span>
+        <span class="gam-melee-martial-help" title="${escapeHTML(meleeMartialText('strongHint'))}" aria-label="${escapeHTML(meleeMartialText('strongHint'))}">(?)</span>
         <span class="gam-melee-martial-detail" data-committed-detail ${fireState.committedAttack ? "" : "hidden"}>
           <select name="committedMode" aria-label="Режим решительной атаки">
             <option value="determined" ${fireState.committedMode === "determined" ? "selected" : ""}>Точная</option>
@@ -561,24 +565,37 @@ export class MeleeAssistantApp extends FirePreparationApp {
       </div>
       <div class="gam-melee-martial-row">
         <label><input type="checkbox" name="defensiveAttack" ${fireState.defensiveAttack ? "checked" : ""}>Defensive Attack</label>
-        <span class="gam-melee-martial-help" title="${escapeHTML(MARTIAL_ARTS_HINTS.defensive)}" aria-label="${escapeHTML(MARTIAL_ARTS_HINTS.defensive)}">(?)</span>
-        <span class="gam-melee-martial-detail" data-defensive-detail ${fireState.defensiveAttack ? "" : "hidden"}>
-          <span>\u0417\u0430\u0449\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u043d\u0443\u0441:</span>
-          <select name="defensiveBonus" aria-label="Бонус защитной атаки">
-            <option value="parry" ${fireState.defensiveBonus === "parry" ? "selected" : ""}>Парирование +1</option>
-            <option value="block" ${fireState.defensiveBonus === "block" ? "selected" : ""}>Блок +1</option>
-          </select>
-        </span>
+        <span class="gam-melee-martial-help" data-defensive-help data-tooltip="${escapeHTML(defense.hint)}" data-tooltip-class="gam-melee-defensive-hint" aria-label="${escapeHTML(defense.hint)}">(?)</span>
       </div>
     </div>`;
   }
 
   _buildAttackOptions() {
-    return this.sourceAttacks.map(attack => '<option value="' + escapeHTML(attack.key) + '" ' +
-      (attack.key === this.selectedAttackKey ? "selected" : "") + '>' + escapeHTML(attack.label) + '</option>').join("");
+    const groups=meleePhysicalAttackGroups(this._visibleAttacks(),this.selectedAttackKey,this.actor),entries=this._visibilityEntries();
+    return groups.map(({attack})=>'<option value="'+escapeHTML(attack.key)+'" '+(attack.key===this.selectedAttackKey?'selected':'')+'>'+escapeHTML(entries.find(e=>e.source.key===attack.key)?.label||attack.name||attack.label)+'</option>').join('');
+  }
+
+  _visibilityEntries() { return meleeVisibilityEntries(this.actor, this.sourceAttacks); }
+  _visibilityEntry() { return this._visibilityEntries().find(e => e.source.key === this.selectedAttackKey); }
+  _visibleAttacks() { return this.weaponVisibility ? this.weaponVisibility.visible(this._visibilityEntries()).map(e => e.source) : this.sourceAttacks; }
+  async _refreshVisibleWeapons() {
+    const next = this._visibleAttacks();
+    if (!next.some(a => a.key === this.selectedAttackKey)) {
+      if (next[0]) await this._selectAttack(next[0].key, {persistSelection:false});
+      else { this.selectedAttackKey = ''; this._effectiveDamage = null; this._damagePreviewRevision += 1; }
+    }
+    if (this.rendered && !this._visibilityClosed) await this.render({force:true});
+  }
+  _onRender(context, options) {
+    super._onRender(context, options);
+    if (this._weaponVisibilityHook == null && globalThis.Hooks?.on) this._weaponVisibilityHook = Hooks.on('updateUser', (user, changes) => {
+      if (user.id === game.user.id && changes.flags?.['olegurps-qol']?.weaponListVisibility && this.rendered && !this._visibilityBusy && !this._visibilityClosed)
+        {this.sourceAttacks=collectMeleeAttacks(this.actor);void this._refreshVisibleWeapons();}
+    });
   }
 
   _buildContent(fireState) {
+    if (!this._visibleAttacks().length) return `<div class="gam-fire-preparation gam-melee-preparation"><p>${visibilityText('EmptyMelee')}</p>${hiddenWeaponsHTML(this.weaponVisibility,this._visibilityEntries(),'melee','data-melee-action')}<button type="button" data-melee-action="standalone-library" aria-label="${visibilityText('AddToList')}">+</button></div>`;
     const skillPreview = this._getSkillPreview();
     const baseSkill = this._getBaseSkillLevel();
     const baseSkillText = Number.isFinite(baseSkill) ? String(baseSkill) : "-";
@@ -593,6 +610,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
           <div class="gam-fire-summary-main">
             <div class="gam-melee-attack-row">
               <select name="meleeAttackKey" class="gam-melee-attack-select" aria-label="Melee attack">${this._buildAttackOptions()}</select>
+              <button type="button" class="gam-melee-icon-button" data-melee-action="hide-weapon" title="${visibilityText(this._visibilityEntry()?.id ? 'Hide' : 'NoIdentity')}" aria-label="${visibilityText('Hide')}" ${this._visibilityEntry()?.id ? '' : 'disabled'}><i class="fa-solid fa-eye-slash"></i></button>
               <button type="button" class="gam-melee-icon-button" data-melee-action="edit" title="Редактировать параметры" aria-label="Редактировать параметры"><i class="fa-solid fa-pen"></i></button>
               <button type="button" class="gam-melee-icon-button" data-melee-action="strength" title="Временные поправки силы">ST</button>
               <button type="button" class="gam-melee-icon-button" data-melee-action="standalone-library" title="Добавить оружие из библиотеки" aria-label="Добавить оружие из библиотеки">+</button>
@@ -602,6 +620,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
                 <span>Dices&amp;Adds</span>
               </label>
             </div>
+            ${hiddenWeaponsHTML(this.weaponVisibility, this._visibilityEntries(), 'melee', 'data-melee-action')}
             <p class="gam-fire-attack-stats" data-melee-attack-meta title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>
             <div data-melee-governing>${this._buildGoverningSkillSelector(fireState)}</div>
           </div>
@@ -658,7 +677,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
                 <span>ход.</span>
               </label>
             </div>
-            <section class="gam-melee-empty-range" aria-hidden="true"></section>
           </div>
           ${this._buildHitLocationContent(fireState)}
         </div>
@@ -693,10 +711,15 @@ export class MeleeAssistantApp extends FirePreparationApp {
     if (isAmmunitionHistoryOnlyUpdate(changes)) return;
     if(isStrengthUpdate(changes)){void this._updateEffectiveDamagePreview();return;}
     this._captureFields();
-    this.sourceAttacks = [...this.sourceAttacks.filter(a => !a.standaloneRef), ...listStandaloneAttacks(this.actor, "melee")];
+    this.sourceAttacks = collectMeleeAttacks(this.actor);
+    if (!this._visibleAttacks().some(a => a.key === this.selectedAttackKey)) {
+      if (this.rendered) void this._refreshVisibleWeapons();
+      return;
+    }
+    this.sourceAttack = this.sourceAttacks.find(a=>a.key===this.selectedAttackKey);
     this._refreshStandaloneAttack();
     this.targetedAttackContext = createMeleeTargetedAttackContext({actor:this.actor,attack:this.attack});
-    void this.render({ force: true });
+    if(this.rendered)void this.render();
   }
 
   _updateTargetRecommendation() {
@@ -708,8 +731,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _updateMeleePreview() {
     this._refreshStandaloneAttack();
-    const skill = this.element?.querySelector("[data-standalone-skill]");
-    if (skill) skill.textContent = this.attack?.skillDescription ?? "";
     const maneuver = this._normalizeManeuverState();
     const evaluateInput = this.element?.querySelector('[name="evaluate"]');
     if (evaluateInput) evaluateInput.disabled = !!this.fireState.telegraphicAttack;
@@ -752,10 +773,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
     if (committedSteps) committedSteps.checked = !!this.fireState.committedSteps;
     const defensive = this.element?.querySelector('[name="defensiveAttack"]');
     if (defensive) defensive.checked = !!this.fireState.defensiveAttack;
-    const defensiveDetail = this.element?.querySelector('[data-defensive-detail]');
-    if (defensiveDetail) defensiveDetail.hidden = !this.fireState.defensiveAttack;
-    const defensiveBonus = this.element?.querySelector('[name="defensiveBonus"]');
-    if (defensiveBonus) defensiveBonus.value = this.fireState.defensiveBonus;
+    const defensiveHelp=this.element?.querySelector('[data-defensive-help]');
+    if(defensiveHelp){const hint=this._getDefensiveContext().hint;defensiveHelp.dataset.tooltip=hint;defensiveHelp.setAttribute('aria-label',hint);}
     const deceptive = this.element?.querySelector('[name="deceptiveAttack"]');
     if (deceptive) {
       deceptive.innerHTML = this._buildDeceptiveOptions(maneuver.deceptive);
@@ -790,7 +809,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       attack: this.attack,
       dicePlusAdds: this.fireState.dicePlusAdds,
       allOutStrong: this.fireState.allOutAttack && this.fireState.allOutAttackMode === "strong",
-      committedStrong: this.fireState.committedAttack && this.fireState.committedMode === "strong",
+      committedStrong: this.fireState.committedAttack && this.fireState.committedMode === "strong" && committedStrongEligible(this.attack),
       defensiveAttack: this.fireState.defensiveAttack
     };
   }
@@ -800,6 +819,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   _showEffectiveDamage(preparedDamage,reason='Формула урона не определена') {
+    const resourceReason=utMeleeResourceReason(this.actor,this.attack);
+    const confirm=this.element?.querySelector('[data-melee-action="confirm"]');
+    if(confirm){confirm.disabled=!!resourceReason||this.attack?.meleeProfile?.utExotic?.contactProcedure===true;confirm.title=resourceReason??(this.attack?.meleeProfile?.utExotic?.contactProcedure?'Подтвердите контакт в редакторе экземпляра.':'');}
     this._effectiveDamage = preparedDamage;
     const button=this.element?.querySelector('[data-melee-action="damage"]');
     if(button){button.disabled=!preparedDamage;button.title=preparedDamage?'Бросить текущий урон':reason;}
@@ -811,6 +833,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async _updateEffectiveDamagePreview() {
+    if (!this.selectedAttackKey || !this._visibleAttacks().some(a=>a.key===this.selectedAttackKey)) return;
     const revision = ++this._damagePreviewRevision;
     try {
       const preparedDamage = await this._prepareEffectiveDamage();
@@ -833,8 +856,13 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async _persistCurrentPreferences() {
+    if (!this.selectedAttackKey) return;
     const settings = getMeleeAttackSettings(this._meleeState, this.sourceAttack);
     let changed = false;
+    if (JSON.stringify(settings.visibility ?? null) !== JSON.stringify(normalizeVisibility(this.visibility))) {
+      setMeleeVisibility(this._meleeState, this.sourceAttack, this.visibility);
+      changed = true;
+    }
     if ((settings.governingSkill ?? "") !== this.fireState.governingSpecialty) {
       setMeleeGoverningSkill(this._meleeState, this.sourceAttack, this.fireState.governingSpecialty);
       changed = true;
@@ -851,6 +879,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
   async close(options = {}) {
+    this._visibilityClosed = true;
+    if (this._weaponVisibilityHook != null) { Hooks.off('updateUser',this._weaponVisibilityHook); this._weaponVisibilityHook = null; }
     this._captureFields();
     try {
       await this._persistCurrentPreferences();
@@ -861,26 +891,35 @@ export class MeleeAssistantApp extends FirePreparationApp {
     return super.close(options);
   }
 
-  async _selectAttack(key) {
+  async _selectAttack(key, {persistSelection = true} = {}) {
     this.sourceAttacks = [...this.sourceAttacks.filter(a => !a.standaloneRef), ...listStandaloneAttacks(this.actor, "melee")];
     this._captureFields();
-    const sourceAttack = this.sourceAttacks.find(entry => entry.key === key);
+    const sourceAttack = this._visibleAttacks().find(entry => entry.key === key);
     if (!sourceAttack || sourceAttack.key === this.selectedAttackKey) return;
+    // Personal list filtering selects a visible row locally; it must not save Actor state.
+    if (persistSelection) await this._persistCurrentPreferences();
+    if (persistSelection && this.selectedAttackKey && sourceAttack.standaloneRef &&
+        this.sourceAttack?.standaloneRef?.weaponId === sourceAttack.standaloneRef.weaponId &&
+        this.sourceAttack.standaloneRef.modeId !== sourceAttack.standaloneRef.modeId)
+      await selectMeleeCombatMode(this.actor, sourceAttack);
     this.selectedAttackKey = sourceAttack.key;
     this.sourceAttack = sourceAttack;
-    this.attack = applyMeleeAttackOverride(sourceAttack, this._meleeState);
+    this.attack = applyMeleeAttackOverride(sourceAttack, this._meleeState,this.actor);
     this._effectiveDamage = null;
     this._damagePreviewRevision += 1;
     this.targetedAttackContext = createMeleeTargetedAttackContext({ actor: this.actor, attack: this.attack });
     const attackSettings = getMeleeAttackSettings(this._meleeState, sourceAttack);
+    this.visibility = normalizeVisibility(attackSettings.visibility);
     const saved = attackSettings.governingSkill ?? "";
     this.fireState.governingSpecialty = this._resolveGoverningSkill(saved);
     this.fireState.rapidStrikeMastery = attackSettings.rapidStrikeMastery === true;
-    setSelectedMeleeAttack(this._meleeState, sourceAttack);
-    if (saved && this.fireState.governingSpecialty !== saved) {
-      setMeleeGoverningSkill(this._meleeState, sourceAttack, "");
+    if (persistSelection) {
+      setSelectedMeleeAttack(this._meleeState, sourceAttack);
+      if (saved && this.fireState.governingSpecialty !== saved) {
+        setMeleeGoverningSkill(this._meleeState, sourceAttack, "");
+      }
+      await this._persistState();
     }
-    await this._persistState();
 
     const service = await TargetingService.create({ attack: this.attack, bodyplan: this.fireState.bodyplanId });
     this.targetingService = service;
@@ -894,6 +933,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
       meta.title = this._buildAttackStats();
     }
     const governing = this.element?.querySelector("[data-melee-governing]");
+    const attackSelector=this.element?.querySelector('[name="meleeAttackKey"]');
+    if(attackSelector)attackSelector.innerHTML=this._buildAttackOptions();
     if (governing) governing.innerHTML = this._buildGoverningSkillSelector(this.fireState);
     const targeting = this.element?.querySelector(".gam-fire-targeting");
     if (targeting) targeting.outerHTML = this._buildHitLocationContent(this.fireState);
@@ -910,24 +951,31 @@ export class MeleeAssistantApp extends FirePreparationApp {
       actor: this.actor,
       attack: this.attack,
       escapeHTML,
-      weaponBondAvailable: hasWeaponBondPerk(this.actor),
+      manualAttack:applyMeleeAttackOverride(this.sourceAttack,this._meleeState),
       weaponBond: getMeleeAttackSettings(this._meleeState, this.sourceAttack).weaponBond === true
     });
     if (!result) return;
     if (result.action === "reset") {
+      if(result.profileContext)await new MeleeProfileService(this.actor).reset(this.sourceAttack,{expectedRevision:result.profileRevision});
       clearMeleeAttackOverride(this._meleeState, this.sourceAttack);
     } else if (result.action === "save") {
+      const candidate=result.manualChanged?{...this.sourceAttack,...result.value,
+        hasMeleeDamageOverride:result.value.damage!==this.sourceAttack.damage,
+        meleeManualOverride:{skillLevel:result.value.skillLevel,parry:result.value.parry}}:
+        applyMeleeAttackOverride(this.sourceAttack,this._meleeState);
+      if(result.profileSelection)await new MeleeProfileService(this.actor).save(candidate,result.profileSelection,
+        {context:result.profileContext,expectedRevision:result.profileRevision});
       const current = { skillLevel: Number(this.attack.level),
         damage: String(this.attack.damage ?? "").trim(),
         reach: String(this.attack.reach ?? "").trim(),
         parry: String(this.attack.parry ?? "").trim() };
       const modelChanged=result.value.damageModel&&JSON.stringify(this.attack.damageModel??inferMeleeDamageModel(this.attack.damage))!==JSON.stringify(result.value.damageModel);
-      if (Object.keys(current).some(key => current[key] !== result.value[key])||modelChanged||
-        (this.attack.applyArmST===true)!==(result.value.applyArmST===true)) {
+      if ((!result.profileSelection||result.manualChanged)&&(Object.keys(current).some(key => current[key] !== result.value[key])||modelChanged||
+        (this.attack.applyArmST===true)!==(result.value.applyArmST===true))) {
         setMeleeAttackOverride(this._meleeState, this.sourceAttack, result.value);
       }
       if(!this.attack.standaloneRef)setMeleeWeaponBond(this._meleeState, this.sourceAttack, result.weaponBond);
-      else if(hasWeaponBondPerk(this.actor)&&result.weaponBond!==getMeleeAttackSettings(this._meleeState,this.sourceAttack).weaponBond){
+      else if(result.weaponBond!==getMeleeAttackSettings(this._meleeState,this.sourceAttack).weaponBond){
         const catalogs=globalThis.OleGURPSQOL?.catalogs,service=new StandaloneWeaponService(this.actor,catalogs);
         const existing=service.get(this.attack.standaloneRef.weaponId);
         const draft=new StandaloneWeaponDraft({actor:this.actor,catalogs,type:'melee',existing});
@@ -968,18 +1016,19 @@ export class MeleeAssistantApp extends FirePreparationApp {
     if (this.fireState.moveAndAttack) return { type: "moveAndAttack" };
     if (this.fireState.committedAttack) return { type: "committedAttack",
       option: this.fireState.committedMode, steps: this.fireState.committedSteps };
-    if (this.fireState.defensiveAttack) return { type: "defensiveAttack",
-      option: this.fireState.defensiveBonus };
+    if (this.fireState.defensiveAttack) return {type:'defensiveAttack'};
     return { type: "attack" };
   }
 
 
   _createAttackSnapshots() {
+    if (this.weaponVisibility && !this._visibleAttacks().some(a=>a.key===this.selectedAttackKey)) throw Error(visibilityText('Empty'));
     this._refreshStandaloneAttack();
     if (this.attack?.readinessReason) throw new Error(this.attack.readinessReason);
     this._saveActiveAttackConfiguration();
     const previousActive = this._activeAttackSlot;
     const snapshots = [];
+    this._buildingAttackSnapshots=true;
     try {
       for (let index = 0; index < this._attackSlots.length; index += 1) {
         const slot = this._attackSlots[index];
@@ -997,14 +1046,12 @@ export class MeleeAssistantApp extends FirePreparationApp {
         const martialNotes = [
           this.fireState.telegraphicAttack ? "\u0417\u0430\u0449\u0438\u0442\u0430 \u0446\u0435\u043b\u0438: +2" : "",
           this.fireState.committedAttack && this.fireState.committedMode === "strong"
-            ? "Committed Attack (Strong): +1 damage" : "",
+            ? meleeMartialText(committedStrongEligible(this.attack)?'strongApplied':'strongUnchanged') : "",
           this.fireState.committedAttack
             ? "\u0417\u0430\u0449\u0438\u0442\u044b: -2; Retreat \u043d\u0435\u043b\u044c\u0437\u044f." : "",
-          this.fireState.defensiveAttack
-            ? "\u0417\u0430\u0449\u0438\u0442\u043d\u044b\u0439 \u0431\u043e\u043d\u0443\u0441: " +
-              (this.fireState.defensiveBonus === "block" ? "Block +1" : "Parry +1") : ""
         ].filter(Boolean);
         const sourceAttack = globalThis.foundry?.utils?.deepClone?.(this.sourceAttack) ?? structuredClone(this.sourceAttack);
+        const blindFightingAttempt = this._getBlindFightingAttempt();
         snapshots.push({
           type: slot.type,
           label: slot.label,
@@ -1019,7 +1066,10 @@ export class MeleeAssistantApp extends FirePreparationApp {
           combatCalculation,
           hitLocation: { ...(randomLocation ? locationResult.selection : this.fireState.hitLocation) },
           visibility: normalizeVisibility(this.visibility),
-          blindFighting: this._blindFighting,
+          blindFighting: blindFightingAttempt?.result ?? null,
+          blindFightingAttempt,
+          isBlindFightingCurrent: blindFightingAttempt
+            ? () => this._getBlindFightingAttempt() === blindFightingAttempt : null,
           clearTargets: !!this._getMeleeVisibilityRules()?.random ||
             !!this.visibility?.blindFireHex || !!this.visibility?.hex,
           hitLocationLabel: locationResult.selection?.label ?? "",
@@ -1031,12 +1081,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
           committedMode: this.fireState.committedMode,
           committedSteps: this.fireState.committedSteps,
           defensiveAttack: this.fireState.defensiveAttack,
-          defensiveBonus: this.fireState.defensiveBonus,
           martialSummary: martialNotes.join("; "),
           manualModifier: this.fireState.manualModifier,
           damageData: { dicePlusAdds: this.fireState.dicePlusAdds,
             allOutStrong: this.fireState.allOutAttack && this.fireState.allOutAttackMode === "strong",
-            committedStrong: this.fireState.committedAttack && this.fireState.committedMode === "strong",
+            committedStrong: this.fireState.committedAttack && this.fireState.committedMode === "strong" && committedStrongEligible(this.attack),
             defensiveAttack: this.fireState.defensiveAttack },
           rapidStrikePenalty: this._getRapidStrikePenalty(),
           locationText,
@@ -1050,6 +1099,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
         });
       }
     } finally {
+      this._buildingAttackSnapshots=false;
       this._activeAttackSlot = previousActive;
       this._applyAttackConfiguration(this._attackSlotStates[previousActive]);
       this._refreshHitLocationContent();
@@ -1060,11 +1110,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _consumeBlindFighting() {
     this._blindFighting = null;
-    this._attackSlotStates = this._attackSlotStates.map(configuration =>
-      ({ ...configuration, blindFighting: null }));
-    this._attackConfigurationCache = new Map([...this._attackConfigurationCache].map(
-      ([type, configuration]) => [type, { ...configuration, blindFighting: null }]
-    ));
   }
 
   async _performAttack(button) {
@@ -1090,7 +1135,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
       const snapshots = this._createAttackSnapshots();
       if (snapshots.length === 1) {
         await executeMeleeAttackSnapshot(snapshots[0]);
-        this._consumeBlindFighting();
       } else {
         const app = new MeleeAttackExecutionApp({
           slots: snapshots,
@@ -1099,7 +1143,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
         this._executionWindows.add(app);
         try {
           await app.render({ force: true });
-          this._consumeBlindFighting();
         } catch (error) { this._executionWindows.delete(app); throw error; }
       }
     } catch (error) {
@@ -1115,10 +1158,12 @@ export class MeleeAssistantApp extends FirePreparationApp {
   async _onInput(event) {
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
+    if (['governingSpecialty', 'meleePrimarySkill', 'meleeGrip', 'rapidStrikeMastery'].includes(field.name)) this._captureFields();
     if (field.name === "meleeVisibility") {
       await this.activateVisibility(field.checked ? { mode: "partial", partialPenalty: -1 } : null);
       this._blindFighting = null;
       this._saveActiveAttackConfiguration();
+      await this._persistCurrentPreferences();
       return;
     }
     if (["visibilityMode", "partialPenalty", "accustomed", "manualHearing"].includes(field.name)) {
@@ -1127,6 +1172,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       this._saveActiveAttackConfiguration();
       this._refreshHitLocationContent();
       this._updateMeleePreview();
+      await this._persistCurrentPreferences();
       return;
     }
     if (field.name === "bodyplanId") {
@@ -1140,6 +1186,23 @@ export class MeleeAssistantApp extends FirePreparationApp {
     }
     if (field.name === "meleeAttackKey") {
       if (event.type === "change") await this._selectAttack(field.value);
+      return;
+    }
+    if (['meleePrimarySkill', 'meleeGrip','meleeNeuralSetting','meleeAttackMode'].includes(field.name)) {
+      if (event.type !== 'change') return;
+      this._captureFields();
+      try {
+        const raw = applyMeleeAttackOverride(this.sourceAttack, this._meleeState);
+        if(field.name==='meleeAttackMode'&&meleeCombatControls(this.actor,raw,{attacks:this.sourceAttacks}).modeSelection==='attack')return this._selectAttack(field.value);
+        await saveMeleeCombatControl(this.actor, raw, field.name === 'meleeGrip' ? 'grip' : field.name==='meleeAttackMode'?'modeId':field.name==='meleeNeuralSetting'?'neuralSetting':'skill', field.value);
+        this._refreshStandaloneAttack();
+        await this._persistCurrentPreferences();
+        await this.render({ force: true });
+        this._updateMeleePreview();
+      } catch (error) {
+        ui.notifications.error(moduleMessage(error));
+        await this.render({ force: true });
+      }
       return;
     }
     if (field.name === "governingSpecialty") {
@@ -1206,8 +1269,6 @@ export class MeleeAssistantApp extends FirePreparationApp {
         this.fireState.committedAttack = false;
       }
       this._refreshAttackSlots();
-    } else if (field.name === "defensiveBonus") {
-      this.fireState.defensiveBonus = field.value === "block" ? "block" : "parry";
     } else if (field.name === "telegraphicAttack") {
       this.fireState.telegraphicAttack = field.checked;
       if (field.checked) this.fireState.deceptiveAttack = "0";
@@ -1243,8 +1304,25 @@ export class MeleeAssistantApp extends FirePreparationApp {
     event.preventDefault();
     event.stopPropagation();
     const action = button.dataset.meleeAction;
+    if (['hide-weapon','restore-weapon','restore-all-weapons'].includes(action)) {
+      if (this._visibilityBusy) return;
+      this._visibilityBusy = true; button.disabled = true;
+      try {
+        await this.weaponVisibility.change(action === 'hide-weapon' ? 'hide' : action === 'restore-weapon' ? 'restore' : 'restore-all',
+          action === 'hide-weapon' ? this._visibilityEntry()?.id : action === 'restore-weapon' ? button.dataset.visibilityId : 'melee', () => this._visibilityEntries());
+        if (!this._visibilityClosed) {
+          await this._refreshVisibleWeapons();
+        }
+      } catch (error) { ui.notifications.error(moduleMessage(error)); }
+      finally { this._visibilityBusy = false; if (button.isConnected) button.disabled = false; }
+      return;
+    }
     if (action === "strength") return openStrengthEditor(this.actor);
-    if (action === "standalone-library") return openStandaloneWeaponLibrary({ actor: this.actor, type: "melee" });
+    if (action === "standalone-library") {
+      await openStandaloneWeaponLibrary({actor:this.actor,type:'melee'});
+      if(!this._visibilityClosed){this.sourceAttacks=collectMeleeAttacks(this.actor);await this._refreshVisibleWeapons();}
+      return;
+    }
     if (action === "blind-fighting") return this._checkBlindFighting(button);
     if (action === "cancel") return this.close();
     if (action === "attack-slot") return this._switchAttackSlot(button.dataset.attackSlot);

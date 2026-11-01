@@ -11,7 +11,7 @@ export class StrengthEditorApp extends foundry.applications.api.ApplicationV2 {
   static DEFAULT_OPTIONS={classes:['olegurps-qol','strength-editor'],tag:'section',
     window:{title:'Временные поправки ST',resizable:true},position:{width:660,height:'auto'}};
   constructor({actor},options={}){
-    super({...options,id:options.id??'olegurps-strength-'+key(actor),window:{title:'ST — '+actor.name,resizable:true}});
+    super({...options,id:options.id??'olegurps-strength-'+key(actor),window:{title:'ST – '+actor.name,resizable:true}});
     this.actor=actor;this.service=new StrengthService(actor);this.saved=readStrengthAdjustments(actor);
     this.modifiers={...this.saved.modifiers};this.dirty=false;this.busy=false;this.actorHook=null;
     this.boundInput=this.onInput.bind(this);this.boundClick=this.onClick.bind(this);
@@ -30,7 +30,7 @@ export class StrengthEditorApp extends foundry.applications.api.ApplicationV2 {
         <td data-st-source="${kind}">${esc(shown(kind==='st'?row.baseCurrent:row.current))}</td>
         <td><input id="${esc(this.id+'-'+kind)}" name="${kind}" data-st-adjustment="${kind}" type="number" step="1" value="${esc(this.modifiers[kind])}" ${!state.kinds.st.supported?'disabled':''} aria-label="Временная поправка ${esc(row.label)}"></td>
         <td><strong data-st-effective="${kind}">${esc(shown(row.effective))}</strong></td></tr>`;}).join('')}</tbody></table>
-      <p class="hint">Striking/Lifting/Arm ST — уровни преимуществ; при отсутствии значение 0. Lifting ST не усиливает обычный удар. Arm ST применяется только по явному выбору для атаки.</p>
+      <p class="hint">Striking/Lifting/Arm ST – уровни преимуществ; при отсутствии значение 0. Lifting ST не усиливает обычный удар. Arm ST применяется только по явному выбору для атаки.</p>
       <p>ST обычного удара: <strong data-st-strike-total>${esc(shown(state.kinds.striking.effective))}</strong> · С Arm ST: <strong data-st-arm-total>${esc(shown(state.kinds.striking.effective===null?null:state.kinds.striking.effective+state.kinds.arm.current+state.modifiers.arm))}</strong></p>
       <p class="hint">Сброс очищает поправки в этом окне. Нажмите «Сохранить», чтобы применить их.</p>
       <p data-st-error role="status"></p></div>

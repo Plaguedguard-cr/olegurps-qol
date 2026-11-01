@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 import { AmmoService } from "./ammo-service.js";
 import { resolveRuntimeAttackProfile, newAttackId, attackProfileError } from "./attack-profile-runtime.js";
 import {persistShotSnapshot} from './shot-history-storage.js';
@@ -102,7 +103,7 @@ export class SprayingFireSessionService {
       throw new Error("\u041d\u0435\u0434\u043e\u0441\u0442\u0430\u0442\u043e\u0447\u043d\u043e \u043f\u0430\u0442\u0440\u043e\u043d\u043e\u0432 \u0434\u043b\u044f \u043e\u0431\u044a\u044f\u0432\u043b\u0435\u043d\u043d\u043e\u0439 \u043e\u0447\u0435\u0440\u0435\u0434\u0438");
     }
     return this.save({
-      sessionId: this.runtime.foundry?.utils?.randomID?.(20) ?? crypto.randomUUID(),
+      sessionId: generateId(this.runtime, { preferFoundry: true, length: 20 }),
       state: "planned", sceneId: this.runtime.canvas?.scene?.id,
       sourceTokenId: this.token?.document?.id ?? this.token?.id,
       actorId: this.actor.id, userId: this.runtime.game?.user?.id,

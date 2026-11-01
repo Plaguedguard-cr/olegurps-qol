@@ -11,7 +11,7 @@ export const DISINTEGRATOR_PROFILES=Object.freeze(Object.fromEntries(rows.flatMa
  ['disintegrator','conversion','reality'].map(family=>{
   const derived=family!=='disintegrator',id=derived?'olegurps:'+family+':'+modeId:modeId;
   return [id,Object.freeze({modeId:id,equipmentId:derived?'olegurps:'+family+':'+equipmentId:equipmentId,chassisEquipmentId:equipmentId,chassisModeId:modeId,
-   name:derived?(family==='conversion'?'Conversion Beam':'Reality Disintegrator')+' — '+name:name,family,tl:'12^',cellSize,cells,shots,acc,halfRange,maximum,rof:10,st,bulk,weightLb,cost,lc,reload,specialty,
+   name:derived?(family==='conversion'?'Conversion Beam':'Reality Disintegrator')+' – '+name:name,family,tl:'12^',cellSize,cells,shots,acc,halfRange,maximum,rof:10,st,bulk,weightLb,cost,lc,reload,specialty,
    cellCost:({C:10,E:2000,F:20000}[cellSize])*100,cellSetCost:({C:10,E:2000,F:20000}[cellSize])*100*cells,
    damage:dice+(family==='conversion'?'(10) cor':'(∞) cor'),followUp:dice+' burn ex',cosmic:true,source:derived?'UT130–131':'UT130'})];
  }))));

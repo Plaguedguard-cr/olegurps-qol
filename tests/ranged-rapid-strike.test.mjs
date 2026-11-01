@@ -54,7 +54,7 @@ test("High, Low, and Level elevation use measured distance and preserve beam ran
 });
 
 test("token elevation selects High, Low, or Level only from available Token elevations", () => {
-  const runtime = { canvas: { grid: { isGridless: false, measurePath: () => ({ spaces: 40 }) } } };
+  const runtime = { canvas: { scene: {grid: {distance: 1, units: 'yd'}}, grid: { isGridless: false, measurePath: () => ({ spaces: 40, distance: 40 }) } } };
   const bands = [{ index: 0, max: 40, penalty: -4 }];
   const source = { document: { elevation: 10 } };
   const target = { document: { elevation: 0 } };

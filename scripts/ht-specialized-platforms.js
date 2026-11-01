@@ -35,11 +35,11 @@ export function specializedPlatform(mode, source) {
     kind:'host-dependent',source:mode.weapon_mode_id==='WVP2b1TCXvqHt6azn'?'UT134':mode.weapon_mode_id==='WX57fdTm6ELTN3VdA'?'UT144-145':'UT136-138',hostBulkAdjustment:0,emHost:true,
     ...(mode.weapon_mode_id==='WX57fdTm6ELTN3VdA'?{maximumHostBulkMagnitude:6}:{}),
     instruction:'Укажите Bulk, ST и Acc с прицельными бонусами носителя. Подача подствольного оружия независимая.'};
-  if(source==='UT'&&mode?.weapon_mode_id==='WqtpFn_3ogNM9oiHv')return {kind:'manual-motor',source:'UT144',instruction:'Мотор: B cell, до 15 минут непрерывной работы; время учитывается вручную. Расход ракет — отдельно.'};
+  if(source==='UT'&&mode?.weapon_mode_id==='WqtpFn_3ogNM9oiHv')return {kind:'manual-motor',source:'UT144',instruction:'Мотор: B cell, до 15 минут непрерывной работы; время учитывается вручную. Расход ракет – отдельно.'};
   const microwave=source==='UT'&&microwaveProfile(mode?.weapon_mode_id);
   const exotic=source==='UT'&&exoticBeamProfile(mode?.weapon_mode_id);
   if(['disintegrator','conversion','reality'].includes(exotic?.family))return {kind:'selective-area',source:exotic.source,hitLocationNotApplicable:true};
-  if(exotic?.family==='ghost')return {kind:'ghost-particle-artillery',source:exotic.source,hitLocationNotApplicable:true,instruction:'Непрямая наводка; точка взрыва и отклонение — вручную. Промежуточное укрытие луч не останавливает. UT131.'};
+  if(exotic?.family==='ghost')return {kind:'ghost-particle-artillery',source:exotic.source,hitLocationNotApplicable:true,instruction:'Непрямая наводка; точка взрыва и отклонение – вручную. Промежуточное укрытие луч не останавливает. UT131.'};
   const sonicNeural=source==='UT'&&sonicNeuralProfile(mode?.weapon_mode_id);
   if(sonicNeural?.family==='mindripper')return {kind:'mindripper-single-target',source:'UT122; проект 21.10.2026',hitLocationNotApplicable:true};
   if(sonicNeural?.coneWidth)return {kind:'sonic-neural-cone',source:sonicNeural.source,hitLocationNotApplicable:true};
@@ -54,7 +54,7 @@ export function specializedPlatform(mode, source) {
     instruction:'UT141: Bulk, ST и прицельные бонусы берутся у выбранного носителя с Bulk −3 или ниже. Собственные подача и C cell EMGL учитываются отдельно.'};
   const dazzler=source==='UT'&&utDazzlerProfile(mode?.weapon_mode_id);
   if(dazzler)return {kind:'vision-laser',source:'UT113',hitLocationNotApplicable:true,
-    instruction:`Конус ${dazzler.coneWidth} ярд. на максимальной дальности; охват и направление взгляда — вручную. UT113.`};
+    instruction:`Конус ${dazzler.coneWidth} ярд. на максимальной дальности; охват и направление взгляда – вручную. UT113.`};
   if(source!=='HT')return null;
   const id=mode?.weapon_mode_id;
   if(['WALzMQGej7znsQIsa','W46_tIuztoKnpftYj'].includes(id))return {

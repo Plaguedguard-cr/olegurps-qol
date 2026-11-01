@@ -8,6 +8,6 @@ export function attackApplicationResult(profile,outcome=null,attackId=null){
 }
 export function attackApplicationHTML(result,escape){
  if(!result)return '';
- return `<p class="olegurps-application-result"><strong>${escape(result.label)} — ${result.status==='check-succeeded'?'проверка успешна':result.status==='check-failed'?'проверка неудачна':'ожидает проверки'}.</strong></p>`+
+ return `<p class="olegurps-application-result"><strong>${escape(result.label)} – ${result.status==='check-succeeded'?'проверка успешна':result.status==='check-failed'?'проверка неудачна':'ожидает проверки'}.</strong></p>`+
   (result.status==='check-succeeded'&&result.defensesManual?'<details class="olegurps-chat-details"><summary>Результат применения</summary><p>Защиту цели и последствия разрешите вручную. Успешный бросок ещё не означает, что цель захвачена или поражена веществом.</p></details>':'');
 }

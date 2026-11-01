@@ -1,0 +1,24 @@
+{
+ "source": "Ultra-Tech 2007 printed UT74/83/163/165/166; Basic Set printed B208/271/273. Independent numeric transcription.",
+ "actor": {"ST":12,"DX":12,"swing":"1d+2","thrust":"1d-1","learnedSkill":16},
+ "modes": [
+  ["w3vSCNftOrywWou49","sw cr","1d+2 cr","1","0","6",1,"Shortsword"],
+  ["wI0oYbRdlvRyfiyHY","thr cr","1d-1 cr","1","0","6",1,"Shortsword"],
+  ["wQn8_zVA--bjjKSQp","thr cr","1d+1 cr","C","0",null,1,"Boxing"],
+  ["wg9K3Yi69WdSCaeKP","sw+1 cut","1d+3 cut","1","0","8",1,"Axe/Mace"],
+  ["wUTM29MorphImp","sw+1 imp","1d+3 imp","1","0","8",1,"Axe/Mace"],
+  ["wUTM29MorphCr","sw+1 cr","1d+3 cr","1","0","8",1,"Axe/Mace"],
+  ["wDySTsgiygu6nSRFu","6d(5) burn","6d(5) burn","C,1","-1","2",1,"Force Sword"],
+  ["wKrl1D1iujaCX9ssm","8d(5) burn","8d(5) burn","1,2","0","3",1,"Force Sword"],
+  ["wUTM29VariableForceC","8d(5) burn","8d(5) burn","C","0","3",1,"Force Sword"],
+  ["wUTM29VariableForce1","8d(5) burn","8d(5) burn","1","0","3",1,"Force Sword"],
+  ["wUTM29VariableForce2","8d(5) burn","8d(5) burn","2","0","3",1,"Force Sword"],
+  ["wKaBftlfcmfO4Q3ph","9d(5) burn","9d(5) burn","2,3","0","7†",2,"Force Sword"],
+  ["wUTM29GlaiveBatonSw","sw cr","1d+2 cr","1","0","6",1,"Shortsword"],
+  ["wUTM29GlaiveBatonThr","thr cr","1d-1 cr","1","0","6",1,"Shortsword"],
+  ["wUTM29GlaiveStaffSw","sw+2 cr","1d+4 cr","1,2","+2","7†",2,"Staff"],
+  ["wUTM29GlaiveStaffThr","thr+2 cr","1d+1 cr","1,2","+2","7†",2,"Staff"],
+  ["w7bLtfJugrIOJS70U","sw cr","1d+2 cr","1","0","5",1,"Shortsword"],
+  ["wmZbVhgow5v78qhsX","thr cr","1d-1 cr","1","0","5",1,"Shortsword"]
+ ]
+}

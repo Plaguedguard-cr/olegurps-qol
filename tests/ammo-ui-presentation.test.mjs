@@ -7,6 +7,9 @@ import { inventoryAmmoName, ammoStockRows, renderAmmunitionSummary, ammoCaption 
 import { escapeWeaponHTML } from "../scripts/tools/weapon-configuration.js";
 import { bindingForGoverningSkill, listRangedGoverningSkills } from "../scripts/tools/ranged-governing-skill-service.js";
 import { utFixedFeed } from '../scripts/tools/ut-physical-feeds.js';
+import { ltFlameProfile } from '../scripts/lt-flame-source.js';
+import { ltFlameCharge } from '../scripts/tools/lt-flame.js';
+import { weaponResourcePresentation } from '../scripts/tools/weapon-resource-presentation.js';
 
 globalThis.foundry = { utils: { deepClone: structuredClone }, applications: { api: { ApplicationV2: class {} } } };
 globalThis.game = { i18n: { lang: "ru", localize: key => key } };
@@ -16,8 +19,8 @@ const { ammoManagementHTML } = await import("../scripts/tools/ammo-management-ap
 // Exercise the manager's actual nested renderer without opening an Application in Node.
 const source = readFileSync(new URL("../scripts/tools/ammo.js", import.meta.url), "utf8");
 const body = source.match(/  function renderSingleMagazineBadges\(weapon,\{active=true,batterySelected=false\}=\{\}\) \{[\s\S]*?\n  \}/)[0];
-const renderBadges = new Function("escapeHTML", "ammoWindowText", "magazineFill", "inventoryAmmoName", "utFixedFeed", body + "; return renderSingleMagazineBadges;")(
-  escapeWeaponHTML, ammoWindowText, magazineFill, inventoryAmmoName, utFixedFeed);
+const renderBadges = new Function("escapeHTML", "ammoWindowText", "magazineFill", "inventoryAmmoName", "utFixedFeed", "ltFlameProfile", "ltFlameCharge", "weaponResourcePresentation", body + "; return renderSingleMagazineBadges;")(
+  escapeWeaponHTML, ammoWindowText, magazineFill, inventoryAmmoName, utFixedFeed, ltFlameProfile, ltFlameCharge, weaponResourcePresentation);
 
 test("each selectable magazine reflects its own rounds, capacity, smooth fill and ammunition tooltip", () => {
   const weapon = { id: "weapon", magazines: [30, 15, 1, 0, 20], loadedIndex: 2, capacity: 30, ammoType: "fallback",
@@ -65,7 +68,7 @@ test("summary counts exact recipe identities independently, including loose-only
   const before=structuredClone(weapon),rows=ammoStockRows(weapon);
   assert.deepEqual(rows.map(r=>[r.key,r.total,r.loaded,r.loose]),[['base',30,30,0],['aphc',37,27,10],['old',10,0,10]]);
   const html=renderAmmunitionSummary(null,weapon,escapeWeaponHTML);
-  assert.doesNotMatch(html,/7.62x39mm APHC<\/strong> — всего 37, в магазинах 27, свободно 10/);
+  assert.doesNotMatch(html,/7.62x39mm APHC<\/strong> – всего 37, в магазинах 27, свободно 10/);
   assert.doesNotMatch(html,/всего 77/);assert.doesNotMatch(html,/Known old name/);assert.doesNotMatch(html,/>Zero</);
   assert.equal(ammoCaption(null,weapon),'7.62x39mm');weapon.ammunitionInventory.installedId='two';
   assert.equal(ammoCaption(null,weapon),'7.62x39mm APHC');assert.match(renderAmmunitionSummary(null,weapon,escapeWeaponHTML),/APHC<\/strong>/);assert.equal((renderAmmunitionSummary(null,weapon,escapeWeaponHTML).match(/gam-ammo-stock-row/g)||[]).length,1);weapon.ammunitionInventory.installedId='one';assert.deepEqual(weapon,before);
@@ -75,9 +78,9 @@ test('installed summary switches between two physical types and never shows anot
     {key:'base',type:{key:'base',source:'catalog',name:'7.62x39mm'},rounds:0},{key:'aphc',type:{key:'aphc',source:'catalog',name:'7.62x39mm APHC'},rounds:0}],
     magazines:[{id:'a',weaponId:'w',capacity:30,rounds:29,ammoKey:'base'},{id:'b',weaponId:'w',capacity:30,rounds:28,ammoKey:'aphc'},{id:'c',weaponId:'w',capacity:30,rounds:0,ammoKey:null}]}};
   const before=structuredClone(weapon);
-  assert.match(renderAmmunitionSummary(null,weapon,escapeWeaponHTML),/7.62x39mm<\/strong> — всего 29, в магазинах 29, свободно 0/);
+  assert.match(renderAmmunitionSummary(null,weapon,escapeWeaponHTML),/7.62x39mm<\/strong> – всего 29, в магазинах 29, свободно 0/);
   applyInventoryOperation(weapon,'install',{magazineId:'b'});const second=renderAmmunitionSummary(null,weapon,escapeWeaponHTML);
-  assert.match(second,/APHC<\/strong> — всего 28, в магазинах 28, свободно 0/);assert.equal((second.match(/gam-ammo-stock-row/g)||[]).length,1);
+  assert.match(second,/APHC<\/strong> – всего 28, в магазинах 28, свободно 0/);assert.equal((second.match(/gam-ammo-stock-row/g)||[]).length,1);
   applyInventoryOperation(weapon,'install',{magazineId:'c'});const empty=renderAmmunitionSummary(null,weapon,escapeWeaponHTML);
   assert.match(empty,/тип боеприпасов не выбран/);assert.doesNotMatch(empty,/APHC|всего 57|в магазинах/);assert.equal(weapon.totalAmmo,before.totalAmmo);
   assert.deepEqual(weapon.ammunitionInventory.stocks,before.ammunitionInventory.stocks);
@@ -124,9 +127,9 @@ test("skill summary follows actual selected mode and leaves effective skill and 
   for (const language of ["ru", "en"]) {
     game.i18n.lang = language;
     const prefix = "Навык";
-    assert.equal(app._getSourceSkillText(language), prefix + ": Guns/TL9 (Rifle) \u2014 13");
+    assert.equal(app._getSourceSkillText(language), prefix + ": Guns/TL9 (Rifle) \u2013 13");
     app.attack.governingSkillBinding = bindingForGoverningSkill(skills[1]);
-    assert.equal(app._getSourceSkillText(language), prefix + ": Guns/TL9 (Pistol) \u2014 14");
+    assert.equal(app._getSourceSkillText(language), prefix + ": Guns/TL9 (Pistol) \u2013 14");
     assert.deepEqual(app._getSkillPreview(), preview);
     app.attack.governingSkillBinding = bindingForGoverningSkill(skills[0]);
   }

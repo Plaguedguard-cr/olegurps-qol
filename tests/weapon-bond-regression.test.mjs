@@ -74,14 +74,14 @@ test("fresh and reused Fire Control windows agree after reopening and switching 
   for (const window of [existing, f.app()]) assert.equal(window._getSkillPreview().level, "13");
 });
 
-test("a weapon without Weapon Bond and an actor without the perk get no bonus", () => {
+test("a weapon without selection gets no bonus; a manual selection needs no perk", () => {
   const f = fixture(), app = f.app();
   app.attack.weaponBond = true;
   assert.equal(app._getSkillPreview().level, "13");
   const absent = fixture({ perk: false }), noPerk = absent.app();
   absent.saved.weapons[0].weaponBond = true;
-  assert.equal(noPerk._getSkillPreview().level, "13");
-  assert.equal(noPerk._getModifierTotalText(), "0");
+  assert.equal(noPerk._getSkillPreview().level, "14");
+  assert.equal(noPerk._getModifierTotalText(), "+1");
 });
 
 test("other modifiers survive Weapon Bond toggles unchanged", () => {

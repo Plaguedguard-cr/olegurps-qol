@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 import { handloadCondition } from "./cartridge-load-conditions.js";
 import { ammoTypeKey } from "./ammo-inventory.js";
 import { f4Text } from "./ammunition-f4-localization.js";
@@ -40,7 +41,7 @@ export function createRegisteredHandload({actor,weapon,type,modeId,facts,option,
   if(!reviewed||evaluateHTOptionEligibility(option,reviewed).status!=="compatible")throw Error(f4Text("BatchBlocked"));
   const previous=type.recipe?.autoProfile?.handloadDefinition;
   const sameBatch=previous&&['actorId','weaponId','modeId','ammoId'].every(k=>previous[k]===definition[k]);
-  const recipe={version:1,variantId:"ht_match_handloaded",customId:sameBatch?type.recipe.customId:runtime.crypto.randomUUID(),parameters:{},
+  const recipe={version:1,variantId:"ht_match_handloaded",customId:sameBatch?type.recipe.customId:generateId(runtime),parameters:{},
     autoProfile:{version:1,id:"individual-handloaded-batch",revision:1,origin:"user",handloadDefinition:definition,
       model:{version:1,kind:"special-rule",status:"resolved",rule:structuredClone(HT_AUTOMATIC_SPECIAL_RULES.ht_match_handloaded)}}};
   const baseName=runtime.OleGURPSQOL?.catalogs?.getAmmoItem('ht',type.ammoId)?.name??type.name;

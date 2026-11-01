@@ -10,11 +10,25 @@ function overlaps(point, size, rect) {
     point.y < rect.bottom + GAP && point.y + size.height > rect.top - GAP;
 }
 
+export function customLauncherPosition(point, hotbar, viewport, size) {
+  const clamped = clampLauncherPosition(point, viewport, size);
+  if (!hotbar || !overlaps(clamped, size, hotbar)) return clamped;
+  const candidates = [
+    { x: hotbar.left - size.width - GAP, y: clamped.y },
+    { x: hotbar.right + GAP, y: clamped.y },
+    { x: clamped.x, y: hotbar.top - size.height - GAP },
+    { x: clamped.x, y: hotbar.bottom + GAP }
+  ].map(candidate => clampLauncherPosition(candidate, viewport, size))
+    .filter(candidate => !overlaps(candidate, size, hotbar));
+  const distance = candidate => (candidate.x - clamped.x) ** 2 + (candidate.y - clamped.y) ** 2;
+  return candidates.sort((a, b) => distance(a) - distance(b))[0] ?? clamped;
+}
+
 // Rectangles are measured in viewport CSS pixels; no GGA DOM is moved or modified.
 export function launcherPosition(preferences, anchors, viewport, size) {
   const bottomLeft = { x: (viewport.left ?? 0) + 16, y: (viewport.top ?? 0) + viewport.height - size.height - 16 };
   if (preferences.position === 'custom' && preferences.custom) {
-    return clampLauncherPosition(preferences.custom, viewport, size);
+    return customLauncherPosition(preferences.custom, anchors.hotbar, viewport, size);
   }
   const anchor = preferences.position === 'controls' ? anchors.controls :
     preferences.position.startsWith('hotbar') ? anchors.hotbar : anchors.bucket ?? anchors.hotbar;

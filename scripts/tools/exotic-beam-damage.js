@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 // Source-scoped adjustments of native GGA Apply Damage instances. No system files,
 // global calculator prototypes, Actor traits, targets or resources are changed here.
 const SCOPE='olegurps-qol',installations=new WeakMap(),applications=new WeakMap();
@@ -80,23 +81,23 @@ function renderProtection(app,html,runtime){
  const {contract}=state,direct=contract.family==='ghost'&&contract.component==='kinetic';
  const box=runtime.document.createElement('fieldset');box.dataset.exoticProtection='true';
  if(contract.family==='plasma-gun'){
-  box.innerHTML='<p>Plasma/Fusion: (2), burn ex. \u0412\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0437\u0440\u044b\u0432 \u2014 \u0448\u0442\u0430\u0442\u043d\u044b\u0439 \u0440\u0435\u0436\u0438\u043c GGA, B414.</p>';
+  box.innerHTML='<p>Plasma/Fusion: (2), burn ex. \u0412\u043d\u0435\u0448\u043d\u0438\u0439 \u0432\u0437\u0440\u044b\u0432 \u2013 \u0448\u0442\u0430\u0442\u043d\u044b\u0439 \u0440\u0435\u0436\u0438\u043c GGA, B414.</p>';
  }else if(['disintegrator','reality','conversion'].includes(contract.family)){
   const follow=contract.family==='conversion'&&contract.component==='follow-up',dis=contract.family!=='conversion';
-  box.innerHTML='<legend>'+ (follow?'Follow-Up — B381, B415':contract.family==='conversion'?'Corrosion (10) — UT131':'Защита — '+contract.source)+'</legend>';
+  box.innerHTML='<legend>'+ (follow?'Follow-Up – B381, B415':contract.family==='conversion'?'Corrosion (10) – UT131':'Защита – '+contract.source)+'</legend>';
   const check=(name,label,value)=>'<label><input type="checkbox" name="'+name+'"'+(value?' checked':'')+'>'+label+'</label>';
   if(dis)box.innerHTML+='<label>'+ (contract.family==='reality'?'Применимый Reality-Stabilized DR':'DR Force Screen')+'<input name="screenDR" type="number" min="0" max="1000000000" value="'+state.screenDR+'"></label>'+check('stasisWeb','Stasis Web (UT193)',state.stasisWeb);
   if(contract.family==='reality')box.innerHTML+=check('realityStabilized','Защита Reality-Stabilized',state.realityStabilized)+check('temporalImmune','Temporal Inertia: применимость иммунитета подтверждена ведущим',state.temporalImmune);
-  if(follow)box.innerHTML+=check('primaryPenetrated','Основной cor пробил DR этой цели: внутренний взрыв',state.primaryPenetrated)+'<p>Без проникновения: внешний взрыв, обычный DR; дистанция в GGA. Radiation/surge — вручную.</p>';
+  if(follow)box.innerHTML+=check('primaryPenetrated','Основной cor пробил DR этой цели: внутренний взрыв',state.primaryPenetrated)+'<p>Без проникновения: внешний взрыв, обычный DR; дистанция в GGA. Radiation/surge – вручную.</p>';
   box.addEventListener('change',()=>{try{const values={screenDR:0};for(const input of box.querySelectorAll('input'))values[input.name]=input.type==='checkbox'?input.checked:input.value.trim()===''?NaN:Number(input.value);updateExoticScreen(app,values);app.render(false);}catch(e){runtime.ui?.notifications?.warn?.(e.message);}});
  }else if(contract.family==='graviton'||direct){
-  box.innerHTML=`<legend>${direct?'Внутренний взрыв — UT131':'Гравитон — UT129'}</legend><label>DR применимого силового экрана<input name="exoticScreenDR" type="number" min="0" max="1000000000" step="1" value="${state.screenDR}"></label>`+
+  box.innerHTML=`<legend>${direct?'Внутренний взрыв – UT131':'Гравитон – UT129'}</legend><label>DR применимого силового экрана<input name="exoticScreenDR" type="number" min="0" max="1000000000" step="1" value="${state.screenDR}"></label>`+
    (direct?`<label><input type="checkbox" name="exoticRealityStabilized"${state.realityStabilized?' checked':''}>Экран Reality-Stabilized (DR/5)</label>`:'<p>Force Screen: DR/100.</p>')+
    `<p>Обычный DR игнорируется.${direct?' Повреждение после экрана ×3; обычный силовой экран не защищает.':''}</p>`;
   box.addEventListener('change',()=>{const field=box.querySelector('[name=exoticScreenDR]');
    try{updateExoticScreen(app,{screenDR:field.value.trim()===''?NaN:Number(field.value),realityStabilized:box.querySelector('[name=exoticRealityStabilized]')?.checked??false});app.render(false);}
    catch(e){field.value=String(state.screenDR);runtime.ui?.notifications?.warn?.(e.message);}});
- }else box.innerHTML='<p>'+ (contract.family==='force'?'Kinetic Stun: обычных ран нет; полный бросок и двойное отбрасывание, blunt trauma сохраняется. UT128.':'Побочный взрыв: обычный DR и обычное повреждение; дистанция от взрыва — в штатном поле GGA. UT131.')+'</p>';
+ }else box.innerHTML='<p>'+ (contract.family==='force'?'Kinetic Stun: обычных ран нет; полный бросок и двойное отбрасывание, blunt trauma сохраняется. UT128.':'Побочный взрыв: обычный DR и обычное повреждение; дистанция от взрыва – в штатном поле GGA. UT131.')+'</p>';
  (root.querySelector('form')??root).prepend(box);
 }
 export function installExoticBeamDamage(runtime=globalThis){
@@ -113,7 +114,7 @@ export function installExoticBeamDamage(runtime=globalThis){
    const {default:ApplyDamageDialog}=await (runtime.__olegurpsExoticDamageLoader?.()??import('/systems/gurps/module/damage/applydamage.js'));
    // GGA's fixed default DOM id can reuse another open Apply instance. Each
    // source-scoped calculator must retain its own native form and listeners.
-   const app=new ApplyDamageDialog(this,data,{id:'olegurps-exotic-apply-'+(runtime.crypto??globalThis.crypto).randomUUID()});
+   const app=new ApplyDamageDialog(this,data,{id:'olegurps-exotic-apply-'+generateId(runtime)});
    configureExoticDamageApplication(app,contracts[0],runtime);app.render(true);return app;
   }catch(e){runtime.ui?.notifications?.error?.(e.message);throw e;}
  };

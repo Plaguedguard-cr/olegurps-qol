@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {structuralDiff as diff,independentCopy} from '../tools/actor-system-integrity.mjs';
+test('object key order does not change structural equality',()=>assert.deepEqual(diff({a:1,b:{x:2,y:3}},{b:{y:3,x:2},a:1}),[]));
+test('snapshot is independent of nested mutations',()=>{const a={x:{y:[1]}};const b=independentCopy(a);a.x.y[0]=2;assert.equal(b.x.y[0],1);assert.equal(diff(b,a)[0].path,'$.x.y[0]');});
+test('nested differences retain exact values',()=>assert.deepEqual(diff({conditions:{usermods:['a']}},{conditions:{usermods:['b']}}).map(d=>[d.path,d.before,d.after]),[['$.conditions.usermods[0]','a','b']]));
+test('numeric and string values differ',()=>assert.equal(diff({v:1},{v:'1'}).length,1));
+test('missing and null fields differ',()=>assert.equal(diff({},{v:null})[0].beforePresent,false));
+test('undefined own key is retained as a presence difference',()=>assert.equal(diff({v:undefined},{})[0].afterPresent,false));
+test('array order and length are significant',()=>{assert.equal(diff([1,2],[2,1]).length,2);assert.ok(diff([],Array(1)).some(d=>d.path==='$.length'));});
+test('no Actor system fields are excluded',()=>{const a={melee:{level:1,parrybonus:2},lastImport:'old'};assert.equal(diff(a,{melee:{level:2,parrybonus:3},lastImport:'new'}).length,3);});

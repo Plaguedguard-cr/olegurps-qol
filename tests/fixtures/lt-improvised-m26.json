@@ -1,0 +1,5454 @@
+{
+  "schema": "lt-m26-printed-vectors-v1",
+  "provenance": "Independent printed transcription and accepted M2.1-M2.5 vectors; no expected numbers copied from M2.6 profiles.",
+  "modes": [
+    {
+      "modeId": "wwqWNCZguZtDPfGy_",
+      "equipmentId": "eUsRcv0aaW45DoX7Q",
+      "modelId": "lt:crowbar-large",
+      "expected": {
+        "damage": "sw+5 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+7 cr",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT30",
+        "LT70"
+      ]
+    },
+    {
+      "modeId": "wlwJG-TLxGsi3Vw1q",
+      "equipmentId": "eUsRcv0aaW45DoX7Q",
+      "modelId": "lt:crowbar-large",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1-2*",
+        "parry": "0",
+        "st": "12†",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT30",
+        "LT70"
+      ]
+    },
+    {
+      "modeId": "wzKMNRNHAZzBjwZg2",
+      "equipmentId": "eEgs4W6k-9iFjnWXQ",
+      "modelId": "lt:oar",
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1-2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Polearm"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT60",
+        "LT68"
+      ]
+    },
+    {
+      "modeId": "weeNQgqI8pLRdPS8y",
+      "equipmentId": "edBYbyqTMO4WubN7W",
+      "modelId": "lt:spike-shuriken",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT73",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wCX-YXcs_j0HKB0rc",
+      "equipmentId": "eWOkljQnuFOlvvblh",
+      "modelId": "lt:star-shuriken",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT73",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wJyE5rQzEJSt7shYB",
+      "equipmentId": "e3m2R0EN6occeIRSW",
+      "modelId": "lt:wooden-stake",
+      "expected": {
+        "damage": "thr(0.5) imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1(0.5) imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT64",
+        "LT67"
+      ]
+    },
+    {
+      "modeId": "wekjDm-aDxkWk8F9m",
+      "equipmentId": "eKw6vIzpzM-liA6SM",
+      "modelId": "lt:roman-scutum-large",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "wLTM25SpikewekjDm-aDxkWk8F9m",
+      "equipmentId": "eKw6vIzpzM-liA6SM",
+      "modelId": "lt:roman-scutum-large",
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "wLTM25LongSpikewekjDm-aDxkWk8F9m",
+      "equipmentId": "eKw6vIzpzM-liA6SM",
+      "modelId": "lt:roman-scutum-large",
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "wLTM25EdgewekjDm-aDxkWk8F9m",
+      "equipmentId": "eKw6vIzpzM-liA6SM",
+      "modelId": "lt:roman-scutum-large",
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "w4t370RBCVyiebGF6",
+      "equipmentId": "eDvyuVqXXIYxrK9O3",
+      "modelId": "lt:roman-scutum-medium",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "wLTM25Spikew4t370RBCVyiebGF6",
+      "equipmentId": "eDvyuVqXXIYxrK9O3",
+      "modelId": "lt:roman-scutum-medium",
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "wLTM25LongSpikew4t370RBCVyiebGF6",
+      "equipmentId": "eDvyuVqXXIYxrK9O3",
+      "modelId": "lt:roman-scutum-medium",
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "wLTM25Edgew4t370RBCVyiebGF6",
+      "equipmentId": "eDvyuVqXXIYxrK9O3",
+      "modelId": "lt:roman-scutum-medium",
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeUstq-45wBk7_FmeT",
+      "equipmentId": "eUstq-45wBk7_FmeT",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeUstq-45wBk7_FmeT",
+      "equipmentId": "eUstq-45wBk7_FmeT",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteUstq-45wBk7_FmeT",
+      "equipmentId": "eUstq-45wBk7_FmeT",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeWrPImwlzokA72wRG",
+      "equipmentId": "eWrPImwlzokA72wRG",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeWrPImwlzokA72wRG",
+      "equipmentId": "eWrPImwlzokA72wRG",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteWrPImwlzokA72wRG",
+      "equipmentId": "eWrPImwlzokA72wRG",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeJ9fllNnD0219w6js",
+      "equipmentId": "eJ9fllNnD0219w6js",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT94"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeJ9fllNnD0219w6js",
+      "equipmentId": "eJ9fllNnD0219w6js",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT94"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteJ9fllNnD0219w6js",
+      "equipmentId": "eJ9fllNnD0219w6js",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeT_f8WXR8mRNOpLSl",
+      "equipmentId": "eT_f8WXR8mRNOpLSl",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeT_f8WXR8mRNOpLSl",
+      "equipmentId": "eT_f8WXR8mRNOpLSl",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteT_f8WXR8mRNOpLSl",
+      "equipmentId": "eT_f8WXR8mRNOpLSl",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendePh8_14rCd7DrMUhP",
+      "equipmentId": "ePh8_14rCd7DrMUhP",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingePh8_14rCd7DrMUhP",
+      "equipmentId": "ePh8_14rCd7DrMUhP",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayonetePh8_14rCd7DrMUhP",
+      "equipmentId": "ePh8_14rCd7DrMUhP",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeDwly9qJ7ondSbli6",
+      "equipmentId": "eDwly9qJ7ondSbli6",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeDwly9qJ7ondSbli6",
+      "equipmentId": "eDwly9qJ7ondSbli6",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteDwly9qJ7ondSbli6",
+      "equipmentId": "eDwly9qJ7ondSbli6",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostlargepistoleAuqzoGL1Fp0OxFeu",
+      "equipmentId": "eAuqzoGL1Fp0OxFeu",
+      "modelId": "lt:pistol",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 1,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+1 cr",
+        "skills": [
+          "Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT93"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostlargepistole-QkIPkcPJEgVnWtA",
+      "equipmentId": "e-QkIPkcPJEgVnWtA",
+      "modelId": "lt:pistol",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 1,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+1 cr",
+        "skills": [
+          "Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT93"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbuttendeqm-l8KNxjOGPkr2y",
+      "equipmentId": "eqm-l8KNxjOGPkr2y",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbarrelswingeqm-l8KNxjOGPkr2y",
+      "equipmentId": "eqm-l8KNxjOGPkr2y",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26Bayoneteqm-l8KNxjOGPkr2y",
+      "equipmentId": "eqm-l8KNxjOGPkr2y",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbuttende9FqkRToOywT7jj5F",
+      "equipmentId": "e9FqkRToOywT7jj5F",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbarrelswinge9FqkRToOywT7jj5F",
+      "equipmentId": "e9FqkRToOywT7jj5F",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26Bayonete9FqkRToOywT7jj5F",
+      "equipmentId": "e9FqkRToOywT7jj5F",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeeJsYOXLUOfaJPTWK",
+      "equipmentId": "eeJsYOXLUOfaJPTWK",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeeJsYOXLUOfaJPTWK",
+      "equipmentId": "eeJsYOXLUOfaJPTWK",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteeJsYOXLUOfaJPTWK",
+      "equipmentId": "eeJsYOXLUOfaJPTWK",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeP4YOxuKnf5Y3AIuA",
+      "equipmentId": "eP4YOxuKnf5Y3AIuA",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeP4YOxuKnf5Y3AIuA",
+      "equipmentId": "eP4YOxuKnf5Y3AIuA",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteP4YOxuKnf5Y3AIuA",
+      "equipmentId": "eP4YOxuKnf5Y3AIuA",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeObrfS7vuahB9FW9i",
+      "equipmentId": "eObrfS7vuahB9FW9i",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeObrfS7vuahB9FW9i",
+      "equipmentId": "eObrfS7vuahB9FW9i",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteObrfS7vuahB9FW9i",
+      "equipmentId": "eObrfS7vuahB9FW9i",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbuttenden4F5-Hs9cuPtw0ed",
+      "equipmentId": "en4F5-Hs9cuPtw0ed",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT94"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbarrelswingen4F5-Hs9cuPtw0ed",
+      "equipmentId": "en4F5-Hs9cuPtw0ed",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT94"
+      ]
+    },
+    {
+      "modeId": "wLTM26Bayoneten4F5-Hs9cuPtw0ed",
+      "equipmentId": "en4F5-Hs9cuPtw0ed",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbuttende1d5I1DEgBx7csoY9",
+      "equipmentId": "e1d5I1DEgBx7csoY9",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT94"
+      ]
+    },
+    {
+      "modeId": "wLTM26Hostbarrelswinge1d5I1DEgBx7csoY9",
+      "equipmentId": "e1d5I1DEgBx7csoY9",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT94"
+      ]
+    },
+    {
+      "modeId": "wLTM26Bayonete1d5I1DEgBx7csoY9",
+      "equipmentId": "e1d5I1DEgBx7csoY9",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostlargepistoleEHSjsOCxFFh6ET2f",
+      "equipmentId": "eEHSjsOCxFFh6ET2f",
+      "modelId": "lt:pistol",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 1,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+1 cr",
+        "skills": [
+          "Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT93"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeikIB_Ocnu5vBx_AY",
+      "equipmentId": "eikIB_Ocnu5vBx_AY",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeikIB_Ocnu5vBx_AY",
+      "equipmentId": "eikIB_Ocnu5vBx_AY",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteikIB_Ocnu5vBx_AY",
+      "equipmentId": "eikIB_Ocnu5vBx_AY",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostsmallpistoleaLpwe40QwHRSk5Ot",
+      "equipmentId": "eaLpwe40QwHRSk5Ot",
+      "modelId": "lt:pistol",
+      "expected": {
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "penalty": 0,
+        "hands": 1,
+        "source": "LT63; LT94, Pocket Pistol Bulk -1",
+        "damage": "thr cr",
+        "skills": [
+          "Brawling",
+          "DX"
+        ]
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "B271",
+        "LT94"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeR0fxLNLai2FOHu7t",
+      "equipmentId": "eR0fxLNLai2FOHu7t",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeR0fxLNLai2FOHu7t",
+      "equipmentId": "eR0fxLNLai2FOHu7t",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteR0fxLNLai2FOHu7t",
+      "equipmentId": "eR0fxLNLai2FOHu7t",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbuttendeMM2x0c5BYnpcGNh2",
+      "equipmentId": "eMM2x0c5BYnpcGNh2",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "thr+2 cr",
+        "skills": [
+          "Staff"
+        ]
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26HostbarrelswingeMM2x0c5BYnpcGNh2",
+      "equipmentId": "eMM2x0c5BYnpcGNh2",
+      "modelId": "lt:musket-or-rifle",
+      "expected": {
+        "reach": null,
+        "parry": "No",
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT63; LT65/69/70",
+        "damage": "sw+4 cr",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ]
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT65",
+        "LT69",
+        "LT70",
+        "LT92"
+      ]
+    },
+    {
+      "modeId": "wLTM26BayoneteMM2x0c5BYnpcGNh2",
+      "equipmentId": "eMM2x0c5BYnpcGNh2",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55",
+        "damage": "thr+3 imp",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikew2Kcn0f4gHG7Xs_vz",
+      "equipmentId": "eLKDn4_JQf6yV8Pkh",
+      "modelId": "lt:argive-shield",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwrPDI-eEP9ACxbGfs",
+      "equipmentId": "e7F8fHESvA-JfH4xM",
+      "modelId": "lt:backsword",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT65",
+        "LT66",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwAIGP1vi1fHHfzIYC",
+      "equipmentId": "e63hCyhuUmjcmEsXd",
+      "modelId": "lt:balisong",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwL4sLEK_4j0dU5iu6",
+      "equipmentId": "espQ32t5diJ_nTjVT",
+      "modelId": "lt:cavalry-saber",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT66",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewNxN2KuElByp51MmT",
+      "equipmentId": "eEu2vQXan2xiLGFf8",
+      "modelId": "lt:comanche-shield",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwuoxbzN9YqDC3cU5s",
+      "equipmentId": "ewqtnwgy4C8-NVr65",
+      "modelId": "lt:cutlass",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT69",
+        "LT65",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwC7kwiuwzalnQQgh-",
+      "equipmentId": "eEkk6WpqrCj5KoCNQ",
+      "modelId": "lt:dagger",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwbTCe3V11yvKYbVMy",
+      "equipmentId": "ejv_7yhIWr-w7FdOC",
+      "modelId": "lt:dao",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT66",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw07JOdWjhIVwOzwFo",
+      "equipmentId": "ekfM7nhB56uunM59T",
+      "modelId": "lt:dress-smallsword",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "5",
+        "skills": [
+          "Smallsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT62",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewqNzTaH6PhRlKtdHa",
+      "equipmentId": "eKUq1vap87PJexK6r",
+      "modelId": "lt:dueling-buckler",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewbr_iBGO9QK06x2dG",
+      "equipmentId": "eh4wim5anWaEyB5Rb",
+      "modelId": "lt:dueling-long-shield",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield",
+          "Staff"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw7tiFqttK_IsnH_ox",
+      "equipmentId": "e4g-va5KWviMGyE6F",
+      "modelId": "lt:edged-rapier",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "2",
+        "parry": "0F",
+        "st": "10",
+        "skills": [
+          "Rapier"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT61",
+        "LT68",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw3KTjelathsARN_pu",
+      "equipmentId": "eVsq-INlRIDzirMJa",
+      "modelId": "lt:estoc",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT66",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwACR8Gph0MCxX8_l2",
+      "equipmentId": "eRv_rs5osGxWCFftz",
+      "modelId": "lt:falchion",
+      "expected": {
+        "damage": "thr-4 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-5 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewljCLBzAJeuiCuYSm",
+      "equipmentId": "eyIESVGXulfaCqV2n",
+      "modelId": "lt:heater-shield",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewJwFZ0j7hPgANJCy6",
+      "equipmentId": "eyHMjAdvXz2S18ecs",
+      "modelId": "lt:homeric-buckler-large",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewuzq6jICulP14Fhj1",
+      "equipmentId": "eIej6GKa1Yxfz-rB1",
+      "modelId": "lt:homeric-buckler-medium",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw77RJQ7qSA7t-tK_F",
+      "equipmentId": "eyFzn-BFYhzHXAAXt",
+      "modelId": "lt:hungamunga",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "-2",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT72",
+        "LT78",
+        "B272",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipwu4pvgk8neNTGwwdU",
+      "equipmentId": "evVFy7uca9O8D1KNp",
+      "modelId": "lt:jian",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT66",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwikkqnutJTGtZmXiP",
+      "equipmentId": "eSH8jtUi7O-Eztex1",
+      "modelId": "lt:katana",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "11",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwFp0g_8TGGs4OEJIX",
+      "equipmentId": "eSH8jtUi7O-Eztex1",
+      "modelId": "lt:katana",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwiI30yAAM_X052yQI",
+      "equipmentId": "eR5Uz8oeA0ZD2Y6_O",
+      "modelId": "lt:katar",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewpwY_K8gu3ClTpKOl",
+      "equipmentId": "e82vlur9Jg7K79W9Q",
+      "modelId": "lt:kite-shield",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwG4kCWRXQyqb7CLDJ",
+      "equipmentId": "e0tmeOQw5QoeJJL-Y",
+      "modelId": "lt:kukri",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT58",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwOn9TKw_JhbnLHpsQ",
+      "equipmentId": "eK17o5feHeURAy5d9",
+      "modelId": "lt:large-falchion",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT65",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwDvNK7Xe3WVA4ITfW",
+      "equipmentId": "eBvYYD-dieC5iol_L",
+      "modelId": "lt:large-katar",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwHh4b6lYKhc7xjiCp",
+      "equipmentId": "e4Cqh4R-bWl7CS7dQ",
+      "modelId": "lt:large-knife",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT58",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewCqgQxsRG-V2xcTJA",
+      "equipmentId": "eE75n5IqjUbcK7sUS",
+      "modelId": "lt:large-shield-heavy",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewD3uA-H1b4rrOev1E",
+      "equipmentId": "eOkiGUtUqzkRkrJrx",
+      "modelId": "lt:large-shield-light",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwAknh3bLiN-z2FcXJ",
+      "equipmentId": "eE8_Dy15zRaLiEs45",
+      "modelId": "lt:large-throwing-knife",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "-2",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT75",
+        "LT78",
+        "B272",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwsK7j6dJBohe4n8sa",
+      "equipmentId": "ezTmezdXy1DpJpNW1",
+      "modelId": "lt:late-katana",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwRCDB3TogGahkj8hi",
+      "equipmentId": "ezTmezdXy1DpJpNW1",
+      "modelId": "lt:late-katana",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "9†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw7Od9gGJ58vOv-oC7",
+      "equipmentId": "ewpF8TAvUV_1xpjXO",
+      "modelId": "lt:light-edged-rapier",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8",
+        "skills": [
+          "Rapier"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT61",
+        "LT68",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwbUrBUfm6vAN5BS8d",
+      "equipmentId": "e9lnfC0mIL30gEZH3",
+      "modelId": "lt:light-rapier",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8",
+        "skills": [
+          "Rapier"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT61",
+        "LT68",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwE0lzQQVszFLQXwve",
+      "equipmentId": "e2nWZSbk5ADtbp5FG",
+      "modelId": "lt:long-knife",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT67",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwiA7o63kK_43igjgB",
+      "equipmentId": "e2nWZSbk5ADtbp5FG",
+      "modelId": "lt:long-knife",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT67",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwkePG9X2bhubKRddv",
+      "equipmentId": "e140WNiazx7pJ3WTT",
+      "modelId": "lt:longsword",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT58",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwSyyMVFZwpR_0-Gfi",
+      "equipmentId": "e140WNiazx7pJ3WTT",
+      "modelId": "lt:longsword",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "9†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT58",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwUbyroNVVs8tKm2_I",
+      "equipmentId": "ectaYaLbAkCo8RdZ-",
+      "modelId": "lt:main-gauche",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "skills": [
+          "Main-Gauche"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT59",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipwumg2JAvAPBaRDqSC",
+      "equipmentId": "ectaYaLbAkCo8RdZ-",
+      "modelId": "lt:main-gauche",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT59",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikew9A9CuCg38ugDmaPD",
+      "equipmentId": "eCGab_4FOc7eX-oaI",
+      "modelId": "lt:medium-shield-heavy",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewvIYmB-3MNTDxgckD",
+      "equipmentId": "eAC_bC78eyVqPgCWp",
+      "modelId": "lt:medium-shield-light",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewkKZcc55t55qJtIBV",
+      "equipmentId": "e2hF_R9vE532_PYrY",
+      "modelId": "lt:parrying-buckler",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield (Buckler)"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw_k2EXcrqJeAiw25K",
+      "equipmentId": "eVFFo97xJS4l_aVcY",
+      "modelId": "lt:pata",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT60",
+        "LT65",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwpruFvHXqsYCIZer7",
+      "equipmentId": "egIzYm2hrjhoVpPTN",
+      "modelId": "lt:rapier",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "2",
+        "parry": "0F",
+        "st": "9",
+        "skills": [
+          "Rapier"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT61",
+        "LT68",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipwl_T_sGUxAQKcfS2Q",
+      "equipmentId": "exp433xr3rkUj9Wuk",
+      "modelId": "lt:rondel-dagger",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipwy8JQukvdXJpwTeXE",
+      "equipmentId": "exp433xr3rkUj9Wuk",
+      "modelId": "lt:rondel-dagger",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "0F",
+        "st": "6",
+        "skills": [
+          "Main-Gauche"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwVTmfof1YAbmwCzMQ",
+      "equipmentId": "e2uQrabbceGyYIDmM",
+      "modelId": "lt:saber",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8",
+        "skills": [
+          "Saber"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT61",
+        "LT68",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw9VqY3etaLshEIIy0",
+      "equipmentId": "ez4ZjutUoKa4ORnkj",
+      "modelId": "lt:shortsword",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT61",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwZNMkUX7_Izf1ow99",
+      "equipmentId": "eFwe9c7n36mOngrR1",
+      "modelId": "lt:shotel",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "11",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT62",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipweACtf6r_LsIgLqXP",
+      "equipmentId": "edQFaHvX_nrGL4ra6",
+      "modelId": "lt:small-falchion",
+      "expected": {
+        "damage": "thr-4 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-5 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwHGmPC_2ji_0bPaq8",
+      "equipmentId": "ee1kRIRXHzUdofj74",
+      "modelId": "lt:small-knife",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT58",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikew_ba5IqxUJHkeuwxy",
+      "equipmentId": "en0UBIZvVnpiXFMq3",
+      "modelId": "lt:small-shield-heavy",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewK1PvIUHo-IHo2_xx",
+      "equipmentId": "eZQSoCM_oYThNMId6",
+      "modelId": "lt:small-shield-light",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": "shield-long-spike",
+        "source": "tests/fixtures/lt-shields-tools-m25.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwbJlLT2OmOHM-e7m4",
+      "equipmentId": "emViZt-5rQnxGAIVU",
+      "modelId": "lt:small-throwing-knife",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "-2",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT75",
+        "LT78",
+        "B272",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwW5SH263ihTw2_Cd4",
+      "equipmentId": "eJdmG2XPlfFC_C8B9",
+      "modelId": "lt:smallsword",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "5",
+        "skills": [
+          "Smallsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT61",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwSX8z_LtxMkmixQBc",
+      "equipmentId": "ehWLoxON1p8yydZwT",
+      "modelId": "lt:stiletto",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT62",
+        "LT67"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwGcH0SjyyoDVdadue",
+      "equipmentId": "ehWLoxON1p8yydZwT",
+      "modelId": "lt:stiletto",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "0F",
+        "st": "5",
+        "skills": [
+          "Main-Gauche"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT62",
+        "LT67"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipw83g2u0G5r1-hRrGh",
+      "equipmentId": "eZ5VeRUQ_ElV7L2cl",
+      "modelId": "lt:thrusting-bastard-sword",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "2",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26Tipwksr-kvhYKVTQ_2zT",
+      "equipmentId": "eZ5VeRUQ_ElV7L2cl",
+      "modelId": "lt:thrusting-bastard-sword",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "10†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT66",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwYOBxn9NJwkZPg_oW",
+      "equipmentId": "eTZgf42cuj04t5Sej",
+      "modelId": "lt:thrusting-broadsword",
+      "expected": {
+        "damage": "thr cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT55",
+        "LT65",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwwqpD5QdjCCHn-McW",
+      "equipmentId": "eKOnhuOmt2tBEfyeK",
+      "modelId": "lt:thrusting-greatsword",
+      "expected": {
+        "damage": "thr+1 cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "12†",
+        "skills": [
+          "Two-Handed Sword"
+        ],
+        "penalty": 0,
+        "hands": 2,
+        "fitting": null,
+        "source": "tests/fixtures/lt-blades-m21.json; LT62"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT56",
+        "LT70",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwJyE5rQzEJSt7shYB",
+      "equipmentId": "e3m2R0EN6occeIRSW",
+      "modelId": "lt:wooden-stake",
+      "expected": {
+        "damage": "thr-2 cr",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62; LT71 wooden cutting tip becomes crushing"
+      },
+      "formulaST12": "1d-3 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT64",
+        "LT67",
+        "LT62",
+        "LT71"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM21HaladieThrust",
+      "equipmentId": "eLTM21Haladie",
+      "modelId": "lt:haladie",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT56",
+        "LT67",
+        "MA111-112",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltarroworboltThrust",
+      "equipmentId": "eLTM26arroworbolt",
+      "modelId": "lt:arrow-or-bolt",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-6 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltbottlebrokenThrust",
+      "equipmentId": "eLTM26bottlebroken",
+      "modelId": "lt:bottle-broken",
+      "expected": {
+        "damage": "thr-3(0.5) cut",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-4(0.5) cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltcaltropPunch",
+      "equipmentId": "eLTM26caltrop",
+      "modelId": "lt:caltrop",
+      "expected": {
+        "damage": "thr-4 cut",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltpenorstylusThrust",
+      "equipmentId": "eLTM26penorstylus",
+      "modelId": "lt:pen-or-stylus",
+      "expected": {
+        "damage": "thr-5 cut",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-6 cut",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltpenorstylusHugepen",
+      "equipmentId": "eLTM26PenHuge",
+      "modelId": "lt:pen-or-stylus",
+      "expected": {
+        "damage": "thr-4 cut",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-5 cut",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltpitchforkOnehand",
+      "equipmentId": "eLTM26pitchfork",
+      "modelId": "lt:pitchfork",
+      "expected": {
+        "damage": "thr(0.5) cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-1(0.5) cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltpitchforkTwohands",
+      "equipmentId": "eLTM26pitchfork",
+      "modelId": "lt:pitchfork",
+      "expected": {
+        "damage": "thr+1(0.5) cut",
+        "reach": "2",
+        "parry": "0",
+        "st": "10†",
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d(0.5) cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltspindlespikeorspitSmallspit",
+      "equipmentId": "eLTM26spindlespikeorspit",
+      "modelId": "lt:spindle-spike-or-spit",
+      "expected": {
+        "damage": "thr-5 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-6 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltspindlespikeorspitSpike",
+      "equipmentId": "eLTM26SpindleDagger",
+      "modelId": "lt:spindle-spike-or-spit",
+      "expected": {
+        "damage": "thr-4 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-5 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltspindlespikeorspitLongspitthrust",
+      "equipmentId": "eLTM26SpindleLong",
+      "modelId": "lt:spindle-spike-or-spit",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltfishingspearThrust",
+      "equipmentId": "eLTM26fishingspear",
+      "modelId": "lt:fishing-spear",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT29",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltbayonetThrust",
+      "equipmentId": "eLTM26bayonet",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "damage": "thr-2 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-3 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26ltpitonThrust",
+      "equipmentId": "eLTM26piton",
+      "modelId": "lt:piton",
+      "expected": {
+        "damage": "thr-3 cut",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-4 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT125",
+        "LT67",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteUstq-45wBk7_FmeT",
+      "equipmentId": "eUstq-45wBk7_FmeT",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteWrPImwlzokA72wRG",
+      "equipmentId": "eWrPImwlzokA72wRG",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteJ9fllNnD0219w6js",
+      "equipmentId": "eJ9fllNnD0219w6js",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteT_f8WXR8mRNOpLSl",
+      "equipmentId": "eT_f8WXR8mRNOpLSl",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayonetePh8_14rCd7DrMUhP",
+      "equipmentId": "ePh8_14rCd7DrMUhP",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteDwly9qJ7ondSbli6",
+      "equipmentId": "eDwly9qJ7ondSbli6",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26Bayoneteqm-l8KNxjOGPkr2y",
+      "equipmentId": "eqm-l8KNxjOGPkr2y",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26Bayonete9FqkRToOywT7jj5F",
+      "equipmentId": "e9FqkRToOywT7jj5F",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteeJsYOXLUOfaJPTWK",
+      "equipmentId": "eeJsYOXLUOfaJPTWK",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteP4YOxuKnf5Y3AIuA",
+      "equipmentId": "eP4YOxuKnf5Y3AIuA",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteObrfS7vuahB9FW9i",
+      "equipmentId": "eObrfS7vuahB9FW9i",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26Bayoneten4F5-Hs9cuPtw0ed",
+      "equipmentId": "en4F5-Hs9cuPtw0ed",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26Bayonete1d5I1DEgBx7csoY9",
+      "equipmentId": "e1d5I1DEgBx7csoY9",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteikIB_Ocnu5vBx_AY",
+      "equipmentId": "eikIB_Ocnu5vBx_AY",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteR0fxLNLai2FOHu7t",
+      "equipmentId": "eR0fxLNLai2FOHu7t",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM26BayoneteMM2x0c5BYnpcGNh2",
+      "equipmentId": "eMM2x0c5BYnpcGNh2",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "penalty": 0,
+        "hands": 2,
+        "source": "LT54-55; LT62",
+        "damage": "thr+1 cut",
+        "skills": [
+          "Spear"
+        ]
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT69",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikewekjDm-aDxkWk8F9m",
+      "equipmentId": "eKw6vIzpzM-liA6SM",
+      "modelId": "lt:roman-scutum-large",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26TipwLTM25LongSpikew4t370RBCVyiebGF6",
+      "equipmentId": "eDvyuVqXXIYxrK9O3",
+      "modelId": "lt:roman-scutum-medium",
+      "expected": {
+        "damage": "thr-1 cut",
+        "reach": "1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Shield"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription; LT62"
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT68",
+        "LT113",
+        "LT114",
+        "LT116",
+        "B220",
+        "B287",
+        "LT115",
+        "LT62"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltabacusPunch",
+      "equipmentId": "eLTM26abacus",
+      "modelId": "lt:abacus",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Brawling"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltarroworboltThrust",
+      "equipmentId": "eLTM26arroworbolt",
+      "modelId": "lt:arrow-or-bolt",
+      "expected": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-4 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63",
+        "LT67"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbeltBuckle",
+      "equipmentId": "eLTM26belt",
+      "modelId": "lt:belt",
+      "expected": {
+        "damage": "sw-2 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Flail"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbeltWhip",
+      "equipmentId": "eLTM26belt",
+      "modelId": "lt:belt",
+      "expected": {
+        "damage": "sw-3(0.5) cr",
+        "reach": "1",
+        "parry": "No",
+        "st": "6",
+        "skills": [
+          "Whip"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1(0.5) cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbookorcodexPunch",
+      "equipmentId": "eLTM26bookorcodex",
+      "modelId": "lt:book-or-codex",
+      "expected": {
+        "damage": "thr-2 cr",
+        "reach": "C",
+        "parry": "No",
+        "st": "7",
+        "skills": [
+          "Brawling"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbootsshoesorsandalsInhand",
+      "equipmentId": "eLTM26bootsshoesorsandals",
+      "modelId": "lt:boots-shoes-or-sandals",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Brawling"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbootsshoesorsandalsBylaces",
+      "equipmentId": "eLTM26bootsshoesorsandals",
+      "modelId": "lt:boots-shoes-or-sandals",
+      "expected": {
+        "damage": "sw-2 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Flail"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbottlebrokenSwing",
+      "equipmentId": "eLTM26bottlebroken",
+      "modelId": "lt:bottle-broken",
+      "expected": {
+        "damage": "sw-3(0.5) cut",
+        "reach": "C,1",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1(0.5) cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbottlebrokenThrust",
+      "equipmentId": "eLTM26bottlebroken",
+      "modelId": "lt:bottle-broken",
+      "expected": {
+        "damage": "thr-1(0.5) imp",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2(0.5) imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbottleintactSwing",
+      "equipmentId": "eLTM26bottleintact",
+      "modelId": "lt:bottle-intact",
+      "expected": {
+        "damage": "sw-1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltcaltropPunch",
+      "equipmentId": "eLTM26caltrop",
+      "modelId": "lt:caltrop",
+      "expected": {
+        "damage": "thr-2 imp",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2 imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltchainunweightedSwing",
+      "equipmentId": "eLTM26chainunweighted",
+      "modelId": "lt:chain-unweighted",
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1-4*",
+        "parry": "No",
+        "st": "11",
+        "skills": [
+          "Kusari"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltchainunweightedThrust",
+      "equipmentId": "eLTM26chainunweighted",
+      "modelId": "lt:chain-unweighted",
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1-4*",
+        "parry": "No",
+        "st": "11",
+        "skills": [
+          "Kusari"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltchairorstoolSwing",
+      "equipmentId": "eLTM26chairorstool",
+      "modelId": "lt:chair-or-stool",
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 13,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltchairorstoolCollapsible",
+      "equipmentId": "eLTM26ChairCollapsible",
+      "modelId": "lt:chair-or-stool",
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 13,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltchopstickHammerFist",
+      "equipmentId": "eLTM26chopstick",
+      "modelId": "lt:chopstick",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Hammer Fist"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT64",
+        "MA73",
+        "B182",
+        "B203"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltcomborbrushHammerFist",
+      "equipmentId": "eLTM26comborbrush",
+      "modelId": "lt:comb-or-brush",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Hammer Fist"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT64",
+        "MA73",
+        "B182",
+        "B203"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltkeyskeletonHammerFist",
+      "equipmentId": "eLTM26keyskeleton",
+      "modelId": "lt:key-skeleton",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Hammer Fist"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT64",
+        "MA73",
+        "B182",
+        "B203"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltrimofbottlecuporglassHammerFist",
+      "equipmentId": "eLTM26rimofbottlecuporglass",
+      "modelId": "lt:rim-of-bottle-cup-or-glass",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Hammer Fist"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT64",
+        "MA73",
+        "B182",
+        "B203"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltmugorsteinSwing",
+      "equipmentId": "eLTM26mugorstein",
+      "modelId": "lt:mug-or-stein",
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "No",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltmugorsteinLargemug",
+      "equipmentId": "eLTM26MugLarge",
+      "modelId": "lt:mug-or-stein",
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltpanironSwing",
+      "equipmentId": "eLTM26paniron",
+      "modelId": "lt:pan-iron",
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "No",
+        "st": "12",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltpenorstylusThrust",
+      "equipmentId": "eLTM26penorstylus",
+      "modelId": "lt:pen-or-stylus",
+      "expected": {
+        "damage": "thr-3 imp",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-4 imp",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltpenorstylusHugepen",
+      "equipmentId": "eLTM26PenHuge",
+      "modelId": "lt:pen-or-stylus",
+      "expected": {
+        "damage": "thr-2 imp",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-3 imp",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltpitchforkOnehand",
+      "equipmentId": "eLTM26pitchfork",
+      "modelId": "lt:pitchfork",
+      "expected": {
+        "damage": "thr+2(0.5) imp",
+        "reach": "1*",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+1(0.5) imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltpitchforkTwohands",
+      "equipmentId": "eLTM26pitchfork",
+      "modelId": "lt:pitchfork",
+      "expected": {
+        "damage": "thr+3(0.5) imp",
+        "reach": "1,2*",
+        "parry": "0",
+        "st": "10†",
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+2(0.5) imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltpursecoinfilledPunch",
+      "equipmentId": "eLTM26pursecoinfilled",
+      "modelId": "lt:purse-coin-filled",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Brawling"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltrakeSwing",
+      "equipmentId": "eLTM26rake",
+      "modelId": "lt:rake",
+      "expected": {
+        "damage": "sw+3(0.5) imp",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+5(0.5) imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltringsheavyPunch",
+      "equipmentId": "eLTM26ringsheavy",
+      "modelId": "lt:rings-heavy",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Boxing",
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltscarfWeightedend",
+      "equipmentId": "eLTM26scarf",
+      "modelId": "lt:scarf",
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "No",
+        "st": "6",
+        "skills": [
+          "Flail"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltscrollrolledSwing",
+      "equipmentId": "eLTM26scrollrolled",
+      "modelId": "lt:scroll-rolled",
+      "expected": {
+        "damage": "sw-1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltscrollrolledThrust",
+      "equipmentId": "eLTM26scrollrolled",
+      "modelId": "lt:scroll-rolled",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltshovelSwing",
+      "equipmentId": "eLTM26shovel",
+      "modelId": "lt:shovel",
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 13,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltspindlespikeorspitSmallspit",
+      "equipmentId": "eLTM26spindlespikeorspit",
+      "modelId": "lt:spindle-spike-or-spit",
+      "expected": {
+        "damage": "thr-3 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-4 imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltspindlespikeorspitSpike",
+      "equipmentId": "eLTM26SpindleDagger",
+      "modelId": "lt:spindle-spike-or-spit",
+      "expected": {
+        "damage": "thr-2 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-3 imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltspindlespikeorspitLongspitswing",
+      "equipmentId": "eLTM26SpindleLong",
+      "modelId": "lt:spindle-spike-or-spit",
+      "expected": {
+        "damage": "sw-3 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltspindlespikeorspitLongspitthrust",
+      "equipmentId": "eLTM26SpindleLong",
+      "modelId": "lt:spindle-spike-or-spit",
+      "expected": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2 imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltstrigilHammerFist",
+      "equipmentId": "eLTM26strigil",
+      "modelId": "lt:strigil",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Hammer Fist"
+        ],
+        "penalty": -1,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT63",
+        "LT64",
+        "MA73",
+        "B182",
+        "B203"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltcaneSwing",
+      "equipmentId": "eLTM26cane",
+      "modelId": "lt:cane",
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT55",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltcaneThrust",
+      "equipmentId": "eLTM26cane",
+      "modelId": "lt:cane",
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT55",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltcaneLightswing",
+      "equipmentId": "eLTM26CaneLight",
+      "modelId": "lt:cane",
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "skills": [
+          "Rapier",
+          "Smallsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltcaneLightthrust",
+      "equipmentId": "eLTM26CaneLight",
+      "modelId": "lt:cane",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0F",
+        "st": "6",
+        "skills": [
+          "Rapier",
+          "Smallsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT55",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltyawaraHammerFist",
+      "equipmentId": "eLTM26yawara",
+      "modelId": "lt:yawara",
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Hammer Fist"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 15,
+      "sourcePages": [
+        "LT64",
+        "LT65",
+        "LT64",
+        "MA73",
+        "B182",
+        "B203"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltrigidscabbardSwing",
+      "equipmentId": "eLTM26rigidscabbard",
+      "modelId": "lt:rigid-scabbard",
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltrigidscabbardThrust",
+      "equipmentId": "eLTM26rigidscabbard",
+      "modelId": "lt:rigid-scabbard",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT57",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltwoodenlegKick",
+      "equipmentId": "eLTM26woodenleg",
+      "modelId": "lt:wooden-leg",
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "C,1",
+        "parry": "No",
+        "st": null,
+        "skills": [
+          "Kicking"
+        ],
+        "penalty": 0,
+        "hands": 0,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT149",
+        "B271",
+        "B231",
+        "MA75"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltadzeSwing",
+      "equipmentId": "eLTM26adze",
+      "modelId": "lt:adze",
+      "expected": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT28",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltfishingspearThrust",
+      "equipmentId": "eLTM26fishingspear",
+      "modelId": "lt:fishing-spear",
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT29",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbayonetSwing",
+      "equipmentId": "eLTM26bayonet",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT67"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltbayonetThrust",
+      "equipmentId": "eLTM26bayonet",
+      "modelId": "lt:bayonet",
+      "expected": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT54",
+        "LT55",
+        "LT67"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltclimbingpoleSwing",
+      "equipmentId": "eLTM26climbingpole",
+      "modelId": "lt:climbing-pole",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "2,3",
+        "parry": "+2",
+        "st": "10†",
+        "skills": [
+          "Staff"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT125",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltclimbingpoleThrust",
+      "equipmentId": "eLTM26climbingpole",
+      "modelId": "lt:climbing-pole",
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "2,3",
+        "parry": "+2",
+        "st": "10†",
+        "skills": [
+          "Staff"
+        ],
+        "penalty": -2,
+        "hands": 2,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT125",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltpitonThrust",
+      "equipmentId": "eLTM26piton",
+      "modelId": "lt:piton",
+      "expected": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": -2,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-2 imp",
+      "levelST12": 14,
+      "sourcePages": [
+        "LT125",
+        "LT67"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltprybarSwing",
+      "equipmentId": "eLTM26PryBar30",
+      "modelId": "lt:pry-bar",
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT126",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltprybarSmallswing",
+      "equipmentId": "eLTM26PryBar20",
+      "modelId": "lt:pry-bar",
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT126",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltprybarSmallthrust",
+      "equipmentId": "eLTM26PryBar20",
+      "modelId": "lt:pry-bar",
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT126",
+        "LT65"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltboomerangClubswing",
+      "equipmentId": "eKPBObWzRN5w7bnh1",
+      "modelId": "lt:boomerang",
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT72",
+        "LT69"
+      ]
+    },
+    {
+      "modeId": "wLTM26ltboomerangClubthrust",
+      "equipmentId": "eKPBObWzRN5w7bnh1",
+      "modelId": "lt:boomerang",
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1,
+        "source": "Independent printed LT transcription"
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16,
+      "sourcePages": [
+        "LT72",
+        "LT69"
+      ]
+    }
+  ]
+}

@@ -13,18 +13,19 @@ import { getCombatRules } from "./combat-technique-registry.js";
 import { findRangeBandForDistance, getRangeBandDistance, isBeamWeapon, resolveEffectiveRange } from "./fire-range-service.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 import { airburstAttackBonus } from "./fuze-tracer-ammunition.js";
-export const sensorTargetingBonus=values=>values?.sensorTargetingConfirmed===true&&Number.isSafeInteger(Number(values?.aimSeconds))&&Number(values.aimSeconds)>0?3:0;
+import {nativeRangedModifierEvidence,externalRangedModifierEvidence} from './ranged-modifier-provenance.js';
 
-function sceneDistanceToYards(value, runtime = globalThis) {
+export function sceneDistanceToYards(value, runtime = globalThis) {
+  if(value===null||value===undefined||String(value).trim()==='')return null;
   const number = Number(value);
   if (!Number.isFinite(number)) return null;
   const Length = runtime.GURPS?.Length;
-  if (!Length?.from || !Length?.Unit?.Yard) return number;
-  const unit = Length.unitFromString?.(
-    runtime.canvas?.scene?.grid?.units ?? Length.Unit.Yard
-  ) ?? Length.Unit.Yard;
+  const raw=String(runtime.canvas?.scene?.grid?.units??'').trim().toLowerCase();
+  if (!Length?.from || !Length?.Unit?.Yard) return ['yd','yard','yards'].includes(raw)?number:null;
+  const unit=Object.entries(Length.UNIT_LABELS??{}).find(([,labels])=>labels.some(label=>label.toLowerCase()===raw))?.[0];
+  if(!unit)return null;
   const yards = Length.from(number, unit)?.to(Length.Unit.Yard)?.value;
-  return Number.isFinite(Number(yards)) ? Number(yards) : null;
+  return yards!==null&&yards!==undefined&&Number.isFinite(Number(yards)) ? Number(yards) : null;
 }
 
 export function measureTokenDistanceYards(sourceToken, targetToken, runtime = globalThis) {
@@ -35,7 +36,7 @@ export function measureTokenDistanceYards(sourceToken, targetToken, runtime = gl
     const sourcePoint=sourceDocument.getCenterPoint?.()??sourceToken.center??sourceDocument;
     const targetPoint=targetDocument.getCenterPoint?.()??targetToken.center??targetDocument;
     const path = runtime.canvas?.grid?.measurePath?.([sourcePoint, targetPoint]);
-    const sceneDistance = runtime.canvas?.grid?.isGridless ? path?.distance : path?.spaces;
+    const sceneDistance = path?.distance;
     const yards = sceneDistanceToYards(sceneDistance, runtime);
     return Number.isFinite(yards) && yards >= 0 ? yards : null;
   } catch (error) {
@@ -51,7 +52,7 @@ export function measureCanvasPointDistanceYards(sourceToken, point, runtime = gl
       !Number.isFinite(point?.x) || !Number.isFinite(point?.y)) return null;
   try {
     const path = grid.measurePath?.([source, point]);
-    const sceneDistance = grid.isGridless ? path?.distance : path?.spaces;
+    const sceneDistance = path?.distance;
     const yards = sceneDistanceToYards(sceneDistance, runtime);
     return Number.isFinite(yards) && yards >= 0 ? yards : null;
   } catch (error) {
@@ -302,17 +303,17 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     ]);
   }
 
-  function getApplicableEffectModifierTotal(attack, skipTargets = false) {
+  function getApplicableEffectModifiers(attack, skipTargets = false) {
     const settings = getTaggedModifierSettings();
-    if (!settings?.autoAdd || (mode === "standalone" && !token)) return 0;
+    if (!settings?.autoAdd || (mode === "standalone" && !token)) return [];
 
     try {
       const effectUi = globalThis.GURPS?.EffectModifierControl?._ui;
-      if (!effectUi?.getData) return 0;
+      if (!effectUi?.getData) return [];
       const effectToken = effectUi.getToken?.();
-      if (effectToken && effectToken !== token) return 0;
+      if (effectToken && effectToken !== token) return [];
       const data = effectUi.getData();
-      if (!data || typeof data.then === "function") return 0;
+      if (!data || typeof data.then === "function") return [];
       const entries = [
         ...(Array.isArray(data.selfmodifiers) ? data.selfmodifiers : []),
         ...(!skipTargets && Array.isArray(data.targets)
@@ -320,20 +321,20 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
           : [])
       ];
       const rollTags = getRangedRollTags(attack, settings);
-      let total = 0;
-      for (const entry of entries) {
-        const match = String(entry?.desc ?? "").match(/^([+-]\d+)/);
-        if (!match) continue;
-        const modifier = Number(match[1]);
-        for (const tag of entry?.tags ?? []) {
-          if (rollTags.has(String(tag).trim().toLowerCase())) total += modifier;
-        }
-      }
-      return total;
+      // GGA 0.18.23 adds a matching modifier for each matching tag. Mirror that
+      // behavior, including its multiplicity, before crediting known Weapon Bond.
+      return entries.flatMap(entry => {
+        const match = String(entry?.desc ?? '').match(/^[+-]\d+/);
+        if (!match) return [];
+        return (entry.tags ?? []).filter(tag => rollTags.has(String(tag).trim().toLowerCase()))
+          .map(() => ({ ...entry, modint: Number(match[0]) }));
+      });
     } catch (_error) {
-      return 0;
+      return [];
     }
   }
+
+  function getApplicableEffectModifierTotal(attack,skipTargets=false){return getApplicableEffectModifiers(attack,skipTargets).reduce((n,e)=>n+e.modint,0);}
 
   function getPreviewBucketTotal() {
     return fireService.getPreviewModifierTotal();
@@ -405,7 +406,13 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       ? resolveRangedRapidStrike({ actor: token?.actor, attack, governingSkill,
         governingSpecialty: governingSkill?.specialty ?? values?.governingSpecialty }) : null;
     const bucketModifier = configuredPreview ? 0 : getPreviewBucketTotal();
-    const effectModifier = configuredPreview ? 0 : getApplicableEffectModifierTotal(attack, blindUnknown);
+    const effectEntries=configuredPreview?[]:getApplicableEffectModifiers(attack,blindUnknown);
+    const effectModifier=effectEntries.reduce((n,e)=>n+e.modint,0);
+    const modifierEvidence=mode==='weapon'?[...nativeRangedModifierEvidence(token?.actor,attack),
+      ...externalRangedModifierEvidence(effectEntries,'GGA tagged modifier'),
+      ...externalRangedModifierEvidence(configuredPreview?[]:(fireService._previewModifierSnapshot??fireService.getModifierSnapshot?.()??[]).filter(e=>!e.tagged),'Modifier Bucket')]:[];
+    const bondIncluded=modifierEvidence.filter(e=>e.kind==='weaponBond').reduce((n,e)=>n+e.value,0);
+    const bondSelected=mode==='weapon'&&isWeaponBondActive(token?.actor,attack?.weaponBond);
     const targetLabel = targetedAttack?.entry?.name ?? targetedAttack?.attackVariant ?? "";
     const targetedAttackLabel = /^Targeted Attack\b/iu.test(targetLabel)
       ? targetLabel : (targetLabel ? `Targeted Attack: ${targetLabel}` : "Targeted Attack");
@@ -424,14 +431,13 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const calculation = resolveCombatCalculation({
       combatType: "ranged", actor: token?.actor, attack, baseAttackLevel: baseLevel,
       governingSkill, attackSlot: values?.contextLabel ?? null,
-      context: { weaponBond: mode === "weapon" && isWeaponBondActive(token?.actor, attack?.weaponBond,attack?.weaponBondPerkConfirmed),
+      context: { weaponBond: bondSelected||bondIncluded!==0,weaponBondAdjustment:Number(bondSelected)-bondIncluded,
         rapidStrike, targetedAttack, hitLocationBase: locationPenalty,
         hitLocationLabel, closeQuartersBattle, closeQuartersBattleLabel: cqbLabel,
         closeHipShooting, closeHipLabel, moveAttackBase: moveAttackPenalty,
         closeCombatBulkBase },
       channels: [
         ...(attack?.platformRules?.areaAttack?[{id:'areaAttack',value:4,label:'Атака области (B414)'}]:[]),
-        {id:'sensorTargeting',value:sensorTargetingBonus(values),label:'Захват активным сенсором (UT63–64)'},
         ...(attack?.electrolaser?[{id:'electrolaserWeather',value:attack.electrolaser.weatherPenalty,label:'Среда электролазера (UT119)'}]:[]),
         { id: "ammunitionTracer", value: nextTurnTracer, label: f4Text("TracerBonus") },
         { id: "fluidBounce", value: attack?.ammunitionFluid?.vortex?-2*Number(values?.fluidBounces??0):0, label: "\u0420\u0438\u043a\u043e\u0448\u0435\u0442\u044b Vortex" },
@@ -461,7 +467,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     });
     const movementChannel = calculation.channels.find(channel => channel.id === "moveAndAttack");
     return { effectiveSkill: calculation.effectiveSkill, calculatedSkill: calculation.uncappedSkill,
-      environment: environment ?? null,
+      environment: environment ?? null,modifierEvidence,
       modifiers: calculation.modifiers, combatCalculation: calculation,
       closeQuartersBattle, closeHipShooting, rapidStrike,
       moveAttackPenalty: movementChannel?.resolvedValue ?? moveAttackPenalty,

@@ -28,7 +28,7 @@ for(const p of Object.values(ELECTROLASER_PROFILES)){
       if(environment!=='vacuum')assert.doesNotMatch(stats,/burn|aff/);else assert.doesNotMatch(stats,/HT|Оглушение|Смертельный/);
       const details=app._ammunitionConditionsHTML();assert.match(details,/<details[^>]*data-electrolaser-impact/);assert.doesNotMatch(details,/<details[^>]*\sopen/);
       assert.ok(details.includes(environment==='vacuum'?'1d-3 burn':p.burn));
-      if(environment!=='vacuum')assert.match(details,/Связанный ожог:.*Оба воздействия — одна атака/);
+      if(environment!=='vacuum')assert.match(details,/Связанный ожог:.*Оба воздействия – одна атака/);
       assert.equal(app.attack.data.damage,environment==='vacuum'?'1d-3 burn':p.burn);assert.deepEqual(f.state(),before);
     }
     await f.service.setElectrolaserConfiguration(f.weapon().id,{electrolaserMode:'kill',electrolaserEnvironment:'air'});
@@ -39,7 +39,7 @@ for(const p of Object.values(ELECTROLASER_PROFILES)){
     const f=await fixture(p);await f.service.setElectrolaserConfiguration(f.weapon().id,{electrolaserMode:'kill',electrolaserEnvironment:'rain',electrolaserVisibilityDR:17});
     const before=f.state();for(const lang of ['ru','en']){game.i18n.lang=lang;const html=electrolaserControlsHTML(f.weapon(),x=>x);
       assert.match(html,/gam-fire-electrolaser-fields/);assert.match(html,/value="kill" selected/);assert.match(html,/value="rain" selected/);
-      assert.match(html,/name="electrolaserVisibilityDR"[^>]*value="17"/);assert.match(html,/Kill: 2 заряда\/выстрел; смена режима — Ready/);
+      assert.match(html,/name="electrolaserVisibilityDR"[^>]*value="17"/);assert.match(html,/Kill: 2 заряда\/выстрел; смена режима – Ready/);
       assert.match(html,/title="[^"]*Heart Attack/);assert.doesNotMatch(html,/<p>|gam-fire-lp-controls/);
       assert.equal((html.match(/<select /g)??[]).length,2);assert.equal((html.match(/<input /g)??[]).length,1);
     }assert.deepEqual(f.state(),before);

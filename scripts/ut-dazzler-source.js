@@ -32,5 +32,5 @@ export function utDazzlerDamage(raw,id){
         halfRange:range?Number(range[1]):p.halfRange,outcome:'temporary-blindness',source:p.source},
       ballisticRange:range?{halfDamage:Number(range[1]),maximum:Number(range[2]),minimum:null,source:p.source}:null},
     support:{manual:[{id:'SpecializedPlatform',text:`Конус ${p.coneWidth} ярд. на максимальной дальности; охват и направление взгляда определяют вручную. UT113.`},
-      {id:'SpecializedPlatform',text:'При провале — слепота на минуты по степени провала; защита зрения учитывается в сопротивлении. UT113.'}]}};
+      {id:'SpecializedPlatform',text:'При провале – слепота на минуты по степени провала; защита зрения учитывается в сопротивлении. UT113.'}]}};
 }

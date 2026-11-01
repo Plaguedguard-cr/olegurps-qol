@@ -296,11 +296,55 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 6px 12px;
+  gap: 6px;
 }
 
 .melee-assistant .gam-melee-governing-controls .gam-fire-governing-skill {
   margin-top: 5px;
+}
+
+.melee-assistant .gam-melee-governing-controls label {
+  min-width: 0;
+}
+.melee-assistant .gam-melee-governing-controls select {
+  min-width: 0;
+  max-width: min(240px, 100%);
+}
+.melee-assistant .gam-melee-governing-controls .gam-fire-governing-skill select {
+  width: 168px;
+  flex: 0 1 168px;
+  max-width: 100%;
+}
+.melee-assistant .gam-melee-grip {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  flex: 0 0 auto;
+  width: max-content;
+  max-width: 100%;
+  gap: 5px;
+  margin-top: 5px;
+  font-size: 0.82em;
+}
+.melee-assistant .gam-melee-grip select {
+  width: auto;
+  flex: 0 1 auto;
+  height: 26px;
+  font: inherit;
+}
+.melee-assistant .gam-melee-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 5px;
+  max-width: 100%;
+  font-size: 0.82em;
+}
+.melee-assistant .gam-melee-mode select {
+  width: 156px;
+  flex: 0 1 156px;
+  height: 26px;
+  font: inherit;
 }
 
 .melee-assistant .gam-melee-rapid-mastery {
@@ -359,7 +403,7 @@
 
 .melee-assistant .gam-melee-attack-row {
   display: grid;
-  grid-template-columns: minmax(140px, 1fr) repeat(3,32px) auto auto;
+  grid-template-columns: minmax(140px, 1fr) repeat(4,32px) auto auto;
   align-items: center;
   gap: 7px;
   margin-bottom: 5px;
@@ -521,12 +565,6 @@
   min-width: 0;
 }
 
-.melee-assistant .gam-melee-empty-range {
-  min-height: 360px;
-  border-top: 1px solid rgba(128, 128, 128, 0.16);
-}
-
-
 .melee-assistant .gam-melee-rapid-strike {
   grid-column: 1 / -1;
   display: inline-flex;
@@ -618,9 +656,6 @@
     grid-column: 1 / -1;
   }
 
-  .melee-assistant .gam-melee-empty-range {
-    min-height: 180px;
-  }
 }
 
 /* Special fire modes */
@@ -979,3 +1014,102 @@ dialog.gam-roll-confirmation {
 .olegurps-launcher-grid span { width: 100%; min-width: 0; text-align: center; overflow-wrap: break-word; }
 .olegurps-launcher .form-footer { flex: 0 0 auto; }
 .olegurps-launcher-settings .window-content { overflow-y: auto; }
+.gam-melee-profile .gam-attack-editor-row {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.8fr) minmax(0, 1.4fr);
+  align-items: center;
+  gap: 6px;
+}
+.gam-melee-profile .gam-attack-editor-row > :is(select, input) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.gam-melee-profile .gam-ut-contact-confirm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.gam-melee-profile .gam-ut-contact-confirm > input[type="checkbox"] {
+  width: 16px;
+  flex: 0 0 16px;
+  margin-left: auto;
+}
+.gam-melee-profile select[data-melee-profile="neuralSettings"] {
+  height: 6rem;
+}
+.gam-melee-profile {
+  min-width: 0;
+  padding: 8px;
+  gap: 8px;
+}
+.gam-melee-profile-group {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.gam-melee-profile-group > h4 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: 600;
+}
+.gam-melee-profile .hint {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.gam-melee-additional, .gam-melee-import-baseline {
+  min-width: 0;
+}
+.gam-melee-additional > summary, .gam-melee-import-baseline > summary {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.gam-melee-additional[open] > .gam-melee-profile-group {
+  margin-top: 6px;
+}
+.gam-melee-editor-window .gam-melee-editor {
+  gap: 8px;
+  min-width: 0;
+}
+.gam-melee-editor-window .gam-melee-manual-fields .gam-attack-editor-row {
+  grid-template-columns: minmax(90px, 0.8fr) minmax(0, 1.4fr);
+  gap: 6px;
+}
+.gam-melee-editor-window .gam-melee-manual-fields :is(select, input) {
+  min-width: 0;
+  max-width: 100%;
+}
+.gam-melee-editor-window .form-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 6px;
+}
+.gam-melee-editor-window .form-footer > button {
+  flex: 1 1 90px;
+  min-width: 0;
+  height: auto;
+  white-space: normal;
+  line-height: 1.2;
+}
+.gam-melee-manual-fields > summary { cursor: pointer; }
+.gam-melee-profile .gam-melee-material-row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Keep the short MA100 sentence on one line when it fits, without widening the assistant. */
+#tooltip.gam-melee-defensive-hint {
+  width: max-content;
+  max-width: calc(100vw - 24px);
+  white-space: normal;
+}
+/* Personal weapon list controls shared by both assistants. */
+.olegurps-qol .gam-hidden-weapons { font-size: 12px; min-width: 0; }
+.olegurps-qol .gam-hidden-weapons summary { cursor: pointer; }
+.olegurps-qol .gam-hidden-weapons-list { max-height: 180px; overflow: auto; padding: 4px; }
+.olegurps-qol .gam-hidden-weapon { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+.olegurps-qol .gam-hidden-weapon > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.olegurps-qol .gam-hidden-weapon small { display: block; opacity: .75; }
+.olegurps-qol .gam-hidden-weapon button { flex: 0 0 auto; width: auto; }
+.olegurps-qol .gam-toolbar .gam-hidden-weapons { grid-column: 1 / -1; }
+.olegurps-qol .gam-toolbar .gam-hidden-weapon button { width: auto !important; }

@@ -559,7 +559,7 @@ export class SuppressionFireApp extends ApplicationV2 {
     return `
       <section class="gam-suppression-zone ${active ? "active" : ""} ${depleted ? "depleted" : ""}" data-zone="${index}">
         <div class="gam-suppression-zone-head">
-          <strong>\u0417\u043e\u043d\u0430 ${index + 1}${active ? " \u2014 \u0410\u041a\u0422\u0418\u0412\u041d\u0410" : depleted ? " \u2014 \u0418\u0421\u0427\u0415\u0420\u041f\u0410\u041d\u0410" : ""}</strong>
+          <strong>\u0417\u043e\u043d\u0430 ${index + 1}${active ? " \u2013 \u0410\u041a\u0422\u0418\u0412\u041d\u0410" : depleted ? " \u2013 \u0418\u0421\u0427\u0415\u0420\u041f\u0410\u041d\u0410" : ""}</strong>
           <input type="number" data-zone-shots data-zone-index="${index}"
             min="${SUPPRESSION_FIRE_MINIMUM_SHOTS}" step="1" value="${escapeHTML(shots)}" ${geometryLocked}>
           <span class="gam-suppression-zone-skill" data-zone-preview="${index}">
@@ -660,7 +660,7 @@ export class SuppressionFireApp extends ApplicationV2 {
           ? "\u0420\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u043e \u043f\u0430\u0442\u0440\u043e\u043d\u043e\u0432: " + allocation.totalShots + " \u0438\u0437 " + capacity.availableShots
           : allocation.errors.join("; ");    const skillPreview = this._getDisplayedSkillPreview();
     const sourceSkill = Number(this.attack?.level);
-    const sourceSkillText = Number.isFinite(sourceSkill) ? Math.trunc(sourceSkill) : "\u2014";
+    const sourceSkillText = Number.isFinite(sourceSkill) ? Math.trunc(sourceSkill) : "\u2013";
     return `
       <div class="gam-suppression">
         <div class="gam-suppression-summary">

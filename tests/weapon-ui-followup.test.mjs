@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {fixture,load,shoot,catalogs,compatibility,automatic,escapePayload} from './helpers/ut-ammunition-fixture.mjs';
+import {fixture,load,prepareArbalest,shoot,catalogs,compatibility,automatic,escapePayload} from './helpers/ut-ammunition-fixture.mjs';
 import {WeaponConfigurationDraft,weaponConfigurationHTML,bindWeaponConfiguration} from '../scripts/tools/weapon-configuration.js';
 import {standaloneConfigurationHTML} from '../scripts/tools/standalone-weapon-configuration.js';
 import {StandaloneWeaponDraft,StandaloneWeaponService} from '../scripts/tools/standalone-weapon-service.js';
@@ -64,7 +64,7 @@ for(const [book,type,id]of representatives)test('one common Weapon Bond setting 
   const reopened=new StandaloneWeaponDraft({catalogs,type,actor:fx.actor,existing:service.get(record.id)});
   assert.equal(reopened.weaponBond,true);assert.match(standaloneConfigurationHTML(reopened),/name="standaloneWeaponBond"[^>]*checked/);
   const other=new StandaloneWeaponDraft({catalogs,type,actor:fx.actor});other.selectModel(draft.modelId);const second=await service.save(other);
-  assert.equal(second.settings.weaponBond,undefined);assert.deepEqual(fx.actor.system,source);
+  assert.equal(second.settings.weaponBond,book==='LT'&&type==='ranged'?false:undefined);assert.deepEqual(fx.actor.system,source);
   delete fx.actor.system.ads;const old=service.get(record.id),unrelated=new StandaloneWeaponDraft({catalogs,type,actor:fx.actor,existing:old});
   await service.save(unrelated);assert.equal(service.get(record.id).settings.weaponBond,true); // no destructive reset when perk disappears
 });
@@ -120,7 +120,7 @@ test('component presentation distinguishes follow-up, fragmentation and manual-o
   const p={damage:{nativeSafe:true,formula:'9d(2) pi+',components:[{role:'kinetic',status:'resolved',formula:'9d(2) pi+'},
     {role:'follow-up',status:'resolved',formula:'1d cr ex'},{role:'fragmentation',status:'resolved',formula:'1d-2 cut'}]}};
   const text=attackProfilePresentation(p).damageText;assert.match(text,/Урон 9d\(2\) pi\+/);assert.match(text,/Последействие 1d cr ex/);assert.match(text,/Осколки 1d-2 cut/);
-  assert.equal(attackProfilePresentation({damage:{nativeSafe:false,formula:'99d pi'}}).damageText,'Урон — уточните профиль');
+  assert.equal(attackProfilePresentation({damage:{nativeSafe:false,formula:'99d pi'}}).damageText,'Урон – уточните профиль');
   assert.equal(attackProfilePresentation({damage:{nativeSafe:true,rules:{instructionOnly:true}}}).damageText,'Эффект вручную');
   assert.equal(executionAmmoCaption('15mmCLP',attackProfilePresentation(p)),'15mmCLP');
 });
@@ -171,7 +171,7 @@ test('ru/en use Russian module Damage labels and unsupported profiles never get 
 
 for(const [book,id,damage]of [['HT','Wxm8TWSvu5UFTAaDn','7d pi'],['LT','W4gnbkfxzHAYre3kO','3d-1 imp']])
 test(book+' card shows its selected ordinary Damage without ETC conversion',async()=>{
-  const fx=await fixture(id);await load(fx,fx.candidates().find(t=>!t.recipe));const app=await managerFixture(fx),before=JSON.stringify(fx.state());
+  const fx=await fixture(id),ammo=book==='LT'?await prepareArbalest(fx):fx.candidates().find(t=>!t.recipe);await load(fx,ammo);const app=await managerFixture(fx),before=JSON.stringify(fx.state());
   const html=app.buildWeaponCards(fx.state(),[fx.carrier.id]);assert.ok(html.includes('Урон '+damage));assert.doesNotMatch(html,/ - ETC/);
   const attack=withRuntimeAmmoStats(fx.attack(),fx.actor);assert.equal(attack.data.damage,damage);assert.equal(attack.ammunitionDisplay.etc,false);
   assert.equal(JSON.stringify(fx.state()),before);

@@ -28,7 +28,7 @@ export const explosiveMessages = {
     RevisionNotice: "Saving edits the selected user recipe and preserves rounds. A published profile creates a separate user recipe; old attacks remain unchanged.",
     ReferenceConfirmed: "Reference confirmed", GMApproved: "User recipe", Unknown: "Compatibility unknown", Incompatible: "Confirmed incompatible",
     Resolved: "Calculation complete", Unresolved: "Calculation incomplete", Explosion: "Explosion", Fragmentation: "Fragments",
-    Incendiary: "APHEX: incendiary — the GM determines ignition conditions; no separate fire damage is assigned.",
+    Incendiary: "APHEX: incendiary – the GM determines ignition conditions; no separate fire damage is assigned.",
     ManualConditions: "The GM determines Follow-Up conditions. Select Explosion, internal explosion and DR handling manually in Apply Damage; these are not enabled automatically.",
     FollowUp: "Follow-up", FollowUpHint: "The GM confirms Follow-Up conditions: one guaranteed hit, others use the normal roll. Penetration and internal explosions are not determined automatically.",
     Guaranteed: "One guaranteed Follow-Up fragment hit", Unavailable: "Component unavailable: {reason}",

@@ -41,11 +41,13 @@ export class LauncherSettingsApp extends ApplicationV2 {
     id: 'olegurps-launcher-settings', classes: ['olegurps-qol', 'olegurps-settings', 'olegurps-launcher-settings'], tag: 'form',
     window: { title: text('Settings'), resizable: false }, position: { width: 460, height: 'auto' },
     actions: { reset: async function() {
+      delete this.launcherPositionDraft;
       await resetLauncherPosition();
       await this.render({ force: true });
     } },
     form: { closeOnSubmit: true, handler: async function(_event, _form, formData) {
-      await saveLauncherPreferences({ visible: formData.object.visible === true, position: formData.object.position, size: Number(formData.object.size) });
+      await saveLauncherPreferences({ visible: formData.object.visible === true, position: formData.object.position, size: Number(formData.object.size),
+        ...(formData.object.position === 'custom' && this?.launcherPositionDraft ? { custom: this.launcherPositionDraft } : {}) });
     } }
   };
   async _prepareContext() { return readLauncherPreferences(); }
@@ -70,6 +72,20 @@ export async function openUnifiedLauncher() {
   }
   opening = (async () => { await launcher.render({ force: true }); return launcher; })();
   try { return await opening; } finally { opening = null; }
+}
+
+let toggling = Promise.resolve();
+export function toggleUnifiedLauncher() {
+  const operation = toggling.then(async () => {
+    if (opening) await opening;
+    if (launcher?.rendered) {
+      await launcher.close();
+      return launcher;
+    }
+    return openUnifiedLauncher();
+  });
+  toggling = operation.catch(() => {});
+  return operation;
 }
 
 export function registerLauncherSettings(onChange, runtime = globalThis) {

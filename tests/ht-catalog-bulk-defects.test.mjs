@@ -180,7 +180,7 @@ test("historical 227 +P restrictions stay intact; current B review preserves eve
   assert.equal(report.rows.find(r=>r.modeId==="W10jqOZ0kjeSuoY3C").parsed.damageStatus,"present-but-not-supported-by-plus-p-parser");
   assert.equal(JSON.stringify(catalogs.getCatalog("ht")),before);
   assert.equal(report.previousAggregate.ready,283);
-  assert.equal(current.examined,511); assert.equal(current.ready,369);
+  assert.equal(current.examined,513); assert.equal(current.ready,369);
   // P6 pressure gate changes diagnostic classification, never opens historical E/F.
   const closed=new Set([...current.rows,...current.otherNonreadyPairs].map(r=>r.modeId+'/'+r.ammoItemId));
   const pairs=catalogs.getCatalog('ht').ammo_items.flatMap(ammo=>ammo.weapon_mode_ids.map(modeId=>({

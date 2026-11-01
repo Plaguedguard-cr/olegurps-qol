@@ -68,18 +68,18 @@ export function resolveLTPersonalRange({actor,profile,configuration={},skillLeve
  return {ready:true,halfDamage:values.length===2?Number(values[0].toPrecision(12)):null,maximum:Number(values.at(-1).toPrecision(12)),st,arm,striking:0,lifting:0,source:p.source};
 }
 const manual={
- bolas:['Обвивание и освобождение — вручную после защиты цели; Bolas против ST для выбивания удерживаемого предмета. B410.'],
- harpoon:['Зазубрины и освобождение — вручную; длина привязи ограничивает движение, натяжение — состязание ST. B411.'],
- pilum:['После попадания согнут: выпрямление — 3 Ready и ST. Застрявший в щите: −1; при массе ≥½/полной массы щита — −2/−4. LT73.'],
- hungamunga:['Мягкое железо TL2: после броска 1d, 1–3 — согнут; 10 с и Armoury+3 для исправления. Сталь TL3+ не гнётся по этому правилу. LT72.'],
+ bolas:['Обвивание и освобождение – вручную после защиты цели; Bolas против ST для выбивания удерживаемого предмета. B410.'],
+ harpoon:['Зазубрины и освобождение – вручную; длина привязи ограничивает движение, натяжение – состязание ST. B411.'],
+ pilum:['После попадания согнут: выпрямление – 3 Ready и ST. Застрявший в щите: −1; при массе ≥½/полной массы щита – −2/−4. LT73.'],
+ hungamunga:['Мягкое железо TL2: после броска 1d, 1–3 – согнут; 10 с и Armoury+3 для исправления. Сталь TL3+ не гнётся по этому правилу. LT72.'],
  cloak:['Набрасывание плаща: защиту и фейнт/захват по Cloak разрешите вручную; автоматического ослепления нет. B404.'],
- 'net-large':['После неудачной защиты цель опутана. Освобождение: три успешных DX−4, по Ready; три последовательных провала — нужна помощь/разрезание. B411.'],
- 'net-small':['При броске — сеть: DX−4 с +3 за малую сеть; в контакте применяется отдельная процедура лассо/bolas. B411.'],
- lariat:['После захвата поддерживайте натяжение каждым Ready; состязание ST, для шеи у цели −5; нога — DX, при беге −4. B411.'],
- powder:['Порошок: ближняя атака Blowpipe +2, до 1 ярда; ветер снаружи даёт −2 и хуже. Действие вещества — вручную по способу доставки. B180.'],
+ 'net-large':['После неудачной защиты цель опутана. Освобождение: три успешных DX−4, по Ready; три последовательных провала – нужна помощь/разрезание. B411.'],
+ 'net-small':['При броске – сеть: DX−4 с +3 за малую сеть; в контакте применяется отдельная процедура лассо/bolas. B411.'],
+ lariat:['После захвата поддерживайте натяжение каждым Ready; состязание ST, для шеи у цели −5; нога – DX, при беге −4. B411.'],
+ powder:['Порошок: ближняя атака Blowpipe +2, до 1 ярда; ветер снаружи даёт −2 и хуже. Действие вещества – вручную по способу доставки. B180.'],
  metsubushi:['Metsubushi: один заранее снаряжённый заряд, Ready 1 с; снаряжение устройства в бою непрактично. Ближняя атака Blowpipe +2 до 1 ярда. LT72; B180.'],
- grapnel:['Крюк брошен: закрепление и удержание верёвки проверяются вручную. Звук о твёрдую поверхность — 4 ярда. LT125.'],
- 'grapnel-padded':['Мягкая обмотка: звук удара о твёрдую поверхность — 2 ярда. Закрепление крюка и удержание верёвки — вручную. LT125.']
+ grapnel:['Крюк брошен: закрепление и удержание верёвки проверяются вручную. Звук о твёрдую поверхность – 4 ярда. LT125.'],
+ 'grapnel-padded':['Мягкая обмотка: звук удара о твёрдую поверхность – 2 ярда. Закрепление крюка и удержание верёвки – вручную. LT125.']
 };
 export function ltPersonalDamage({actor,attack={},raw={},modeId,weapon=null,type,catalogs,compatibility,context={},policy=readLTPersonalPolicy()}={}){
  const p=ltPersonalProfile(modeId);if(!p)return null;
@@ -108,10 +108,10 @@ export function ltPersonalDamage({actor,attack={},raw={},modeId,weapon=null,type
  if(variant==='sling_stone_unshaped')attackBonus-=1;
  if(policy.slingCrushing&&['sling','staff-sling','heavy-sling'].includes(p.kind)&&formula)formula=formula.replace(/\bpi(?:\+\+|\+|-)?(?=\s|$)/,'cr');
  const brief=[...(manual[p.kind]??[])];
- if(p.kind.startsWith('crossbow-'))brief.push('Доставка '+(p.kind==='crossbow-rope'?'верёвки с грузом':'крюка с верёвкой')+': подходящее крепление и подготовка — вручную. Успех броска не подтверждает закрепление или допустимую нагрузку. LT125.');
+ if(p.kind.startsWith('crossbow-'))brief.push('Доставка '+(p.kind==='crossbow-rope'?'верёвки с грузом':'крюка с верёвкой')+': подходящее крепление и подготовка – вручную. Успех броска не подтверждает закрепление или допустимую нагрузку. LT125.');
  const delivery=parameters.delivery??null;
  if(delivery==='penetration')brief.push('Нанесённое вещество применяется вручную только после проникновения; эффект определяется конкретным составом. LT128–130.');
- else if(delivery)brief.push('Способ доставки: '+({contact:'контактный',respiratory:'дыхательный',blood:'через кровь/глаза',digestive:'пищевой',manual:'по ручным условиям'}[delivery]??delivery)+'; действие вещества — вручную.');
+ else if(delivery)brief.push('Способ доставки: '+({contact:'контактный',respiratory:'дыхательный',blood:'через кровь/глаза',digestive:'пищевой',manual:'по ручным условиям'}[delivery]??delivery)+'; действие вещества – вручную.');
  const displayRange=halfDamage===null?String(maximum):halfDamage+'/'+maximum;
  const facts={version:1,modeId,kind:p.kind,procedure:p.procedure,physicalAmmoId:identity.id,physicalUnits:1,recoverable:p.recoverable,
   configuration,policy:{slingCrushing:policy.slingCrushing===true},strength,range:{...range,halfDamage,maximum},brief,source:p.source,delivery};

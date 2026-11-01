@@ -1,4 +1,5 @@
 import test from "node:test";
+import {assertCurrentHTNativePairs} from './fixtures/ht-plus-p-ready-identities.mjs';
 import {assertProjectedUTCatalog} from './helpers/ut-projected-catalog-contract.mjs';
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -53,7 +54,10 @@ test("four-catalog audit is read-only and distinguishes complete data from unkno
     ["WI9EWrbCRSJOCS_y4", "ht_37x122mmr", "ht_apex"], ["WI9EWrbCRSJOCS_y4", "ht_37x122mmr", "ht_aphex"]
   ]);
   assert.equal(compatibility.checkCompatibility("WdzSSShGT_yv4ctOi", "ht_42_caplock_lemat", { book: "ht", kind: "ammo-item" }).status, "incompatible");
-  assert.deepEqual(r.ht,{combinations:1022,complete:10,incomplete:1006,incompatible:6,rules:{undetermined:1016,incompatible:6}});
+  // HT199 adds exactly two AM-402T physical pairs. Neither creates a complete
+  // generic explosive or pressure profile; two variants add four incomplete rows.
+  assertCurrentHTNativePairs(catalogs);
+  assert.deepEqual(r.ht,{combinations:1026,complete:10,incomplete:1010,incompatible:6,rules:{undetermined:1020,incompatible:6}});
   // UT-DATA transcribed two previously absent UT142 weapons; the imported GCS stays intact.
   assert.equal(data.weapons.equipment.length,1152);
   const projected=assertProjectedUTCatalog(catalogs,data.weapons,data.ut);
@@ -135,7 +139,7 @@ for(const [variantId,charge,kinetic,explosion] of [
   assert.equal(weapon.ammunitionInventory.stocks[0].rounds,5);assert.equal(weapon.ammunitionInventory.magazines[0].rounds,5);
   for(const lang of ["ru","en"]){
     const displayed=availableAmmoTypes(actor,weapon,api(ak),lang);
-    assert.equal(displayed.find(t=>!t.recipe).label,"7.62x39mm \u2014 \u0411\u0430\u0437\u043e\u0432\u044b\u0439");
+    assert.equal(displayed.find(t=>!t.recipe).label,"7.62x39mm \u2013 \u0411\u0430\u0437\u043e\u0432\u044b\u0439");
     for(const choice of displayed.filter(t=>t.recipe))assert.equal(choice.label,
       isMultishotVariant(choice.recipe.variantId) ? "7.62x39mm "+automaticAmmoText("P3"+choice.recipe.variantId,lang) :
       isEnvironmentVariant(choice.recipe.variantId) ? "7.62x39mm "+automaticAmmoText("P5"+choice.recipe.variantId,lang) :

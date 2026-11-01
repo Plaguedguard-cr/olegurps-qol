@@ -1,9 +1,10 @@
+import { generateId } from "../random-id.js";
 import { ammunitionResourceContract, useSealedResource } from "./ammunition-resource-contract.js";
 import { assertMagazineAddition, magazinePolicy } from './magazine-policy.js';
 // Resource accounting only. Catalog compatibility and ballistic rules belong to their existing services.
 export const AMMO_INVENTORY_VERSION = 1;
 const copy = value => structuredClone(value);
-const id = () => globalThis.crypto.randomUUID();
+const id = () => generateId();
 export const isArchivedAmmoType = type => !!type && !["catalog", "legacy"].includes(type.source);
 export const ammoTypeKey = binding => binding.source && binding.source !== "catalog" ? binding.key :
   [binding.book, binding.kind, encodeURIComponent(binding.ammoId)].join(":") +

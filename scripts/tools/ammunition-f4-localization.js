@@ -1,7 +1,7 @@
 import { moduleText } from "../localization.js";
 export const F4_TEXT = Object.freeze({
-  BatchTL:["TL партии — пользовательское значение","Batch TL — user value"],
-  Local:["\u0421\u043b\u044b\u0448\u0438\u043c\u043e\u0441\u0442\u044c, \u043d\u0430\u0434\u0451\u0436\u043d\u043e\u0441\u0442\u044c \u0438 \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0439 \u0445\u043e\u0434 \u2014 \u0440\u0443\u0447\u043d\u044b\u0435 \u0443\u0441\u043b\u043e\u0432\u0438\u044f","Hearing, reliability and next turn \u2014 manual conditions"],
+  BatchTL:["TL партии – пользовательское значение","Batch TL – user value"],
+  Local:["\u0421\u043b\u044b\u0448\u0438\u043c\u043e\u0441\u0442\u044c, \u043d\u0430\u0434\u0451\u0436\u043d\u043e\u0441\u0442\u044c \u0438 \u0441\u043b\u0435\u0434\u0443\u044e\u0449\u0438\u0439 \u0445\u043e\u0434 \u2013 \u0440\u0443\u0447\u043d\u044b\u0435 \u0443\u0441\u043b\u043e\u0432\u0438\u044f","Hearing, reliability and next turn \u2013 manual conditions"],
   Hint:["Укажите условия и нажмите «Проверить условия». Проверки Hearing и Malf выполните вручную штатными средствами GGA.","Enter conditions and click Check conditions. Resolve Hearing and Malf manually using native GGA rolls."],
   Hearing:["Слышимость выстрела","Shot hearing"], Reliability:["Надёжность этой атаки","This attack's reliability"],
   Tracer:["Трассеры: непосредственно следующий ход","Tracer: immediately following turn"], Loading:["Изготовление и опора +P","+P loading and support"], Native:["Исходные свойства +P","Native +P conditions"], Handload:["Партия Handloaded Match","Handloaded Match batch"],

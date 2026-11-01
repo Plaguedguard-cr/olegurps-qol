@@ -1,5 +1,7 @@
 import { readWeaponSkillTLPolicy } from "./weapon-skill-tl-policy.js";
 import { publishedTL } from './tech-level.js';
+import { meleeSource, meleeSkillRules } from '../melee-source-data.js';
+import {resolveImprovisedTechnique} from '../lt-improvised-source.js';
 
 // Catalog defaults are directed rules. Never infer defaults from similar names or recurse through them.
 const clean = value => String(value ?? "").normalize("NFKC").trim();
@@ -8,7 +10,10 @@ const specialties = { law: "light anti-armor weapon", lmg: "light machine gun", 
 const specialty = value => specialties[canonical(value)] ?? canonical(value);
 export function parseStandaloneSkill(value, specialization = null) {
   const match = clean(value).match(/^(.+?)(?:\s*\/\s*TL\s*(\d+))?\s*(?:\(([^()]*)\))?$/iu);
-  return match ? { family: canonical(match[1]), specialty: specialty(specialization ?? match[3]),
+  const family=match?canonical(match[1]):null,rawSpecialty=specialty(specialization??match?.[3]);
+  // B220 calls the strap specialty simply Shield; GCS also spells it Shield (Shield).
+  const shieldSpecialty=family==='shield'?({shield:'','force shield':'force'}[rawSpecialty]??rawSpecialty):rawSpecialty;
+  return match ? { family, specialty: shieldSpecialty,
     tl: match[2] === undefined ? null : Number(match[2]), name: clean(value) } : null;
 }
 function learnedSkills(actor) {
@@ -41,6 +46,10 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   const snapshot = mode?.snapshot;
   const explicit = clean(mode?.overrides?.governingSkill);
   const sourceSkill = snapshot?.governing_skill?.skill;
+  const melee=meleeSource(mode?.modeId);
+  if(melee&&explicit&&!melee.primarySkills.some(n=>canonical(n)===canonical(explicit)||
+    parseStandaloneSkill(n)?.family==='shield'&&parseStandaloneSkill(explicit)?.family==='shield'&&sameSkill(parseStandaloneSkill(n),parseStandaloneSkill(explicit))))return {
+    resolved:false,level:null,reason:'Выберите опубликованный навык этого режима.',candidates:[]};
   const alternatives = snapshot?.governing_skill?.candidates ?? snapshot?.governing_skill_selection?.candidates;
   if(snapshot?.governing_skill_selection?.strategy==='best-available-unmodified' && alternatives?.length>1) {
     const permitted=alternatives.map(s=>parseStandaloneSkill(s.name,s.specialization));
@@ -71,24 +80,28 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
     required.tl = publishedTL(tl);
   }
   const name = explicit ? explicit.replace(/\s*\([^()]*\)\s*$/, "").replace(/\s*\/\s*TL\s*\d+\s*/iu, "") :
-    attributeOnly ? required.name : sourceSkill.name;
+    attributeOnly ? required.name : sourceSkill.name.replace(/\s*\([^()]*\)\s*$/, "");
+  const sourceSpecialty=sourceSkill?.specialization??clean(sourceSkill?.name).match(/\(([^()]*)\)\s*$/)?.[1];
   const label = name +
     (required.tl === null ? "" : "/TL" + required.tl) +
-    (required.specialty ? " (" + (explicit ? explicit.match(/\(([^()]*)\)/)?.[1] ?? required.specialty : sourceSkill.specialization) + ")" : "");
+    (required.specialty ? " (" + (explicit ? explicit.match(/\(([^()]*)\)/)?.[1] ?? required.specialty : sourceSpecialty) + ")" : "");
   const learned = attributeOnly ? [] : learnedSkills(actor);
   const exact = learned.filter(s => sameSkill(s, required) && s.tl === required.tl).sort((a,b) => b.level-a.level)[0];
   const common = { name: label, family: required.family, specialty: required.family === "guns" ?
     ({ "light anti-armor weapon": "law", "light machine gun": "lmg", "submachine gun": "smg" }[required.specialty] ?? required.specialty) : required.specialty,
     tl: required.tl, tlPolicy, key: "standalone:" + record.id + ":" + mode.modeId };
   const attackModifier=Number.isInteger(snapshot?.governing_skill?.attack_modifier)?snapshot.governing_skill.attack_modifier:0;
-  if (exact) return { ...common, resolved: true, level: exact.level+attackModifier, learned: true,
-    source: "learned", sourceName: exact.name, penalty: attackModifier, entry: exact.entry, candidates: [] };
+  if(melee?.technique)return {...common,...resolveImprovisedTechnique(actor,melee)};
+  const exactModifier=melee?.water?-4:attackModifier;
+  if (exact) return { ...common, resolved: true, level: exact.level+exactModifier, learned: true,
+    source: "learned", sourceName: exact.name, sourceLevel:exact.level, directWeaponPenalty:exactModifier,
+    defaultPenalty:0, penalty: exactModifier, entry: exact.entry, candidates: [] };
   // A manual replacement without catalog rules may use an exact learned skill only.
   const original = snapshot?.governing_skill?.skill;
   const originalIdentity = original && parseStandaloneSkill(original.name, original.specialization);
   const alternativeDefaults=snapshot?.governing_skill_selection?.strategy==='best-available-unmodified'?snapshot.governing_skill_selection.candidate_defaults?.find(s=>{const p=parseStandaloneSkill(s.name,s.specialization);return p&&sameSkill(p,required);})?.defaults:null;
   const rules = attributeOnly ? snapshot.governing_skill_selection.attribute_defaults.map(r=>({type:canonical(r.attribute),modifier:r.modifier})) :
-    alternativeDefaults??(!explicit || originalIdentity && sameSkill(originalIdentity, required) ? snapshot?.defaults ?? [] : []);
+    melee?meleeSkillRules(melee,label):alternativeDefaults??(!explicit || originalIdentity && sameSkill(originalIdentity, required) ? snapshot?.defaults ?? [] : []);
   const candidates = [];
   for (const rule of rules) {
     const modifier = Number(rule.modifier);
@@ -102,16 +115,17 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
         const standardTLPenalty = tlPenalty(skill, required);
         if (standardTLPenalty === null) continue;
         const adjustment = tlPolicy.ignoreWeaponSkillTLDifferences && skill.family === required.family ? 0 : standardTLPenalty;
-        candidates.push({ level: skill.level + modifier + adjustment, sourceName: skill.name,
-          sourceLevel: skill.level, penalty: modifier + adjustment, defaultPenalty: modifier,
+        candidates.push({ level: skill.level + modifier + adjustment+(melee?attackModifier:0), sourceName: skill.name,
+          sourceLevel: skill.level, penalty: modifier + adjustment+(melee?attackModifier:0), directWeaponPenalty:melee?attackModifier:0, defaultPenalty: modifier,
           tlPenalty: adjustment, standardTLPenalty, rule: structuredClone(rule), source: "skill-default" });
       }
     } else if (["dx", "iq", "ht", "st", "per", "will"].includes(canonical(rule.type))) {
       const attribute = canonical(rule.type).toUpperCase();
       const raw = actor?.system?.attributes?.[attribute]?.value ?? actor?.system?.[canonical(rule.type)]?.value;
       const value = raw === null || raw === undefined || clean(raw) === "" ? NaN : Number(raw);
-      if (Number.isFinite(value)) candidates.push({ level: (attributeOnly ? value : Math.min(20, value)) + modifier,
-        sourceName: attribute, sourceLevel: value, penalty: modifier, rule: structuredClone(rule), source: attributeOnly ? "attribute-roll" : "attribute-default" });
+      if (Number.isFinite(value)) candidates.push({ level: (attributeOnly ? value : Math.min(20, value)) + modifier+(melee?attackModifier:0),
+        sourceName: attribute, sourceLevel: value, penalty: modifier+(melee?attackModifier:0),defaultPenalty:modifier,
+        directWeaponPenalty:melee?attackModifier:0, rule: structuredClone(rule), source: attributeOnly ? "attribute-roll" : "attribute-default" });
     }
   }
   candidates.sort((a,b) => b.level-a.level);
@@ -122,6 +136,6 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
 export function standaloneSkillDescription(skill) {
   if (!skill?.resolved) return skill?.reason ?? "Навык не определён.";
   if (skill.source === 'attribute-roll') return skill.sourceName + (skill.penalty >= 0 ? '+' : '') + skill.penalty + ': ' + skill.level;
-  return skill.name + ": " + skill.level + (skill.learned ? " — изучен" :
-    " — не изучен; по умолчанию от " + skill.sourceName + " (" + (skill.penalty > 0 ? "+" : "") + skill.penalty + ")");
+  return skill.name + ": " + skill.level + (skill.learned ? " – изучен" :
+    " – не изучен; по умолчанию от " + skill.sourceName + " (" + (skill.penalty > 0 ? "+" : "") + skill.penalty + ")");
 }

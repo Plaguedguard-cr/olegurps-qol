@@ -98,7 +98,7 @@ test('SEFOP stock, fields and registered shot are distinct from manual impact; n
     const failedRegistration=await shoot(fx,1,{effectiveSkill:3});
     assert.equal(failedRegistration.rollData.failure,true);assert.equal(failedRegistration.rollData.rofrcl,null);
     assert.match(failedRegistration.message.content,/olegurps-sefop-manual-damage[^>]*>[^<]*\[.*D:/);
-    assert.match(result.message.content,/Выстрел зарегистрирован/);assert.match(result.message.content,/попадание SEFOP — вручную/);assert.match(result.message.content,/D:"/);assert.doesNotMatch(result.message.content,/<details[^>]*\bopen|B413|B414|автоматически успешно/);
+    assert.match(result.message.content,/Выстрел зарегистрирован/);assert.match(result.message.content,/попадание SEFOP – вручную/);assert.match(result.message.content,/D:"/);assert.doesNotMatch(result.message.content,/<details[^>]*\bopen|B413|B414|автоматически успешно/);
     const old=JSON.stringify(result.snapshot),next=automatic.prepare({modeId:fx.carrier.standaloneModeId,base,variantId:'ut_sefop',parameters:{...p.type.recipe.parameters,note:'',description:'',sefopMode:'aphex'}});
     await fx.transaction('edit-recipe',{ammoKey:p.type.key,type:next.type});assert.equal(JSON.stringify(result.snapshot),old);assert.equal(result.snapshot.profile.damage.formula,'5d+5x3(3) cr inc');
   }finally{game.user.isGM=true;}

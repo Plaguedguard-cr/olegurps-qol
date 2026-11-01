@@ -79,11 +79,11 @@ export function applyLaserModifications(base,raw,id,w){
     if(c.mode==='dazzle')lines.push('Только лицо или глаза; цель смотрит на луч. Временное ослепление; энергия пренебрежимо мала. UT113.');
     if(c.mode==='blinding')lines.push('Цель смотрит на луч; калечащее ослепление. 1/10 штатного заряда за выстрел. UT113–114.');
     if(pulse)lines.push('Импульсный взрывной удар. UT118–119.');
-    if(!aff&&['xray','graser'].includes(p.family))lines.push((p.family==='xray'?'В атмосфере Range 7/20':'В атмосфере Range 70/200')+' ярдов / давление; под водой не действует. UT117–118; предел и Field-jacketed — вручную.');
+    if(!aff&&['xray','graser'].includes(p.family))lines.push((p.family==='xray'?'В атмосфере Range 7/20':'В атмосфере Range 70/200')+' ярдов / давление; под водой не действует. UT117–118; предел и Field-jacketed – вручную.');
     if(p.chemical)lines.push(...base.support.manual.filter(v=>/Химический|Ранец|Отдельный/.test(v.text)).map(v=>v.text));
     if(c.modifications.construction==='blueGreen')lines.push('Blue-Green: подводный предел 150/60/15 ярдов для прозрачной/обычной/мутной воды. UT114–115.');
     if(c.modifications.construction==='ultraviolet')lines.push('Ultraviolet: предел атмосферы 500 ярдов / относительное давление; в вакууме предела нет. UT115.');
-    if(laserAvailableModes(w).length>1)lines.push('Смена режима — Ready.');
+    if(laserAvailableModes(w).length>1)lines.push('Смена режима – Ready.');
     const rules={...base.rules,beam:{...base.rules.beam,tightBeam:!aff&&!pulse,surge:!aff&&!pulse&&['xray','graser'].includes(p.family)},
       ballisticRange:r,laserModifications:c,...(aff?{instructionOnly:true,resistanceEffect:{version:1,id,name:p.name,attribute:'HT',modifier,
         condition:'vision-laser',halfRange:r.halfDamage,outcome:c.mode==='dazzle'?'temporary-blindness':'crippling-blindness',source:'UT113–114'}}:{})};
@@ -104,7 +104,7 @@ export function laserModificationsHTML(id,c,escape){
     (invalid||a.blueGreenReason?`<small role="status">${escape(invalid||a.blueGreenReason)}</small>`:'')+'<div style="display:flex;flex-wrap:wrap;gap:6px 14px">'+
     [['dazzle','Dazzle Mode'],['blinding','Blinding Mode'],['beamPulse','Beam/Pulse']].filter(([k])=>a[k]).map(([k,v])=>`<label style="display:inline-flex;align-items:center;gap:4px"><input type="checkbox" name="laserModification-${k}"${c[k]?' checked':''}${(c.construction!=='standard'&&k!=='beamPulse'||c.construction==='pulse')?' disabled':''}>${v}</label>`).join('')+'</div>'+costHTML(id,c)+'</fieldset>';
 }
-function costHTML(id,c){const price=laserModificationCost(id,c);return `<small data-laser-cost>Цена ×${price.multiplier}${price.total===null?'':` — $${price.total}`}; надбавки к базовой цене: +${price.percent}%.</small>`;}
+function costHTML(id,c){const price=laserModificationCost(id,c);return `<small data-laser-cost>Цена ×${price.multiplier}${price.total===null?'':` – ${price.total}`}; надбавки к базовой цене: +${price.percent}%.</small>`;}
 export function laserFireControlsHTML(w,escape){
   if(!beamWeapon(w))return '';
   const c=laserModifications(w),modes=laserAvailableModes(w),e=w.laserEnvironment??{water:'air',pressure:1};
@@ -112,6 +112,6 @@ export function laserFireControlsHTML(w,escape){
   return '<div class="gam-fire-electrolaser-controls" data-laser-fire-controls><div class="gam-fire-electrolaser-fields">'+
     (modes.length>1?'<label>Режим<select name="laserMode" style="width:10em;flex-shrink:0">'+modes.map(m=>`<option value="${m}"${laserMode(w)===m?' selected':''}>${LASER_MODES[m]}</option>`).join('')+'</select></label>':'')+
     (c.construction==='blueGreen'?'<label>Среда<select name="laserWater" style="width:16em">'+[['air','Воздух'],['clear','Прозрачная вода'],['average','Обычная вода'],['murky','Мутная вода']].map(([k,v])=>`<option value="${k}"${e.water===k?' selected':''}>${v}</option>`).join('')+'</select></label>':'')+
-    (c.construction==='ultraviolet'?`<label>Давление, атм<input name="laserPressure" type="number" min="0" max="1000" step="any" value="${escape(e.pressure)}" style="width:5em" title="Относительное давление; 0 — вакуум"></label>`:'')+
-    '</div>'+(modes.length>1?'<small>Смена режима — Ready</small>':'')+'</div>';
+    (c.construction==='ultraviolet'?`<label>Давление, атм<input name="laserPressure" type="number" min="0" max="1000" step="any" value="${escape(e.pressure)}" style="width:5em" title="Относительное давление; 0 – вакуум"></label>`:'')+
+    '</div>'+(modes.length>1?'<small>Смена режима – Ready</small>':'')+'</div>';
 }

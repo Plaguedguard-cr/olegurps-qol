@@ -3,7 +3,7 @@ const parents=Object.values(LT_BOW_PROFILES).filter(p=>p.kind!=='bow'&&p.modeId!
 const hook='lt_p3_object_eLTP3GrapplingHook',padded='lt_p3_object_eLTP3PaddedGrapplingHook';
 export const LT_CROSSBOW_UTILITY_PROFILES=Object.freeze(Object.fromEntries(parents.flatMap(parent=>['rope','hook'].map(kind=>{
  const modeId='WLTP7'+kind+'_'+parent.modeId;
- return [modeId,Object.freeze({modeId,parentModeId:parent.modeId,name:parent.name+' — '+(kind==='rope'?'Weighted Rope':'Grappling Hook'),kind:'crossbow-'+kind,damage:'spec.',range:'spec.',source:'LT125; LT74–76',noDamage:true,recoverable:true,procedure:'ranged',hitBonus:0,ammoIds:kind==='rope'?['lt_p7_weighted_rope']:[hook,padded]})];
+ return [modeId,Object.freeze({modeId,parentModeId:parent.modeId,name:parent.name+' – '+(kind==='rope'?'Weighted Rope':'Grappling Hook'),kind:'crossbow-'+kind,damage:'spec.',range:'spec.',source:'LT125; LT74–76',noDamage:true,recoverable:true,procedure:'ranged',hitBonus:0,ammoIds:kind==='rope'?['lt_p7_weighted_rope']:[hook,padded]})];
 }))));
 export const ltCrossbowUtilityProfile=id=>LT_CROSSBOW_UTILITY_PROFILES[id]??null;
 export function projectLTCrossbowUtility(book,data){

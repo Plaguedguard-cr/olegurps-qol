@@ -1,4 +1,5 @@
 import test from 'node:test';
+import {assertCurrentHTNativePairs} from './fixtures/ht-plus-p-ready-identities.mjs';
 import assert from 'node:assert/strict';
 import { catalogs, compatibility, api } from './fixtures/ht-special-context.mjs';
 import { StandaloneWeaponDraft, StandaloneWeaponService } from '../scripts/tools/standalone-weapon-service.js';
@@ -134,7 +135,8 @@ test('legacy unmanaged Zip-Gun cannot execute without an installed physical cart
 test('all 511 audited native links keep their previous outcome except the approved Zip-Gun pair', () => {
   const unresolved = new Set(['W82oDY970UdeqLXTF', 'WGJgRQusTscOtoLC9', 'Wkvf5salwlKpkRx_c', 'WOAL2ladqiRbTuvRU']);
   const rows = catalogs.getCatalog('ht').ammo_items.flatMap(a => a.weapon_mode_ids.map(modeId => ({ modeId, ammoId: a.id })));
-  assert.equal(rows.length, 511);
+  assertCurrentHTNativePairs(catalogs);
+  assert.equal(rows.length, 513);
   for (const row of rows) assert.equal(compatibility.checkCompatibility(row.modeId, row.ammoId, { book: 'ht', kind: 'ammo-item' }).status,
     row.modeId === 'WdzSSShGT_yv4ctOi' ? 'incompatible' : unresolved.has(row.modeId) ? 'undetermined' : 'compatible', row.modeId);
 });

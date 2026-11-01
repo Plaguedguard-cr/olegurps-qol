@@ -11,7 +11,6 @@ import {messageResistanceEffect,visionResistanceModifier,resistanceOutcome} from
 import {robotAmmunitionAllowed} from '../scripts/tools/ut-robot-ammunition.js';
 import {campaignAmmunitionAdmission} from '../scripts/tools/ammunition-tech-level.js';
 import {createShotSnapshot} from '../scripts/tools/attack-profile-resolver.js';
-import {sensorTargetingBonus} from '../scripts/tools/fire-control-context.js';
 globalThis.canvas={scene:{id:'unit-scene'}};
 const area={areaPoint:{x:150,y:150,sceneId:'unit-scene'},physicalDistance:10};
 test('eleven distinct source identities are searchable in the real model selector',()=>{
@@ -130,10 +129,6 @@ test('old missing power is preserved until an explicit replacement; no settings 
   const f=await gaussFixture(id,{profileContext:area}),state=f.state(),key=f.power().stateKey;delete state.weapons[0][key];await f.actor.setFlag('world','gurpsAmmoManager',state);
   await f.service.loadState();assert.equal(f.weapon()[key],undefined);await assert.rejects(()=>f.shoot());await f.battery();assert.equal(readWeaponBattery(f.weapon()).charge,f.power().capacity);
  }
-});
-test('one shared sensor targeting bonus requires explicit conditions and a real Aim',()=>{
- assert.equal(sensorTargetingBonus({sensorTargetingConfirmed:true,aimSeconds:1}),3);
- for(const values of [{},{sensorTargetingConfirmed:false,aimSeconds:4},{sensorTargetingConfirmed:true,aimSeconds:0},{sensorTargetingConfirmed:true,aimSeconds:1.5}])assert.equal(sensorTargetingBonus(values),0);
 });
 test('selected sensor TL reaches the common skill resolver and campaign admission without changing old high-TL instances',async()=>{
  const f=await gaussFixture('WUTMilitaryLadarSmall'),draft=()=>new StandaloneWeaponDraft({actor:f.actor,catalogs,type:'ranged',existing:f.definitions.list()[0]});

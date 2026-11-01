@@ -44,5 +44,5 @@ export function attachBiochemicalEffect(damage,type){
 export function chemicalEditorHTML(type,parameters,escape,{campaignTL=null}={}){
  const options=chemicalOptions(type);if(!options.length)return '';
  const selected=parameters?.chemicalId??type.recipe.parameters?.chemicalId??'';
- return `<label>Источниковый состав<select name="ut-chemicalId"><option value="">Произвольный текст — без автоматического эффекта</option>${options.filter(f=>campaignTL==null||f.tl<=campaignTL||f.id===selected).map(f=>`<option value="${escape(f.id)}"${f.id===selected?' selected':''}>${escape(f.name)} (TL${f.tl}${f.superscience?'^':''})</option>`).join('')}</select></label>`;
+ return `<label>Источниковый состав<select name="ut-chemicalId"><option value="">Произвольный текст – без автоматического эффекта</option>${options.filter(f=>campaignTL==null||f.tl<=campaignTL||f.id===selected).map(f=>`<option value="${escape(f.id)}"${f.id===selected?' selected':''}>${escape(f.name)} (TL${f.tl}${f.superscience?'^':''})</option>`).join('')}</select></label>`;
 }

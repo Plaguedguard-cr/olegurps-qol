@@ -3,7 +3,7 @@ import { russianUI } from "./russian-ui.js";
 // Module UI always uses its own Russian resources. Foundry/GGA i18n is never changed.
 export function moduleText(key, values = {}, fallback = "Текст интерфейса недоступен") {
   const template = russianUI[key] ?? fallback;
-  return String(template).replace(/\{(\w+)\}/g, (token, name) => Object.hasOwn(values, name) ? String(values[name] ?? "—") : token);
+  return String(template).replace(/\{(\w+)\}/g, (token, name) => Object.hasOwn(values, name) ? String(values[name] ?? "–") : token);
 }
 
 export function moduleMessage(value) {

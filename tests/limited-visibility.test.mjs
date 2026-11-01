@@ -118,8 +118,8 @@ test("blind-fire picker selects only a Grid cell and leaves token data untouched
 test("distance to a selected hex uses the shared grid path and scene units", async () => {
   const { measureCanvasPointDistanceYards } = await import("../scripts/tools/fire-control-context.js");
   const runtime = {
-    canvas: { grid: { isGridless: false, measurePath: ([a, b]) =>
-      ({ spaces: Math.hypot(a.x - b.x, a.y - b.y) }) } }
+    canvas: { scene:{grid:{units:'yd'}},grid: { isGridless: false, measurePath: ([a, b]) =>
+      ({ distance: Math.hypot(a.x - b.x, a.y - b.y),spaces:Math.hypot(a.x - b.x, a.y - b.y) }) } }
   };
   const source = { document: { getCenterPoint: () => ({ x: 5, y: 5 }) } };
   assert.equal(measureCanvasPointDistanceYards(source, { x: 25, y: 5 }, runtime), 20);
@@ -230,10 +230,10 @@ test("known-position Token keeps safe name and Token distance/elevation", async 
     hidden: true, displayName: 20 } };
   const runtime = {
     CONST: { TOKEN_DISPLAY_MODES: { HOVER: 10, ALWAYS: 20 } },
-    canvas: { grid: { isGridless: false, measurePath: ([a, b]) => {
+    canvas: { scene:{grid:{units:'yd'}},grid: { isGridless: false, measurePath: ([a, b]) => {
       assert.equal(a, source.document);
       assert.equal(b, known.document);
-      return { spaces: 14 };
+      return { spaces: 14, distance:14 };
     } } }
   };
   assert.equal(getSafeTargetName(known, runtime), "Known Target");

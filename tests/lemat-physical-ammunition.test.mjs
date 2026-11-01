@@ -92,7 +92,7 @@ test("OWNER +P needs a scoped loading check, not GM approval or world writes; pr
   assert.equal(automatic.admission(pressure,{approval:ownPressure}).allowed,false);
 });
 const definition={id:"lemat",name:"LeMat",source:{equipmentId:LEMAT.equipmentId},resourceLinks:{ammoWeaponId:"lemat"},
-  modes:[LEMAT.revolverModeId,LEMAT.shotModeId].map(modeId=>({modeId}))};
+  modes:[LEMAT.revolverModeId,LEMAT.shotModeId].map(modeId=>({modeId,snapshot:structuredClone(catalogs.getMode(modeId))}))};
 test("one instance owns distinct 9 and 1 carriers without retagging old stock or IDs",()=>{
   const old={id:"saved",standaloneWeaponId:"lemat",standaloneModeId:LEMAT.shotModeId,ammunitionInventory:{stocks:[{id:"old",type:{...rev.base,recipe:{version:1,customId:"user"}},rounds:4}],magazines:[{id:"old-mag",rounds:1}]}},before=JSON.stringify(old);
   const carriers=standaloneAmmoCarriers(definition,[old]);assert.equal(carriers.length,2);assert.equal(new Set(carriers.map(c=>c.id)).size,2);
@@ -188,10 +188,14 @@ test("other 510 native +P pairs retain identities and weapon source records",()=
     if(printedAccuracyZero[modeId]) {
       const fields=expectedPrintedFields(modeId);
       for(const [field,value]of Object.entries(fields)) {
-        assert.equal(modes.get(modeId).stats[field],null);assert.equal(effectiveMode.stats[field],value);
-        effectiveMode.stats[field]=null;
+        const projected=modeId==='Wr_7MnorYDlPSb2qW'?value:null;
+        assert.equal(modes.get(modeId).stats[field],projected);assert.equal(effectiveMode.stats[field],value);
+        const sourceMode=catalogs.getSourceCatalog('weapons').equipment.flatMap(e=>e.modes).find(m=>m.weapon_mode_id===modeId);
+        assert.equal(sourceMode.stats[field],null,'protected imported field');
+        effectiveMode.stats[field]=projected;
       }
-      assert.deepEqual(effectiveMode.sourceStatisticsCorrection,{version:1,source:printedAccuracyZero[modeId],
+      if(modeId==='Wr_7MnorYDlPSb2qW')assert.equal(effectiveMode.sourceStatisticsCorrection,undefined);
+      else assert.deepEqual(effectiveMode.sourceStatisticsCorrection,{version:1,source:printedAccuracyZero[modeId],
         fields:Object.entries(fields).map(([field,value])=>({field,original:null,value}))});
       delete effectiveMode.sourceStatisticsCorrection;
     }
@@ -225,7 +229,7 @@ test("other 510 native +P pairs retain identities and weapon source records",()=
     if(names[ammo.id]){assert.equal(projected.name,names[ammo.id]);assert.equal(projected.sourceLabelCorrection.original,ammo.name);
       assert.equal(projected.sourceLabelCorrection.version,1);restored.name=ammo.name;delete restored.sourceLabelCorrection;}
     assert.deepEqual(restored,{...ammo,weapon_mode_ids:[]});}
-  assert.equal(count,510);
+  assert.equal(count,512);
 });
 test("charge editor defaults to the actual barrel capacity without invented mass/price inputs",()=>{
   const w={id:"shot",standaloneModeId:LEMAT.shotModeId,ammunitionInventory:{version:1,stocks:[],magazines:[],installedId:null}};

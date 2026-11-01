@@ -1,5 +1,8 @@
 import { sourceWeaponHandling, sourceBulkChoiceHTML } from './weapon-bulk.js';
+import { installViewportBounds } from './application-viewport.js';
 import { moduleMessage, moduleText } from "../localization.js";
+import {collectMeleeAttacks} from './melee-assistant-state.js';
+import {WeaponListVisibility,meleeVisibilityEntries,visibilityText} from './weapon-list-visibility.js';
 import {ladarProfile} from '../ut-next-eleven-source.js';
 import {sonicShuriken} from '../ut-sonic-shuriken-source.js';
 import {parseCampaignTL} from './tech-level.js';
@@ -15,7 +18,17 @@ import { StandaloneWeaponDraft, StandaloneWeaponService, searchStandaloneModels,
 
 const escape = value => String(value ?? "").replace(/[&<>"']/g,
   c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
-const caption = equipment => [equipment.name, equipment.source, equipment.reference].filter(Boolean).join(" — ");
+const caption = equipment => [equipment.name, equipment.source, equipment.reference].filter(Boolean).join(" – ");
+
+export function unarmedLibraryEntries(actor) {
+  return meleeVisibilityEntries(actor,collectMeleeAttacks(actor,{includeAvailable:true})).filter(e=>e.source.unarmedRef?.native===false);
+}
+export function unarmedLibraryHTML(actor) {
+  const selected=new Set(new WeaponListVisibility(actor).manualProfiles());
+  return `<fieldset class="gam-personal-unarmed"><legend>${visibilityText('BodyAttacks')}</legend>
+    <select name="personalUnarmedAttack" aria-label="${visibilityText('BodyAttacks')}">${unarmedLibraryEntries(actor).map(e=>`<option value="${escape(e.id)}">${escape(e.name)}${selected.has(e.source.unarmedRef.id)?' – '+visibilityText('AlreadyAdded'):''}</option>`).join('')}</select>
+    <button type="button" data-personal-unarmed-add>${visibilityText('AddBody')}</button></fieldset>`;
+}
 
 export function standaloneModelOptions(draft) {
   const limit=parseCampaignTL(draft.actor?.getFlag?.('olegurps-qol','campaignTL'));
@@ -36,7 +49,7 @@ export function standaloneModeFields(draft) {
     let preview=draft.statPreview?.(id);
     if(!preview&&ltBowProfile(id)){
       const b=resolveLTBowBase({modeId:id,configuration:draft.ltBow,actor:draft.actor,sourceStats:draft.overrides[id]});
-      preview={stats:{...stats,damage:b.ready?b.dice+' '+b.type:'—',range:b.ready?b.range.join('/'):'—'},derivedFields:['damage','range']};
+      preview={stats:{...stats,damage:b.ready?b.dice+' '+b.type:'–',range:b.ready?b.range.join('/'):'–'},derivedFields:['damage','range']};
     }
     const platform=specializedPlatform(mode,draft.equipment.source);
     const handling=sourceWeaponHandling(mode,draft.overrides[id]?.bulkState,draft.overrides[id]?.bulk??null);
@@ -48,13 +61,13 @@ export function standaloneModeFields(draft) {
         selected ? `<label>${escape(standaloneText("Skill"))}<input type="text" data-standalone-stat="governingSkill" data-mode-id="${escape(id)}" value="${escape(draft.overrides[id]?.governingSkill ?? "")}" placeholder="${escape(standaloneText("MissingInput"))}" title="${escape(standaloneText("Missing"))}"></label>` :
           `<p>${escape(standaloneText("Skill"))}: ${escape(skillName)}</p>`) +
       (selected && platform?.kind==='host-dependent' ?
-        (platform.stockConfiguration?`<label>Исполнение FN 303<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите исполнение</option><option value="stock"${draft.overrides[id]?.installation==='stock'?' selected':''}>С прикладом — Bulk −4</option><option value="host"${draft.overrides[id]?.installation==='host'?' selected':''}>Подствольное</option></select></label>`:'')+
+        (platform.stockConfiguration?`<label>Исполнение FN 303<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите исполнение</option><option value="stock"${draft.overrides[id]?.installation==='stock'?' selected':''}>С прикладом – Bulk −4</option><option value="host"${draft.overrides[id]?.installation==='host'?' selected':''}>Подствольное</option></select></label>`:'')+
         `<label>Bulk оружия-носителя<input data-standalone-stat="hostBulk" data-mode-id="${escape(id)}" value="${escape(draft.overrides[id]?.hostBulk??'')}" placeholder="Например, −5"></label><p class="hint">${platform.source}: к Bulk носителя прибавляется ${platform.hostBulkAdjustment}. Собственный носитель не изменяется.</p>`:'')+
       (selected && platform?.instruction?`<p class="hint">${escape(platform.instruction)}</p>`:'')+
-      (selected&&ladarProfile(id)?ladarProfile(id).size==='Smartskin'?`<label>Носитель<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите носитель</option>${campaignTL===null||campaignTL>=11||draft.overrides[id]?.installation==='nightwing-ut230'?`<option value="nightwing-ut230"${draft.overrides[id]?.installation==='nightwing-ut230'?' selected':''}>Nightwing — 10 миль, UT230</option>`:''}</select></label>`:`<label>TL сенсора<select data-standalone-stat="sensorTL" data-mode-id="${escape(id)}">${[9,10,11,12].filter(tl=>campaignTL===null||tl<=campaignTL||tl===Number(draft.overrides[id]?.sensorTL??9)).map(tl=>`<option value="${tl}"${Number(draft.overrides[id]?.sensorTL??9)===tl?' selected':''}>${tl}</option>`).join('')}</select></label>`:'')+
-      (selected && htPreGaussProfile(id)?.continuousUnits?`<label>Струя Beattie M2-2<select data-standalone-stat="jetMode" data-mode-id="${escape(id)}"><option value="short" ${draft.overrides[id]?.jetMode!=='continuous'?'selected':''}>2 с — один подготовленный заряд</option><option value="continuous" ${draft.overrides[id]?.jetMode==='continuous'?'selected':''}>10 с — пять подготовленных зарядов</option></select></label>`:'')+
+      (selected&&ladarProfile(id)?ladarProfile(id).size==='Smartskin'?`<label>Носитель<select data-standalone-stat="installation" data-mode-id="${escape(id)}"><option value="">Выберите носитель</option>${campaignTL===null||campaignTL>=11||draft.overrides[id]?.installation==='nightwing-ut230'?`<option value="nightwing-ut230"${draft.overrides[id]?.installation==='nightwing-ut230'?' selected':''}>Nightwing – 10 миль, UT230</option>`:''}</select></label>`:`<label>TL сенсора<select data-standalone-stat="sensorTL" data-mode-id="${escape(id)}">${[9,10,11,12].filter(tl=>campaignTL===null||tl<=campaignTL||tl===Number(draft.overrides[id]?.sensorTL??9)).map(tl=>`<option value="${tl}"${Number(draft.overrides[id]?.sensorTL??9)===tl?' selected':''}>${tl}</option>`).join('')}</select></label>`:'')+
+      (selected && htPreGaussProfile(id)?.continuousUnits?`<label>Струя Beattie M2-2<select data-standalone-stat="jetMode" data-mode-id="${escape(id)}"><option value="short" ${draft.overrides[id]?.jetMode!=='continuous'?'selected':''}>2 с – один подготовленный заряд</option><option value="continuous" ${draft.overrides[id]?.jetMode==='continuous'?'selected':''}>10 с – пять подготовленных зарядов</option></select></label>`:'')+
       (selected && platform?.blockedReason?`<p class="hint">${escape(platform.blockedReason)}</p>`:'')+
-      (selected&&sonicShuriken(id)?`<label>Конструкция<select data-standalone-stat="sonicChemical" data-mode-id="${escape(id)}"><option value="">Обычная — $400</option><option value="enabled" ${draft.overrides[id]?.sonicChemical==='enabled'?'selected':''}>Химическая — $450, две дозы отдельно</option></select></label>`:'')+
+      (selected&&sonicShuriken(id)?`<label>Конструкция<select data-standalone-stat="sonicChemical" data-mode-id="${escape(id)}"><option value="">Обычная – $400</option><option value="enabled" ${draft.overrides[id]?.sonicChemical==='enabled'?'selected':''}>Химическая – $450, две дозы отдельно</option></select></label>`:'')+
       (selected && platform?.terminalInstruction?`<p class="hint">${escape(platform.terminalInstruction)}</p>`:'')+
       (selected ? sourceBulkChoiceHTML(mode,draft.overrides[id]?.bulkState,escape,`data-standalone-stat="bulkState" data-mode-id="${escape(id)}"`)+`<div class="gam-standalone-stats">${keys.map(key => {
         const value = key==='bulk'&&handling?.bulkMetadata?handling.bulkMetadata.numericBulk:preview?.stats[key] ?? draft.overrides[id]?.[key] ?? stats[key] ?? "";
@@ -99,7 +112,7 @@ export function bindStandaloneConfiguration(root, draft) {
       for(const input of modes.querySelectorAll('[data-standalone-stat]')){
         const id=input.dataset.modeId,key=input.dataset.standaloneStat;if(!ltBowProfile(id)||!['damage','range'].includes(key))continue;
         const b=resolveLTBowBase({modeId:id,configuration:draft.ltBow,actor:draft.actor,sourceStats:draft.overrides[id]});
-        input.value=draft.statPreview?.(id)?.stats[key]??(b.ready?(key==='damage'?b.dice+' '+b.type:b.range.join('/')):'—');input.readOnly=true;
+        input.value=draft.statPreview?.(id)?.stats[key]??(b.ready?(key==='damage'?b.dice+' '+b.type:b.range.join('/')):'–');input.readOnly=true;
       }
     }});}
   const options = () => { models.innerHTML = standaloneModelOptions(draft); };
@@ -135,7 +148,14 @@ export function bindStandaloneConfiguration(root, draft) {
 }
 
 /** Preparation library reached from Помощник ближнего боя, including actors with no GGA attacks. */
-export async function openStandaloneWeaponLibrary({ actor, type = "melee", catalogs = globalThis.OleGURPSQOL?.catalogs }) {
+const OPEN_WEAPON_LIBRARIES=new Map();
+export function openStandaloneWeaponLibrary(options) {
+  const key=(options.actor.uuid??options.actor.id)+':'+(options.type??'melee'),existing=OPEN_WEAPON_LIBRARIES.get(key);
+  if(existing){existing.dialog?.bringToFront?.();return existing.promise;}
+  const entry={};entry.promise=Promise.resolve().then(()=>renderStandaloneWeaponLibrary(options,entry)).finally(()=>{if(OPEN_WEAPON_LIBRARIES.get(key)===entry)OPEN_WEAPON_LIBRARIES.delete(key);});
+  OPEN_WEAPON_LIBRARIES.set(key,entry);return entry.promise;
+}
+async function renderStandaloneWeaponLibrary({ actor, type = "melee", catalogs = globalThis.OleGURPSQOL?.catalogs },entry) {
   if (!actor.isOwner) throw new Error(standaloneText("Owner"));
   try { await catalogs?.load(); } catch (error) { console.warn("OleGURPS catalog", error); }
   const DialogV2 = foundry.applications.api.DialogV2;
@@ -143,19 +163,28 @@ export async function openStandaloneWeaponLibrary({ actor, type = "melee", catal
   const content = () => {
     const rows = service.list(type);
     return `<div class="standard-form gam-standalone-library"><p class="hint">${escape(standaloneText("Pending"))}</p>` +
-      (rows.length ? rows.map(w => `<section class="gam-standalone-mode"><h3>${escape(w.name)}</h3><p>${escape(w.source.source)} · ${escape(w.modes.map(m => m.snapshot.usage || m.modeId).join("; "))}</p>
+      (type==='melee'?unarmedLibraryHTML(actor):'')+
+      (rows.length ? rows.map(w => `<section class="gam-standalone-mode"><h3>${escape(w.name)}</h3><p>${escape(w.source.source)} · ${type==='melee'&&w.modes.length>1?'Режимов: '+w.modes.length:escape(w.modes.map(m => m.snapshot.usage || m.modeId).join("; "))}</p>
         <div class="gam-standalone-actions">${type === "melee" ? `<button type="button" data-standalone-use="${escape(w.id)}">Выбрать для атаки</button>` : ""}<button type="button" data-standalone-edit="${escape(w.id)}">${escape(standaloneText("Edit"))}</button><button type="button" data-standalone-remove="${escape(w.id)}">${escape(standaloneText("Delete"))}</button></div></section>`).join("") : `<p>${escape(standaloneText("Empty"))}</p>`) +
       `<button type="button" data-standalone-add>${escape(standaloneText("Add"))}</button></div>`;
   };
-  return DialogV2.wait({ window: { title: standaloneText("Library") + " — " + actor.name }, position: { width: 680 },
+  return DialogV2.wait({ window: { title: standaloneText("Library") + " – " + actor.name }, position: { width: 680 },
     content: content(), buttons: [{ action: "close", label: standaloneText("Cancel") }], rejectClose: false, modal: false,
     render: (_event, dialog) => {
+      entry.dialog=dialog;
+      installViewportBounds(dialog);
       const root = dialog.element;
       root.addEventListener("click", async event => {
-        const button = event.target.closest("[data-standalone-add], [data-standalone-edit], [data-standalone-remove], [data-standalone-use]");
+        const button = event.target.closest("[data-personal-unarmed-add], [data-standalone-add], [data-standalone-edit], [data-standalone-remove], [data-standalone-use]");
         if (!button || button.disabled) return;
         event.preventDefault(); button.disabled = true;
         try {
+          if(button.hasAttribute('data-personal-unarmed-add')) {
+            const id=root.querySelector('[name=personalUnarmedAttack]')?.value;
+            await new WeaponListVisibility(actor).change('add-unarmed',id,()=>unarmedLibraryEntries(actor));
+            const current=root.querySelector('.gam-standalone-library');if(current)current.outerHTML=content();
+            return;
+          }
           if (button.dataset.standaloneUse) {
             if (globalThis.canvas?.tokens?.controlled?.length !== 1 || globalThis.canvas.tokens.controlled[0].actor?.id !== actor.id)
               throw new Error("Выберите токен этого персонажа, чтобы открыть помощник атаки.");
@@ -186,13 +215,16 @@ export async function openStandaloneWeaponLibrary({ actor, type = "melee", catal
             const result = await DialogV2.input({ window: { title: standaloneText(existing ? "Edit" : "Add") },
               content: `<div class="standard-form"><label><input type="checkbox" checked disabled>${escape(standaloneText("Absent"))}</label>${standaloneConfigurationHTML(draft)}</div>`,
               position: { width: 720 }, modal: false, rejectClose: false, ok: { label: standaloneText("Save") },
-              render: (_event, editor) => bindStandaloneConfiguration(editor.element, draft) });
+              render: (_event, editor) => {
+                installViewportBounds(editor);
+                bindStandaloneConfiguration(editor.element, draft);
+              } });
             if (result) await service.save(draft);
           }
           const current = root.querySelector('.gam-standalone-library');
           if (current) current.outerHTML = content();
         } catch (error) { ui.notifications.error(moduleMessage(error.message)); }
-        finally { if (button.isConnected) button.disabled = false; }
+        finally { if (button.isConnected) button.disabled = false; if(dialog.rendered)dialog.bringToFront?.(); }
       });
     }
   });

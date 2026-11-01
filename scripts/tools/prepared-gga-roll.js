@@ -209,7 +209,7 @@ export async function executePreparedGgaRoll({
     const robot=attackProfile.damage.rules.robot;
     if(actor?.isOwner===false&&!game.user?.isGM)throw Error('Нет прав владельца персонажа.');
     const damageLink=followon&&typeof GURPS.gurpslink==='function'?GURPS.gurpslink(followon):followon;
-    const content=`<p><strong>${escapeModifierHtml(robot.name)} — запуск зарегистрирован.</strong></p><p>Поведение и попадание робота разрешаются вручную; броска попадания стрелка нет.</p>`+
+    const content=`<p><strong>${escapeModifierHtml(robot.name)} – запуск зарегистрирован.</strong></p><p>Поведение и попадание робота разрешаются вручную; броска попадания стрелка нет.</p>`+
       (damageLink?`<div class="roll-message gga-chat-message olegurps-robot-manual-damage">${damageLink}</div>`:'')+utPayloadChatHTML(shotSnapshot?.profile??attackProfile,escapeModifierHtml);
     const messageData={user:game.user.id,speaker:ChatMessage.getSpeaker({actor}),content,flags:{'olegurps-qol':{
       shotStorageVersion:SHOT_STORAGE_VERSION,...(attackProfile.damage.rules.resistanceEffect?{resistanceEffect:structuredClone(attackProfile.damage.rules.resistanceEffect)}:{}),
@@ -286,7 +286,7 @@ export async function executePreparedGgaRoll({
 
   const chatdata = {
     prefix: "",
-    chatthing: manualGuided ? escapeModifierHtml(exactName+' — '+(manualArtillery?'регистрация непрямого выстрела':moduleText('OleGURPS.UTPayload.'+(proximity?'ProximityRegistration':manualSEFOP?'SEFOPRegistration':'HomingRegistration')))) : attack?.standaloneRef ? escapeModifierHtml(exactName) : chatthing,
+    chatthing: manualGuided ? escapeModifierHtml(exactName+' – '+(manualArtillery?'регистрация непрямого выстрела':moduleText('OleGURPS.UTPayload.'+(proximity?'ProximityRegistration':manualSEFOP?'SEFOPRegistration':'HomingRegistration')))) : attack?.standaloneRef ? escapeModifierHtml(exactName) : chatthing,
     thing: cleanName,
     origtarget: baseSkill,
     fromUser: game.user.id,
@@ -324,7 +324,7 @@ export async function executePreparedGgaRoll({
     const deviation=failure?(attackProfile.context.areaSquaredScatter?Math.max(0,-margin)**2:Math.min(Math.max(0,-margin),Math.ceil(distance/2))):0;
     const direction=failure?await Roll.create('1d6').evaluate():null;
     chatdata.areaEffect={point:structuredClone(point),distance,radius:attackProfile.damage.rules.nextEleven.radius,scatterYards:deviation,direction:direction?.total??null,source:'B413–414'};
-    content+=`<p>Область Displacer: радиус ${attackProfile.damage.rules.nextEleven.radius} ярд. ${failure?'Промах: отклонение '+deviation+' ярд.; направление '+direction.total+' (1 — вперёд, далее по 60°).':'Область попала в выбранную точку.'}</p>`+
+    content+=`<p>Область Displacer: радиус ${attackProfile.damage.rules.nextEleven.radius} ярд. ${failure?'Промах: отклонение '+deviation+' ярд.; направление '+direction.total+' (1 – вперёд, далее по 60°).':'Область попала в выбранную точку.'}</p>`+
       `<details class="olegurps-chat-details"><summary>Точка и область</summary><p>Точка: ${point.x}, ${point.y}; дистанция ${distance} ярд. B413–414. Цели и уход из области разрешаются вручную.</p></details>`;
   }
   if(attackProfile?.damage?.rules?.plasmaParticle?.hotshot)content+=`<p>${hotshotMalf?'Отказ Hotshot (Malf14). Последствия по B407 применяются вручную.':'Hotshot: Malf14; расход ×2. UT133.'}</p>`;
@@ -334,14 +334,14 @@ export async function executePreparedGgaRoll({
     const link=typeof GURPS.gurpslink==='function'?GURPS.gurpslink(followon):followon;
     content+=`<div class="roll-message gga-chat-message olegurps-cone-damage">${link}</div>`;
   }
-  if(hotCartridge&&hotshotMalf)content+='<p>\u041e\u0442\u043a\u0430\u0437 Hot Power Cartridge (Malf14); B407 \u2014 \u0432\u0440\u0443\u0447\u043d\u0443\u044e.</p>';
+  if(hotCartridge&&hotshotMalf)content+='<p>\u041e\u0442\u043a\u0430\u0437 Hot Power Cartridge (Malf14); B407 \u2013 \u0432\u0440\u0443\u0447\u043d\u0443\u044e.</p>';
   const electro=attackProfile?.damage?.rules?.electrolaser;
   if(electro)content+=`<p>Режим: ${electro.mode==='kill'?'Kill':'Standard'}. Расход: ${electro.unitsPerShot} ${electro.unitsPerShot===1?'заряд':'заряда'} на выстрел.</p>`+
     `<details class="olegurps-chat-details"><summary>Условия электролазера</summary><p>Смена Standard/Kill требует Ready (UT119). ${electro.mode==='kill'?'Kill: LC2.':''}</p>`+
     `<p>${potentialHits} попаданий: ожог${attackProfile.damage.rules.resistanceEffect?' и независимое HT-сопротивление для каждого попадания':''}. ${electro.visibilityDR?'Добавочный DR лучу от видимости: '+electro.visibilityDR+'; учтите вручную при Damage.':''}</p></details>`;
   if(manualGuided){
     const damageLink=typeof GURPS.gurpslink==='function'?GURPS.gurpslink(followon):followon;
-    content+=(proximity?'':`<p class="olegurps-sefop-outcome">${escapeModifierHtml(manualArtillery?'Выстрел зарегистрирован. Точка падения, scatter и попадание определяются вручную; Damage — после подтверждённого попадания.':moduleText('OleGURPS.UTPayload.'+(manualSEFOP?'SEFOPManualOutcome':'HomingManualOutcome')))}</p>`)+
+    content+=(proximity?'':`<p class="olegurps-sefop-outcome">${escapeModifierHtml(manualArtillery?'Выстрел зарегистрирован. Точка падения, scatter и попадание определяются вручную; Damage – после подтверждённого попадания.':moduleText('OleGURPS.UTPayload.'+(manualSEFOP?'SEFOPManualOutcome':'HomingManualOutcome')))}</p>`)+
       `<div class="roll-message gga-chat-message olegurps-sefop-manual-damage">${damageLink}</div>`;
   }
   if(attackProfile?.damage?.rules?.backblast){
@@ -350,7 +350,7 @@ export async function executePreparedGgaRoll({
       const template=runtime.document.createElement('template');template.innerHTML=GURPS.gurpslink('['+b.formula+']');
       const link=template.content.querySelector('.gurpslink');if(link){link.dataset.olegurpsShotComponent='backblast';auxiliary='<div class="roll-message gga-chat-message">'+template.innerHTML+'</div>';}
     }
-    content+=`<details class="olegurps-chat-details" data-ut-backblast><summary>Обратная струя</summary><p>${escapeModifierHtml(b.formula)}; конус ${b.coneYards} ярд. позади. Затронутые цели — вручную. UT145.</p>${auxiliary}</details>`;
+    content+=`<details class="olegurps-chat-details" data-ut-backblast><summary>Обратная струя</summary><p>${escapeModifierHtml(b.formula)}; конус ${b.coneYards} ярд. позади. Затронутые цели – вручную. UT145.</p>${auxiliary}</details>`;
   }
   if (contextLabel) {
     const safeContext = String(contextLabel).replace(/[&<>"']/g, character => ({
@@ -385,7 +385,7 @@ export async function executePreparedGgaRoll({
   const emConditions=gaussManualConditions((shotSnapshot?.profile??attackProfile)?.binding?.confirmed?.modeId);
   if(emConditions.length)content+=`<details class="olegurps-chat-details"><summary>Особенности оружия</summary>${emConditions.map(c=>escapeModifierHtml(c.text)).join('<br>')}</details>`;
   const reliability=(shotSnapshot?.profile ?? attackProfile)?.weaponReliability;
-  if(reliability&&!hotCartridge&&!attackProfile?.damage?.rules?.plasmaParticle?.hotshot)content+=`<details class="olegurps-chat-details"><summary>Особенности оружия</summary>Malf ${escapeModifierHtml(reliability.malf)} (${escapeModifierHtml(reliability.source)}). Проверка надёжности — вручную; поправки боеприпаса учитываются отдельно.</details>`;
+  if(reliability&&!hotCartridge&&!attackProfile?.damage?.rules?.plasmaParticle?.hotshot)content+=`<details class="olegurps-chat-details"><summary>Особенности оружия</summary>Malf ${escapeModifierHtml(reliability.malf)} (${escapeModifierHtml(reliability.source)}). Проверка надёжности – вручную; поправки боеприпаса учитываются отдельно.</details>`;
   const messageData = {
     // Payload text belongs to the selected shot only; never copy weapon/GCS Notes.
     user: game.user.id,

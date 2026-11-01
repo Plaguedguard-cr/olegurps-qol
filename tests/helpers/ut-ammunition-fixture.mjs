@@ -52,6 +52,24 @@ async function load(fx,type,rounds=8) {
   await fx.transaction('add-stock',{ammoKey:type.key,amount:rounds});const id=fx.weapon().ammunitionInventory.installedId;
   await fx.transaction('load',{magazineId:id,ammoKey:type.key,amount:Math.min(rounds,fx.weapon().ammunitionInventory.magazines[0].capacity)});return id;
 }
+// LT-P5 requires a physical batch fitted to this exact weapon and charge slot.
+// Keep raw catalogue entries unavailable; use the same service as the editor.
+async function prepareArbalest(fx) {
+  assert.equal(fx.carrier.standaloneModeId,'W4gnbkfxzHAYre3kO');
+  const ammoId='lt_arbalest_bolt_lt81';
+  const raw=fx.candidates().find(t=>t.ammoId===ammoId&&!t.recipe);
+  assert.ok(raw?.unavailable&&raw.requiresPreparation);
+  await assert.rejects(fx.transaction('add-stock',{ammoKey:raw.key,amount:1}),/TypeUnavailable/);
+  const type={source:'catalog',book:'lt',kind:'ammo-item',ammoId,name:'Arbalest Bolt',recipe:{version:1,variantId:'lt_artillery_load',customId:crypto.randomUUID(),parameters:{
+    accounting:'components',loading:'mechanical',powder:null,powderQuality:'normal',massFactor:1,
+    fit:{equipmentId:'eplqAiEXFYhk9kTJM',weaponId:fx.carrier.id,barrels:[0]}}}};
+  type.key=ammoTypeKey(type);
+  await fx.transaction('save-recipe',{type});
+  await fx.transaction('lt-early-configure',{settings:{setupReady:true,mountReady:true,procedureReady:true,visionReady:true,crew:1,cocking:'crank'}});
+  const prepared=fx.candidates().find(t=>t.key===type.key);
+  assert.ok(prepared&&!prepared.unavailable,'fitted ordinary bolt must be available');
+  return prepared;
+}
 function nativeRuntime(actor){
   const messages=[];return {messages,runtime:{game:{user:game.user,settings:{get:()=>null}},
     GURPS:{ModifierBucket:{modifierStack:{},applyMods:async()=>[]},setLastTargetedRoll(){}},canvas:{tokens:{placeables:[]}},
@@ -75,4 +93,4 @@ import {utPayloadParameters} from '../../scripts/tools/ut-special-ammunition.js'
 const escapePayload=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 
-export {fixture,load,shoot,catalogs,compatibility,automatic,resolver,api,escapePayload};
+export {fixture,load,prepareArbalest,shoot,catalogs,compatibility,automatic,resolver,api,escapePayload};

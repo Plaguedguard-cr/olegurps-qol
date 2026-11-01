@@ -36,7 +36,7 @@ export function gaussSpeedHTML(weapon,escape,{name='gaussSpeed'}={}) {
 }
 export function gaussManualConditions(modeId) {
   const p=gaussProfile(modeId);if(!p)return [];
-  if(p.nail)return [{id:'gauss-nail-safety',text:'UT82–83: блокировка по живой плоти; отключение — Electronics Operation (Security), 1 минута на попытку. DR 3+ скрывает плоть. Условия и бросок учитываются вручную.'}];
+  if(p.nail)return [{id:'gauss-nail-safety',text:'UT82–83: блокировка по живой плоти; отключение – Electronics Operation (Security), 1 минута на попытку. DR 3+ скрывает плоть. Условия и бросок учитываются вручную.'}];
   if(['W__0RKAth-4yvVBSl','WdV0VzMAch5j8pxdy','WbvkCgoaLuWViWyKK','WJstukbcBFPxQFtJE','WdI9_2mws5U3wSQl-'].includes(modeId))
     return [{id:'gauss-platform',text:'UT141–143: установка, наведение, перезарядка и рассеивание при непрямом огне учитываются вручную.'}];
   return [];

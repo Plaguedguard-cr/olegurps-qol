@@ -2401,7 +2401,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -4159,7 +4159,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -5922,7 +5922,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -7720,7 +7720,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -9511,7 +9511,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -11294,7 +11294,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -13052,7 +13052,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -14815,7 +14815,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -16603,7 +16603,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -18386,7 +18386,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -20159,7 +20159,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -21960,7 +21960,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -23762,7 +23762,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -25516,7 +25516,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -29139,7 +29139,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -30921,7 +30921,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -32703,7 +32703,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -34485,7 +34485,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -36235,7 +36235,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -37952,7 +37952,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -39669,7 +39669,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -41386,7 +41386,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -43130,7 +43130,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -44893,7 +44893,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -46656,7 +46656,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -48432,7 +48432,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -50189,7 +50189,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -51908,7 +51908,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -53666,7 +53666,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -55627,7 +55627,7 @@
         "reloadSeconds": 5
       },
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -57848,7 +57848,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -59828,7 +59828,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -62268,7 +62268,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -64515,7 +64515,7 @@
       "candidateId": "swarm",
       "kind": "warhead",
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",
@@ -66457,7 +66457,7 @@
         "reloadSeconds": 3
       },
       "status": "incompatible",
-      "reason": "UT152/UT156: принят приоритет специального правила UT156 — Swarm только от 40mm.",
+      "reason": "UT152/UT156: принят приоритет специального правила UT156 – Swarm только от 40mm.",
       "basis": "UT156-priority-over-UT152",
       "conditions": [
         "source-conflict",

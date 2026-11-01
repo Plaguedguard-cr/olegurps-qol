@@ -88,7 +88,7 @@ async function showConfirmation(request, runtime = globalThis) {
     : '<p><strong>Цель:</strong> ' + escapeHTML(targetName) + '</p>';
   return DialogV2.wait({
     window: {
-      title: "Подавляющий огонь — Зона " + (request.zoneIndex + 1)
+      title: "Подавляющий огонь – Зона " + (request.zoneIndex + 1)
     },
     position: { width: 430 },
     content: '<div class="standard-form">' +

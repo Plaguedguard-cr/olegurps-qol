@@ -1,3 +1,4 @@
+import {weaponResourceStatLines} from './weapon-resource-presentation.js';
 import { recoilNotApplicable } from './weapon-recoil.js';
 import {ltEarlyProfile} from '../lt-early-firearms-source.js';
 import {duckFootFieldsHTML,captureDuckFootInputs,readDuckFootContext} from './lt-duck-foot.js';
@@ -45,7 +46,6 @@ import { proximityRangeReason } from './ut-he-proximity.js';
 import { weaponResourceReason as weaponPowerReason } from './weapon-resources.js';
 import { uawWeaponView } from './ut-uaw.js';
 import { getRangeBandDistance } from './fire-range-service.js';
-import { weaponResourceLabel as beamResourceLabel } from './weapon-resources.js';
 
 const ApplicationV2 = foundry.applications.api.ApplicationV2;
 
@@ -728,11 +728,11 @@ const formatDistance = value => new Intl.NumberFormat("ru-RU", {
   maximumFractionDigits: 3
 }).format(Number(value));
 
-const formatAttackStat = value => String(value ?? "").trim() || "—";
+const formatAttackStat = value => String(value ?? "").trim() || "–";
 
 export class FirePreparationApp extends ApplicationV2 {
   get title() {
-    return this.mode==='weapon'&&this.weapon ? `Огонь — ${this._getAttackTitle()}` : super.title;
+    return this.mode==='weapon'&&this.weapon ? `Огонь – ${this._getAttackTitle()}` : super.title;
   }
 
   static DEFAULT_OPTIONS = {
@@ -747,7 +747,7 @@ export class FirePreparationApp extends ApplicationV2 {
     super({
       ...options,
       id: options.id ?? (mode === "standalone" ? "olegurps-fire-control-standalone" : `olegurps-fire-preparation-${token.id}-${weapon.id}`),
-      window: { title: mode === "standalone" ? "Огонь — Fire Control" : `Огонь — ${weapon.name}`, resizable: true, ...(options.window ?? {}) }
+      window: { title: mode === "standalone" ? "Огонь – Fire Control" : `Огонь – ${weapon.name}`, resizable: true, ...(options.window ?? {}) }
     });
     this.mode = mode;
     this.parseRateOfFire = parseRateOfFire;
@@ -983,7 +983,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this.fireState.height = String(context.height);
       this.fireState.elevationDirection = context.elevationDirection;
       if (!this.fireState.manualRangeSelected) this.fireState.selectedRangeIndex = context.rangeIndex;
-    } else if (!target && !this.fireState.manualRangeSelected) {
+    } else if (!this.fireState.manualRangeSelected) {
       this.fireState.selectedRangeIndex = null;
       this.fireState.height = "";
       this.fireState.elevationDirection = "level";
@@ -1195,7 +1195,6 @@ export class FirePreparationApp extends ApplicationV2 {
     this.fireState.proximityDistance = root.querySelector('[name="proximityDistance"]')?.value ?? this.fireState.proximityDistance ?? '';
     this.fireState.projectileDistance = root.querySelector('[name="projectileDistance"]')?.value ?? this.fireState.projectileDistance ?? '';
     this.fireState.manualGuidanceConfirmed = root.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
-    this.fireState.sensorTargetingConfirmed=root.querySelector('[name="sensorTargetingConfirmed"]')?.checked===true;
     this.fireState.areaSquaredScatter=root.querySelector('[name="areaSquaredScatter"]')?.checked===true;
     this.fireState.attackEnvironment = root.querySelector('[name="attackEnvironment"]')?.value ?? "air";
     this.fireState.depthFeet = root.querySelector('[name="depthFeet"]')?.value ?? "";
@@ -1273,7 +1272,6 @@ export class FirePreparationApp extends ApplicationV2 {
       fluidBounces:Number(this.element?.querySelector('[name="fluidBounces"]')?.value??this.fireState.fluidBounces??0),
       shots: this._getShotsValue(),
       manualGuidanceConfirmed:this.fireState.manualGuidanceConfirmed,
-      sensorTargetingConfirmed:this.fireState.sensorTargetingConfirmed===true,
       areaPoint:this.fireState.areaPoint??null,
       areaSquaredScatter:this.fireState.areaSquaredScatter===true,
       rangedRapidStrike: this.fireState.rangedRapidStrike,
@@ -1512,7 +1510,7 @@ export class FirePreparationApp extends ApplicationV2 {
   _getModifierTotalText() {
     const base = Number(this.attack?.level);
     const effective = this.calculateEffectiveSkill?.(this.getShotOptions(), this.targetingService);
-    if (!Number.isFinite(base) || base <= 0 || !Number.isFinite(effective)) return "\u2014";
+    if (!Number.isFinite(base) || base <= 0 || !Number.isFinite(effective)) return "\u2013";
     const total = Math.trunc(effective - base);
     return total > 0 ? `+${total}` : String(total);
   }
@@ -1587,10 +1585,10 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _getDisplayedAcc(fireState = this.fireState) {
-    if(this.attack?.platformRules?.accNotApplicable)return '—';
-    if (this.mode === "standalone" && this.attack?.acc === null) return "—";
+    if(this.attack?.platformRules?.accNotApplicable)return '–';
+    if (this.mode === "standalone" && this.attack?.acc === null) return "–";
     const baseAcc = Number(this.attack?.acc);
-    if (!Number.isFinite(baseAcc)) return "—";
+    if (!Number.isFinite(baseAcc)) return "–";
     return String(Math.trunc(baseAcc) + (fireState.braced && !fireState.moveAndAttack ? 1 : 0));
   }
 
@@ -1603,8 +1601,7 @@ export class FirePreparationApp extends ApplicationV2 {
     return [
       this.attack?.ammunitionDisplay?.electrolaser?.heading??(this.attack?.ammunitionDisplay??attackProfilePresentation(null)).damageText,
       ...(this.attack?.data?.range?['Range '+(fluidProfile(this.attack?.standaloneRef?.modeId)?fluidEffectiveRange(fluidProfile(this.attack.standaloneRef.modeId),Number(this.fireState.fluidBounces??0)).join('/'):this.attack.data.range)]:[]),
-      ...(this.attack?.ammunitionLTEarly?.kind==='flame'?['Остаток '+this.attack.ammunitionLTEarly.stateBefore?.remaining+(this.attack.ammunitionLTEarly.system==='blowpipe'?' заряд':' с')]:beamResourceLabel(weapon)?[beamResourceLabel(weapon)]:this.attack?.standaloneRef && weapon.ammoUnconfigured && !weapon.magazines.length ?
-        ["Без учёта боезапаса"] : [`${this.attack?.platformRules?.rofJet?'резервуар':'магазин'} ${weapon.magazines[weapon.loadedIndex]}/${weapon.capacity}`]),
+      ...weaponResourceStatLines(weapon),
       `RoF ${displayedRoF}`,
       this.attack?.platformRules?.accNotApplicable?'Acc не применяется':`Acc ${displayedAcc}`,
       `\u041f\u0440\u0438\u0446\u0435\u043b ${Math.max(0, Math.trunc(Number(this.attack?.scopeBonus) || 0))}`,
@@ -1744,8 +1741,8 @@ export class FirePreparationApp extends ApplicationV2 {
     const fluid=fluidProfile(this.attack?.standaloneRef?.modeId);
     if(fluid){
       const range=fluidEffectiveRange(fluid,Number(this.fireState.fluidBounces??0)),filler=FLUID_FILLERS[this.attack?.ammunitionFluid?.fillerId];
-      return `<p class="hint">Полная длина пути: до ${range.at(-1)} ярдов${range.length===2?'; ½D '+range[0]+' ярдов':''}. ${fluid.vortex?'Косые рикошеты: −2 к атаке и −10% исходной дальности за каждый. Прямое столкновение раскрывает газовое кольцо.':'Струя без штрафа за дальность. Респираторный агент — в лицо без штрафа за зону; контактный — на тело.'}</p>`+
-        (fluid.modeId==='WXki2UKT5ScYY4QsY'?'<p class="hint">Баллон DR10: пробитие может выпустить весь запас как 100mm biochemical — вручную, UT134,153.</p>':'')+
+      return `<p class="hint">Полная длина пути: до ${range.at(-1)} ярдов${range.length===2?'; ½D '+range[0]+' ярдов':''}. ${fluid.vortex?'Косые рикошеты: −2 к атаке и −10% исходной дальности за каждый. Прямое столкновение раскрывает газовое кольцо.':'Струя без штрафа за дальность. Респираторный агент – в лицо без штрафа за зону; контактный – на тело.'}</p>`+
+        (fluid.modeId==='WXki2UKT5ScYY4QsY'?'<p class="hint">Баллон DR10: пробитие может выпустить весь запас как 100mm biochemical – вручную, UT134,153.</p>':'')+
         `<details><summary>Наполнитель: ${escapeHTML(filler?.name??'не выбран')}</summary><p>${escapeHTML(filler?.brief??'')}</p></details>`;
     }
     const language = globalThis.game?.i18n?.lang ?? "ru";
@@ -1762,7 +1759,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const impact=this.attack?.ammunitionDisplay?.electrolaser;
     const html=lines.map(text => `<p class="hint">${escapeHTML(text)}</p>`).join("");
     return impact?`<details class="gam-fire-electrolaser-impact" data-electrolaser-impact><summary>Воздействие</summary>`+
-      `<p>${escapeHTML(impact.linked?'Связанный ожог: '+impact.burn+'. Оба воздействия — одна атака.':'Лазерный ожог: '+impact.burn+'. Электрического эффекта нет.')}</p>${html}</details>`:html;
+      `<p>${escapeHTML(impact.linked?'Связанный ожог: '+impact.burn+'. Оба воздействия – одна атака.':'Лазерный ожог: '+impact.burn+'. Электрического эффекта нет.')}</p>${html}</details>`:html;
   }
 
   _updateSkillPreview() {
@@ -2149,7 +2146,6 @@ export class FirePreparationApp extends ApplicationV2 {
       this._aimManuallyEdited = true;
     } else if (field.name === "braced") this.fireState.braced = field.checked;
     else if (field.name === "laserSight") this.fireState.laserSight = field.checked;
-    else if(field.name==='sensorTargetingConfirmed')this.fireState.sensorTargetingConfirmed=field.checked;
     else if(field.name==='areaSquaredScatter')this.fireState.areaSquaredScatter=field.checked;
     else if (field.name === "moveAndAttack") {
       this.fireState.moveAndAttack = field.checked;
@@ -2446,7 +2442,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const text = name => weaponText(name, { game: { i18n: { lang: language } } });
     const skill = this._getGoverningSkill();
     if (this.attack?.standaloneRef) return standaloneSkillDescription(skill);
-    return text("SkillSummary") + ": " + (skill ? `${skill.name} \u2014 ${skill.level}` : text("SelectSkill"));
+    return text("SkillSummary") + ": " + (skill ? `${skill.name} \u2013 ${skill.level}` : text("SelectSkill"));
   }
 
   _getHitLocationMarkers(zoneId, regionId = null, _fireState = this.fireState) {
@@ -2559,7 +2555,7 @@ export class FirePreparationApp extends ApplicationV2 {
           <div class="gam-hit-panel">
             <div class="gam-hit-map">
               <div class="gam-hit-stage" style="--gam-hit-aspect:${escapeHTML(this.targetingService.aspectRatio)}">
-                <img src="${escapeHTML(this.targetingService.image)}" alt="${escapeHTML(this.targetingService.label)} — зоны попадания">
+                <img src="${escapeHTML(this.targetingService.image)}" alt="${escapeHTML(this.targetingService.label)} – зоны попадания">
                 <svg class="gam-hit-overlay" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-label="Интерактивная схема зон попадания">${regions}</svg>
               </div>
             </div>
@@ -2574,13 +2570,13 @@ export class FirePreparationApp extends ApplicationV2 {
   _buildStandaloneStats(fireState) {
     const fields = [["acc", "Acc"], ["bulk", "Bulk"], ["rcl", "Rcl"], ["halfd", "½D, yd"]];
     const stats = fields.map(([name, label]) =>
-      `<label>${label} <input type="text" name="${name}" value="${escapeHTML(fireState[name])}" placeholder="—" aria-label="${label}" title="${name === "halfd" ? "Необязательно: ½D для определения Extremely Close" : "Необязательная характеристика"}"></label>`
+      `<label>${label} <input type="text" name="${name}" value="${escapeHTML(fireState[name])}" placeholder="–" aria-label="${label}" title="${name === "halfd" ? "Необязательно: ½D для определения Extremely Close" : "Необязательная характеристика"}"></label>`
     ).join("");
     const shotgun = `<div class="gam-fire-shotgun">
       <span>Дробовик</span>
       <input type="checkbox" name="shotgun" aria-label="Дробовик" ${fireState.shotgun ? "checked" : ""}>
       <span aria-hidden="true">×</span>
-      <input type="number" name="projectileMultiplier" value="${escapeHTML(fireState.projectileMultiplier)}" placeholder="—" min="2" step="1" inputmode="numeric" aria-label="Число снарядов после ×" ${fireState.shotgun ? "" : "disabled"}>
+      <input type="number" name="projectileMultiplier" value="${escapeHTML(fireState.projectileMultiplier)}" placeholder="–" min="2" step="1" inputmode="numeric" aria-label="Число снарядов после ×" ${fireState.shotgun ? "" : "disabled"}>
     </div>`;
     return `<div class="gam-fire-manual-stats">${stats}${shotgun}</div><small class="gam-fire-missing-stats" data-missing-stats></small>`;
   }
@@ -2638,10 +2634,10 @@ export class FirePreparationApp extends ApplicationV2 {
     const base = Number.isFinite(skill) ? skill - (safeUnseen ? rules.penalty : 0) : null;
     const calculated = Number.isFinite(base) ? base + rules.penalty : null;
     const final = calculated === null ? null : rules.blind ? Math.min(calculated, 9) : calculated;
-    return `<span>\u0420\u0430\u0441\u0447\u0451\u0442: ${base ?? "\u2014"}</span>
+    return `<span>\u0420\u0430\u0441\u0447\u0451\u0442: ${base ?? "\u2013"}</span>
       <span>\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c: ${rules.penalty}</span>
       ${rules.blind ? "<span>Предел навыка при стрельбе вслепую: 9</span>" : ""}
-      <strong>\u0418\u0442\u043e\u0433: ${final ?? "\u2014"}</strong>`;
+      <strong>\u0418\u0442\u043e\u0433: ${final ?? "\u2013"}</strong>`;
   }
 
   _hasUnseenDirection() {
@@ -2776,7 +2772,6 @@ export class FirePreparationApp extends ApplicationV2 {
             ${this.mode === "standalone" ? this._buildStandaloneStats(fireState) : `<p class="gam-fire-attack-stats" data-attack-stats title="${escapeHTML(attackStats)}">${escapeHTML(attackStats)}</p>`}
             ${this.attack?.ammunitionDisplay?.electrolaser?`<small class="gam-fire-electrolaser-hint" data-electrolaser-effect-hint${this.attack.ammunitionDisplay.electrolaser.hint?'':' hidden'}>${escapeHTML(this.attack.ammunitionDisplay.electrolaser.hint)}</small>`:''}
             ${this.attack?.ammunitionRobot?'<p>Регистрация запуска робота. Команды: Artillery (Guided Missile); поведение, время полёта и попадание разрешаются вручную. Броска попадания стрелка нет.</p>':''}
-            <label><input type="checkbox" name="sensorTargetingConfirmed"${fireState.sensorTargetingConfirmed?' checked':''}>Сенсор +3: цель обнаружена и захвачена; Aim и targeting software подтверждены (UT63–64). Бонус одного сенсора.</label>
             ${this.attack?.platformRules?.areaAttack?`<button type="button" data-fire-action="area-point">Выбрать точку области</button><p>${fireState.areaPoint?'Точка выбрана; атака области +4 (B414).':'Выберите точку на сцене; атака области +4 (B414).'}</p><label><input type="checkbox" name="areaSquaredScatter"${fireState.areaSquaredScatter?' checked':''}>Точка в воздухе/под водой: квадрат степени промаха (B414)</label>`:''}
             ${this.attack?.platformRules?.manualGuidance ? `<p class="hint">${escapeHTML(this.attack.platformRules.instruction)}</p><label><input type="checkbox" name="manualGuidanceConfirmed" ${fireState.manualGuidanceConfirmed?'checked':''}>Подтверждаю ручной учёт наведения и полёта</label>` : ''}
             ${this.attack?.platformRules?.kind==='manual-motor'?`<p class="hint" data-ut-manual-motor>${escapeHTML(this.attack.platformRules.instruction)}</p>`:''}
@@ -2784,7 +2779,7 @@ export class FirePreparationApp extends ApplicationV2 {
             ${Object.hasOwn(UT_GYROC_FAMILIES,this.attack?.standaloneRef?.modeId??'')?`<label>Дистанция Gyroc, ярды<input name="projectileDistance" type="number" min="1" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}" placeholder="По цели или выбранной дистанции"></label>`:''}
             ${this.attack?.ammunitionLTBow?.flight?`<label>Дистанция Flight Arrow, ярды<input name="projectileDistance" type="number" min="0" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}" placeholder="По цели или выбранной дистанции"></label>`:''}
             ${this.attack?.ammunitionLTPersonal?.kind?.startsWith('crossbow-')?`<label>Фактическая дальность доставки, ярды<input name="projectileDistance" type="number" min="0" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}" placeholder="По цели или выбранной дистанции"></label>`:''}
-            ${this.attack?.ammunitionLTEarly?.kind==='flame'?`<p>Одна атака: ${this.attack.ammunitionLTEarly.system==='blowpipe'?'один физический заряд; конус и цели — вручную':'одна секунда Jet'}. Остаток ${this.attack.ammunitionLTEarly.stateBefore?.remaining??0} ${this.attack.ammunitionLTEarly.system==='blowpipe'?'заряд':'с'}.</p><label>Фактическая дистанция, ярды<input name="projectileDistance" type="number" min="0" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}" placeholder="По цели или выбранной дистанции"></label>`:''}
+            ${this.attack?.ammunitionLTEarly?.kind==='flame'?`<p>Одна атака: ${this.attack.ammunitionLTEarly.system==='blowpipe'?'один физический заряд; конус и цели – вручную':'одна секунда Jet'}. Остаток ${this.attack.ammunitionLTEarly.stateBefore?.remaining??0} ${this.attack.ammunitionLTEarly.system==='blowpipe'?'заряд':'с'}.</p><label>Фактическая дистанция, ярды<input name="projectileDistance" type="number" min="0" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}" placeholder="По цели или выбранной дистанции"></label>`:''}
             ${duckFootFieldsHTML(this,escapeHTML)}
             ${this.attack?.ammunitionLTEarly?.kind==='artillery'?`<p data-lt-artillery-procedure>${this.attack.ammunitionLTEarly.indirect?'Непрямой огонь: регистрируется выстрел, а точка падения и попадание определяются вручную. Выбранный Token не считается автоматически поражённым.':'Прямой огонь.'} Снаряжение: ${this.attack.ammunitionLTEarly.reloadSeconds} с; расчёт: ${this.attack.ammunitionLTEarly.crew}. ${this.attack.ammunitionLTEarly.betweenShotsReady?'Между выстрелами: 5 Ready.':''}</p><label>Фактическая дистанция, ярды<input name="projectileDistance" type="number" min="0" step="any" value="${escapeHTML(this.fireState.projectileDistance??'')}" placeholder="По цели или выбранной дистанции"></label>`:''}
             ${this.attack?.standaloneRef?.modeId==='WIijXG9uGZ52T0eW2'?'<p class="hint" data-splat-ready>Размер залпа изменяется после Ready в окне «Патроны». UT136.</p>':''}

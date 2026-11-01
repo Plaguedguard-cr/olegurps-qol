@@ -1,4 +1,6 @@
 import {installExoticBeamDamage} from './tools/exotic-beam-damage.js';
+import {registerWeaponListVisibilityHooks} from './tools/weapon-list-visibility.js';
+import {registerWeaponAssistantReset} from './tools/weapon-assistant-reset.js';
 import { openUnifiedLauncher, registerLauncherSettings } from './unified-launcher.js';
 import { launcherActions, runLauncherAction } from './launcher-actions.js';
 import { launcherButton } from './launcher-button.js';
@@ -95,6 +97,7 @@ Hooks.once("init", () => {
   registerReelingTiredSetting();
   registerDeveloperModeMenu();
   registerWeaponSkillSettings();
+  registerWeaponAssistantReset();
   registerLTPersonalSettings();
   globalThis.OleGURPSQOL = api;
   void catalogs.load().catch(error =>
@@ -102,6 +105,7 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", async () => {
+  registerWeaponListVisibilityHooks();
   await loadWeaponSkillTLTranslations().catch(error => console.error("OleGURPS QOL | Weapon skill translations:", error));
   await loadAmmoEffectTranslations().catch(error => console.error("OleGURPS QOL | Ammo effects translations:", error));
   await loadExplosiveTranslations().catch(error => console.error("OleGURPS QOL | Explosive translations:", error));

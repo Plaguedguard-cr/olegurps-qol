@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 import {exoticDamageProvenance} from './exotic-beam-damage.js';
 import {renderLTFlameBurn} from './lt-flame-burn.js';
 import {applyLTBowDamageResult} from './lt-bow.js';
@@ -67,6 +68,8 @@ const identityCopy = shot => ({ version: shot.version, attackId: shot.attackId, 
   ...(shot.profile?.damage ? { damage: shot.profile.damage, damageAttack: shot.profile.effective,
     transformations: shot.profile.transformations, context: shot.profile.context } : {}) });
 const unlinked = reason => ({ status: "unlinked", reason });
+const meleeLinkedRules=damage=>damage?.rules?.utExotic?.manualLinkedAction?damage.rules.utExotic:damage?.rules?.htSpecial;
+const manualMeleeLinkedShot=shot=>!!meleeLinkedRules(shot?.profile?.damage??shot?.damage)?.manualLinkedAction;
 const explosiveShot = shot => !!(shot?.profile?.damage??shot?.damage)?.rules?.fluid || !!(shot?.profile?.damage??shot?.damage)?.rules?.backblast || ['ghost','conversion'].includes((shot?.profile?.damage??shot?.damage)?.rules?.exoticBeam?.family) || isUTExtendedVariant(shot?.ammunition?.recipe?.variantId) || isExplosiveVariant(shot?.ammunition?.recipe?.variantId) || isEnvironmentVariant(shot?.ammunition?.recipe?.variantId) || isFuzeTracerVariant(shot?.ammunition?.recipe?.variantId);
 const componentConditionIds = new Set(["P4LinkedFollowUp", "P4Fragmentation", "P4SAPLEReliability", "P4HESH", "P4Tandem", "P4Thermobaric"]);
 const ltLinkedShot=shot=>{const r=(shot?.profile?.damage??shot?.damage)?.rules;return !!(r?.ltBow||r?.ltPersonal||r?.ltEarly);};
@@ -120,7 +123,7 @@ export function shotAmmunitionConditions(message, runtime = globalThis) {
 export function ammunitionConditionTexts(conditions = [], language = globalThis.game?.i18n?.lang ?? "ru", excludedKeys = new Set()) {
   return (conditions ?? []).flatMap(condition => {
     if(condition.id==='BeamCondition'&&typeof condition.text==='string')return [condition.text];
-    if(condition.id==='WeaponReliability'&&Number.isFinite(condition.malf))return [`Malf ${condition.malf} (${condition.source}). Проверка надёжности — вручную; поправки боеприпаса учитываются отдельно.`];
+    if(condition.id==='WeaponReliability'&&Number.isFinite(condition.malf))return [`Malf ${condition.malf} (${condition.source}). Проверка надёжности – вручную; поправки боеприпаса учитываются отдельно.`];
     if(condition.id==='SpecializedPlatform'&&typeof condition.text==='string')return [condition.text];
     const f1Key = f1ManualConditionKey(condition.id);
     if (f1Key) return excludedKeys.has(f1Key) ? [] : [automaticAmmoText(f1Key, language)];
@@ -172,14 +175,14 @@ export function shotDamageComponents(message, runtime = globalThis) {
   if (!readable(message)) return [];
   const shot = flag(message);
   if(shot?.profile?.attackResult)return [];
-  if (!completed(shot, message.id) || !explosiveShot(shot)&&!ltLinkedShot(shot)) return [];
+  if (!completed(shot, message.id) || !explosiveShot(shot)&&!ltLinkedShot(shot)&&!manualMeleeLinkedShot(shot)) return [];
   if(shot.profile.damage?.rules?.ltEarly&&!shot.profile.damage.components.some(c=>c.role!=='kinetic'))return [];
   const composite=shot.profile.damage?.model?.kind==="published-composite" || !!shot.profile.damage?.rules?.componentOrder || !!shot.profile.damage?.rules?.fuzeTracer;
   const roles=composite ? shot.profile.damage.components.filter(c=>c.role!==(shot.profile.damage.rules?.primaryDamageRole??'kinetic')&&c.status==="resolved").map(c=>c.role) : ["follow-up","fragmentation"];
   return roles.map(role => {
     const component = shot.profile.damage?.components?.find(c => c.role === role);
     const resolved = shot.profile.damage?.nativeSafe && component?.status === "resolved" && !!component.formula;
-    return { role, label: role==='backblast'?'Обратная струя':role==='collateral'?'Побочный взрыв':explosiveText({"linked":"P4Linked","main-charge":"P4MainCharge","follow-up":"Explosion","fragmentation":"Fragmentation"}[role], runtime),
+    return { role, label: manualMeleeLinkedShot(shot)&&role==='linked'?(shot.profile?.damage?.rules?.utExotic?'Электрический разряд':'Связанная пуля'):role==='backblast'?'Обратная струя':role==='collateral'?'Побочный взрыв':explosiveText({"linked":"P4Linked","main-charge":"P4MainCharge","follow-up":"Explosion","fragmentation":"Fragmentation"}[role], runtime),
       formula: resolved ? component.formula : null, reason: resolved ? null : shot.profile.damage?.reason ?? "unconfirmed-compatibility" };
   });
 }
@@ -285,7 +288,11 @@ export function installDamageShotLink(runtime = globalThis) {
       if (diagnostic.compatible && unchanged && damage?.nativeSafe) {
         // Use GGA's own parser and normal damage dispatch, including its access/modifier/confirmation path.
         const frozen=damage.rules?.meleeSnapshot;
-        const parsed = frozen?structuredClone(frozen.action):GURPS.parselink(formula)?.action;
+        const manualLinked=context.component==='linked'&&meleeLinkedRules(damage)?.manualLinkedAction;
+        // Native canRoll requires parser metadata (including orig). The saved
+        // linked formula remains authoritative; no current Actor/catalog lookup.
+        const parsed = manualLinked?{...GURPS.parselink(formula)?.action,...structuredClone(manualLinked)}:
+          frozen?structuredClone(frozen.action):GURPS.parselink(formula)?.action;
         if (parsed?.type === "damage" && (frozen||!parsed.next)) dispatched = { ...parsed,
           costs: action.costs, mod: action.mod, desc: action.desc, blindroll: action.blindroll,
           att: structuredClone(context.shot.damageAttack), sourceId: context.shot.actorId };
@@ -372,7 +379,7 @@ export function installDamageShotLink(runtime = globalThis) {
     rolls.delete(data.rolls[0]);
     let damageEventId, prepared;
     try {
-      damageEventId = runtime.crypto.randomUUID();
+      damageEventId = generateId(runtime);
       prepared = { ...data, flags: { ...data.flags, gurps: { ...data.flags?.gurps, transfer },
         [SHOT_FLAG_SCOPE]: { ...data.flags?.[SHOT_FLAG_SCOPE],
         damageLink: { version: 1, damageEventId, status: "unlinked", reason: "metadata-unavailable" } } } };
@@ -420,8 +427,8 @@ export function installDamageShotLink(runtime = globalThis) {
         // GGA dispatch reads data-action/data-otf, not the visible text of its native span.
         // Only a completed, readable source with a confirmed saved identity may supply this label.
         if (ammunitionName && (!action.sourceId || action.sourceId === shot.actorId))
-          element.textContent = "D:" + (shot.profile.damage.rules?.heProximity?explosiveText('Fragmentation',runtime)+' / ':'') + ammunitionName + (manualProjectileGuidance(shot.profile) ? ' — после ручного попадания' : '');
-        if (completed(shot, message.id) && (explosiveShot(shot)||ltLinkedShot(shot)) && !element.dataset.olegurpsComponentsRendered && runtime.document) {
+          element.textContent = "D:" + (shot.profile.damage.rules?.heProximity?explosiveText('Fragmentation',runtime)+' / ':'') + ammunitionName + (manualProjectileGuidance(shot.profile) ? ' – после ручного попадания' : '');
+        if (completed(shot, message.id) && (explosiveShot(shot)||ltLinkedShot(shot)||manualMeleeLinkedShot(shot)) && !element.dataset.olegurpsComponentsRendered && runtime.document) {
           element.dataset.olegurpsComponentsRendered = "true";
           let anchor = element;
           for (const component of shotDamageComponents(message, runtime)) {
@@ -430,7 +437,7 @@ export function installDamageShotLink(runtime = globalThis) {
             button.dataset.olegurpsShotComponent = component.role;
             button.dataset.gurpsClickwired = "true"; button.dataset.gurpsContextmenuwired = "true";
             button.textContent = "D:" + component.label;
-            button.title = component.formula ?? component.label;
+            button.title = manualMeleeLinkedShot(shot)?meleeLinkedRules(shot.profile.damage).manualHints.join(' '):component.formula ?? component.label;
             if (component.formula) {
               const parsed = GURPS.parselink(component.formula);
               const template = runtime.document.createElement("template"); template.innerHTML = parsed.text;

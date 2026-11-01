@@ -8,7 +8,7 @@ const rows = [
  ['W4PRplvj0ypVOdY6s','ei0N-icgR3T51RL0k','Iron Fire-Lance','lt_iron_fire_lance_charge','pyrotechnic',120,'1d burn','2-4','11†',-6,['powder-fragments'],3,null]
 ];
 const reference={Cheirosiphon:{weightLb:20,cost:1000},Eruptor:{weightLb:50,cost:500},'Fire-Lance':{weightLb:5,cost:50},'Fire-Siphon':{weightLb:550,cost:2750},'Incendiary Blowpipe':{weightLb:1,chargeWeightLb:0.05,cost:35,chargeCost:0.5},'Iron Fire-Lance':{weightLb:10,cost:150}};
-const notes={Cheirosiphon:'Подготовка 10 с; затем непрерывная подача. Дальность от ST. После попадания: 1d burn/с в течение 1d с; на воде радиус 2 ярда. LT86.',Eruptor:'Поджечь за 1 Ready. Перезарядка: 20 мин и Explosives (Fireworks). Статичная опора — отдельная опция: $270, 13.5 lb. LT86.',
+const notes={Cheirosiphon:'Подготовка 10 с; затем непрерывная подача. Дальность от ST. После попадания: 1d burn/с в течение 1d с; на воде радиус 2 ярда. LT86.',Eruptor:'Поджечь за 1 Ready. Перезарядка: 20 мин и Explosives (Fireworks). Статичная опора – отдельная опция: $270, 13.5 lb. LT86.',
  'Fire-Lance':'По одному Ready: взять, поджечь, сменить хват. Одноразовое устройство; использованное сохраняется как израсходованное. LT86.',
  'Fire-Siphon':'Два оператора. Каждые 10 с: среднее ST или ST-based Liquid Projector (Flamethrower), если выше. После попадания: 1d burn/с в течение 10d с; на воде радиус 2 ярда. LT86.',
  'Incendiary Blowpipe':'Подготовка двумя руками, атака одной. Дальность ST×0.2; ширина конуса у края равна дальности. Заряд $0.50. LT86.',

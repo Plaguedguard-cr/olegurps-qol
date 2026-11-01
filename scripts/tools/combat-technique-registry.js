@@ -4,7 +4,7 @@ export const COMBAT_RULES = Object.freeze([
     id: "weaponBond", combatType: "both", kind: "perk", activation: "weapon-setting",
     channel: "weaponBond", priority: 10, affectedChannels: ["weaponBond"],
     when: c => c.weaponBond === true,
-    resolve: () => ({ value: 1, source: "weapon-bond", label: "Weapon Bond" })
+    resolve: ({context:c}) => ({ value: c.weaponBondAdjustment??1, source: "weapon-bond", label: "Weapon Bond" })
   },
   {
     id: "rangedRapidStrike", combatType: "ranged", kind: "combat-option", activation: "manual",

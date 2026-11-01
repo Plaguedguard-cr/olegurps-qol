@@ -19,6 +19,14 @@ jobs:
       - name: Validate tag and module manifest
         run: node .github/scripts/validate-release.mjs
 
+      - name: Set up Node for compatibility tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check HTTP ID compatibility before packaging
+        run: node --test tests/random-id-compatibility.test.mjs tests/random-id-dependency-regression.test.mjs tests/weapon-assistant-reset.test.mjs
+
       - name: Resolve release filenames
         id: metadata
         shell: bash

@@ -62,6 +62,6 @@ test('Psionic: exact consequences and partial Death immunities, never automatic 
  assert.match(resistanceOutcome({...e,setting:'eraser'},{...n,margin:-5},conditions).consequence,/Unconsciousness.*Daze/);
 });
 test('Psionic equipment UI: installed options, price and Ready; cancel conditions under ru/en',async()=>{
- const f=await fixture(rows[1].modeId);assert.doesNotMatch(exoticBeamControlsHTML(f.weapon(),String),/<select/);await f.hardware(['eraser','insanity']);assert.match(exoticBeamHardwareHTML(rows[1].modeId,f.weapon(),String),/\$1800/);assert.match(exoticBeamControlsHTML(f.weapon(),String),/Ready/);
+ const f=await fixture(rows[1].modeId);assert.doesNotMatch(exoticBeamControlsHTML(f.weapon(),String),/<select/);await f.hardware(['eraser','insanity']);assert.match(exoticBeamHardwareHTML(rows[1].modeId,f.weapon(),String),/Цена: 1800; ×1\.5/);assert.match(exoticBeamControlsHTML(f.weapon(),String),/Ready/);
  const shot=await f.shoot();for(const lang of ['ru','en']){const h=nativeHarness({dialog:async o=>{assert.match(o.content,/Mind Shield/);assert.doesNotMatch(o.content,/name="(?:ht|sm)"/);return false;}});h.actor.system.attributes.WILL={value:11};h.rt.game.i18n={lang};assert.equal(await rollResistance(shot.message,h.rt),null);assert.equal(h.calls.length,0);}
 });

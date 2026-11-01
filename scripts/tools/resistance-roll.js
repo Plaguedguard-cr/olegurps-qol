@@ -1,4 +1,5 @@
 import {applyMessageMode} from './chat-message-mode.js';
+import {validUTContactEffect,utContactConditions,askUTContactConditions,utContactConsequence} from './ut-contact-resistance.js';
 // Attribute -> modifier -> explicit conditions -> native GGA -> descriptive outcome.
 // Buttons never contain a target, Actor or Token binding.
 const SCOPE='olegurps-qol',installations=new WeakMap(),busy=new WeakSet();
@@ -16,9 +17,10 @@ function validChemical(value){
       typeof c.label==='string'&&c.label.length<=200&&Number.isSafeInteger(c.modifier)&&Math.abs(c.modifier)<=1000);
 }
 export function resistanceEffect(value){
+  if(value?.condition==='ut-contact')return validUTContactEffect(value)?structuredClone(value):null;
   if(!value||value.version!==1||value.eligible===false||!Object.hasOwn(attributes,value.attribute)||
     !Number.isSafeInteger(value.modifier)||Math.abs(value.modifier)>1000||
-    !['none','reality-stabilizer','vision-laser','electrolaser','microwave-mad','microwave-disruptor','omni-blaster',...Object.keys(afflictionOutcomes)].includes(value.condition)||!['displacement','temporary-blindness','crippling-blindness','electrical-stun','agony','shutdown','unconsciousness',...Object.values(afflictionOutcomes)].includes(value.outcome)||
+    !['none','reality-stabilizer','vision-laser','electrolaser','microwave-mad','microwave-disruptor','omni-blaster',...Object.keys(afflictionOutcomes)].includes(value.condition)||!['displacement','temporary-blindness','crippling-blindness','electrical-stun','contact-electrical','agony','shutdown','unconsciousness',...Object.values(afflictionOutcomes)].includes(value.outcome)||
     (value.condition==='reality-stabilizer')!==(value.outcome==='displacement')||value.condition==='reality-stabilizer'&&(value.attribute!=='HT'||value.modifier!==0)||
     Object.hasOwn(afflictionOutcomes,value.condition)&&(value.attribute!==(value.condition==='psionic'?'Will':'HT')||value.outcome!==afflictionOutcomes[value.condition]||!Number.isFinite(value.halfRange)||value.halfRange<0)||
     Object.values(afflictionOutcomes).includes(value.outcome)&&afflictionOutcomes[value.condition]!==value.outcome||
@@ -34,9 +36,10 @@ export function resistanceEffect(value){
     value.condition==='electrolaser'&&(value.outcome!=='electrical-stun'||!['standard','kill'].includes(value.mode)||value.armorDivisor!==2||
       value.hits!==undefined&&(!Number.isSafeInteger(value.hits)||value.hits<1)||value.hitLocation!==undefined&&(typeof value.hitLocation!=='string'||value.hitLocation.length>200))||
     value.outcome==='electrical-stun'&&value.condition!=='electrolaser'||
+    value.outcome==='contact-electrical'&&(value.condition!=='none'||value.attribute!=='HT'||value.modifier!==-3||value.armorDivisor!==0.5||typeof value.brief!=='string'||value.brief.length>2000)||
     value.condition==='fluid'&&value.chemical!==undefined&&!validChemical(value.chemical))return null;
   return Object.fromEntries(['version','id','name','attribute','modifier','condition','halfRange','outcome','source',
-    ...(value.condition==='fluid'?['brief','chemical']:[]),
+    ...(value.condition==='fluid'?['brief','chemical']:value.outcome==='contact-electrical'?['brief','armorDivisor']:[]),
     ...(value.condition==='electrolaser'?['mode','armorDivisor','hitLocation','hits']:[]),
     ...(['neural','psionic'].includes(value.condition)?['setting']:[]),...(value.condition==='sonic-stunner'?['hitLocation']:[])].filter(k=>value[k]!==undefined).map(k=>[k,value[k]]));
 }
@@ -91,6 +94,7 @@ export function resistanceVisionDefaults(actor){
   return {distance:'within',protectedVision:protectedVision?'yes':'no',membrane:levels.length&&levels.every(n=>n===levels[0])&&Number.isSafeInteger(levels[0])?levels[0]:0};
 }
 export function visionResistanceModifier(effect,choices){
+  if(effect.condition==='ut-contact')return utContactConditions(effect,choices);
   if(effect.condition==='reality-stabilizer'){
     if(!Number.isSafeInteger(choices?.ht)||choices.ht<1||choices.ht>100000)throw Error('Укажите собственный HT Reality Stabilizer.');
     return {applies:true,modifier:0,lines:['Собственный HT Reality Stabilizer: '+choices.ht+'; HT жертвы и обычная DR не используются. UT131.']};
@@ -162,7 +166,7 @@ export function visionResistanceModifier(effect,choices){
       lines:['Дистанция: '+(distance?'за ½D (+3)':'до ½D (+0)'),`DR поражённой локации: ${dr}; делитель (2): +${armor} к HT.`,
         'Electrical: '+(choices.electrical?'да':'нет')]};
   }
-  if(effect.condition==='none')return {applies:true,modifier:effect.modifier,lines:[]};
+  if(effect.condition==='none')return {applies:true,modifier:effect.modifier,lines:effect.outcome==='contact-electrical'?[effect.brief]:[]};
   const membrane=nonnegativeLevel(choices?.membrane);
   if(!choices||!['within','beyond'].includes(choices.distance)||
     !['yes','no'].includes(choices.protectedVision)||!Number.isSafeInteger(membrane)||membrane<0)
@@ -173,13 +177,14 @@ export function visionResistanceModifier(effect,choices){
       'Protected Vision: '+(pv?'+5':'нет (+0)'), 'Nictitating Membrane: +'+membrane]};
 }
 async function askConditions(effect,runtime,actor){
+  if(effect.condition==='ut-contact')return askUTContactConditions(effect,runtime,actor);
   if(effect.condition==='reality-stabilizer')return runtime.foundry.applications.api.DialogV2.wait({window:{title:'Сопротивление Reality Stabilizer'},position:{width:420},modal:false,rejectClose:false,
     content:'<p>Бросок только при наличии Reality Stabilizer или стабилизированного force screen. Используйте HT самого устройства (обычно 12), не HT жертвы. UT131.</p><label>HT стабилизатора<input name="ht" type="number" min="1" max="100000" step="1" value="12"></label>',
     buttons:[{action:'roll',label:'Бросить',callback:(_event,button)=>({ht:Number(button.form.elements.ht.value)})},{action:'cancel',label:'Отмена',callback:()=>false}]});
   if(effect.condition==='fluid'){
     const checks=effect.chemical?.checks;
     if(!checks||checks.length===1)return checks?{checkId:checks[0].id}:{exposed:true,protected:false,immune:false};
-    return runtime.foundry.applications.api.DialogV2.wait({window:{title:'\u0411\u0440\u043e\u0441\u043e\u043a \u0441\u043e\u043f\u0440\u043e\u0442\u0438\u0432\u043b\u0435\u043d\u0438\u044f \u2014 '+effect.name},position:{width:440},modal:false,rejectClose:false,
+    return runtime.foundry.applications.api.DialogV2.wait({window:{title:'\u0411\u0440\u043e\u0441\u043e\u043a \u0441\u043e\u043f\u0440\u043e\u0442\u0438\u0432\u043b\u0435\u043d\u0438\u044f \u2013 '+effect.name},position:{width:440},modal:false,rejectClose:false,
       content:`<label>\u041f\u0440\u043e\u0432\u0435\u0440\u043a\u0430<select name="chemicalCheck">${checks.map(c=>`<option value="${escape(c.id)}">${escape(c.label)}: HT${c.modifier}</option>`).join('')}</select></label>`,
       buttons:[{action:'roll',label:'\u0411\u0440\u043e\u0441\u0438\u0442\u044c',callback:(_event,button)=>({checkId:button.form.elements.chemicalCheck.value})},{action:'cancel',label:'\u041e\u0442\u043c\u0435\u043d\u0430',callback:()=>false}]});
   }
@@ -190,9 +195,9 @@ async function askConditions(effect,runtime,actor){
   const defaults=resistanceVisionDefaults(actor);
   const select=(name,label,options)=>`<label>${label}<select name="${name}">${options.map(([value,label])=>`<option value="${value}"${defaults[name]===value?' selected':''}>${label}</option>`).join('')}</select></label>`;
   const read=form=>({distance:form.elements.distance.value,protectedVision:form.elements.protectedVision.value,membrane:nonnegativeLevel(form.elements.membrane.value)});
-  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления — '+effect.name},
+  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления – '+effect.name},
     position:{width:440},modal:false,rejectClose:false,
-    content:`<p><strong>${escape(actor.name)}</strong></p><p>${escape(effect.source)}: Protected Vision даёт +5, Nictitating Membrane — +1/уровень; DR не влияет.</p>`+
+    content:`<p><strong>${escape(actor.name)}</strong></p><p>${escape(effect.source)}: Protected Vision даёт +5, Nictitating Membrane – +1/уровень; DR не влияет.</p>`+
       select('distance','Дистанция',[['within','В пределах 1/2D ('+effect.halfRange+' ярдов)'],['beyond','Дальше 1/2D (+3)']])+
       select('protectedVision','Protected Vision',[['yes','Да (+5)'],['no','Нет']])+
       `<label>Nictitating Membrane: уровень<input name="membrane" type="number" min="0" step="1" value="${defaults.membrane}"></label>`+
@@ -238,7 +243,7 @@ async function askProfileAfflictionConditions(effect,runtime,actor){
     stunner?{dr:nonnegativeLevel(form.elements.dr.value),limb:form.elements.limb.checked,hitLocation:locations[Number(form.elements.localDR.value)]?.name??effect.hitLocation??''}:
       {sealed:form.elements.sealed.checked,nervousSystem:form.elements.nervousSystem.checked,
         ...(form.elements.killjoy?{killjoy:form.elements.killjoy.checked}:{}),...(form.elements.noVitals?{noVitals:form.elements.noVitals.checked}:{})})});
-  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления — '+effect.name},position:{width:460},modal:false,rejectClose:false,
+  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления – '+effect.name},position:{width:460},modal:false,rejectClose:false,
     content:`<p><strong>${escape(actor.name)}</strong></p><label>Дистанция<select name="distance"><option value="within">В пределах 1/2D (${effect.halfRange} ярдов)</option><option value="beyond">Дальше 1/2D (+3)</option></select></label>`+
       (psionic?`<label>Mind Shield: уровень<input type="number" name="mindShield" min="0" max="1000" step="1" value="${defaults.mindShield}"></label>`+
         check('iqZero','IQ 0 (иммунитет)',defaults.iqZero)+check('digitalMind','Digital Mind (иммунитет)',defaults.digitalMind)+
@@ -250,7 +255,7 @@ async function askProfileAfflictionConditions(effect,runtime,actor){
         check('sealed','Sealed (полная защита)',defaults.sealed)+check('nervousSystem','Функционирующая нервная система',defaults.nervousSystem)+
         (effect.setting==='ecstasy'?check('killjoy','Killjoy (защита от Ecstasy, B428)',defaults.killjoy):'')+
         (['agony','ecstasy','death'].includes(effect.setting)?check('noVitals','Injury Tolerance (No Vitals): защита от Heart Attack, B429',defaults.noVitals):'')+
-        '<p>Diffuse, No Brain, Homogenous, Unliving и Machine невосприимчивы. Необычная биология и инопланетные исключения — по решению ведущего. UT121–122.</p>')+
+        '<p>Diffuse, No Brain, Homogenous, Unliving и Machine невосприимчивы. Необычная биология и инопланетные исключения – по решению ведущего. UT121–122.</p>')+
       '<p data-resistance-preview aria-live="polite"></p>',
     render:(_event,dialog)=>{const form=dialog.element.querySelector('form'),preview=dialog.element.querySelector('[data-resistance-preview]');
       const update=()=>{try{const c=visionResistanceModifier(effect,read(form));preview.textContent=c.immunity??'Поправка сопротивления: '+c.modifier+'.';}catch(e){preview.textContent=e.message;}};
@@ -266,16 +271,16 @@ async function askArmorAfflictionConditions(effect,runtime,actor){
   let ht='';if(disruptor){try{ht=resistanceAttribute(actor,'HT');}catch{}}
   const read=form=>({dr:nonnegativeLevel(form.elements.dr.value),...(disruptor?{ht:form.elements.ht.value,sm:form.elements.sm.value,
     distance:form.elements.distance.value,sealed:form.elements.sealed.checked,exposed:form.elements.exposed.checked}:{})});
-  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления — '+effect.name},position:{width:460},modal:false,rejectClose:false,
+  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления – '+effect.name},position:{width:460},modal:false,rejectClose:false,
     content:`<p><strong>${escape(actor?.name??'Электрическая система без Actor')}</strong></p>`+
       (disruptor?`<label>HT<input name="ht" type="number" min="1" max="100000" step="1" value="${ht}" required></label>`+
         `<label>SM (пустое = 0)<input name="sm" type="number" min="-1000" max="1000" step="1" value=""></label>`+
         `<label>Дистанция<select name="distance"><option value="within">В пределах 1/2D (${effect.halfRange} ярдов)</option><option value="beyond">Дальше 1/2D (+3)</option></select></label>`+
         `<label><input name="sealed" type="checkbox">Sealed</label><label><input name="exposed" type="checkbox">Неэкранированные антенны, кабели или силовые линии</label>`+
         `<p>Только электрические системы и Electrical. Обычный DR игнорируется; у Sealed без открытых соединений добавляется применимый DR. UT121.</p>`:
-        effect.condition==='omni-blaster'?'<p>Треть применимого DR добавляется к HT с округлением вниз. При провале — Unconsciousness на минуты по степени провала. UT124.</p>':
-        `<p>Полный применимый DR добавляется к HT. При провале — Agony в луче и ещё 1 секунду. UT120.</p>`)+
-      `<label>Защита<select name="localDR"><option value="-1">Указать DR вручную</option>${locations.map((v,i)=>`<option value="${i}">${escape(v.name)}${v.dr===null?' — DR неоднозначен':' (DR '+v.dr+')'}</option>`).join('')}</select></label>`+
+        effect.condition==='omni-blaster'?'<p>Треть применимого DR добавляется к HT с округлением вниз. При провале – Unconsciousness на минуты по степени провала. UT124.</p>':
+        `<p>Полный применимый DR добавляется к HT. При провале – Agony в луче и ещё 1 секунду. UT120.</p>`)+
+      `<label>Защита<select name="localDR"><option value="-1">Указать DR вручную</option>${locations.map((v,i)=>`<option value="${i}">${escape(v.name)}${v.dr===null?' – DR неоднозначен':' (DR '+v.dr+')'}</option>`).join('')}</select></label>`+
       `<label>Применимый DR<input name="dr" type="number" min="0" max="100000" step="1" value="0"></label><p data-resistance-preview aria-live="polite"></p>`,
     render:(_event,dialog)=>{const form=dialog.element.querySelector('form'),preview=dialog.element.querySelector('[data-resistance-preview]'),button=dialog.element.querySelector('[data-action="roll"]');
       const update=()=>{try{const c=read(form),value=visionResistanceModifier(effect,c).modifier;
@@ -292,9 +297,9 @@ async function askElectricalConditions(effect,runtime,actor){
   const locations=electricalResistanceLocations(actor),matches=locations.map((v,i)=>normalizeName(v.name)===normalizeName(effect.hitLocation)?i:-1).filter(i=>i>=0);
   const selected=matches.length===1?matches[0]:-1,initial=locations[selected]?.dr??0;
   const read=form=>({distance:form.elements.distance.value,dr:nonnegativeLevel(form.elements.dr.value),electrical:form.elements.electrical.checked});
-  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления — '+effect.name},position:{width:460},modal:false,rejectClose:false,
+  const answer=await runtime.foundry.applications.api.DialogV2.wait({window:{title:'Условия сопротивления – '+effect.name},position:{width:460},modal:false,rejectClose:false,
     content:`<p><strong>${escape(actor.name)}</strong></p><p>Для одного фактического попадания; ожог не обязан пробить DR. UT119.</p>`+
-      `<label>Поражённая локация<select name="localDR"><option value="-1">Указать DR вручную</option>${locations.map((v,i)=>`<option value="${i}"${selected===i?' selected':''}>${escape(v.name)}${v.dr===null?' — DR неоднозначен':' (DR '+v.dr+')'}</option>`).join('')}</select></label>`+
+      `<label>Поражённая локация<select name="localDR"><option value="-1">Указать DR вручную</option>${locations.map((v,i)=>`<option value="${i}"${selected===i?' selected':''}>${escape(v.name)}${v.dr===null?' – DR неоднозначен':' (DR '+v.dr+')'}</option>`).join('')}</select></label>`+
       `<label>DR поражённой локации<input name="dr" type="number" min="0" max="100000" step="1" value="${initial}"></label>`+
       `<p>Каждые 2 DR дают +1 к HT. Проверьте DR именно места попадания; общий DR персонажа не используется.</p>`+
       `<label>Дистанция<select name="distance"><option value="within">В пределах 1/2D (${effect.halfRange} ярдов)</option><option value="beyond">Дальше 1/2D (+3)</option></select></label>`+
@@ -339,7 +344,7 @@ function profileAfflictionConsequence(effect,native,choices,success){
   if(effect.condition==='fluid')return success?'Сопротивление успешно.':`${effect.brief} Степень провала: ${Math.max(0,-native.margin)}. Последствия и повторные циклы применяются вручную.`;
   if(success)return 'Воздействие отражено.';
   const duration=native.margin<0?-native.margin+' мин':'длительность автоматического провала определите вручную';
-  if(effect.condition==='mindripper')return 'Coma; '+(native.margin<=-5?'Total Amnesia после восстановления; high-resolution emulation.':native.margin<0?'low-resolution fragment (провал 1–4).':'разрешите степень автоматического провала и качество копии вручную.')+' Копия сознания — только описание. UT122; проект 21.10.2026.';
+  if(effect.condition==='mindripper')return 'Coma; '+(native.margin<=-5?'Total Amnesia после восстановления; high-resolution emulation.':native.margin<0?'low-resolution fragment (провал 1–4).':'разрешите степень автоматического провала и качество копии вручную.')+' Копия сознания – только описание. UT122; проект 21.10.2026.';
   if(effect.condition==='psionic'){
     const severe=native.margin<=-5;
     if(effect.setting==='eraser')return (severe?'Unconsciousness; после восстановления Daze: ':'Daze (встряска или ранение выводит из Daze): ')+duration+'. Потеря памяти: секунда выстрела и предыдущая секунда. UT132.';
@@ -349,7 +354,7 @@ function profileAfflictionConsequence(effect,native,choices,success){
     return 'Пси-способности подавлены: '+duration+'. UT132.';
   }
   if(effect.condition==='sonic-nauseator')return native.margin<=-5?
-    `Deafness и retching; потеря контроля сфинктеров — Bad Smell до очищения. Deafness защищает от следующих Nauseator. Длительность Deafness/retching: ${duration}. UT125.`:
+    `Deafness и retching; потеря контроля сфинктеров – Bad Smell до очищения. Deafness защищает от следующих Nauseator. Длительность Deafness/retching: ${duration}. UT125.`:
     `Hard of Hearing и Moderate Pain: ${duration}. UT125.`;
   if(effect.condition==='sonic-stunner')return (choices.limb?'Недееспособность поражённой конечности / extremity':'Unconsciousness')+': '+duration+'. UT125.';
   if(effect.setting==='death')return 'Heart Attack. UT122; B429.';
@@ -370,7 +375,7 @@ export function resistanceOutcome(effect,native,choices={}){
     !success&&native.margin<0?'Степень провала: '+(-native.margin):
       label+' независимо от сравнения с итоговой характеристикой; разность характеристики и броска: '+native.margin;
   const recovery=`Каждый ход: HT${effect.modifier} для восстановления от оглушения, без бонуса DR. UT119; применяется вручную.`;
-  const consequence=effect.condition==='reality-stabilizer'?(success?'Reality Stabilizer защитил от переноса.':'Защита Reality Stabilizer не сработала. Габариты, область и назначение переноса разрешаются вручную. UT131.'):Object.hasOwn(afflictionOutcomes,effect.condition)?profileAfflictionConsequence(effect,native,choices,success):effect.condition==='omni-blaster'?(success?'Воздействие Stun отражено.':
+  const consequence=effect.condition==='ut-contact'?utContactConsequence(effect,native,choices,success):effect.outcome==='contact-electrical'?(success?'Электрическое воздействие отражено; отдельный механический урон/ожог не отменяется.':'Оглушение во время контакта и ещё max(1,20−HT) секунд, затем HT−3 каждый ход без DR. Длительность от исходного HT, не итогового target. Все состояния, воспламенение и повторные проверки вручную. HT199–200; B432.'):effect.condition==='reality-stabilizer'?(success?'Reality Stabilizer защитил от переноса.':'Защита Reality Stabilizer не сработала. Габариты, область и назначение переноса разрешаются вручную. UT131.'):Object.hasOwn(afflictionOutcomes,effect.condition)?profileAfflictionConsequence(effect,native,choices,success):effect.condition==='omni-blaster'?(success?'Воздействие Stun отражено.':
     'Unconsciousness: '+(native.margin<0?-native.margin+' мин.':'длительность по степени автоматического провала определите вручную.')+' Применяется вручную. UT124.'):
     effect.condition==='microwave-mad'?(success?'Воздействие MAD отражено.':
     'Agony: пока цель находится в луче и ещё 1 секунду после выхода. Применяется вручную. UT120; B428.'):
@@ -383,7 +388,7 @@ export function resistanceOutcome(effect,native,choices={}){
     success?'Эффект лазера отражён; слепота от этого воздействия не наступает.':
     effect.outcome==='temporary-blindness'?(native.margin<0?'Временная слепота на '+(-native.margin)+' мин. Применяется вручную ('+effect.source+').':
       'Временная слепота при автоматическом провале; длительность по степени провала определите вручную ('+effect.source+', B348).'):
-      'Калечащая слепота. Длительность определите отдельным HT по B422 в конце боя: успех — временная, провал — длительная, критический провал — постоянная. Срок длительной слепоты и лечение — вручную.';
+      'Калечащая слепота. Длительность определите отдельным HT по B422 в конце боя: успех – временная, провал – длительная, критический провал – постоянная. Срок длительной слепоты и лечение – вручную.';
   return {success,criticalSuccess,criticalFailure,label,marginText,consequence};
 }
 export async function rollResistance(message,runtime=globalThis){
@@ -474,6 +479,7 @@ export function installResistanceRoll(runtime=globalThis){
     if(!root)return;
     if(old){old.textContent=resistanceLabel(effect);return;}
     const button=runtime.document.createElement('button');button.type='button';button.dataset.olegurpsResistance='true';button.textContent=resistanceLabel(effect);
+    if(effect.outcome==='contact-electrical')button.title=effect.brief;
     button.addEventListener('click',async event=>{event.preventDefault();event.stopPropagation();if(button.disabled)return;button.disabled=true;
       try{await rollResistance(message,runtime);}catch(e){runtime.ui?.notifications?.warn?.(e.message);runtime.console?.error?.('OleGURPS resistance:',e);}finally{button.disabled=false;}});
     (root.querySelector('.message-content')??root).append(button);

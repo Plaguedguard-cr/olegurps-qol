@@ -1,0 +1,52 @@
+[
+  {
+    "file": "scripts/tools/explosion-fragmentation.js",
+    "text": "  // Для дистанций за пределами таблицы этого макроса — безопасная аппроксимация.",
+    "reason": "Code comment, not UI output."
+  },
+  {
+    "file": "scripts/tools/fright.js",
+    "text": "    [4,5,\"4–5\",\"Оглушение на 1 секунду; затем — автоматическое восстановление.\"],",
+    "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
+  },
+  {
+    "file": "scripts/tools/fright.js",
+    "text": "    [12,12,\"12\",\"Спазмы желудка. Рвота в течение (25 − ЗД) секунд, затем — каждую секунду бросок против ЗД для восстановления.\"],",
+    "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
+  },
+  {
+    "file": "scripts/tools/fright.js",
+    "text": "    [14,15,\"14–15\",\"Вы теряете 1к ЕУ и оглушены на 1к секунд — как в пункте 10.\"],",
+    "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
+  },
+  {
+    "file": "scripts/tools/fright.js",
+    "text": "    [17,17,\"17\",\"Обморок на 1к минут, затем — бросок ЗД каждую минуту для восстановления.\"],",
+    "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
+  },
+  {
+    "file": "scripts/tools/fright.js",
+    "text": "    [20,20,\"20\",\"Обморок, граничащий с шоком — на 4к минут. Вы теряете 1к ЕУ.\"],",
+    "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
+  },
+  {
+    "file": "scripts/tools/fright.js",
+    "text": "    [36,36,\"36\",\"Серьёзный физический эффект — как в пункте 24, но эквивалентен −20 очкам.\"],",
+    "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
+  },
+  {
+    "file": "scripts/tools/fright.js",
+    "text": "    [37,37,\"37\",\"Серьёзный физический эффект — как в пункте 24, но эквивалентен −30 очкам.\"],",
+    "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
+  },
+  {
+    "file": "scripts/tools/targeted-attack-service.js",
+    "text": "  .replace(/[ё]/g, \"е\").replace(/[‐‑‒–—−]/g, \"-\")",
+    "reason": "Input normalization accepts existing external/user dash variants; not UI output."
+  },
+  {
+    "file": "scripts/tools/ammunition-chat-summary.js",
+    "text": "    for (const separator of [' \\u2014 ', ' – ']) if (name.endsWith(separator + p.note)) {",
+    "reason": "Read-only matching of legacy persisted names; no UI output or data migration."
+  }
+]

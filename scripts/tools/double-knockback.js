@@ -110,7 +110,7 @@ export async function reportDoubleKnockback(message, runtime = globalThis) {
   if (!inputs || !readable(message)) return null;
   const result = calculateDoubleKnockback(hit.damage, inputs.strength, hit.type, inputs.cuttingStopped);
   const outcome = result.yards ? `Результат: ${result.yards} ярдов (${result.yards} гексов).` : 'Цель не отброшена.';
-  const balance = result.yards ? `<p>Проверка по наибольшему из DX, Acrobatics или Judo: ${result.balancePenalty || 'без штрафа'}. Perfect Balance: +4. При провале — падение (B378).</p>` : '';
+  const balance = result.yards ? `<p>Проверка по наибольшему из DX, Acrobatics или Judo: ${result.balancePenalty || 'без штрафа'}. Perfect Balance: +4. При провале – падение (B378).</p>` : '';
   return runtime.ChatMessage.create({
     speaker: message.speaker, whisper: [...(message.whisper ?? [])], blind: !!message.blind,
     content: `<div class="olegurps-knockback"><strong>Отбрасывание:</strong><br>Базовый урон: ${hit.damage}<br>Double Knockback: ×2<br><strong>${outcome}</strong>${balance}<details class="olegurps-chat-details"><summary>Расчёт отбрасывания</summary>ST цели: ${inputs.strength}. Обычное отбрасывание: ${result.ordinary} ярдов.${hit.type === 'cut' ? (inputs.cuttingStopped ? ' Cutting не пробил DR.' : ' Cutting пробил DR: отбрасывания нет.') : ''} B104, B378.</details></div>`,

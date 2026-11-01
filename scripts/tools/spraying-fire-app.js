@@ -183,33 +183,33 @@ export class SprayingFireApp extends ApplicationV2 {
       const expanded = this._expandedTargets.get(target.tokenId) ?? active;
       const summary = "<span>" + escape(target.shots) + " \u0432\u044b\u0441\u0442\u0440.</span>" +
         "<span>\u041d\u0430\u0432\u044b\u043a " + escape(row.preview.level) + "</span>" +
-        "<span>Rcl " + escape(row.effectiveRcl ?? "\u2014") + "</span>";
+        "<span>Rcl " + escape(row.effectiveRcl ?? "\u2013") + "</span>";
       const transfer = row.index ?
-        '<div class="sf-pair sf-transfer"><span>\u041f\u0435\u0440\u0435\u043d\u043e\u0441: <b>' + escape(Number.isFinite(row.traverseDistance) ? row.traverseDistance.toFixed(1) : "\u2014") +
+        '<div class="sf-pair sf-transfer"><span>\u041f\u0435\u0440\u0435\u043d\u043e\u0441: <b>' + escape(Number.isFinite(row.traverseDistance) ? row.traverseDistance.toFixed(1) : "\u2013") +
         ' \u044f\u0440\u0434\u043e\u0432</b></span><span>\u041f\u043e\u0442\u0435\u0440\u044f\u043d\u043e \u043f\u0430\u0442\u0440\u043e\u043d\u043e\u0432: <b>' + escape(row.wastedShots ?? 0) + '</b></span></div>' : "";
       return '<section class="sf-card ' + (completed ? "done" : active ? "active" : "waiting") + (expanded ? " expanded" : " collapsed") + '">' +
         '<h3><button type="button" class="sf-card-toggle" data-action="toggle-target"' + attr +
         'aria-expanded="' + expanded + '">' +
-        '<span class="sf-card-title">\u0426\u0435\u043b\u044c ' + (row.index + 1) + ' \u2014 ' + status +
+        '<span class="sf-card-title">\u0426\u0435\u043b\u044c ' + (row.index + 1) + ' \u2013 ' + status +
         (target.name && target.name !== "\u0426\u0435\u043b\u044c" ? ' <small>' + escape(target.name) + '</small>' : "") + '</span>' +
         '<span class="sf-card-summary">' + summary + '</span><i class="fas fa-chevron-' + (expanded ? "down" : "right") + '" aria-hidden="true"></i>' +
         '</button></h3>' + (expanded ? '<div class="sf-card-details"><div class="sf-grid">' +
         '<label>\u0412\u044b\u0441\u0442\u0440\u0435\u043b\u044b<input type="number" min="1" step="1" data-field="shots"' + attr + 'value="' + escape(target.shots) + '" ' + disabled + '></label>' +
         '<div class="sf-distance"><label>\u0414\u0438\u0441\u0442\u0430\u043d\u0446\u0438\u044f<input type="number" min="0" step="0.1" data-field="manualDistance"' + attr +
         'value="' + escape(target.manualDistance ?? "") + '" placeholder="' + escape(row.automatic?.distance?.toFixed?.(1) ?? "") + '" ' + disabled + '></label>' +
-        '<button type="button" data-action="auto-distance"' + attr + disabled + '>\u0410\u0432\u0442\u043e ' + escape(row.automatic?.distance?.toFixed?.(1) ?? "\u2014") + '</button></div>' +
+        '<button type="button" data-action="auto-distance"' + attr + disabled + '>\u0410\u0432\u0442\u043e ' + escape(row.automatic?.distance?.toFixed?.(1) ?? "\u2013") + '</button></div>' +
         '<div class="sf-elevation"><label>Высота<input type="number" min="0" step="0.1" data-field="heightOverride"' + attr +
         'value="' + escape(target.heightOverride ?? "") + '" placeholder="' + escape(row.automatic?.height ?? 0) + '" ' + disabled + '></label>' +
         '<label class="sf-check"><input type="checkbox" data-field="highGroundOverride"' + attr +
         (row.highGround ? " checked" : "") + ' ' + disabled + '>\u0412\u044b\u0448\u0435</label></div>' +
         '<div class="sf-pair"><span>Эффективный RoF: <b>' + escape(row.fireMode.effectiveRoF) + '</b></span><span>Бонус скорострельности: <b>+' + escape(row.rfBonus) + '</b></span></div>' +
-        '<div class="sf-pair"><span>Rcl: <b>' + escape(row.baseRcl ?? "\u2014") + '</b></span><span>\u042d\u0444\u0444. Rcl: <b>' + escape(row.effectiveRcl ?? "\u2014") + '</b></span></div>' +
+        '<div class="sf-pair"><span>Rcl: <b>' + escape(row.baseRcl ?? "\u2013") + '</b></span><span>\u042d\u0444\u0444. Rcl: <b>' + escape(row.effectiveRcl ?? "\u2013") + '</b></span></div>' +
         '<label>\u0414\u043e\u043f. \u043c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440<input type="number" step="1" data-field="modifier"' + attr +
         'value="' + escape(target.modifier ?? 0) + '" ' + disabled + '></label>' +
         '<div class="sf-pair"><span>\u042d\u0444\u0444. \u0443\u043c\u0435\u043d\u0438\u0435: <b>' + escape(row.preview.level) + '</b></span><span>3d6: <b>' + escape(row.preview.chance) + '%</b></span></div>' +
         '<div class="sf-pair"><span>\u041c\u0430\u043a\u0441. \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u0439: <b>' + escape(row.fireMode.effectiveRoF) + '</b></span></div>' +
         transfer + '</div><button type="button" data-action="roll"' + attr + (active && !problem && row.skill && !this._rolling ? "" : " disabled") +
-        '>\u0426\u0435\u043b\u044c ' + (row.index + 1) + (completed ? " \u2713" : " \u2014 \u0410\u0442\u0430\u043a\u0430") + '</button></div>' : "") + '</section>';
+        '>\u0426\u0435\u043b\u044c ' + (row.index + 1) + (completed ? " \u2713" : " \u2013 \u0410\u0442\u0430\u043a\u0430") + '</button></div>' : "") + '</section>';
     }).join("");
     return '<div class="sf-root"><div class="sf-overview"><strong class="sf-weapon">' + escape(this.weapon.name) + '</strong>' +
       (governingSelect || '<span>Основной навык: <b>' + escape(common.governingSpecialty || this.weapon.governingSpecialty || this.attack.name) + '</b></span>') +
@@ -220,9 +220,9 @@ export class SprayingFireApp extends ApplicationV2 {
       '<option value="right-to-left"' + (this.session.direction === "right-to-left" ? " selected" : "") + '>\u0421\u043f\u0440\u0430\u0432\u0430 \u2192 \u043d\u0430\u043b\u0435\u0432\u043e</option></select></label></div>' +
       '<div class="sf-modifiers"><div class="sf-numeric">' + numericFields + '</div><div class="sf-options">' + checkFields + '</div></div>' +
       '<div class="sf-totals">\u041f\u043e \u0446\u0435\u043b\u044f\u043c: ' + data.shots +
-      ' | \u041f\u043e\u0442\u0435\u0440\u0438 \u043d\u0430 \u043f\u0435\u0440\u0435\u043d\u043e\u0441: ' + (data.plan.waste ?? '\u2014') +
+      ' | \u041f\u043e\u0442\u0435\u0440\u0438 \u043d\u0430 \u043f\u0435\u0440\u0435\u043d\u043e\u0441: ' + (data.plan.waste ?? '\u2013') +
       ' | \u0412\u0441\u0435\u0433\u043e: ' + data.plannedAmmo +
-      ' | \u041c\u0438\u043d\u0438\u043c\u0443\u043c: ' + (data.plan.minimum ?? '\u2014') +
+      ' | \u041c\u0438\u043d\u0438\u043c\u0443\u043c: ' + (data.plan.minimum ?? '\u2013') +
       ' | \u041e\u0441\u0442\u0430\u0442\u043e\u043a RoF: ' + data.remaining + '</div>' +
       (problem ? '<p class="sf-error">' + escape(problem) + '</p>' : "") +
       '<div class="sf-cards">' + cards + '</div>' +

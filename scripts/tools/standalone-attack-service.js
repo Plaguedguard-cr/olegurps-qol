@@ -1,3 +1,6 @@
+import {utExoticSource} from '../ut-exotic-melee-source.js';
+import {ltShieldToolSource,shieldModeAllowed} from '../lt-shield-tool-source.js';
+import {ltImprovisedSource} from '../lt-improvised-source.js';
 import {HT_TEAR_SPRAY_MODE} from './biochemical-integration.js';
 import {ltPersonalProfile} from '../lt-personal-source.js';
 import {ltEarlyProfile} from '../lt-early-firearms-source.js';
@@ -30,6 +33,11 @@ import { uawFeed, uawWeaponView } from './ut-uaw.js';
 import { stormFeed } from './ut-storm-feeds.js';
 import { weaponResourceReason as weaponPowerReason } from './weapon-resources.js';
 import { htPreGaussProfile } from '../ht-pre-gauss-profiles.js';
+import { parseCompleteMeleeDamage } from './melee-damage-model.js';
+import { meleeSource } from '../melee-source-data.js';
+import {htOrdinarySource} from '../ht-ordinary-melee-source.js';
+import {utOrdinarySource,utOrdinaryAllowed} from '../ut-ordinary-melee-source.js';
+import {htSpecialSource,htCombinedEquipment} from '../ht-special-melee-source.js';
 
 /** A module-owned attack value, not an Actor attack, Item or GGA lookup path. Read fresh for each calculation. */
 export function readStandaloneAttack(actor, weaponId, modeId = null) {
@@ -49,6 +57,8 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   const record = new StandaloneWeaponService(actor).get(weaponId);
   const mode = modeId ? record?.modes.find(m => m.modeId === modeId) : record?.modes[0];
   if (!record || !mode) return null;
+  const combatType=htCombinedEquipment(record.source?.equipmentId)?mode.snapshot.combat_type:record.type;
+  const special=utExoticSource(mode.modeId)??htSpecialSource(mode.modeId),instructionOnly=special?.equipmentId===record.source.equipmentId&&special.instructionOnly===true;
   const stats = { ...standaloneModeStats(mode.snapshot), ...mode.overrides };
   const weaponHandling = sourceWeaponHandling(mode.snapshot, mode.overrides?.bulkState, mode.overrides?.bulk ?? null);
   if(weaponHandling?.rclNotApplicable)stats.rcl=null;
@@ -81,17 +91,18 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   }
   if(plasmaGunProfile(mode.modeId)||exoticBeamProfile(mode.modeId)||sonicNeuralProfile(mode.modeId)||beamProfile(mode.modeId)||htLaserProfile(mode.modeId)||utDazzlerProfile(mode.modeId)||electrolaserProfile(mode.modeId)||microwaveProfile(mode.modeId)||ppbProfile(mode.modeId))data.isBeamWeapon=true;
   // Catalog defense values are modifiers, GGA attack values are complete defense levels.
-  if (record.type === "melee" && skill.resolved) for (const field of ["parry", "block"]) {
+  if (combatType === "melee" && skill.resolved) for (const field of ["parry", "block"]) {
     const match = String(stats[field] ?? "").match(/^([+-]?\d+)([A-Za-z]*)$/);
-    if (match) data[field] = String(3 + Math.floor(skill.level / 2) + Number(match[1])) + match[2];
+    if (match) data[field] = String(3 + Math.floor(skill.level / 2) + Number(match[1])-(field==='parry'?(meleeSource(mode.modeId)?.parrySkillAlreadyIncluded??0):0)) + match[2];
   }
   const uuid = "olegurps:" + record.id + ":" + mode.modeId;
-  const reference = { weaponId: record.id, modeId: mode.modeId, revision: record.revision, combatType: record.type,
+  const reference = { weaponId: record.id, modeId: mode.modeId, revision: record.revision, combatType: combatType,
     source: structuredClone(record.source), governingSkill: skill };
   let unsupportedDamage = false;
   if (stats.damage && typeof globalThis.GURPS?.parselink === "function") {
     try { const action = globalThis.GURPS.parselink(stats.damage)?.action;
-      unsupportedDamage = !["damage", "deriveddamage"].includes(action?.type) || !!action?.next;
+      unsupportedDamage = combatType==='melee'?!parseCompleteMeleeDamage(stats.damage,globalThis.GURPS.parselink.bind(globalThis.GURPS)):
+        !["damage", "deriveddamage"].includes(action?.type) || !!action?.next;
     } catch { unsupportedDamage = true; }
   }
   const htProfile=record.source.source==='HT'&&htPreGaussProfile(mode.modeId);
@@ -108,23 +119,24 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
   const feed=stormFeed(carrier,carrier?.ammunitionInventory?.magazines.find(m=>m.id===carrier.ammunitionInventory.installedId));
   if(feed&&carrier.executionVariant!=='lp')data.shots=feed.sourceShots;
   const utReason = utSpecialReadiness(mode.modeId)??utConventionalReadiness(mode.modeId, stats);
-  const deferred=ltDeferredExecutionReason(mode.modeId);
-  const reason = deferred ?? (sonicShuriken(mode.modeId)&&stats.damage==='thr(3) cut' ? 'Не заданы текущие ST и базовый thr персонажа в GGA.' : requiresUTPowerAccounting(mode.modeId) ? moduleText("OleGURPS.AttackProfile.UTPowerAccountingRequired") : utReason ? moduleText('OleGURPS.AttackProfile.'+utReason) : configured.reason ?? (weaponHandling?.jetDeferred ? "Для этого режима LT ещё не реализованы контракт Jet и расход топлива." : null) ?? platformRules?.blockedReason ?? (!skill.resolved ? skill.reason : skill.level < 3 ? "Уровень навыка ниже 3: атака недоступна." : !stats.damage ? "В режиме не указан Damage." :
-    unsupportedDamage ? "Этот Damage не поддерживается штатным адаптером. Укажите одну распознаваемую GGA формулу урона." :
-    record.type === "ranged" && (!personal||personal.procedure==='ranged') && (!platformRules?.rofJet && !/\d/.test(String(stats.rof ?? "")) || !platformRules?.rclNotApplicable && !weaponHandling?.rclNotApplicable && !/^[1-9]\d*(?:\s*\/\s*[1-9]\d*)?$/.test(String(stats.rcl ?? "")) ||
+  const deferred=(combatType==='melee'&&meleeSource(mode.modeId)?.manualOnly&&!mode.overrides?.damage?
+    mode.snapshot.lt_flexible_manual:null)??ltDeferredExecutionReason(mode.modeId);
+  const reason = (mode.snapshot.ht_work_only?'Рабочая операция: обычный боевой профиль не опубликован. Применение и Damage по объекту – вручную.':null) ?? deferred ?? (sonicShuriken(mode.modeId)&&stats.damage==='thr(3) cut' ? 'Не заданы текущие ST и базовый thr персонажа в GGA.' : requiresUTPowerAccounting(mode.modeId) ? moduleText("OleGURPS.AttackProfile.UTPowerAccountingRequired") : utReason ? moduleText('OleGURPS.AttackProfile.'+utReason) : configured.reason ?? (weaponHandling?.jetDeferred ? "Для этого режима LT ещё не реализованы контракт Jet и расход топлива." : null) ?? platformRules?.blockedReason ?? (!skill.resolved ? skill.reason : skill.level < 3 ? "Уровень навыка ниже 3: атака недоступна." : !stats.damage ? "В режиме не указан Damage." :
+    unsupportedDamage && !instructionOnly ? "Этот Damage не поддерживается штатным адаптером. Укажите одну распознаваемую GGA формулу урона." :
+    combatType === "ranged" && (!personal||personal.procedure==='ranged') && (!platformRules?.rofJet && !/\d/.test(String(stats.rof ?? "")) || !platformRules?.rclNotApplicable && !weaponHandling?.rclNotApplicable && !/^[1-9]\d*(?:\s*\/\s*[1-9]\d*)?$/.test(String(stats.rcl ?? "")) ||
     !platformRules?.accNotApplicable && (stats.acc === null || !Number.isFinite(Number(String(stats.acc).split("+")[0]))) || !platformRules?.bulkNotApplicable && !bulkMetadata) ?
       "В режиме не хватает RoF, Rcl, Acc или Bulk. Заполните отсутствующие параметры в настройках." :
-    record.type === "melee" && !stats.reach ? "В режиме не указан Reach." : null));
-  return { ...data, path: "", uuid, key: "uuid:" + uuid, label: data.mode ? record.name + " — " + data.mode : record.name,
+    combatType === "melee" && record.source.source!=='LT' && !htOrdinarySource(mode.modeId)?.hostRule && !stats.reach ? "В режиме не указан Reach." : null));
+  return { ...data, path: "", uuid, key: "uuid:" + uuid, label: data.mode ? record.name + " – " + data.mode : record.name,
     acc: platformRules?.accNotApplicable || stats.acc === null ? null : Number(String(stats.acc).split("+")[0]),
     scopeBonus: Number(String(stats.acc ?? "").split("+")[1]) || 0,
     bulk: bulkMetadata?.numericBulk ?? null, bulkMetadata, ...(weaponHandling?{weaponHandling}:{}), data, sourceDamage: stats.damage,
-    standaloneRef: reference, governingSkillBinding: { kind: "standalone", weaponId: record.id, modeId: mode.modeId },
+    manualSourceHint:mode.snapshot.ht_tool_manual??null, standaloneRef: reference, governingSkillBinding: { kind: "standalone", weaponId: record.id, modeId: mode.modeId },
     ...(record.settings?.ltBow?{ltBowConfiguration:record.settings.ltBow,ltBowOverrides:mode.overrides}:{}),
     ...(personal?{ltPersonalOverrides:mode.overrides,ltProcedure:personal.procedure,sourceCombatType:mode.snapshot.combat_type}:{}),
     ...(ltEarlyProfile(mode.modeId)?{ltEarlyOverrides:{...(ltEarlyProfile(mode.modeId).kind==='flame'?{damage:stats.damage,range:stats.range}:{}),...mode.overrides}}:{}),
     ...(typeof record.settings?.weaponBond==='boolean'?{weaponBondSetting:record.settings.weaponBond}:{}),
-    ...(record.source.source==='LT'&&record.type==='ranged'&&record.settings?.weaponBondPerkConfirmed===true?{weaponBondPerkConfirmed:true}:{}),
+    ...(record.source.source==='LT'&&combatType==='ranged'&&record.settings?.weaponBondPerkConfirmed===true?{weaponBondPerkConfirmed:true}:{}),
     ...(platformRules?{platformRules,ammunitionRange,
       ammunitionConditions:platformRules.instruction?[{id:'SpecializedPlatform',text:platformRules.instruction}]:[]}:{}),
     ...(electrolaserProfile(mode.modeId)?{preparationReadinessReason:weaponPowerReason({...carrier,electrolaserMode:'standard'},1,mode.modeId)??reason}:{}),
@@ -133,7 +145,7 @@ function readStandaloneAttackValue(actor, weaponId, modeId = null) {
 }
 export function listStandaloneAttacks(actor, type) {
   return new StandaloneWeaponService(actor).list(type).flatMap(record =>
-    (Array.isArray(record.modes) && record.modes.length ? record.modes : [null]).map((mode, index) => {
+    (Array.isArray(record.modes) && record.modes.length ? record.modes : [null]).filter(mode=>!htCombinedEquipment(record.source.equipmentId)||mode?.snapshot.combat_type===type).filter(mode=>utOrdinaryAllowed(utOrdinarySource(mode?.modeId),actor.getFlag('olegurps-qol','meleeProfiles')?.profiles?.['weapon:'+record.id]??{})).filter(mode=>shieldModeAllowed(ltShieldToolSource(mode?.modeId)??ltImprovisedSource(mode?.modeId),actor.getFlag('olegurps-qol','meleeProfiles')?.profiles?.['weapon:'+record.id]??{})).map((mode, index) => {
       try {
         const attack = readStandaloneAttack(actor, record.id, mode?.modeId);
         if (attack) return attack;

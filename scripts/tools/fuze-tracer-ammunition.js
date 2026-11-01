@@ -93,7 +93,7 @@ export function reviewFuzeTracerDefinition(option, originalFacts, definition) {
 export function airburstAttackBonus(definition, mechanics, target) {
   if (definition?.variantId !== "ht_airburst" || definition.airburstAlreadyIncluded !== false) return 0;
   if ([5, 6].includes(definition.fuseTL)) return target === "area" ? mechanics.tl5_6_area_attack_to_hit_bonus : target === "air" ? mechanics.tl5_6_air_target_to_hit_bonus : 0;
-  return [7, 8].includes(definition.fuseTL) && target === "area" ? mechanics.tl7_8_area_attack_to_hit_bonus : 0;
+  return [7, 8].includes(definition.fuseTL) && ["area", "air"].includes(target) ? mechanics.tl7_8_area_attack_to_hit_bonus : 0;
 }
 
 /** One shared effect path: immutable source, one journal, no Rolls/Actor writes/geometry. */

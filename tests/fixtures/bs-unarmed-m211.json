@@ -1,0 +1,12 @@
+{
+  "source": "GURPS Basic Set 4e Characters, printed B182, B203, B271, B274; Campaigns B369-371",
+  "pdfIndex": "Characters: printed + 1; Campaigns: printed - 336",
+  "attacks": [
+    {"id":"punch","damage":"thr-1 cr","reach":"C","parry":"0","penalty":0,"skills":["DX","Brawling","Boxing","Karate"],"pages":[182,203,271,274]},
+    {"id":"kick","damage":"thr cr","reach":"C, 1","parry":"No","penalty":-2,"skills":["DX","Brawling","Karate"],"pages":[182,203,271,274]},
+    {"id":"boots","damage":"thr+1 cr","reach":"C, 1","parry":"No","penalty":-2,"skills":["DX","Brawling","Karate"],"pages":[271,274]},
+    {"id":"bite","damage":"thr-1 cr","reach":"C","parry":"No","penalty":0,"skills":["DX","Brawling"],"pages":[91,182,271]}
+  ],
+  "bonuses": {"Brawling":[[1,0],[2,1]],"Boxing":[[0,0],[1,1],[2,2]],"Karate":[[-1,0],[0,1],[1,2]]},
+  "scope": "Claws B42-43; Teeth B91; typed Striker B88; equipped Gripboots UT75,173. Special grappling actions remain native/manual. Implants OUT_OF_SCOPE."
+}

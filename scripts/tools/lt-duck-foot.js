@@ -12,12 +12,12 @@ export function duckFootFieldsHTML(app,escape){
  const draft=app._ltDuckDraft??{},primary=[...(globalThis.game?.user?.targets??[])];
  const target=primary.length===1?primary[0]:null,offset=Number(draft.offset??0),tokens=(globalThis.canvas?.tokens?.placeables??[]).filter(t=>globalThis.game?.user?.isGM||!t.document?.hidden&&t.isVisible!==false);
  const arc=target&&app.token?duckArcCandidates(app.token,target,tokens,offset):null;
- return `<fieldset data-duck-arc><legend>Duck’s Foot — залп четырёх стволов</legend><label>Точная дистанция, ярды<input name="projectileDistance" type="number" min="0" step="any" value="${escape(app.fireState.projectileDistance??'')}"></label>`+
-  '<p>До 2 ярдов — одна цель, RoF1×4. При большей дистанции — один выстрел по основной цели и B389 для остальных в дуге30°, максимум четыре потенциальных попадания. LT93.</p>'+
+ return `<fieldset data-duck-arc><legend>Duck’s Foot – залп четырёх стволов</legend><label>Точная дистанция, ярды<input name="projectileDistance" type="number" min="0" step="any" value="${escape(app.fireState.projectileDistance??'')}"></label>`+
+  '<p>До 2 ярдов – одна цель, RoF1×4. При большей дистанции – один выстрел по основной цели и B389 для остальных в дуге30°, максимум четыре потенциальных попадания. LT93.</p>'+
   `<details><summary>Дуга и остальные цели для дистанции 3+ ярда</summary><p>Основная цель: ${escape(target?.name??'Отметьте ровно одну цель штатным Target в Foundry.')}</p>`+
   `<label>Смещение центра дуги относительно основной цели, градусы<input type="number" name="duck-offset" min="-15" max="15" step="any" value="${escape(offset)}"></label>`+
   `<label>Порядок<select name="duck-order"><option value="left-to-right" ${draft.order!=='right-to-left'?'selected':''}>Слева направо</option><option value="right-to-left" ${draft.order==='right-to-left'?'selected':''}>Справа налево</option></select></label>`+
-  (arc?.targets??[]).map(t=>`<div data-duck-token="${escape(t.tokenId)}"><label><input type="checkbox" data-duck-include ${draft.targets?.[t.tokenId]?.include===false?'':'checked'}>${escape(t.name)} — может быть задет</label><label>Итоговый шанс намеренного выстрела по этой цели, ввод владельца<input type="number" data-duck-skill step="1" value="${escape(draft.targets?.[t.tokenId]?.skill??'')}"></label></div>`).join('')+
+  (arc?.targets??[]).map(t=>`<div data-duck-token="${escape(t.tokenId)}"><label><input type="checkbox" data-duck-include ${draft.targets?.[t.tokenId]?.include===false?'':'checked'}>${escape(t.name)} – может быть задет</label><label>Итоговый шанс намеренного выстрела по этой цели, ввод владельца<input type="number" data-duck-skill step="1" value="${escape(draft.targets?.[t.tokenId]?.skill??'')}"></label></div>`).join('')+
   `<label><input type="checkbox" name="duck-confirmed" ${draft.confirmed?'checked':''}>Дуга и список проверены; исключены цели, которые не могут быть задеты. Все остальные возможные цели указаны.</label>`+
   '<p>B389 использует меньшее из9 и введённого шанса. Защиты и применение Damage к каждой цели разрешаются отдельно; выбор дуги не наносит урон.</p></details></fieldset>';
 }

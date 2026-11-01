@@ -1,7 +1,7 @@
 import { moduleText } from './localization.js';
-import { readLauncherPreferences, saveLauncherPreferences, normalizeLauncherSize } from './launcher-preferences.js';
-import { clampLauncherPosition, launcherPosition } from './launcher-position.js';
-import { openUnifiedLauncher } from './unified-launcher.js';
+import { readLauncherPreferences, normalizeLauncherSize } from './launcher-preferences.js';
+import { customLauncherPosition, launcherPosition } from './launcher-position.js';
+import { toggleUnifiedLauncher } from './unified-launcher.js';
 
 const SELECTORS = { bucket: '#bucket-container', hotbar: '#hotbar', controls: '#scene-controls',
   navigation: '#scene-navigation', sidebar: '#sidebar', players: '#players', chat: '#chat-notifications' };
@@ -42,7 +42,7 @@ export class LauncherButton {
   refresh() {
     if (!this.started) return;
     const r = this.runtime, preferences = readLauncherPreferences(r);
-    if (!preferences.visible) { this.button?.remove(); this.button = null; this.drag = null; return; }
+    if (!preferences.visible && !this.positionApp) { this.button?.remove(); this.button = null; this.drag = null; return; }
     if (!this.button) {
       const button = r.document.createElement('button');
       button.id = 'olegurps-launcher-button'; button.type = 'button';
@@ -53,7 +53,7 @@ export class LauncherButton {
       const label = r.document.createElement('span'); label.textContent = 'OG'; label.setAttribute('aria-hidden', 'true'); button.append(label);
       button.addEventListener('click', event => {
         if (this.suppressClick) { this.suppressClick = false; event.preventDefault(); return; }
-        void openUnifiedLauncher().catch(error => this.report(error));
+        void toggleUnifiedLauncher().catch(error => this.report(error));
       });
       button.addEventListener('pointerdown', event => this.pointerDown(event));
       button.addEventListener('pointermove', event => this.pointerMove(event));
@@ -63,7 +63,7 @@ export class LauncherButton {
       r.document.body.append(button); this.button = button;
     }
     this.button.style.setProperty('--olegurps-launcher-size', `${this.previewSize ?? preferences.size}px`);
-    this.button.classList.toggle('is-draggable', preferences.position === 'custom');
+    this.button.classList.toggle('is-draggable', !!this.positionApp);
     this.schedule();
   }
   bindSizePreview(app) {
@@ -79,6 +79,20 @@ export class LauncherButton {
       this.refresh();
     };
     for (const event of ['input', 'change']) picker.addEventListener(event, preview, { signal: this.sizePreviewAbort.signal });
+    const position = app.element?.querySelector('#oq-launcher-position');
+    if (position) {
+      const previewPosition = () => {
+        this.drag = null;
+        this.positionApp = position.value === 'custom' ? app : null;
+        if (this.positionApp && !app.launcherPositionDraft && !readLauncherPreferences(this.runtime).custom) {
+          const bounds = this.button?.getBoundingClientRect();
+          if (bounds) app.launcherPositionDraft = { x: bounds.left, y: bounds.top };
+        }
+        this.refresh();
+      };
+      position.addEventListener('change', previewPosition, { signal: this.sizePreviewAbort.signal });
+      previewPosition();
+    }
     this.previewSize = picker.value === '' ? null : normalizeLauncherSize(Number(picker.value));
     this.refresh();
   }
@@ -86,6 +100,8 @@ export class LauncherButton {
     if (app !== this.previewApp) return;
     this.sizePreviewAbort?.abort(); this.sizePreviewAbort = null;
     this.previewApp = null; this.previewSize = null;
+    if (this.positionApp === app) { this.positionApp = null; this.drag = null; }
+    delete app?.launcherPositionDraft;
     this.refresh();
   }
   report(error) {
@@ -115,11 +131,18 @@ export class LauncherButton {
     }
     for (const element of this.observed) if (!element.isConnected) { this.resize.unobserve(element); this.observed.delete(element); }
     const { viewport, size } = this.measurements();
-    this.place(launcherPosition(readLauncherPreferences(r), anchors, viewport, size));
+    const preferences = readLauncherPreferences(r);
+    if (this.positionApp) {
+      preferences.position = 'custom';
+      preferences.custom = this.positionApp.launcherPositionDraft ?? preferences.custom;
+    }
+    const point = launcherPosition(preferences, anchors, viewport, size);
+    if (this.positionApp) this.positionApp.launcherPositionDraft = point;
+    this.place(point);
   }
   place(point) { this.button.style.left = `${point.x}px`; this.button.style.top = `${point.y}px`; }
   pointerDown(event) {
-    if (event.button !== 0 || readLauncherPreferences(this.runtime).position !== 'custom') return;
+    if (event.button !== 0 || !this.positionApp) return;
     this.suppressClick = false;
     const bounds = this.button.getBoundingClientRect();
     this.drag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY,
@@ -133,7 +156,8 @@ export class LauncherButton {
     if (!drag.moved && Math.hypot(dx, dy) < 5) return;
     drag.moved = true;
     const { viewport, size } = this.measurements();
-    drag.point = clampLauncherPosition({ x: drag.x + dx, y: drag.y + dy }, viewport, size);
+    const hotbar = rect(this.runtime.document.querySelector(SELECTORS.hotbar));
+    drag.point = customLauncherPosition({ x: drag.x + dx, y: drag.y + dy }, hotbar, viewport, size);
     this.place(drag.point);
   }
   pointerEnd(event, cancelled = false) {
@@ -142,9 +166,8 @@ export class LauncherButton {
     this.drag = null;
     this.suppressClick = drag.moved;
     if (this.button?.hasPointerCapture(event.pointerId)) this.button.releasePointerCapture(event.pointerId);
-    if (drag.moved && !cancelled) {
-      void saveLauncherPreferences({ custom: drag.point }, this.runtime).catch(error => { this.report(error); this.schedule(); });
-    } else this.schedule();
+    if (drag.moved && !cancelled && this.positionApp) this.positionApp.launcherPositionDraft = drag.point;
+    this.schedule();
   }
   stop() {
     if (!this.started) return;

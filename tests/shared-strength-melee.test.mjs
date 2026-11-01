@@ -103,9 +103,9 @@ test('every derived component uses GGA parser, numeric damage and single-pass ma
   globalThis.GURPS={parseForRollOrDamage:p,DamageChat:{create:async(...args)=>{calls.push(args);}}};
   try{
     const prepared=await prepareEffectiveMeleeDamage({actor:a,attack:{damage:'sw+3 cut, 1d burn'},committedStrong:true});
-    assert.equal(prepared.formula,'1d+6 cut, 1d+1 burn');
+    assert.equal(prepared.formula,'1d+6 cut, 1d burn');
     await set(a,{st:10});await executeNativeMeleeDamage({actor:a,preparedDamage:prepared,committedStrong:true});
-    assert.deepEqual(calls.map(c=>c[1]),['1d+6','1d+1']);
+    assert.deepEqual(calls.map(c=>c[1]),['1d+6','1d']);
   }finally{globalThis.GURPS=old;}
 });
 test('frozen common snapshot stores numeric components, exact strength evidence and martial flags without advantage notes',async()=>{

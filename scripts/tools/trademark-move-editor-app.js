@@ -52,7 +52,7 @@ export class TrademarkMoveEditorApp extends ApplicationV2 {
   }
 
   _previewText(preview) {
-    if (!preview) return "\u0411\u0430\u0437\u0430: \u2014 | \u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b: \u2014 | \u042d\u0444\u0444.: \u2014";
+    if (!preview) return "\u0411\u0430\u0437\u0430: \u2013 | \u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b: \u2013 | \u042d\u0444\u0444.: \u2013";
     const modifiers = preview.totalModifiers >= 0 ? `+${preview.totalModifiers}` : String(preview.totalModifiers);
     return `\u0411\u0430\u0437\u0430: ${preview.baseSkill} | \u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b: ${modifiers} | \u042d\u0444\u0444.: ${preview.effectiveSkill} (${preview.successChance}%)`;
   }

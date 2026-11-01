@@ -41,10 +41,11 @@ test("hearing success remains -6; exact position alone gives -4", () => {
 test("a selected hex uses its center and never reads the hidden Token", () => {
   globalThis.game = { user: { targets: { [Symbol.iterator]() { throw Error("target read"); } } } };
   globalThis.canvas = {
+    scene: {grid: {distance: 1, units: 'yd'}},
     grid: {
       getCenterPoint: ({ i, j }) => ({ x: i * 10 + 5, y: j * 10 + 5 }),
       isGridless: false,
-      measurePath: ([a, b]) => ({ spaces: Math.hypot(a.x - b.x, a.y - b.y) })
+      measurePath: ([a, b]) => ({ spaces: Math.hypot(a.x - b.x, a.y - b.y), distance: Math.hypot(a.x - b.x, a.y - b.y) })
     },
     get tokens() { throw Error("token layer read"); }
   };

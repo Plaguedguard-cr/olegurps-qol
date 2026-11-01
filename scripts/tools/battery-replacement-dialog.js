@@ -1,9 +1,20 @@
+import { generateId } from "../random-id.js";
 import { batteryText, batteryExpectation, weaponPowerProfile } from './weapon-power.js';
 import { uawPowerOwner } from './ut-uaw.js';
+import {utMeleeResourceContext} from './ut-melee-resources.js';
 
-export async function confirmBatteryReplacement({actor, weaponId, ammoService,
+export async function confirmBatteryReplacement({actor, weaponId, ammoService,meleeAttack=null,modeId=null,
   DialogV2 = globalThis.foundry?.applications?.api?.DialogV2}) {
   if (actor.isOwner !== true && !globalThis.game?.user?.isGM) throw Error('Permission');
+  if(meleeAttack){
+    const c=utMeleeResourceContext(actor,meleeAttack,modeId);if(!c)throw Error('Нет источникового ресурса.');
+    const expectedResource=structuredClone(c.saved),requestId=generateId();
+    const answer=await DialogV2.wait({window:{title:c.p.power?'Заменить батарею':'Установить новый ресурс'},position:{width:350},modal:false,rejectClose:false,
+      content:'<p>'+(c.p.power?'Заменить '+c.profile.cellSize+' cell?':'Установить новый полный ресурс ('+c.profile.capacity+')?')+'</p>'+(c.p.power?'<label><input name="nonRechargeable" type="checkbox"> Non-Rechargeable</label>':''),
+      buttons:[{action:'yes',label:'Да',callback:(_e,b)=>({nonRechargeable:c.p.power?b.form.elements.nonRechargeable.checked:false})},{action:'no',label:'Нет',default:true,callback:()=>false}]});
+    if(!answer||typeof answer!=='object'||typeof answer.nonRechargeable!=='boolean')return null;
+    return ammoService.replaceMeleeResource(meleeAttack,{modeId,requestId,expectedResource,nonRechargeable:answer.nonRechargeable});
+  }
   const state=actor.getFlag('world','gurpsAmmoManager');
   const weapon = uawPowerOwner(state,state?.weapons?.find(w=>w.id===weaponId));
   const profile=weaponPowerProfile(weapon);
@@ -11,7 +22,7 @@ export async function confirmBatteryReplacement({actor, weaponId, ammoService,
   if(profile.oneShot)return null;
   const question=profile.cosmic?`\u0417\u0430\u043c\u0435\u043d\u0438\u0442\u044c \u043a\u043e\u043c\u043f\u043b\u0435\u043a\u0442 Cosmic ${profile.cells>1?profile.cells:''}${profile.cellSize} cell?`:profile.chemical?`Установить новый полный ${profile.label.toLowerCase()}?`:profile.cells>1?
     `Заменить весь комплект из ${profile.cells} ${profile.cellSize} cell?`:batteryText('Question');
-  const expectedBattery = batteryExpectation(weapon), requestId = crypto.randomUUID();
+  const expectedBattery = batteryExpectation(weapon), requestId = generateId();
   const answer = await DialogV2.wait({
     window:{title:question},position:{width:350},modal:false,rejectClose:false,
     content:`<p>${question}</p>`+(profile.cosmic||profile.chemical||profile.standard==='HT13'?'':`<label><input type="checkbox" name="nonRechargeable"> Non-Rechargeable</label>`),

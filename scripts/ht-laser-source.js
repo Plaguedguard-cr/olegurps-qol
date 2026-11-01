@@ -23,7 +23,7 @@ export function htLaserEffect(id,range=null){
 }
 export function htLaserInstructions(id){
   const p=htLaserProfile(id);if(!p)return [];
-  return [(p.coneWidth?'Зелёный луч, конус 3 ярда на максимальной дальности; область — вручную. ':'Треножная установка, узкий луч; прицеливание именно в глаза не требуется. ')+
+  return [(p.coneWidth?'Зелёный луч, конус 3 ярда на максимальной дальности; область – вручную. ':'Треножная установка, узкий луч; прицеливание именно в глаза не требуется. ')+
     'Действует только на смотрящих в сторону лазера. HT181.',
     'Сопротивление: за ½D +3, Protected Vision +5, Nictitating Membrane +1/уровень; DR не помогает. HT181.'];
 }

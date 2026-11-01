@@ -1,8 +1,13 @@
+import {adaptGgaShieldAttacks} from './shield-equipment-adapter.js';
+import {collectUnarmedAttacks} from './bs-unarmed.js';
+import {adaptGgaImprovisedAttacks} from './lt-improvised-equipment-adapter.js';
 import { getAttackOverrideKey } from "./weapon-attack-overrides.js";
 import { listStandaloneAttacks } from "./standalone-attack-service.js";
 import { withActorResourceWrite } from "./actor-resource-writes.js";
 import { StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { normalizeMeleeDamageModel } from './melee-damage-model.js';
+import { resolveMeleeProfile } from './melee-profile-service.js';
+import { normalizeVisibility } from './limited-visibility.js';
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "olegurpsMeleeAssistant";
@@ -64,13 +69,13 @@ export function buildMeleeAttackReference(source, path) {
   return reference;
 }
 
-export function collectMeleeAttacks(actor) {
+export function collectMeleeAttacks(actor, options = {}) {
   const attacks = [];
   walkMeleeAttackTree(actor?.system?.melee, (source, path) => {
     const reference = buildMeleeAttackReference(source, path);
     if (reference.key) attacks.push(reference);
   });
-  return [...attacks, ...listStandaloneAttacks(actor, "melee")];
+  return collectUnarmedAttacks(actor,[...adaptGgaImprovisedAttacks(actor,adaptGgaShieldAttacks(actor,attacks)), ...listStandaloneAttacks(actor, "melee")],options);
 }
 
 export function normalizeMeleeAttackOverride(value) {
@@ -95,11 +100,13 @@ export function normalizeMeleeAssistantState(value) {
     const rapidStrikeMastery = raw.rapidStrikeMastery === true;
     const weaponBond = raw.weaponBond === true;
     const override = normalizeMeleeAttackOverride(raw.override);
+    const hasVisibility = Object.hasOwn(raw, 'visibility');
     const safeKey = normalizeStoredAttackKey(key);
-    if (safeKey && (governingSkill || rapidStrikeMastery || weaponBond || override)) attacks[safeKey] = {
+    if (safeKey && (governingSkill || rapidStrikeMastery || weaponBond || override || hasVisibility)) attacks[safeKey] = {
       ...(governingSkill ? { governingSkill } : {}),
       ...(rapidStrikeMastery ? { rapidStrikeMastery: true } : {}),
       ...(weaponBond ? { weaponBond: true } : {}),
+      ...(hasVisibility ? { visibility: normalizeVisibility(raw.visibility) } : {}),
       ...(override ? { override } : {})
     };
   }
@@ -121,14 +128,16 @@ export function getMeleeAttackSettings(state, attack) {
   return typeof attack?.weaponBondSetting==='boolean'?{...settings,weaponBond:attack.weaponBondSetting}:settings;
 }
 
-export function applyMeleeAttackOverride(attack, state) {
+export function applyMeleeAttackOverride(attack, state, actor=null) {
   if (!attack) return null;
   const override = normalizeMeleeAttackOverride(getMeleeAttackSettings(state, attack).override);
-  if (!override) return attack;
-  return {
+  if (!override) return actor?resolveMeleeProfile({actor,attack}):attack;
+  const result = {
     ...attack,
     level: override.skillLevel,
     damage: override.damage,
+    hasMeleeDamageOverride:override.damage!==attack.damage,
+    meleeManualOverride:{skillLevel:override.skillLevel,parry:override.parry},
     reach: override.reach,
     parry: override.parry,
     ...(override.damageModel?{damageModel:override.damageModel}:{}),
@@ -142,6 +151,7 @@ export function applyMeleeAttackOverride(attack, state) {
       parry: override.parry
     }
   };
+  return actor?resolveMeleeProfile({actor,attack:result}):result;
 }
 
 export function setMeleeDicePlusAdds(state, enabled) {
@@ -171,6 +181,14 @@ export function setMeleeRapidStrikeMastery(state, attack, enabled) {
   else delete current.rapidStrikeMastery;
   if (Object.keys(current).length) state.attacks[key] = current;
   else delete state.attacks[key];
+  return true;
+}
+
+export function setMeleeVisibility(state, attack, visibility) {
+  const key = storedAttackKey(attack);
+  if (!key) return false;
+  state.attacks ??= {};
+  state.attacks[key] = { ...(state.attacks[key] ?? {}), visibility: normalizeVisibility(visibility) };
   return true;
 }
 

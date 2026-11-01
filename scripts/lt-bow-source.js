@@ -13,8 +13,8 @@ const rows=[
  ['WxBwICnOg7tP-Gqfq','Composite Crossbow','wood',8,5,4,25,30],
  ['Wdn9cVYekaOlUeQnQ','Pistol Crossbow','pistol',7,2,1,15,20],
  ['WEccMSldVWlEmz-AU','Prodd','prodd',7,4,2,20,25],
- ['W11eNBa3voVFCsgWv','Slurbow — 2 medium','slurbow',9,3,1,25,30,2],
- ['WFAwJH7XlIK-bIy0Q','Slurbow — 5 small','slurbow',9,2,1,15,20,5],
+ ['W11eNBa3voVFCsgWv','Slurbow – 2 medium','slurbow',9,3,1,25,30,2],
+ ['WFAwJH7XlIK-bIy0Q','Slurbow – 5 small','slurbow',9,2,1,15,20,5],
  ['WVvwyyO4VoyeTryRo','Fowling Crossbow','steel',8,5,4,25,30,1,1.5],
  ['WEG0MRykkKI4AzUzD','Hunting Crossbow','steel',10,5,4,25,30,1,2],
  ['WPn4rW6HE64VST_pm','Military Crossbow','steel',12,5,4,25,30,1,3],
@@ -85,9 +85,9 @@ export function ltBowPhysicalAdmission(modeId,ammoId,kind,configuration={}){
 }
 
 const newItems=[
- {id:'lt_slurbow_medium_dart_lt76',name:'Slurbow — средний дротик',ammo_family_id:'slurbow_medium_dart',weapon_mode_ids:['W11eNBa3voVFCsgWv'],price_usd:0.5,weight_lb:0.03,projectile_classes:['slurbow_medium_dart'],source_ref_raw:'LT74,76,78 n.3',tech_level_raw:'3'},
- {id:'lt_slurbow_small_dart_lt76',name:'Slurbow — малый дротик',ammo_family_id:'slurbow_small_dart',weapon_mode_ids:['WFAwJH7XlIK-bIy0Q'],price_usd:0.5,weight_lb:0.02,projectile_classes:['slurbow_small_dart'],source_ref_raw:'LT74,76,78 n.3',tech_level_raw:'3'},
- {id:'lt_bodkin_gastraphetes_bolt_lt76',name:'Gastraphetes — Bodkin Bolt',ammo_family_id:'gastraphetes_personal_bolt',weapon_mode_ids:['Ws0Es7ZR78_sIW-uP'],price_usd:2,weight_lb:0.15,variant_id:'crossbow_bodkin',projectile_classes:['hand_crossbow_bolt'],source_ref_raw:'LT76; B277',tech_level_raw:'3'},
+ {id:'lt_slurbow_medium_dart_lt76',name:'Slurbow – средний дротик',ammo_family_id:'slurbow_medium_dart',weapon_mode_ids:['W11eNBa3voVFCsgWv'],price_usd:0.5,weight_lb:0.03,projectile_classes:['slurbow_medium_dart'],source_ref_raw:'LT74,76,78 n.3',tech_level_raw:'3'},
+ {id:'lt_slurbow_small_dart_lt76',name:'Slurbow – малый дротик',ammo_family_id:'slurbow_small_dart',weapon_mode_ids:['WFAwJH7XlIK-bIy0Q'],price_usd:0.5,weight_lb:0.02,projectile_classes:['slurbow_small_dart'],source_ref_raw:'LT74,76,78 n.3',tech_level_raw:'3'},
+ {id:'lt_bodkin_gastraphetes_bolt_lt76',name:'Gastraphetes – Bodkin Bolt',ammo_family_id:'gastraphetes_personal_bolt',weapon_mode_ids:['Ws0Es7ZR78_sIW-uP'],price_usd:2,weight_lb:0.15,variant_id:'crossbow_bodkin',projectile_classes:['hand_crossbow_bolt'],source_ref_raw:'LT76; B277',tech_level_raw:'3'},
  {id:'lt_flaming_arrow_b410',name:'Flaming Arrow',ammo_family_id:'bow_arrow',weapon_mode_ids:LT_BOW_IDS,variant_id:'flaming',projectile_classes:['bow_arrow'],source_ref_raw:'B410; LT73'},
  {id:'lt_flaming_humming_bulb_arrow_lt73',name:'Flaming Humming Bulb Arrow',ammo_family_id:'bow_arrow',weapon_mode_ids:LT_BOW_IDS,variant_id:'flaming_humming',projectile_classes:['bow_arrow'],source_ref_raw:'LT73; B410'}
 ];

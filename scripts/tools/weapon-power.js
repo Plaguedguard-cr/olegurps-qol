@@ -33,23 +33,23 @@ export const WEAPON_POWER_PROFILES = Object.freeze({
   ...Object.fromEntries(Object.values(EXOTIC_BEAM_PROFILES).map(p=>[p.modeId,Object.freeze({
     id:'ut-exotic-beam:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'exoticBeamBattery',completeSet:true,...(p.cosmic?{cosmic:true,label:'Cosmic '+(p.cells>1?p.cells:'')+p.cellSize+(['E','F'].includes(p.cellSize)?'p':'')+' cell'}:{}),source:p.source,accounting:'published-shots-per-complete-source-set',
-    ...(!p.cosmic&&['D','E','F'].includes(p.cellSize)?{label:(p.cells>1?p.cells:'')+p.cellSize+'p — выносной комплект'}:{})})])),
+    ...(!p.cosmic&&['D','E','F'].includes(p.cellSize)?{label:(p.cells>1?p.cells:'')+p.cellSize+'p – выносной комплект'}:{})})])),
   ...Object.fromEntries(Object.values(SONIC_NEURAL_PROFILES).map(p=>[p.modeId,Object.freeze({
     id:'ut-sonic-neural:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'sonicNeuralBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
-    ...(p.cellSize==='D'?{label:'Dp — D cell (выносная)'}:{})})])),
+    ...(p.cellSize==='D'?{label:'Dp – D cell (выносная)'}:{})})])),
   ...Object.fromEntries(Object.values(PPB_PROFILES).map(p=>[p.modeId,Object.freeze({
     id:'ut-plasma-particle:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'plasmaParticleBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
-    ...(['D','E','F'].includes(p.cellSize)?{label:(p.cells>1?p.cells:'')+p.cellSize+'p — выносной комплект'}:{})})])),
+    ...(['D','E','F'].includes(p.cellSize)?{label:(p.cells>1?p.cells:'')+p.cellSize+'p – выносной комплект'}:{})})])),
   ...Object.fromEntries(Object.values(MICROWAVE_PROFILES).map(p=>[p.modeId,Object.freeze({
     id:'ut-microwave:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'microwaveBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
-    ...(p.cellSize==='D'?{label:'Dp — D cell (выносная)'}:{})})])),
+    ...(p.cellSize==='D'?{label:'Dp – D cell (выносная)'}:{})})])),
   ...Object.fromEntries(Object.values(ELECTROLASER_PROFILES).map(p=>[p.modeId,Object.freeze({
     id:'electrolaser:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'electrolaserBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set',
-    ...(p.backpack?{label:'Dp — D cell (выносная)'}:{})})])),
+    ...(p.backpack?{label:'Dp – D cell (выносная)'}:{})})])),
   ...Object.fromEntries(Object.values(UT_DAZZLER_PROFILES).map(p=>[p.modeId,Object.freeze({
     id:'ut-dazzler:'+p.modeId,cellSize:p.cellSize,cells:p.cells,capacity:p.shots,chargePerPhysicalShot:1,
     stateKey:'dazzlerBattery',completeSet:true,source:p.source,accounting:'published-shots-per-complete-source-set'})])),
@@ -257,9 +257,9 @@ export function weaponBatteryHTML(weapon, selected, escape) {
   const profile=weaponPowerProfile(weapon);if(!profile)return '';
   const b=readWeaponBattery(weapon,profile),charge=b?.charge??0,capacity=b?.capacity??profile.capacity;
   const unit=profile.unitsPerStandardShot??1;
-  const cell=profile.oneShot?'Встроенный заряд':profile.label??(profile.cells>1?profile.cells+'×':'')+profile.cellSize+' cell',label=cell+(b?.nonRechargeable?' — Non-Rechargeable':'');
+  const cell=profile.oneShot?'Встроенный заряд':profile.label??(profile.cells>1?profile.cells+'×':'')+profile.cellSize+' cell',label=cell+(b?.nonRechargeable?' – Non-Rechargeable':'');
   return `<button type="button" class="gam-battery ${selected?'selected':''}" data-ammo-action="select-battery" data-weapon-id="${escape(weapon.id)}" aria-pressed="${!!selected}" aria-label="${escape(label)} ${charge/unit}/${capacity/unit}" title="${escape(weaponPowerReason(weapon)??label)}">`+
-    `<span class="gam-battery-text"><span>${escape(cell)}</span><span>${charge/unit}/${capacity/unit}</span></span>`+
+    `<span class="gam-battery-text"><span>${escape(cell)}</span><span>${charge/unit}/${capacity/unit}${profile.chemical?' \u0432\u044b\u0441\u0442\u0440.':''}</span></span>`+
     `<span class="gam-battery-icon" style="--gam-mag-hue:${magazineFill(charge,capacity).hue}" aria-hidden="true">${Array.from({length:10},(_,i)=>
       `<span class="gam-battery-segment ${charge>(9-i)*capacity/10?'filled':''}"></span>`).join('')}</span></button>`;
 }

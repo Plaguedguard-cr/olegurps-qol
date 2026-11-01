@@ -1,3 +1,4 @@
+import { generateId } from "../random-id.js";
 const MODULE = "olegurps-qol", SETTING = "ammunitionApprovals";
 import { htVariantKind } from "./ht-kinetic-rules.js";
 import { readStandaloneAttack, standaloneCatalogBinding } from "./standalone-attack-service.js";
@@ -141,7 +142,7 @@ export function setAmmunitionApproval({ actor, weapon, type, active, plusPDecisi
         malfModifier: plusPDecision.malfModifier ?? null, rof: plusPDecision.rof ?? null,
         loadingCheckPassed: plusPDecision.loadingCheckPassed === true,
         ...(active && plusPDecision.loadingCheckPassed === true ? { loadingConfirmation: {
-          id: globalThis.crypto.randomUUID(), userId: runtime.game.user.id, origin:'user',
+          id: generateId(), userId: runtime.game.user.id, origin:'user',
           scope: key, fingerprint: recipeFingerprint(type), perShot: false } } : {}) } : structuredClone(previous?.plusPDecision??null) } : {}) };
     await actor.setFlag(MODULE,'ammunitionDecisions',saved);
     return structuredClone(saved[key]);

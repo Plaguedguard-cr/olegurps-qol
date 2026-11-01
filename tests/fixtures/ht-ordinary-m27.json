@@ -1,0 +1,3688 @@
+{
+  "schema": 1,
+  "source": "Printed High-Tech 2007, B271-274; MA214. Independently transcribed numeric expectations.",
+  "sourceSHA256": "d791a73bbbad780bf3a337a9a428829d8c7c0a34a9b89f3a47743e991d537260",
+  "modes": [
+    {
+      "modeId": "wFmnElv38Dl7vCHz8",
+      "equipmentId": "ev6IWD4-uE0rGlA0e",
+      "sourcePages": [
+        "HT24",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -3,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 13
+    },
+    {
+      "modeId": "wfKR2M4gnXBEF9xnA",
+      "equipmentId": "eWPb7dZDtN1UCSHqd",
+      "sourcePages": [
+        "HT24",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w2A5N1ScjaT1lLiWB",
+      "equipmentId": "e7_bLwLBEgCjCHcJV",
+      "sourcePages": [
+        "HT24",
+        "HT25",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wtn5e3QgIZlvQbvqQ",
+      "equipmentId": "en23jl_JtDFD07ZkT",
+      "sourcePages": [
+        "HT24",
+        "HT25",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SpikeAxePick",
+      "equipmentId": "en23jl_JtDFD07ZkT",
+      "sourcePages": [
+        "HT24",
+        "HT25",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 imp",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wiVweCQycRfxLWw-S",
+      "equipmentId": "ebtmPVWYqoPTurp35",
+      "sourcePages": [
+        "HT25",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -3,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 13
+    },
+    {
+      "modeId": "wNvMhJZvddcEoaCeq",
+      "equipmentId": "e6t4Yw5hHaQR0vZoM",
+      "sourcePages": [
+        "HT25",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+4 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27RescuePick",
+      "equipmentId": "e6t4Yw5hHaQR0vZoM",
+      "sourcePages": [
+        "HT25",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+1 imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wdTZZ7oKQZ7buTp0c",
+      "equipmentId": "eNlOD0zWWikViisSd",
+      "sourcePages": [
+        "HT25",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wCPNzG9L3bnIX62at",
+      "equipmentId": "eRx44Du6RbHftDjqV",
+      "sourcePages": [
+        "HT25",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wTlBkPvUYs-6Rw3l4",
+      "equipmentId": "eWRfOAIsArr59NgHj",
+      "sourcePages": [
+        "HT25",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 13
+    },
+    {
+      "modeId": "w37bkrQ8qa2ehFHj-",
+      "equipmentId": "eGOxhmW2NAoeOReiY",
+      "sourcePages": [
+        "HT29",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 13
+    },
+    {
+      "modeId": "wYaeKbdic5OYqbULN",
+      "equipmentId": "eezdwLDGWE_YDI6K7",
+      "sourcePages": [
+        "HT220",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 13
+    },
+    {
+      "modeId": "wrL7rskIEkSAtGcTC",
+      "equipmentId": "eajfEbEtM723JxHzZ",
+      "sourcePages": [
+        "HT29",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 1
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 14
+    },
+    {
+      "modeId": "wHTM27TitaniumCrowbar",
+      "equipmentId": "eHTM27TitaniumCrowbar",
+      "sourcePages": [
+        "HT30",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+2 cr",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -1,
+        "hands": 1
+      },
+      "formulaST12": "1d+4 cr",
+      "levelST12": 15
+    },
+    {
+      "modeId": "wp6bDROiNcRJwGzWh",
+      "equipmentId": "e_1UECwWT7jlR5Jrh",
+      "sourcePages": [
+        "HT25",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 14
+    },
+    {
+      "modeId": "w8UxOYTiLBvz6mhoR",
+      "equipmentId": "eW-cNpwCnVcCDwAjs",
+      "sourcePages": [
+        "HT25",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+2 cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 1
+      },
+      "formulaST12": "1d+4 cut",
+      "levelST12": 14
+    },
+    {
+      "modeId": "wQ0bf_MmAgCn4fM1v",
+      "equipmentId": "eFf7OhZNT2TliecEw",
+      "sourcePages": [
+        "HT56",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+1 imp",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w7amXfwCvbsp7yOU_",
+      "equipmentId": "e5nWOWZw-5nAJf2Op",
+      "sourcePages": [
+        "HT25",
+        "B272"
+      ],
+      "expected": {
+        "damage": "sw-3 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27PocketknifeSwing",
+      "equipmentId": "eHTM27Pocketknife",
+      "sourcePages": [
+        "HT31",
+        "B272"
+      ],
+      "expected": {
+        "damage": "sw-4 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-2 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27PocketknifeThrust",
+      "equipmentId": "eHTM27Pocketknife",
+      "sourcePages": [
+        "HT31",
+        "B272"
+      ],
+      "expected": {
+        "damage": "thr-2 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-3 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wAjcSsvacJM_7Tzfr",
+      "equipmentId": "earXz_vCKpjMT8AyY",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw-1 cut",
+        "reach": "C,1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+1 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wRXDd86Y4__OPZLRK",
+      "equipmentId": "earXz_vCKpjMT8AyY",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wtIG6nyrGeh8tD-zL",
+      "equipmentId": "emJVhil2_lMm-hp5b",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wtMjcI58OCR7XMeMq",
+      "equipmentId": "esGXNt3LP9x5vK2tM",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wrQR9Rgjti7MzzuO9",
+      "equipmentId": "esGXNt3LP9x5vK2tM",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wkbjDVUL46CT6mIcC",
+      "equipmentId": "eTeIQwzgAqpsxVYtD",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw-3 cut",
+        "reach": "C,1",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wm46LzEuQ8BMOFZ2_",
+      "equipmentId": "eTeIQwzgAqpsxVYtD",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "No",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wljw_rn5aQiy2VN6y",
+      "equipmentId": "e52sQF4g-RQhkba8a",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw-3 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wxEqz2xFzN7mgJLei",
+      "equipmentId": "e52sQF4g-RQhkba8a",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr-1 imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "5",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wzamLAfFUhE_iRDHH",
+      "equipmentId": "ec-sdpLnIh2l6kLUW",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wT-pH9Zmco_kJOcvk",
+      "equipmentId": "ec-sdpLnIh2l6kLUW",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27TrenchPunch",
+      "equipmentId": "ec-sdpLnIh2l6kLUW",
+      "sourcePages": [
+        "HT198",
+        "HT200",
+        "MA111",
+        "B182",
+        "B203"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Boxing",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w1E5tlALr61HNzATz",
+      "equipmentId": "eC6lytQUMuXS9guYX",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wM0HTKatanaThrust",
+      "equipmentId": "eC6lytQUMuXS9guYX",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27KatanaSheathSwing",
+      "equipmentId": "eC6lytQUMuXS9guYX",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27KatanaSheathThrust",
+      "equipmentId": "eC6lytQUMuXS9guYX",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w0pG2m0oUOrqTGZIq",
+      "equipmentId": "egixYjiSM8QfhH5S1",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "C,1",
+        "parry": "-2F",
+        "st": "5",
+        "skills": [
+          "Smallsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SwordCaneSheathSwing",
+      "equipmentId": "egixYjiSM8QfhH5S1",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SwordCaneSheathThrust",
+      "equipmentId": "egixYjiSM8QfhH5S1",
+      "sourcePages": [
+        "HT197",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SaberSwing",
+      "equipmentId": "eHTM27Saber",
+      "sourcePages": [
+        "HT196",
+        "B273",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw-1 cut",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8",
+        "skills": [
+          "Saber"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+1 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SaberThrust",
+      "equipmentId": "eHTM27Saber",
+      "sourcePages": [
+        "HT196",
+        "B273",
+        "B274"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0F",
+        "st": "8",
+        "skills": [
+          "Saber"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27CutlassSwing",
+      "equipmentId": "eHTM27Cutlass",
+      "sourcePages": [
+        "HT196",
+        "B273",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27CutlassThrust",
+      "equipmentId": "eHTM27Cutlass",
+      "sourcePages": [
+        "HT196",
+        "B273",
+        "B274"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27CutlassPunch",
+      "equipmentId": "eHTM27Cutlass",
+      "sourcePages": [
+        "HT196",
+        "B274[10]",
+        "B271",
+        "MA111",
+        "B182",
+        "B203"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Boxing",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ShortswordSwing",
+      "equipmentId": "eHTM27Shortsword",
+      "sourcePages": [
+        "HT196",
+        "B273",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ShortswordThrust",
+      "equipmentId": "eHTM27Shortsword",
+      "sourcePages": [
+        "HT196",
+        "B273",
+        "B274"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27TomahawkBlade",
+      "equipmentId": "eHTM27Tomahawk",
+      "sourcePages": [
+        "HT196",
+        "B271",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SpikedTomahawkBlade",
+      "equipmentId": "eHTM27SpikedTomahawk",
+      "sourcePages": [
+        "HT196",
+        "B271",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SpikedTomahawkSpike",
+      "equipmentId": "eHTM27SpikedTomahawk",
+      "sourcePages": [
+        "HT196",
+        "B271",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "8",
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w--xkYEbbEK1Rrg0A",
+      "equipmentId": "e0WSvhPoP9FfmXqSp",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wo4A8K1eQQs458_Xg",
+      "equipmentId": "e0WSvhPoP9FfmXqSp",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w0NSjdoiRcUc8KE8m",
+      "equipmentId": "eiGKXpvF-EAqxnqr_",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Tonfa"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w30EgsQ0EdR8Lhf04",
+      "equipmentId": "eiGKXpvF-EAqxnqr_",
+      "sourcePages": [
+        "HT198",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C,1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Tonfa"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27TonfaPunch",
+      "equipmentId": "eiGKXpvF-EAqxnqr_",
+      "sourcePages": [
+        "HT198",
+        "HT200",
+        "MA111",
+        "B182",
+        "B203"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Boxing",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27CaneSwing",
+      "equipmentId": "eHTM27Cane",
+      "sourcePages": [
+        "HT31",
+        "B271",
+        "MA214"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27CaneThrust",
+      "equipmentId": "eHTM27Cane",
+      "sourcePages": [
+        "HT31",
+        "B271",
+        "MA214"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SpyglassSwing",
+      "equipmentId": "eHTM27Spyglass",
+      "sourcePages": [
+        "HT47",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27SpyglassThrust",
+      "equipmentId": "eHTM27Spyglass",
+      "sourcePages": [
+        "HT47",
+        "B271"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ScabbardSwing",
+      "equipmentId": "eHTM27RigidScabbard",
+      "sourcePages": [
+        "HT198",
+        "B273"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ScabbardThrust",
+      "equipmentId": "eHTM27RigidScabbard",
+      "sourcePages": [
+        "HT198",
+        "B273"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wZXqbIUQSr3ohAwKB",
+      "equipmentId": "eJMrkuiaXNnra_maA",
+      "sourcePages": [
+        "HT52",
+        "B273"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wfEKsoFrfsGkWtKO_",
+      "equipmentId": "eJMrkuiaXNnra_maA",
+      "sourcePages": [
+        "HT52",
+        "B273"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w-l1Jk0-db1LbK5tg",
+      "equipmentId": "exKEib5EKFTfuiP89",
+      "sourcePages": [
+        "HT52",
+        "B273"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+2 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "w7pREBk8-2BnGHseL",
+      "equipmentId": "exKEib5EKFTfuiP89",
+      "sourcePages": [
+        "HT52",
+        "B273"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d-1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wPvpPmA7zMWFG2nEE",
+      "equipmentId": "eTGYRiOPWA63QwFPV",
+      "sourcePages": [
+        "HT52",
+        "B271"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Boxing",
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wGYwjQk5pg_UNgXN9",
+      "equipmentId": "etEMrb0nJU4ZJkJeY",
+      "sourcePages": [
+        "HT52",
+        "B271"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Boxing",
+          "Brawling",
+          "Karate",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27HandRam",
+      "equipmentId": "eHTM27HandRam",
+      "sourcePages": [
+        "HT29",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -3,
+        "hands": 2
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 12
+    },
+    {
+      "modeId": "wHTM27HandRamNonSparking",
+      "equipmentId": "eHTM27HandRamNonSparking",
+      "sourcePages": [
+        "HT29",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+4 cr",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "13‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -3,
+        "hands": 2
+      },
+      "formulaST12": "1d+6 cr",
+      "levelST12": 12
+    },
+    {
+      "modeId": "wHTM27TitaniumShovel",
+      "equipmentId": "eHTM27TitaniumShovel",
+      "sourcePages": [
+        "HT25",
+        "HT26",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+3 cut",
+        "reach": "1,2*",
+        "parry": "0U",
+        "st": "12‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cut",
+      "levelST12": 14
+    },
+    {
+      "modeId": "wHTM27CavalrySaberSwing",
+      "equipmentId": "eHTM27CavalrySaber",
+      "sourcePages": [
+        "HT196",
+        "B271"
+      ],
+      "expected": {
+        "damage": "sw+1 cut",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cut",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27CavalrySaberThrust",
+      "equipmentId": "eHTM27CavalrySaber",
+      "sourcePages": [
+        "HT196",
+        "B271"
+      ],
+      "expected": {
+        "damage": "thr+1 imp",
+        "reach": "1",
+        "parry": "0",
+        "st": "10",
+        "skills": [
+          "Broadsword"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteevjTNNYZXZhJnXvl",
+      "equipmentId": "eevjTNNYZXZhJnXvl",
+      "sourcePages": [
+        "HT105",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleevjTNNYZXZhJnXvl",
+      "equipmentId": "eevjTNNYZXZhJnXvl",
+      "sourcePages": [
+        "HT105",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteevjTNNYZXZhJnXvl",
+      "equipmentId": "eevjTNNYZXZhJnXvl",
+      "sourcePages": [
+        "HT105",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteYO4QzOcjqeQCBtqN",
+      "equipmentId": "eYO4QzOcjqeQCBtqN",
+      "sourcePages": [
+        "HT107",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleYO4QzOcjqeQCBtqN",
+      "equipmentId": "eYO4QzOcjqeQCBtqN",
+      "sourcePages": [
+        "HT107",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteYO4QzOcjqeQCBtqN",
+      "equipmentId": "eYO4QzOcjqeQCBtqN",
+      "sourcePages": [
+        "HT107",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteRzbXLJtgucqkrdt",
+      "equipmentId": "eRzbXLJtgucqkrdt-",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleRzbXLJtgucqkrdt",
+      "equipmentId": "eRzbXLJtgucqkrdt-",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteRzbXLJtgucqkrdt",
+      "equipmentId": "eRzbXLJtgucqkrdt-",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Butternjv8F38cn4anRy",
+      "equipmentId": "ernjv_8F38cn4anRy",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrelernjv8F38cn4anRy",
+      "equipmentId": "ernjv_8F38cn4anRy",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayoneternjv8F38cn4anRy",
+      "equipmentId": "ernjv_8F38cn4anRy",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteiTvWfvhEaBhjYp5c",
+      "equipmentId": "eiTvWfvhEaBhjYp5c",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleiTvWfvhEaBhjYp5c",
+      "equipmentId": "eiTvWfvhEaBhjYp5c",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteiTvWfvhEaBhjYp5c",
+      "equipmentId": "eiTvWfvhEaBhjYp5c",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteyHxDzmpP7NueYEoE",
+      "equipmentId": "eyHxDzmpP7NueYEoE",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleyHxDzmpP7NueYEoE",
+      "equipmentId": "eyHxDzmpP7NueYEoE",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteyHxDzmpP7NueYEoE",
+      "equipmentId": "eyHxDzmpP7NueYEoE",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Butte2DQNlmfA1iIpoWc",
+      "equipmentId": "e2D_QNlmfA1iIpoWc",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrele2DQNlmfA1iIpoWc",
+      "equipmentId": "e2D_QNlmfA1iIpoWc",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonete2DQNlmfA1iIpoWc",
+      "equipmentId": "e2D_QNlmfA1iIpoWc",
+      "sourcePages": [
+        "HT108",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteAGqBfzU1sQHkJT5",
+      "equipmentId": "eAGqBfzU1sQHkJ_T5",
+      "sourcePages": [
+        "HT109",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleAGqBfzU1sQHkJT5",
+      "equipmentId": "eAGqBfzU1sQHkJ_T5",
+      "sourcePages": [
+        "HT109",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteAGqBfzU1sQHkJT5",
+      "equipmentId": "eAGqBfzU1sQHkJ_T5",
+      "sourcePages": [
+        "HT109",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Butte22lYvrpeVpE0znPx",
+      "equipmentId": "e22lYvrpeVpE0znPx",
+      "sourcePages": [
+        "HT110",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrele22lYvrpeVpE0znPx",
+      "equipmentId": "e22lYvrpeVpE0znPx",
+      "sourcePages": [
+        "HT110",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonete22lYvrpeVpE0znPx",
+      "equipmentId": "e22lYvrpeVpE0znPx",
+      "sourcePages": [
+        "HT110",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButtePlkuIRRdhJKSGcz9",
+      "equipmentId": "ePlkuIRRdhJKSGcz9",
+      "sourcePages": [
+        "HT111",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarrelePlkuIRRdhJKSGcz9",
+      "equipmentId": "ePlkuIRRdhJKSGcz9",
+      "sourcePages": [
+        "HT111",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayonetePlkuIRRdhJKSGcz9",
+      "equipmentId": "ePlkuIRRdhJKSGcz9",
+      "sourcePages": [
+        "HT111",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Butte9566AWnFUdmajf8p",
+      "equipmentId": "e9566AWnFUdmajf8p",
+      "sourcePages": [
+        "HT111",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrele9566AWnFUdmajf8p",
+      "equipmentId": "e9566AWnFUdmajf8p",
+      "sourcePages": [
+        "HT111",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonete9566AWnFUdmajf8p",
+      "equipmentId": "e9566AWnFUdmajf8p",
+      "sourcePages": [
+        "HT111",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteF3IpLTAHbDoSDXzF",
+      "equipmentId": "eF3IpLTAHbDoSDXzF",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleF3IpLTAHbDoSDXzF",
+      "equipmentId": "eF3IpLTAHbDoSDXzF",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteF3IpLTAHbDoSDXzF",
+      "equipmentId": "eF3IpLTAHbDoSDXzF",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Buttee0VyLFXJaSBVRP0",
+      "equipmentId": "ee0V_yLFXJaSBVRP0",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrelee0VyLFXJaSBVRP0",
+      "equipmentId": "ee0V_yLFXJaSBVRP0",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonetee0VyLFXJaSBVRP0",
+      "equipmentId": "ee0V_yLFXJaSBVRP0",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteNKy2cjhZpcdSZje3",
+      "equipmentId": "eNKy2cjhZpcdSZje3",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleNKy2cjhZpcdSZje3",
+      "equipmentId": "eNKy2cjhZpcdSZje3",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteNKy2cjhZpcdSZje3",
+      "equipmentId": "eNKy2cjhZpcdSZje3",
+      "sourcePages": [
+        "HT112",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Buttee3UomNhA2E12tsUp",
+      "equipmentId": "ee3UomNhA2E12tsUp",
+      "sourcePages": [
+        "HT113",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrelee3UomNhA2E12tsUp",
+      "equipmentId": "ee3UomNhA2E12tsUp",
+      "sourcePages": [
+        "HT113",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonetee3UomNhA2E12tsUp",
+      "equipmentId": "ee3UomNhA2E12tsUp",
+      "sourcePages": [
+        "HT113",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButtebUdu85R4zUtfJQas",
+      "equipmentId": "ebUdu85R4zUtfJQas",
+      "sourcePages": [
+        "HT113",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarrelebUdu85R4zUtfJQas",
+      "equipmentId": "ebUdu85R4zUtfJQas",
+      "sourcePages": [
+        "HT113",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayonetebUdu85R4zUtfJQas",
+      "equipmentId": "ebUdu85R4zUtfJQas",
+      "sourcePages": [
+        "HT113",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteT448e6j7QT5yBB9",
+      "equipmentId": "eT448e6j7QT5yBB9-",
+      "sourcePages": [
+        "HT114",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleT448e6j7QT5yBB9",
+      "equipmentId": "eT448e6j7QT5yBB9-",
+      "sourcePages": [
+        "HT114",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteT448e6j7QT5yBB9",
+      "equipmentId": "eT448e6j7QT5yBB9-",
+      "sourcePages": [
+        "HT114",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteWJtl7hsVqeN7zd6",
+      "equipmentId": "eWJtl_7hsVqeN7zd6",
+      "sourcePages": [
+        "HT114",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleWJtl7hsVqeN7zd6",
+      "equipmentId": "eWJtl_7hsVqeN7zd6",
+      "sourcePages": [
+        "HT114",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteWJtl7hsVqeN7zd6",
+      "equipmentId": "eWJtl_7hsVqeN7zd6",
+      "sourcePages": [
+        "HT114",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteuZambZiOmLic0RDq",
+      "equipmentId": "euZambZiOmLic0RDq",
+      "sourcePages": [
+        "HT115",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleuZambZiOmLic0RDq",
+      "equipmentId": "euZambZiOmLic0RDq",
+      "sourcePages": [
+        "HT115",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteuZambZiOmLic0RDq",
+      "equipmentId": "euZambZiOmLic0RDq",
+      "sourcePages": [
+        "HT115",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Butted3ioYrUkJ0WeHY2j",
+      "equipmentId": "ed3ioYrUkJ0WeHY2j",
+      "sourcePages": [
+        "HT115",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barreled3ioYrUkJ0WeHY2j",
+      "equipmentId": "ed3ioYrUkJ0WeHY2j",
+      "sourcePages": [
+        "HT115",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayoneted3ioYrUkJ0WeHY2j",
+      "equipmentId": "ed3ioYrUkJ0WeHY2j",
+      "sourcePages": [
+        "HT115",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1,2*",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButterCcAHHIbdN16knh",
+      "equipmentId": "erCcAHHIbdN_16knh",
+      "sourcePages": [
+        "HT116",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarrelerCcAHHIbdN16knh",
+      "equipmentId": "erCcAHHIbdN_16knh",
+      "sourcePages": [
+        "HT116",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneterCcAHHIbdN16knh",
+      "equipmentId": "erCcAHHIbdN_16knh",
+      "sourcePages": [
+        "HT116",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteOzfZp8n7uNE4sGxH",
+      "equipmentId": "eOzfZp8n7uNE4sGxH",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleOzfZp8n7uNE4sGxH",
+      "equipmentId": "eOzfZp8n7uNE4sGxH",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteOzfZp8n7uNE4sGxH",
+      "equipmentId": "eOzfZp8n7uNE4sGxH",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButtetS2NjSHMX4nhW",
+      "equipmentId": "etS2NjSH-MX_4n-hW",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreletS2NjSHMX4nhW",
+      "equipmentId": "etS2NjSH-MX_4n-hW",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayonetetS2NjSHMX4nhW",
+      "equipmentId": "etS2NjSH-MX_4n-hW",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Butte67zCZrPud7CFltf",
+      "equipmentId": "e67zCZr-Pud7CFltf",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrele67zCZrPud7CFltf",
+      "equipmentId": "e67zCZr-Pud7CFltf",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonete67zCZrPud7CFltf",
+      "equipmentId": "e67zCZr-Pud7CFltf",
+      "sourcePages": [
+        "HT117",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Butte77Qd8iSqq4qwpA",
+      "equipmentId": "e77Qd8-iSqq4qwpA-",
+      "sourcePages": [
+        "HT118",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrele77Qd8iSqq4qwpA",
+      "equipmentId": "e77Qd8-iSqq4qwpA-",
+      "sourcePages": [
+        "HT118",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonete77Qd8iSqq4qwpA",
+      "equipmentId": "e77Qd8-iSqq4qwpA-",
+      "sourcePages": [
+        "HT118",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 14
+    },
+    {
+      "modeId": "wHTM27ButtemmzpqCoD5lddcmK",
+      "equipmentId": "emmzpqCoD5lddc_mK",
+      "sourcePages": [
+        "HT118",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarrelemmzpqCoD5lddcmK",
+      "equipmentId": "emmzpqCoD5lddc_mK",
+      "sourcePages": [
+        "HT118",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayonetemmzpqCoD5lddcmK",
+      "equipmentId": "emmzpqCoD5lddc_mK",
+      "sourcePages": [
+        "HT118",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 14
+    },
+    {
+      "modeId": "wHTM27ButtejGDTj8sgEEsoqJV",
+      "equipmentId": "ejGDTj_8sgEEsoqJV",
+      "sourcePages": [
+        "HT119",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarrelejGDTj8sgEEsoqJV",
+      "equipmentId": "ejGDTj_8sgEEsoqJV",
+      "sourcePages": [
+        "HT119",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayonetejGDTj8sgEEsoqJV",
+      "equipmentId": "ejGDTj_8sgEEsoqJV",
+      "sourcePages": [
+        "HT119",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButtexQ5ayubvFgz7DqON",
+      "equipmentId": "exQ5ayubvFgz7DqON",
+      "sourcePages": [
+        "HT121",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarrelexQ5ayubvFgz7DqON",
+      "equipmentId": "exQ5ayubvFgz7DqON",
+      "sourcePages": [
+        "HT121",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayonetexQ5ayubvFgz7DqON",
+      "equipmentId": "exQ5ayubvFgz7DqON",
+      "sourcePages": [
+        "HT121",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ButteNdsyjC2v9jtDfJMe",
+      "equipmentId": "eNdsyjC2v9jtDfJMe",
+      "sourcePages": [
+        "HT121",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BarreleNdsyjC2v9jtDfJMe",
+      "equipmentId": "eNdsyjC2v9jtDfJMe",
+      "sourcePages": [
+        "HT121",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27BayoneteNdsyjC2v9jtDfJMe",
+      "equipmentId": "eNdsyjC2v9jtDfJMe",
+      "sourcePages": [
+        "HT121",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 14
+    },
+    {
+      "modeId": "wHTM27Butte5xQY7IgYf7EXTimp",
+      "equipmentId": "e5xQY7IgYf7EXTimp",
+      "sourcePages": [
+        "HT125",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+2 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Staff"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+1 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Barrele5xQY7IgYf7EXTimp",
+      "equipmentId": "e5xQY7IgYf7EXTimp",
+      "sourcePages": [
+        "HT125",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "sw+3 cr",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+5 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27Bayonete5xQY7IgYf7EXTimp",
+      "equipmentId": "e5xQY7IgYf7EXTimp",
+      "sourcePages": [
+        "HT125",
+        "HT197",
+        "HT198"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": -2,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 14
+    },
+    {
+      "modeId": "wHTM27GarandKnife1943",
+      "equipmentId": "ee3UomNhA2E12tsUp",
+      "sourcePages": [
+        "HT113",
+        "HT197"
+      ],
+      "expected": {
+        "damage": "thr+3 imp",
+        "reach": "1",
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Spear"
+        ],
+        "penalty": 0,
+        "hands": 2
+      },
+      "formulaST12": "1d+2 imp",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wp3iM8OTc6Vr2eu23",
+      "equipmentId": "e4_jsO6IfwKuAHbnw",
+      "sourcePages": [
+        "HT93",
+        "HT91"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wyHln6_YE3b7CZWdl",
+      "equipmentId": "eSCosXzRCtLU2dhgW",
+      "sourcePages": [
+        "HT93",
+        "HT91"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wI15zL7yXHoMW5cCi",
+      "equipmentId": "eu6uSL_Zf5O4FdR4P",
+      "sourcePages": [
+        "HT93",
+        "HT91"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wc4VbYbgB9QnG7ogU",
+      "equipmentId": "eehksQDl32irf5N46",
+      "sourcePages": [
+        "HT93",
+        "HT91"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wH427EBh0RQ_8Glnp",
+      "equipmentId": "ezYmDBW2qEke5OORf",
+      "sourcePages": [
+        "HT93",
+        "HT91"
+      ],
+      "expected": {
+        "damage": "sw+1 cr",
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Axe/Mace"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d+3 cr",
+      "levelST12": 16
+    },
+    {
+      "modeId": "wHTM27ColtGovernmentWhip",
+      "equipmentId": "ewyeAyQD8Hy4A4-Mm",
+      "sourcePages": [
+        "HT93",
+        "HT98",
+        "HT99"
+      ],
+      "expected": {
+        "damage": "thr+1 cr",
+        "reach": null,
+        "parry": null,
+        "st": null,
+        "skills": [
+          "Brawling",
+          "DX"
+        ],
+        "penalty": 0,
+        "hands": 1
+      },
+      "formulaST12": "1d cr",
+      "levelST12": 16
+    }
+  ]
+}

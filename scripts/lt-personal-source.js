@@ -1,3 +1,4 @@
+import {htCombinedEquipment} from './ht-special-melee-source.js';
 import {normalizeLTQuality,ltPersonalQualityOptions} from './tools/lt-quality.js';
 import {ltCrossbowUtilityProfile} from './lt-crossbow-utility-source.js';
 // Personal LT-P3 source rows, checked against LT63,72-78 and LT125. Raw catalogs remain unchanged.
@@ -54,13 +55,13 @@ const rows = [
 const extras=[
  ['WLTP3PilumThrown','eLTP3Pilum','Pilum','pilum','thr+3 imp','x1/x1.5','73',[],'Wu1wX2lpPMDtA5FNi'],
  ['WLTP3AngonThrown','eLTP3Angon','Angon','pilum','thr+3 imp','x1/x1.5','73',[],'Wu1wX2lpPMDtA5FNi'],
- ['WLTP3FootwearThrown','eLTP3Footwear','Footwear — thrown by laces','footwear','sw-1 cr','x3/x5','63',[],'WQiw6nornpsdGHCov'],
- ['WLTP3CaltropThrown','eLTP3Caltrop','Caltrop — thrown','caltrop','thr-3 imp','x0.25/x0.5','63',[],'WjjbiXtJUu9FPc31Z'],
- ['WLTP3PitonThrown','eLTP3Piton','Piton — thrown','piton','thr-1 imp','x0.8/x1.5','125',[],'WSeSXfbUXTcrrZXGD'],
- ['WLTP3BlowpipePowder','eLTP3BlowpipePowder','Blowpipe — Powder','powder','spec.','1','72',[],'WD7iZ_sU7XylHwqN_'],
+ ['WLTP3FootwearThrown','eLTP3Footwear','Footwear – thrown by laces','footwear','sw-1 cr','x3/x5','63',[],'WQiw6nornpsdGHCov'],
+ ['WLTP3CaltropThrown','eLTP3Caltrop','Caltrop – thrown','caltrop','thr-3 imp','x0.25/x0.5','63',[],'WjjbiXtJUu9FPc31Z'],
+ ['WLTP3PitonThrown','eLTP3Piton','Piton – thrown','piton','thr-1 imp','x0.8/x1.5','125',[],'WSeSXfbUXTcrrZXGD'],
+ ['WLTP3BlowpipePowder','eLTP3BlowpipePowder','Blowpipe – Powder','powder','spec.','1','72',[],'WD7iZ_sU7XylHwqN_'],
  ['WLTP3MetsubushiPowder','eLTP3Metsubushi','Metsubushi','metsubushi','spec.','1','72',[],'WD7iZ_sU7XylHwqN_'],
  ['WLTP3GrapplingHook','eLTP3GrapplingHook','Grappling Hook','grapnel','spec.','spec.','125',[],null],
- ['WLTP3PaddedGrapplingHook','eLTP3PaddedGrapplingHook','Grappling Hook — padded','grapnel-padded','spec.','spec.','125',[],null]
+ ['WLTP3PaddedGrapplingHook','eLTP3PaddedGrapplingHook','Grappling Hook – padded','grapnel-padded','spec.','spec.','125',[],null]
 ];
 const noDamageKinds=new Set(['cloak','net-large','net-small','lariat','powder','metsubushi','grapnel','grapnel-padded']);
 const launcherKinds=new Set(['atlatl-dart','atlatl-javelin','blowpipe-dart','dart-sling','heavy-sling','sling','staff-sling','stone-stick','woomera','powder','metsubushi']);
@@ -71,7 +72,7 @@ export const LT_PERSONAL_PROFILES=Object.freeze(Object.fromEntries([...rows,...e
   hitBonus:kind==='footwear'||kind==='caltrop'?-2:kind==='piton'?-4:0})])));
 export const ltPersonalProfile=value=>{const id=typeof value==='string'?value:value?.standaloneModeId??value?.catalogModeId;return LT_PERSONAL_PROFILES[id]??ltCrossbowUtilityProfile(id);};
 export function isLTProcedureMode(mode){return ltPersonalProfile(mode?.weapon_mode_id)?.procedure!=='ranged'&&!!ltPersonalProfile(mode?.weapon_mode_id);}
-export function supportsStandaloneMode(mode,type){return isLTProcedureMode(mode)?type==='ranged':mode?.combat_type===type;}
+export function supportsStandaloneMode(mode,type){return htCombinedEquipment(mode?.ht_combined_equipment_id)&&['melee','ranged'].includes(type)?['melee','ranged'].includes(mode.combat_type):isLTProcedureMode(mode)?type==='ranged':mode?.combat_type===type;}
 export function ltPersonalAmmoId(p){
  if(p.kind==='atlatl-javelin'||p.modeId==='W666IAfB0ft-hoH3z')return 'lt_atlatl_javelin';
  if(p.kind==='woomera')return 'lt_p3_object_'+LT_PERSONAL_PROFILES.Wu1wX2lpPMDtA5FNi.equipmentId;
@@ -86,9 +87,9 @@ const sourceAliases={WD7iZ_sU7XylHwqN_:['Fukiya'],WUT0gfmvp1m0cFJGL:['Quoit'],
  WQiw6nornpsdGHCov:['Bola Loca'],WqrX0vMt5n6kLV5mq:['Mongwanga'],W4A2YqblVK_LoJh0L:['Mongwanga'],WoPZ6WfjRMTWppGsv:['Fustibal'],WO60e2cUBoUzSuKLd:['Jarid','Nageyari','Skaen','Uchi-ne','Plumbata'],
  W8f7fOdKN4ZBmhYrh:['Flying Dart','Fei Biao'],WSeSXfbUXTcrrZXGD:['Flying Dart','Fei Biao']};
 const addedPhysical=[
- {id:'lt_p3_heavy_sling_lead',name:'Heavy Sling — lead bullet',ammo_family_id:'lt_p3_heavy_sling_lead',weapon_mode_ids:['W04WeGwpSVXBrCCCw'],projectile_classes:['heavy_sling_rock'],variant_id:'sling_lead',tech_level_raw:'2',weight_lb:1,source_ref_raw:'LT74,78'},
- {id:'lt_p3_heavy_sling_unshaped',name:'Heavy Sling — unshaped rock',ammo_family_id:'lt_p3_heavy_sling_unshaped',weapon_mode_ids:['W04WeGwpSVXBrCCCw'],projectile_classes:['heavy_sling_rock'],variant_id:'sling_stone_unshaped',tech_level_raw:'0',weight_lb:1,price_usd:0,source_ref_raw:'LT78 n3'},
- {id:'lt_p3_stone_stick_unshaped',name:'Stone-Launching Stick — unshaped stone',ammo_family_id:'lt_p3_stone_stick_unshaped',weapon_mode_ids:['WrowHYC-dAZA488wu'],projectile_classes:['stone_launcher_stone'],variant_id:'sling_stone_unshaped',tech_level_raw:'0',price_usd:0,source_ref_raw:'LT78 n3'}
+ {id:'lt_p3_heavy_sling_lead',name:'Heavy Sling – lead bullet',ammo_family_id:'lt_p3_heavy_sling_lead',weapon_mode_ids:['W04WeGwpSVXBrCCCw'],projectile_classes:['heavy_sling_rock'],variant_id:'sling_lead',tech_level_raw:'2',weight_lb:1,source_ref_raw:'LT74,78'},
+ {id:'lt_p3_heavy_sling_unshaped',name:'Heavy Sling – unshaped rock',ammo_family_id:'lt_p3_heavy_sling_unshaped',weapon_mode_ids:['W04WeGwpSVXBrCCCw'],projectile_classes:['heavy_sling_rock'],variant_id:'sling_stone_unshaped',tech_level_raw:'0',weight_lb:1,price_usd:0,source_ref_raw:'LT78 n3'},
+ {id:'lt_p3_stone_stick_unshaped',name:'Stone-Launching Stick – unshaped stone',ammo_family_id:'lt_p3_stone_stick_unshaped',weapon_mode_ids:['WrowHYC-dAZA488wu'],projectile_classes:['stone_launcher_stone'],variant_id:'sling_stone_unshaped',tech_level_raw:'0',price_usd:0,source_ref_raw:'LT78 n3'}
 ];
 function appendPhysical(data,item){
  let current=data.ammo_items.find(a=>a.id===item.id);
@@ -135,7 +136,7 @@ export function projectLTPersonalSourceData(book,data){
  }
  if(book==='lt'){
   for(const p of Object.values(LT_PERSONAL_PROFILES)){
-   if(!p.ammoIds.length||p.kind==='woomera'||p.modeId==='W666IAfB0ft-hoH3z')appendPhysical(data,{id:ltPersonalAmmoId(p),name:p.name+' — физический предмет',ammo_family_id:ltPersonalAmmoId(p),weapon_mode_ids:[p.modeId],source_equipment_id:p.kind==='woomera'?LT_PERSONAL_PROFILES.Wu1wX2lpPMDtA5FNi.equipmentId:p.equipmentId,projectile_classes:[p.procedure==='melee-powder'?'lt_powder_load':p.kind==='woomera'?'lt_full_spear':'lt_personal_object'],source_ref_raw:p.source});
+   if(!p.ammoIds.length||p.kind==='woomera'||p.modeId==='W666IAfB0ft-hoH3z')appendPhysical(data,{id:ltPersonalAmmoId(p),name:p.name+' – физический предмет',ammo_family_id:ltPersonalAmmoId(p),weapon_mode_ids:[p.modeId],source_equipment_id:p.kind==='woomera'?LT_PERSONAL_PROFILES.Wu1wX2lpPMDtA5FNi.equipmentId:p.equipmentId,projectile_classes:[p.procedure==='melee-powder'?'lt_powder_load':p.kind==='woomera'?'lt_full_spear':'lt_personal_object'],source_ref_raw:p.source});
   }
   for(const item of addedPhysical)appendPhysical(data,item);
   for(const p of Object.values(LT_PERSONAL_PROFILES)){const item=data.ammo_items.find(a=>a.id===ltPersonalAmmoId(p));if(item&&!item.tech_level_raw)item.tech_level_raw=p.stats?.techLevel??(['piton','caltrop'].includes(p.kind)?'2':p.kind.startsWith('grapnel')?'1':p.kind==='powder'?'0':null);}

@@ -83,13 +83,13 @@ export function sonicNeuralDamage(raw,id,w,context={}){
   version:1,id,name:p.name,attribute:'HT',modifier:p.modifier,condition:['neural','mindripper'].includes(p.family)?p.family:'sonic-'+p.family,
   halfRange:half,outcome:p.family==='mindripper'?'mindripper-affliction':p.family==='neural'?'neural-affliction':p.family==='stunner'?'sonic-incapacitation':'nausea',source:p.family==='mindripper'?MINDRIPPER_PROJECT_POLICY.source:p.source,
   ...(p.family==='neural'?{setting:c.mode}:{}),...(p.family==='stunner'&&typeof context.hitLocation==='string'?{hitLocation:context.hitLocation}:{})}:null;
- const lines=p.family==='screamer'?['Живые цели: injury >½ HP — Hard of Hearing; >⅔ HP — Deafness до заживления вызвавшей её травмы. UT125.']:
-  p.family==='nauseator'?['Слух; Protected Hearing +5 HT. Провал: Hard of Hearing и Moderate Pain на MoF минут; 5+ — Deafness, retching и Bad Smell до очищения. UT125.']:
+ const lines=p.family==='screamer'?['Живые цели: injury >½ HP – Hard of Hearing; >⅔ HP – Deafness до заживления вызвавшей её травмы. UT125.']:
+  p.family==='nauseator'?['Слух; Protected Hearing +5 HT. Провал: Hard of Hearing и Moderate Pain на MoF минут; 5+ – Deafness, retching и Bad Smell до очищения. UT125.']:
   p.family==='stunner'?['DR места попадания: +1 HT за полные 5 DR; за ½D +3. Провал: Unconsciousness либо недееспособность поражённой конечности на MoF минут. UT125.']:
   p.family==='neural'?[`${NEURAL_SETTINGS[c.mode]??'Выберите настройку'}; Sealed и отсутствие функционирующей нервной системы защищают полностью; за ½D +3 HT. UT121–122.`]:
   ['Одна цель на импульс; Mind Shield к HT, за ½D +3; DR и Sealed не защищают. UT122; проект 21.10.2026.',
-   'Провал: Coma; 5+ — Total Amnesia после восстановления. Копия сознания описывается вручную: фрагмент при 1–4, полная эмуляция при 5+. UT122.'];
- if(p.coneWidth&&p.family!=='mindripper')lines.push(`Конус ${p.coneWidth} ярд. на максимальной дальности; охват — вручную. ${p.source}.`);
+   'Провал: Coma; 5+ – Total Amnesia после восстановления. Копия сознания описывается вручную: фрагмент при 1–4, полная эмуляция при 5+. UT122.'];
+ if(p.coneWidth&&p.family!=='mindripper')lines.push(`Конус ${p.coneWidth} ярд. на максимальной дальности; охват – вручную. ${p.source}.`);
  if(contact)lines.push('Вакуум / следовая атмосфера: только физический контакт, Range C. UT124.');
  return {status:reason?'unresolved':'resolved',nativeSafe:!reason,reason,rawFormula:raw.damage,formula,
   components:formula?[{role:'kinetic',status:reason?'unresolved':'resolved',formula}]:[],transformations:[],
@@ -102,14 +102,14 @@ export function sonicNeuralDamage(raw,id,w,context={}){
 export function sonicNeuralControlsHTML(w,escape){
  const p=sonicNeuralWeapon(w);if(!p||p.family==='mindripper')return '';
  const c=sonicNeuralConfiguration(w);
- if(p.family==='neural')return `<div data-sonic-neural-controls>${c.settings.length>1?`<label>Настройка Neural<select name="neuralMode">${c.settings.map(s=>`<option value="${s}"${c.mode===s?' selected':''}>${NEURAL_SETTINGS[s]}</option>`).join('')}</select></label><small>Смена настройки — Ready. UT122.</small>`:c.settings.length?`<small>${NEURAL_SETTINGS[c.mode]}</small>`:'<small>Установите настройку Neural в «Настроить».</small>'}</div>`;
+ if(p.family==='neural')return `<div data-sonic-neural-controls>${c.settings.length>1?`<label>Настройка Neural<select name="neuralMode">${c.settings.map(s=>`<option value="${s}"${c.mode===s?' selected':''}>${NEURAL_SETTINGS[s]}</option>`).join('')}</select></label><small>Смена настройки – Ready. UT122.</small>`:c.settings.length?`<small>${NEURAL_SETTINGS[c.mode]}</small>`:'<small>Установите настройку Neural в «Настроить».</small>'}</div>`;
  return `<div class="gam-fire-electrolaser-controls" data-sonic-neural-controls><div class="gam-fire-electrolaser-fields"><label>Среда<select name="sonicEnvironment">${[['air','Атмосфера'],['vacuum','Вакуум / следовая'],['water','Под водой']].map(([v,l])=>`<option value="${v}"${c.environment===v?' selected':''}>${l}</option>`).join('')}</select></label><label>Давление, атм<input name="sonicPressure" aria-label="Давление, атм" type="number" min="0" max="1000" step="0.01" value="${escape(c.pressure)}" style="width:5em"></label>${c.environment==='vacuum'||c.pressure<=0.01?`<label><input name="sonicPhysicalContact" type="checkbox"${c.physicalContact?' checked':''}>Физический контакт с целью</label>`:''}</div></div>`;
 }
 export function sonicNeuralHardwareHTML(id,w,escape){
  const p=sonicNeuralProfile(id);if(!p||p.family==='mindripper')return '';
  if(isSonic(p))return p.family==='nauseator'?'':`<label><input name="sonicUnderwater" type="checkbox"${w?.sonicUnderwater?' checked':''}>Конструкция Sonic для подводной среды (UT125)</label>`;
  const c=neuralDesign({...w,catalogModeId:id});
- return `<fieldset><legend>Установленные настройки Neural</legend>${Object.entries(NEURAL_SETTINGS).map(([v,l])=>`<label><input name="neuralSetting" value="${v}" type="checkbox"${c.settings.includes(v)?' checked':''}>${l}</label>`).join('')}<small>Выберите хотя бы одну настройку. Смена — Ready; дополнительная настройка +50% базовой цены. Death Beam: TL12^. UT122.</small><p data-neural-price>Цена: $${c.cost}; ×${c.costMultiplier}; TL${c.tl}^.</p></fieldset>`;
+ return `<fieldset><legend>Установленные настройки Neural</legend>${Object.entries(NEURAL_SETTINGS).map(([v,l])=>`<label><input name="neuralSetting" value="${v}" type="checkbox"${c.settings.includes(v)?' checked':''}>${l}</label>`).join('')}<small>Выберите хотя бы одну настройку. Смена – Ready; дополнительная настройка +50% базовой цены. Death Beam: TL12^. UT122.</small><p data-neural-price>Цена: ${c.cost}; ×${c.costMultiplier}; TL${c.tl}^.</p></fieldset>`;
 }
 // Compare actual injury, never nominal weapon dice. No status or Actor mutation.
 export function screamerHearingResult(injury,hp){

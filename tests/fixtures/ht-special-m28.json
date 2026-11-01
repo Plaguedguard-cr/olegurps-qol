@@ -1,0 +1,612 @@
+{
+  "schema": 1,
+  "source": "HT27/180/199-200; B271-273. Explicit independent printed numeric rows, ST12, learned16, no Fine upgrade.",
+  "modes": [
+    {
+      "modeId": "wCqDJeFrsa89Srp2B",
+      "equipmentId": "e3Q0yEd8FcjmFpRm-",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2 cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "wHTM28HardwCqDJeFrsa89Srp2B",
+      "equipmentId": "e3Q0yEd8FcjmFpRm-",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d(0.5) cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2(0.5) cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "w290SmH6F4RcvB53D",
+      "equipmentId": "ekL0jdgQgscxD85sl",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2 cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "wHTM28Hardw290SmH6F4RcvB53D",
+      "equipmentId": "ekL0jdgQgscxD85sl",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d(0.5) cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2(0.5) cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "w96LrgSujNkWxD4Fx",
+      "equipmentId": "exU9mGlA5F9VfY6xD",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2 cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "wHTM28Hardw96LrgSujNkWxD4Fx",
+      "equipmentId": "exU9mGlA5F9VfY6xD",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d(0.5) cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "11‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2(0.5) cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "wnGzvaraC07stjOaT",
+      "equipmentId": "estPzif3b0oJq_WXs",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2 cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "wHTM28HardwnGzvaraC07stjOaT",
+      "equipmentId": "estPzif3b0oJq_WXs",
+      "sourcePages": [
+        "HT27",
+        "B274"
+      ],
+      "expected": {
+        "damage": "sw+1d(0.5) cut",
+        "reach": "1",
+        "parry": "0U",
+        "st": "10‡",
+        "skills": [
+          "Two-Handed Axe/Mace"
+        ],
+        "formulaST12": "2d+2(0.5) cut",
+        "levelST12": 16,
+        "hands": 2
+      }
+    },
+    {
+      "modeId": "wj_F3_STE7-LTGd0Z",
+      "equipmentId": "eFSgCLs3crezPsgLz",
+      "sourcePages": [
+        "HT199",
+        "HT200",
+        "B432"
+      ],
+      "expected": {
+        "damage": "1d-3 burn",
+        "reach": "1",
+        "parry": "0",
+        "st": "3",
+        "skills": [
+          "Shortsword"
+        ],
+        "formulaST12": "1d-3 burn",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "w1zkFGwJ7YaiXlcH-",
+      "equipmentId": "eans6bBBgJpA61jl4",
+      "sourcePages": [
+        "HT199",
+        "HT200",
+        "B432"
+      ],
+      "expected": {
+        "damage": "sw-1 cr",
+        "reach": "C,1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "formulaST12": "1d+1 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wSoNZld9Ji9t-m7y8",
+      "equipmentId": "eans6bBBgJpA61jl4",
+      "sourcePages": [
+        "HT199",
+        "HT200",
+        "B432"
+      ],
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C,1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "formulaST12": "1d-2 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wWTX_8slOTBzVDG7f",
+      "equipmentId": "eW-zph_pMipl-ErCS",
+      "sourcePages": [
+        "HT199",
+        "HT200",
+        "B432"
+      ],
+      "expected": {
+        "damage": "HT-3(0.5) aff",
+        "reach": "C",
+        "parry": "No",
+        "st": "2",
+        "skills": [
+          "Brawling",
+          "DX"
+        ],
+        "formulaST12": null,
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wICNkuQO9i_FxUxf4",
+      "equipmentId": "eN7A1S-7ZzuakCP-u",
+      "sourcePages": [
+        "HT91",
+        "HT198",
+        "HT199",
+        "B272"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "formulaST12": "1d cut",
+        "levelST12": 15,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wk0vCihcCMUm3nBat",
+      "equipmentId": "eN7A1S-7ZzuakCP-u",
+      "sourcePages": [
+        "HT91",
+        "HT198",
+        "HT199",
+        "B272"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "formulaST12": "1d-1 imp",
+        "levelST12": 15,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wFo4UA8LwlZXWjQda",
+      "equipmentId": "eF9wvH1Tq9TV2nh8V",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B272"
+      ],
+      "expected": {
+        "damage": "sw-2 cut",
+        "reach": "C,1",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "formulaST12": "1d cut",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wi2aw3XWqi2XEckOq",
+      "equipmentId": "eF9wvH1Tq9TV2nh8V",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B272"
+      ],
+      "expected": {
+        "damage": "thr imp",
+        "reach": "C",
+        "parry": "-1",
+        "st": "6",
+        "skills": [
+          "Knife"
+        ],
+        "formulaST12": "1d-1 imp",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wMAtvC24PXfeg5608",
+      "equipmentId": "eYVTJmA7RUE6xrlls",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B273"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "formulaST12": "1d+2 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wxIDhFCs6QryHr69k",
+      "equipmentId": "eYVTJmA7RUE6xrlls",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B273"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "formulaST12": "1d-1 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "w5qTNrQOgk1w0mJdI",
+      "equipmentId": "eWE4YEdoLeULeD938",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B273"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "formulaST12": "1d+2 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHtHMiYarJ_DzMXuN",
+      "equipmentId": "eWE4YEdoLeULeD938",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B273"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "6",
+        "skills": [
+          "Shortsword"
+        ],
+        "formulaST12": "1d-1 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHTM28CondorTonfaSwing",
+      "equipmentId": "eHTM28CondorAM402T",
+      "sourcePages": [
+        "HT199",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "sw cr",
+        "reach": "1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Tonfa"
+        ],
+        "formulaST12": "1d+2 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHTM28CondorTonfaThrust",
+      "equipmentId": "eHTM28CondorAM402T",
+      "sourcePages": [
+        "HT199",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C,1",
+        "parry": "0",
+        "st": "7",
+        "skills": [
+          "Tonfa"
+        ],
+        "formulaST12": "1d-1 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHTM28CondorTonfaPunch",
+      "equipmentId": "eHTM28CondorAM402T",
+      "sourcePages": [
+        "HT199",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "thr cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Boxing",
+          "Karate",
+          "DX"
+        ],
+        "formulaST12": "1d cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHTM28SedgleyPunch",
+      "equipmentId": "eHTM28SedgleyGlove",
+      "sourcePages": [
+        "HT199",
+        "B271",
+        "B389"
+      ],
+      "expected": {
+        "damage": "thr-1 cr",
+        "reach": "C",
+        "parry": "0",
+        "st": null,
+        "skills": [
+          "Brawling",
+          "Boxing",
+          "Karate",
+          "DX"
+        ],
+        "formulaST12": "1d-1 cr",
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "w6R_sr11lEsrygm0K",
+      "equipmentId": "e2vXMSkbcMkh-72iy",
+      "sourcePages": [
+        "HT180",
+        "B428",
+        "B124"
+      ],
+      "expected": {
+        "damage": "spec.",
+        "reach": "1,2",
+        "parry": "No",
+        "st": "3",
+        "skills": [
+          "Liquid Projector (Sprayer)"
+        ],
+        "formulaST12": null,
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wphfSIVv80OHomve0",
+      "equipmentId": "eEgRMvkjtY_eQ3bLa",
+      "sourcePages": [
+        "HT180",
+        "B428",
+        "B124"
+      ],
+      "expected": {
+        "damage": "spec.",
+        "reach": "1,2",
+        "parry": "No",
+        "st": "3",
+        "skills": [
+          "Liquid Projector (Sprayer)"
+        ],
+        "formulaST12": null,
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHTM28CondorGaseYVTJmA7RUE6xrlls",
+      "equipmentId": "eYVTJmA7RUE6xrlls",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B273"
+      ],
+      "expected": {
+        "damage": "spec.",
+        "reach": "1,2",
+        "parry": "No",
+        "st": "3",
+        "skills": [
+          "Liquid Projector (Sprayer)"
+        ],
+        "formulaST12": null,
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHTM28CondorGaseWE4YEdoLeULeD938",
+      "equipmentId": "eWE4YEdoLeULeD938",
+      "sourcePages": [
+        "HT91",
+        "HT199",
+        "B273"
+      ],
+      "expected": {
+        "damage": "spec.",
+        "reach": "1,2",
+        "parry": "No",
+        "st": "3",
+        "skills": [
+          "Liquid Projector (Sprayer)"
+        ],
+        "formulaST12": null,
+        "levelST12": 16,
+        "hands": 1
+      }
+    },
+    {
+      "modeId": "wHTM28CondorGaseHTM28CondorAM402T",
+      "equipmentId": "eHTM28CondorAM402T",
+      "sourcePages": [
+        "HT199",
+        "HT200"
+      ],
+      "expected": {
+        "damage": "spec.",
+        "reach": "1,2",
+        "parry": "No",
+        "st": "3",
+        "skills": [
+          "Liquid Projector (Sprayer)"
+        ],
+        "formulaST12": null,
+        "levelST12": 16,
+        "hands": 1
+      }
+    }
+  ]
+}

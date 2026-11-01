@@ -1,3 +1,4 @@
+import { generateId } from "./random-id.js";
 // Reference-only matching. Actor writes are confined to the module's own confirmation flag.
 export const WEAPON_BINDING_FLAG = "weaponCatalogBindings";
 const MODULE_ID = "olegurps-qol";
@@ -109,7 +110,7 @@ export class WeaponCatalogBindingService {
     if(!equipment||equipment.equipment_id!==target.equipmentId||mode.combat_type!==attack.type||mode.role!=="attack"||mode.hidden)throw new Error("Invalid/unavailable catalog equipment/mode pair.");
     const state=this.#state(actor);let entry=bindingId?state.entries.find(e=>e.id===bindingId):state.entries.find(e=>resolveWeaponIdentity(e.anchor,modes).mode?.path===attack.path);
     if(bindingId&&!entry)throw new Error("Unknown confirmation ID.");
-    if(!entry){entry={id:globalThis.crypto.randomUUID()};state.entries.push(entry);}
+    if(!entry){entry={id:generateId()};state.entries.push(entry);}
     Object.assign(entry,{equipmentId:target.equipmentId,modeId:target.modeId,anchor:structuredClone(attack),confirmedBy:globalThis.game?.user?.id??null,confirmedAt:new Date().toISOString()});
     await actor.setFlag(MODULE_ID,WEAPON_BINDING_FLAG,state);return snapshot(entry);
   });}

@@ -25,7 +25,7 @@ function mode(data, id) { return data.weapons.equipment.flatMap(e => e.modes).fi
 test("all catalogs load through CatalogService and compatibility exposes real native records", () => {
   assert.equal(service.getDiagnostics().catalogs.state, "ready");
   for (const [m, id] of [[modes.lt, "lt_arbalest_bolt_lt81"], [modes.ht, "ht_357_magnum_9x33mmr"], [modes.ut, "15mm_cl"]]) {
-    const r = check(m, id); assert.equal(r.status, "compatible"); assert.equal(r.relation.type, "explicit-bidirectional-link"); assert.ok(r.relation.catalog);
+    const r = check(m, id); assert.equal(r.status, "compatible"); assert.equal(r.relation.type, m===modes.lt?"lt-p4-physical-profile":"explicit-bidirectional-link"); assert.ok(r.relation.catalog);
   }
 });
 test("item/family shared HT IDs default to cartridge and permit explicit family lookup", () => {
@@ -57,12 +57,12 @@ test("HT structured shorter cartridge directions resolve former named rule ambig
   assert.equal(diagnostics.some(x => x.rule === 14 && x.code === "AMBIGUOUS_RULE_REFERENCE"), false);
 });
 test("LT projectile-class option does not make giant artillery bolts hand-crossbow ammunition", () => {
-  assert.equal(check(modes.lt, "large_flaming_artillery_bolt").status, "compatible");
+  assert.equal(check(modes.lt, "large_flaming_artillery_bolt").status, "undetermined");
   assert.equal(check(modes.lt, "crossbow_bodkin").status, "incompatible");
   assert.equal(check(modes.lt, "lt_arquebus_bullet_lt93").status, "incompatible");
 });
-test("LT external rules are warnings distinct from compatibility errors", () => {
-  const r = check(modes.lt, "large_flaming_artillery_bolt"); assert.equal(r.status, "compatible"); assert.equal(r.warnings[0].code, "EXTERNAL_RULE");
+test("LT artillery option requires a fitted physical load instead of an external-rule warning", () => {
+  const r = check(modes.lt, "large_flaming_artillery_bolt"); assert.equal(r.status, "undetermined"); assert.ok(r.reasons.some(r=>r.code==="LT_ARTILLERY_PHYSICAL_LOAD_REQUIRED")); assert.equal(r.warnings.some(r=>r.code==="EXTERNAL_RULE"),false);
 });
 test("LT GM/accessory restrictions are not silently approved", () => {
   const arrow = originals.lt.ammo_items.find(x => x.projectile_classes?.includes("bow_arrow")); assert.ok(arrow);
@@ -206,10 +206,13 @@ test("main exposes the same reference service on all existing module API aliases
   for (const match of source.matchAll(/import\s+\{([^}]+)\}\s+from/g)) for (const name of match[1].split(",").map(s => s.trim())) dependencies[name] = function() {};
   for (const name of Object.keys(dependencies)) if (/^(load|ensure)|^registerCustomStatusEffects$/.test(name)) dependencies[name] = async function() {};
   dependencies.WeaponCatalogBindingService = WeaponCatalogBindingService;
+  const launcherCalls = [];
+  dependencies.launcherButton = { start: () => launcherCalls.push('start'), refresh() {} };
   dependencies.CatalogService = function() { return catalogs; }; dependencies.AmmunitionCompatibilityService = AmmunitionCompatibilityService;
   const module = {}, sandbox = { ...dependencies, Hooks: { once: (n, f) => hooks.set(n, f) }, document: { querySelectorAll: () => [{ href: "/modules/olegurps-qol/styles/olegurps-qol.css" }] }, game: { modules: new Map([["olegurps-qol", module]]) }, setTimeout() {}, console };
   runInNewContext(source.replace(/^import\s+\{[^}]+\}\s+from\s+["'][^"']+["'];\r?\n/gm, ""), sandbox);
   hooks.get("init")(); await hooks.get("ready")();
+  assert.deepEqual(launcherCalls, ['start']);
   assert.ok(module.api.weaponCatalogBindings instanceof WeaponCatalogBindingService); assert.equal(module.api.weaponCatalogBindings, sandbox.OleGURPSQOL.weaponCatalogBindings); assert.equal(module.api.weaponCatalogBindings, sandbox.game.olegurpsQOL.weaponCatalogBindings);
   assert.ok(module.api.ammunitionCompatibility instanceof AmmunitionCompatibilityService); assert.equal(module.api.ammunitionCompatibility, sandbox.OleGURPSQOL.ammunitionCompatibility); assert.equal(module.api.ammunitionCompatibility, sandbox.game.olegurpsQOL.ammunitionCompatibility);
 });

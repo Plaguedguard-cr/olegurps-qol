@@ -8,6 +8,7 @@ import { calculateSuppressionFireHits } from "../scripts/tools/suppression-fire-
 import { AmmoService } from "../scripts/tools/ammo-service.js";
 import { ammoDisplayName } from "../scripts/tools/ammo-management-localization.js";
 import { weaponResourceLabel as beamResourceLabel } from '../scripts/tools/weapon-resources.js';
+import { weaponResourcePresentation, shotResourceLines } from '../scripts/tools/weapon-resource-presentation.js';
 import { resolveRuntimeAttackProfile, newAttackId, attackProfileError } from "../scripts/tools/attack-profile-runtime.js";
 
 // Use the production transaction boundary in the private-closure tests as well.
@@ -144,13 +145,13 @@ function shootingFixture(fx, scenario) {
   let randomLocations = 0;
   const ammoService = attachAmmoState(fx.actor, state, () => { saves++; });
   const renderReport = privateFunction("function buildFireChatBody(", "async function fireAndRoll(", {
-    shouldReportField: () => true, escapeHTML: String, buildFireSkillBreakdownHtml: () => "",
+    shouldReportField: () => true, escapeHTML: String, buildFireSkillBreakdownHtml: () => "", weaponResourcePresentation, shotResourceLines,
     buildRandomHitLocationsHtml: () => "<details>locations</details>"
   });
   const execute = privateFunction("async function fireAndRoll(", "async function spendWithoutRoll(", {
     normalizeVisibility: () => null,
     ammoService, actor: fx.actor, token: { id: "source" }, newAttackId, ammoDisplayName,
-    resolveRuntimeAttackProfile, attackProfileError, beamResourceLabel,
+    resolveRuntimeAttackProfile, attackProfileError, beamResourceLabel, weaponResourcePresentation,
     repairState: async () => {}, getWeaponContext: () => ({ weapon, attack: fx.attack }),
     getRangeBands: () => [], getTaggedModifierSettings: () => null,
     parseShotOptions: () => options, getCloseDamageReport: () => null,

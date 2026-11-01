@@ -1,4 +1,10 @@
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+
+// Reuse independent printed-source expectations from completed M2 packages.
+// These are immutable fixtures, not values read back from the runtime projector.
+const laterMeleeFixtures=['lt-improvised-m26','ht-ordinary-m27','ht-special-m28'].flatMap(name=>
+ JSON.parse(readFileSync(new URL('../fixtures/'+name+'.json',import.meta.url),'utf8')).modes);
 
 // Independently reviewed identities, not counts read back from production tables.
 // UT142 transcriptions; six UT130 chassis with UT131 Conversion/Reality rules;
@@ -16,6 +22,9 @@ const lt=[['Pilum','PilumThrown'],['Angon','AngonThrown'],['Footwear','FootwearT
  ['Caltrop','CaltropThrown'],['Piton','PitonThrown'],['BlowpipePowder','BlowpipePowder'],
  ['Metsubushi','MetsubushiPowder'],['GrapplingHook','GrapplingHook'],['PaddedGrapplingHook','PaddedGrapplingHook']]
  .map(([e,m])=>['eLTP3'+e,'WLTP3'+m]);
+// LT73 ordinary melee on the existing thrown-spear identities; ranged mode stays first.
+for(const name of ['Pilum','Angon'])lt.find(([id])=>id==='eLTP3'+name).push(
+ 'wLTM23'+name+'OneThrust','wLTM23'+name+'OneTipSlash','wLTM23'+name+'TwoThrust','wLTM23'+name+'TwoTipSlash');
 // UT127-128: each model has its own physical cartridge. UT133 Hot excludes the
 // two Gatling models; these IDs assert boundaries, not a published shared caliber.
 const plasma=[['eUwiutML2-xkfJWWh','W42mmtM2Oihtfy08e',true],['eBGZsm_PP8XiNEWoP','Wrb5_sR1KSduU7rrt',true],
@@ -27,11 +36,35 @@ const plasma=[['eUwiutML2-xkfJWWh','W42mmtM2Oihtfy08e',true],['eBGZsm_PP8XiNEWoP
 export function assertProjectedUTCatalog(catalogs,sourceWeapons,sourceUT){
  const sourceIds=new Set(sourceWeapons.equipment.map(e=>e.equipment_id));
  const derived=chassis.flatMap(([e,m])=>['conversion','reality'].map(f=>['olegurps:'+f+':'+e,'olegurps:'+f+':'+m]));
- const expected=[...gauss.map(([e,m])=>[e,m]),...derived,...next,...lt];
+ const expected=[...gauss.map(([e,m])=>[e,m]),...derived,...next,...lt].map(([e,...modes])=>[e,modes]);
+ // M2.1 source-only Haladie is one physical model with two attack modes.
+ expected.push(['eLTM21Haladie',['wLTM21HaladieSwing','wLTM21HaladieThrust']]);
+ // LT54/60/61-62: independent M2.3 ordinary melee transcriptions; no UT expansion.
+ expected.push(['eLTM23Ankus',['wLTM23AnkusSwing','wLTM23AnkusThrust','wLTM23AnkusSpikeThrust','wLTM23TipwLTM23AnkusSpikeThrust']],
+  ['eLTM23Tuja',['wLTM23TujaSwing','wLTM23TujaThrust','wLTM23TipwLTM23TujaThrust']],
+  ['eLTM23Pike4Y',['wLTM23Pike4YThrust','wLTM23TipwLTM23Pike4YThrust']],
+  ['eLTM23Pike6Y',['wLTM23Pike6YThrust','wLTM23TipwLTM23Pike6YThrust']],
+  ['eLTM23CrescentSpear',['wLTM23CrescentSpearOne','wLTM23CrescentSpearTwo']]);
+ expected.push(['eLTM24BeltSword',['wLTM24BeltSwordFlat','wLTM24BeltSwordBlade']]);
+ expected.push(['eLTM25MiningHammerLarge',['wLTM25MiningHammerLarge']]);
+ for(const row of laterMeleeFixtures){
+  if(sourceIds.has(row.equipmentId))continue;
+  let entry=expected.find(([id])=>id===row.equipmentId);
+  if(!entry){entry=[row.equipmentId,[]];expected.push(entry);}
+  if(!entry[1].includes(row.modeId))entry[1].push(row.modeId);
+ }
+ // HT199: AM-402T has the AM-402 firing mechanism with a Tonfa body.
+ expected.find(([id])=>id==='eHTM28CondorAM402T')[1].push('WHTM28CondorTonfaFired');
+ // Source-only physical devices: UT197,211,87 respectively, implemented in M2.10.
+ for(const id of ['disposablehypo','stinger','fireextinguishertube','smallfireextinguisher','largefireextinguisher'])
+  expected.push(['eUTM210'+id,['wUTM210'+id]]);
  const equipment=catalogs.getCatalog('weapons').equipment,added=equipment.filter(e=>!sourceIds.has(e.equipment_id));
- assert.equal(sourceWeapons.equipment.length,1152);assert.equal(expected.length,32);
- assert.deepEqual(added.map(e=>[e.equipment_id,e.modes.map(m=>m.weapon_mode_id)]).sort(),expected.map(([e,m])=>[e,[m]]).sort());
- assert.equal(equipment.length,1184);assert.equal(new Set(equipment.map(e=>e.equipment_id)).size,equipment.length);
+ assert.equal(sourceWeapons.equipment.length,1152);assert.equal(expected.length,104);
+ assert.deepEqual(added.map(e=>[e.equipment_id,e.modes.map(m=>m.weapon_mode_id)]).sort(),expected.sort());
+ assert.equal(equipment.length,1256);assert.equal(new Set(equipment.map(e=>e.equipment_id)).size,equipment.length);
+ const haladie=catalogs.getEquipment('eLTM21Haladie');
+ assert.equal(haladie.source,'LT');assert.equal(haladie.name,'Haladie');assert.equal(haladie.reference,'LT56');
+ for(const id of ['wLTM21HaladieSwing','wLTM21HaladieThrust'])assert.equal(catalogs.getMode(id).role,'attack');
  for(const [e,m]of lt){assert.equal(catalogs.getEquipment(e).source,'LT');assert.equal(catalogs.getMode(m).role,'attack');}
  const modeIds=equipment.flatMap(e=>e.modes.map(m=>m.weapon_mode_id));assert.equal(new Set(modeIds).size,modeIds.length);
  for(const [e,m]of chassis)for(const f of ['conversion','reality']){
@@ -60,5 +93,5 @@ export function assertProjectedUTCatalog(catalogs,sourceWeapons,sourceUT){
    if(!hot)assert.equal(catalogs.getAmmoFamily('ut','olegurps:plasma-cartridge:'+m+':hot'),null);
  }
  assert.equal(families.length,sourceUT.ammo_families.length+21);
- return {equipment:1184,extraEquipment:expected.map(([id])=>id).sort(),families:57,edges:108,linkedModes:93};
+ return {equipment:1256,extraEquipment:expected.map(([id])=>id).sort(),families:57,edges:108,linkedModes:93};
 }
