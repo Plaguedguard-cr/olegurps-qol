@@ -102,7 +102,7 @@ for(const chemical of [false,true])test('Foundry14 messageMode preserves GM/blin
 test('history render cache invalidates on updates and always rechecks visibility',async()=>{
  const f=await historyFixture({modeId:'WRsVDXjeX3ABpRPVp',chemicalId:'nerve_poison'}),s=await f.shoot('render'),m=s.message;
  const nodes=[];const node=()=>({style:{},dataset:{},classList:{add(){}},append(){},remove(){},set textContent(v){nodes.push(v);}}),runtime={...f.runtime,document:{createElement:node}},root={querySelector:()=>node(),querySelectorAll:()=>[]};
- renderShotAmmunitionConditions(m,root,runtime);assert.ok(nodes.some(v=>v.includes('HT−7')));nodes.length=0;
+ renderShotAmmunitionConditions(m,root,runtime);assert.ok(nodes.some(v=>v.includes('HT-7')));nodes.length=0;
  m.flags['olegurps-qol'].shotSnapshot.profile.damage.rules.chemical.brief='Updated saved instruction';f.bus.callAll('updateChatMessage',m,{});
  renderShotAmmunitionConditions(m,root,runtime);assert.ok(nodes.includes('Updated saved instruction'));nodes.length=0;m.visible=false;
  assert.equal(renderShotAmmunitionConditions(m,root,runtime),null);assert.equal(nodes.length,0);

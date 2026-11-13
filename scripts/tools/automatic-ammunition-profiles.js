@@ -1,3 +1,4 @@
+import {utWarheadName} from './ut-nomenclature.js';
 import {chemicalOptions} from './biochemical-integration.js';
 import {LT_HEAD_VARIANTS,ltBowRecipeAssessment} from './lt-bow.js';
 import {ltPersonalRecipeAssessment} from './lt-personal.js';
@@ -179,7 +180,7 @@ export class AutomaticAmmunitionProfileService {
       source:{kind:'reference',edition:'Ultra-Tech 2007',note:rule.source},facts,
       model:{version:1,kind:'ut-warhead',status:'resolved',rule:{...rule}}};
     const guidedLabel=variantId==='ut_homing'?'Homing '+facts.homing.attack+
-      (facts.homing.superscience?'^':'')+(warhead?' / '+(UT_EXTENDED_RULES[warhead.variantId]??UT_SPECIAL_RULES[warhead.variantId]??UT_CONVENTIONAL_RULES[warhead.variantId]).label:''):rule.label;
+      (facts.homing.superscience?'^':'')+(warhead?' / '+(utWarheadName(warhead.variantId)??(UT_EXTENDED_RULES[warhead.variantId]??UT_SPECIAL_RULES[warhead.variantId]??UT_CONVENTIONAL_RULES[warhead.variantId]).label):''):rule.label;
     const name=this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+guidedLabel+(payload.reactionless&&variantId!=='ut_reactionless'?' Reactionless':'')+' (TL'+facts.availabilityTL+')'+
       (payload.chemicalId?' / '+CHEMICAL_SUBSTANCES[payload.chemicalId].name:'')+(payload.swarmType?' / '+utSwarmType(payload.swarmType).name:'')+(payload.fuze==='proximity'?' – Proximity':'')+(payload.setting?' '+payload.setting:'')+(payload.note?' – '+payload.note:'');
     const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),name,
@@ -224,7 +225,7 @@ export class AutomaticAmmunitionProfileService {
       source:{kind:'reference',edition:'Ultra-Tech 2007',note:rule.source},facts:review.facts,
       model:{version:1,kind:'ut-conventional',status:'resolved',rule:{...rule}}};
     const type={source:'catalog',book:'ut',kind:'ammo-family',ammoId:base.ammoId,...(Number.isInteger(review.facts.projectileTL)?{projectileTL:review.facts.projectileTL}:{}),
-      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+rule.label,
+      name:this.catalogs.getAmmoFamily('ut',base.ammoId).name+' '+(utWarheadName(rule.id)??rule.label),
       recipe:{version:1,variantId,customId:'auto:'+canonical(autoProfile),parameters:{},autoProfile}};
     type.key=ammoTypeKey(type);
     const legacy=savedType&&approvedLegacyUTRecipe(savedType.recipe,type.recipe,canonical);
@@ -291,7 +292,14 @@ export class AutomaticAmmunitionProfileService {
     if(selected.chemicalId){
       if(!chemicalOptions(type).some(f=>f.id===selected.chemicalId))return snapshot({...fallback,reasons:['UTPayloadInvalid']});
       type.recipe.parameters={chemicalId:selected.chemicalId,...(selected.batchId?{batchId:selected.batchId}:{})};
-      type.recipe.customId+=':chemical:'+selected.chemicalId+(selected.batchId?':batch:'+selected.batchId:'');
+      const fields={};
+      for(const [key,limit] of [['note',500],['savingThrow',500],['description',5000]])if(Object.hasOwn(selected,key)) {
+        if(typeof selected[key]!=='string'||selected[key].length>limit)return snapshot({...fallback,reasons:['UTPayloadInvalid']});
+        fields[key]=selected[key];
+      }
+      Object.assign(type.recipe.parameters,fields);
+      type.recipe.customId+=':chemical:'+selected.chemicalId+(selected.batchId?':batch:'+selected.batchId:'')+
+        (Object.keys(fields).length?':content:'+canonical(fields):'');
       type.name+=' / '+CHEMICAL_SUBSTANCES[selected.chemicalId].name;
     }
     type.key = ammoTypeKey(type);

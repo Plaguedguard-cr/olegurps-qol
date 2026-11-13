@@ -277,7 +277,7 @@ export class AmmoService {
       if (existing) {
         const current = resolveRangedGoverningSkill({ actor: this.actor, binding: existing });
         if (current && (existing.key !== current.key || existing.name !== current.name)) {
-          state.governingSkills[key] = bindingForGoverningSkill(current);
+          state.governingSkills[key] = bindingForGoverningSkill(current,{explicitCleanSkill:existing.strengthBase==='explicit-clean-skill'});
           migrated = true;
         }
         continue;
@@ -934,10 +934,11 @@ export class AmmoService {
       await this.actor.setFlag('olegurps-qol',UT_MELEE_RESOURCE_FLAG,all);return all[c.key];
     });
   }
-  executeMeleeResource({attack,modeId,attackId,execute,amount=1}={}) {
+  executeMeleeResource({attack,modeId,attackId,execute,validate,amount=1}={}) {
     return withActorResourceWrite(this.actor,async()=>{
       if(this.actor.isOwner!==true&&!globalThis.game?.user?.isGM)throw Error('Нет прав на ресурс экземпляра.');
       if(typeof attackId!=='string'||!attackId||attackId.length>100||typeof execute!=='function')throw Error('Некорректное действие.');
+      validate?.();
       const c=utMeleeResourceContext(this.actor,attack,modeId);
       if(!c)return execute(null);
       if(c.saved?.receipts?.includes(attackId))throw Error('Это действие уже выполнено.');
@@ -1251,6 +1252,12 @@ export class AmmoService {
       const reserved=await reserveShotId(this.actor,attackId,weaponId);
       const result = await execute({...prepared, profile});
       if (!result?.rolled){if(reserved)await cancelShotId(this.actor,attackId);return { ...result, profile, spent: 0 };}
+      if(profile.weaponStrength&&Number.isFinite(result.rollData?.weaponStrengthDelta))
+        profile=immutableCopy({...profile,weaponStrength:{...profile.weaponStrength,transmittedDelta:result.rollData.weaponStrengthDelta}});
+      const executedStrength=result.rollData?.weaponStrengthEvidence;
+      if(profile.weaponStrength&&executedStrength&&['actorId','instanceId','equipmentId','modeId'].every(key=>
+        executedStrength.weaponIdentity?.[key]===profile.weaponStrength.weaponIdentity?.[key]))
+        profile=immutableCopy({...profile,weaponStrength:executedStrength});
       // Configuration writers can run while GGA awaits; retain their current settings.
       const current = copyAmmoResources(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY),clone);
       const currentWeapon = current.weapons.find(entry => entry.id === weaponId);

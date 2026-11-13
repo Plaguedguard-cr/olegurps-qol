@@ -3,26 +3,7 @@ import { buildTableNote } from "./table-reference.js";
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "gurpsFrightCheck";
 
-export async function openFrightCheck() {
-  const DialogV2 = foundry?.applications?.api?.DialogV2;
-  if (!DialogV2) return ui.notifications.error("Этот инструмент требует DialogV2.");
-
-  const escapeHTML = value => foundry?.utils?.escapeHTML ? foundry.utils.escapeHTML(String(value ?? "")) : String(value ?? "");
-  const parseIntOr = (v, fallback=0) => { const t=String(v??"").trim().replace(",", "."); if(!t) return fallback; const n=Number(t); return Number.isInteger(n)?n:Number.NaN; };
-  const bool = v => v===true || v==="true" || v==="on" || v===1 || v==="1";
-  const saved = game.user.getFlag(FLAG_SCOPE, FLAG_KEY) ?? {};
-  const savedFearValue = String(saved.fearValue ?? "");
-  const savedRule15 = bool(saved.rule15);
-  let saveQueue = Promise.resolve();
-  const savePreferences = ({ fearValue, rule15 }) => {
-    const preferences = { fearValue: String(fearValue ?? ""), rule15: bool(rule15) };
-    saveQueue = saveQueue.catch(() => undefined).then(() =>
-      game.user.setFlag(FLAG_SCOPE, FLAG_KEY, preferences)
-    ).catch(error => console.warn("Не удалось сохранить настройки Fright Check:", error));
-    return saveQueue;
-  };
-
-  const TABLE = [
+export const FRIGHT_TABLE = [
     [4,5,"4–5","Оглушение на 1 секунду; затем — автоматическое восстановление."],
     [6,7,"6–7","Оглушение на одну секунду. Затем каждый ход бросок немодифицированной Воли для восстановления."],
     [8,9,"8–9","Оглушение на одну секунду. Затем каждый ход бросок Воли с модификаторами, применёнными к данному броску Страха, для восстановления."],
@@ -57,7 +38,30 @@ export async function openFrightCheck() {
     [39,39,"39","Кома, как в пункте 29, и Фобия или другой набор ментальных недостатков на −15 очков."],
     [40,Infinity,"40+","Как в пункте 39, но жертва также теряет 1 очко ИН навсегда; это снижает основанные на ИН умения и заклинания на 1."]
   ];
-  const entryFor = total => total <= 5 ? TABLE[0] : (TABLE.find(e => total>=e[0] && total<=e[1]) ?? TABLE.at(-1));
+export const frightCheckEntry=total=>total<=5?FRIGHT_TABLE[0]:(FRIGHT_TABLE.find(e=>total>=e[0]&&total<=e[1])??FRIGHT_TABLE.at(-1));
+export const frightCheckTarget=(base,modifier,rule15=false)=>Math.min(base+modifier,rule15?14:13);
+
+export async function openFrightCheck() {
+  const DialogV2 = foundry?.applications?.api?.DialogV2;
+  if (!DialogV2) return ui.notifications.error("Этот инструмент требует DialogV2.");
+
+  const escapeHTML = value => foundry?.utils?.escapeHTML ? foundry.utils.escapeHTML(String(value ?? "")) : String(value ?? "");
+  const parseIntOr = (v, fallback=0) => { const t=String(v??"").trim().replace(",", "."); if(!t) return fallback; const n=Number(t); return Number.isInteger(n)?n:Number.NaN; };
+  const bool = v => v===true || v==="true" || v==="on" || v===1 || v==="1";
+  const saved = game.user.getFlag(FLAG_SCOPE, FLAG_KEY) ?? {};
+  const savedFearValue = String(saved.fearValue ?? "");
+  const savedRule15 = bool(saved.rule15);
+  let saveQueue = Promise.resolve();
+  const savePreferences = ({ fearValue, rule15 }) => {
+    const preferences = { fearValue: String(fearValue ?? ""), rule15: bool(rule15) };
+    saveQueue = saveQueue.catch(() => undefined).then(() =>
+      game.user.setFlag(FLAG_SCOPE, FLAG_KEY, preferences)
+    ).catch(error => console.warn("Не удалось сохранить настройки Fright Check:", error));
+    return saveQueue;
+  };
+
+  const TABLE=FRIGHT_TABLE;
+  const entryFor=frightCheckEntry;
   const tableNoteFor = entry => buildTableNote({entries:TABLE,entry,escapeHTML});
   const read = button => ({fearValue:button.form?.elements?.fearValue?.value??"", modifier:button.form?.elements?.modifier?.value??"", rule15:button.form?.elements?.rule15?.checked??false});
   const readAndSave = async (button, mode) => {
@@ -94,7 +98,7 @@ export async function openFrightCheck() {
     return ChatMessage.create({speaker,rolls:[roll],content:`<div style="font-size:.92em;line-height:1.35"><h3>Таблица страха</h3><div>Модификатор: <strong>${modText}</strong> · Итог: <strong>${total}</strong></div><div style="margin-top:8px;padding:8px 10px;border:1px solid rgba(128,128,128,.42);border-radius:6px"><strong>Результат ${escapeHTML(e[2])}</strong><div>${escapeHTML(e[3])}</div></div>${tableNoteFor(e)}</div>`});
   }
   const base=parseIntOr(data.fearValue,Number.NaN); if(!Number.isInteger(base)) return ui.notifications.error("Введите целое значение проверки страха.");
-  const rule15=bool(data.rule15), limit=rule15?14:13, raw=base+modifier, target=Math.min(raw,limit);
+  const rule15=bool(data.rule15), limit=rule15?14:13, raw=base+modifier, target=frightCheckTarget(base,modifier,rule15);
   const check=await new Roll("3d6").evaluate(); const total=Number(check.total), success=total<=target;
   if(success) return ChatMessage.create({speaker,rolls:[check],content:`<div style="font-size:.92em"><h3>Проверка страха</h3><strong>Проверка пройдена</strong><br>3к6: ${total} против ${target}</div>`});
   const margin=Math.max(1,total-target); const tableRoll=await new Roll(`3d6 + ${margin}`).evaluate(); const tableTotal=Number(tableRoll.total), e=entryFor(tableTotal);

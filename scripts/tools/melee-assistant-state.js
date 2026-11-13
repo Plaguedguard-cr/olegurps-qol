@@ -6,7 +6,9 @@ import { listStandaloneAttacks } from "./standalone-attack-service.js";
 import { withActorResourceWrite } from "./actor-resource-writes.js";
 import { StandaloneWeaponService } from "./standalone-weapon-service.js";
 import { normalizeMeleeDamageModel } from './melee-damage-model.js';
-import { resolveMeleeProfile } from './melee-profile-service.js';
+import {createMeleeTargetedAttackContext} from './targeted-attack-service.js';
+import {parseStandaloneSkill} from './standalone-skill-service.js';
+import { resolveMeleeProfile, meleeProfileContext } from './melee-profile-service.js';
 import { normalizeVisibility } from './limited-visibility.js';
 
 const FLAG_SCOPE = "world";
@@ -128,10 +130,24 @@ export function getMeleeAttackSettings(state, attack) {
   return typeof attack?.weaponBondSetting==='boolean'?{...settings,weaponBond:attack.weaponBondSetting}:settings;
 }
 
+function resolveSelectedMeleeProfile(actor,attack,settings) {
+ const context=meleeProfileContext(actor,attack);
+ const p=context?.profiles.find(p=>p.modeId===(context.saved.modeId||context.source.modeId));
+ // The native GGA selector stores an exact skill key in assistant state.
+ // Rebuild only source-confirmed physical strikes, after an explicit selection.
+ if((p?.unarmedSkillBonus||p?.damagePart==='hilt'&&p.primarySkills.includes('Brawling'))&&!attack.standaloneRef&&!attack.unarmedRef&&settings.governingSkill) {
+  const chosen=createMeleeTargetedAttackContext({actor,attack}).specialtyOptions.find(s=>s.value===settings.governingSkill);
+  const identity=chosen&&parseStandaloneSkill(chosen.label);
+  const skill=identity&&p.primarySkills.find(n=>parseStandaloneSkill(n)?.family===identity.family);
+  if(skill)return resolveMeleeProfile({actor,attack,context,selection:{...context.saved,skill}});
+ }
+ return resolveMeleeProfile({actor,attack});
+}
 export function applyMeleeAttackOverride(attack, state, actor=null) {
   if (!attack) return null;
-  const override = normalizeMeleeAttackOverride(getMeleeAttackSettings(state, attack).override);
-  if (!override) return actor?resolveMeleeProfile({actor,attack}):attack;
+  const settings=getMeleeAttackSettings(state,attack);
+  const override = normalizeMeleeAttackOverride(settings.override);
+  if (!override) return actor?resolveSelectedMeleeProfile(actor,attack,settings):attack;
   const result = {
     ...attack,
     level: override.skillLevel,
@@ -151,7 +167,7 @@ export function applyMeleeAttackOverride(attack, state, actor=null) {
       parry: override.parry
     }
   };
-  return actor?resolveMeleeProfile({actor,attack:result}):result;
+  return actor?resolveSelectedMeleeProfile(actor,result,settings):result;
 }
 
 export function setMeleeDicePlusAdds(state, enabled) {

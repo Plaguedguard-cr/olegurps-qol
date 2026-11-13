@@ -1,4 +1,6 @@
 import { recoilNotApplicable, validateAttackRecoil } from './weapon-recoil.js';
+import { rangedStrengthExplanation } from './ranged-weapon-strength.js';
+import { weaponStrengthExplanation } from './weapon-strength-display.js';
 import { validateProximityShot } from './ut-he-proximity.js';
 import {applyMessageMode} from './chat-message-mode.js';
 import {SHOT_STORAGE_VERSION} from './shot-history-storage.js';
@@ -53,13 +55,13 @@ export function reconcileAttackModifierDetails(modifiers = [], expectedTotal = 0
   return details;
 }
 
-export function buildAttackModifierBreakdownHtml(modifiers = []) {
+export function buildAttackModifierBreakdownHtml(modifiers = [], explanation = '') {
   const details = normalizeAttackModifierDetails(modifiers);
-  if (!details.length) return "";
+  if (!details.length && !explanation) return "";
   const lines = details.map(({ label, value }) =>
     `<span class="olegurps-attack-modifier-item">${escapeModifierHtml(label)} (${value > 0 ? "+" : ""}${value})</span>`
   ).join("<br>");
-  return `<details class="olegurps-attack-modifiers olegurps-chat-details"><summary style="cursor:pointer"><strong>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b:</strong></summary><div>${lines}</div></details>`;
+  return `<details class="olegurps-attack-modifiers olegurps-chat-details"><summary style="cursor:pointer"><strong>\u041c\u043e\u0434\u0438\u0444\u0438\u043a\u0430\u0442\u043e\u0440\u044b:</strong></summary><div>${lines}${explanation ? '<p>'+escapeModifierHtml(explanation)+'</p>' : ''}</div></details>`;
 }
 const ACTIVE_CHAT_MESSAGE_CAPTURES = new WeakMap();
 export {applyMessageMode as applyPreparedMessageMode} from './chat-message-mode.js';
@@ -126,7 +128,7 @@ export function calculateHitsFromMargin(shots, rcl, margin, rollData = null) {
   return Math.min(safeShots, 1 + Math.floor(margin / safeRcl));
 }
 
-function getCriticalState(total, target) {
+export function getCriticalState(total, target) {
   return {
     isCritSuccess: total <= 4 || (total === 5 && target >= 15) || (total === 6 && target >= 16),
     isCritFailure: total >= 18 || (total === 17 && target <= 15) || (total - target >= 10 && target > 0)
@@ -373,7 +375,10 @@ export async function executePreparedGgaRoll({
       ? [...combatCalculation.modifiers.filter(entry => entry.value !== 0),
           { label: "Фирменный приём", value: trademarkMoveBonus }]
       : targetmods, finaltarget - baseSkill, capLabel);
-  const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers);
+  const strengthEvidence=attackProfile?.weaponStrength??attackProfile?.damage?.rules?.weaponStrength;
+  const strengthOptions={baseLevel:combatCalculation?.baseSkill??baseSkill};
+  const strengthExplanation=combatType==='ranged'?rangedStrengthExplanation(strengthEvidence,strengthOptions):weaponStrengthExplanation(strengthEvidence,strengthOptions);
+  const modifierBreakdown = buildAttackModifierBreakdownHtml(displayedModifiers, strengthExplanation);
   if (modifierBreakdown) content += modifierBreakdown;
   if (combatType === "melee" && attackContextHtml && !concealTargetDetails) {
     content += `<details class="olegurps-attack-context olegurps-chat-details"><summary>Подробности атаки</summary><div>${attackContextHtml}</div></details>`;
@@ -421,10 +426,10 @@ export async function executePreparedGgaRoll({
 }
 // Generic prepared skill roll: no ranged document, attack dialogs or ammunition side effects.
 export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkill, effectiveRoF = 1,
-  rcl = null, location, targetingService, closeMultiplier = null, modifierDetails = [], runtime = globalThis }) {
+  rcl = null, location, targetingService, closeMultiplier = null, modifierDetails = [], skillLabel = 'Fire Control', marginLink = false, runtime = globalThis }) {
   if (!Number.isFinite(Number(effectiveSkill))) throw new Error("Не рассчитано Эффективное умение.");
   const finaltarget = Math.max(3, Math.trunc(Number(effectiveSkill)));
-  const { roll, testRoll } = await evaluatePreparedCheck("3d6[Fire Control]", runtime, "prepared-skill");
+  const { roll, testRoll } = await evaluatePreparedCheck(`3d6[${String(skillLabel).replace(/[\[\]]/g, '')}]`, runtime, "prepared-skill");
   const total = Number(roll.total);
   const margin = finaltarget - total;
   const failure = total >= 17 || margin < 0;
@@ -444,13 +449,14 @@ export async function executePreparedSkillRoll({ actor, baseSkill, effectiveSkil
     }
   }
   const data = {
-    prefix: "", chatthing: "Fire Control", thing: "Fire Control", origtarget: baseSkill,
+    prefix: "", chatthing: skillLabel, thing: skillLabel, origtarget: baseSkill,
     fromUser: runtime.game.user.id,
     targetmods: buildCompactAttackModifiers(finaltarget - baseSkill), showPlus: true,
     multiples: [{ rtotal: total, loaded: !!roll.isLoaded, rolls: (roll.dice?.[0]?.results ?? []).map(r => r.result).join() }],
     rtotal: total, modifier: finaltarget - baseSkill, finaltarget, margin, failure,
     seventeen: total >= 17, ...critical, isDraggable: false,
     followon: "", optlabel: "", isBlind: false,
+    ...(marginLink ? { otf: `${margin >= 0 ? '+' : ''}${margin} margin for ${skillLabel}` } : {}),
     rof: hits === null ? null : String(effectiveRoF), rcl, rofrcl: hits
   };
   const escape = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));

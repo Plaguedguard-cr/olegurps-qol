@@ -431,6 +431,9 @@ export class SuppressionFireApp extends ApplicationV2 {
     return {
       rapidFireBonus,
       uncappedSkill,
+      weaponStrength:details?.combatCalculation?.metadata?.weaponStrength,
+      weaponStrengthDelta:details?.combatCalculation?.metadata?.weaponStrengthDelta,
+      baseSkill:details?.baseSkill,baseSkillName:details?.baseSkillName,
       ...calculateSuppressionFireSkill({
         uncappedSkill,
         rapidFireBonus,
@@ -474,6 +477,8 @@ export class SuppressionFireApp extends ApplicationV2 {
       effectiveRoF: shots,
       rapidFireBonus: preview.rapidFireBonus,
       effectiveSkill: preview.effectiveSkill,
+      weaponStrength:preview.weaponStrength,weaponStrengthDelta:preview.weaponStrengthDelta,
+      baseSkill:preview.baseSkill,baseSkillName:preview.baseSkillName,
       rcl: this.fireService.parseAttackRcl(this.attack),
       aimSeconds: this.fireService.normalizeAimSeconds(this._state.aimSeconds),
       aimBonus: aimed.aimBonus,

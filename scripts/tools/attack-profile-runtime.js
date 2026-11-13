@@ -8,7 +8,7 @@ import { explosiveText } from "./explosive-ammunition-localization.js";
 import { readStandaloneAttack, standaloneCatalogBinding } from "./standalone-attack-service.js";
 import { moduleText, moduleMessage } from "../localization.js";
 import { captureF4Combat, tracerBonus } from "./ammunition-f4.js";
-import { applyAttackOverride, parseAccuracyComponents } from "./weapon-attack-overrides.js";
+import { applyAttackOverride, getAttackOverride, parseAccuracyComponents } from "./weapon-attack-overrides.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
 import { attackProfilePresentation } from './weapon-profile-presentation.js';
 import { readDamageDiceAddsPolicy } from './damage-dice-adds.js';
@@ -72,6 +72,11 @@ export function attackProfileError(code, runtime = globalThis) {
 export function withRuntimeAmmoStats(attack, actor, state) {
   if(!attack)return attack;
   const cleanAttack = { ...attack };
+  // A previous +P preview must not leave its effective ST on an ordinary magazine.
+  const currentNative=attack.path?.split('.').reduce((value,key)=>value?.[key],actor);
+  if(currentNative&&Object.hasOwn(currentNative,'st')){
+    cleanAttack.st=currentNative.st;cleanAttack.data={...cleanAttack.data,st:currentNative.st};
+  }
   if(attack?.ammunitionSourceEdition==='Ultra-Tech 2007' && attack.path) {
     const raw=attack.path.split('.').reduce((v,k)=>v?.[k],actor);
     if(raw) {
@@ -85,7 +90,7 @@ export function withRuntimeAmmoStats(attack, actor, state) {
   }
   // An overlay may itself be the previous window value. Re-read the owned definition before applying this magazine.
   const source=attack?.standaloneRef ? readStandaloneAttack(actor,attack.standaloneRef.weaponId,attack.standaloneRef.modeId) : null;
-  if(source)for(const key of ['data','acc','scopeBonus','bulk','bulkMetadata','rof','rcl','platformRules','ammunitionRange','weaponBondSetting','nextElevenConfiguration']) {
+  if(source)for(const key of ['data','st','acc','scopeBonus','bulk','bulkMetadata','rof','rcl','platformRules','ammunitionRange','weaponBondSetting','nextElevenConfiguration']) {
     if(Object.hasOwn(source,key))cleanAttack[key]=source[key];else delete cleanAttack[key];
   }
   delete cleanAttack.ammunitionFuzeTracer;
@@ -100,11 +105,14 @@ export function withRuntimeAmmoStats(attack, actor, state) {
   delete cleanAttack.ammunitionRobot;
   delete cleanAttack.ammunitionReadinessReason;
   delete cleanAttack.ammunitionDisplay;
+  delete cleanAttack.ammunitionRequiredStrength;
+  delete cleanAttack.weaponStrength;
   try {
     const profile = resolveRuntimeAttackProfile({ actor, attack:cleanAttack, state });
+    cleanAttack.weaponStrength=profile.weaponStrength;
     const artilleryCarrier=(state??actor.getFlag?.('world','gurpsAmmoManager'))?.weapons?.find(w=>w.id===profile.weaponId);
     const artillerySkill=ltArtillerySkill(actor,artilleryCarrier);
-    if(artillerySkill){cleanAttack.level=artillerySkill.level;cleanAttack.data={...cleanAttack.data,level:artillerySkill.level};
+    if(artillerySkill&&!getAttackOverride(state??actor.getFlag?.('world','gurpsAmmoManager'),cleanAttack)){cleanAttack.level=artillerySkill.level;cleanAttack.data={...cleanAttack.data,level:artillerySkill.level};
       cleanAttack.skillDescription=artillerySkill.name; if(!artillerySkill.resolved)cleanAttack.readinessReason=artillerySkill.reason;}
     const ammunitionDisplay=attackProfilePresentation(profile);
     if(profile.weaponHandling) {

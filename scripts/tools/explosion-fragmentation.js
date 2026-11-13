@@ -1,9 +1,12 @@
+import {grenadeDisplayName,grenadeDisplayProfile} from './ut-nomenclature.js';
 import { moduleMessage } from "../localization.js";
 import { explosiveText } from "./explosive-ammunition-localization.js";
+import {mountGrenadeEffectCalculator} from './grenade-effect-ui.js';
 
 const PREFERENCE_SCOPE = 'olegurps-qol';
 const PREFERENCE_KEY = 'explosionFragmentation';
 const preferenceWrites = new WeakMap();
+let activeExplosionDialog = null;
 const DEFAULT_PREFERENCES = Object.freeze({ explosionDamage: '6d', fragmentDamage: '2d',
   distance: '1', sm: '0', posture: 'standing', followUp: false, autoLocations: false });
 
@@ -168,7 +171,17 @@ export function fragmentTargetProfile({ damage, distance, sm, postureModifier, c
   return { dangerRadius, rangeMod, effectiveSkill };
 }
 
-export async function openExplosionFragmentation() {
+// Shared B414–415 calculation, also used by manually placed mines.
+export function explosionTargetDamage({damage,total,distance,environment='normal'}) {
+  if(!damage||!Number.isFinite(total)||!Number.isFinite(distance)||distance<0)throw Error('Некорректные параметры взрыва.');
+  const factor={normal:3,trace:10,vacuum:10,water:1}[environment];
+  if(!factor)throw Error('Укажите среду взрыва.');
+  const radius=2*damage.effectiveDice,divisor=distance===0?1:factor*distance;
+  return {radius,divisor,value:distance>radius?0:Math.max(0,Math.floor(total/divisor))};
+}
+
+export async function openExplosionFragmentation({token=null}={}) {
+  if(activeExplosionDialog?.rendered){await activeExplosionDialog.grenades?.setToken(token);activeExplosionDialog.bringToFront();return activeExplosionDialog;}
   const DialogV2 = foundry?.applications?.api?.DialogV2;
 
   if (!DialogV2) {
@@ -257,10 +270,12 @@ export async function openExplosionFragmentation() {
     return `<div class="dice-roll"><div class="dice-result"><h4 class="dice-total">${escapeHTML(roll.total)}</h4></div></div>`;
   }
 
-  async function createChat(content) {
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker(),
-      content
+  let grenadeEvent = null;
+  async function createChat(content, grenadeDamage = null) {
+    return ChatMessage.create({
+      speaker: grenadeEvent ? {actor:grenadeEvent.actorId,alias:game.actors?.get(grenadeEvent.actorId)?.name??grenadeDisplayName(grenadeEvent.profile)} : ChatMessage.getSpeaker(),
+      content,
+      ...(grenadeDamage ? {flags:{'olegurps-qol':{grenadeDamage}}} : {})
     });
   }
 
@@ -282,6 +297,10 @@ export async function openExplosionFragmentation() {
       posture,
       autoLocations,
       followUp: !!root.querySelector('[name="followUp"]')?.checked
+      ,blastType: root.querySelector('[name="blastType"]')?.value ?? 'cr'
+      ,fragmentType: root.querySelector('[name="fragmentType"]')?.value ?? 'cut'
+      ,fragmentDivisor: parseNumber(root.querySelector('[name="fragmentDivisor"]')?.value, 1)
+      ,fragmentRadius: grenadeEvent?.detonation?.profile?.fragmentRadius ?? null
     };
   }
 
@@ -294,6 +313,9 @@ export async function openExplosionFragmentation() {
   }
 
   async function resolveExplosion(values) {
+    if(grenadeEvent?.detonation?.profile?.specialBlast) {
+      ui.notifications.warn('Особый взрыв: используйте сохранённые параметры и процедуру эффекта; общий делитель B414 к нему автоматически не применяется.');return;
+    }
     const damage = parseFragmentDamage(values.explosionDamage);
     if (!damage) {
       ui.notifications.error(
@@ -308,31 +330,25 @@ export async function openExplosionFragmentation() {
     const roll = await evaluateRoll(damage.formula);
     const rollHTML = await renderRoll(roll);
 
-    let finalDamage = 0;
+    const finalDamage = explosionTargetDamage({damage,total:Number(roll.total),distance:values.distance}).value;
     let calculation = "";
     let status = "";
 
     if (values.distance > blastRadius) {
-      finalDamage = 0;
       status = `Цель находится за пределами радиуса взрыва (${blastRadius} ярд.)`;
       calculation = "Урон от взрывной волны: 0";
     } else if (values.distance <= 0) {
-      finalDamage = Math.max(0, Math.floor(Number(roll.total) || 0));
       status = "В центре взрыва / прямое воздействие";
       calculation = `Итог: ${finalDamage}`;
     } else {
       const divisor = 3 * values.distance;
-      finalDamage = Math.max(
-        0,
-        Math.floor((Number(roll.total) || 0) / divisor)
-      );
       calculation = `${roll.total} ÷ (3 × ${values.distance}) = ${finalDamage}`;
     }
 
     const content = `
       <div class="gurps-explosion-card" style="font-size:0.92em;line-height:1.35;">
         <h3 style="margin:0 0 6px;">Взрыв</h3>
-        <div><strong>Взрывной урон:</strong> ${escapeHTML(damage.pretty)}</div>
+        <div><strong>Взрывной урон:</strong> ${escapeHTML(damage.pretty)} ${escapeHTML(values.blastType)} ex</div>
         <div><strong>Дистанция до центра:</strong> ${escapeHTML(values.distance)} ярд.</div>
         <div><strong>Радиус взрыва:</strong> ${escapeHTML(blastRadius)} ярд.</div>
         ${status ? `<div style="margin-top:4px;"><strong>${escapeHTML(status)}</strong></div>` : ""}
@@ -341,6 +357,7 @@ export async function openExplosionFragmentation() {
           <div style="margin-top:4px;opacity:0.8;">Для косвенного взрыва используется DR торса. Делитель брони исходной атаки к этому урону не применяется.</div>
         </details>
         <div style="margin-top:6px;font-size:1.12em;"><strong>Итоговый урон взрывом: ${finalDamage}</strong></div>
+        ${finalDamage>0?'<button type="button" data-grenade-native>Урон через GGA</button>':''}
         <details style="margin-top:8px;">
           <summary style="cursor:pointer;">Показать бросок исходного урона</summary>
           ${rollHTML}
@@ -348,10 +365,12 @@ export async function openExplosionFragmentation() {
       </div>
     `;
 
-    await createChat(content);
+    await createChat(content, {actorId:grenadeEvent?.actorId??null,eventId:grenadeEvent?.id??null,
+      formula:String(finalDamage),type:values.blastType,divisor:values.distance===0?grenadeEvent?.detonation?.profile?.blast?.divisor??1:1});
   }
 
   async function resolveFragments(values) {
+    if(!Number.isFinite(values.fragmentDivisor)||values.fragmentDivisor<=0){ui.notifications.error('Укажите положительный бронеделитель осколков.');return;}
     const damage = parseFragmentDamage(values.fragmentDamage);
     if (!damage) {
       ui.notifications.error(
@@ -362,9 +381,10 @@ export async function openExplosionFragmentation() {
 
     if (!validateDistance(values.distance)) return;
 
-    const { dangerRadius, rangeMod, effectiveSkill } = fragmentTargetProfile({
+    const { dangerRadius: calculatedRadius, rangeMod, effectiveSkill } = fragmentTargetProfile({
       damage, distance: values.distance, sm: values.sm, postureModifier: values.posture.modifier
     });
+    const dangerRadius=values.fragmentRadius??calculatedRadius;
 
     let attackRoll = null;
     let attackRollHTML = "";
@@ -433,7 +453,7 @@ export async function openExplosionFragmentation() {
     const content = `
       <div class="gurps-fragment-card" style="font-size:0.92em;line-height:1.35;">
         <h3 style="margin:0 0 6px;">Осколки</h3>
-        <div><strong>Урон одного осколка:</strong> ${escapeHTML(damage.pretty)} cut</div>
+        <div><strong>Урон одного осколка:</strong> ${escapeHTML(damage.pretty)}${values.fragmentDivisor!==1?'('+escapeHTML(values.fragmentDivisor)+')':''} ${escapeHTML(values.fragmentType)}</div>
         <div><strong>Дистанция до центра:</strong> ${escapeHTML(values.distance)} ярд.</div>
         <div><strong>Радиус разлёта:</strong> ${escapeHTML(dangerRadius)} ярд.</div>
         <div><strong>Поза:</strong> ${escapeHTML(values.posture.label)}; <strong>SM:</strong> ${signed(values.sm)}</div>
@@ -441,11 +461,13 @@ export async function openExplosionFragmentation() {
         ${values.autoLocations && hits > 0
           ? `<div style="margin-top:8px;"><strong>Случайные зоны попадания (гуманоид):</strong></div>${locationRows.join("")}`
           : ""}
-        <div style="margin-top:8px;opacity:0.8;">Осколки наносят режущий урон. Делитель брони исходного взрыва к ним не применяется.</div>
+        <div style="margin-top:8px;opacity:0.8;">Тип осколков: ${escapeHTML(values.fragmentType)}. Делитель брони исходного взрыва к ним не применяется.</div>
+        ${hits>0?'<button type="button" data-grenade-native>Урон одного осколка через GGA</button>':''}
       </div>
     `;
 
-    await createChat(content);
+    await createChat(content,{actorId:grenadeEvent?.actorId??null,eventId:grenadeEvent?.id??null,
+      formula:damage.pretty,type:values.fragmentType,divisor:values.fragmentDivisor});
   }
 
   const content = `
@@ -511,6 +533,16 @@ export async function openExplosionFragmentation() {
       }
     </style>
 
+    <nav class="og-grenade-tabs" aria-label="Взрывы">
+      <button type="button" data-exfrag-tab="grenades">Гранаты</button>
+      <button type="button" data-exfrag-tab="mines">Мины</button>
+      <button type="button" data-exfrag-tab="calculator">Расчёт взрыва</button>
+    </nav>
+    <section data-grenade-panel class="og-grenade-panel"></section>
+    <section data-mine-panel class="og-grenade-panel og-mine-panel" hidden></section>
+    <section data-exfrag-calculator hidden>
+    <details data-grenade-transfer hidden><summary>Параметры гранаты и применение</summary><div data-grenade-profile></div><button type="button" data-exfrag-manual>Ручной расчёт</button></details>
+    <section data-grenade-effects hidden></section>
     <div class="gurps-exfrag-form">
       <div class="gurps-exfrag-row">
         <label><strong>Урон взрыва</strong></label>
@@ -526,6 +558,11 @@ export async function openExplosionFragmentation() {
         <label><strong>Дистанция до центра взрыва</strong></label>
         <input type="number" name="distance" value="${escapeHTML(previous.distance)}" min="0" step="0.1">
       </div>
+      <details><summary>Типы урона</summary><div class="gurps-exfrag-row">
+        <label>Тип взрыва</label><select name="blastType"><option value="cr">cr</option><option value="burn">burn</option></select>
+        <label>Тип осколков</label><select name="fragmentType"><option value="cut">cut</option><option value="burn">burn</option><option value="cr">cr</option></select>
+        <label>Бронеделитель осколков</label><input name="fragmentDivisor" type="number" min="0.01" step="0.01" value="1">
+      </div></details>
       <div class="gurps-exfrag-hint">Ярды. Используется и для взрывной волны, и для попадания осколков.</div>
 
       <div class="gurps-exfrag-row">
@@ -564,7 +601,7 @@ export async function openExplosionFragmentation() {
           <i class="fa-solid fa-burst"></i> Осколки
         </button>
       </div>
-    </div>
+    </div></section>
   `;
 
   const dialog = new DialogV2({
@@ -585,6 +622,7 @@ export async function openExplosionFragmentation() {
       }
     ]
   });
+  activeExplosionDialog=dialog;
 
   await dialog.render({ force: true });
 
@@ -593,8 +631,53 @@ export async function openExplosionFragmentation() {
     ui.notifications.error("Не удалось получить элемент окна макроса.");
     return;
   }
+  const switchTab = name => {
+    const panel=root.querySelector('[data-grenade-panel]'),calculator=root.querySelector('[data-exfrag-calculator]');
+    if(panel)panel.hidden=name!=='grenades';if(calculator)calculator.hidden=name!=='calculator';
+    const mines=root.querySelector('[data-mine-panel]');if(mines)mines.hidden=name!=='mines';
+    for(const b of root.querySelectorAll?.('[data-exfrag-tab]')??[])b.setAttribute('aria-selected',String(b.dataset.exfragTab===name));
+  };
+  // Minimal test/third-party adapters may expose only the historic calculator DOM.
+  const payloadCalculator=mountGrenadeEffectCalculator(root);
+  if(payloadCalculator&&typeof dialog.close==='function'){
+    const closeCalculator=dialog.close.bind(dialog);
+    dialog.close=async function(...args){payloadCalculator.destroy();return closeCalculator(...args);};
+  }
+  if(game.actors&&root.querySelector('[data-grenade-panel]')) {
+    const {mountMineAssistant}=await import('./mine-assistant.js');await mountMineAssistant(root,{dialog});
+    const {mountGrenadeAssistant,grenadeProfileHTML}=await import('./grenade-assistant.js');
+    await mountGrenadeAssistant(root,{dialog,token,showCalculator:(event,activate=true)=>{
+      grenadeEvent=structuredClone(event);const p=grenadeDisplayProfile(event.detonation.profile);
+      payloadCalculator?.transfer(event);
+      const set=(name,value)=>{const e=root.querySelector(`[name="${name}"]`);if(e)e.value=value;};
+      set('explosionDamage',p.blast?.formula??'');set('fragmentDamage',p.fragments?.formula??'');set('blastType',p.blast?.type??'cr');
+      set('fragmentType',p.fragments?.type??'cut');set('fragmentDivisor',p.fragments?.divisor??1);
+      // Distances to individual victims remain explicitly entered unless known.
+      set('distance',event.targetDistance??'');root.querySelector('[name="followUp"]').checked=false;
+      const transfer=root.querySelector('[data-grenade-transfer]');transfer.hidden=false;
+      root.querySelector('[data-grenade-profile]').innerHTML=`<strong>${escapeHTML(p.name)}</strong>`+(p.radius!=null?`<div>Радиус эффекта: ${escapeHTML(p.radius)} ярд.</div>`:'')+grenadeProfileHTML(p)+`<p>Место: ${escapeHTML(event.calculationLocation?.place??event.detonation.place)}</p>`;
+      root.querySelector('[data-exfrag-action="explosion"]').disabled=!p.blast||!!p.specialBlast;
+      root.querySelector('[data-exfrag-action="fragments"]').disabled=!p.fragments;
+      const form=root.querySelector('.gurps-exfrag-form');if(form)form.hidden=!!p.payloadEffect&&!p.fragments;
+      for(const name of ['explosionDamage','distance']){const row=root.querySelector(`[name="${name}"]`)?.closest('.gurps-exfrag-row');if(row)row.hidden=!!p.payloadEffect;}
+      root.querySelector('[data-exfrag-action="explosion"]').hidden=!!p.payloadEffect;
+      for(const name of ['explosionDamage','fragmentDamage','blastType','fragmentType','fragmentDivisor']){const field=root.querySelector(`[name="${name}"]`);if(field){field[p.payloadEffect?'setAttribute':'removeAttribute']('readonly','');if(field.tagName==='SELECT')field.disabled=!!p.payloadEffect;}}
+      if(activate)switchTab('calculator');
+    }});
+    root.addEventListener('click',e=>{const b=e.target.closest('[data-exfrag-tab]');if(b){e.preventDefault();switchTab(b.dataset.exfragTab);}});
+    root.querySelector('[data-exfrag-manual]').addEventListener('click',e=>{
+      e.preventDefault();grenadeEvent=null;payloadCalculator?.transfer(null);root.querySelector('[data-grenade-transfer]').hidden=true;
+      for(const field of root.querySelectorAll('[readonly]'))field.removeAttribute('readonly');
+      const form=root.querySelector('.gurps-exfrag-form');if(form)form.hidden=false;
+      for(const name of ['explosionDamage','distance']){const row=root.querySelector(`[name="${name}"]`)?.closest('.gurps-exfrag-row');if(row)row.hidden=false;}
+      root.querySelector('[data-exfrag-action="explosion"]').hidden=false;
+      for(const name of ['blastType','fragmentType'])root.querySelector(`[name="${name}"]`).disabled=false;
+      root.querySelector('[data-exfrag-action="explosion"]').disabled=false;root.querySelector('[data-exfrag-action="fragments"]').disabled=false;
+    });
+    switchTab('grenades');
+  }
 
-  const remember = () => saveExplosionPreferences(readExplosionFormPreferences(root), user)
+  const remember = (event) => event?.target?.closest?.('[data-grenade-panel], [data-grenade-effects], [data-mine-panel]') ? Promise.resolve() : saveExplosionPreferences(readExplosionFormPreferences(root), user)
     .catch(error => console.warn('OleGURPS QOL | Explosion preferences:', error));
   root.addEventListener('input', remember);
   root.addEventListener('change', remember);
@@ -616,7 +699,7 @@ export async function openExplosionFragmentation() {
       if (action === "fragments") {
         await resolveFragments(values);
       } else if (action === "explosion") {
-        await resolveExplosion(values);
+        if(grenadeEvent?.detonation?.profile?.payloadEffect)await payloadCalculator.resolve();else await resolveExplosion(values);
       }
     } catch (error) {
       console.error("GURPS Explosion/Fragmentation Macro:", error);
@@ -625,4 +708,5 @@ export async function openExplosionFragmentation() {
       button.disabled = false;
     }
   });
+  return dialog;
 }

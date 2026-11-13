@@ -1,4 +1,6 @@
 import { generateId } from "../random-id.js";
+import {weaponWeightControls,openWeaponWeightEditor} from './weapon-weight-app.js';
+import {setWeaponBackpack,readWeaponWeightState} from './weapon-weight.js';
 import {WeaponListVisibility, rangedVisibilityEntries, hiddenWeaponsHTML, visibilityText} from './weapon-list-visibility.js';
 import {weaponResourcePresentation,weaponResourceStatLines,shotResourceLines} from './weapon-resource-presentation.js';
 import { recoilNotApplicable } from './weapon-recoil.js';
@@ -682,14 +684,7 @@ export async function openAmmoManager() {
     const moveAndAttack = parseBoolean(values.moveAndAttack);
     const allOutAttack = parseBoolean(values.allOutAttack) && !moveAndAttack;
     const allOutAttackBonus = fireService.calculateRangedAllOutAttackBonus(allOutAttack, moveAndAttack);
-    const { aimBonus, bracingBonus, sightBonus, laserBonus } = fireService.resolveAimedFireBonuses({
-      accuracy: attack?.acc,
-      scopeBonus: attack?.scopeBonus ?? attack?.data?.scopeBonus ?? 0,
-      aimSeconds,
-      braced,
-      laserSight,
-      moveAndAttack
-    });
+    const { aimBonus, bracingBonus, sightBonus, laserBonus } = getFireBonuses(attack,values);
     const moveAttackPenalty = fireService.calculateMoveAttackPenalty(
       attack?.data?.bulk ?? attack?.bulk,
       moveAndAttack
@@ -794,6 +789,7 @@ export async function openAmmoManager() {
       rapidFireBonus: calculateRapidFireBonus(fireMode.effectiveRoF),
       effectiveSkill,
       combatCalculation: skillDetails?.combatCalculation ?? null,
+      supportSelection:skillDetails?.supportSelection??null,
       airburstTarget: values.airburstTarget ?? "point",
       environment: environment ?? null,
       baseSkill: skillDetails?.baseSkill ?? Number(attack?.level),
@@ -944,6 +940,7 @@ export async function openAmmoManager() {
           const profile = resolveRuntimeAttackProfile({ actor, attack: rollAttack, weaponId,
             state: current, ammunition, context: { kind: preparedSnapshot ? "ranged-rapid-strike" : "normal",
               fluidDoses:shotOptions.fluidDoses??1,fluidBounces:shotOptions.fluidBounces??0,
+              supportSelection:shotOptions.supportSelection??null,braced:shotOptions.braced,
               tokenId: token.id, hitLocation: shotOptions.hitLocationLabel, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
               manualGuidanceConfirmed: rawShotOptions.manualGuidanceConfirmed === true,
               duckArc:rawShotOptions.duckArc??null,
@@ -1537,7 +1534,7 @@ export async function openAmmoManager() {
         const skill = listRangedGoverningSkills(actor).find(entry => entry.key === skillKey);
         const attackKey = getRangedGoverningAttackKey(weapon.attackRef);
         state.governingSkills ??= {};
-        if (skill) state.governingSkills[attackKey] = bindingForGoverningSkill(skill);
+        if (skill) state.governingSkills[attackKey] = bindingForGoverningSkill(skill,{explicitCleanSkill:true});
         else delete state.governingSkills[attackKey];
         if (skill?.specialty) weapon.governingSpecialty = skill.specialty;
         else delete weapon.governingSpecialty;
@@ -2146,7 +2143,7 @@ export async function openAmmoManager() {
               <section class="gam-card ${broken ? "broken" : ""}" data-weapon-card="${weapon.id}">
                 <div class="gam-card-head">
                   <div class="gam-card-info">
-                    <h3>${escapeHTML(weapon.name)}</h3>
+                    <div class="gam-weight-title"><h3>${escapeHTML(weapon.name)}</h3><button type="button" class="gam-melee-icon-button" data-ammo-action="hide-weapon" data-weapon-id="${weapon.id}" title="${visibilityText('Hide')}" aria-label="${visibilityText('Hide')}" ${visibilityEntries.find(e=>e.source.id===weapon.id)?.id ? '' : 'disabled'}><i class="fa-solid fa-eye-slash"></i></button>${weaponWeightControls(actor,visibilityEntries.find(e=>e.source.id===weapon.id)?.id,{weaponId:weapon.id})}</div>
                     <div class="gam-sub">
                       ${weapon.standaloneWeaponId ? escapeHTML(attack?.readinessReason ?? attack?.skillDescription ?? standaloneText("Pending")) : broken ? "Связанная дистанционная атака не найдена" : levelText}
                     </div>
@@ -2188,7 +2185,6 @@ export async function openAmmoManager() {
                     <i class="fa-solid fa-gear"></i>
                     Настроить
                   </button>
-                  <button type="button" data-ammo-action="hide-weapon" data-weapon-id="${weapon.id}" title="${visibilityText(visibilityEntries.find(e=>e.source.id===weapon.id)?.id ? 'Hide' : 'NoIdentity')}" aria-label="${visibilityText('Hide')}" ${visibilityEntries.find(e=>e.source.id===weapon.id)?.id ? '' : 'disabled'}><i class="fa-solid fa-eye-slash"></i></button>
 
                   ${sonicShuriken(weapon)?`<button type="button" data-ammo-action="manage-load" data-weapon-id="${weapon.id}">Патроны – подбор и начинка</button>`:''}
 
@@ -2285,9 +2281,15 @@ export async function openAmmoManager() {
         if (visibilityHook !== null) { Hooks.off('updateUser', visibilityHook); visibilityHook = null; }
       },
       handleAction: async ({ action, weaponId, magazineIndex, visibilityId, app: managerApp }) => {
-        if (['hide-weapon','restore-weapon','restore-all-weapons'].includes(action)) {
+        if(['weight-backpack','weight-edit'].includes(action)){
+          const id=rangedVisibilityEntries(actor,persistentState).find(e=>e.source.id===weaponId)?.id;
+          if(action==='weight-edit'){await openWeaponWeightEditor(actor,id);return {changed:false};}
+          await setWeaponBackpack(actor,id,readWeaponWeightState(actor,id).backpack===false);
+          return {changed:true,managerState:persistentState};
+        }
+        if (['hide-weapon','restore-weapon','restore-all-weapons','import-legacy-visibility'].includes(action)) {
           const service = new WeaponListVisibility(actor), entries = () => rangedVisibilityEntries(actor,persistentState);
-          await service.change(action === 'hide-weapon' ? 'hide' : action === 'restore-weapon' ? 'restore' : 'restore-all',
+          await service.change(action === 'import-legacy-visibility'?'import-legacy':action === 'hide-weapon' ? 'hide' : action === 'restore-weapon' ? 'restore' : 'restore-all',
             action === 'hide-weapon' ? entries().find(e=>e.source.id===weaponId)?.id : action === 'restore-weapon' ? visibilityId : 'ranged', entries);
           return {changed:true,managerState:persistentState};
         }
@@ -2383,7 +2385,8 @@ export async function openAmmoManager() {
         persistentState = await loadState();
         if (!app.rendered) return;
         app.setManagerState(persistentState);
-        await app.refreshContent({weaponIds:changedAmmunitionCards(previous,persistentState,changes ?? {})});
+        const shared=Object.keys(changes.flags?.['olegurps-qol']??{}).some(k=>['weaponWeight','weaponListState'].includes(k))||Object.keys(changes).some(k=>/^flags\.olegurps-qol\.(?:weaponWeight|weaponListState)/.test(k));
+        await app.refreshContent(shared?{}:{weaponIds:changedAmmunitionCards(previous,persistentState,changes ?? {})});
       } catch (error) { console.error("OleGURPS ammunition indicators refresh", error); }
     });
     visibilityHook = Hooks.on('updateUser', (user, changes) => {

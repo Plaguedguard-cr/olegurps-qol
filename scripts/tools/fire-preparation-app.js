@@ -1,4 +1,5 @@
 import {weaponResourceStatLines} from './weapon-resource-presentation.js';
+import { rangedStrengthExplanation } from './ranged-weapon-strength.js';
 import { recoilNotApplicable } from './weapon-recoil.js';
 import {ltEarlyProfile} from '../lt-early-firearms-source.js';
 import {duckFootFieldsHTML,captureDuckFootInputs,readDuckFootContext} from './lt-duck-foot.js';
@@ -37,7 +38,8 @@ import { findCloseHipShooting, resolveCloseHipShooting } from "./close-hip-shoot
 import { RangedTechniquesApp } from "./ranged-techniques-app.js";
 import { standaloneSkillDescription } from "./standalone-skill-service.js";
 import { readStandaloneAttack } from "./standalone-attack-service.js";
-import { withRuntimeAmmoStats } from "./attack-profile-runtime.js";
+import { withRuntimeAmmoStats, resolveRuntimeAttackProfile } from "./attack-profile-runtime.js";
+import { bindSupportSelection } from './ranged-support.js';
 import { parseRateOfFire } from "./fire-service.js";
 import { ammunitionConditionTexts } from "./damage-shot-link.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
@@ -228,6 +230,9 @@ const FIRE_PREPARATION_CSS = `
     width: auto;
     margin: 0;
   }
+  .gam-fire-braced:has([name="supportChoice"]) { grid-template-columns:max-content auto minmax(0,1fr); gap:6px; }
+  .gam-fire-support { display:inline-flex; align-items:center; justify-content:flex-end; gap:5px; min-width:0; margin:0; font-size:.92em; }
+  .gam-fire-support select { width:108px; min-width:0; max-width:100%; height:26px; margin:0; padding:0 3px; }
 
 
   .gam-fire-rof {
@@ -804,6 +809,7 @@ export class FirePreparationApp extends ApplicationV2 {
       manualModifier: "",
       aimSeconds: this._lastAimStatusSeconds ? String(this._lastAimStatusSeconds) : "",
       braced: false,
+      supportChoice: 'none',
       laserSight: false,
       moveAndAttack: false,
       allOutAttack: false,
@@ -1209,6 +1215,7 @@ export class FirePreparationApp extends ApplicationV2 {
     if (hearingField) this.manualHearingLevel = hearingField.value;
     this.fireState.aimSeconds = root.querySelector('[name="aimSeconds"]')?.value ?? "";
     this.fireState.braced = !!root.querySelector('[name="braced"]')?.checked;
+    this.fireState.supportChoice = root.querySelector('[name="supportChoice"]')?.value ?? this.fireState.supportChoice;
     this.fireState.laserSight = !!root.querySelector('[name="laserSight"]')?.checked;
     this.fireState.moveAndAttack = !!root.querySelector('[name="moveAndAttack"]')?.checked;
     this.fireState.allOutAttack = !!root.querySelector('[name="allOutAttack"]')?.checked;
@@ -1242,6 +1249,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   getShotOptions() {
+    const supportSelection=this._supportSelection();
     this.fireState.manualGuidanceConfirmed = this.element?.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
     // Refresh only the perk toggle; keep the GGA skill and all other attack values.
     if (this.mode === "weapon" && this.weapon && this.attack) {
@@ -1284,6 +1292,7 @@ export class FirePreparationApp extends ApplicationV2 {
       manualModifier: this.fireState.manualModifier,
       aimSeconds: this.attack?.ammunitionLTEarly?.noAim || this.attack?.platformRules?.rofJet || rules && !rules.aimAllowed ? 0 : this.fireState.aimSeconds,
       braced: this.attack?.ammunitionLTEarly?.noAim || this.attack?.platformRules?.rofJet || rules && !rules.aimAllowed ? false : this.fireState.braced,
+      supportSelection,
       laserSight: this.attack?.platformRules?.rofJet || rules?.random ? false : this.fireState.laserSight,
       visibility,
       targetDistanceOverride: Number.isFinite(areaDistance)?areaDistance:distance,
@@ -1520,7 +1529,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const value = Number(this.calculateAimBonus?.(
       fireState.aimSeconds,
       fireState.moveAndAttack,
-      fireState.braced,
+      fireState.braced || this._supportBraced(),
       fireState.laserSight
     ));
     return Number.isFinite(value) && value >= 0 ? Math.trunc(value) : 0;
@@ -1555,7 +1564,7 @@ export class FirePreparationApp extends ApplicationV2 {
     if(this.attack?.platformRules?.rofJet)return 0;
     if (visibilityRules(this.visibility)?.aimAllowed === false) return 0;
     const value = Number(this.calculateBracingBonus?.(
-      fireState.braced,
+      fireState.braced || this._supportBraced(),
       fireState.aimSeconds,
       fireState.moveAndAttack,
       fireState.laserSight
@@ -1569,7 +1578,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const value = Number(this.calculateLaserBonus?.(
       fireState.laserSight,
       fireState.aimSeconds,
-      fireState.braced,
+      fireState.braced || this._supportBraced(),
       fireState.moveAndAttack
     ));
     return value === 1 ? 1 : 0;
@@ -1589,7 +1598,7 @@ export class FirePreparationApp extends ApplicationV2 {
     if (this.mode === "standalone" && this.attack?.acc === null) return "–";
     const baseAcc = Number(this.attack?.acc);
     if (!Number.isFinite(baseAcc)) return "–";
-    return String(Math.trunc(baseAcc) + (fireState.braced && !fireState.moveAndAttack ? 1 : 0));
+    return String(Math.trunc(baseAcc) + ((fireState.braced || this._supportBraced()) && !fireState.moveAndAttack ? 1 : 0));
   }
 
   _getAttackTitle() {
@@ -1769,6 +1778,13 @@ export class FirePreparationApp extends ApplicationV2 {
     const { level, chance, probability } = this._getSkillPreview();
     preview.textContent = `${level} (${chance}%)`;
     preview.style.color = skillProbabilityColor(probability);
+    const sourceSkill=this.element?.querySelector('[data-source-skill]');
+    if(sourceSkill&&this.mode==='weapon'){
+      const strength=resolveRuntimeAttackProfile({actor:this.actor,attack:this.attack,weaponId:this.weapon?.id,
+        context:{supportSelection:this._supportSelection()}})?.weaponStrength;
+      sourceSkill.textContent=this._getSourceSkillText();
+      sourceSkill.title=rangedStrengthExplanation(strength);
+    }
     const total = this.element?.querySelector("[data-total-modifier]");
     if (total) total.textContent = this._getModifierTotalText();
     const environmentHint = this.element?.querySelector("[data-environment-hint]");
@@ -2130,7 +2146,7 @@ export class FirePreparationApp extends ApplicationV2 {
       const skill = listRangedGoverningSkills(this.actor).find(entry => entry.key === field.value);
       this.fireState.governingSkillKey = skill?.key ?? "";
       this.fireState.governingSpecialty = skill?.specialty ?? "";
-      this.attack.governingSkillBinding = bindingForGoverningSkill(skill);
+      this.attack.governingSkillBinding = bindingForGoverningSkill(skill,{explicitCleanSkill:true});
       if (this.fireState.closeHipShooting && !findCloseHipShooting({ actor: this.actor, governingSkill: skill }))
         this.fireState.closeHipShooting = false;
       const source = this.element?.querySelector("[data-source-skill]");
@@ -2145,6 +2161,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this.fireState.aimSeconds = field.value;
       this._aimManuallyEdited = true;
     } else if (field.name === "braced") this.fireState.braced = field.checked;
+    else if (field.name === 'supportChoice') { this.fireState.supportChoice=field.value;this._supportSelection(); }
     else if (field.name === "laserSight") this.fireState.laserSight = field.checked;
     else if(field.name==='areaSquaredScatter')this.fireState.areaSquaredScatter=field.checked;
     else if (field.name === "moveAndAttack") {
@@ -2182,7 +2199,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this._updateRapidFirePreview();
       this._updateRrsPreview();
     }
-    if (field.name === "aimSeconds" || field.name === "braced" || field.name === "laserSight" || field.name === "moveAndAttack" || field.name === "allOutAttack") this._updateAimPreview();
+    if (field.name === 'supportChoice' || field.name === "aimSeconds" || field.name === "braced" || field.name === "laserSight" || field.name === "moveAndAttack" || field.name === "allOutAttack") this._updateAimPreview();
     if (field.name === "height" || field.name === "highGround" || field.name === "lowGround") {
       this._updateElevationPreview();
       this._updateTargetRecommendation();
@@ -2441,6 +2458,10 @@ export class FirePreparationApp extends ApplicationV2 {
   _getSourceSkillText(language = "ru") {
     const text = name => weaponText(name, { game: { i18n: { lang: language } } });
     const skill = this._getGoverningSkill();
+    if(this.mode==='weapon') {
+      const strength=resolveRuntimeAttackProfile({actor:this.actor,attack:this.attack,weaponId:this.weapon?.id})?.weaponStrength;
+      if(strength&&Number.isFinite(strength.baseLevel))return moduleText('OleGURPS.Strength.BaseLevel',{level:strength.baseLevel});
+    }
     if (this.attack?.standaloneRef) return standaloneSkillDescription(skill);
     return text("SkillSummary") + ": " + (skill ? `${skill.name} \u2013 ${skill.level}` : text("SelectSkill"));
   }
@@ -2717,6 +2738,33 @@ export class FirePreparationApp extends ApplicationV2 {
     </section>`;
   }
 
+  _supportDefinition() {
+    return this.mode==='weapon'?resolveRuntimeAttackProfile({actor:this.actor,attack:this.attack,weaponId:this.weapon?.id})?.weaponStrength:null;
+  }
+
+  _supportSelection() {
+    const definition=this._supportDefinition(),identity=definition?.weaponIdentity;
+    const key=identity?JSON.stringify([identity.actorId,identity.instanceId,identity.equipmentId,identity.modeId]):null;
+    if(this._supportIdentityKey!==key){this.fireState.supportChoice='none';this._supportIdentityKey=key;}
+    if(!definition?.support?.availableTypes?.includes(this.fireState.supportChoice))this.fireState.supportChoice='none';
+    const select=this.element?.querySelector('[name="supportChoice"]');
+    if(select&&select.value!==this.fireState.supportChoice)select.value=this.fireState.supportChoice;
+    return identity?bindSupportSelection(this.fireState.supportChoice,identity):null;
+  }
+
+  _supportBraced() {
+    const selection=this._supportSelection();
+    return !!selection&&resolveRuntimeAttackProfile({actor:this.actor,attack:this.attack,weaponId:this.weapon?.id,
+      context:{supportSelection:selection}})?.weaponStrength?.support?.effects?.bracingEligible===true;
+  }
+
+  _buildSupportChoice() {
+    if(this.mode!=='weapon')return '';
+    this._supportSelection();
+    const types=this._supportDefinition()?.support?.availableTypes??['none'];
+    return `<label class="gam-fire-support"><span>${escapeHTML(moduleText('OleGURPS.Support.Label'))}</span><select name="supportChoice" aria-label="${escapeHTML(moduleText('OleGURPS.Support.Label'))}">${types.map(type=>`<option value="${type}"${type===this.fireState.supportChoice?' selected':''}>${escapeHTML(moduleText('OleGURPS.Support.'+type))}</option>`).join('')}</select></label>`;
+  }
+
   _buildContent(fireState) {
     const fireMode = this._getRapidFireState(fireState);
     const aimBonus = this._getAimBonus(fireState);
@@ -2821,9 +2869,10 @@ export class FirePreparationApp extends ApplicationV2 {
                   <span>Движение и атака</span>
                   <input type="checkbox" name="moveAndAttack" aria-label="Движение и атака" ${fireState.moveAndAttack ? "checked" : ""}>
                 </div>
-              <div class="gam-fire-braced" title="Бонус применяется только при прицеливании">
+              <div class="gam-fire-braced">
                   <span>Упор</span>
-                  <input type="checkbox" name="braced" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} aria-label="Упор" ${fireState.braced ? "checked" : ""}>
+                  <input type="checkbox" name="braced" title="Бонус применяется только при прицеливании" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} aria-label="Упор" ${fireState.braced ? "checked" : ""}>
+                  ${this._buildSupportChoice()}
                 </div>
               <div class="gam-fire-field gam-fire-field-checkbox">
                   <span>\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 <strong>+1</strong></span>

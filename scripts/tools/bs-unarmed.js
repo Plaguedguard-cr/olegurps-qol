@@ -2,6 +2,7 @@ import {resolveStrengthDamage} from './strength-service.js';
 import {withActorResourceWrite} from './actor-resource-writes.js';
 import {getAttackOverrideKey} from './weapon-attack-overrides.js';
 import {WeaponListVisibility} from './weapon-list-visibility.js';
+import { naturalWeaponStrength } from './melee-weapon-strength.js';
 
 // Basic Set 4e, printed pages. Body profiles are projections, never GGA Items.
 export const BS_UNARMED = Object.freeze({
@@ -102,7 +103,7 @@ export function resolveUnarmedAttack(actor,attack,selection=unarmedSelection(act
  const evidence={id:p.id,part:p.part,equipmentId:p.equipmentId??null,instanceId:p.instanceId??null,nativeSource:ref.native,selectedSkill:native?'GGA':skill?.name,baseSkill:skill?.baseLevel??null,dx:skill?.dx??null,attackPenalty:p.penalty??0,encumbrancePenalty:enc,baseThrust:strength.baseFormula,baseThrustDice:dice,bonusPerDie,naturalPerDie,totalBonus:dice*(bonusPerDie+naturalPerDie),alreadyIncluded:native,manualDamage:attack.hasMeleeDamageOverride===true,pages:p.pages};
  return {...attack,level,damage,parry,skillDescription:native?'Исходный итог GGA':(skill?.name??selection.skill)+': '+level,
   readinessReason:skill?.resolved?null:'Выбранный навык не изучен; выберите DX или изученный навык.',
-  meleeProfile:{unarmed:evidence,skill,motion:/^thr/.test(damage)?'thrust':'fixed',attackType:p.penalty===-2?'kick':'unarmed',sourcePages:p.pages,strength:{maximumST:null},manualHints:[unarmedHint(p),unarmedParryHint(p,skill)].filter(Boolean),conditions:[],gripEffects:{}},
+  meleeProfile:{unarmed:evidence,skill,weaponStrength:naturalWeaponStrength(actor,attack),motion:/^thr/.test(damage)?'thrust':'fixed',attackType:p.penalty===-2?'kick':'unarmed',sourcePages:p.pages,strength:{maximumST:null},manualHints:[unarmedHint(p),unarmedParryHint(p,skill)].filter(Boolean),conditions:[],gripEffects:{}},
   data:{...attack.data,level,damage,parry}};
 }
 export function unarmedParryHint(p,skill){

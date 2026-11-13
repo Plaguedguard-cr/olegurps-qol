@@ -1,4 +1,7 @@
+import {assertMeleeExecutionState} from './melee-execution-state.js';
+import {validateWeaponShotResources} from './weapon-resources.js';
 import {applyMessageMode} from './chat-message-mode.js';
+import { weaponStrengthExplanation } from './weapon-strength-display.js';
 import {ltShieldToolSource,shieldModeAllowed} from '../lt-shield-tool-source.js';
 import {ltImprovisedSource} from '../lt-improvised-source.js';
 import {utOrdinarySource,utOrdinaryAllowed} from '../ut-ordinary-melee-source.js';
@@ -17,6 +20,7 @@ import { AttackProfileResolver, createShotSnapshot } from "./attack-profile-reso
 import { resolveStrengthDamage } from './strength-service.js';
 import { getMeleeNativeDamageParser, parseCompleteMeleeDamage, inferMeleeDamageModel, parseMeleeDamageTerms } from './melee-damage-model.js';
 import { installMeleeNativeDamage, numericMeleeDamageEvent } from './melee-native-damage.js';
+import { meleeStrengthChannel } from './melee-weapon-strength.js';
 import { resolveCombatCalculation } from "./combat-calculation-engine.js";
 import { getCombatRules } from "./combat-technique-registry.js";
 import { committedStrongEligible } from './melee-martial-rules.js';
@@ -45,7 +49,7 @@ export function getAllOutAttackSkillBonus(allOutAttack, mode) {
 
 function resolveMeleePass(options, deceptivePenalty = 0) {
   if (options.baseSkill === null || options.baseSkill === undefined) return null;
-  const baseSkill = Number(options.baseSkill);
+  const baseSkill = Number(options.baseSkill) - (options.attack?.meleeProfile?.projectedStrengthDelta ?? 0);
   if (!Number.isFinite(baseSkill)) return null;
   const hitLocationBase = Number(options.hitLocationBasePenalty ?? options.hitLocationPenalty ?? 0);
   const precisionPenalty = integer(options.precisionPenalty);
@@ -64,6 +68,7 @@ function resolveMeleePass(options, deceptivePenalty = 0) {
     attack: options.attack, baseAttackLevel: baseSkill, governingSkill: options.governingSkill,
     attackSlot: options.attackSlot, context,
     channels: [
+      meleeStrengthChannel(options.attack?.meleeProfile?.weaponStrength??options.attack?.weaponStrength, { reconcileExternal: true }),
       { id:'ammunitionConstruction',value:options.attack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE||options.attack?.meleeProfile?.htSpecial?.spray?2:0,label:'Широкая струя (HT180)' },
       { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
       { id: "situational", value: integer(options.manualModifier), label: "\u0411\u043e\u043d\u0443\u0441\u044b/\u0448\u0442\u0440\u0430\u0444\u044b" },
@@ -96,7 +101,8 @@ export function resolveMeleeCombatCalculation(options = {}) {
   const result = resolveMeleePass(options, deceptivePenalty);
   if (result) result.metadata = { ...result.metadata,
     defenseModifier: (result.metadata.defenseModifier ?? 0),
-    deceptivePenalty, beforeDeceptive: before.effectiveSkill };
+    deceptivePenalty, beforeDeceptive: before.effectiveSkill,
+    weaponStrengthDelta: result.channels.find(c=>c.id==='weaponStrength')?.resolvedValue??0 };
   return result;
 }
 
@@ -251,6 +257,11 @@ export function freezeMeleeAttackProfile({actor,attack,preparedDamage,context={}
     status:preparedDamage?'resolved':'unresolved',components:[],reason:preparedDamage?null:'melee-damage-unresolved',
     rules:{meleeSnapshot:{version:1,action:preparedDamage?structuredClone(preparedDamage.action):null,
       evidence:preparedDamage?.evidence??null,combatProfile:attack?.meleeProfile?structuredClone(attack.meleeProfile):null}}};
+  const weaponStrength=attack?.meleeProfile?.weaponStrength??attack?.weaponStrength;
+  if(weaponStrength){
+    profile.damage.rules.weaponStrength={...structuredClone(weaponStrength),
+      transmittedDelta:Number.isFinite(context.weaponStrengthDelta)?context.weaponStrengthDelta:null};
+  }
   if(attack?.meleeProfile?.unarmed){profile.damage.rules.bsUnarmed=structuredClone(attack.meleeProfile.unarmed);profile.sources.raw=attack.unarmedRef.native?'Actor.system.melee (read-only)':'Basic Set body projection (read-only)';}
   if(attack?.meleeProfile?.utOrdinary)profile.damage.rules.utOrdinary={...structuredClone(attack.meleeProfile.utOrdinary),sourcePages:structuredClone(attack.meleeProfile.sourcePages),manualHints:structuredClone(attack.meleeProfile.manualHints)};
   if(attack?.meleeProfile?.utExotic){
@@ -292,7 +303,9 @@ export async function executeUTMeleeContact({actor,attack,confirmed=false}={}){
   }});
 }
 
-export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0, damageOptions = {}, combatCalculation = null, skillCap = null } = {}) {
+export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0, damageOptions = {}, combatCalculation = null, skillCap = null, expectedExecution = null } = {}) {
+  const validateExecution=()=>assertMeleeExecutionState(actor,sourceAttack,expectedExecution);
+  validateExecution();
   if(maneuver?.type==='defensiveAttack')maneuver={type:'defensiveAttack'};
   if(sourceAttack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE){
     if(!actor?.isOwner||sourceAttack.readinessReason)throw Error(sourceAttack.readinessReason??'Permission');
@@ -319,7 +332,9 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
     const attack = { ...selectedAttack, data: { ...selectedAttack.data, damage: preparedDamage?.formula??'spec.' } };
     const profile = freezeMeleeAttackProfile({ actor, attack, preparedDamage,
       context: { effectiveSkill, weaponBond:combatCalculation?.channels?.find(c=>c.id==='weaponBond')?.resolvedValue===1,
+        weaponStrengthDelta:combatCalculation?.metadata?.weaponStrengthDelta,
         deceptiveDefensePenalty, telegraphicCriticalBonus } });
+    validateWeaponShotResources(actor,profile,1,attack);
     const attackId = newAttackId();
     const run=async evidence=>{
     if(evidence){profile.resourceConsumption={utMelee:structuredClone(evidence)};profile.damage.rules.utExotic.resource=structuredClone(evidence);}
@@ -328,7 +343,7 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
       baseSkillName: sourceAttack.skillDescription, effectiveSkill, physicalShots: 1, effectiveRoF: 1, rcl: 1,
       combatType: "melee", maneuver, telegraphicCriticalBonus, combatCalculation, skillCap,
       deceptiveDefensePenalty, attackContextHtml: (overrideText || locationText)+unarmedDamageExplanation(selectedAttack) });};
-    const result=utSource?await new AmmoService(actor).executeMeleeResource({attack:selectedAttack,modeId:selectedId,attackId,execute:run}):await run(null);
+    const result=utSource?await new AmmoService(actor).executeMeleeResource({attack:selectedAttack,modeId:selectedId,attackId,validate:validateExecution,execute:run}):await run(null);
     if(result.rolled&&result.utMeleeResourceEvidence){
       const resource=structuredClone(result.utMeleeResourceEvidence);profile.damage.rules.utExotic.resource=resource;profile.resourceConsumption={utMelee:resource};
       const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -345,6 +360,7 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   const preparedDamage=await prepareEffectiveMeleeDamage({...damageOptions,actor,attack:selectedAttack});
   const profile=freezeMeleeAttackProfile({actor,attack:selectedAttack,preparedDamage,
     context:{effectiveSkill,weaponBond:combatCalculation?.channels?.find(c=>c.id==='weaponBond')?.resolvedValue===1,
+      weaponStrengthDelta:combatCalculation?.metadata?.weaponStrengthDelta,
       deceptiveDefensePenalty,telegraphicCriticalBonus,maneuver}});
   const attackId=newAttackId();
   const originalLevel = Number(sourceAttack?.level ?? sourceAttack?.import);
@@ -357,7 +373,8 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   const actionName = mode ? name + " (" + mode + ")" : name;
   const modifier = Math.trunc(Number(effectiveSkill)) - Math.trunc(originalLevel);
   const [compactModifier] = buildCompactAttackModifiers(modifier);
-  const modifierBreakdown = buildAttackModifierBreakdownHtml(modifierDetails);
+  const modifierBreakdown = buildAttackModifierBreakdownHtml(modifierDetails,weaponStrengthExplanation(
+    profile.damage?.rules?.weaponStrength,{baseLevel:combatCalculation?.baseSkill??originalLevel}));
   const attackContext = overrideText || locationText;
   const contextBreakdown = attackContext
     ? `<details class="olegurps-attack-context"><summary style="cursor:pointer">Условия атаки</summary><div>${attackContext}</div></details>` : "";

@@ -1,5 +1,7 @@
-// Personal presentation state only. Never write equipment, combat profiles or history.
+// Actor presentation state. Never write equipment, combat profiles or history.
 export const WEAPON_VISIBILITY_FLAG = 'weaponListVisibility';
+export const SHARED_WEAPON_LIST_FLAG = 'weaponListState';
+export const weaponStateKey = value => [...String(value??'')].map(c=>c.codePointAt(0).toString(16).padStart(6,'0')).join('');
 import {moduleText} from '../localization.js';
 const scope = 'olegurps-qol', queues = new Map();
 const text = value => String(value ?? '').trim();
@@ -77,15 +79,18 @@ export function rangedVisibilityEntries(actor, state) {
 export class WeaponListVisibility {
   constructor(actor, user = globalThis.game?.user) { this.actor = actor; this.user = user; }
   state() {
+    const shared=this.actor?.getFlag?.(scope,SHARED_WEAPON_LIST_FLAG)??{};
+    return {...shared,hidden:Object.values(shared.hiddenById??{}).filter(r=>r?.hidden===true)};
+  }
+  legacyState() {
     const saved = this.user?.getFlag?.(scope, WEAPON_VISIBILITY_FLAG)?.actors?.[actorKey(this.actor)];
     return saved && saved.actorUuid === this.actor?.uuid ? saved : {};
   }
-  records() { return Array.isArray(this.state().hidden) ? this.state().hidden.filter(r=>r&&typeof r.id==='string'&&['melee','ranged'].includes(r.type)) : []; }
-  manualProfiles() { return Array.isArray(this.state().manualProfiles) ? this.state().manualProfiles.filter(id=>typeof id==='string') : []; }
+  records() { return Array.isArray(this.state().hidden) ? this.state().hidden.filter(r=>r&&typeof r.id==='string'&&['melee','ranged'].includes(r.type)).map(({hidden,...record})=>record) : []; }
+  manualProfiles() { return Array.isArray(this.legacyState().manualProfiles) ? this.legacyState().manualProfiles.filter(id=>typeof id==='string') : []; }
+  canImportLegacy() { return this.state().legacyImported!==true && Array.isArray(this.legacyState().hidden) && this.legacyState().hidden.length>0; }
   async verifyLegacyStamp() {
-    await queues.get(this.user?.uuid??this.user?.id)?.catch(()=>{});
-    if(this.records().some(r=>r.id.startsWith('legacy:')) && this.state().lastActorModifiedTime !== modificationStamp(this.actor))
-      await this.change('invalidate-legacy');
+    await queues.get(this.actor?.uuid)?.catch(()=>{});
   }
   isHidden(id, proof) { return !!id && this.records().some(r => r.id === id && (!id.startsWith('legacy:') || proof === undefined || r.proof === proof)); }
   visible(entries) { return entries.filter(e => !this.isHidden(e.id,e.proof)); }
@@ -95,14 +100,25 @@ export class WeaponListVisibility {
       .map(r => {const e=byId.get(r.id),match=e&&(!r.id.startsWith('legacy:')||e.proof===r.proof);return {...r,...(match?e:{}),stale:!match};});
   }
   change(operation, id, entries = () => []) {
-    const user = this.user, key = user?.uuid ?? user?.id, previous = queues.get(key) ?? Promise.resolve();
+    const user = this.user, key = this.actor?.uuid, previous = queues.get(key) ?? Promise.resolve();
     const task = previous.catch(() => {}).then(async () => {
       if (!this.actor?.isOwner || !this.actor?.uuid || !user || user.id !== globalThis.game?.user?.id)
-        throw Error('Нет прав на личные настройки этого персонажа.');
+        throw Error('Нет прав на настройки этого персонажа.');
       const state=this.state(),manualProfiles=[...new Set(this.manualProfiles())];
       let hidden = this.records().map(r => ({id:r.id,name:r.name,type:r.type,...(r.proof?{proof:r.proof}:{})}));
       let legacyEpoch=Number.isSafeInteger(state.legacyEpoch)?state.legacyEpoch:0;
-      if (operation === 'hide') {
+      const patch={};
+      if(operation==='import-legacy'){
+        if(!this.canImportLegacy())return false;
+        const available=entries();
+        for(const old of this.legacyState().hidden){
+          const entry=available.find(e=>e.id===old.id);
+          const k=weaponStateKey(old.id);
+          // A deliberate shared decision (including restore) always wins.
+          if(entry&&!Object.hasOwn(state.hiddenById??{},k)&&!old.id.startsWith('legacy:'))patch[`flags.${scope}.${SHARED_WEAPON_LIST_FLAG}.hiddenById.${k}`]={id:entry.id,name:text(entry.label||entry.name),type:entry.type,hidden:true};
+        }
+        patch[`flags.${scope}.${SHARED_WEAPON_LIST_FLAG}.legacyImported`]=true;
+      } else if (operation === 'hide') {
         const entry = entries().find(e => e.id === id);
         if (!id || !entry) throw Error('Нет надёжного идентификатора экземпляра. Скрытие недоступно.');
         hidden=hidden.filter(r=>r.id!==id);
@@ -122,7 +138,14 @@ export class WeaponListVisibility {
         const ids = new Set(entries().map(e => e.id));
         hidden = hidden.filter(r => r.type !== id && !ids.has(r.id));
       } else throw Error('Неизвестная операция списка оружия.');
-      await user.setFlag(scope, WEAPON_VISIBILITY_FLAG + '.actors.' + actorKey(this.actor), {actorUuid:this.actor.uuid,hidden,manualProfiles,legacyEpoch,lastActorModifiedTime:modificationStamp(this.actor)});
+      if(operation==='add-unarmed')await user.setFlag(scope,WEAPON_VISIBILITY_FLAG+'.actors.'+actorKey(this.actor),{...this.legacyState(),actorUuid:this.actor.uuid,manualProfiles});
+      if(operation!=='import-legacy'){
+        const before=new Map(this.records().map(r=>[r.id,r])),after=new Map(hidden.map(r=>[r.id,r]));
+        for(const key of new Set([...before.keys(),...after.keys()]))if(JSON.stringify(before.get(key))!==JSON.stringify(after.get(key)))
+          patch[`flags.${scope}.${SHARED_WEAPON_LIST_FLAG}.hiddenById.${weaponStateKey(key)}`]={...(after.get(key)??before.get(key)),hidden:after.has(key)};
+        if(legacyEpoch!==(state.legacyEpoch??0))patch[`flags.${scope}.${SHARED_WEAPON_LIST_FLAG}.legacyEpoch`]=legacyEpoch;
+      }
+      if(Object.keys(patch).length)await this.actor.update(patch);
       return true;
     });
     queues.set(key, task);
@@ -133,12 +156,12 @@ export class WeaponListVisibility {
 let sourceHook=null;
 export function registerWeaponListVisibilityHooks() {
   if(sourceHook!==null)return;
-  sourceHook=Hooks.on('updateActor',(actor,changes)=>{
+  sourceHook=Hooks.on('updateActor',(actor,changes,_options,userId)=>{
     const system=changes.system??{};
     const rewritten=Object.keys(changes).some(k=>/^system\.(?:melee(?:\.|$)|-=melee$|lastImport$)/.test(k)) || ['melee','-=melee','lastImport'].some(k=>Object.hasOwn(system,k));
     const service=new WeaponListVisibility(actor);
-    if(actor.isOwner&&service.records().some(r=>r.id.startsWith('legacy:')))
-      void service.change(rewritten?'invalidate-legacy':'acknowledge-legacy').catch(error=>console.error('OleGURPS personal legacy list:',error));
+    if(rewritten&&actor.isOwner&&globalThis.game?.user?.id===userId&&service.records().some(r=>r.id.startsWith('legacy:')))
+      void service.change('invalidate-legacy').catch(error=>console.error('OleGURPS shared legacy list:',error));
   });
 }
 
@@ -150,5 +173,6 @@ export function hiddenWeaponsHTML(service, entries, type, actionAttribute) {
     <div class="gam-hidden-weapons-list">${unique.length ? unique.map(r => `<div class="gam-hidden-weapon">
       <span><strong>${esc(r.label||r.name)}</strong><small>${esc(r.id)}${r.stale ? ' · ' + visibilityText('Stale') : ''}</small></span>
       <button type="button" ${actionAttribute}="restore-weapon" data-visibility-id="${esc(r.id)}">${visibilityText('Restore')}</button></div>`).join('') : `<p>${visibilityText('None')}</p>`}
-    ${unique.length ? `<button type="button" ${actionAttribute}="restore-all-weapons">${visibilityText('RestoreAll')}</button>` : ''}</div></details>`;
+    ${unique.length ? `<button type="button" ${actionAttribute}="restore-all-weapons">${visibilityText('RestoreAll')}</button>` : ''}
+    ${service.canImportLegacy()?`<button type="button" ${actionAttribute}="import-legacy-visibility">Перенести прежнее скрытие в общий список</button>`:''}</div></details>`;
 }

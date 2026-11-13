@@ -1,4 +1,5 @@
-import {gaussFixture} from './gauss-context.mjs';
+import {gaussFixture,automatic} from './gauss-context.mjs';
+import {chemicalOptions} from '../../scripts/tools/biochemical-integration.js';
 import {createShotSnapshot} from '../../scripts/tools/attack-profile-resolver.js';
 import {executePreparedGgaRoll} from '../../scripts/tools/prepared-gga-roll.js';
 
@@ -30,7 +31,17 @@ export async function historyFixture({modeId='WIAo1otMCstnbi4Dv',chemicalId=null
   (f.flags[s]??={})[k]=JSON.parse(wire);bus.callAll('updateActor',f.actor,{flags:{[s]:{[k]:value}}});return f.actor;
  };
  let choice=f.candidates().find(t=>!t.recipe);
- if(chemicalId)choice=f.candidates().find(t=>t.recipe?.parameters?.chemicalId===chemicalId||t.ammoId===chemicalId);
+ if(chemicalId){
+  const types=f.candidates();choice=types.find(t=>t.recipe?.parameters?.chemicalId===chemicalId||t.ammoId===chemicalId);
+  // Fillers are configured in a saved batch, not generated as catalog duplicates.
+  if(!choice){
+   const base=types.find(t=>t.recipe&&!t.recipe.parameters?.chemicalId&&chemicalOptions(t).some(c=>c.id===chemicalId));
+   if(!base)throw Error('Missing physical chemical carrier: '+chemicalId);
+   const prepared=automatic.prepare({modeId,base,variantId:base.recipe.variantId,parameters:{...base.recipe.parameters,chemicalId}});
+   if(prepared.state!=='complete')throw Error('Unresolved chemical fixture: '+chemicalId);
+   await f.tx('save-recipe',{type:prepared.type});choice=f.candidates().find(t=>t.key===prepared.type.key);
+  }
+ }
  await f.load(choice,Math.min(8,f.weapon().capacity));
  if(f.power()&&!f.power().externalPower)await f.battery();
  const profile=f.profile();

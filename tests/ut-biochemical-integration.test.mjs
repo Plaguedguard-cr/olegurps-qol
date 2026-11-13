@@ -19,6 +19,12 @@ async function fixture(id,context={physicalDistance:1,manualGuidanceConfirmed:tr
  const power=weaponPowerProfile(f.weapon());if(power&&!power.externalPower)await f.battery();
  return f;
 }
+async function configuredType(f,variantId,chemicalId,ammoId=null){
+ const base=f.candidates().find(t=>t.recipe?.variantId===variantId&&(!ammoId||t.ammoId===ammoId)&&!t.recipe.parameters?.chemicalId);
+ assert.ok(base,'Physical carrier '+variantId);
+ const p=automatic.prepare({modeId:f.attack().standaloneRef.modeId,base,variantId,parameters:{...base.recipe.parameters,chemicalId}});
+ assert.equal(p.state,'complete');await f.tx('save-recipe',{type:p.type});return f.candidates().find(t=>t.key===p.type.key);
+}
 for(const substance of Object.values(CHEMICAL_SUBSTANCES))test(substance.id+': structured source, all resistance branches, no DR gate or Actor writes',()=>{
  assert.ok(substance.source);assert.ok(substance.deliveries.length);assert.ok(substance.protection);assert.ok(substance.duration);assert.ok(substance.repeats);
  const rules=chemicalProfile(substance,{delivery:substance.deliveries[0]});
@@ -49,8 +55,8 @@ test('every substance has explicit available/incompatible/undetermined coverage;
  assert.equal(coverage.rows.some(r=>r.source==='HT'&&r.variant?.startsWith('ut_')),false);
 });
 test('10mm face-only aerosol, UT153 dose/price, injection no HT for nonresisting nanomachines',async()=>{
- const f=await fixture('W9chB7ydzOWTAxQP0'),t=f.candidates().find(t=>t.recipe?.variantId==='ut_biochemical_aerosol'&&t.recipe.parameters.chemicalId==='nerve');assert.ok(t);await f.load(t,1);const shot=await f.shoot();assert.equal(shot.profile.damage.rules.faceOnly,true);assert.equal(shot.profile.damage.rules.chemical.radius,null);assert.equal(shot.profile.damage.rules.chemical.doses,1);assert.equal(shot.profile.damage.rules.fillerCost,10);
- const g=await fixture('WRsVDXjeX3ABpRPVp'),nano=g.candidates().find(t=>t.recipe?.parameters?.chemicalId==='splatter');await g.load(nano,1);const n=await g.shoot();assert.equal(n.profile.damage.rules.resistanceEffect,undefined);
+ const f=await fixture('W9chB7ydzOWTAxQP0'),t=await configuredType(f,'ut_biochemical_aerosol','nerve');assert.ok(t);await f.load(t,1);const shot=await f.shoot();assert.equal(shot.profile.damage.rules.faceOnly,true);assert.equal(shot.profile.damage.rules.chemical.radius,null);assert.equal(shot.profile.damage.rules.chemical.doses,1);assert.equal(shot.profile.damage.rules.fillerCost,10);
+ const g=await fixture('WRsVDXjeX3ABpRPVp'),nano=await configuredType(g,'ut_drugged_dart','splatter');await g.load(nano,1);const n=await g.shoot();assert.equal(n.profile.damage.rules.resistanceEffect,undefined);
 });
 test('wrong route/unknown filler rejected; historical manual text never becomes executable substance',async()=>{
  const f=await fixture('WRsVDXjeX3ABpRPVp'),base={source:'catalog',book:'ut',kind:'ammo-family',ammoId:'3mm_n'};
@@ -83,8 +89,8 @@ test('Sleep, Riot and Paralysis consequences use their source failure thresholds
 });
 test('chemical TL is combined with carrier TL and higher fillers require campaign availability',async()=>{
  const f=await fixture('WIAo1otMCstnbi4Dv'),type=f.candidates().find(t=>t.recipe?.parameters?.chemicalId==='dominator_injection');assert.equal(type,undefined);
- const t=f.candidates().find(t=>t.recipe?.parameters?.chemicalId==='dominator_contact_mist');assert.equal(requiredAmmunitionTL(t,catalogs),12);assert.equal(campaignAmmunitionAdmission(t,catalogs,11).allowed,false);assert.equal(campaignAmmunitionAdmission(t,catalogs,12).allowed,true);
+ const t=await configuredType(f,'ut_biochemical_aerosol','dominator_contact_mist');assert.equal(requiredAmmunitionTL(t,catalogs),12);assert.equal(campaignAmmunitionAdmission(t,catalogs,11).allowed,false);assert.equal(campaignAmmunitionAdmission(t,catalogs,12).allowed,true);
 });
 for(const chemicalId of ['tear','tear_vomit'])for(const [modeId,ammoId]of [['W9chB7ydzOWTAxQP0','10mm_clp'],['WnaTVcm1lDzdUBdwA','15mm_gyroc'],['WATP5TU7jVQnEpqB0','40mm_plb'],['WInB0nYjRLMJm5Ha-','64mm_missile']])test(chemicalId+' fills UT aerosol '+ammoId+' as a separate physical batch',async()=>{
- const f=await fixture(modeId),t=f.candidates().find(t=>t.ammoId===ammoId&&t.recipe?.variantId==='ut_biochemical_aerosol'&&t.recipe.parameters.chemicalId===chemicalId);assert.ok(t);await f.tx('save-recipe',{type:t});await f.load(t,1);const s=await f.shoot();assert.equal(s.spent,1);assert.equal(s.profile.damage.rules.chemical.id,chemicalId);assert.deepEqual(s.profile.damage.rules.chemical.checks.map(c=>c.modifier),chemicalId==='tear'?[-2,-2]:[-2,-2,-2]);assert.ok(s.profile.damage.rules.costPerShot>=0||s.profile.damage.rules.fillerCostUnknown);assert.ok(ammunitionChatData(s.profile).lines.length<=3);
+ const f=await fixture(modeId),t=await configuredType(f,'ut_biochemical_aerosol',chemicalId,ammoId);assert.ok(t);await f.load(t,1);const s=await f.shoot();assert.equal(s.spent,1);assert.equal(s.profile.damage.rules.chemical.id,chemicalId);assert.deepEqual(s.profile.damage.rules.chemical.checks.map(c=>c.modifier),chemicalId==='tear'?[-2,-2]:[-2,-2,-2]);assert.ok(s.profile.damage.rules.costPerShot>=0||s.profile.damage.rules.fillerCostUnknown);assert.ok(ammunitionChatData(s.profile).lines.length<=3);
 });

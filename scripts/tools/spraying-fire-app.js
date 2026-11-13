@@ -424,6 +424,7 @@ export class SprayingFireApp extends ApplicationV2 {
         effectiveRoF: row.fireMode.effectiveRoF, extremelyClose: row.fireMode.extremelyClose,
         rcl: row.effectiveRcl, maximumHits: row.fireMode.effectiveRoF,
         effectiveSkill: row.skill.effectiveSkill,
+        combatCalculation:row.skill.combatCalculation,baseSkill:row.skill.baseSkill,baseSkillName:row.skill.baseSkillName,
         rangePenalty: row.range?.penalty ?? 0, rangeLabel: row.range?.label ?? "",
         effectRangePenalty, hitLocationPenalty: 0, hitLocationModifierLabel: "Random Location",
         rapidFireBonus: row.rfBonus,

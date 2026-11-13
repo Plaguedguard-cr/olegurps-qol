@@ -19,6 +19,8 @@ import { openReactionRoll } from "./tools/reaction.js";
 import { openCriticalTables } from "./tools/critical.js";
 import { openFallingDamage } from "./tools/falling.js";
 import { openExplosionFragmentation } from "./tools/explosion-fragmentation.js";
+import { installGrenadeHooks } from './tools/grenade-service.js';
+import {installMineService} from './tools/mine-service.js';
 import { openLuck } from "./tools/luck.js";
 import { openDamageRoll } from "./tools/damage.js";
 import { openMeleeAssistant } from "./tools/melee-assistant.js";
@@ -31,6 +33,7 @@ import { registerStatusEffectVisibilitySetting } from "./tools/status-effect-vis
 import { registerReelingTiredSetting, installReelingTiredCompatibility } from "./tools/reeling-tired-compat.js";
 import { installEquipmentContainerCompatibility } from "./tools/equipment-container-compat.js";
 import { installEncumbranceCompatibility } from "./tools/encumbrance-compat.js";
+import {registerWeaponWeightSettings,installWeaponWeightAdapter} from './tools/weapon-weight-gga.js';
 
 import { CatalogService } from "./catalog-service.js";
 import { WeaponCatalogBindingService } from "./weapon-catalog-binding-service.js";
@@ -97,6 +100,7 @@ Hooks.once("init", () => {
   registerReelingTiredSetting();
   registerDeveloperModeMenu();
   registerWeaponSkillSettings();
+  registerWeaponWeightSettings();
   registerWeaponAssistantReset();
   registerLTPersonalSettings();
   globalThis.OleGURPSQOL = api;
@@ -105,6 +109,8 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", async () => {
+  installGrenadeHooks();
+  installMineService();
   registerWeaponListVisibilityHooks();
   await loadWeaponSkillTLTranslations().catch(error => console.error("OleGURPS QOL | Weapon skill translations:", error));
   await loadAmmoEffectTranslations().catch(error => console.error("OleGURPS QOL | Ammo effects translations:", error));
@@ -139,6 +145,7 @@ Hooks.once("ready", async () => {
   }
   try {
     installEncumbranceCompatibility();
+    installWeaponWeightAdapter();
   } catch (error) {
     console.error("OleGURPS QOL: encumbrance compatibility failed.", error);
   }

@@ -1,5 +1,8 @@
+import {captureMeleeExecutionState,notifyMeleeExecutionError} from './melee-execution-state.js';
 import {readGgaShieldAttack} from './shield-equipment-adapter.js';
-import { moduleMessage } from "../localization.js";
+import {weaponWeightControls,openWeaponWeightEditor} from './weapon-weight-app.js';
+import {setWeaponBackpack,readWeaponWeightState} from './weapon-weight.js';
+import { moduleMessage, moduleText } from "../localization.js";
 import {WeaponListVisibility, meleeVisibilityEntries, hiddenWeaponsHTML, visibilityText} from './weapon-list-visibility.js';
 import { FirePreparationApp } from "./fire-preparation-app.js";
 import { isAmmunitionHistoryOnlyUpdate } from './weapon-assistant-app.js';
@@ -11,6 +14,7 @@ import { getMeleeAttackSlots } from "./melee-attack-slots.js";
 import { createMeleeTargetedAttackContext } from "./targeted-attack-service.js";
 import { openMeleeAttackEditor } from "./melee-attack-editor.js";
 import { openStrengthEditor } from './strength-editor-app.js';
+import { weaponStrengthExplanation } from './weapon-strength-display.js';
 import { isStrengthUpdate, sameStrengthActor } from './strength-service.js';
 import { openStandaloneWeaponLibrary } from "./standalone-weapon-configuration.js";
 import { StandaloneWeaponDraft, StandaloneWeaponService } from "./standalone-weapon-service.js";
@@ -597,7 +601,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
   _buildContent(fireState) {
     if (!this._visibleAttacks().length) return `<div class="gam-fire-preparation gam-melee-preparation"><p>${visibilityText('EmptyMelee')}</p>${hiddenWeaponsHTML(this.weaponVisibility,this._visibilityEntries(),'melee','data-melee-action')}<button type="button" data-melee-action="standalone-library" aria-label="${visibilityText('AddToList')}">+</button></div>`;
     const skillPreview = this._getSkillPreview();
-    const baseSkill = this._getBaseSkillLevel();
+    const calculation=resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+    const baseSkill = calculation?.baseSkill;
     const baseSkillText = Number.isFinite(baseSkill) ? String(baseSkill) : "-";
     const maneuver = this._normalizeManeuverState();
     const deceptiveOptions = this._buildDeceptiveOptions(maneuver.deceptive);
@@ -611,6 +616,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
             <div class="gam-melee-attack-row">
               <select name="meleeAttackKey" class="gam-melee-attack-select" aria-label="Melee attack">${this._buildAttackOptions()}</select>
               <button type="button" class="gam-melee-icon-button" data-melee-action="hide-weapon" title="${visibilityText(this._visibilityEntry()?.id ? 'Hide' : 'NoIdentity')}" aria-label="${visibilityText('Hide')}" ${this._visibilityEntry()?.id ? '' : 'disabled'}><i class="fa-solid fa-eye-slash"></i></button>
+              ${this.sourceAttack?.unarmedRef&&this.sourceAttack.unarmedRef.profile?.part!=='accessory'?'':weaponWeightControls(this.actor,this._visibilityEntry()?.id,{actionAttribute:'data-melee-action'})}
               <button type="button" class="gam-melee-icon-button" data-melee-action="edit" title="Редактировать параметры" aria-label="Редактировать параметры"><i class="fa-solid fa-pen"></i></button>
               <button type="button" class="gam-melee-icon-button" data-melee-action="strength" title="Временные поправки силы">ST</button>
               <button type="button" class="gam-melee-icon-button" data-melee-action="standalone-library" title="Добавить оружие из библиотеки" aria-label="Добавить оружие из библиотеки">+</button>
@@ -627,7 +633,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
           <div class="gam-fire-skill" aria-live="polite">
             <span class="gam-fire-skill-label">Эффективное умение</span>
             <strong class="gam-fire-skill-value" data-skill-preview>${skillPreview.level} (${skillPreview.chance}%)</strong>
-            <span class="gam-fire-source-skill">Значение умения: <span data-melee-base-skill>${baseSkillText}</span></span>
+            <span class="gam-fire-source-skill">${moduleText('OleGURPS.Strength.BaseLabel')}: <span data-melee-base-skill>${baseSkillText}</span></span>
           </div>
         </div>
         ${this._buildVisibilityContent()}
@@ -735,8 +741,12 @@ export class MeleeAssistantApp extends FirePreparationApp {
     const evaluateInput = this.element?.querySelector('[name="evaluate"]');
     if (evaluateInput) evaluateInput.disabled = !!this.fireState.telegraphicAttack;
     const base = this.element?.querySelector("[data-melee-base-skill]");
-    const baseSkill = this._getBaseSkillLevel();
-    if (base) base.textContent = Number.isFinite(baseSkill) ? String(baseSkill) : "-";
+    const calculation=resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+    const baseSkill = calculation?.baseSkill;
+    if (base) {
+      base.textContent = Number.isFinite(baseSkill) ? String(baseSkill) : "-";
+      base.title=weaponStrengthExplanation(this.attack?.meleeProfile?.weaponStrength??this.attack?.weaponStrength,{baseLevel:baseSkill});
+    }
 
     const manual = this.element?.querySelector('[name="manualModifier"]');
     if (manual) manual.value = this.fireState.manualModifier;
@@ -1057,6 +1067,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
           label: slot.label,
           actor: this.actor,
           sourceAttack,
+          executionState:captureMeleeExecutionState(this.actor,sourceAttack),
           damageOptions: this._getEffectiveDamageOptions(),
           skillCap: this.fireState.moveAndAttack || this._getMeleeVisibilityRules()?.cap ? 9 : null,
           selectedAttack: globalThis.foundry?.utils?.deepClone?.(this.attack) ?? structuredClone(this.attack),
@@ -1147,7 +1158,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       }
     } catch (error) {
       console.error("Помощник ближнего боя attack:", error);
-      ui.notifications.error(moduleMessage(error));
+      notifyMeleeExecutionError(error);
     } finally {
       this._submitting = false;
       if (button.isConnected) button.disabled = false;
@@ -1304,11 +1315,16 @@ export class MeleeAssistantApp extends FirePreparationApp {
     event.preventDefault();
     event.stopPropagation();
     const action = button.dataset.meleeAction;
-    if (['hide-weapon','restore-weapon','restore-all-weapons'].includes(action)) {
+    if(['weight-backpack','weight-edit'].includes(action)){
+      const id=this._visibilityEntry()?.id;
+      if(action==='weight-edit')return openWeaponWeightEditor(this.actor,id);
+      await setWeaponBackpack(this.actor,id,readWeaponWeightState(this.actor,id).backpack===false);return;
+    }
+    if (['hide-weapon','restore-weapon','restore-all-weapons','import-legacy-visibility'].includes(action)) {
       if (this._visibilityBusy) return;
       this._visibilityBusy = true; button.disabled = true;
       try {
-        await this.weaponVisibility.change(action === 'hide-weapon' ? 'hide' : action === 'restore-weapon' ? 'restore' : 'restore-all',
+        await this.weaponVisibility.change(action === 'import-legacy-visibility'?'import-legacy':action === 'hide-weapon' ? 'hide' : action === 'restore-weapon' ? 'restore' : 'restore-all',
           action === 'hide-weapon' ? this._visibilityEntry()?.id : action === 'restore-weapon' ? button.dataset.visibilityId : 'melee', () => this._visibilityEntries());
         if (!this._visibilityClosed) {
           await this._refreshVisibleWeapons();

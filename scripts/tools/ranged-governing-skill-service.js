@@ -39,8 +39,9 @@ export function listRangedGoverningSkills(actor) {
   return result;
 }
 
-export function bindingForGoverningSkill(skill) {
-  return skill ? { key: skill.key, name: skill.name } : null;
+export function bindingForGoverningSkill(skill, { explicitCleanSkill = false } = {}) {
+  return skill ? { key: skill.key, name: skill.name,
+    ...(explicitCleanSkill?{strengthBase:'explicit-clean-skill'}:{}) } : null;
 }
 
 export function resolveRangedGoverningSkill({ actor, binding, legacySpecialty,

@@ -9,6 +9,7 @@ import {ltImprovisedSource,ltImprovisedGripPolicy,ltImprovisedHints,resolveImpro
 import {ltShieldToolGripPolicy,ltShieldToolHints,shieldModeAllowed,shieldQualityGrades,resolveShieldQuality} from '../lt-shield-tool-source.js';
 import { meleeSource, meleeSiblingSources, meleeSkillRules } from '../melee-source-data.js';
 import { readActorStrength } from './strength-service.js';
+import { resolveProfileWeaponStrength, projectMeleeStrength, unboundMeleeStrength } from './melee-weapon-strength.js';
 import { resolveStandaloneSkill, standaloneSkillDescription } from './standalone-skill-service.js';
 import { withActorResourceWrite } from './actor-resource-writes.js';
 import { parseCampaignTL } from './tech-level.js';
@@ -52,7 +53,8 @@ export function meleeMaterialOptions(actor,profile,saved={},selection=saved) {
 export function meleeProfileContext(actor,attack,{catalogs=globalThis.OleGURPSQOL?.catalogs,sourceModeId=null}={}) {
   const saved=readMeleeProfileSelection(actor,attack),ref=attack?.standaloneRef;
   const record=ref?actor?.getFlag?.(scope,'standaloneWeapons')?.weapons?.find(w=>w.id===ref.weaponId):null;
-  const id=ref?.modeId??sourceModeId??saved.sourceModeId??attack?.catalogBinding?.modeId;
+  const id=ref?.modeId??sourceModeId??saved.sourceModeId??attack?.catalogBinding?.modeId??
+    meleeSource(attack?.data?.originaluuid)?.modeId??meleeSource(attack?.uuid)?.modeId;
   const source=ltMeleeQualityProfile(id,catalogs,meleeSource(id));
   if(!source||!source.primarySkills.length&&!source.contactProcedure||source.manualOnly||record&&source.equipmentId!==record.source.equipmentId)return null;
   if(!ref&&saved.anchor&&(saved.anchor.name!==attack.name||saved.anchor.reference!==text(attack.data?.pageref)))return null;
@@ -187,7 +189,7 @@ export function resolveMeleeQuality(profile,selection={}, {imported=false,manual
 
 export function resolveMeleeProfile({actor,attack,selection=null,context=meleeProfileContext(actor,attack)}={}) {
   if(attack?.unarmedRef)return resolveUnarmedAttack(actor,attack,selection??undefined);
-  if(!context)return attack;
+  if(!context)return {...attack,weaponStrength:unboundMeleeStrength(actor,attack)};
   selection=selection??context.saved;
   let profile=context.profiles.find(p=>p.modeId===(selection.modeId||context.source.modeId));
   if(!profile)return {...attack,readinessReason:'Выбранный режим не принадлежит этому оружию.'};
@@ -208,8 +210,9 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
       profile={...profile,stats:{...profile.stats,damage:htOrdinarySource(profile.modeId)?htOrdinaryTipDamage(profile):ltBladeTipDamage(profile)}};
     }
     const sourceStats=profile.stats;
+    const unarmedSkillBonus=profile.unarmedSkillBonus||profile.damagePart==='hilt'&&profile.primarySkills.includes('Brawling');
     const motion=profile.motion??(/^sw/i.test(sourceStats.damage)?'swing':/^thr/i.test(sourceStats.damage)?'thrust':'fixed');
-    const rebuildUnarmed=!!profile.unarmedSkillBonus&&!!selection.skill&&!manual.damage&&!attack.hasMeleeDamageOverride;
+    const rebuildUnarmed=!!unarmedSkillBonus&&!!selection.skill&&!manual.damage&&!attack.hasMeleeDamageOverride;
     const damage=rebuildUnarmed?sourceStats.damage:grip==='tip'&&martial?sourceStats.damage:same?attack.damage:manual.damage??sourceStats.damage;
     let reach=same?attack.reach:manual.reach??sourceStats.reach;
     const st=same?attack.st:manual.st??sourceStats.st;
@@ -234,7 +237,6 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
     }
     const strength=readActorStrength(actor),actualST=strength.kinds.st.effective;
     const hands=resolveMeleeHands(st,martial?'published':grip,actualST,profile.hands??null,profile.requiresTwoHands);
-    if(profile.utOrdinary){hands.penalty=0;hands.minimumSTPenaltyDeferred=true;}
     const gripEffects={skill:0,damage:0,swingReduction:false,parry:0,conditions:[]};
     if(martial){
       gripEffects.conditions.push(grip==='reversed'&&gripPolicy?.freeReverse?
@@ -268,14 +270,17 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
     const ownerOverride=same?attack.meleeManualOverride:null;
     if(ownerOverride)skill={...skill,resolved:true,level:ownerOverride.skillLevel,source:'owner-override',
       directPenaltyAlreadyIncluded:true};
-    const damageSkill=profile.unarmedSkillBonus?{...(profile.technique?techniqueDamageBonus(profile,skill,actor):ltImpactSkillDamage(profile,rawSkill,skill,actor)),
+    const damageSkill=unarmedSkillBonus?{...(profile.technique?techniqueDamageBonus(profile,skill,actor):ltImpactSkillDamage({...profile,unarmedSkillBonus:true},rawSkill,skill,actor)),
       alreadyIncluded:context.imported&&same&&!rebuildUnarmed,
       ...((context.imported&&same&&!rebuildUnarmed||manual.damage||attack.hasMeleeDamageOverride)?{bonusPerDie:0}:{})}:profile.damagePart==='hilt'?{name:'Brawling',source:'LT71[5]; B182',alreadyIncluded:context.imported&&same,
       bonusPerDie:(!context.imported||publishedInput)&&!manual.damage&&!attack.hasMeleeDamageOverride&&skill.source==='learned'&&rawSkill==='Brawling'&&
         Number(skill.sourceLevel??skill.level)>=Number(actor?.system?.attributes?.DX?.value)+2?1:0}:null;
     const attackOnly=importedBaseline||ownerOverride?0:profile.attackOnlyModifier??0;
-    const additional=quality.skillBonus+gripEffects.skill+(importedBaseline||ownerOverride?0:hands.penalty)+attackOnly;
-    const level=skill.resolved?skill.level+additional:null;
+    const weaponStrength=resolveProfileWeaponStrength({actor,attack,profile,context,selection,skill,importedBaseline,ownerOverride,st,hands,martial,motion});
+    const additional=quality.skillBonus+gripEffects.skill+attackOnly;
+    const levelBeforeStrength=skill.resolved?skill.level+additional:null;
+    const level=projectMeleeStrength(levelBeforeStrength,weaponStrength);
+    const projectedStrengthDelta=weaponStrength.proposedDelta??0;
     const defenseLevel=level===null?null:level-attackOnly;
     let parry=same?attack.parry:manual.parry??sourceStats.parry;
     if(ownerOverride){
@@ -284,7 +289,7 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
     }else if(!importedBaseline){
       const match=/^([+-]?\d+)([UF]*)$/i.exec(manual.parry??sourceStats.parry);
       if(match&&defenseLevel!==null)parry=String(3+Math.floor(defenseLevel/2)+Number(match[1])-(profile.parrySkillAlreadyIncluded??0))+match[2];
-    }else if(additional&&/^\d+[UF]*$/i.test(parry))parry=parry.replace(/^\d+/,v=>String(Number(v)+Math.floor(level/2)-Math.floor(attack.level/2)));
+    }else if((additional||projectedStrengthDelta)&&/^\d+[UF]*$/i.test(parry))parry=parry.replace(/^\d+/,v=>String(Number(v)+Math.floor(level/2)-Math.floor(attack.level/2)));
     if(gripEffects.parry&&/^\d+[UF]*$/i.test(parry))parry=parry.replace(/^\d+/,v=>String(Number(v)+gripEffects.parry));
     // LT63: this is the user's hand, not the improvised object or its attack technique.
     if(!importedBaseline&&!ownerOverride)parry=publishedHandParry(profile,rawSkill,skill,actor)??parry;
@@ -302,13 +307,13 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
       ...(profile.attackOnlyModifier?{attackOnlyModifier:profile.attackOnlyModifier,attackOnlyAlreadyIncluded:importedBaseline||!!ownerOverride}:{}),
       ...(profile.occupiedHands?{occupiedHands:profile.occupiedHands}:{}),
       motion,
-      skill:{...skill,entry:undefined,candidates:undefined},attackLevel:level,directWeaponPenalty:profile.attackModifier,
+      skill:{...skill,entry:undefined,candidates:undefined},attackLevel:level,levelBeforeStrength,projectedStrengthDelta,weaponStrength,directWeaponPenalty:profile.attackModifier,
       applyArmST:selection.applyArmST??attack.applyArmST===true,
       strength:{...hands,actualST,penaltyAlreadyIncluded:importedBaseline||!!ownerOverride},damageExpression:damage,reach,parry,
       conditions:[hands.ready,...gripEffects.conditions].filter(Boolean)};
     return {...attack,...(attack.equipmentRef?{equipmentRef:{...attack.equipmentRef,governingSkill:skill}}:{}),mode:profile.usage??attack.mode,label:profile.usage?attack.name+' – '+profile.usage:attack.name,
       level,damage,reach,parry,st,meleeProfile:resolved,applyArmST:resolved.applyArmST,
-      skillDescription:ownerOverride?'Ручной итог: '+level:importedBaseline?'Итог GGA: '+level:standaloneSkillDescription({...skill,level}),
+      skillDescription:(ownerOverride?'Ручной итог: '+level:importedBaseline?'Итог GGA: '+level:standaloneSkillDescription({...skill,level}))+(weaponStrength.reason?' '+weaponStrength.reason:''),
       ...(attack.standaloneRef?{standaloneRef:{...attack.standaloneRef,modeId:profile.modeId,governingSkill:skill}}:{}),
       data:{...attack.data,damage,reach,parry,st,level},
       readinessReason:hands.reason??(!skill.resolved?skill.reason:null)??(same&&!profile.contactProcedure?attack.readinessReason:null)};

@@ -244,11 +244,21 @@ export function validateWeaponExecution(weapon, profile) {
   }
 }
 // Frozen snapshots authorize Damage replay, never a new expenditure of live energy.
+export function shotResourceWeapon(actor, profile, attack = null) {
+  const weapons=actor?.getFlag?.('world','gurpsAmmoManager')?.weapons??[];
+  const modeId=profile?.binding?.confirmed?.modeId??profile?.mode?.standaloneRef?.modeId??attack?.standaloneRef?.modeId;
+  const weaponId=profile?.weaponId;
+  const standaloneId=attack?.standaloneRef?.weaponId??profile?.mode?.standaloneRef?.weaponId;
+  // Never match a native ranged row by two absent standalone identity fields.
+  // An explicit carrier ID is authoritative, including after deletion.
+  const weapon=weaponId?weapons.find(w=>w.id===weaponId):standaloneId&&modeId?
+    weapons.find(w=>w.standaloneWeaponId===standaloneId&&w.standaloneModeId===modeId):null;
+  if(weaponId&&!weapon)throw Error(etcText('Changed'));
+  return uawWeaponView({weapons},weapon);
+}
 export function validateWeaponShotPower(actor, profile, amount = 1, attack = null) {
   const modeId=profile?.binding?.confirmed?.modeId??profile?.mode?.standaloneRef?.modeId??attack?.standaloneRef?.modeId;
-  const weapons=actor?.getFlag?.('world','gurpsAmmoManager')?.weapons??[];
-  const weapon=uawWeaponView({weapons},weapons.find(w=>w.id===profile?.weaponId)??weapons.find(w=>
-    w.standaloneWeaponId===attack?.standaloneRef?.weaponId && w.standaloneModeId===modeId));
+  const weapon=shotResourceWeapon(actor,profile,attack);
   validateWeaponExecution(weapon,profile);
   const reason=weaponPowerReason(weapon,amount,modeId);
   if(reason)throw Error(reason);

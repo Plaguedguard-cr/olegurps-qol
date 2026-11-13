@@ -2,7 +2,7 @@ import { exoticBeamWeapon } from '../ut-exotic-beam-source.js';
 import {sonicShuriken,SONIC_SHURIKEN} from '../ut-sonic-shuriken-source.js';
 import {nextElevenWeapon} from '../ut-next-eleven-source.js';
 import { weaponPowerProfile, readWeaponBattery, weaponPowerReason, weaponPowerEvidence,
-  validateWeaponExecution, sameBattery, weaponBatteryHTML, weaponPowerCost } from './weapon-power.js';
+  validateWeaponExecution, sameBattery, weaponBatteryHTML, weaponPowerCost, shotResourceWeapon } from './weapon-power.js';
 import { lpProfile, lpFireMode, LP_FIRE_MODES, lpFuelReason, readLPFuel, lpText, lpFeedReason } from './ut-liquid-propellant.js';
 import { magazineFill } from './ammo-inventory.js';
 import { uawWeaponView } from './ut-uaw.js';
@@ -100,8 +100,7 @@ export function validateWeaponResources(weapon,profile,ammunition=null) {
 export const sameWeaponResource = sameBattery;
 export function validateWeaponShotResources(actor,profile,amount=1,attack=null) {
   const modeId=profile?.binding?.confirmed?.modeId??profile?.mode?.standaloneRef?.modeId??attack?.standaloneRef?.modeId;
-  const weapons=actor?.getFlag?.('world','gurpsAmmoManager')?.weapons??[];
-  const weapon=uawWeaponView({weapons},weapons.find(w=>w.id===profile?.weaponId)??weapons.find(w=>w.standaloneWeaponId===attack?.standaloneRef?.weaponId&&w.standaloneModeId===modeId));
+  const weapon=shotResourceWeapon(actor,profile,attack);
   validateLTWeaponAmmunition(actor, weapon);
   validateWeaponResources(weapon,profile);
   const reason=weaponResourceReason(weapon,amount,modeId);if(reason)throw Error(reason);

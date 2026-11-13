@@ -1,11 +1,11 @@
 // UT160-161 and the three approved HT/Basic additions. Unknown prices stay unknown.
 const rows=[
- ['riot','Riot Gas',9,2,'gas','respiratory',-4,'Каждую секунду HT−4: тошнота; провал ≥5 – рвота, затем тошнота MoF минут.'],
+ ['riot','Riot Gas',9,2,'gas','respiratory',-4,'Каждую секунду HT-4: тошнота; провал ≥5 – рвота, затем тошнота MoF минут.'],
  ['musk','Musk',9,2,'aerosol','contact',null,'Bad Smell на 2 недели; час мытья сокращает срок на день. Sealed защищает тело, но не костюм.'],
- ['nerve','Lethal Nerve Gas',9,10,'aerosol','contact',-6,'HT−6 (остаточное загрязнение −3): 1d tox, 6 циклов по минуте; неврологические последствия по потере HP.'],
- ['sleep','Sleep Gas',9,0.5,'aerosol','contact',-6,'HT−6: без сознания MoF минут, затем обычный сон.'],
- ['paralysis','Paralysis Gas',10,10,'aerosol','contact',-6,'Каждый ход HT−6: провал 1–2 – падение и неподвижность на ход; ≥3 – паралич MoF минут; критпровал – 1d и кома.'],
- ['pheromone','Pheromone Spray',10,20,'gas','respiratory',-2,'HT−2: Lecherousness (9) в облаке + MoF минут; обычно только тот же вид.'],
+ ['nerve','Lethal Nerve Gas',9,10,'aerosol','contact',-6,'HT-6 (остаточное загрязнение −3): 1d tox, 6 циклов по минуте; неврологические последствия по потере HP.'],
+ ['sleep','Sleep Gas',9,0.5,'aerosol','contact',-6,'HT-6: без сознания MoF минут, затем обычный сон.'],
+ ['paralysis','Paralysis Gas',10,10,'aerosol','contact',-6,'Каждый ход HT-6: провал 1–2 – падение и неподвижность на ход; ≥3 – паралич MoF минут; критпровал – 1d и кома.'],
+ ['pheromone','Pheromone Spray',10,20,'gas','respiratory',-2,'HT-2: Lecherousness (9) в облаке + MoF минут; обычно только тот же вид.'],
  ['mask','Mask',10,30,'aerosol','traces',null,'Forensics по следам и выслеживание по запаху −6; сам Mask легко обнаруживается.'],
  ['antitangler','Anti-Tangler Aerosol',10,1,'aerosol','tangler',null,'Растворяет связи Tangler за 1 секунду.'],
  ['smoke','Smoke',9,null,'gas','obscurant',null,'Визуальные атаки и наблюдение −10; блокирует ladar. Облако 1–4 минуты.'],
@@ -18,31 +18,31 @@ const rows=[
  ['mea','Metal Embrittlement Agent',10,5,'liquid','metal',null,'Заданный сплав: 3d cor/час, 12 часов или до очистки; полностью охваченный SM≥+2 умножает урон на SM.'],
  ['disassembler','Disassembler Nanoglop',11,null,'slime','material',null,'Радиус /2 (ниже 1 ярда – только прямое попадание); 15 секунд, удвоенный урон disassembler: 2×(1d−2)(10) cor/с; только Sealed DR. UT161,169.'],
  ['replicator','Replicator Nanoglop',12,null,'slime','material',null,'Replicating disassemblers: превращение материи и распространение вручную по UT161,169.'],
- ['tear','Tear Gas',6,10,'gas','respiratory/vision',-2,'HT−2 отдельно: кашель/слепота в облаке + MoF минут; Vision −1…−3 на ярд. B439.'],
- ['tear_vomit','Tear Gas + Vomiting Agent',6,null,'gas','respiratory/vision',-2,'Два HT−2: кашель/слепота в облаке + MoF минут; третий HT−2: рвота в облаке + 5×MoF минут. HT171.'],
- ['mustard','Mustard Gas',6,10,'aerosol','contact/respiratory',null,'Контакт: HT−4, 1 tox ×24/8 ч; вдыхание: задержка 2 ч, HT−1, 1d tox ×6/час. B439.']
+ ['tear','Tear Gas',6,10,'gas','respiratory/vision',-2,'HT-2 отдельно: кашель/слепота в облаке + MoF минут; Vision −1…−3 на ярд. B439.'],
+ ['tear_vomit','Tear Gas + Vomiting Agent',6,null,'gas','respiratory/vision',-2,'Два HT-2: кашель/слепота в облаке + MoF минут; третий HT-2: рвота в облаке + 5×MoF минут. HT171.'],
+ ['mustard','Mustard Gas',6,10,'aerosol','contact/respiratory',null,'Контакт: HT-4, 1 tox ×24/8 ч; вдыхание: задержка 2 ч, HT-1, 1d tox ×6/час. B439.']
 ];
 const BASE_CHEMICALS=Object.freeze(Object.fromEntries(rows.map(([id,name,tl,cost,phase,route,modifier,brief])=>[id,Object.freeze({id,name,tl,cost,phase,route,modifier,brief,source:['tear','tear_vomit','mustard'].includes(id)?id==='tear_vomit'?'HT171':'B439':id==='disassembler'||id==='replicator'?'UT161,169':'UT160'})])));
 const extra=[
- {id:'nerve_poison',name:'Nerve Poison',tl:9,cost:10,phase:'injection',route:'injection',modifier:-7,brief:'HT−7: 1d tox, 6 циклов по минуте; неврологические последствия по утрате HP.',source:'UT161',cycles:{count:6,intervalSeconds:60}},
- {id:'sleep_poison',name:'Sleep Poison',tl:9,cost:0.5,phase:'injection',route:'injection',modifier:-6,brief:'HT−6: сонливость; провал ≥5 – без сознания MoF минут.',source:'UT161'},
- {id:'nerve_contact',name:'Nerve Poison – Contact',tl:9,cost:100,phase:'gel',route:'contact',modifier:-5,brief:'Контактная версия: HT−5; 1d tox, 6 циклов по минуте.',source:'UT161',deliveries:['contact-application']},
- {id:'sleep_contact',name:'Sleep Poison – Contact',tl:9,cost:5,phase:'gel',route:'contact',modifier:-4,brief:'Контактная версия: HT−4; сонливость, при провале ≥5 – без сознания MoF минут.',source:'UT161',deliveries:['contact-application']},
+ {id:'nerve_poison',name:'Nerve Poison',tl:9,cost:10,phase:'injection',route:'injection',modifier:-7,brief:'HT-7: 1d tox, 6 циклов по минуте; неврологические последствия по утрате HP.',source:'UT161',cycles:{count:6,intervalSeconds:60}},
+ {id:'sleep_poison',name:'Sleep Poison',tl:9,cost:0.5,phase:'injection',route:'injection',modifier:-6,brief:'HT-6: сонливость; провал ≥5 – без сознания MoF минут.',source:'UT161'},
+ {id:'nerve_contact',name:'Nerve Poison – Contact',tl:9,cost:100,phase:'gel',route:'contact',modifier:-5,brief:'Контактная версия: HT-5; 1d tox, 6 циклов по минуте.',source:'UT161',deliveries:['contact-application']},
+ {id:'sleep_contact',name:'Sleep Poison – Contact',tl:9,cost:5,phase:'gel',route:'contact',modifier:-4,brief:'Контактная версия: HT-4; сонливость, при провале ≥5 – без сознания MoF минут.',source:'UT161',deliveries:['contact-application']},
  {id:'splatter',name:'Splatter Nano',tl:11,cost:100,phase:'injection',route:'injection',modifier:null,brief:'Только follow-up. После ≥1 минуты: 1d tox за минуту циркуляции, максимум 30d на дозу; запуск по таймеру/сигналу вручную.',source:'UT162'},
- {id:'parasite_seed',name:'Parasite Seed',tl:12,cost:10000,phase:'capsule',route:'capsule',modifier:-4,brief:'Капсула размером с яблочное семя: каждый час HT−4; успех уничтожает её, провал −3 HT до превращения при HT0. Вручную.',source:'UT162',deliveries:['capsule']},
+ {id:'parasite_seed',name:'Parasite Seed',tl:12,cost:10000,phase:'capsule',route:'capsule',modifier:-4,brief:'Капсула размером с яблочное семя: каждый час HT-4; успех уничтожает её, провал −3 HT до превращения при HT0. Вручную.',source:'UT162',deliveries:['capsule']},
  {id:'parasite_seed_mind',name:'Parasite Seed – Mind Trapping',tl:12,cost:100000,phase:'capsule',route:'capsule',modifier:-4,brief:'Parasite Seed с захватом сознания; капсула требует подходящего устройства. Последствия вручную.',source:'UT162',deliveries:['capsule']}
 ];
 const nanos=[
- ['nanoburn','Nanoburn',10,5,-6,'HT−6: паралич 3×MoF минут; 1d−1 tox каждые 3 минуты следующие 30 минут. Только углеродная жизнь.'],
+ ['nanoburn','Nanoburn',10,5,-6,'HT-6: паралич 3×MoF минут; 1d−1 tox каждые 3 минуты следующие 30 минут. Только углеродная жизнь.'],
  ['nanotracers','Nanotracers',10,100,null,'Через минуту: сигнал/запах не менее суток, +5 к подходящему выслеживанию при известном и обнаруживаемом сигнале.'],
  ['shrike','Shrike Nano',11,500,null,'Каждую минуту состязание с Aegis: уничтожение проигравшего агента; ничья продолжает борьбу. Уровни и усиление дозой – вручную.'],
- ['dominator','Dominator Nano',12,null,-6,'Задержка 6 часов, HT−6: запрограммированный допустимый ментальный недостаток, постоянный эффект. Программа и последствия вручную.'],
- ['dominator_fast','Dominator Nano (TL12^)',12,null,-6,'Задержка 1 минута, HT−6: запрограммированный допустимый ментальный недостаток. Цена ×2; последствия вручную.']
+ ['dominator','Dominator Nano',12,null,-6,'Задержка 6 часов, HT-6: запрограммированный допустимый ментальный недостаток, постоянный эффект. Программа и последствия вручную.'],
+ ['dominator_fast','Dominator Nano (TL12^)',12,null,-6,'Задержка 1 минута, HT-6: запрограммированный допустимый ментальный недостаток. Цена ×2; последствия вручную.']
 ];
 for(const [baseId,name,tl,cost,modifier,brief]of nanos)for(const [suffix,phase,route,multiplier]of [
  ['injection','injection','injection',1],['blood','liquid','blood',2],['contact_mist','aerosol','contact',1],
  ['contact_gas','gas','contact',10],['contact_gel','gel','contact',2],['respiratory','aerosol','respiratory',5]
-])extra.push({id:baseId+'_'+suffix,name:name+' – '+({injection:'инъекция',blood:'слизистые',contact_mist:'контактный туман',contact_gas:'контактный газ',contact_gel:'контактный гель',respiratory:'вдыхание'}[suffix]),baseId,tl,cost:cost==null?null:cost*multiplier,phase,route,modifier,brief,source:tl===10?'UT161':'UT161–162',metabolic:true,superscience:baseId==='dominator_fast',...(phase==='gel'?{deliveries:['contact-application']}:{}),costBasis:baseId.startsWith('dominator')?'$100 × стоимость недостатков; ×2 TL12^; ×2 обратимое исполнение; затем множитель доставки':null});
+])extra.push({id:baseId+'_'+suffix,name:name+' – '+({injection:'Injection',blood:'Blood Agent',contact_mist:'Contact Mist',contact_gas:'Contact Gas',contact_gel:'Contact Gel',respiratory:'Respiratory Agent'}[suffix]),baseId,tl,cost:cost==null?null:cost*multiplier,phase,route,modifier,brief,source:tl===10?'UT161':'UT161–162',metabolic:true,superscience:baseId==='dominator_fast',...(phase==='gel'?{deliveries:['contact-application']}:{}),costBasis:baseId.startsWith('dominator')?'$100 × стоимость недостатков; ×2 TL12^; ×2 обратимое исполнение; затем множитель доставки':null});
 function timing(f){
  if(['nerve','nerve_poison','nerve_contact'].includes(f.id))return {duration:{manual:true},repeats:{count:6,intervalSeconds:60},outcomes:{failureDamage:'1d tox',hpThresholds:[{lostFraction:1/3,effect:'coughing, mild neurological disorder'},{lostFraction:1/2,effect:'nausea, severe neurological disorder'},{lostFraction:2/3,effect:'crippling neurological disorder'}]}};
  if(['sleep','sleep_poison','sleep_contact'].includes(f.id))return {duration:{unconsciousMinutesPerMoF:1,...(f.id==='sleep'?{then:'ordinary sleep'}:{unconsciousFailureThreshold:5,otherwise:'drowsy'})},repeats:{none:true}};

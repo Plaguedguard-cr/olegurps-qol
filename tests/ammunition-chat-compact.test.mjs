@@ -29,7 +29,7 @@ test('HT normal, AP, APEX, APHEX, +P, tracer, HE and manual effects retain charg
   const samples=[
     [null,'HT176','',{}],['ht_ap','HT167','',{}],['ht_apex','HT169','follow-up',{}],['ht_aphex','HT170','incendiary',{}],
     ['ht_plus_p','HT165','Malf',{pressure:{possibleMalfPenalty:-1}}],['ht_tracer','HT175','+1',{}],
-    ['ht_he','HT169','осколки',{}],['ht_white_phosphorus','HT172','10 секунд',{}],['ht_tear_gas','HT171','HT−2',{}]
+    ['ht_he','HT169','осколки',{}],['ht_white_phosphorus','HT172','10 секунд',{}],['ht_tear_gas','HT171','HT-2',{}]
   ];
   for(const [variant,source,unique,rules]of samples){
     const profile={ammunition:{book:'ht',name:'Тестовый заряд',recipe:{variantId:variant}},damage:{nativeSafe:true,variantId:variant,formula:'4d(2) pi',components:[{role:'kinetic',formula:'4d(2) pi',status:'resolved'}],rules:{...rules,ammunitionSource:source}}};

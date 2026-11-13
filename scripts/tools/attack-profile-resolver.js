@@ -64,6 +64,7 @@ import { electrolaserDamage, electrolaserProfile } from '../ut-electrolaser-sour
 import { microwaveDamage, microwaveProfile } from '../ut-microwave-source.js';
 import { sonicNeuralDamage, sonicNeuralProfile } from '../ut-sonic-neural-source.js';
 import { ppbDamage, ppbProfile } from '../ut-plasma-particle-source.js';
+import { resolveRangedWeaponStrength } from './ranged-weapon-strength.js';
 
 export const SHOT_PROFILE_VERSION = 1;
 export const SHOT_FLAG_SCOPE = "olegurps-qol";
@@ -628,7 +629,11 @@ export class AttackProfileResolver {
     if (damage.nativeSafe) effective.damage = damage.rules.robot||damage.rules.nextEleven||damage.rules.exoticBeam?damage.effectiveChanges.damage:laser?raw.damage:(damage.rules.sonicNeural||damage.rules.plasmaParticle||damage.rules.laserModifications)&&damage.rules.resistanceEffect?damage.effectiveChanges.damage:damage.formula;
     const weaponReliability=damage.rules.ltQuality?.weaponReliability??((damage.rules.plasmaParticle?.hotshot||damage.rules.plasmaGun?.hot)?{malf:14,source:'UT133'}:this.catalogs?.getMode(confirmedBinding?.modeId)?.weaponReliability);
     transformations.push(...damage.transformations.map(entry => ({ ...entry, order: transformations.length + entry.order })));
+    const strengthMode=this.catalogs?.getMode(confirmedBinding?.modeId);
+    const weaponStrength=strengthMode?.combat_type==='melee'||context.kind==='melee'?null:resolveRangedWeaponStrength({actor,attack,weapon:carrier,catalogs:this.catalogs,
+      profile:{actorId,weaponId,raw,overrides,binding:{confirmed:confirmedBinding},ammunition:identity,resource:{magazineId:ammunition?.magazineId??null},damage,context}});
     return immutableCopy({ version: SHOT_PROFILE_VERSION, actorId, weaponId,
+      ...(weaponStrength?{weaponStrength}:{}),
       ...(weaponHandling?{weaponHandling}:{}),
       mode: { uuid: attack?.uuid ?? null, path: attack?.path ?? null,
         ...(attack?.standaloneRef ? { standaloneRef: structuredClone(attack.standaloneRef) } : {}),

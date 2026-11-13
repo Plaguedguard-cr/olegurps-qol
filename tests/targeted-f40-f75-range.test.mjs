@@ -38,7 +38,7 @@ test('F18 preserves Foundry scale and rejects missing distances or unknown units
  runtime.canvas.scene.grid.units='yd';runtime.canvas.grid.measurePath=()=>({spaces:1});assert.equal(measureTokenDistanceYards(source,target,runtime),null);
 });
 
-test('F14/F15 synthetic HT165 control matrix preserves the legal penalty, without guessing import components',()=>{
+test('F14/F15 bare HT165 metadata cannot prove a clean or known-included imported base',()=>{
  const raw={damage:'4d-1 pi+',range:'100/1000',st:'9'},p=resolveAmmunitionEffects({raw,variantId:'ht_plus_p',baseStatus:'compatible',constructionStatus:'compatible',facts:{weaponTL:5}});
  assert.equal(p.rules.requiredStrength.value,10);
  // These inputs are declared controls, not evidence of an actual character import.
@@ -48,7 +48,10 @@ test('F14/F15 synthetic HT165 control matrix preserves the legal penalty, withou
   const actor={system:{attributes:{ST:{value:st}}}},token={actor},f=createFireControlContext({token,fireService:new FireService({actor,token})});
   const attack={name:'Declared control',level,...plusP?{ammunitionRequiredStrength:p.rules.requiredStrength}:{}};
   const d=f.calculateEffectiveFireSkillDetails(attack,{rangeIndex:0,manualRangeSelected:true,shots:1},[{index:0,max:2,penalty:0}],{getSelection:()=>({penalty:0})});
-  assert.equal(d.effectiveSkill,level-(plusP?Math.max(0,10-st):0));assert.deepEqual(d.modifierEvidence,[]);
+  // No catalog/instance binding or numerical provenance is supplied here.
+  // The source-bound CLEAN/KNOWN_INCLUDED +P controls are in ranged-weapon-strength.test.mjs.
+  assert.equal(d.effectiveSkill,level);assert.equal(d.combatCalculation.metadata.weaponStrength.provenanceStatus,'UNKNOWN');
+  assert.equal(d.combatCalculation.metadata.weaponStrength.proposedDelta,null);assert.deepEqual(d.modifierEvidence,[]);
  }}finally{Object.assign(globalThis,before);}
 });
 

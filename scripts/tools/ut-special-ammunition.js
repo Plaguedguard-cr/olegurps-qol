@@ -1,3 +1,4 @@
+import {utWarheadName} from './ut-nomenclature.js';
 import {CHEMICAL_SUBSTANCES,chemicalAllowed} from './biochemical-catalog.js';
 import {UT_SWARM_TYPES,utSwarmType} from '../ut-swarm-source.js';
 import {chemicalEditorHTML} from './biochemical-integration.js';
@@ -53,7 +54,7 @@ export function utPayloadEditorHTML(option,draft,escape,{open=false,campaignTL=n
   });
   return `<details data-ut-payload data-ammo-key="${escape(option.key??'')}" ${open?'open':''}><summary>${escape(text('Content'))}</summary><div class="gam-payload-fields">`+
     chemicalEditorHTML({...option,recipe:{...option.recipe,parameters:p}},p,escape,{campaignTL})+
-    `<label>${escape(text(substance ? 'Note' : 'PlainNote'))}<input type="text" name="ut-note" maxlength="500" value="${escape(p?.note??'')}"></label>`+
+    `<label>${escape(text(substance&&!p?.chemicalId ? 'Note' : 'PlainNote'))}<input type="text" name="ut-note" maxlength="500" value="${escape(p?.note??'')}"></label>`+
     (swarm?`<label>${escape(text('SwarmType'))}<select name="ut-swarmType"><option value="" ${!p.swarmType?'selected':''}>${escape(text('SwarmUnspecified'))}</option>`+
       Object.values(UT_SWARM_TYPES).map(s=>`<option value="${s.id}" ${p.swarmType===s.id?'selected':''} ${s.tl>p.availabilityTL?'disabled':''}>${escape(s.name)} (TL${s.tl})</option>`).join('')+'</select></label>'+
       (swarmType?`<p class="hint" data-ut-swarm-rule>${escape(swarmType.brief+' '+text('SwarmManual')+' '+swarmType.source+'.')}</p>`:''):'')+
@@ -63,9 +64,9 @@ export function utPayloadEditorHTML(option,draft,escape,{open=false,campaignTL=n
     (guided?`<label>${escape(text('HomingSensor'))}<select name="ut-homingGuidance">`+
       (!sensors.includes(p.homingGuidance)?`<option value="${escape(p.homingGuidance)}" selected disabled>${escape(text('HomingInvalidChoice'))}</option>`:'')+
       sensors.map(value=>`<option value="${value}" ${p.homingGuidance===value?'selected':''}>${escape(text('SEFOPSensor_'+value))}${UT_SEFOP_GUIDANCE[value].superscience?'^':''}</option>`).join('')+`</select></label>`+
-      `<label>${escape(text('HomingCharge'))}<select name="ut-warheadVariant"><option value="" ${!p.warheadVariant?'selected':''}>${escape(text('HomingInert'))}</option>`+
-      (p.warheadVariant&&!homingWarheads.some(t=>t.recipe.variantId===p.warheadVariant)?`<option value="${escape(p.warheadVariant)}" selected disabled>${escape(UT_EXTENDED_SOURCE[p.warheadVariant]?.name??UT_SPECIAL_RULES[p.warheadVariant]?.label??UT_CONVENTIONAL_RULES[p.warheadVariant]?.label??p.warheadVariant)} – ${escape(text('HomingInvalidChoice'))}</option>`:'')+
-      [...new Map(homingWarheads.map(t=>[t.recipe.variantId,t])).values()].map(t=>`<option value="${escape(t.recipe.variantId)}" ${p.warheadVariant===t.recipe.variantId?'selected':''}>${escape(UT_EXTENDED_SOURCE[t.recipe.variantId]?.name??UT_SPECIAL_RULES[t.recipe.variantId]?.label??UT_CONVENTIONAL_RULES[t.recipe.variantId]?.label??t.name)}</option>`).join('')+`</select></label>`:'')+
+      `<label>${escape(text('HomingCharge'))}<select name="ut-warheadVariant"><option value="" ${!p.warheadVariant?'selected':''}>${escape(utWarheadName('standard_inert'))}</option>`+
+      (p.warheadVariant&&!homingWarheads.some(t=>t.recipe.variantId===p.warheadVariant)?`<option value="${escape(p.warheadVariant)}" selected disabled>${escape(utWarheadName(p.warheadVariant)??UT_EXTENDED_SOURCE[p.warheadVariant]?.name??UT_SPECIAL_RULES[p.warheadVariant]?.label??p.warheadVariant)} – ${escape(text('HomingInvalidChoice'))}</option>`:'')+
+      [...new Map(homingWarheads.map(t=>[t.recipe.variantId,t])).values()].map(t=>`<option value="${escape(t.recipe.variantId)}" ${p.warheadVariant===t.recipe.variantId?'selected':''}>${escape(utWarheadName(t.recipe.variantId)??UT_EXTENDED_SOURCE[t.recipe.variantId]?.name??UT_SPECIAL_RULES[t.recipe.variantId]?.label??t.name)}</option>`).join('')+`</select></label>`:'')+
     (charge&&['mininuke','micro_antimatter'].includes(charge.id)?`<label>${escape(text('Setting'))}<select name="ut-setting">${Object.keys(charge.damage_table).map(value=>`<option value="${value}" ${p.setting===value?'selected':''}>${value}</option>`).join('')}</select></label>`:'')+
     (charge?.id==='he'?`<label>${escape(text('HEFuze'))}<select name="ut-fuze">${['impact','proximity'].map(value=>`<option value="${value}" ${(p.fuze??'impact')===value?'selected':''}>${value==='impact'?'Impact':'Proximity'}</option>`).join('')}</select></label>`:'')+
     (charge?.id==='stasis'?`<label>${escape(text('DurationSeconds'))}<input name="ut-durationSeconds" type="number" min="300" step="1" value="${escape(p.durationSeconds??300)}"></label>`:'')+

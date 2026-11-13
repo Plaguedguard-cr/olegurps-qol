@@ -155,10 +155,10 @@ test('standing alongside artillery removes every Aim increment; explicit distanc
  const context=createFireControlContext({token:{actor:f.actor},fireService:new FireService({actor:f.actor}),mode:'standalone'});
  const bonus=context.getFireBonuses(attack,{aimSeconds:3,braced:true,laserSight:false});assert.equal(bonus.aimBonus,0);assert.equal(bonus.bracingBonus,0);assert.equal(bonus.sightBonus,0);
  const {FirePreparationApp}=await import('../scripts/tools/fire-preparation-app.js');
- const options=FirePreparationApp.prototype.getShotOptions.call({mode:'standalone',actor:f.actor,attack,weapon:f.current(),fireState:{projectileDistance:'12.5',aimSeconds:3,braced:true,hitLocation:{zoneId:'torso'}},_getShotsValue:()=>1,rangeBands:[{index:0,max:15,penalty:-5}]});
+ const options=FirePreparationApp.prototype.getShotOptions.call({mode:'standalone',actor:f.actor,attack,weapon:f.current(),fireState:{projectileDistance:'12.5',aimSeconds:3,braced:true,hitLocation:{zoneId:'torso'}},_supportSelection:()=>null,_getShotsValue:()=>1,rangeBands:[{index:0,max:15,penalty:-5}]});
  assert.equal(options.targetDistanceOverride,12.5);assert.equal(options.aimSeconds,0);assert.equal(options.braced,false);
  attack.ammunitionLTEarly={...attack.ammunitionLTEarly,indirect:true};
- const indirect=FirePreparationApp.prototype.getShotOptions.call({mode:'standalone',actor:f.actor,attack,weapon:f.current(),fireState:{projectileDistance:'12.5',hitLocation:{zoneId:'skull',regionId:'face'}},_getShotsValue:()=>1,rangeBands:[{index:0,max:15,penalty:-5}]});
+ const indirect=FirePreparationApp.prototype.getShotOptions.call({mode:'standalone',actor:f.actor,attack,weapon:f.current(),fireState:{projectileDistance:'12.5',hitLocation:{zoneId:'skull',regionId:'face'}},_supportSelection:()=>null,_getShotsValue:()=>1,rangeBands:[{index:0,max:15,penalty:-5}]});
  assert.equal(indirect.hitLocationId,'silhouette');assert.equal(indirect.hitRegionId,null);assert.equal(indirect.suppressTargetedAttack,true);
  assert.match(FirePreparationApp.prototype._buildHitLocationContent.call({attack},{}),/Точка падения/);
 });

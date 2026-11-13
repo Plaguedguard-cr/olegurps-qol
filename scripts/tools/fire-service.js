@@ -5,7 +5,9 @@ import { calculateHitsFromMargin, executePreparedGgaRoll } from "./prepared-gga-
 import { f4Text } from "./ammunition-f4-localization.js";
 import { resolveRuntimeAttackProfile, newAttackId, pendingShotSnapshot, attackProfileError } from "./attack-profile-runtime.js";
 import {persistShotSnapshot} from './shot-history-storage.js';
-import { createShotSnapshot } from "./attack-profile-resolver.js";
+import { createShotSnapshot, immutableCopy } from "./attack-profile-resolver.js";
+import { moduleText } from '../localization.js';
+import { rangedStrengthSignature, resolveRangedWeaponStrength } from './ranged-weapon-strength.js';
 import { parseWeaponBulk } from "./weapon-bulk.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 
@@ -388,7 +390,9 @@ export class FireService {
   }
 
   async executeRangedAttack(attack, options) {
-    const attackProfile = options.attackProfile ?? resolveRuntimeAttackProfile({
+    const expectedStrength=options.combatCalculation?.metadata?.weaponStrength??options.weaponStrength;
+    const supportSelection=options.supportSelection??expectedStrength?.support?.selection??null;
+    let attackProfile = options.attackProfile ?? resolveRuntimeAttackProfile({
       actor: this.actor, attack, context: { kind: options.contextLabel || "ranged",
         tokenId: this.token?.id ?? null, physicalShots: options.physicalShots,
         effectiveSkill: options.effectiveSkill, effectiveRoF: options.effectiveRoF, rcl: options.rcl,
@@ -400,6 +404,19 @@ export class FireService {
           extremelyClose: options.extremelyClose === true, closeDamageMultiplier: options.closeDamageMultiplier ?? null,
           damageApplication: "native-GGA-GM-selection" } } });
     validateProximityShot(attackProfile);
+    // A prepaid suppression/spraying profile freezes ammunition ballistics, not today's handling ST.
+    if(attackProfile.weaponStrength){
+      attackProfile=immutableCopy({...attackProfile,context:{...attackProfile.context,supportSelection}});
+      attackProfile=immutableCopy({...attackProfile,
+        weaponStrength:resolveRangedWeaponStrength({actor:this.actor,attack,profile:attackProfile,catalogs:globalThis.OleGURPSQOL?.catalogs})});
+    }
+    if(expectedStrength&&rangedStrengthSignature(expectedStrength)!==rangedStrengthSignature(attackProfile.weaponStrength))throw Error(moduleText('OleGURPS.Strength.Stale'));
+    const strengthDelta=options.combatCalculation?.channels?.find(c=>c.id==='weaponStrength')?.resolvedValue??options.weaponStrengthDelta;
+    if(attackProfile.weaponStrength&&Number.isFinite(strengthDelta))attackProfile=immutableCopy({...attackProfile,
+      weaponStrength:{...attackProfile.weaponStrength,support:{...(expectedStrength?.support??attackProfile.weaponStrength.support),
+        effects:{...attackProfile.weaponStrength.support.effects,
+          appliedBracingBonus:options.combatCalculation?.channels?.find(c=>c.id==='braced')?.resolvedValue??0,
+          aimSeconds:options.aimSeconds??0}},transmittedDelta:strengthDelta}});
     validateWeaponShotPower(this.actor, attackProfile, options.physicalShots ?? 1, attack);
     const previewTracer = options.combatCalculation?.channels?.find(c => c.id === "ammunitionTracer")?.resolvedValue ?? 0;
     if (previewTracer !== (attackProfile.context?.f4?.tracerBonus ?? 0)) throw Error(f4Text("Stale"));
@@ -552,6 +569,10 @@ export class FireService {
       }
     }
 
+    if(result.rolled&&attackProfile.weaponStrength&&Number.isFinite(strengthDelta)){
+      if(result.rollData){result.rollData.weaponStrengthDelta=strengthDelta;
+        result.rollData.weaponStrengthEvidence=attackProfile.weaponStrength;}
+    }
     if (result.rolled && result.message?.setFlag && !["after-attack", "spraying-completion"].includes(shotSnapshot.resourceTiming)) {
       const finalSnapshot = createShotSnapshot(attackProfile, { attackId, spent: 0,
         resourceTiming: shotSnapshot.resourceTiming, resourceReceiptId: shotSnapshot.resourceReceiptId,

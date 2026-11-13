@@ -1,3 +1,4 @@
+import {utWarheadName} from './ut-nomenclature.js';
 import { recipeFingerprint } from "./ammunition-approval-service.js";
 import { isUTConventionalVariant, UT_CONVENTIONAL_RULES, UT_KINETIC_MODES } from "./ut-conventional-ammunition.js";
 import {ltBowRecipeAssessment} from './lt-bow.js';
@@ -15,7 +16,7 @@ import { FUZE_TRACER_VARIANTS, reviewFuzeTracerDefinition } from "./fuze-tracer-
 import { CASE_VARIANTS, isCaseVariant } from "./case-technology.js";
 import { htLiquidRecipe, validHTLiquidRecipe, htPreGaussProfile } from '../ht-pre-gauss-profiles.js';
 export const FIRST_STAGE_VARIANTS = Object.freeze(["ht_ap", "ht_aphc", "ht_hollow_point", ...Object.keys(EXPLOSIVE_VARIANTS), ...Object.keys(HT_AUTOMATIC_KINETIC_RULES), ...Object.keys(HT_AUTOMATIC_SPECIAL_RULES), ...MULTISHOT_IDS, ...Object.keys(ENVIRONMENT_VARIANTS), ...Object.keys(FUZE_TRACER_VARIANTS), ...Object.keys(CASE_VARIANTS)]);
-export const variantAbbreviation = id => UT_CONVENTIONAL_RULES[id]?.label ?? ({ ht_ap: "AP", ht_aphc: "APHC", ht_hollow_point: "HP" })[id] ?? EXPLOSIVE_VARIANTS[id] ?? HT_AUTOMATIC_KINETIC_RULES[id]?.label ?? HT_AUTOMATIC_SPECIAL_RULES[id]?.label ?? MULTISHOT_LABELS[id] ?? ENVIRONMENT_VARIANTS[id] ?? FUZE_TRACER_VARIANTS[id] ?? CASE_VARIANTS[id];
+export const variantAbbreviation = id => utWarheadName(id) ?? ({ ht_ap: "AP", ht_aphc: "APHC", ht_hollow_point: "HP" })[id] ?? EXPLOSIVE_VARIANTS[id] ?? HT_AUTOMATIC_KINETIC_RULES[id]?.label ?? HT_AUTOMATIC_SPECIAL_RULES[id]?.label ?? MULTISHOT_LABELS[id] ?? ENVIRONMENT_VARIANTS[id] ?? FUZE_TRACER_VARIANTS[id] ?? CASE_VARIANTS[id];
 export function assessAmmunitionRecipe(compatibility, modeId, type, approval = null, automatic = null, preparedFacts = null) {
   const base = compatibility?.checkCompatibility(modeId, type.ammoId, { book: type.book, kind: type.kind });
   const recipe = type.recipe;

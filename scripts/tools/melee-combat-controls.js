@@ -4,6 +4,7 @@ import {UT_NEURAL_SETTINGS} from '../ut-exotic-melee-source.js';
 import {weaponListIdentity} from './weapon-list-visibility.js';
 import { MeleeProfileService, resolveMeleeProfile, resolveMeleeHands, meleeMartialGrips } from './melee-profile-service.js';
 import { readActorStrength } from './strength-service.js';
+import { weaponStrengthExplanation } from './weapon-strength-display.js';
 import { StandaloneWeaponDraft, StandaloneWeaponService } from './standalone-weapon-service.js';
 import { resolveStandaloneSkill } from './standalone-skill-service.js';
 
@@ -80,6 +81,7 @@ export function meleeCombatControls(actor, attack,{attacks=[]}={}) {
     (siblings.length?siblings:[attack]).map(a=>({value:a.key,label:a.mode||a.data?.mode||'Атака',hint:a.label}));
   return { context, record, profile, skills, skill, grips, grip,modes,modeSelection:context?'profile':'attack',mode:profile?.modeId??attack.key,neuralSettings,neuralSetting:selection.neuralSetting,
     hint: [...(profile?.sourcePages ?? []), projected.meleeProfile?.strength?.ready ?? hands.ready,
+      weaponStrengthExplanation(projected.meleeProfile?.weaponStrength??projected.weaponStrength,{baseLevel:projected.meleeProfile?.levelBeforeStrength}),
       ...(projected.meleeProfile?.gripEffects?.conditions ?? []),
       ...(profile?.tooltipHints ? projected.meleeProfile?.manualHints ?? [] : []),
       mode?.snapshot?.lt_flexible_manual,mode?.snapshot?.lt_tool_manual,mode?.snapshot?.ht_tool_manual,attack?.manualSourceHint].filter(Boolean).join(' ') };

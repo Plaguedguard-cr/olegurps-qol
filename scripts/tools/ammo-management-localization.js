@@ -1,3 +1,4 @@
+import {utSavedAmmunitionName} from './ut-nomenclature.js';
 import { russianUI } from "../russian-ui.js";
 import { isArchivedAmmoType } from "./ammo-inventory.js";
 import { HT_12G_CASE_CONSTRUCTIONS } from "../ht-shotshell-source-data.js";
@@ -68,6 +69,7 @@ export function ammoDisplayName(type, language = globalThis.game?.i18n?.lang ?? 
   if (isArchivedAmmoType(type)) return ammoWindowText("Stored", language);
   const reviewed = type?.source === "catalog" && type.book === "ht" && type.kind === "ammo-item" && HT_12G_CASE_CONSTRUCTIONS[type.ammoId];
   const id=type?.recipe?.variantId, multishot=isMultishotVariant(id);
+  if(type?.book==='ut')return utSavedAmmunitionName(type,globalThis.OleGURPSQOL?.catalogs);
   if (!reviewed) return multishot ? String(type.name ?? "").replace(new RegExp(MULTISHOT_LABELS[id]+"$"),automaticAmmoText("P3"+id,language)) : type?.name;
   const suffix = type.recipe ? multishot ? automaticAmmoText("P3"+id,language) : variantAbbreviation(id) : null;
   if (type.recipe && !suffix) return type.name;

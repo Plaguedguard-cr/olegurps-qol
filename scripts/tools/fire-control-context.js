@@ -14,6 +14,10 @@ import { findRangeBandForDistance, getRangeBandDistance, isBeamWeapon, resolveEf
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 import { airburstAttackBonus } from "./fuze-tracer-ammunition.js";
 import {nativeRangedModifierEvidence,externalRangedModifierEvidence} from './ranged-modifier-provenance.js';
+import { resolveRuntimeAttackProfile } from './attack-profile-runtime.js';
+import { rangedStrengthBase, rangedStrengthChannel } from './ranged-weapon-strength.js';
+import { withSupportBulk } from './ranged-support.js';
+import { moduleText } from '../localization.js';
 
 export function sceneDistanceToYards(value, runtime = globalThis) {
   if(value===null||value===undefined||String(value).trim()==='')return null;
@@ -155,14 +159,16 @@ export function createStandaloneAttack(values) {
 
 export function createFireControlContext({ token, fireService, mode = "weapon" }) {
   const parseBoolean = value => value === true || value === 1 || ["true", "1", "on"].includes(String(value ?? "").toLowerCase());
-  function getFireBonuses(attack, values) {
+  function getFireBonuses(attack, values, strength = null) {
+    strength??=mode==='weapon'?resolveRuntimeAttackProfile({actor:token?.actor,attack,context:{supportSelection:values?.supportSelection}})?.weaponStrength:null;
+    attack=withSupportBulk(attack,strength?.support?.effects);
     const hasAcc = fireService.normalizeAccuracy(attack?.acc) !== null;
     const hasBulk = fireService.normalizeBulk(attack?.data?.bulk ?? attack?.bulk) !== null;
     const visibility = visibilityRules(values?.visibility);
     const aimed = fireService.resolveAimedFireBonuses({
       accuracy: attack?.acc, scopeBonus: attack?.scopeBonus ?? attack?.data?.scopeBonus ?? 0,
       aimSeconds: attack?.ammunitionLTEarly?.noAim||visibility && !visibility.aimAllowed ? 0 : values?.aimSeconds,
-      braced: attack?.ammunitionLTEarly?.noAim||visibility && !visibility.aimAllowed ? false : values?.braced,
+      braced: attack?.ammunitionLTEarly?.noAim||visibility && !visibility.aimAllowed ? false : parseBoolean(values?.braced)||strength?.support?.effects?.bracingEligible===true,
       laserSight: visibility?.random ? false : values?.laserSight,
       moveAndAttack: parseBoolean(values?.moveAndAttack)
     });
@@ -344,7 +350,10 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const governingSkill = mode === "weapon" ? resolveRangedGoverningSkill({
       actor: token?.actor, binding: attack?.governingSkillBinding
     }) : null;
-    const baseLevel = attack?.standaloneRef ? governingSkill?.level ?? NaN : Number(attack?.level);
+    const strengthProfile=mode==='weapon'?resolveRuntimeAttackProfile({actor:token?.actor,attack,context:{braced:parseBoolean(values?.braced),supportSelection:values?.supportSelection}}):null;
+    const strength=strengthProfile?.weaponStrength;
+    attack=withSupportBulk(attack,strength?.support?.effects);
+    const baseLevel = mode==='weapon'?(strength?.baseLevel??rangedStrengthBase(token?.actor,attack,governingSkill).level):Number(attack?.level);
     if (!Number.isFinite(baseLevel) || baseLevel <= 0) return null;
     if ((parseBoolean(values?.moveAndAttack) || parseBoolean(values?.closeCombat) || values?.closeHipShooting) &&
         normalizeBulk(attack?.data?.bulk ?? attack?.bulk) === null) return null;
@@ -375,7 +384,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       : 0;
     const manualValue = Number(String(values?.manualModifier ?? "").replace(",", "."));
     const manualModifier = Number.isFinite(manualValue) ? Math.trunc(manualValue) : 0;
-    const { aimBonus, bracingBonus, sightBonus, laserBonus, moveAttackPenalty } = getFireBonuses(attack, values);
+    const { aimBonus, bracingBonus, sightBonus, laserBonus, moveAttackPenalty } = getFireBonuses(attack, values, strength);
     const closeHipShooting = !configuredPreview && values?.closeHipShooting
       ? resolveCloseHipShooting({ actor: token?.actor, attack, governingSkill, enabled: true }) : null;
     const closeQuartersBattle = resolveCloseQuartersBattle({ actor: token?.actor, attack,
@@ -443,7 +452,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         { id: "fluidBounce", value: attack?.ammunitionFluid?.vortex?-2*Number(values?.fluidBounces??0):0, label: "\u0420\u0438\u043a\u043e\u0448\u0435\u0442\u044b Vortex" },
         { id: "ammunitionConstruction", value: attack?.ammunitionHitBonus??0, label: "Конструкция боеприпаса" },
         ...(fuzeBonus ? [{ id: "ammunitionAirburst", value: fuzeBonus, label: automaticAmmoText("P6ht_airburst") }] : []),
-        { id: "requiredStrength", value: weaponStrengthPenalty(attack, token?.actor), label: automaticAmmoText("MinimumSTPenalty") },
+        ...(mode==='weapon'?[rangedStrengthChannel(strength)]:[]),
         { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
         { id: "modifierBucket", value: bucketModifier, label: "Набор модификаторов", roll: false },
         { id: "ggaEffects", value: effectModifier, label: "\u042d\u0444\u0444\u0435\u043a\u0442\u044b GGA", roll: false },
@@ -452,7 +461,8 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         { id: "rapidFire", value: rapidFireBonus, label: `\u0421\u043a\u043e\u0440\u043e\u0441\u0442\u0440\u0435\u043b\u044c\u043d\u043e\u0441\u0442\u044c: ${fireMode.effectiveRoF ?? ""}` },
         { id: "rangedRapidStrike", value: rapidStrike ? -6 : 0, label: "Ranged Rapid Strike", kind: "combat-option" },
         { id: "aim", value: aimBonus, label: "Aim" },
-        { id: "braced", value: bracingBonus, label: "\u0423\u043f\u043e\u0440" },
+        { id: "braced", value: bracingBonus, label: strength?.support?.effects?.bracingEligible
+          ? moduleText('OleGURPS.Support.Bracing',{type:moduleText('OleGURPS.Support.'+strength.support.confirmedType)}) : "\u0423\u043f\u043e\u0440" },
         { id: "opticalSight", value: sightBonus, label: "Оптический прицел" },
         { id: "laser", value: laserBonus, label: "\u041b\u0430\u0437\u0435\u0440\u043d\u044b\u0439 \u043f\u0440\u0438\u0446\u0435\u043b" },
         { id: "moveAndAttack", value: moveAttackPenalty, label: cqbLabel, kind: "maneuver" },
@@ -466,8 +476,10 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       caps: visibility?.blind ? [{ maximum: 9, label: "Предел навыка при стрельбе вслепую: 9" }] : []
     });
     const movementChannel = calculation.channels.find(channel => channel.id === "moveAndAttack");
+    calculation.metadata.weaponStrength=strength??null;
+    calculation.metadata.weaponStrengthDelta=calculation.channels.find(c=>c.id==='weaponStrength')?.resolvedValue??null;
     return { effectiveSkill: calculation.effectiveSkill, calculatedSkill: calculation.uncappedSkill,
-      environment: environment ?? null,modifierEvidence,
+      environment: environment ?? null,modifierEvidence,supportSelection:strength?.support?.selection??null,
       modifiers: calculation.modifiers, combatCalculation: calculation,
       closeQuartersBattle, closeHipShooting, rapidStrike,
       moveAttackPenalty: movementChannel?.resolvedValue ?? moveAttackPenalty,
@@ -485,10 +497,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     getFireBonuses, getRapidFireBonus };
 }
 
-/** Use the ordinary combat channel; support-dependent minimum ST remains a GM decision. */
+/** Compatibility API: the combat engine owns the sole weaponStrength channel. */
 export function weaponStrengthPenalty(attack, actor) {
-  const required = attack?.ammunitionRequiredStrength;
-  const actorST = Number(actor?.system?.attributes?.ST?.value);
-  if (required?.application !== "existing-fire-skill-channels" || !Number.isFinite(actorST)) return 0;
-  return -Math.max(0, required.value - actorST);
+  return rangedStrengthChannel(resolveRuntimeAttackProfile({actor,attack}).weaponStrength).value;
 }

@@ -1,4 +1,5 @@
 import {CHEMICAL_SUBSTANCES} from './tools/biochemical-catalog.js';
+import {projectWeaponMass,projectAmmoMass} from './weapon-mass-source.js';
 import { LEMAT, LEMAT_SHOT_CHARGE, correctHTMode, correctHTAmmo } from "./ht-physical-ammunition-evidence.js";
 import { correctedHTLabel } from "./ht-source-corrections.js";
 import { projectUTSourceData } from "./ut-source-data.js";
@@ -463,7 +464,7 @@ export class CatalogService {
       // Validate the protected source first; corrections must never repair malformed inputs.
       buildIndexes(book, data);
       entry.sourceData = freeze(structuredClone(data));
-      data = projectMeleeSourceData(book,projectLTBladeSourceData(book,projectLTSourceData(book, projectUTSourceData(book, data))));
+      data = projectWeaponMass(book,projectMeleeSourceData(book,projectLTBladeSourceData(book,projectLTSourceData(book, projectUTSourceData(book, data)))));
       const built = buildIndexes(book, data);
       Object.assign(entry, built, { data });
       entry.counts = Object.fromEntries([...entry.indexes].map(([name, index]) => [name, index.size]));
@@ -573,10 +574,10 @@ export class CatalogService {
   getModesForEquipment(id) { return this.getEquipment(id)?.modes ?? EMPTY; }
   getAmmoItem(book, id) {
     if(book==='ht'&&this.#ready(book)?.relationshipChecks.status==='passed') {
-      const item=HT_PRE_GAUSS_AMMO.find(a=>a.id===id);if(item)return freeze(item);
+      const item=HT_PRE_GAUSS_AMMO.find(a=>a.id===id);if(item)return freeze(projectAmmoMass(book,item));
     }
     if (book === "ht" && id === LEMAT.shotAmmoId && this.#ready(book)?.relationshipChecks.status === "passed" &&
-        this.getMode(LEMAT.shotModeId)?.ht_ammo_item_ids.includes(id)) return LEMAT_SHOT_CHARGE;
+        this.getMode(LEMAT.shotModeId)?.ht_ammo_item_ids.includes(id)) return freeze(projectAmmoMass(book,LEMAT_SHOT_CHARGE));
     const record = this.getRecord(book, "ammo_items", id);
     if(book==='ht' && id==='ht_specific_hydra_laser_guided_70mm' && record?.warhead_type==='HE' && !record.attack_override) {
       const he=this.getRecord(book,'ammo_items','ht_specific_hydra_mk66_he');
@@ -584,7 +585,7 @@ export class CatalogService {
         return freeze({...record,attack_override:{...he.attack_override,range:'300/10,500',acc:'4'},
           guidancePackage:{warheadAmmoId:he.id,source:'HT150: MK66 HE with laser guidance package; independent warhead and guidance',acc:4,manualGuidance:true}});
     }
-    return book === "ht" ? freeze(correctHTAmmo(record)) : record;
+    return freeze(projectAmmoMass(book,book === "ht" ? correctHTAmmo(record) : record));
   }
   getAmmoFamily(book, id) {
     if(book==='ht'&&this.#ready(book)?.relationshipChecks.status==='passed') {

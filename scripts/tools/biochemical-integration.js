@@ -3,7 +3,7 @@ export const HT_TEAR_SPRAY_MODE='w6R_sr11lEsrygm0K';
 export const htTearSprayType=type=>type?.source==='catalog'&&type.book==='ht'&&type.kind==='chemical-dose'&&type.ammoId==='tear'&&!type.recipe;
 export function htTearSprayDamage(raw,type){
  const nativeSafe=htTearSprayType(type),rules=chemicalProfile(CHEMICAL_SUBSTANCES.tear,{delivery:'spray',doses:1});
- rules.chemical={...rules.chemical,source:'HT180',duration:{minutesPerMoF:1},brief:'Два HT−2: отдельно кашель и слепота, MoF минут. HT180.'};
+ rules.chemical={...rules.chemical,source:'HT180',duration:{minutesPerMoF:1},brief:'Два HT-2: отдельно кашель и слепота, MoF минут. HT180.'};
  rules.resistanceEffect={...rules.resistanceEffect,source:'HT180',brief:rules.chemical.brief,chemical:rules.chemical};
  return {status:nativeSafe?'resolved':'unresolved',nativeSafe,reason:nativeSafe?null:'Требуется готовый заряд Tear Gas Spray (HT180).',rawFormula:raw.damage,formula:'spec.',transformations:[],components:[],rules:{...rules,instructionOnly:true,htTearSpray:true,ammunitionSource:'HT180'},support:{manual:[{id:'Biochemical',text:rules.chemical.brief}]}};
 }
@@ -45,4 +45,12 @@ export function chemicalEditorHTML(type,parameters,escape,{campaignTL=null}={}){
  const options=chemicalOptions(type);if(!options.length)return '';
  const selected=parameters?.chemicalId??type.recipe.parameters?.chemicalId??'';
  return `<label>Источниковый состав<select name="ut-chemicalId"><option value="">Произвольный текст – без автоматического эффекта</option>${options.filter(f=>campaignTL==null||f.tl<=campaignTL||f.id===selected).map(f=>`<option value="${escape(f.id)}"${f.id===selected?' selected':''}>${escape(f.name)} (TL${f.tl}${f.superscience?'^':''})</option>`).join('')}</select></label>`;
+}
+
+// Defaults are applied only on an explicit substance selection, never on render.
+export function chemicalBatchFields(id) {
+ const f=CHEMICAL_SUBSTANCES[id];
+ if(!f)return {savingThrow:'',description:''};
+ const multiple=f.checks.length>1;
+ return {savingThrow:f.checks.map(c=>(multiple?c.label+': ':'')+'HT'+(c.modifier<0?'-'+Math.abs(c.modifier):c.modifier>0?'+'+c.modifier:'')).join('; '),description:f.brief};
 }

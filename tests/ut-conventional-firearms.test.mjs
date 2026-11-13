@@ -157,9 +157,9 @@ test('magazine switch/reload/delete is one preserved ledger and historical unava
   const state=fx.state(),stock={key:'ut:ammo-family:3mm_n',type:{key:'ut:ammo-family:3mm_n',source:'catalog',book:'ut',kind:'ammo-family',ammoId:'3mm_n',name:'3mmN'},rounds:4};state.weapons[0].ammunitionInventory.stocks.push(stock);await fx.actor.setFlag('world','gurpsAmmoManager',state);
   const historical=displayedAmmoTypes(fx.actor,fx.weapon(),api).find(t=>t.key===stock.key);assert.equal(historical.historical,true);assert.equal(historical.unavailable,true);
 });
-test('new UT reasons and labels are Russian at Foundry ru and en',async()=>{
+test('UT reasons stay Russian and canonical names stay English at Foundry ru and en',async()=>{
   const fx=await fixture('WwK7xKN4sLQXIuQ64');
-  for(const lang of ['ru','en']){game.i18n.lang=lang;assert.match(moduleText('OleGURPS.AttackProfile.UTMotorPowerRequired'),/[\u0400-\u04ff]/);assert.equal(ammoText('UTMotorPowerRequired'),moduleText('OleGURPS.AttackProfile.UTMotorPowerRequired'));assert.ok(fx.candidates().some(t=>t.name.endsWith('\u0414\u0440\u043e\u0431\u044c')));}
+  for(const lang of ['ru','en']){game.i18n.lang=lang;assert.match(moduleText('OleGURPS.AttackProfile.UTMotorPowerRequired'),/[\u0400-\u04ff]/);assert.equal(ammoText('UTMotorPowerRequired'),moduleText('OleGURPS.AttackProfile.UTMotorPowerRequired'));assert.ok(fx.candidates().some(t=>t.name.endsWith('Shotshell')));}
   const ru=JSON.parse(await readFile(new URL('../lang/ru.json',import.meta.url),'utf8')),en=JSON.parse(await readFile(new URL('../lang/en.json',import.meta.url),'utf8'));
   for(const k of Object.keys(ru).filter(k=>k.startsWith('OleGURPS.AttackProfile.UT')))assert.ok(en[k]);
   const html=choiceGroupsHTML(fx.candidates(),' ',s=>s);assert.match(html,/UT/);assert.equal((html.match(/<optgroup/g)??[]).length,2);

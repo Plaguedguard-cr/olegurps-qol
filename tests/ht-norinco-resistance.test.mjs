@@ -119,7 +119,7 @@ test('ZM87 failure describes crippling blindness and separate B422 duration, not
   const r=resistanceOutcome(htLaserEffect(z),n);assert.match(r.consequence,/Калечащая слепота/);assert.match(r.consequence,/отдельным HT по B422/);assert.doesNotMatch(r.consequence,/7 мин|HP|Damage/);
 });
 test('structured saved effects survive without current weapons; ordinary Damage and missed attacks have no button',()=>{
-  const m=msg();assert.equal(resistanceLabel(messageResistanceEffect(m)),'Бросок HT−5');assert.equal(messageResistanceEffect({flags:{gurps:{transfer:{payload:[{damage:31}]}}}}),null);
+  const m=msg();assert.equal(resistanceLabel(messageResistanceEffect(m)),'Бросок HT-5');assert.equal(messageResistanceEffect({flags:{gurps:{transfer:{payload:[{damage:31}]}}}}),null);
   m.flags[scope].resistanceEffect.eligible=false;assert.equal(messageResistanceEffect(m),null);
   const old={flags:{[scope]:{shotSnapshot:{profile:{context:{resistanceApplicable:true},damage:{rules:{resistanceEffect:htLaserEffect(z)}}}}}}};assert.equal(messageResistanceEffect(old).modifier,-10);
   old.flags[scope].shotSnapshot.profile.context={};assert.equal(messageResistanceEffect(old),null);
@@ -184,8 +184,8 @@ test('render adds one Russian button beside intact native content; saved/reopene
   const h=nativeRuntime();let button;h.rt.document={querySelectorAll:()=>[],createElement:()=>({dataset:{},addEventListener(){},remove(){button=null;}})};
   const root={querySelector:s=>s==='[data-olegurps-resistance]'?button:null,append:b=>{button=b;}};
   const i=installResistanceRoll(h.rt);assert.equal(installResistanceRoll(h.rt),i);const render=[...h.hooks.values()].find(h=>h.name==='renderChatMessageHTML').fn;
-  for(const language of ['en','ru']){h.rt.game.i18n={lang:language};render(msg(),root);const first=button;render(msg(),root);assert.equal(button,first);assert.equal(button.textContent,'Бросок HT−5');}
-  render({flags:{}},root);assert.equal(button,null);render(structuredClone(msg(z)),root);assert.equal(button.textContent,'Бросок HT−10');i.uninstall();assert.equal(h.hooks.size,0);
+  for(const language of ['en','ru']){h.rt.game.i18n={lang:language};render(msg(),root);const first=button;render(msg(),root);assert.equal(button,first);assert.equal(button.textContent,'Бросок HT-5');}
+  render({flags:{}},root);assert.equal(button,null);render(structuredClone(msg(z)),root);assert.equal(button.textContent,'Бросок HT-10');i.uninstall();assert.equal(h.hooks.size,0);
 });
 test('resistance implementation has no own dice, Target access, Actor/Token writes or PF2e dependency',async()=>{
   const code=await readFile(new URL('../scripts/tools/resistance-roll.js',import.meta.url),'utf8');

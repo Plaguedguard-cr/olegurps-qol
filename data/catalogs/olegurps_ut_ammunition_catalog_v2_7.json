@@ -1259,7 +1259,18 @@
       "follow_up": "user-defined injectable drug/poison",
       "notes_required": true,
       "notes_hint": "Enter drug/poison name and any extra text.",
-      "source_ref": "UT 139, 161"
+      "source_ref": "UT 139, 161",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          139
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "drugged_ice_sliver",
@@ -1272,7 +1283,18 @@
       "follow_up": "user-defined hypo-injected drug/poison if projectile penetrates",
       "notes_required": true,
       "notes_hint": "Enter drug/poison name and any extra text.",
-      "source_ref": "UT 140"
+      "source_ref": "UT 140",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          140
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "paint_pellet",
@@ -1285,7 +1307,18 @@
       "damage_behavior": "inherit_weapon_damage",
       "notes_allowed": true,
       "notes_hint": "Optional paint color/marking text.",
-      "source_ref": "UT 139"
+      "source_ref": "UT 139",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          139
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "biochemical_liquid_pellet",
@@ -1299,7 +1332,18 @@
       "damage_behavior": "use_warhead_spec",
       "notes_required": true,
       "notes_hint": "Enter the liquid/foam name and any extra text.",
-      "source_ref": "UT 139, 153"
+      "source_ref": "UT 139, 153",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          139
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "ice_needle",
@@ -1309,7 +1353,18 @@
         "ice_gun"
       ],
       "damage_behavior": "inherit_weapon_damage",
-      "source_ref": "UT 140"
+      "source_ref": "UT 140",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          140
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "solid_slug_25mm_tangler_gun",
@@ -1320,7 +1375,18 @@
         "tangler_pistol_25mm"
       ],
       "damage_behavior": "inherit_weapon_damage",
-      "source_ref": "UT 139"
+      "source_ref": "UT 139",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          139
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     }
   ],
   "warheads": [
@@ -1369,6 +1435,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 152"
         }
+      },
+      "massModifier": {
+        "category": "A",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "UT",
+        "pages": [
+          152
+        ],
+        "reason": "Baseline delegates to verified physical ammunition; no added payload mass."
       }
     },
     {
@@ -1423,6 +1500,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 152"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          152
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -1478,6 +1566,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 152"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          152
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -1533,6 +1632,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 152"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          152
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -1627,6 +1737,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 152-153"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          152
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -1727,6 +1848,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 153"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          153
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -1822,6 +1954,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 153"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          153
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -1908,6 +2051,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 153"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          153
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2002,6 +2156,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 153-154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          153
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2083,6 +2248,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          154
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2133,6 +2309,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          154
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2220,6 +2407,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          154
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2273,6 +2471,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          154
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2325,6 +2534,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          154
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2381,6 +2601,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          154
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2457,6 +2688,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 154"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          154
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2537,6 +2779,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 155"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          155
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2607,6 +2860,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 155"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          155
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2662,6 +2926,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 155"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          155
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2764,6 +3039,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 155"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          155
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2846,6 +3132,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 155-156"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          155
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2913,6 +3210,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 156"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          156
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -2964,6 +3272,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 156"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          156
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3047,6 +3366,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 156"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          156
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3130,6 +3460,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 156-157"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          156
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3231,6 +3572,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 157"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          157
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3270,7 +3622,7 @@
         "25mm": {
           "damage": "spec.",
           "radius_yards": 25,
-          "source_status": "OleGURPS house rule (inferred; 25mm absent from published UT 157 table)",
+          "source_status": "OleGURPS QOL approved project rule; 25mm absent from published UT 157 table",
           "official_radius": false
         },
         "40mm": {
@@ -3328,6 +3680,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 157"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          157
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3421,6 +3784,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 157"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          157
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3516,6 +3890,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 157"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          157
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3591,6 +3976,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 157-158"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          157
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3667,6 +4063,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 158"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          158
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3742,6 +4149,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 158"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          158
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3833,6 +4251,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 158"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          158
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -3924,6 +4353,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 158"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          158
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -4013,6 +4453,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 158"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          158
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -4086,6 +4537,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 158-159"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          158
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     },
     {
@@ -4159,6 +4621,17 @@
           "resolution": "informational_only",
           "source_ref": "UT 159"
         }
+      },
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "UT",
+        "pages": [
+          159
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
       }
     }
   ],

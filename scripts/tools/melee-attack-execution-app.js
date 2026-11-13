@@ -1,3 +1,4 @@
+import {notifyMeleeExecutionError} from './melee-execution-state.js';
 import { moduleMessage, moduleText } from "../localization.js";
 import { buildRandomHitLocationsHtml } from "./hit-location-result.js";
 import { executeNativeMeleeAttack } from "./melee-service.js";
@@ -22,6 +23,7 @@ export async function executeMeleeAttackSnapshot(snapshot) {
   const roll = () => executeNativeMeleeAttack({
     actor: snapshot.actor,
     sourceAttack: snapshot.sourceAttack,
+    expectedExecution:snapshot.executionState,
     effectiveSkill: snapshot.effectiveSkill,
     locationText: snapshot.locationText,
     overrideText: snapshot.overrideText,
@@ -110,7 +112,7 @@ export class MeleeAttackExecutionApp extends ApplicationV2 {
       }
     } catch (error) {
       console.error("Помощник ближнего боя attack " + slot.label + ":", error);
-      ui.notifications.error(moduleMessage(error));
+      notifyMeleeExecutionError(error);
     } finally {
       this._busy = false;
       if (!this._closed && this.rendered) await this.render({ force: true });

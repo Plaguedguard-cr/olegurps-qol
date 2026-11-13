@@ -1543,7 +1543,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 0.5,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.5,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_arquebus_bullet_lt93",
@@ -1566,7 +1579,22 @@
       ],
       "round_weight_lb_source": 0.05,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.05 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.05,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_atlatl_dart_lt77",
@@ -1584,7 +1612,22 @@
       "notes_ru": null,
       "projectile_classes": [
         "atlatl_dart"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          77,
+          73
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "B277 explicitly states bodkin points have no effect on weight; LT76/77 gives the baseline physical arrow/bolt/dart.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_ballista_0_03_lb_bullet_lt83",
@@ -1604,7 +1647,20 @@
       "source_ref_price": "LT 87",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.03,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_0_03_lb_stone_lt83",
@@ -1624,7 +1680,20 @@
       "source_ref_price": "LT 81",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.03,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_0_06_lb_bullet_lt83",
@@ -1644,7 +1713,20 @@
       "source_ref_price": "LT 87",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_0_06_lb_stone_lt83",
@@ -1664,7 +1746,20 @@
       "source_ref_price": "LT 81",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_0_12_lb_bullet_lt83",
@@ -1684,7 +1779,20 @@
       "source_ref_price": "LT 87",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.12,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_0_12_lb_stone_lt83",
@@ -1704,7 +1812,20 @@
       "source_ref_price": "LT 81",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.12,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_0_18_lb_bullet_lt83",
@@ -1724,7 +1845,20 @@
       "source_ref_price": "LT 87",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.18,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_0_18_lb_stone_lt83",
@@ -1744,7 +1878,20 @@
       "source_ref_price": "LT 81",
       "projectile_classes": [
         "personal_ballista_ball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.18,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_1_lb_stone_lt81",
@@ -1764,7 +1911,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 1,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 1.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_2_lb_stone_lt81",
@@ -1784,7 +1944,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 2,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 2.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_5_lb_stone_lt81",
@@ -1804,7 +1977,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 5,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 5.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ballista_10_lb_stone_lt81",
@@ -1825,7 +2011,23 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 10,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 10,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          80,
+          81,
+          82
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "Historical single large stone reference. Executable bundle stocks use separate one-pound stone/lead IDs; never reinterpret an old quantity as bundles.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_ballista_15_lb_stone_lt81",
@@ -1846,7 +2048,23 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 15,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 15,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          80,
+          81,
+          82
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "Historical single large stone reference. Executable bundle stocks use separate one-pound stone/lead IDs; never reinterpret an old quantity as bundles.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_ballista_20_lb_stone_lt81",
@@ -1867,7 +2085,23 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 20,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 20,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          80,
+          81,
+          82
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "Historical single large stone reference. Executable bundle stocks use separate one-pound stone/lead IDs; never reinterpret an old quantity as bundles.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_ballista_30_lb_stone_lt81",
@@ -1888,7 +2122,23 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 30,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 30,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          80,
+          81,
+          82
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "Historical single large stone reference. Executable bundle stocks use separate one-pound stone/lead IDs; never reinterpret an old quantity as bundles.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_ballista_60_lb_stone_lt81",
@@ -1909,7 +2159,23 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 60,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 60,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          80,
+          81,
+          82
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "Historical single large stone reference. Executable bundle stocks use separate one-pound stone/lead IDs; never reinterpret an old quantity as bundles.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_ballista_180_lb_stone_lt81",
@@ -1930,7 +2196,23 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 180,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 180,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          80,
+          81,
+          82
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "Historical single large stone reference. Executable bundle stocks use separate one-pound stone/lead IDs; never reinterpret an old quantity as bundles.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_barbed_arrow_lt73",
@@ -1956,7 +2238,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_beam_sling_15_man_stone_lt81",
@@ -1976,7 +2271,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 2,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 2.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_beam_sling_30_man_stone_lt81",
@@ -1996,7 +2304,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 5,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 5.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_beam_sling_50_man_stone_lt81",
@@ -2016,7 +2337,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 10,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 10.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_beam_sling_100_man_stone_lt81",
@@ -2036,7 +2370,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 30,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 30.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_blowpipe_dart_lt76",
@@ -2056,7 +2403,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "blowpipe_dart"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.05,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_blunderbuss_shot_lt92",
@@ -2074,7 +2434,22 @@
       "notes_ru": null,
       "projectile_classes": [
         "black_powder_firearm"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          92
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.06 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.06,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_blunt_arrow_lt73",
@@ -2100,7 +2475,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_bombard_metal_ball_lt87",
@@ -2128,6 +2516,21 @@
         "metal_damage_multiplier_relative_to_stone": 2,
         "metal_range_multiplier_relative_to_stone": 2,
         "manual_check": "Verify gun bore and charge safety; do not apply multiplier twice."
+      },
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 50.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 50.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
       }
     },
     {
@@ -2155,6 +2558,21 @@
         "weapon_table_assumes": "stone",
         "stone_stats_already_in_weapon_table": true,
         "do_not_half_again": true
+      },
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 50.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 50.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
       }
     },
     {
@@ -2183,6 +2601,21 @@
         "metal_damage_multiplier_relative_to_stone": 2,
         "metal_range_multiplier_relative_to_stone": 2,
         "manual_check": "Verify gun bore and charge safety; do not apply multiplier twice."
+      },
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 430.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 430.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
       }
     },
     {
@@ -2209,7 +2642,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_breechloading_carbine_bullet_lt94",
@@ -2232,7 +2678,22 @@
       ],
       "round_weight_lb_source": 0.04,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.04 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.04,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_caliver_bullet_lt93",
@@ -2255,7 +2716,22 @@
       ],
       "round_weight_lb_source": 0.07,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.07 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.07,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_cannon_3_lb_cannonball_lt89",
@@ -2278,7 +2754,22 @@
       ],
       "round_weight_lb_source": 4.5,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 4.5 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 4.5,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_cannon_12_lb_cannonball_lt89",
@@ -2301,7 +2792,22 @@
       ],
       "round_weight_lb_source": 18,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 18.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 18.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_cannon_24_lb_cannonball_lt89",
@@ -2324,7 +2830,22 @@
       ],
       "round_weight_lb_source": 36,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 36.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 36.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_carbine_bullet_lt93",
@@ -2347,7 +2868,22 @@
       ],
       "round_weight_lb_source": 0.08,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.08 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.08,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_carroballista_bolt_lt81",
@@ -2367,7 +2903,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 0.5,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.5,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_cheiroballistra_bolt_lt83",
@@ -2387,7 +2936,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 0.12,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.12,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_crapaudeau_stone_lt87",
@@ -2414,6 +2976,21 @@
         "weapon_table_assumes": "stone",
         "stone_stats_already_in_weapon_table": true,
         "do_not_half_again": true
+      },
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.12 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.12,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
       }
     },
     {
@@ -2435,7 +3012,22 @@
       ],
       "round_weight_lb_source": 3.5,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 1.15 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 1.15,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_crouching_tiger_gun_stone_lt87",
@@ -2456,7 +3048,22 @@
       ],
       "round_weight_lb_source": 1.15,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 1.15 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 1.15,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_culverin_cannonball_lt89",
@@ -2479,7 +3086,22 @@
       ],
       "round_weight_lb_source": 30,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 30.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 30.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_cutting_arrow_lt73",
@@ -2505,7 +3127,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_dart_sling_dart_lt76",
@@ -2523,7 +3158,20 @@
       "notes_ru": null,
       "projectile_classes": [
         "dart_sling_dart"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.25,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_dragoon_pistol_heavy_bullet_lt94",
@@ -2546,7 +3194,22 @@
       ],
       "round_weight_lb_source": 0.06,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.06 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.06,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_dragoon_pistol_light_bullet_lt94",
@@ -2569,7 +3232,22 @@
       ],
       "round_weight_lb_source": 0.04,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.04 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.04,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_duck_s_foot_pistol_bullet_lt94",
@@ -2592,7 +3270,22 @@
       ],
       "round_weight_lb_source": 0.06,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.06 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.06,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_falcon_cannonball_lt89",
@@ -2615,7 +3308,22 @@
       ],
       "round_weight_lb_source": 3.2,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 3.2 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 3.2,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_falconet_cannonball_lt89",
@@ -2638,7 +3346,22 @@
       ],
       "round_weight_lb_source": 1.4,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 1.4 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 1.4,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_fire_arrow_lt73",
@@ -2664,7 +3387,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.2,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_fire_cage_arrow_lt73",
@@ -2690,7 +3426,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_flight_arrow_lt73",
@@ -2716,7 +3465,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.05,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_flintlock_carbine_bullet_lt93",
@@ -2739,7 +3501,22 @@
       ],
       "round_weight_lb_source": 0.06,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.06 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.06,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_fowling_piece_shot_lt92",
@@ -2758,7 +3535,22 @@
       "notes_ru": null,
       "projectile_classes": [
         "black_powder_firearm"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          92
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.1 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.1,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_fusil_de_chasse_bullet_lt93",
@@ -2781,7 +3573,22 @@
       ],
       "round_weight_lb_source": 0.04,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.04 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.04,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_fusil_ordinaire_bullet_lt93",
@@ -2804,7 +3611,22 @@
       ],
       "round_weight_lb_source": 0.065,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.065 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.065,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_gastraphetes_bolt_lt81",
@@ -2824,7 +3646,20 @@
       "source_ref_price": "LT 81",
       "projectile_classes": [
         "artillery_bolt"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 2.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_gastraphetes_bolt_lt76",
@@ -2844,7 +3679,20 @@
         "hand_crossbow_bolt"
       ],
       "price_usd": 2,
-      "source_ref_price": "LT 78 note 3"
+      "source_ref_price": "LT 78 note 3",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.15,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_gastraphetes_mountain_bolt_lt81",
@@ -2864,7 +3712,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 1,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 1.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_gonne_bolt_lt91",
@@ -2884,7 +3745,22 @@
       "source_ref_price": "LT 87",
       "projectile_classes": [
         "gonne_bolt"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          91
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.17 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.17,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_gonne_bullet_lt91",
@@ -2904,7 +3780,22 @@
       "source_ref_price": "LT 87",
       "projectile_classes": [
         "black_powder_firearm"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          91
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.17 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.17,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_heavy_sling_shaped_rock_lt76",
@@ -2924,7 +3815,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "heavy_sling_rock"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 1.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_highland_pistol_bullet_lt94",
@@ -2947,7 +3851,22 @@
       ],
       "round_weight_lb_source": 0.03,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.03 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.03,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_humming_bulb_arrow_lt73",
@@ -2973,7 +3892,20 @@
       "weight_rule": "variant weight relative to base arrow",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_incendiary_blowpipe_charge_lt86",
@@ -2991,7 +3923,20 @@
       "notes_ru": null,
       "projectile_classes": [
         "incendiary_blower"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.05,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          86
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_jager_rifle_bullet_lt94",
@@ -3014,7 +3959,22 @@
       ],
       "round_weight_lb_source": 0.06,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.06 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.06,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_lantaka_cannonball_lt89",
@@ -3037,7 +3997,22 @@
       ],
       "round_weight_lb_source": 0.08,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.08 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.08,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_long_range_awe_inspiring_gun_lead_ball_lt87",
@@ -3058,7 +4033,22 @@
       ],
       "round_weight_lb_source": 3,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 3.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 3.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_long_range_awe_inspiring_gun_lead_shot_lt87",
@@ -3079,7 +4069,22 @@
       ],
       "round_weight_lb_source": 3.5,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 3.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 3.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_military_pistol_bullet_lt94",
@@ -3102,7 +4107,22 @@
       ],
       "round_weight_lb_source": 0.04,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.04 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.04,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_monankon_stone_lt81",
@@ -3122,7 +4142,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 15,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 15.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_musket_bullet_lt93",
@@ -3145,7 +4178,22 @@
       ],
       "round_weight_lb_source": 0.15,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.15 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.15,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_petrobolos_5_lb_stone_lt81",
@@ -3165,7 +4213,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 5,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 5.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_petrobolos_40_lb_stone_lt81",
@@ -3185,7 +4246,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 40,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 40.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_petronel_bullet_lt94",
@@ -3208,7 +4282,22 @@
       ],
       "round_weight_lb_source": 0.04,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.04 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.04,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_pistol_crossbow_dart_lt76",
@@ -3228,7 +4317,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "pistol_crossbow_dart"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_pocket_pistol_bullet_lt94",
@@ -3251,7 +4353,22 @@
       ],
       "round_weight_lb_source": 0.008,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.008 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.008,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_polybolos_bolt_lt81",
@@ -3269,7 +4386,20 @@
       "notes_ru": null,
       "projectile_classes": [
         "artillery_bolt"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.2,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_prodd_pellet_lt76",
@@ -3289,7 +4419,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "prodd_pellet"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_puckle_gun_bullet_lt93",
@@ -3309,7 +4452,20 @@
       "source_ref_price": "LT 87",
       "projectile_classes": [
         "black_powder_firearm"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.4,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_puffer_pistol_bullet_lt94",
@@ -3332,7 +4488,22 @@
       ],
       "round_weight_lb_source": 0.035,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.035 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.035,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_queen_anne_pistol_bullet_lt94",
@@ -3355,7 +4526,22 @@
       ],
       "round_weight_lb_source": 0.03,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.03 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.03,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_rabinet_cannonball_lt89",
@@ -3378,7 +4564,22 @@
       ],
       "round_weight_lb_source": 0.65,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.65 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.65,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_saker_cannonball_lt897",
@@ -3401,7 +4602,22 @@
       ],
       "round_weight_lb_source": 10,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 10.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 10.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_scorpion_9_bolt_lt83",
@@ -3421,7 +4637,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 0.02,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.02,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_scorpion_13_5_bolt_lt83",
@@ -3441,7 +4670,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 0.06,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_scorpion_18_bolt_lt83",
@@ -3461,7 +4703,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 0.14,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.14,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_scorpion_27_bolt_lt81",
@@ -3481,7 +4736,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 0.5,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.5,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_scorpion_36_bolt_lt81",
@@ -3501,7 +4769,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 1.2,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 1.2,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_scorpion_45_bolt_lt81",
@@ -3521,7 +4802,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 2.25,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 2.25,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_scorpion_54_bolt_lt81",
@@ -3541,7 +4835,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 4,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 4.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_scorpion_72_bolt_lt81",
@@ -3561,7 +4868,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 10,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 10.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_shaped_sling_stone_lt76",
@@ -3582,7 +4902,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "sling_projectile"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.05,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_ship_s_gun_4_lb_cannonball_lt89",
@@ -3605,7 +4938,22 @@
       ],
       "round_weight_lb_source": 7.5,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 7.5 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 7.5,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_ship_s_gun_9_lb_cannonball_lt89",
@@ -3628,7 +4976,22 @@
       ],
       "round_weight_lb_source": 16.5,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 16.5 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 16.5,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_ship_s_gun_18_lb_cannonball_lt89",
@@ -3651,7 +5014,22 @@
       ],
       "round_weight_lb_source": 28,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 28.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 28.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_ship_s_gun_42_lb_cannonball_lt89",
@@ -3674,7 +5052,22 @@
       ],
       "round_weight_lb_source": 60,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 60.0 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 60.0,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_sling_pellet_lt76",
@@ -3695,7 +5088,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "sling_projectile"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.05,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_slurbow_dart_lt76",
@@ -3716,7 +5122,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "slurbow_dart"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_snaphaunce_pistol_bullet_lt94",
@@ -3739,7 +5158,22 @@
       ],
       "round_weight_lb_source": 0.01,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.01 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.01,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_springald_bolt_lt81",
@@ -3759,7 +5193,20 @@
         "artillery_bolt"
       ],
       "round_weight_lb_source": 2,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 2.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_stone_launching_stick_shaped_stone_lt77",
@@ -3779,7 +5226,20 @@
       "source_ref_price": "LT 78 n.3",
       "projectile_classes": [
         "stone_launcher_stone"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.25,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          77
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_swivel_gun_cannonball_lt89",
@@ -3802,7 +5262,22 @@
       ],
       "round_weight_lb_source": 2.5,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 2.5 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 2.5,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_tantsutsu_bullet_lt94",
@@ -3825,7 +5300,22 @@
       ],
       "round_weight_lb_source": 0.06,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.06 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.06,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_teppo_bullet_lt93",
@@ -3848,7 +5338,22 @@
       ],
       "round_weight_lb_source": 0.025,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.025 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.025,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_trebuchet_large_stone_lt81",
@@ -3868,7 +5373,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 80,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 80.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_trebuchet_small_stone_lt81",
@@ -3888,7 +5406,20 @@
         "artillery_spherical"
       ],
       "round_weight_lb_source": 25,
-      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)"
+      "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
+      "mass": {
+        "unit": "lb",
+        "unitLb": 25.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_veuglaire_stone_lt87",
@@ -3915,6 +5446,21 @@
         "weapon_table_assumes": "stone",
         "stone_stats_already_in_weapon_table": true,
         "do_not_half_again": true
+      },
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 2.5 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 2.5,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
       }
     },
     {
@@ -3938,7 +5484,22 @@
       ],
       "round_weight_lb_source": 0.3,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.3 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.3,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_winged_tiger_gun_bullet_lt93",
@@ -3961,7 +5522,22 @@
       ],
       "round_weight_lb_source": 0.135,
       "round_weight_source_ref": "LT 82-83 / 88-89 / 93-94 (corresponding weapon table)",
-      "round_weight_includes_propellant_warning": true
+      "round_weight_includes_propellant_warning": true,
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          93
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.135 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.135,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_regular_arrow",
@@ -3982,7 +5558,20 @@
       "price_usd": 2,
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_bodkin_arrow",
@@ -4004,7 +5593,22 @@
       "requires_external_rule": "Basic Set B277",
       "projectile_classes": [
         "bow_arrow"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.1,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76,
+          73
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "B277 explicitly states bodkin points have no effect on weight; LT76/77 gives the baseline physical arrow/bolt/dart.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_standard_crossbow_bolt",
@@ -4026,7 +5630,20 @@
       "price_usd": 2,
       "projectile_classes": [
         "hand_crossbow_bolt"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_bodkin_crossbow_bolt",
@@ -4048,7 +5665,22 @@
       "price_usd": 2,
       "projectile_classes": [
         "hand_crossbow_bolt"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.06,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76,
+          73
+        ],
+        "formula": "quantity * source physical unit",
+        "reason": "B277 explicitly states bodkin points have no effect on weight; LT76/77 gives the baseline physical arrow/bolt/dart.",
+        "sourceReview": "WEIGHT-A2 physical unit reviewed"
+      }
     },
     {
       "id": "lt_sling_unshaped_stone",
@@ -4065,7 +5697,20 @@
       "price_usd": 0,
       "projectile_classes": [
         "sling_projectile"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.05,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_arrow_guide_dart",
@@ -4088,7 +5733,20 @@
       "requires_accessory": "Navak arrow guide",
       "projectile_classes": [
         "bow_arrow_guide_dart"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.03,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "formula": "explicit LT78 dart mass; separate guide accessory .5 lb",
+        "reason": ""
+      }
     },
     {
       "id": "lt_standard_staff_sling_stone",
@@ -4104,7 +5762,20 @@
       "notes_ru": "The LT 78 note 9 lead option applies sling weapon. Do not force lead effect on staff sling without GM reading.",
       "projectile_classes": [
         "sling_projectile"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 0.05,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          76
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_rocket_complete",
@@ -4135,6 +5806,19 @@
           "radius_yards": 2
         },
         "source_ref": "LT 87"
+      },
+      "mass": {
+        "unit": "lb",
+        "unitLb": 1.15,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          87
+        ],
+        "formula": "complete rocket once",
+        "reason": ""
       }
     },
     {
@@ -4153,7 +5837,20 @@
       "notes_ru": "Same 5-lb stone as the regular 30-man beam sling; different engine trajectory.",
       "projectile_classes": [
         "artillery_spherical"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 5.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_weighted_beam_sling_50_stone",
@@ -4171,7 +5868,20 @@
       "notes_ru": "Same 10-lb stone as the regular 50-man beam sling; different engine trajectory.",
       "projectile_classes": [
         "artillery_spherical"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 10.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_hinged_trebuchet_large_stone",
@@ -4188,7 +5898,20 @@
       "price_formula": "1 USD × 80 lb = $80",
       "projectile_classes": [
         "artillery_spherical"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 80.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_hinged_trebuchet_small_stone",
@@ -4205,7 +5928,20 @@
       "price_formula": "1 USD × 25 lb = $25",
       "projectile_classes": [
         "artillery_spherical"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 25.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          82
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_cannon_fitted_ball",
@@ -4223,7 +5959,23 @@
       "notes_ru": "Generic artillery model only; match actual bore and ball weight, do not infer a caliber.",
       "projectile_classes": [
         "black_powder_cannonball"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "COMPLETE_ROUND",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          83,
+          87,
+          89
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "LT83-87 requires the actual fitted projectile mass or selected overweight factor. Read the saved lt_artillery_load projectileMass/massFactor with USER_DEFINED provenance where applicable; no nominal placeholder.",
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_buccaneer_fusil_ball",
@@ -4240,7 +5992,22 @@
       "notes_ru": "Model-specific TL4 lead ball; user confirms individual fit.",
       "projectile_classes": [
         "black_powder_firearm"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          92
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.065 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.065,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_double_jager_ball",
@@ -4257,7 +6024,22 @@
       "notes_ru": "Model-specific TL4 rifle lead ball. Each barrel takes one round.",
       "projectile_classes": [
         "black_powder_firearm"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          94
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": "Published full shot is 0.12 lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "fullShotLb": 0.12,
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_multi_gonne_ball",
@@ -4280,7 +6062,21 @@
       "notes_ru": "Muzzleloading balls measured for each tube; do not assume modern cartridge or cross-weapon interchangeability.",
       "projectile_classes": [
         "black_powder_firearm"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "FULL_SHOT_KNOWN_COMPONENT_SPLIT_UNKNOWN",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          91
+        ],
+        "formula": null,
+        "reason": "Published full shot is None lb including propellant. This stock stores a separate projectile; individual projectile, priming and wrapping masses are not isolated. A complete unboosted prepared lt_early_load can use the full-shot reference once.",
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_atlatl_javelin",
@@ -4297,7 +6093,20 @@
       "notes_ru": "Full javelin is an ordinary piece of equipment that may be recovered, unlike a detachable modern round. Javelin price is determined by its GGA inventory entry.",
       "projectile_classes": [
         "atlatl_javelin"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": 2.0,
+        "complete": true,
+        "kind": "COMPLETE_ROUND",
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          69
+        ],
+        "formula": "published reload / physical shots * verified special factor",
+        "reason": ""
+      }
     },
     {
       "id": "lt_cheirosiphon_fuel",
@@ -4314,7 +6123,24 @@
       "notes_ru": "Initial 3d burn; continuing 1d burn per second for 1d seconds; on water can cover radius 2 yd. Fuel choice and price are not fixed in LT86.",
       "projectile_classes": [
         "cheirosiphon_fuel"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "COMPLETE_ROUND",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          84,
+          85,
+          86,
+          87
+        ],
+        "formula": null,
+        "reason": "LT84-87 gives mixture density/complete weapon or charge statistics, not an isolated mass per stored logical fuel/ignition unit. A number of seconds or charges is not pounds.",
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_fire_siphon_fuel",
@@ -4331,7 +6157,24 @@
       "notes_ru": "Initial 3d burn; continuing 1d burn per second for 10d seconds; on water can cover radius 2 yd. Fuel price depends on selected incendiary.",
       "projectile_classes": [
         "fire_siphon_fuel"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "COMPLETE_ROUND",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          84,
+          85,
+          86,
+          87
+        ],
+        "formula": null,
+        "reason": "LT84-87 gives mixture density/complete weapon or charge statistics, not an isolated mass per stored logical fuel/ignition unit. A number of seconds or charges is not pounds.",
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_fire_lance_one_use",
@@ -4349,7 +6192,24 @@
       "notes_ru": "This fire-lance is discarded after use. Record as consumed device, not as independently reloadable bullet.",
       "projectile_classes": [
         "fire_lance_whole_unit"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "COMPLETE_ROUND",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          84,
+          85,
+          86,
+          87
+        ],
+        "formula": null,
+        "reason": "LT84-87 gives mixture density/complete weapon or charge statistics, not an isolated mass per stored logical fuel/ignition unit. A number of seconds or charges is not pounds.",
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_iron_fire_lance_charge",
@@ -4366,7 +6226,24 @@
       "notes_ru": "Reloading takes 10 minutes and Explosives (Fireworks) roll. Flame 1d burn; additional linked 1 pi-. Charge price not specified.",
       "projectile_classes": [
         "iron_fire_lance_reload"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "COMPLETE_ROUND",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          84,
+          85,
+          86,
+          87
+        ],
+        "formula": null,
+        "reason": "LT84-87 gives mixture density/complete weapon or charge statistics, not an isolated mass per stored logical fuel/ignition unit. A number of seconds or charges is not pounds.",
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     },
     {
       "id": "lt_eruptor_reload",
@@ -4383,7 +6260,24 @@
       "notes_ru": "Reloading takes 20 minutes, as iron fire-lance, with Explosives (Fireworks) roll. 1d+1 burn and linked 1 pi-. Charge price not specified.",
       "projectile_classes": [
         "eruptor_reload"
-      ]
+      ],
+      "mass": {
+        "unit": "lb",
+        "unitLb": null,
+        "complete": false,
+        "kind": "COMPLETE_ROUND",
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          84,
+          85,
+          86,
+          87
+        ],
+        "formula": null,
+        "reason": "LT84-87 gives mixture density/complete weapon or charge statistics, not an isolated mass per stored logical fuel/ignition unit. A number of seconds or charges is not pounds.",
+        "sourceReview": "WEIGHT-A2 physical unit/decomposition reviewed"
+      }
     }
   ],
   "projectile_options": [
@@ -4397,7 +6291,18 @@
       "damage_rule": "Use native arrow mode damage (normally imp).",
       "cost_multiplier": 1,
       "weight_multiplier": 1,
-      "notes_ru": "Обычный наконечник стрелы."
+      "notes_ru": "Обычный наконечник стрелы.",
+      "massModifier": {
+        "category": "A",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "Baseline delegates to verified physical ammunition; no added payload mass."
+      }
     },
     {
       "id": "bodkin",
@@ -4408,7 +6313,18 @@
       ],
       "damage_rule": "Bodkin rules depend on Basic Set B277; no invented armor divisor.",
       "requires_external_rule": "Basic Set B277",
-      "notes_ru": "Бронебойный наконечник из базовых правил; не приписывать ему бонусы без сверки B277."
+      "notes_ru": "Бронебойный наконечник из базовых правил; не приписывать ему бонусы без сверки B277.",
+      "massModifier": {
+        "category": "A",
+        "factor": 1,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "BS",
+        "pages": [
+          277
+        ],
+        "reason": "B277 explicitly: no effect on cost or weight."
+      }
     },
     {
       "id": "barbed",
@@ -4420,7 +6336,18 @@
       "removal_damage": "Half the injury caused when the arrow entered, if pulled out.",
       "cost_multiplier": 1,
       "weight_multiplier": 1,
-      "notes_ru": "При выдёргивании наносит половину ранее причинённой раны; многие боевые стрелы уже имеют зазубрины по умолчанию."
+      "notes_ru": "При выдёргивании наносит половину ранее причинённой раны; многие боевые стрелы уже имеют зазубрины по умолчанию.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "blunt",
@@ -4432,7 +6359,18 @@
       "damage_type_override": "cr",
       "cost_multiplier": 0.5,
       "weight_multiplier": 1,
-      "notes_ru": "Тупой наконечник: дробящий урон, половина стоимости."
+      "notes_ru": "Тупой наконечник: дробящий урон, половина стоимости.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "cutting",
@@ -4444,7 +6382,18 @@
       "damage_type_override": "cut",
       "cost_multiplier": 1,
       "weight_multiplier": 1,
-      "notes_ru": "Режущий наконечник; прочие характеристики не меняются."
+      "notes_ru": "Режущий наконечник; прочие характеристики не меняются.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "bowel_raker",
@@ -4459,7 +6408,18 @@
       "removal_damage": "Half the injury caused when the arrow entered, if pulled out.",
       "cost_multiplier": 1,
       "weight_multiplier": 1,
-      "notes_ru": "Зазубренная режущая стрела, –1 Acc и –5 к ОБОИМ множителям дальности; при выдёргивании половина нанесённой раны."
+      "notes_ru": "Зазубренная режущая стрела, –1 Acc и –5 к ОБОИМ множителям дальности; при выдёргивании половина нанесённой раны.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "fire_arrow",
@@ -4480,7 +6440,18 @@
       "cost_delta_usd": 5,
       "weight_multiplier": 2,
       "wet_weather_sensitive": true,
-      "notes_ru": "Китайская огневая стрела. Отдельный взрыв 1d-1 cr ex; отсутствует обычный штраф -2 к попаданию от открытого пламени."
+      "notes_ru": "Китайская огневая стрела. Отдельный взрыв 1d-1 cr ex; отсутствует обычный штраф -2 к попаданию от открытого пламени.",
+      "massModifier": {
+        "category": "B",
+        "factor": 2.0,
+        "absoluteLb": null,
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 explicit weight factor."
+      }
     },
     {
       "id": "fire_cage",
@@ -4497,7 +6468,18 @@
       "cost_multiplier": 1,
       "weight_multiplier": 1,
       "requires_external_rule": "Basic Set B410, flaming arrow",
-      "notes_ru": "Подожжённая стрела-клетка: –2 к попаданию, –1 Acc, –5 к обоим множителям дальности, малый колющий урон и 1d-3 burn."
+      "notes_ru": "Подожжённая стрела-клетка: –2 к попаданию, –1 Acc, –5 к обоим множителям дальности, малый колющий урон и 1d-3 burn.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "flight",
@@ -4511,7 +6493,18 @@
       "range_multiplier_factor": 2,
       "cost_multiplier": 1,
       "weight_multiplier": 0.5,
-      "notes_ru": "Дальнобойная стрела: урон ×0,5 до 1/2D, за 1/2D урон 0; оба множителя дальности ×2."
+      "notes_ru": "Дальнобойная стрела: урон ×0,5 до 1/2D, за 1/2D урон 0; оба множителя дальности ×2.",
+      "massModifier": {
+        "category": "B",
+        "factor": 0.5,
+        "absoluteLb": null,
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 explicit weight factor."
+      }
     },
     {
       "id": "humming_bulb",
@@ -4526,7 +6519,18 @@
       "range_multiplier_subtract_each": 5,
       "cost_multiplier": 1,
       "weight_multiplier": 1,
-      "notes_ru": "Свистящая головка, сигнал; дробящий урон с бронеделителем (0,5). Наполнитель с горючей смесью только по отдельному решению GM."
+      "notes_ru": "Свистящая головка, сигнал; дробящий урон с бронеделителем (0,5). Наполнитель с горючей смесью только по отдельному решению GM.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "crossbow_regular",
@@ -4536,7 +6540,18 @@
         "hand_crossbow_bolt"
       ],
       "damage_rule": "Use weapon native imp damage.",
-      "price_usd": 2
+      "price_usd": 2,
+      "massModifier": {
+        "category": "A",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Baseline delegates to verified physical ammunition; no added payload mass."
+      }
     },
     {
       "id": "crossbow_bodkin",
@@ -4546,7 +6561,18 @@
         "hand_crossbow_bolt"
       ],
       "damage_rule": "Use Basic Set B277; do not assign guessed divisor.",
-      "requires_external_rule": "Basic Set B277"
+      "requires_external_rule": "Basic Set B277",
+      "massModifier": {
+        "category": "A",
+        "factor": 1,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "BS",
+        "pages": [
+          277
+        ],
+        "reason": "B277 explicitly: no effect on cost or weight."
+      }
     },
     {
       "id": "crossbow_alternate_tip",
@@ -4566,7 +6592,18 @@
         "flight",
         "humming_bulb"
       ],
-      "notes_ru": "LT73 формально описывает стрелы луков; применение модификаций к ручным арбалетным болтам считать факультативным правилом GM."
+      "notes_ru": "LT73 формально описывает стрелы луков; применение модификаций к ручным арбалетным болтам считать факультативным правилом GM.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          73
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "large_flaming_artillery_bolt",
@@ -4578,7 +6615,18 @@
       "effect_rule": "Large flaming arrow; on critical failure burning damage applies to launching catapult itself.",
       "requires_external_rule": "Basic Set B410",
       "min_tl": 2,
-      "notes_ru": "Крупные горящие болты боевых машин; при критическом провале горение наносит урон самой машине."
+      "notes_ru": "Крупные горящие болты боевых машин; при критическом провале горение наносит урон самой машине.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "arrow_guide",
@@ -4592,7 +6640,18 @@
       "shots_override": "1(3)",
       "cost_usd": 0.5,
       "weight_lb": 0.03,
-      "weapon_requires_accessory": "Arrow Guide ($50, 0.5 lb.)"
+      "weapon_requires_accessory": "Arrow Guide ($50, 0.5 lb.)",
+      "massModifier": {
+        "category": "A",
+        "factor": null,
+        "absoluteLb": 0.03,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "LT78 explicit dart .03 lb; separate guide accessory .5 lb in A, not another .03-lb projectile."
+      }
     },
     {
       "id": "panjagan_5",
@@ -4611,7 +6670,18 @@
         "name": "Panjagan fastener",
         "cost_usd": 10
       },
-      "notes_ru": "5 стрел за выстрел, каждая получает –2 к урону; RoF 1×5, дальность вдвое меньше."
+      "notes_ru": "5 стрел за выстрел, каждая получает –2 к урону; RoF 1×5, дальность вдвое меньше.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "panjagan_10",
@@ -4626,7 +6696,18 @@
       "hit_modifier": -4,
       "damage_add": -4,
       "range_multiplier_factor": 0.5,
-      "notes_ru": "Кинематографическое правило GM; применение в бою исторически не подтверждено."
+      "notes_ru": "Кинематографическое правило GM; применение в бою исторически не подтверждено.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "sling_lead",
@@ -4639,7 +6720,18 @@
       "damage_add": 1,
       "range_multiplier_factor": 2,
       "cost_usd": 0.1,
-      "notes_ru": "Свинцовая пуля пращи: +1 к урону и удвоение дальности."
+      "notes_ru": "Свинцовая пуля пращи: +1 к урону и удвоение дальности.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "sling_stone_shaped",
@@ -4649,7 +6741,18 @@
         "sling_projectile"
       ],
       "cost_usd": 0.06,
-      "notes_ru": "Подобранный по форме пращный камень; стандартная точность."
+      "notes_ru": "Подобранный по форме пращный камень; стандартная точность.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "sling_stone_unshaped",
@@ -4660,7 +6763,18 @@
       ],
       "cost_usd": 0,
       "hit_modifier": -1,
-      "notes_ru": "Необработанный камень: бесплатно, но –1 к попаданию."
+      "notes_ru": "Необработанный камень: бесплатно, но –1 к попаданию.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "sling_harsh_realism",
@@ -4671,7 +6785,18 @@
       ],
       "status": "GM_OPTION",
       "damage_type_override": "cr",
-      "notes_ru": "Факультативная суровая реалистичность: у пращных снарядов тип ранения меняется с колющего на дробящий; по умолчанию выключено."
+      "notes_ru": "Факультативная суровая реалистичность: у пращных снарядов тип ранения меняется с колющего на дробящий; по умолчанию выключено.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          75
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "artillery_lead",
@@ -4681,7 +6806,18 @@
         "artillery_spherical"
       ],
       "cost_usd_per_lb": 1.6,
-      "notes_ru": "Свинцовая артиллерийская пуля. Для малых персональных баллист дополнительно действуют специальные правила LT83."
+      "notes_ru": "Свинцовая артиллерийская пуля. Для малых персональных баллист дополнительно действуют специальные правила LT83.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          81
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "artillery_stone",
@@ -4691,7 +6827,18 @@
         "artillery_spherical"
       ],
       "cost_usd_per_lb": 1.0,
-      "notes_ru": "Каменный снаряд; калибры метательных машин по массе индивидуальны."
+      "notes_ru": "Каменный снаряд; калибры метательных машин по массе индивидуальны.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          81
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "artillery_bolt_cost",
@@ -4700,7 +6847,18 @@
       "applies_to": [
         "artillery_bolt"
       ],
-      "cost_usd_per_lb": 33
+      "cost_usd_per_lb": 33,
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          81
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "lead_substitute_ballista",
@@ -4716,7 +6874,18 @@
         "0.12": "pi++",
         "0.18": "pi++"
       },
-      "notes_ru": "Только персональная баллиста: +1 к урону; pi+ для 0,03/0,06 фунта, pi++ для более тяжёлых."
+      "notes_ru": "Только персональная баллиста: +1 к урону; pi+ для 0,03/0,06 фунта, pi++ для более тяжёлых.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "catapult_overweight",
@@ -4739,7 +6908,18 @@
         "10": 0.1,
         "12": 0.08
       },
-      "notes_ru": "Увеличение веса снаряда уменьшает дальность по таблице LT83; без самостоятельной выдумки урона."
+      "notes_ru": "Увеличение веса снаряда уменьшает дальность по таблице LT83; без самостоятельной выдумки урона.",
+      "massModifier": {
+        "category": "B",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "DERIVED_CONFIRMED_RULE",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "reason": "LT83 chosen massFactor multiplies nominal stone; factor must be actually selected."
+      }
     },
     {
       "id": "incendiary_catapult_pot",
@@ -4753,7 +6933,18 @@
         "greek_fire": 3
       },
       "status": "GM_DEFINED_PAYLOAD",
-      "notes_ru": "Зажигательные сосуды: см. LT83–84; итоговый урон зависит от наполнителя и способа доставки; без единой формулы для всех катапульт."
+      "notes_ru": "Зажигательные сосуды: см. LT83–84; итоговый урон зависит от наполнителя и способа доставки; без единой формулы для всех катапульт.",
+      "massModifier": {
+        "category": "E",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          83
+        ],
+        "reason": "Instance-specific complete-round/component weight or source decomposition is required."
+      }
     },
     {
       "id": "incendiary_sphere",
@@ -4769,7 +6960,18 @@
       "damage": "1d+1 burn",
       "area_radius_yards": 1,
       "duration_seconds": 120,
-      "notes_ru": "Огненная сфера для метательной машины типа Beam Sling. Горит 2 минуты, причиняя 1d+1 burn в радиусе 1 ярда. Для снаряжения требуется подтвердить грузоподъёмность метателя."
+      "notes_ru": "Огненная сфера для метательной машины типа Beam Sling. Горит 2 минуты, причиняя 1d+1 burn в радиусе 1 ярда. Для снаряжения требуется подтвердить грузоподъёмность метателя.",
+      "massModifier": {
+        "category": "A",
+        "factor": null,
+        "absoluteLb": 10.0,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          85
+        ],
+        "reason": "LT78/85: physical object or accessory, not an added projectile."
+      }
     },
     {
       "id": "paper_bomb",
@@ -4796,7 +6998,18 @@
         "ordinary_failure": "Hearing penalty equal margin of failure for max(1,20-HT) minutes, plus stun; roll vs HT each turn to recover",
         "critical_or_fail_by_10": "Deafness; recovery as crippling injury"
       },
-      "notes_ru": "Бумажная бомба: 5d cr ex; дым –10 к Vision в радиусе 5 ярдов на 1 минуту; если есть дробящий урон, HT-5 против потери слуха/оглушения; при провале на 10+ или критическом — глухота."
+      "notes_ru": "Бумажная бомба: 5d cr ex; дым –10 к Vision в радиусе 5 ярдов на 1 минуту; если есть дробящий урон, HT-5 против потери слуха/оглушения; при провале на 10+ или критическом — глухота.",
+      "massModifier": {
+        "category": "A",
+        "factor": null,
+        "absoluteLb": 5.0,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          85
+        ],
+        "reason": "LT78/85: physical object or accessory, not an added projectile."
+      }
     },
     {
       "id": "iron_bomb",
@@ -4811,7 +7024,18 @@
       "price_usd": 600,
       "damage": "6d×4 [2d] cr ex",
       "fragmentation": "2d",
-      "notes_ru": "Железная бомба с осколками: 6d×4 [2d] cr ex. Это не обычный камень: нельзя допустить двойной урон от снаряда и бомбы без решения GM."
+      "notes_ru": "Железная бомба с осколками: 6d×4 [2d] cr ex. Это не обычный камень: нельзя допустить двойной урон от снаряда и бомбы без решения GM.",
+      "massModifier": {
+        "category": "A",
+        "factor": null,
+        "absoluteLb": 30.0,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          85
+        ],
+        "reason": "LT78/85: physical object or accessory, not an added projectile."
+      }
     },
     {
       "id": "rocket_hearing",
@@ -4831,7 +7055,18 @@
         "radius_yards": 2,
         "damage": "1 burn"
       },
-      "notes_ru": "После взрыва ракеты поражённый дробящим уроном проходит HT-2 против потери слуха и оглушения по правилам Paper Bomb (LT85). Дополнительно 1 burn в радиусе 2 ярдов."
+      "notes_ru": "После взрыва ракеты поражённый дробящим уроном проходит HT-2 против потери слуха и оглушения по правилам Paper Bomb (LT85). Дополнительно 1 burn в радиусе 2 ярдов.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          87
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "chain_shot",
@@ -4846,7 +7081,18 @@
       "range_multiplier_factor": 0.5,
       "reload_time_multiplier": 1.2,
       "cost_multiplier": 2,
-      "notes_ru": "Урон той же величины, но рубящий с бронеделителем (0,5); дальность вдвое меньше."
+      "notes_ru": "Урон той же величины, но рубящий с бронеделителем (0,5); дальность вдвое меньше.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "grapeshot",
@@ -4863,7 +7109,18 @@
       "half_d_override_yards": 60,
       "max_range_override_yards": 600,
       "recoil_override": 1,
-      "notes_ru": "Дробь из пушек: число шариков 40×вес снаряда в фунтах; урон каждого делится на √число, RoF умножается на число. Книга задаёт 1/2D 60, Max 600, Rcl 1."
+      "notes_ru": "Дробь из пушек: число шариков 40×вес снаряда в фунтах; урон каждого делится на √число, RoF умножается на число. Книга задаёт 1/2D 60, Max 600, Rcl 1.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "heated_shot",
@@ -4882,7 +7139,18 @@
         "relationship": "extra fire damage, separate from direct hit"
       },
       "requires_powder_cloth_bag": true,
-      "notes_ru": "Раскалённый снаряд: +3d burn каждую секунду 30 секунд, нужен мешок с порохом и прокладка, –1 Malf."
+      "notes_ru": "Раскалённый снаряд: +3d burn каждую секунду 30 секунд, нужен мешок с порохом и прокладка, –1 Malf.",
+      "massModifier": {
+        "category": "C",
+        "factor": 1.0,
+        "absoluteLb": null,
+        "status": "CONFIRMED_PRIMARY",
+        "book": "LT",
+        "pages": [
+          88
+        ],
+        "reason": "LT73 or LT88 explicitly leaves weight / other statistics unchanged."
+      }
     },
     {
       "id": "firearm_extra_charge",
@@ -4897,7 +7165,18 @@
       "cost_multiplier": 1.5,
       "requires_skill": "Armoury (Small Arms), or IQ-based Guns-2",
       "over_safe_limits_malf_delta": -2,
-      "notes_ru": "Усиленный заряд: 1,1×урон, дальность и ST; безопасная навеска требует проверки. При превышении лимита опасное разрушение оружия."
+      "notes_ru": "Усиленный заряд: 1,1×урон, дальность и ST; безопасная навеска требует проверки. При превышении лимита опасное разрушение оружия.",
+      "massModifier": {
+        "category": "E",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          95
+        ],
+        "reason": "Instance-specific complete-round/component weight or source decomposition is required."
+      }
     },
     {
       "id": "firearm_improvised_projectile",
@@ -4910,7 +7189,18 @@
       "damage_multiplier": 0.5,
       "range_multiplier": 0.5,
       "malfunction_modifier": -2,
-      "notes_ru": "Подручные камни/монеты: –1 Acc, урон и дальность вдвое, Malf –2."
+      "notes_ru": "Подручные камни/монеты: –1 Acc, урон и дальность вдвое, Malf –2.",
+      "massModifier": {
+        "category": "E",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          95
+        ],
+        "reason": "Instance-specific complete-round/component weight or source decomposition is required."
+      }
     },
     {
       "id": "serpentine_powder",
@@ -4922,7 +7212,18 @@
       ],
       "min_tl": 3,
       "cost_usd_per_lb": 10,
-      "notes_ru": "Ранний порох. Книга задаёт половину стоимости зернёного пороха: исходная цена $20/фунт, CF –0,5. Это отдельный компонент, не новый калибр."
+      "notes_ru": "Ранний порох. Книга задаёт половину стоимости зернёного пороха: исходная цена $20/фунт, CF –0,5. Это отдельный компонент, не новый калибр.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          85
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "corned_powder",
@@ -4934,7 +7235,18 @@
       ],
       "min_tl": 4,
       "cost_usd_per_lb": 20,
-      "notes_ru": "Зернёный порох $20/фунт. Вес заряда конкретного оружия не следует угадывать."
+      "notes_ru": "Зернёный порох $20/фунт. Вес заряда конкретного оружия не следует угадывать.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          85
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     }
   ],
   "excluded_candidates": [
@@ -4972,27 +7284,82 @@
     {
       "id": "blowpipe_poison",
       "source_ref": "LT 78 note 1",
-      "rule": "Follow-up poison/drug only if projectile penetrates DR; substance determines effect; do not invent HT thresholds."
+      "rule": "Follow-up poison/drug only if projectile penetrates DR; substance determines effect; do not invent HT thresholds.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "unshaped_projectile",
       "source_ref": "LT 78 note 3",
-      "rule": "Stones/rocks found for free; -1 to hit compared with shaped stones."
+      "rule": "Stones/rocks found for free; -1 to hit compared with shaped stones.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          78
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "firearm_powder_ball_separate",
       "source_ref": "LT 87",
-      "rule": "TL3-4 firearms use separately measured propellant and shot; do not represent a modern fixed cartridge."
+      "rule": "TL3-4 firearms use separately measured propellant and shot; do not represent a modern fixed cartridge.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          87
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "bombard_stone_vs_metal",
       "source_ref": "LT 87",
-      "rule": "Stone ammunition has half normal metal damage and range; source weapon table already accounts for this; do not apply half again to stone-shooting mode."
+      "rule": "Stone ammunition has half normal metal damage and range; source weapon table already accounts for this; do not apply half again to stone-shooting mode.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          87
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     },
     {
       "id": "flamethrower_fuel",
       "source_ref": "LT 84-86",
-      "rule": "Fuel is a consumable with specific liquid/projector rules, not interchangeable with normal arrow/ball."
+      "rule": "Fuel is a consumable with specific liquid/projector rules, not interchangeable with normal arrow/ball.",
+      "massModifier": {
+        "category": "D",
+        "factor": null,
+        "absoluteLb": null,
+        "status": "UNDETERMINED",
+        "book": "LT",
+        "pages": [
+          84
+        ],
+        "reason": "Explicit whole-round mass delta or explicit unchanged mass has not been established; missing modifier is not multiplier 1."
+      }
     }
   ],
   "audit": {

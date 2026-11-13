@@ -1,5 +1,6 @@
+import {utSavedAmmunitionName} from './ut-nomenclature.js';
 import { generateId } from "../random-id.js";
-import {HT_TEAR_SPRAY_MODE,chemicalOptions,chemicalEditorHTML,attachBiochemicalEffect} from './biochemical-integration.js';
+import {HT_TEAR_SPRAY_MODE,chemicalOptions,chemicalEditorHTML,chemicalBatchFields} from './biochemical-integration.js';
 import {sonicShuriken} from '../ut-sonic-shuriken-source.js';
 import {sonicManagementHTML} from './ut-sonic-shuriken.js';
 import {robotAmmunitionCandidates,robotAmmunitionAllowed} from './ut-robot-ammunition.js';
@@ -259,7 +260,7 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
       const admission = automatic.admission(prepared, { policy: automaticAmmoPolicy(), approval });
       const result = { ...stock.type, unavailable: !admission.allowed,
         preparation: { ...structuredClone(prepared), type: undefined, admission },
-        label: stock.type.name,
+        label:utSavedAmmunitionName(stock.type,api?.catalogs),
         reason: automaticAmmoText(prepared.state === "complete" ? admission.allowed ? "Ready" : admission.authority === "revoked" ? "Revoked" : "ApprovalRequired" : "Incomplete", language) };
       if(stock.type.book==='ut' && prepared.state!=='complete' && !isUTSpecialVariant(stock.type.recipe.variantId)) {
         result.historical=true;result.label=stock.type.name+' – сохранённые остатки';
@@ -321,7 +322,7 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
       ...(model ? { preparation: { state: model.status === "resolved" ? "complete" : "incomplete", origin: "gm", model,
         missing: missingExplosiveInputs(stock.type.recipe.parameters ?? {}), reasons: model.reasons,
         admission: { allowed: assessment.applicationAllowed, authority: assessment.authority } } } : {}),
-      label: stock.type.name, reason: explosiveText(authority, {}, language), authority: assessment.authority });
+      label:utSavedAmmunitionName(stock.type,api?.catalogs), reason: explosiveText(authority, {}, language), authority: assessment.authority });
   }
   // Keep legacy labels as legacy identities; never infer a catalog cartridge from free text.
   for (const stock of inventory?.stocks ?? []) if (stock.type.source === "legacy" &&
@@ -391,11 +392,8 @@ export function ammunitionCandidates(actor, weapon, api = globalThis.OleGURPSQOL
     const display = ammoDisplayName(type, language);
     if (display !== type.name && !isCaseVariant(type.recipe?.variantId)) type.label = display + (!type.recipe ? " – " + (type.substitution ? "Заменяющий" : "Базовый") : "");
   }
-  const chemicalBases=types.filter(t=>!t.unavailable&&['ut','ht'].includes(t.book)&&t.recipe&&!t.recipe.parameters?.chemicalId&&chemicalOptions(t).length);
-  for(const base of chemicalBases)for(const f of chemicalOptions(base)){
-    const prepared=automatic.prepare({modeId,base,variantId:base.recipe.variantId,parameters:{...base.recipe.parameters,chemicalId:f.id}});
-    if(prepared.state==='complete')types.push({...structuredClone(prepared.type),label:prepared.type.name,physical:{...base.physical,costPerShot:attachBiochemicalEffect({rules:{}},prepared.type).rules.costPerShot??null}});
-  }
+  // Fillers configure batches, not additional physical catalog types.
+  // Existing saved recipes above keep their exact legacy keys and stock.
   const campaignTL = readCampaignTL(actor);
   for(const robot of robotAmmunitionCandidates(modeId,types)){
     const index=types.findIndex(t=>t.key===robot.key);
@@ -549,7 +547,7 @@ export function ammoManagementHTML(weapon, ui, types, actor=null) {
     ${recipeEditorHTML(ui, option, ui.language ?? "ru")}
     ${ltPersonalManagementHTML(weapon,option,ui.ltPersonalDrafts?.[ui.ammoKey],globalThis.OleGURPSQOL,escape)}
     ${ltProjectileRecipeHTML(weapon.standaloneModeId??weapon.catalogModeId,option,ui.ltProjectileDrafts?.[ui.ammoKey],globalThis.OleGURPSQOL,escape)}
-    ${option?.book==='ht'&&chemicalOptions(option).length?`<details data-biochemical-payload><summary>\u0425\u0438\u043c\u0438\u0447\u0435\u0441\u043a\u0438\u0439 \u0441\u043e\u0441\u0442\u0430\u0432</summary>${chemicalEditorHTML(option,ui.utPayloadDraft,escape,{campaignTL:ui.campaignTL})}<button type="button" data-inventory-action="save-biochemical-batch">\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043e\u0442\u0434\u0435\u043b\u044c\u043d\u0443\u044e \u043f\u0430\u0440\u0442\u0438\u044e</button></details>`:''}
+    ${option?.book==='ht'&&chemicalOptions(option).length?(()=>{const p=ui.utPayloadDraft??option.recipe.parameters??{};return `<details data-ut-payload data-ammo-key="${escape(option.key)}" ${ui.utPayloadOpen?'open':''}><summary>\u0421\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u0435 \u043f\u0430\u0440\u0442\u0438\u0438</summary>${chemicalEditorHTML(option,p,escape,{campaignTL:ui.campaignTL})}<label>Note<input name="ut-note" maxlength="500" value="${escape(p.note??'')}"></label><label>\u0421\u043f\u0430\u0441\u0431\u0440\u043e\u0441\u043e\u043a<input name="ut-saving-throw" maxlength="500" value="${escape(p.savingThrow??'')}"></label><label>\u041a\u0440\u0430\u0442\u043a\u043e\u0435 \u043e\u043f\u0438\u0441\u0430\u043d\u0438\u0435<textarea name="ut-description" maxlength="5000">${escape(p.description??'')}</textarea></label><button type="button" data-inventory-action="save-biochemical-batch">\u0421\u043e\u0445\u0440\u0430\u043d\u0438\u0442\u044c \u043e\u0442\u0434\u0435\u043b\u044c\u043d\u0443\u044e \u043f\u0430\u0440\u0442\u0438\u044e</button></details>`;})():''}
     ${utPayloadEditorHTML(option,ui.utPayloadDraft,escape,{open:ui.utPayloadOpen,campaignTL:ui.campaignTL,
       homingWarheads:types.filter(t=>t.book==='ut'&&t.recipe&&!t.unavailable&&!['ut_homing','ut_sefop','ut_shotshell'].includes(t.recipe.variantId)&&
         (t.recipe.parameters?.availabilityTL==null||t.recipe.parameters.availabilityTL===(ui.utPayloadDraft??option?.recipe?.parameters)?.availabilityTL))})}
@@ -707,6 +705,15 @@ export class AmmoManagementApp extends foundry.applications.api.ApplicationV2 {
   }
   async _onChange(event) {
     this._captureInputs();
+    if(event.target.name==='ut-chemicalId') {
+      const fields=chemicalBatchFields(event.target.value);
+      this.ui.utPayloadDraft={...(this.ui.utPayloadDraft??{}),chemicalId:event.target.value,...fields};
+      for(const [key,name] of [['savingThrow','ut-saving-throw'],['description','ut-description']]) {
+        const input=this.element.querySelector(`[name="${name}"]`);if(input)input.value=fields[key];
+      }
+      this._captureInputs();
+      return;
+    }
     if (event.target.name === "inventoryAmmo") {
       this.ui.ammoKey = event.target.value; this.ui.magazineQuantity = undefined;
       this.ui.ballisticsDraft = null;

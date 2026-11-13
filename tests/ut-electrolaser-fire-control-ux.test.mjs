@@ -18,8 +18,8 @@ for(const p of Object.values(ELECTROLASER_PROFILES)){
   test(p.name+': dynamic Standard/Kill/vacuum heading and linked Damage stay consistent',async()=>{
     const f=await fixture(p);
     for(const[mode,environment,heading,hint]of [
-      ['standard','air',`Оглушение: HT−${-p.modifier} (2)`,''],
-      ['kill','air',`Смертельный разряд: HT−${-p.modifier} (2)`,'Heart Attack при провале на 5+'],
+      ['standard','air',`Оглушение: HT-${-p.modifier} (2)`,''],
+      ['kill','air',`Смертельный разряд: HT-${-p.modifier} (2)`,'Heart Attack при провале на 5+'],
       ['kill','vacuum','1d-3 burn','']]){
       await f.service.setElectrolaserConfiguration(f.weapon().id,{electrolaserMode:mode,electrolaserEnvironment:environment,electrolaserVisibilityDR:3});
       const before=f.state(),app=f.app(),profile=f.profile(),display=attackProfilePresentation(profile);

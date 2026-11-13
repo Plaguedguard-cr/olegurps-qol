@@ -51,7 +51,7 @@ export function messageResistanceEffect(message){
   const profile=flags.shotSnapshot?.profile??flags.attackProfile;
   return profile?.context?.resistanceApplicable===true?resistanceEffect(profile.damage?.rules?.resistanceEffect):null;
 }
-export const resistanceLabel=effect=>'Бросок '+effect.attribute+(effect.modifier<0?'−'+Math.abs(effect.modifier):effect.modifier>0?'+'+effect.modifier:'');
+export const resistanceLabel=effect=>'Бросок '+effect.attribute+(effect.modifier<0?'-'+Math.abs(effect.modifier):effect.modifier>0?'+'+effect.modifier:'');
 export function selectedResistanceToken(runtime=globalThis){
   const controlled=runtime.canvas?.tokens?.controlled??[];
   if(controlled.length!==1)throw Error('Выделите ровно один токен на сцене для броска сопротивления.');
@@ -338,7 +338,11 @@ function profileAfflictionConsequence(effect,native,choices,success){
     if(id==='sleep_poison'||id==='sleep_contact')return (mof!=null&&mof>=5?'Без сознания: '+duration:'Сонливость')+'. Последствия применяются вручную. '+c.source;
     if(id==='sleep')return 'Без сознания: '+duration+', затем обычный сон. Применяется вручную. UT160.';
     if(id==='riot')return (mof!=null&&mof>=5?'Рвота в облаке; после выхода тошнота '+duration:'Тошнота в облаке')+'. Применяется вручную. UT160.';
-    if(id==='paralysis')return native.isCritFailure?'1d повреждений и кома; применяются вручную (UT160).':(mof!=null&&mof<=2?'Падение и неподвижность на этот ход.':'Падение и паралич: '+duration)+ ' Применяется вручную (UT160).';
+    if(id==='paralysis')return native.isCritFailure||native.finaltarget<=0&&native.margin<=-10?'1d повреждений и кома; применяются вручную (UT160).':(mof!=null&&mof<=2?'Падение и неподвижность на этот ход.':'Падение и паралич: '+duration)+ ' Применяется вручную (UT160).';
+    if(['tear','tear_vomit'].includes(id))return (choices.checkId==='eyes'?'Слепота':choices.checkId==='vomit'?'Рвота':'Кашель')+' в облаке; после выхода '+(mof==null?'длительность определите вручную':(choices.checkId==='vomit'?5*mof:mof)+' минут')+'. '+c.source;
+    if(id==='pheromone')return 'Lecherousness (9) в облаке и ещё '+duration+' после выхода; обычно только тот же вид. UT160.';
+    if(['nerve','nerve_poison','nerve_contact'].includes(id))return '1d tox; следующие циклы и неврологические последствия по утрате HP учитываются вручную. '+c.source;
+    if(id.startsWith('nanoburn_'))return 'Паралич: '+(mof==null?'длительность определите вручную':3*mof+' минут')+'; 1d−1 tox каждые 3 минуты следующие 30 минут, если наступил паралич. Только углеродная жизнь; последствия и противодействие вручную. UT161.';
     return c.brief+' '+(mof==null?'Автоматический провал; MoF-условия определите вручную.':'Степень провала: '+mof+'.')+' Последствия и повторные циклы применяются вручную. '+c.source;
   }
   if(effect.condition==='fluid')return success?'Сопротивление успешно.':`${effect.brief} Степень провала: ${Math.max(0,-native.margin)}. Последствия и повторные циклы применяются вручную.`;
@@ -375,7 +379,7 @@ export function resistanceOutcome(effect,native,choices={}){
     !success&&native.margin<0?'Степень провала: '+(-native.margin):
       label+' независимо от сравнения с итоговой характеристикой; разность характеристики и броска: '+native.margin;
   const recovery=`Каждый ход: HT${effect.modifier} для восстановления от оглушения, без бонуса DR. UT119; применяется вручную.`;
-  const consequence=effect.condition==='ut-contact'?utContactConsequence(effect,native,choices,success):effect.outcome==='contact-electrical'?(success?'Электрическое воздействие отражено; отдельный механический урон/ожог не отменяется.':'Оглушение во время контакта и ещё max(1,20−HT) секунд, затем HT−3 каждый ход без DR. Длительность от исходного HT, не итогового target. Все состояния, воспламенение и повторные проверки вручную. HT199–200; B432.'):effect.condition==='reality-stabilizer'?(success?'Reality Stabilizer защитил от переноса.':'Защита Reality Stabilizer не сработала. Габариты, область и назначение переноса разрешаются вручную. UT131.'):Object.hasOwn(afflictionOutcomes,effect.condition)?profileAfflictionConsequence(effect,native,choices,success):effect.condition==='omni-blaster'?(success?'Воздействие Stun отражено.':
+  const consequence=effect.condition==='ut-contact'?utContactConsequence(effect,native,choices,success):effect.outcome==='contact-electrical'?(success?'Электрическое воздействие отражено; отдельный механический урон/ожог не отменяется.':'Оглушение во время контакта и ещё max(1,20−HT) секунд, затем HT-3 каждый ход без DR. Длительность от исходного HT, не итогового target. Все состояния, воспламенение и повторные проверки вручную. HT199–200; B432.'):effect.condition==='reality-stabilizer'?(success?'Reality Stabilizer защитил от переноса.':'Защита Reality Stabilizer не сработала. Габариты, область и назначение переноса разрешаются вручную. UT131.'):Object.hasOwn(afflictionOutcomes,effect.condition)?profileAfflictionConsequence(effect,native,choices,success):effect.condition==='omni-blaster'?(success?'Воздействие Stun отражено.':
     'Unconsciousness: '+(native.margin<0?-native.margin+' мин.':'длительность по степени автоматического провала определите вручную.')+' Применяется вручную. UT124.'):
     effect.condition==='microwave-mad'?(success?'Воздействие MAD отражено.':
     'Agony: пока цель находится в луче и ещё 1 секунду после выхода. Применяется вручную. UT120; B428.'):
@@ -391,24 +395,24 @@ export function resistanceOutcome(effect,native,choices={}){
       'Калечащая слепота. Длительность определите отдельным HT по B422 в конце боя: успех – временная, провал – длительная, критический провал – постоянная. Срок длительной слепоты и лечение – вручную.';
   return {success,criticalSuccess,criticalFailure,label,marginText,consequence};
 }
-export async function rollResistance(message,runtime=globalThis){
-  const effect=messageResistanceEffect(message);if(!effect)return null;
+export async function rollResistance(message,runtime=globalThis,adapter=null){
+  const effect=adapter?.effect??messageResistanceEffect(message);if(!effect||!readable(message))return null;
   if(busy.has(runtime))throw Error('Дождитесь завершения текущего броска сопротивления.');
   busy.add(runtime);
   let preHook,createHook,timer,cleanupModifier;
   try{
-    const manual=['microwave-disruptor','reality-stabilizer'].includes(effect.condition),controlled=runtime.canvas?.tokens?.controlled??[];
+    const manual=['microwave-disruptor','reality-stabilizer'].includes(effect.condition),controlled=manual?runtime.canvas?.tokens?.controlled??[]:[];
     if(manual&&controlled.length>1)throw Error('Выделите не более одного токена для сопротивления.');
-    const token=manual?(controlled[0]?.actor?selectedResistanceToken(runtime):null):selectedResistanceToken(runtime),actor=token?.actor;
+    const token=adapter?.selectActor?adapter.selectActor():manual?(controlled[0]?.actor?selectedResistanceToken(runtime):null):selectedResistanceToken(runtime),actor=token?.actor;
     const validate=()=>{if(actor)boundActor(token,actor,runtime);};
-    if(!manual)resistanceAttribute(actor,effect.attribute);
-    const choices=await (runtime.__olegurpsResistanceConditions??askConditions)(effect,runtime,actor);
+    if(!manual&&!adapter?.base)resistanceAttribute(actor,effect.attribute);
+    const choices=await (adapter?.conditions??runtime.__olegurpsResistanceConditions??askConditions)(effect,runtime,actor);
     if(!choices)return null;
     validate();
-    const conditions=visionResistanceModifier(effect,choices);
+    const conditions=adapter?.plan?adapter.plan(choices,actor):visionResistanceModifier(effect,choices);
     if(!conditions.applies){
       const immunityMessage=await runtime.ChatMessage.create(applyMessageMode(runtime.ChatMessage,{speaker:runtime.ChatMessage.getSpeaker({actor,token}),
-        content:`<p>${escape(conditions.immunity)}</p>`,flags:{[SCOPE]:{resistanceImmunity:{version:1,effectId:effect.id,sourceMessageId:message.id,conditions:structuredClone(choices)}}}},runtime.game));
+        content:`<p>${escape(conditions.immunity)}</p>`,flags:{[SCOPE]:{resistanceImmunity:{version:1,effectId:effect.id,sourceMessageId:message.id,conditions:structuredClone(choices)},...adapter?.flags?.({actor,choices,conditions,immune:true})}}},runtime.game));
       return {message:immunityMessage,immune:true};
     }
     const loader=runtime.__olegurpsNativeResistanceLoader??(()=>import('/systems/gurps/module/dierolls/dieroll.js'));
@@ -416,7 +420,7 @@ export async function rollResistance(message,runtime=globalThis){
     if(typeof doRoll!=='function')throw Error('Нативный механизм сопротивления GGA недоступен.');
     if(!readable(message))throw Error('Сообщение сопротивления больше недоступно.');
     validate();
-    const base=manual?Number(choices.ht):resistanceAttribute(actor,effect.attribute),G=runtime.GURPS;
+    const base=adapter?.base?adapter.base(actor,choices):manual?Number(choices.ht):resistanceAttribute(actor,effect.attribute),G=runtime.GURPS;
     const thing='Сопротивление: '+effect.name+' ('+effect.attribute+')',previous=G.lastTargetedRoll;
     let matchedId=null,captured=null,resolveMessage;
     const created=new Promise(resolve=>{resolveMessage=resolve;});
@@ -426,13 +430,15 @@ export async function rollResistance(message,runtime=globalThis){
       if((nativeMessage.speaker?.actor??null)!==(actor?.id??null)||(nativeMessage.author?.id??nativeMessage.user?.id)!==runtime.game.user.id||
         r===previous||r?.thing!==thing||r.fromUser!==runtime.game.user.id||(r.actorid??null)!==(actor?.id??null)||r.rtotal!==roll?.total||r.origtarget!==base)return;
       validate();
-      const result=resistanceOutcome(effect,r,choices),bucket=r.finaltarget-base-conditions.modifier;
+      const result=adapter?.outcome?adapter.outcome(r,choices):resistanceOutcome(effect,r,choices),bucket=r.finaltarget-base-conditions.modifier;
       captured={...result,base,modifier:conditions.modifier,bucketModifier:bucket,finalTarget:r.finaltarget,total:r.rtotal,margin:r.margin};
       matchedId=nativeMessage.id;
       const details=`<details class="olegurps-chat-details"><summary>Условия сопротивления</summary><p>${escape(effect.name)}; ${escape(effect.attribute)} ${base}, поправка эффекта и условий ${conditions.modifier}, Modifier Bucket и GGA ${bucket}, итог ${r.finaltarget}.</p><p>3d6: ${r.rtotal}. ${escape(result.marginText)}.</p>${conditions.lines.map(line=>'<p>'+escape(line)+'</p>').join('')}<p>${escape(effect.source)}</p></details>`;
+      const extraFlags=adapter?.flags?.({actor,choices,conditions,result,native:r})??{};
       nativeMessage.updateSource({content:nativeMessage.content+`<div class="olegurps-resistance-result"><strong>${escape(result.label)}</strong><p>${escape(result.consequence)}</p>${details}</div>`,
+        ...Object.fromEntries(Object.entries(extraFlags).map(([key,value])=>[`flags.${SCOPE}.${key}`,value])),
         [`flags.${SCOPE}.resistanceResult`]:{version:1,effectId:effect.id,attribute:effect.attribute,base,modifier:conditions.modifier,
-          ...(effect.chemical?{sourceMessageId:message.id}:{}),
+          ...(effect.chemical||adapter?{sourceMessageId:message.id}:{}),
           bucketModifier:bucket,finalTarget:r.finaltarget,total:r.rtotal,margin:r.margin,success:result.success,
           criticalSuccess:result.criticalSuccess,criticalFailure:result.criticalFailure,source:effect.source,
           ...(effect.condition==='electrolaser'?{mode:effect.mode,electrical:choices.electrical,dr:choices.dr,distance:choices.distance}: {}),
@@ -447,7 +453,8 @@ export async function rollResistance(message,runtime=globalThis){
     });
     const action=actor?G.parselink(effect.attribute)?.action:null;
     if(actor&&action?.type!=='attribute')throw Error('GGA не распознал характеристику сопротивления.');
-    const desc='Сопротивление '+effect.name,bucket=G.ModifierBucket,stack=bucket?.modifierStack;
+    const maximum=typeof adapter?.maxTarget==='function'?adapter.maxTarget(choices):adapter?.maxTarget;
+    const desc='Сопротивление '+effect.name+(maximum?' *Max:'+maximum:''),bucket=G.ModifierBucket,stack=bucket?.modifierStack;
     const existing=stack?.modifierList?.find(m=>m.desc===desc),previousMod=existing?.modint??0;
     // With autoAdd, GGA puts targetmods in the Bucket before confirmation. Its
     // Cancel only clears tagged entries, so remove our own surviving modifier.
