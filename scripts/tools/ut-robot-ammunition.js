@@ -5,7 +5,7 @@ const independentPrimary=new Set(['ut_shaped_charge','ut_hemp','ut_thermobaric',
 export function robotAmmunitionAllowed(modeId,type){
  const r=type?.robot,p=r&&ROBOTS[r.id];
  if(p?.id==='shuriken')return modeId===p.modeId&&type.source==='catalog'&&type.book==='ut'&&type.kind==='ammo-family'&&type.ammoId==='smart_shuriken_robot'&&r.tl===11&&!type.recipe&&type.key===ammoTypeKey(type);
- return !!p&&['hunter','striker'].includes(p.id)&&p.launcherModeIds.includes(modeId)&&p.versions.includes(r.tl)&&
+ return !!p&&['hunter','striker','floater'].includes(p.id)&&p.launcherModeIds.includes(modeId)&&p.versions.includes(r.tl)&&
   type.source==='catalog'&&type.book==='ut'&&type.kind==='ammo-family'&&type.ammoId===p.familyId&&
   !forbidden.has(type.recipe?.variantId)&&!type.recipe?.parameters?.reactionless&&
   type.key===ammoTypeKey(type);

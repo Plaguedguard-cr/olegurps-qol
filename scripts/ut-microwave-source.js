@@ -9,7 +9,16 @@ const rows=[
 ];
 export const MICROWAVE_PROFILES=Object.freeze(Object.fromEntries(rows.map(([modeId,equipmentId,name,family,cellSize,cells,shots,modifier,coneWidth,acc,halfRange,maximum,st,bulk,weightLb,cost,lc,reload,specialty])=>
   [modeId,Object.freeze({modeId,equipmentId,name,family,cellSize,cells,shots,modifier,coneWidth,acc,halfRange,maximum,st,bulk,weightLb,cost,lc,reload,specialty,source:family==='mad'?'UT120':'UT121'})])));
-export const microwaveProfile=id=>Object.hasOwn(MICROWAVE_PROFILES,id??'')?MICROWAVE_PROFILES[id]:null;
+// UT65 explicitly refers to UT121. The user-approved combat baseline is the
+// Tactical Disruptor; its portable hardware and power supply are not inherited.
+const tactical=MICROWAVE_PROFILES.W9JO2V_oiKVqnyb_F;
+export const AESA_MICROWAVE_PROFILE=Object.freeze({
+  modeId:'WUTTacticalAESA',equipmentId:'eUTTacticalAESA',name:'Tactical Active Electromagnetic Sensor Array (AESA)',
+  family:tactical.family,modifier:tactical.modifier,coneWidth:tactical.coneWidth,acc:tactical.acc,
+  halfRange:tactical.halfRange,maximum:tactical.maximum,specialty:tactical.specialty,source:'UT65,121',
+  vehiclePower:true,inheritance:{baseModeId:tactical.modeId,reference:'UT65 -> UT121',decision:'user-approved-combat-baseline'}
+});
+export const microwaveProfile=id=>id===AESA_MICROWAVE_PROFILE.modeId?AESA_MICROWAVE_PROFILE:Object.hasOwn(MICROWAVE_PROFILES,id??'')?MICROWAVE_PROFILES[id]:null;
 export const microwaveWeapon=w=>microwaveProfile(w?.standaloneModeId??w?.catalogModeId);
 export const microwaveFormula=p=>`HT${p.modifier} aff (${p.coneWidth} yd)`;
 export function projectMicrowaveCatalog(book,data){

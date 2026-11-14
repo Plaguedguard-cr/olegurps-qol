@@ -62,6 +62,30 @@ test('M2.10 all rigid reaches use sw+1d+R while flexible modes remain different'
 test('M2.10 fixed Force damage ignores ST and Committed Strong, F77 retained',async()=>{
  const a=actor(),raw=await weapon(a,'woO7urPHntECbjiW_');for(const st of [6,12,40]){a.system.attributes.ST.value=st;const attack=resolveMeleeProfile({actor:a,attack:raw});assert.equal((await damage(a,attack)).formula,'4d(5) burn');assert.equal(applyMartialArtsDamage('4d(5) burn',{committedStrong:true,strengthBased:false}),'4d(5) burn');}
 });
+
+test('UT-INHERIT Stasis uses one B/10h across rigid reaches; unpowered flexible and replacement preserve history',async()=>{
+ const a=actor(),before=JSON.stringify(a.system),raw=await weapon(a,'w17DvILEf9UF-N1G2'),s=new AmmoService(a);
+ assert.match(utMeleeResourceReason(a,raw),/ресурс/);await equip(a,raw);
+ let c=utMeleeResourceContext(a,raw);assert.equal(c.profile.cellSize,'B');assert.equal(c.remaining,36000);
+ const reach30=await new MeleeProfileService(a).save(raw,{modeId:'w17DvILEf9UF-N1G2R30'});
+ const attackId=crypto.randomUUID();let snapshot;
+ await s.executeMeleeResource({attack:reach30,attackId,execute:async()=>{
+  const preparedDamage=await damage(a,reach30);snapshot=createShotSnapshot(freezeMeleeAttackProfile({actor:a,attack:reach30,preparedDamage}),{attackId});return {rolled:true};
+ }});
+ assert.equal(utMeleeResourceContext(a,reach30).remaining,35999);const saved=JSON.stringify(snapshot);
+ await assert.rejects(s.executeMeleeResource({attack:reach30,attackId,execute:async()=>{throw Error('duplicate executed');}}));
+ const resources=a.getFlag('olegurps-qol','utMeleeResources');Object.values(resources)[0].charge=0;await a.setFlag('olegurps-qol','utMeleeResources',resources);
+ assert.match(utMeleeResourceReason(a,reach30),/исчерпан/);
+ const flexible=await new MeleeProfileService(a).save(raw,{modeId:'wXIUigU9a9ScSXIFY'});
+ assert.equal(utMeleeResourceContext(a,flexible),null);assert.equal(utMeleeResourceReason(a,flexible),null);
+ assert.equal((await damage(a,flexible)).formula,'2d+1(10) cut');
+ const reloaded=readStandaloneAttack(a,raw.standaloneRef.weaponId,raw.standaloneRef.modeId);assert.equal(utMeleeResourceReason(a,reloaded,'wXIUigU9a9ScSXIFY'),null);assert.equal(JSON.stringify(snapshot),saved);
+ await equip(a,raw,'w17DvILEf9UF-N1G2',true);
+ const rigid=await new MeleeProfileService(a).save(raw,{modeId:'w17DvILEf9UF-N1G2R1'});
+ assert.equal(utMeleeResourceContext(a,rigid).remaining,72000);assert.equal(utMeleeResourceReason(a,rigid),null);
+ assert.equal(JSON.stringify(snapshot),saved);assert.equal(JSON.stringify(a.system),before);
+ assert.match(P['w17DvILEf9UF-N1G2'].hints.join(' '),/force\/energy/);
+});
 for(const [id,capacity,cost]of [['w8xpTbHH1oVDkHOYb',10,1],['wYzmoafHusruaKOBV',10,2],['w7bLtfJugrIOJS70U',20,1],['woO7urPHntECbjiW_',100,1],['wqTQ5eckqDQIKszMe',180,1],['wZa4lUipo5uQSO9_4',900,1]])test('M2.10 exact resource, cancellation and immutable receipt '+id,async()=>{
  const a=actor(),raw=await weapon(a,id),s=new AmmoService(a);assert.match(utMeleeResourceReason(a,raw),/ресурс/);await equip(a,raw);assert.equal(utMeleeResourceContext(a,raw).remaining,capacity);
  const before=JSON.stringify(a.getFlag('olegurps-qol','utMeleeResources'));await s.executeMeleeResource({attack:raw,attackId:'cancel',execute:async()=>({rolled:false})});assert.equal(JSON.stringify(a.getFlag('olegurps-qol','utMeleeResources')),before);
@@ -108,7 +132,7 @@ test('M2.10 uncertain native outcome reserves once and explicit stale-safe resol
 });
 test('M2.10 Nanothorn is a typed same-instance upgrade of the two published monowire constructions',async()=>{
  for(const id of ['w9NE7eo1a5TicfmpW','wAtyEWpMeFPCyRNj8']){const a=actor(),raw=await weapon(a,id),r=resolveMeleeProfile({actor:a,attack:raw,selection:{blade:'nanothorn',weaponTL:11}});assert.ok(!r.readinessReason,r.readinessReason);assert.match((await damage(a,r)).formula,/\(10\) cor$/);assert.equal(r.meleeProfile.quality.price,P[id].cost*4);}
- const a=actor(),raw=await weapon(a,'w17DvILEf9UF-N1G2');assert.ok(resolveMeleeProfile({actor:a,attack:raw,selection:{blade:'nanothorn',weaponTL:12}}).readinessReason);assert.equal(P['w17DvILEf9UF-N1G2'].power,null);assert.equal(P['w17DvILEf9UF-N1G2'].powerUnspecified,true);
+ const a=actor(),raw=await weapon(a,'w17DvILEf9UF-N1G2');assert.ok(resolveMeleeProfile({actor:a,attack:raw,selection:{blade:'nanothorn',weaponTL:12}}).readinessReason);assert.deepEqual(P['w17DvILEf9UF-N1G2'].power,P.wAtyEWpMeFPCyRNj8.power);assert.equal(P['w17DvILEf9UF-N1G2'].powerUnspecified,undefined);
 });
 test('M2.10 glove punches have one physical profile and a frozen explicit linked kill, no second Attack',async()=>{
  const a=actor(),raw=await weapon(a,'wYzmoafHusruaKOBVPunch'),r=resolveMeleeProfile({actor:a,attack:raw,selection:{skill:'Karate'}}),d=await damage(a,r),p=freezeMeleeAttackProfile({actor:a,attack:r,preparedDamage:d});assert.equal(d.formula,'1d cr');assert.equal(p.damage.components.length,2);assert.equal(p.damage.components[1].formula,'2d burn');assert.equal(p.damage.rules.utExotic.manualLinkedAction.formula,'2d');

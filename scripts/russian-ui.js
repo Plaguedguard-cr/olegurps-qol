@@ -804,7 +804,7 @@ export const russianUI = Object.freeze({
   "OleGURPS.Macro.OQMeleeAssist001": "Помощник ближнего боя",
   "OleGURPS.Macro.OQcritical000001": "Критические результаты",
   "OleGURPS.Macro.OQexplosion00001": "Взрыв и осколки",
-  "OleGURPS.Macro.OQfalling0000001": "Урон от падения",
+  "OleGURPS.Macro.OQfalling0000001": "Падения и столкновения",
   "OleGURPS.Macro.OQfirecontrol001": "Огонь",
   "OleGURPS.Macro.OQfright00000001": "Проверка страха",
   "OleGURPS.Macro.OQreaction000001": "Реакция",

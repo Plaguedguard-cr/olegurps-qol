@@ -1,44 +1,109 @@
-import { basicDamageDice } from "./basic-damage-dice.js";
+import { FALL_PRESETS, ANGLES, COLLISION_MODES, asBool,
+  fallCollisionSettings, calculateFall, calculateCollision } from './fall-collision-rules.js';
+import { fallCollisionMessage } from './fall-collision-presentation.js';
+
+export const FALL_FLAG_SCOPE = 'world', FALL_FLAG_KEY = 'gurpsFallDamageMacro';
+const TITLE = 'Падения и столкновения';
+const escape = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const field = (name, label, value, { min = 0, step = 'any', optional = false } = {}) =>
+  `<div class="oq-fall-row"><label for="oq-fc-${name}">${label}</label><input id="oq-fc-${name}" type="number" name="${name}" value="${escape(value)}" min="${min}" step="${step}" ${optional ? '' : 'required'}></div>`;
+const check = (name, label, value) => `<div class="oq-fall-row oq-fall-check"><label for="oq-fc-${name}">${label}</label><input id="oq-fc-${name}" type="checkbox" name="${name}" ${asBool(value) ? 'checked' : ''}></div>`;
+const select = (name, label, value, options) => `<div class="oq-fall-row"><label for="oq-fc-${name}">${label}</label><select id="oq-fc-${name}" name="${name}">${Object.entries(options).map(([key, text]) => `<option value="${key}" ${value === key ? 'selected' : ''}>${text}</option>`).join('')}</select></div>`;
+const surface = (name, value) => select(name, 'Поверхность', String(asBool(value)), { true: 'Твёрдая', false: 'Мягкая' });
+const barrier = (prefix, v) => `${check(prefix + 'breakable', 'Разрушаемая преграда', v.breakable)}<div data-barrier="${prefix}">
+  ${field(prefix + 'barrierHp', 'HP преграды', v.barrierHp, { min: '.000001' })}${field(prefix + 'barrierDr', 'DR преграды', v.barrierDr)}
+  <p class="oq-fall-hint">После броска: не более HP + DR преграды в обе стороны (B431).</p></div>`;
+const participants = (prefix, v) => `${field(prefix + 'hpA', 'HP объекта A (ударяющего)', v.hpA, { min: '.000001' })}
+  ${field(prefix + 'hpB', 'HP объекта B (цели)', v.hpB, { min: '.000001' })}
+  ${field(prefix + 'speedA', 'Скорость A, ярдов/с', v.speedA)}${field(prefix + 'speedB', 'Скорость B, ярдов/с', v.speedB)}
+  ${select(prefix + 'angle', 'Характер столкновения', v.angle, ANGLES)}
+  <p class="oq-fall-hint">Сзади: A догоняет B. Сбоку: A ударяет B; скорость B не влияет на скорость столкновения. Вводите полные HP, а не текущий остаток.</p>`;
+
+export function fallingContent(v) {
+  return `<div class="oq-fall">
+  <div class="oq-fall-tabs" role="tablist" aria-label="Раздел помощника">
+    <button type="button" role="tab" data-fc-tab="fall" id="oq-fc-tab-fall" aria-controls="oq-fc-panel-fall">Падения</button>
+    <button type="button" role="tab" data-fc-tab="collision" id="oq-fc-tab-collision" aria-controls="oq-fc-panel-collision">Столкновения</button>
+  </div>
+  <input type="hidden" name="tab" value="${v.tab}">
+  <section data-fc-panel="fall" id="oq-fc-panel-fall" role="tabpanel" aria-labelledby="oq-fc-tab-fall">
+    ${field('height', 'Высота падения, ярды', v.height)}${field('hp', 'HP падающего объекта', v.hp, { min: '.000001' })}
+    ${field('gravity', 'Гравитация, G', v.gravity)}${field('pressure', 'Атмосферное давление, атм.', v.pressure)}
+    <p class="oq-fall-hint">0 атм. – вакуум: конечная скорость не ограничена. Вводите полные HP объекта.</p>
+    ${select('fallType', 'Положение тела / форма', v.fallType, { ...Object.fromEntries(Object.entries(FALL_PRESETS).map(([k, p]) => [k, p.optionLabel])), custom: 'Своё значение' })}
+    <div data-custom-terminal>${field('customTerminal', 'Своя земная конечная скорость, ярдов/с', v.customTerminal, { min: '.000001' })}</div>
+    <p class="oq-fall-hint" data-terminal-preview></p>
+    ${surface('hardSurface', v.hardSurface)}${check('acrobatics', 'Успешная акробатика (−5 ярдов)', v.acrobatics)}
+    <p class="oq-fall-hint">Галочка означает уже выполненный успешный бросок Acrobatics.</p>
+    ${barrier('', v)}
+  </section>
+  <section data-fc-panel="collision" id="oq-fc-panel-collision" role="tabpanel" aria-labelledby="oq-fc-tab-collision">
+    ${select('collisionMode', 'Вид столкновения', v.collisionMode, COLLISION_MODES)}
+    <div data-fc-mode="object">${participants('object.', v.object)}</div>
+    <div data-fc-mode="obstacle">${field('obstacle.hp', 'HP движущегося объекта', v.obstacle.hp, { min: '.000001' })}
+      ${field('obstacle.speed', 'Скорость удара, ярдов/с', v.obstacle.speed)}${surface('obstacle.hardSurface', v.obstacle.hardSurface)}${barrier('obstacle.', v.obstacle)}</div>
+    <div data-fc-mode="overrun">${participants('overrun.', v.overrun)}
+      ${field('overrun.smA', 'SM объекта A', v.overrun.smA, { min: '-1000000', step: 1 })}${field('overrun.smB', 'SM цели B', v.overrun.smB, { min: '-1000000', step: 1 })}
+      ${field('overrun.st', 'ST объекта A (если есть)', v.overrun.st, { min: '.000001', optional: true })}
+      <p class="oq-fall-hint">Для дополнительного thrust используется половина ST; если ST нет – половина HP. Разница SM должна быть не меньше 2 (B432).</p></div>
+  </section></div>`;
+}
+
+// Keep every input mounted: tab/mode switching only changes visibility and validation.
+export function mountFallingDialog(root, previous) {
+  const get = name => root.querySelector(`[name="${name}"]`);
+  const update = () => {
+    const tab = get('tab').value, mode = get('collisionMode').value;
+    for (const b of root.querySelectorAll('[data-fc-tab]')) b.setAttribute('aria-selected', String(b.dataset.fcTab === tab));
+    for (const el of root.querySelectorAll('[data-fc-panel]')) el.hidden = el.dataset.fcPanel !== tab;
+    for (const el of root.querySelectorAll('[data-fc-mode]')) el.hidden = el.dataset.fcMode !== mode;
+    for (const el of root.querySelectorAll('[data-barrier]')) el.hidden = !get(el.dataset.barrier + 'breakable').checked;
+    root.querySelector('[data-custom-terminal]').hidden = get('fallType').value !== 'custom';
+    root.querySelector('[data-terminal-preview]').textContent = get('fallType').value === 'custom' ?
+      'Задайте конечную скорость для 1G и 1 атм.; местные условия учитываются автоматически.' :
+      `Земная конечная скорость: ${FALL_PRESETS[get('fallType').value]?.terminal ?? '–'} ярдов/с (1G, 1 атм.).`;
+    for (const el of root.querySelectorAll('input:not([type=hidden]),select')) el.disabled = Boolean(el.closest('[hidden]'));
+  };
+  for (const b of root.querySelectorAll('[data-fc-tab]')) b.addEventListener('click', () => { get('tab').value = b.dataset.fcTab; update(); });
+  root.addEventListener('change', update);
+  update();
+  return () => {
+    const state = { ...previous, object: { ...previous.object }, obstacle: { ...previous.obstacle }, overrun: { ...previous.overrun } };
+    for (const el of root.querySelectorAll('input[name],select[name]')) {
+      const [group, key] = el.name.split('.'), value = el.type === 'checkbox' ? el.checked : el.value;
+      if (key) state[group][key] = value; else state[group] = value;
+    }
+    state.hardSurface = asBool(state.hardSurface); state.obstacle.hardSurface = asBool(state.obstacle.hardSurface);
+    return state;
+  };
+}
+
 export async function openFallingDamage() {
-  const DialogV2 = foundry?.applications?.api?.DialogV2;
-  if (!DialogV2) return ui.notifications.error("Этот инструмент требует DialogV2.");
-  const FLAG_SCOPE="world", FLAG_KEY="gurpsFallDamageMacro";
-  const PRESETS={
-    prone:{label:"Человек – плашмя",optionLabel:"Плашмя (60)",terminal:60},
-    normal:{label:"Человек – обычное падение",optionLabel:"Обычное падение (80)",terminal:80},
-    streamlined:{label:"Человек – ногами или головой вниз",optionLabel:"Вертикально (100)",terminal:100},
-    dense:{label:"Плотный или обтекаемый предмет",optionLabel:"Плотный предмет (200)",terminal:200}
-  };
-  const valid=new Set([...Object.keys(PRESETS),"custom"]);
-  const num=v=>Number(String(v??"").trim().replace(",","."));
-  const bool=v=>v===true||v==="true"||v==="on"||v===1||v==="1";
-  const defaults={gravity:.138,pressure:1.3,height:19,hp:10,fallType:"normal",customTerminal:120,hardSurface:true};
-  const saved=game.user.getFlag(FLAG_SCOPE,FLAG_KEY)??{};
-  const oldTerminal=num(saved.terminalEarth);
-  let migrated=defaults.fallType;
-  if(Number.isFinite(oldTerminal)&&oldTerminal>0){const found=Object.entries(PRESETS).find(([,p])=>Math.abs(p.terminal-oldTerminal)<.001);migrated=found?found[0]:"custom";}
-  const previous={
-    gravity:saved.gravity??defaults.gravity,pressure:saved.pressure??defaults.pressure,height:saved.height??defaults.height,hp:saved.hp??defaults.hp,
-    fallType:valid.has(saved.fallType)?saved.fallType:migrated,
-    customTerminal:(Number.isFinite(num(saved.customTerminal))&&num(saved.customTerminal)>0)?num(saved.customTerminal):(Number.isFinite(oldTerminal)&&oldTerminal>0?oldTerminal:defaults.customTerminal),
-    hardSurface:saved.hardSurface===undefined?defaults.hardSurface:bool(saved.hardSurface)
-  };
-  const options=Object.entries(PRESETS).map(([k,p])=>`<option value="${k}" ${previous.fallType===k?"selected":""}>${p.optionLabel}</option>`).join("");
-  const data=await DialogV2.input({window:{title:"Расчёт урона от падения"},position:{width:640},content:`<style>.oq-fall{max-height:70vh;overflow-y:auto;padding:0 9px 0 2px;font-size:.88em}.oq-fall-row{display:grid;grid-template-columns:minmax(190px,1fr) minmax(250px,280px);align-items:center;gap:8px 12px;padding:10px 3px;border-bottom:1px solid rgba(128,128,128,.25)}.oq-fall-row:first-child{border-top:1px solid rgba(128,128,128,.25)}.oq-fall-row[hidden]{display:none!important}.oq-fall-row label,.oq-fall-label{font-weight:700}.oq-fall-row input,.oq-fall-row select{width:100%;margin:0}.oq-fall-hint{grid-column:1/-1;margin:0;opacity:.78;font-size:.86em}.oq-surface{display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(128,128,128,.3);border-radius:4px;overflow:hidden}.oq-surface input{position:absolute;opacity:0;pointer-events:none}.oq-surface label{display:flex;justify-content:center;align-items:center;gap:5px;min-height:34px;margin:0;cursor:pointer;opacity:.65}.oq-surface input:checked+label{opacity:1;box-shadow:inset 0 0 0 1px var(--color-border-highlight,#ff6400);background:rgba(255,255,255,.1)}@media(max-width:600px){.oq-fall-row{grid-template-columns:1fr}.oq-fall-hint{grid-column:1}}</style><div class="oq-fall">
-    <div class="oq-fall-row"><label>Гравитация, G</label><input type="number" name="gravity" value="${previous.gravity}" min="0" step="any"></div>
-    <div class="oq-fall-row"><label>Атмосферное давление, атм.</label><input type="number" name="pressure" value="${previous.pressure}" min="0" step="any"><p class="oq-fall-hint">0 считается вакуумом: конечная скорость не ограничена.</p></div>
-    <div class="oq-fall-row"><label>Высота падения, ярды</label><input type="number" name="height" value="${previous.height}" min="0" step="any" autofocus></div>
-    <div class="oq-fall-row"><label>ЕЖ падающего объекта</label><input type="number" name="hp" value="${previous.hp}" min=".01" step="any"></div>
-    <div class="oq-fall-row"><label>Тип падения</label><select name="fallType">${options}<option value="custom" ${previous.fallType==="custom"?"selected":""}>Своё значение</option></select><p class="oq-fall-hint" id="oq-terminal-preview"></p></div>
-    <div class="oq-fall-row oq-custom" ${previous.fallType==="custom"?"":"hidden"}><label>Своя земная конечная скорость, ярдов/с</label><input type="number" name="customTerminal" value="${previous.customTerminal}" min=".01" step="any"></div>
-    <div class="oq-fall-row"><span class="oq-fall-label">Поверхность столкновения</span><div class="oq-surface"><input id="oq-hard" type="radio" name="hardSurface" value="true" ${previous.hardSurface?"checked":""}><label for="oq-hard"><i class="fa-solid fa-hammer"></i>Твёрдая</label><input id="oq-soft" type="radio" name="hardSurface" value="false" ${previous.hardSurface?"":"checked"}><label for="oq-soft"><i class="fa-solid fa-water"></i>Мягкая</label></div><p class="oq-fall-hint">При столкновении с твёрдым объектом ЕЖ для расчёта удваиваются.</p></div>
-  </div>`,ok:{label:"Рассчитать",icon:"fa-solid fa-calculator"},rejectClose:false,modal:false,render:(_e,d)=>{const r=d.element;const sel=r.querySelector('select[name="fallType"]'),row=r.querySelector('.oq-custom'),inp=r.querySelector('input[name="customTerminal"]'),prev=r.querySelector('#oq-terminal-preview');if(!sel||!row||!inp||!prev)return;const update=()=>{const k=sel.value;row.hidden=k!=="custom";if(k==="custom"){const x=num(inp.value);prev.textContent=Number.isFinite(x)&&x>0?`Будет использована земная конечная скорость ${x} ярдов/с.`:"Введите земную конечную скорость.";}else prev.textContent=`Макрос автоматически использует ${PRESETS[k]?.terminal??"–"} ярдов/с.`;};sel.addEventListener("change",update);inp.addEventListener("input",update);update();}});
-  if(!data)return; const v=data.object??data; const gravity=num(v.gravity),pressure=num(v.pressure),height=num(v.height),hp=num(v.hp),fallType=String(v.fallType??""),customTerminal=num(v.customTerminal??previous.customTerminal),hardSurface=bool(v.hardSurface); const preset=PRESETS[fallType],terminalEarth=fallType==="custom"?customTerminal:preset?.terminal;
-  const errors=[]; if(!Number.isFinite(gravity)||gravity<0)errors.push("гравитация должна быть числом не меньше 0");if(!Number.isFinite(pressure)||pressure<0)errors.push("давление должно быть числом не меньше 0");if(!Number.isFinite(height)||height<0)errors.push("высота должна быть числом не меньше 0");if(!Number.isFinite(hp)||hp<=0)errors.push("ЕЖ должны быть больше 0");if(!valid.has(fallType))errors.push("не выбран допустимый тип падения");if(!Number.isFinite(terminalEarth)||terminalEarth<=0)errors.push("земная конечная скорость должна быть больше 0");if(errors.length)return ui.notifications.error(`Ошибка ввода: ${errors.join("; ")}.`);
-  try{await game.user.setFlag(FLAG_SCOPE,FLAG_KEY,{gravity,pressure,height,hp,fallType,customTerminal,hardSurface,terminalEarth});}catch(e){console.warn(e)}
-  const freeFallSpeed=Math.sqrt(21.4*gravity*height); const terminalSpeed=pressure===0?Infinity:terminalEarth*Math.sqrt(gravity)/Math.sqrt(pressure); const impactSpeed=Math.min(freeFallSpeed,terminalSpeed); const limited=Number.isFinite(terminalSpeed)&&freeFallSpeed>terminalSpeed; const effectiveHp=hardSurface?hp*2:hp; const rawDice=effectiveHp*impactSpeed/100;
-  const damage=value=>basicDamageDice(value).replace("d", "к").replace("-", "−");
-  const fmt=(x,d=2)=>Number.isFinite(x)?new Intl.NumberFormat("ru-RU",{maximumFractionDigits:d}).format(x):"не ограничена";
-  const rows=[['Гравитация',`${fmt(gravity,3)}G`],['Давление',`${fmt(pressure,3)} атм.`],['Тип падения',fallType==="custom"?"Своё значение":preset.label],['Земная конечная скорость',`${fmt(terminalEarth)} ярда/с`],['Скорость без атмосферы',`${fmt(freeFallSpeed)} ярда/с`],['Местная конечная скорость',pressure===0?"не ограничена – вакуум":`${fmt(terminalSpeed)} ярда/с`],['Ограничение скорости',limited?"Да – скорость ограничена атмосферой":"Нет – конечная скорость не достигнута"],['Скорость столкновения',`<strong>${fmt(impactSpeed)} ярда/с</strong>`],['Поверхность',hardSurface?"твёрдая – ЕЖ удвоены":"мягкая – ЕЖ не удвоены"],['ЕЖ для расчёта',fmt(effectiveHp)],['Кубики до округления',`${fmt(rawDice,3)}к`]].map(([a,b],i)=>`<tr${i<10?' style="border-bottom:1px solid rgba(128,128,128,.22)"':''}><th style="width:55%;padding:3px 5px;text-align:left">${a}</th><td style="padding:3px 5px">${b}</td></tr>`).join('');
-  await ChatMessage.create({speaker:ChatMessage.getSpeaker({alias:"Расчёт падения"}),content:`<div style="font-size:.78em;line-height:1.2"><h3 style="margin:0 0 5px;font-size:1.15em">Падение с ${fmt(height)} ярдов</h3><details class="olegurps-falling-calculation"><summary style="cursor:pointer">\u0420\u0430\u0441\u0447\u0451\u0442</summary><table style="width:100%;margin:0;font-size:.96em;border-collapse:collapse"><tbody>${rows}</tbody></table></details><hr style="margin:5px 0"><p style="margin:3px 0 0;font-size:1.2em"><strong>Урон: ${damage(rawDice)} дробящего</strong></p></div>`});
+  const DialogV2 = globalThis.foundry?.applications?.api?.DialogV2;
+  if (!DialogV2) return ui.notifications.error('Этот инструмент требует DialogV2.');
+  const user = game.user, saved = user.getFlag(FALL_FLAG_SCOPE, FALL_FLAG_KEY) ?? {};
+  const previous = fallCollisionSettings(saved);
+  let read;
+  const answer = await DialogV2.wait({
+    window: { title: TITLE }, position: { width: 610 }, modal: false, rejectClose: false,
+    content: fallingContent(previous),
+    render: (_event, dialog) => { read = mountFallingDialog(dialog.element, previous); },
+    buttons: [
+      { action: 'calculate', label: 'Рассчитать', icon: 'fa-solid fa-calculator', default: true, callback: () => {
+        try {
+          const state = read();
+          const result = state.tab === 'fall' ? calculateFall(state) : calculateCollision(state.collisionMode, state[state.collisionMode]);
+          return { state, result };
+        } catch (error) { ui.notifications.error(`Ошибка ввода: ${error.message}`); return false; }
+      } },
+      { action: 'cancel', label: 'Отмена', callback: () => false }
+    ]
+  });
+  if (!answer?.state) return;
+  const { state, result } = answer;
+  // Keep the old key/shape and unknown legacy properties. Cancel/open never write flags.
+  const terminalEarth = state.fallType === 'custom' ? state.customTerminal : FALL_PRESETS[state.fallType]?.terminal;
+  try { await user.setFlag(FALL_FLAG_SCOPE, FALL_FLAG_KEY, { ...state, terminalEarth }); }
+  catch (error) { console.warn('OleGURPS QOL: fall/collision preferences', error); ui.notifications.warn('Не удалось сохранить настройки помощника.'); }
+  await ChatMessage.create({ speaker: ChatMessage.getSpeaker({ alias: TITLE }), content: fallCollisionMessage(result) });
 }

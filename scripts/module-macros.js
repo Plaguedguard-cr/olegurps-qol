@@ -44,6 +44,24 @@ function needsUpdate(document, source) {
     document.getFlag(MODULE_ID, "tool") !== source.flags[MODULE_ID].tool;
 }
 
+// Only known module-authored default names. User-renamed macros stay unchanged.
+export function isLegacyFallingMacro(document) {
+  return document.getFlag?.(MODULE_ID, 'tool') === 'falling' &&
+    document.command?.trim() === 'game.olegurpsQOL.falling.open();' &&
+    /^(?:OleGURPS QOL\s*\p{Dash_Punctuation}\s*)?(?:Falling Damage|Урон от падения|Расчёт урона от падения)$/u.test(document.name);
+}
+
+export async function renameLegacyFallingMacros(runtime = globalThis) {
+  if (!runtime.game.user?.isGM) return [];
+  const changed = [];
+  for (const document of runtime.game.macros ?? []) {
+    if (!isLegacyFallingMacro(document)) continue;
+    await document.update({ name: 'Падения и столкновения' });
+    changed.push(document.id);
+  }
+  return changed;
+}
+
 export async function ensureModuleMacros() {
   if (!game.user?.isGM) return;
   if (game.users?.activeGM && game.users.activeGM !== game.user) return;
@@ -87,6 +105,7 @@ export async function ensureModuleMacros() {
       const document = await pack.getDocument(entry._id);
       if (document && document.name !== name) await document.update({name});
     }
+    await renameLegacyFallingMacros();
   } finally {
     if (wasLocked) await pack.configure({ locked: true });
   }

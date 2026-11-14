@@ -1121,7 +1121,7 @@ export class AmmoService {
           throw Error('TypeUnavailable');
       }
       const beam=beamProfile(utModeId);
-      if(nextElevenProfile(utModeId)&&utModeId!=='WUTSmartShuriken'){
+      if(nextElevenProfile(utModeId)&&!microwaveProfile(utModeId)&&utModeId!=='WUTSmartShuriken'){
         const attack=readStandaloneAttack(this.actor,weapon.standaloneWeaponId,utModeId);
         const expected=nextElevenDamage(attack?.data,utModeId,attack?.nextElevenConfiguration);
         if(!expected?.nativeSafe||!profile.damage?.nativeSafe||amount!==1||deferConsumption||ammunition||!resourceOnlyWeapon(weapon)||

@@ -141,7 +141,7 @@
   },
   {
     "_id": "OQfalling0000001",
-    "name": "Урон от падения",
+    "name": "Падения и столкновения",
     "type": "script",
     "img": "modules/olegurps-qol/assets/falling.png",
     "command": "game.olegurpsQOL.falling.open();",

@@ -1248,3 +1248,17 @@ dialog.gam-roll-confirmation {
 .og-mine-target,.og-mine-resolution { border-top:1px solid var(--color-border-light-primary,#777); margin-top:8px; padding-top:8px; }
 .og-mine-result pre { white-space:pre-wrap; overflow-wrap:anywhere; max-height:300px; overflow:auto; font-size:11px; }
 @media(max-width:520px) { .og-mine-grid { grid-template-columns:1fr; } }
+/* Falls and collisions: DialogV2 sanitizes style tags in content. */
+.oq-fall { max-height: 70vh; overflow-y: auto; padding: 0 6px; font-size: .9em; }
+.oq-fall [hidden] { display: none !important; }
+.oq-fall-row { display: grid; grid-template-columns: minmax(190px, 1fr) minmax(140px, 220px); align-items: center; gap: 8px 14px; padding: 7px 2px; border-bottom: 1px solid rgba(128,128,128,.22); }
+.oq-fall-row label { font-weight: 600; }
+.oq-fall-row input, .oq-fall-row select { width: 100%; min-width: 0; margin: 0; }
+.oq-fall-check input { width: auto; justify-self: start; }
+.oq-fall-hint { margin: 7px 2px; opacity: .8; font-size: .85em; line-height: 1.3; }
+.oq-fall-tabs { display: flex; gap: 6px; margin: 0 0 9px; }
+.oq-fall-tabs button { flex: 1; min-height: 32px; }
+.oq-fall-tabs button[aria-selected=true] { box-shadow: inset 0 0 0 1px var(--color-border-highlight,#ff6400); font-weight: 700; }
+.dialog:has(.oq-fall) { max-height: calc(100vh - 20px); }
+.dialog:has(.oq-fall) .window-content { min-height: 0; overflow: hidden; }
+@media(max-width:600px) { .oq-fall-row { grid-template-columns: minmax(0,1fr) minmax(100px,160px); } }

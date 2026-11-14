@@ -185,6 +185,14 @@ export class StandaloneWeaponService {
         for(const mode of record.modes??[]){
           applyUTErrataMode(mode.snapshot,{snapshot:true});
           const current=catalogs?.getMode(mode.modeId);
+          if(mode.modeId==='WUTTacticalAESA'&&record.source.equipmentId===nextElevenProfile(mode.modeId).equipmentId&&current){
+            // Read-through repair of the former source-manual baseline. Explicit
+            // owner overrides and historical shotSnapshots remain untouched.
+            for(const [key,value]of Object.entries(current.stats))if(mode.snapshot.stats[key]==null||key==='damage'&&mode.snapshot.stats.damage?.type==='spec.')mode.snapshot.stats[key]=clone(value);
+            if(mode.snapshot.raw_calc?.damage==='spec.')mode.snapshot.raw_calc=clone(current.raw_calc);
+            for(const key of ['ut_next_eleven','governing_skill','governing_skill_selection','defaults','attack_resolution'])mode.snapshot[key]=clone(current[key]);
+            if(record.equipmentSnapshot?.local_notes?.startsWith('AESA: UT227'))record.equipmentSnapshot.local_notes='';
+          }
           if(fluidProfile(mode.modeId)&&record.source.equipmentId===fluidProfile(mode.modeId).equipmentId)mode.snapshot=clone(current);
           if(exoticBeamProfile(mode.modeId)&&current?.ut_exotic_beam_source&&record.source.equipmentId===exoticBeamProfile(mode.modeId).equipmentId)
             for(const field of ['governing_skill','governing_skill_selection','defaults'])mode.snapshot[field]=clone(current[field]);

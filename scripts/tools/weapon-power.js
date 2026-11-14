@@ -187,7 +187,7 @@ export function validateWeaponExecution(weapon, profile) {
   if(ltEarlyProfile(modeId)){
     const reason=ltEarlyReadiness(weapon,modeId);if(!weapon||reason||!profile.damage?.nativeSafe||!profile.resource?.ltEarlyCharges||JSON.stringify(profile.resource.ltEarlyCharges)!==JSON.stringify(ltEarlyShotPlan(weapon)))throw Error(reason??'Подготовленный физический состав LT не подтверждён для этого выстрела.');
   }
-  if(nextElevenProfile(modeId)&&modeId!=='WUTSmartShuriken'&&(!weapon||!profile.damage?.nativeSafe||profile.damage.rules?.nextEleven?.modeId!==modeId||
+  if(nextElevenProfile(modeId)&&!microwaveProfile(modeId)&&modeId!=='WUTSmartShuriken'&&(!weapon||!profile.damage?.nativeSafe||profile.damage.rules?.nextEleven?.modeId!==modeId||
     ![undefined,'ordinary'].includes(weapon.executionVariant)||modeId!==(weapon.standaloneModeId??weapon.catalogModeId)))
     throw Error('Нужен действующий источниковый профиль устройства, без ETC/LP.');
   if(exoticBeamProfile(modeId)){

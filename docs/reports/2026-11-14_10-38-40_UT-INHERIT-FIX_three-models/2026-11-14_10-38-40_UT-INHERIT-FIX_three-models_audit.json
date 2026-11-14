@@ -1,0 +1,867 @@
+{
+  "stage": "UT-INHERIT-FIX",
+  "createdLocal": "2026-11-14T10:38:40+03:00",
+  "moduleVersion": "0.2.3",
+  "status": "complete",
+  "sources": [
+    {
+      "book": "GURPS Ultra-Tech (2007)",
+      "libraryFile": "E:/НРИ/GURPS/BooksCodex/GURPS 4E - Ultra-Tech.pdf",
+      "printedPages": [
+        65,
+        121,
+        145,
+        146,
+        163,
+        164,
+        168,
+        169
+      ],
+      "pdfOneBasedOffset": 1
+    },
+    {
+      "book": "GURPS Basic Set: Characters",
+      "printedPages": [
+        15,
+        74
+      ],
+      "pdfOneBasedOffset": 2
+    },
+    {
+      "book": "GURPS Basic Set: Campaigns",
+      "printedPages": [
+        406,
+        413,
+        430,
+        458
+      ],
+      "pdfOneBasedOffset": -335
+    }
+  ],
+  "models": {
+    "AESA": {
+      "before": "source-manual blocked; no combat row",
+      "inheritance": "UT65 -> UT121; user-approved Tactical Disruptor combat baseline",
+      "combat": {
+        "damage": "HT-8 aff (3 yd)",
+        "acc": 18,
+        "halfRange": 600,
+        "maximum": 1200,
+        "rof": 1,
+        "skill": "Gunner (Beams)"
+      },
+      "ownExceptions": {
+        "vehiclePower": "indefinite",
+        "host": "Armored Hovercraft UT227",
+        "detectionMiles": 10
+      },
+      "notInherited": [
+        "weight",
+        "cost",
+        "D cell",
+        "shots",
+        "ST18M",
+        "Bulk-8"
+      ],
+      "legacyRepair": "read-through only; source hash and equipment ID checked; explicit overrides and stored flags unchanged",
+      "live": {
+        "gm": {
+          "messageId": "LffkZ1xkUuGmqIN0",
+          "roll": 7,
+          "loaded": false,
+          "spent": 0,
+          "resistance": [
+            {
+              "choices": {
+                "ht": 15,
+                "sm": -4,
+                "dr": 10,
+                "distance": "within",
+                "sealed": false,
+                "exposed": false
+              },
+              "result": {
+                "version": 1,
+                "effectId": "WUTTacticalAESA",
+                "attribute": "HT",
+                "base": 15,
+                "modifier": -12,
+                "sourceMessageId": "LffkZ1xkUuGmqIN0",
+                "bucketModifier": 0,
+                "finalTarget": 3,
+                "total": 8,
+                "margin": -5,
+                "success": false,
+                "criticalSuccess": false,
+                "criticalFailure": false,
+                "source": "UT65,121",
+                "ht": 15,
+                "sm": -4,
+                "dr": 10,
+                "distance": "within",
+                "sealed": false,
+                "exposed": false
+              },
+              "total": 8
+            },
+            {
+              "choices": {
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": false
+              },
+              "result": {
+                "version": 1,
+                "effectId": "WUTTacticalAESA",
+                "attribute": "HT",
+                "base": 15,
+                "modifier": 8,
+                "sourceMessageId": "LffkZ1xkUuGmqIN0",
+                "bucketModifier": 0,
+                "finalTarget": 23,
+                "total": 14,
+                "margin": 9,
+                "success": true,
+                "criticalSuccess": false,
+                "criticalFailure": false,
+                "source": "UT65,121",
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": false
+              },
+              "total": 14
+            },
+            {
+              "choices": {
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": true
+              },
+              "result": {
+                "version": 1,
+                "effectId": "WUTTacticalAESA",
+                "attribute": "HT",
+                "base": 15,
+                "modifier": -2,
+                "sourceMessageId": "LffkZ1xkUuGmqIN0",
+                "bucketModifier": 0,
+                "finalTarget": 13,
+                "total": 5,
+                "margin": 8,
+                "success": true,
+                "criticalSuccess": false,
+                "criticalFailure": false,
+                "source": "UT65,121",
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": true
+              },
+              "total": 5
+            }
+          ]
+        },
+        "owner": {
+          "messageId": "jqIufn5aOQzCxrvz",
+          "roll": 8,
+          "loaded": false,
+          "spent": 0,
+          "resistance": [
+            {
+              "choices": {
+                "ht": 15,
+                "sm": -4,
+                "dr": 10,
+                "distance": "within",
+                "sealed": false,
+                "exposed": false
+              },
+              "result": {
+                "version": 1,
+                "effectId": "WUTTacticalAESA",
+                "attribute": "HT",
+                "base": 15,
+                "modifier": -12,
+                "sourceMessageId": "jqIufn5aOQzCxrvz",
+                "bucketModifier": 0,
+                "finalTarget": 3,
+                "total": 15,
+                "margin": -12,
+                "success": false,
+                "criticalSuccess": false,
+                "criticalFailure": true,
+                "source": "UT65,121",
+                "ht": 15,
+                "sm": -4,
+                "dr": 10,
+                "distance": "within",
+                "sealed": false,
+                "exposed": false
+              },
+              "total": 15
+            },
+            {
+              "choices": {
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": false
+              },
+              "result": {
+                "version": 1,
+                "effectId": "WUTTacticalAESA",
+                "attribute": "HT",
+                "base": 15,
+                "modifier": 8,
+                "sourceMessageId": "jqIufn5aOQzCxrvz",
+                "bucketModifier": 0,
+                "finalTarget": 23,
+                "total": 15,
+                "margin": 8,
+                "success": true,
+                "criticalSuccess": false,
+                "criticalFailure": false,
+                "source": "UT65,121",
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": false
+              },
+              "total": 15
+            },
+            {
+              "choices": {
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": true
+              },
+              "result": {
+                "version": 1,
+                "effectId": "WUTTacticalAESA",
+                "attribute": "HT",
+                "base": 15,
+                "modifier": -2,
+                "sourceMessageId": "jqIufn5aOQzCxrvz",
+                "bucketModifier": 0,
+                "finalTarget": 13,
+                "total": 17,
+                "margin": -4,
+                "success": false,
+                "criticalSuccess": false,
+                "criticalFailure": true,
+                "source": "UT65,121",
+                "ht": 15,
+                "sm": 3,
+                "dr": 10,
+                "distance": "beyond",
+                "sealed": true,
+                "exposed": true
+              },
+              "total": 17
+            }
+          ]
+        }
+      }
+    },
+    "Floater": {
+      "before": "no launcher binding; explicitly excluded from execution",
+      "inheritance": "UT168 Similar to Striker; common 100mm launcher interface",
+      "warheadMm": 100,
+      "launchers": [
+        "WpvG7-bGWCtwNOPFf",
+        "WNK4gk21iQ4le2Lxr"
+      ],
+      "ownExceptions": {
+        "tl": "10^",
+        "rangeMiles": 320,
+        "rangeYards": 563200,
+        "weightLb": 5,
+        "ST": 3,
+        "DX": 14,
+        "IQ": 6,
+        "HT": 12,
+        "HP": 6,
+        "Will": 6,
+        "Per": 13,
+        "Speed": 8,
+        "Dodge": 11,
+        "SM": -4,
+        "airMove": 120,
+        "enhancedMove": 2,
+        "minutes": 10,
+        "skills": {
+          "Aerobatics": 12,
+          "Observation": 11
+        },
+        "costByTL": {
+          "10": 5000,
+          "11": 1000
+        },
+        "propulsion": "reactionless/contragravity",
+        "backblast": false
+      },
+      "matrix": [
+        {
+          "modeId": "WpvG7-bGWCtwNOPFf",
+          "candidates": 188,
+          "byTL": [
+            {
+              "tl": 10,
+              "count": 94,
+              "warheads": [
+                "solid",
+                "ut_aphc",
+                "ut_apds",
+                "ut_apep",
+                "ut_tangler",
+                "ut_biochemical_aerosol",
+                "ut_biochemical_liquid",
+                "ut_aphex",
+                "ut_flare",
+                "ut_he",
+                "ut_hec",
+                "ut_shaped_charge",
+                "ut_memory_baton",
+                "ut_monochain",
+                "ut_sefop",
+                "ut_thermobaric",
+                "ut_hemp",
+                "ut_stingray",
+                "ut_swarm",
+                "ut_aphd",
+                "ut_mininuke",
+                "ut_micro_antimatter",
+                "ut_emp",
+                "ut_expendable_jammer",
+                "ut_strobe",
+                "ut_warbler",
+                "ut_force",
+                "ut_plasma",
+                "ut_implosion",
+                "ut_psi_bomb",
+                "ut_message_psi_bomb",
+                "ut_terror_psi_bomb",
+                "ut_stasis",
+                "ut_vortex"
+              ]
+            },
+            {
+              "tl": 11,
+              "count": 94,
+              "warheads": [
+                "solid",
+                "ut_aphc",
+                "ut_apds",
+                "ut_apep",
+                "ut_tangler",
+                "ut_biochemical_aerosol",
+                "ut_biochemical_liquid",
+                "ut_aphex",
+                "ut_flare",
+                "ut_he",
+                "ut_hec",
+                "ut_shaped_charge",
+                "ut_memory_baton",
+                "ut_monochain",
+                "ut_sefop",
+                "ut_thermobaric",
+                "ut_hemp",
+                "ut_stingray",
+                "ut_swarm",
+                "ut_aphd",
+                "ut_mininuke",
+                "ut_micro_antimatter",
+                "ut_emp",
+                "ut_expendable_jammer",
+                "ut_strobe",
+                "ut_warbler",
+                "ut_force",
+                "ut_plasma",
+                "ut_implosion",
+                "ut_psi_bomb",
+                "ut_message_psi_bomb",
+                "ut_terror_psi_bomb",
+                "ut_stasis",
+                "ut_vortex"
+              ]
+            }
+          ]
+        },
+        {
+          "modeId": "WNK4gk21iQ4le2Lxr",
+          "candidates": 188,
+          "byTL": [
+            {
+              "tl": 10,
+              "count": 94,
+              "warheads": [
+                "solid",
+                "ut_aphc",
+                "ut_apds",
+                "ut_apep",
+                "ut_tangler",
+                "ut_biochemical_aerosol",
+                "ut_biochemical_liquid",
+                "ut_aphex",
+                "ut_flare",
+                "ut_he",
+                "ut_hec",
+                "ut_shaped_charge",
+                "ut_memory_baton",
+                "ut_monochain",
+                "ut_sefop",
+                "ut_thermobaric",
+                "ut_hemp",
+                "ut_stingray",
+                "ut_swarm",
+                "ut_aphd",
+                "ut_mininuke",
+                "ut_micro_antimatter",
+                "ut_emp",
+                "ut_expendable_jammer",
+                "ut_strobe",
+                "ut_warbler",
+                "ut_force",
+                "ut_plasma",
+                "ut_implosion",
+                "ut_psi_bomb",
+                "ut_message_psi_bomb",
+                "ut_terror_psi_bomb",
+                "ut_stasis",
+                "ut_vortex"
+              ]
+            },
+            {
+              "tl": 11,
+              "count": 94,
+              "warheads": [
+                "solid",
+                "ut_aphc",
+                "ut_apds",
+                "ut_apep",
+                "ut_tangler",
+                "ut_biochemical_aerosol",
+                "ut_biochemical_liquid",
+                "ut_aphex",
+                "ut_flare",
+                "ut_he",
+                "ut_hec",
+                "ut_shaped_charge",
+                "ut_memory_baton",
+                "ut_monochain",
+                "ut_sefop",
+                "ut_thermobaric",
+                "ut_hemp",
+                "ut_stingray",
+                "ut_swarm",
+                "ut_aphd",
+                "ut_mininuke",
+                "ut_micro_antimatter",
+                "ut_emp",
+                "ut_expendable_jammer",
+                "ut_strobe",
+                "ut_warbler",
+                "ut_force",
+                "ut_plasma",
+                "ut_implosion",
+                "ut_psi_bomb",
+                "ut_message_psi_bomb",
+                "ut_terror_psi_bomb",
+                "ut_stasis",
+                "ut_vortex"
+              ]
+            }
+          ]
+        }
+      ],
+      "payloadReview": {
+        "basicRule": "B15, B74: 3 * (ST^2/5)/10 lb",
+        "floaterCapacityLb": 0.54,
+        "strikerCapacityLb": 2.16,
+        "knownFullBaselineRocketLb": 25,
+        "independent100mmWarheadMass": "not separately specified by the examined table; full rocket mass is not payload mass",
+        "decision": "retain published robot weight, ST, Payload and inherited 100mm compatibility; no fabricated Lifting ST, extra mass, or capacity increase",
+        "remainingAmbiguity": "engineering mass/volume not derivable from these entries; no established specific collision prohibiting all payloads"
+      },
+      "execution": "register one physical robot launch; Artillery commands, target selection, flight and actual collision adjudicated manually under existing robot path; independent payload Damage via GGA snapshot",
+      "live": {
+        "gm": [
+          {
+            "variant": "ut_he",
+            "messageId": "grLXCWiKMVyDPmxK",
+            "formula": "6dx5 cr ex",
+            "range": "563200",
+            "spent": 1,
+            "damage": {
+              "id": "0kJlaAQWdZQ03Iur",
+              "formula": "6d6[Damage] + 0",
+              "total": 28,
+              "linked": "linked",
+              "totalMeaning": "native dice total; published multipliers and damage components are carried by GGA DamageChat separately"
+            }
+          },
+          {
+            "variant": "ut_shaped_charge",
+            "messageId": "Aj6rGXbPZu0vpwfv",
+            "formula": "6dx10(10) cr inc",
+            "range": "563200",
+            "spent": 1,
+            "damage": {
+              "id": "MnepoEhHxk7nKRBS",
+              "formula": "6d6[Damage] + 0",
+              "total": 18,
+              "linked": "linked",
+              "totalMeaning": "native dice total; published multipliers and damage components are carried by GGA DamageChat separately"
+            }
+          }
+        ],
+        "owner": [
+          {
+            "variant": "ut_he",
+            "messageId": "7xYUUMfsrEU7bEhv",
+            "formula": "6dx5 cr ex",
+            "range": "563200",
+            "spent": 1,
+            "damage": {
+              "id": "wMxDQb5qhJajBM5p",
+              "formula": "6d6[Damage] + 0",
+              "total": 18,
+              "linked": "linked",
+              "totalMeaning": "native dice total; published multipliers and damage components are carried by GGA DamageChat separately"
+            }
+          },
+          {
+            "variant": "ut_shaped_charge",
+            "messageId": "Z6LhDVnIbFffJB7v",
+            "formula": "6dx10(10) cr inc",
+            "range": "563200",
+            "spent": 1,
+            "damage": {
+              "id": "TIgHaP94WCPe8wOY",
+              "formula": "6d6[Damage] + 0",
+              "total": 20,
+              "linked": "linked",
+              "totalMeaning": "native dice total; published multipliers and damage components are carried by GGA DamageChat separately"
+            }
+          }
+        ]
+      },
+      "replayAfterF5": {
+        "gm": {
+          "role": 4,
+          "matrix": [
+            {
+              "modeId": "WpvG7-bGWCtwNOPFf",
+              "types": 188
+            }
+          ],
+          "replay": [
+            {
+              "id": "dKc7SzD3A8x1lnRd",
+              "formula": "6d6[Damage] + 0",
+              "total": 19,
+              "linked": "linked"
+            },
+            {
+              "id": "9RcvhtGeDm1xiJrI",
+              "formula": "6d6[Damage] + 0",
+              "total": 21,
+              "linked": "linked"
+            }
+          ],
+          "historyPreserved": true,
+          "resourcesPreserved": true,
+          "currentFloaterHasNoInventedMassField": true
+        },
+        "owner": {
+          "role": 1,
+          "matrix": [
+            {
+              "modeId": "WpvG7-bGWCtwNOPFf",
+              "types": 188
+            }
+          ],
+          "replay": [
+            {
+              "id": "bHoEP7qGpEOgXIe6",
+              "formula": "6d6[Damage] + 0",
+              "total": 18,
+              "linked": "linked"
+            },
+            {
+              "id": "ebXTtVreR6ZFymlE",
+              "formula": "6d6[Damage] + 0",
+              "total": 23,
+              "linked": "linked"
+            }
+          ],
+          "historyPreserved": true,
+          "resourcesPreserved": true,
+          "currentFloaterHasNoInventedMassField": true
+        }
+      }
+    },
+    "Stasis": {
+      "before": "rigid modes had power:null and powerUnspecified; no battery controls",
+      "inheritance": "UT164 identical effect to Monowire Switchblade except listed differences",
+      "power": {
+        "cell": "B",
+        "seconds": 36000,
+        "costPerCompletedAttackSeconds": 1,
+        "nonRechargeableSeconds": 72000,
+        "accounting": "existing module convention; remaining real operating time spent explicitly"
+      },
+      "ownExceptions": [
+        "TL12^",
+        "$20000",
+        "Reach C-30 / 1-30*",
+        "rigid sw+1d+R(10) cut",
+        "flexible sw+1d-1(10) cut",
+        "indestructible blade",
+        "parries force/energy"
+      ],
+      "unpowered": "rigid execution denied; flexible mode selectable and works without power; manual Ready, no automatic timer or forced selection",
+      "live": {
+        "gm": {
+          "emptyRigidDenied": true,
+          "flexible": {
+            "messageId": "XUEP9cImupI3xkv9",
+            "formula": "3d(10) cut",
+            "remaining": null,
+            "roll": 11,
+            "loaded": false
+          },
+          "restoredRigid": {
+            "messageId": "O35ZhYYH6nIMmVMI",
+            "formula": "3d+2(10) cut",
+            "remaining": 35999,
+            "roll": 12,
+            "loaded": false
+          }
+        },
+        "owner": {
+          "emptyRigidDenied": true,
+          "flexible": {
+            "messageId": "ifpERhSlnVLKPryW",
+            "formula": "3d(10) cut",
+            "remaining": null,
+            "roll": 10,
+            "loaded": false
+          },
+          "restoredRigid": {
+            "messageId": "J8VVoObR8EVjj4jP",
+            "formula": "3d+2(10) cut",
+            "remaining": 35999,
+            "roll": 15,
+            "loaded": false
+          }
+        }
+      },
+      "ownerUI": {
+        "role": 1,
+        "cancelNoWrite": true,
+        "nonRechargeableInitiallyUnchecked": true,
+        "replacementCapacity": 36000,
+        "manualSpend": 2,
+        "remaining": 35998,
+        "flexibleNoPowerControls": true,
+        "switchPreservedCharge": true,
+        "modal": false
+      },
+      "screenshot": "screenshots/stasis-b-cell-owner.png"
+    }
+  },
+  "verification": {
+    "tests": [
+      {
+        "file": "tests/ut-next-eleven.test.mjs",
+        "pass": 29,
+        "fail": 0
+      },
+      {
+        "file": "tests/ut-microwave-six.test.mjs",
+        "pass": 61,
+        "fail": 0
+      },
+      {
+        "file": "tests/melee-ut-exotic.test.mjs",
+        "pass": 60,
+        "fail": 0
+      }
+    ],
+    "totalPassed": 150,
+    "fullSuiteRun": false,
+    "initialFixtureError": "new Stasis test called AmmoService.loadState without a Foundry global; replaced with rereading standalone attack; history assertions retained; final 60/60 pass",
+    "initialSandboxSpawn": "EPERM; completed under authorized escalation",
+    "testRunnerNote": "an affinity-limited rerun was slow while the software renderer initialized; final changed files completed with direct Node runs; no skipped checks",
+    "syntaxFiles": 9,
+    "strictUtf8": true,
+    "uiDashes": "PASS",
+    "versions": {
+      "gm": {
+        "name": "OG-QA-GM",
+        "role": 4,
+        "foundry": "14.364",
+        "gga": "0.18.23",
+        "lang": "en",
+        "webgl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "maxFPS": 5
+      },
+      "owner": {
+        "name": "OG-QA-PLAYER",
+        "role": 1,
+        "foundry": "14.364",
+        "gga": "0.18.23",
+        "lang": "en",
+        "webgl": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "maxFPS": 5
+      }
+    },
+    "liveSummary": {
+      "role": 4,
+      "actors": 6,
+      "messages": 42,
+      "attackSnapshots": 15,
+      "nativeRollMessages": 32,
+      "loadedRolls": 0,
+      "perAuthor": [
+        {
+          "name": "OG-QA-GM",
+          "role": 4,
+          "attacks": 9,
+          "rollMessages": 18
+        },
+        {
+          "name": "OG-QA-PLAYER",
+          "role": 1,
+          "attacks": 6,
+          "rollMessages": 14
+        }
+      ],
+      "currentResource": 35998
+    },
+    "historyAfterF5": {
+      "gm": {
+        "snapshots": 15,
+        "snapshotsUnchanged": true,
+        "resourcesUnchanged": true
+      },
+      "owner": {
+        "snapshots": 15,
+        "snapshotsUnchanged": true,
+        "resourcesUnchanged": true
+      }
+    },
+    "originalModelRegression": {
+      "Tactical Disruptor": "GM real attack; original 50-shot D cell preserved",
+      "Striker Missile": "GM real launch and GGA Damage; original 100mm and 17 lb preserved",
+      "Monowire Switchblade": "GM real attack and GGA Damage; original B/10h and Reach5 preserved"
+    }
+  },
+  "performance": {
+    "samples": 234,
+    "maxCpuPercent": 31.605,
+    "maxGpuEnginePercent": 0.0,
+    "gpuCounterErrors": 1,
+    "actions": [
+      "none"
+    ],
+    "temporaryBytes": 170576243,
+    "headless": true,
+    "backendConfirmedBy": [
+      "CDP SystemInfo.getInfo",
+      "WebGL renderer"
+    ],
+    "gpuCounterGap": "one invalid Windows counter sample; subsequent samples resumed successfully",
+    "cpuControl": "shared one-core affinity initially; five shared cores during live QA with PID-tree monitoring; no user process constrained"
+  },
+  "cleanup": {
+    "removed": {
+      "actors": 6,
+      "tokens": 6,
+      "messages": 44,
+      "users": 0
+    },
+    "baselineActorsPreserved": true,
+    "baselineTokensPreserved": true,
+    "baselineMessagesPreserved": true,
+    "usersPreserved": true,
+    "primarySessionActive": true,
+    "leftoverActors": 0
+  },
+  "temporary": {
+    "paths": [
+      "A:/CodexTemp/ut-inherit-fix-20261114",
+      "<module>/.qa-ut-inherit"
+    ],
+    "approxPeakBytes": 170576243,
+    "removed": true,
+    "cleanupValidation": "Exact resolved paths and task-owned browser profile marker checked; no matching browser process remained."
+  },
+  "changedFiles": [
+    {
+      "path": "scripts/ut-microwave-source.js",
+      "sha256": "562bf717662ab497d0392c90e92838cb4fbaa7a72f444502ded6b7d40dd8cf26"
+    },
+    {
+      "path": "scripts/ut-next-eleven-source.js",
+      "sha256": "c63459d4e799eb612b29aefc9e5f831fc2caba7ad89062a9acfb746ff834cd30"
+    },
+    {
+      "path": "scripts/ut-exotic-melee-source.js",
+      "sha256": "53cea1aab8620a4cc3a197d05859bf6588c69fce7a5f39b412c91fff0a0d53bf"
+    },
+    {
+      "path": "scripts/tools/ut-robot-ammunition.js",
+      "sha256": "6a4224d1c91ba635189285567271ef6911a83b70e38a8a8f66e36fc53f6e9c9f"
+    },
+    {
+      "path": "scripts/tools/ammo-service.js",
+      "sha256": "f94b7ddb5bebefa71825a3920ee18e1b8a4f854f9d0e43b9a1342de22a293343"
+    },
+    {
+      "path": "scripts/tools/weapon-power.js",
+      "sha256": "45b55df44663075bc3216987c93e8800a7d4be2514891aef66ad1bdfae9772dd"
+    },
+    {
+      "path": "scripts/tools/standalone-weapon-service.js",
+      "sha256": "0e5224d3b80bf4f1d948fd26decac725c49d573f1820199025993aeb20865f9b"
+    },
+    {
+      "path": "tests/ut-next-eleven.test.mjs",
+      "sha256": "c826ed500933a7a277a3ffd6126e3533dc7d3ef15a0f0ef83bfb877242bdf37b"
+    },
+    {
+      "path": "tests/melee-ut-exotic.test.mjs",
+      "sha256": "53b75348f8ef709d2403fad8e536485ca0d5c4c484276080b329c0aa28598084"
+    }
+  ],
+  "constraints": {
+    "actorSystemUserWrites": false,
+    "GgaGcsEdits": false,
+    "commit": false,
+    "push": false,
+    "tag": false,
+    "release": false,
+    "versionChanged": false,
+    "unrelatedUserChangesPreserved": true
+  }
+}

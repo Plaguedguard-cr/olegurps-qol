@@ -1,8 +1,8 @@
 {
   "id": "olegurps-qol",
   "title": "OleGURPS QOL",
-  "description": "Набор инструментов качества жизни для GURPS Game Aid: оружие и патроны, проверка страха, реакции, критические таблицы и урон от падения.",
-  "version": "0.2.3",
+  "description": "Набор инструментов качества жизни для GURPS Game Aid: оружие и патроны, проверка страха, реакции, критические таблицы, падения и столкновения.",
+  "version": "0.2.3a",
   "authors": [
     { "name": "Олег" }
   ],
@@ -45,5 +45,5 @@
   ],
   "url": "https://github.com/Plaguedguard-cr/olegurps-qol",
   "manifest": "https://github.com/Plaguedguard-cr/olegurps-qol/releases/latest/download/module.json",
-  "download": "https://github.com/Plaguedguard-cr/olegurps-qol/releases/download/v0.2.3/olegurps-qol-v0.2.3.zip"
+  "download": "https://github.com/Plaguedguard-cr/olegurps-qol/releases/download/v0.2.3a/olegurps-qol-v0.2.3a.zip"
 }

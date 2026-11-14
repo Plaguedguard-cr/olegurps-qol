@@ -1,0 +1,3737 @@
+{
+  "task": "FALL-COLLISION",
+  "timestamp": "2026-11-14_12-02-15",
+  "timezone": "Europe/Moscow",
+  "versionChanged": false,
+  "commitPushTagRelease": false,
+  "sources": [
+    {
+      "book": "GURPS Basic Set 4e: Campaigns",
+      "localFile": "GURPS 4E - Basic Set - Campaigns.pdf",
+      "sha256": "79cff8f75b91b4ba72e7947320bf98e184515e60108bda0f0891d379b3c96e80",
+      "pages": [
+        {
+          "printed": 378,
+          "pdf": 43
+        },
+        {
+          "printed": 430,
+          "pdf": 95
+        },
+        {
+          "printed": 431,
+          "pdf": 96
+        },
+        {
+          "printed": 432,
+          "pdf": 97
+        }
+      ]
+    },
+    {
+      "book": "GURPS Basic Set 4e: Characters",
+      "localFile": "GURPS 4E - Basic Set - Characters.pdf",
+      "sha256": "1839c304b65d954fb6c6a20b64e206cc908ad38601f6c0650a405d6d974c683c",
+      "pages": [
+        {
+          "printed": 9,
+          "pdf": 11
+        },
+        {
+          "printed": 16,
+          "pdf": 18
+        }
+      ]
+    }
+  ],
+  "tests": {
+    "new": {
+      "file": "tests/fall-collision.test.mjs",
+      "pass": 82,
+      "fail": 0
+    },
+    "related": {
+      "files": [
+        "tests/unified-launcher.test.mjs",
+        "tests/explosive-ammunition.test.mjs",
+        "tests/strength-41-99.test.mjs",
+        "tests/russian-ui-audit.test.mjs"
+      ],
+      "pass": 63,
+      "fail": 0
+    },
+    "total": 145,
+    "fullSuite": false,
+    "runner": "node --test --experimental-test-isolation=none --test-concurrency=1",
+    "initialRunnerFailure": "Process-isolated runner was blocked by spawn EPERM; rerun without process isolation.",
+    "syntaxPassed": true,
+    "uiDashesPassed": true,
+    "live": [
+      {
+        "file": "live-gm-checks.json",
+        "out": [
+          {
+            "name": "Legacy pressure/gravity preserved",
+            "pass": true
+          },
+          {
+            "name": "Legacy custom terminal migrated on read",
+            "pass": true
+          },
+          {
+            "name": "Open is read-only",
+            "pass": true
+          },
+          {
+            "name": "Object values survive mode switch",
+            "pass": true
+          },
+          {
+            "name": "Only active mode is enabled",
+            "pass": true
+          },
+          {
+            "name": "Fall values survive tabs",
+            "pass": true
+          },
+          {
+            "name": "Breakable fields visible when enabled",
+            "pass": true
+          },
+          {
+            "name": "Breakable fields hidden and excluded when off",
+            "pass": true
+          },
+          {
+            "name": "Cancel does not write drafts",
+            "pass": true
+          },
+          {
+            "name": "Invalid input emits no chat/flags",
+            "pass": true
+          },
+          {
+            "name": "Fresh pressure=1, gravity=.138",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 2к дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 1 ярдов</strong></p>\n    <p>Урон: <strong>2к дробящего</strong>.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">1 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">1 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">1G / 1 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 1 × 1) = 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √1 / √1 = 80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">15</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">30</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">30 × 5 / 100 = 1,5к → 2к</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 0 дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 3 ярдов</strong></p>\n    <p>Урон: <strong>0 дробящего</strong>.</p><p>Успешная акробатика: −5 ярдов.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">3 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">0 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">1G / 1 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 1 × 0) = 0 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √1 / √1 = 80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">0 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">15</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">30</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">30 × 0 / 100 = 0к → 0</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: не более 5",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 22 ярдов</strong></p>\n    <p>Урон: <strong>4к дробящего</strong>.</p><p>Успешная акробатика: −5 ярдов.</p><p>Разрушаемая преграда: не более 5 повреждений в обе стороны.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">22 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">17 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">1G / 1 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 1 × 17) = 19 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √1 / √1 = 80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">19 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">20</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">20 × 19 / 100 = 3,8к → 4к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Предел HP + DR (B431)</th><td style=\"padding:3px 5px\">3 + 2 = 5. К выпавшим повреждениям объекта и преграды применить min(результат, 5); это предел в пунктах, а не кубиках.</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: A → B: <strong>2к",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – С объектом</strong></p>\n    <p>Скорость столкновения: 15 ярдов/с.</p><p>A → B: <strong>2к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Лобовое</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">100 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">5 / 10 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">vA + vB = 15 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">100 × 15 / 100 = 15к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 15 / 100 = 1,5к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">A: кубики ограничены уроном другого участника (более медленный участник)</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 1,5к → 2к; B → A: 1,5к → 2к</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Head-on reciprocal cap in chat",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 2к дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – С препятствием</strong></p>\n    <p>Скорость столкновения: 19 ярдов/с.</p><p>Объекту и препятствию: <strong>2к дробящего</strong>.</p><p>Разрушаемая преграда: не более 5 повреждений в обе стороны.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Мягкая – обычные HP</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">10 × 19 / 100 = 1,9к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Предел HP + DR (B431)</th><td style=\"padding:3px 5px\">3 + 2 = 5. К выпавшим повреждениям объекта и преграды применить min(результат, 5); это предел в пунктах, а не кубиках.</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 3к дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – Наезд (Overrun)</strong></p>\n    <p>Скорость столкновения: 20 ярдов/с.</p><p>A → B: <strong>12к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p><p>Дополнительно A → B (Overrun): <strong>3к дробящего</strong>.</p><p>SM объекта A больше SM цели минимум на 2 (B432).</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Удар сзади</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">60 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">25 / 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">max(0, vA − vB) = 20 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">60 × 20 / 100 = 12к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 20 / 100 = 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">Дополнительное ограничение кубиков не потребовалось</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 12к → 12к; B → A: 2к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">SM A / SM B</th><td style=\"padding:3px 5px\">2 / 0</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Overrun (B432; B9; B16)</th><td style=\"padding:3px 5px\">⌊60 HP / 2⌋ = ST 30; thrust = 3к. SM объекта A больше SM цели минимум на 2 (B432).</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "HP Overrun additional result",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 1к−1 дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – Наезд (Overrun)</strong></p>\n    <p>Скорость столкновения: 20 ярдов/с.</p><p>A → B: <strong>12к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p><p>Дополнительно A → B (Overrun): <strong>1к−1 дробящего</strong>.</p><p>SM объекта A больше SM цели минимум на 2 (B432).</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Удар сзади</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">60 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">25 / 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">max(0, vA − vB) = 20 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">60 × 20 / 100 = 12к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 20 / 100 = 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">Дополнительное ограничение кубиков не потребовалось</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 12к → 12к; B → A: 2к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">SM A / SM B</th><td style=\"padding:3px 5px\">2 / 0</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Overrun (B432; B9; B16)</th><td style=\"padding:3px 5px\">⌊25 ST / 2⌋ = ST 12; thrust = 1к−1. SM объекта A больше SM цели минимум на 2 (B432).</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: Разница SM меньше 2",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – Наезд (Overrun)</strong></p>\n    <p>Скорость столкновения: 20 ярдов/с.</p><p>A → B: <strong>12к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p><p>Дополнительный урон Overrun не рассчитан.</p><p>Разница SM меньше 2.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Удар сзади</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">60 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">25 / 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">max(0, vA − vB) = 20 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">60 × 20 / 100 = 12к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 20 / 100 = 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">Дополнительное ограничение кубиков не потребовалось</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 12к → 12к; B → A: 2к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">SM A / SM B</th><td style=\"padding:3px 5px\">1 / 0</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Overrun (B432; B9; B16)</th><td style=\"padding:3px 5px\">⌊25 ST / 2⌋ = ST 12. Разница SM меньше 2.</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "No extra Overrun below threshold",
+            "pass": true
+          },
+          {
+            "name": "Reopen retains current mode and ST",
+            "pass": true
+          },
+          {
+            "name": "All Actor.system values preserved",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM",
+        "attacks": 8,
+        "saved": {
+          "gravity": "1",
+          "pressure": "1",
+          "height": "22",
+          "hp": "10",
+          "fallType": "normal",
+          "customTerminal": "120",
+          "hardSurface": true,
+          "acrobatics": true,
+          "breakable": true,
+          "barrierHp": "3",
+          "barrierDr": "2",
+          "tab": "collision",
+          "collisionMode": "overrun",
+          "object": {
+            "hpA": "100",
+            "hpB": "10",
+            "speedA": "5",
+            "speedB": "10",
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": "10",
+            "speed": "19",
+            "hardSurface": false,
+            "breakable": true,
+            "barrierHp": "3",
+            "barrierDr": "2"
+          },
+          "overrun": {
+            "hpA": "60",
+            "hpB": "10",
+            "speedA": "25",
+            "speedB": "5",
+            "angle": "rearEnd",
+            "smA": "1",
+            "smB": "0",
+            "st": "25"
+          },
+          "terminalEarth": 80
+        }
+      },
+      {
+        "file": "live-gm-close.json",
+        "out": [],
+        "user": "OG-QA-GM",
+        "stage": "close",
+        "viewport": [
+          1300,
+          1100
+        ]
+      },
+      {
+        "file": "live-gm-fall.json",
+        "out": [
+          {
+            "name": "Shared stylesheet applied",
+            "pass": true
+          },
+          {
+            "name": "Footer reachable",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM",
+        "stage": "fall",
+        "viewport": [
+          1300,
+          1100
+        ]
+      },
+      {
+        "file": "live-gm-init.json",
+        "out": [
+          {
+            "name": "Foundry/GGA versions",
+            "pass": true
+          },
+          {
+            "name": "No scene or combat dependency",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM",
+        "role": 4,
+        "noCanvas": true,
+        "activeScene": null
+      },
+      {
+        "file": "live-gm-isolation.json",
+        "out": [
+          {
+            "name": "Chat created: дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 19 ярдов</strong></p>\n    <p>Урон: <strong>1к дробящего</strong>.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">19 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">19 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">0,138G / 1,7 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 0,138 × 19) = 7 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √0,138 / √1,7 = 22,7932 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">7 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">20</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">20 × 7 / 100 = 1,4к → 1к</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Other user flags untouched",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM"
+      },
+      {
+        "file": "live-gm-language-en.json",
+        "out": [
+          {
+            "name": "Module form stays Russian under en",
+            "pass": true
+          }
+        ]
+      },
+      {
+        "file": "live-gm-macro.json",
+        "out": [
+          {
+            "name": "Existing compendium macro opens same helper",
+            "pass": true
+          },
+          {
+            "name": "Macro cancellation read-only",
+            "pass": true
+          }
+        ],
+        "macroId": "OQfalling0000001",
+        "command": "game.olegurpsQOL.falling.open();"
+      },
+      {
+        "file": "live-gm-object.json",
+        "out": [
+          {
+            "name": "Shared stylesheet applied",
+            "pass": true
+          },
+          {
+            "name": "Footer reachable",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM",
+        "stage": "object",
+        "viewport": [
+          1300,
+          1100
+        ]
+      },
+      {
+        "file": "live-gm-obstacle.json",
+        "out": [
+          {
+            "name": "Shared stylesheet applied",
+            "pass": true
+          },
+          {
+            "name": "Footer reachable",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM",
+        "stage": "obstacle",
+        "viewport": [
+          1300,
+          1100
+        ]
+      },
+      {
+        "file": "live-gm-overrun.json",
+        "out": [
+          {
+            "name": "Shared stylesheet applied",
+            "pass": true
+          },
+          {
+            "name": "Footer reachable",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM",
+        "stage": "overrun",
+        "viewport": [
+          1300,
+          1100
+        ]
+      },
+      {
+        "file": "live-gm-persist.json",
+        "out": [
+          {
+            "name": "F5 retained mode/ST/SM",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-GM"
+      },
+      {
+        "file": "live-owner-checks.json",
+        "out": [
+          {
+            "name": "Legacy pressure/gravity preserved",
+            "pass": true
+          },
+          {
+            "name": "Legacy custom terminal migrated on read",
+            "pass": true
+          },
+          {
+            "name": "Open is read-only",
+            "pass": true
+          },
+          {
+            "name": "Object values survive mode switch",
+            "pass": true
+          },
+          {
+            "name": "Only active mode is enabled",
+            "pass": true
+          },
+          {
+            "name": "Fall values survive tabs",
+            "pass": true
+          },
+          {
+            "name": "Breakable fields visible when enabled",
+            "pass": true
+          },
+          {
+            "name": "Breakable fields hidden and excluded when off",
+            "pass": true
+          },
+          {
+            "name": "Cancel does not write drafts",
+            "pass": true
+          },
+          {
+            "name": "Invalid input emits no chat/flags",
+            "pass": true
+          },
+          {
+            "name": "Fresh pressure=1, gravity=.138",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 2к дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 1 ярдов</strong></p>\n    <p>Урон: <strong>2к дробящего</strong>.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">1 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">1 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">1G / 1 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 1 × 1) = 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √1 / √1 = 80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">15</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">30</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">30 × 5 / 100 = 1,5к → 2к</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 0 дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 3 ярдов</strong></p>\n    <p>Урон: <strong>0 дробящего</strong>.</p><p>Успешная акробатика: −5 ярдов.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">3 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">0 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">1G / 1 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 1 × 0) = 0 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √1 / √1 = 80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">0 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">15</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">30</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">30 × 0 / 100 = 0к → 0</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: не более 5",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 22 ярдов</strong></p>\n    <p>Урон: <strong>4к дробящего</strong>.</p><p>Успешная акробатика: −5 ярдов.</p><p>Разрушаемая преграда: не более 5 повреждений в обе стороны.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">22 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">17 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">1G / 1 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 1 × 17) = 19 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √1 / √1 = 80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">19 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">20</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">20 × 19 / 100 = 3,8к → 4к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Предел HP + DR (B431)</th><td style=\"padding:3px 5px\">3 + 2 = 5. К выпавшим повреждениям объекта и преграды применить min(результат, 5); это предел в пунктах, а не кубиках.</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: A → B: <strong>2к",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – С объектом: Лобовое</strong></p>\n    <p>Скорость столкновения: 15 ярдов/с.</p><p>A → B: <strong>2к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Лобовое</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">100 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">5 / 10 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">vA + vB = 15 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">100 × 15 / 100 = 15к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 15 / 100 = 1,5к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">A: кубики ограничены уроном другого участника (более медленный участник)</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 1,5к → 2к; B → A: 1,5к → 2к</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Head-on reciprocal cap in chat",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 2к дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – С препятствием</strong></p>\n    <p>Скорость столкновения: 19 ярдов/с.</p><p>Объекту и препятствию: <strong>2к дробящего</strong>.</p><p>Разрушаемая преграда: не более 5 повреждений в обе стороны.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Мягкая – обычные HP</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">10 × 19 / 100 = 1,9к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Предел HP + DR (B431)</th><td style=\"padding:3px 5px\">3 + 2 = 5. К выпавшим повреждениям объекта и преграды применить min(результат, 5); это предел в пунктах, а не кубиках.</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 3к дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – Наезд (Overrun): Удар сзади</strong></p>\n    <p>Скорость столкновения: 20 ярдов/с.</p><p>A → B: <strong>12к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p><p>Дополнительно A → B (Overrun): <strong>3к дробящего</strong>.</p><p>SM объекта A больше SM цели минимум на 2 (B432).</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Удар сзади</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">60 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">25 / 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">max(0, vA − vB) = 20 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">60 × 20 / 100 = 12к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 20 / 100 = 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">Дополнительное ограничение кубиков не потребовалось</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 12к → 12к; B → A: 2к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">SM A / SM B</th><td style=\"padding:3px 5px\">2 / 0</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Overrun (B432; B9; B16)</th><td style=\"padding:3px 5px\">⌊60 HP / 2⌋ = ST 30; thrust = 3к. SM объекта A больше SM цели минимум на 2 (B432).</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "HP Overrun additional result",
+            "pass": true
+          },
+          {
+            "name": "Chat created: 1к−1 дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – Наезд (Overrun): Удар сзади</strong></p>\n    <p>Скорость столкновения: 20 ярдов/с.</p><p>A → B: <strong>12к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p><p>Дополнительно A → B (Overrun): <strong>1к−1 дробящего</strong>.</p><p>SM объекта A больше SM цели минимум на 2 (B432).</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Удар сзади</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">60 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">25 / 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">max(0, vA − vB) = 20 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">60 × 20 / 100 = 12к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 20 / 100 = 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">Дополнительное ограничение кубиков не потребовалось</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 12к → 12к; B → A: 2к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">SM A / SM B</th><td style=\"padding:3px 5px\">2 / 0</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Overrun (B432; B9; B16)</th><td style=\"padding:3px 5px\">⌊25 ST / 2⌋ = ST 12; thrust = 1к−1. SM объекта A больше SM цели минимум на 2 (B432).</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Chat created: Разница SM меньше 2",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Столкновение – Наезд (Overrun): Удар сзади</strong></p>\n    <p>Скорость столкновения: 20 ярдов/с.</p><p>A → B: <strong>12к дробящего</strong>; B → A: <strong>2к дробящего</strong>.</p><p>Дополнительный урон Overrun не рассчитан.</p><p>Разница SM меньше 2.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Характер столкновения</th><td style=\"padding:3px 5px\">Удар сзади</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP A / HP B</th><td style=\"padding:3px 5px\">60 / 10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость A / скорость B</th><td style=\"padding:3px 5px\">25 / 5 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения (B432)</th><td style=\"padding:3px 5px\">max(0, vA − vB) = 20 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">A → B до ограничения</th><td style=\"padding:3px 5px\">60 × 20 / 100 = 12к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">B → A до ограничения</th><td style=\"padding:3px 5px\">10 × 20 / 100 = 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничения B432</th><td style=\"padding:3px 5px\">Дополнительное ограничение кубиков не потребовалось</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">После ограничения и округления</th><td style=\"padding:3px 5px\">A → B: 12к → 12к; B → A: 2к → 2к</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">SM A / SM B</th><td style=\"padding:3px 5px\">1 / 0</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Overrun (B432; B9; B16)</th><td style=\"padding:3px 5px\">⌊25 ST / 2⌋ = ST 12. Разница SM меньше 2.</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "No extra Overrun below threshold",
+            "pass": true
+          },
+          {
+            "name": "Reopen retains current mode and ST",
+            "pass": true
+          },
+          {
+            "name": "All Actor.system values preserved",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-PLAYER",
+        "attacks": 8,
+        "saved": {
+          "gravity": "1",
+          "pressure": "1",
+          "height": "22",
+          "hp": "10",
+          "fallType": "normal",
+          "customTerminal": "120",
+          "hardSurface": true,
+          "acrobatics": true,
+          "breakable": true,
+          "barrierHp": "3",
+          "barrierDr": "2",
+          "tab": "collision",
+          "collisionMode": "overrun",
+          "object": {
+            "hpA": "100",
+            "hpB": "10",
+            "speedA": "5",
+            "speedB": "10",
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": "10",
+            "speed": "19",
+            "hardSurface": false,
+            "breakable": true,
+            "barrierHp": "3",
+            "barrierDr": "2"
+          },
+          "overrun": {
+            "hpA": "60",
+            "hpB": "10",
+            "speedA": "25",
+            "speedB": "5",
+            "angle": "rearEnd",
+            "smA": "1",
+            "smB": "0",
+            "st": "25"
+          },
+          "terminalEarth": 80
+        }
+      },
+      {
+        "file": "live-owner-init.json",
+        "out": [
+          {
+            "name": "Foundry/GGA versions",
+            "pass": true
+          },
+          {
+            "name": "No scene or combat dependency",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-PLAYER",
+        "role": 1,
+        "noCanvas": true,
+        "activeScene": null
+      },
+      {
+        "file": "live-owner-isolation.json",
+        "out": [
+          {
+            "name": "Chat created: дробящего",
+            "pass": true,
+            "detail": "<div class=\"olegurps-fall-collision\" style=\"font-size:.88em;line-height:1.3\"><h3>Падения и столкновения</h3><p><strong>Падение с 19 ярдов</strong></p>\n    <p>Урон: <strong>1к дробящего</strong>.</p>\n    <details class=\"olegurps-chat-details olegurps-falling-calculation\"><summary>Расчёт</summary><table style=\"width:100%;border-collapse:collapse\"><tbody><tr><th style=\"text-align:left;padding:3px 5px\">Исходная высота</th><td style=\"padding:3px 5px\">19 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Эффективная высота</th><td style=\"padding:3px 5px\">19 ярдов</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Гравитация / давление</th><td style=\"padding:3px 5px\">0,138G / 2,3 атм.</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Положение тела / форма</th><td style=\"padding:3px 5px\">Человек – обычное падение</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Земная конечная скорость</th><td style=\"padding:3px 5px\">80 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Свободное падение (B431)</th><td style=\"padding:3px 5px\">округление √(21.4 × 0,138 × 19) = 7 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Местная конечная скорость</th><td style=\"padding:3px 5px\">80 × √0,138 / √2,3 = 19,5959 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Ограничение конечной скоростью</th><td style=\"padding:3px 5px\">Не достигнута</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Скорость столкновения</th><td style=\"padding:3px 5px\">7 ярдов/с</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP движущегося объекта</th><td style=\"padding:3px 5px\">10</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Поверхность</th><td style=\"padding:3px 5px\">Твёрдая – HP × 2</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">HP для расчёта</th><td style=\"padding:3px 5px\">20</td></tr><tr><th style=\"text-align:left;padding:3px 5px\">Кубики (B430–431)</th><td style=\"padding:3px 5px\">20 × 7 / 100 = 1,4к → 1к</td></tr></tbody></table></details></div>"
+          },
+          {
+            "name": "Calculation closed by default",
+            "pass": true
+          },
+          {
+            "name": "Other user flags untouched",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-PLAYER"
+      },
+      {
+        "file": "live-owner-language-en.json",
+        "out": [
+          {
+            "name": "Module form stays Russian under en",
+            "pass": true
+          }
+        ]
+      },
+      {
+        "file": "live-owner-macro.json",
+        "out": [
+          {
+            "name": "Existing compendium macro opens same helper",
+            "pass": true
+          },
+          {
+            "name": "Macro cancellation read-only",
+            "pass": true
+          }
+        ],
+        "macroId": "OQfalling0000001",
+        "command": "game.olegurpsQOL.falling.open();"
+      },
+      {
+        "file": "live-owner-persist.json",
+        "out": [
+          {
+            "name": "F5 retained mode/ST/SM",
+            "pass": true
+          }
+        ],
+        "user": "OG-QA-PLAYER"
+      }
+    ],
+    "examples": [
+      {
+        "name": "1G, height1, HP15, hard",
+        "input": {
+          "gravity": 1,
+          "pressure": 1,
+          "height": 1,
+          "hp": 15,
+          "fallType": "normal",
+          "customTerminal": 120,
+          "hardSurface": true,
+          "acrobatics": false,
+          "breakable": false,
+          "barrierHp": 10,
+          "barrierDr": 0,
+          "tab": "fall",
+          "collisionMode": "object",
+          "object": {
+            "hpA": 10,
+            "hpB": 10,
+            "speedA": 5,
+            "speedB": 5,
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": 10,
+            "speed": 5,
+            "hardSurface": true,
+            "breakable": false,
+            "barrierHp": 10,
+            "barrierDr": 0
+          },
+          "overrun": {
+            "hpA": 60,
+            "hpB": 10,
+            "speedA": 25,
+            "speedB": 5,
+            "angle": "rearEnd",
+            "smA": 2,
+            "smB": 0,
+            "st": ""
+          }
+        },
+        "expected": {
+          "speed": 5,
+          "damage": "2d"
+        },
+        "actual": {
+          "speed": 5,
+          "damage": "2d"
+        },
+        "pass": true
+      },
+      {
+        "name": "B431 example, 17 yd, HP10",
+        "input": {
+          "gravity": 1,
+          "pressure": 1,
+          "height": 17,
+          "hp": 10,
+          "fallType": "normal",
+          "customTerminal": 120,
+          "hardSurface": true,
+          "acrobatics": false,
+          "breakable": false,
+          "barrierHp": 10,
+          "barrierDr": 0,
+          "tab": "fall",
+          "collisionMode": "object",
+          "object": {
+            "hpA": 10,
+            "hpB": 10,
+            "speedA": 5,
+            "speedB": 5,
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": 10,
+            "speed": 5,
+            "hardSurface": true,
+            "breakable": false,
+            "barrierHp": 10,
+            "barrierDr": 0
+          },
+          "overrun": {
+            "hpA": 60,
+            "hpB": 10,
+            "speedA": 25,
+            "speedB": 5,
+            "angle": "rearEnd",
+            "smA": 2,
+            "smB": 0,
+            "st": ""
+          }
+        },
+        "expected": {
+          "speed": 19,
+          "damage": "4d"
+        },
+        "actual": {
+          "speed": 19,
+          "damage": "4d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Legacy gravity .138G, 19 yd",
+        "input": {
+          "gravity": 0.138,
+          "pressure": 1,
+          "height": 19,
+          "hp": 10,
+          "fallType": "normal",
+          "customTerminal": 120,
+          "hardSurface": true,
+          "acrobatics": false,
+          "breakable": false,
+          "barrierHp": 10,
+          "barrierDr": 0,
+          "tab": "fall",
+          "collisionMode": "object",
+          "object": {
+            "hpA": 10,
+            "hpB": 10,
+            "speedA": 5,
+            "speedB": 5,
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": 10,
+            "speed": 5,
+            "hardSurface": true,
+            "breakable": false,
+            "barrierHp": 10,
+            "barrierDr": 0
+          },
+          "overrun": {
+            "hpA": 60,
+            "hpB": 10,
+            "speedA": 25,
+            "speedB": 5,
+            "angle": "rearEnd",
+            "smA": 2,
+            "smB": 0,
+            "st": ""
+          }
+        },
+        "expected": {
+          "speed": 7,
+          "damage": "1d"
+        },
+        "actual": {
+          "speed": 7,
+          "damage": "1d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Acrobatics below 5 yd",
+        "input": {
+          "gravity": 1,
+          "pressure": 1,
+          "height": 3,
+          "hp": 10,
+          "fallType": "normal",
+          "customTerminal": 120,
+          "hardSurface": true,
+          "acrobatics": true,
+          "breakable": false,
+          "barrierHp": 10,
+          "barrierDr": 0,
+          "tab": "fall",
+          "collisionMode": "object",
+          "object": {
+            "hpA": 10,
+            "hpB": 10,
+            "speedA": 5,
+            "speedB": 5,
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": 10,
+            "speed": 5,
+            "hardSurface": true,
+            "breakable": false,
+            "barrierHp": 10,
+            "barrierDr": 0
+          },
+          "overrun": {
+            "hpA": 60,
+            "hpB": 10,
+            "speedA": 25,
+            "speedB": 5,
+            "angle": "rearEnd",
+            "smA": 2,
+            "smB": 0,
+            "st": ""
+          }
+        },
+        "expected": {
+          "speed": 0,
+          "damage": "0"
+        },
+        "actual": {
+          "speed": 0,
+          "damage": "0"
+        },
+        "pass": true
+      },
+      {
+        "name": "Acrobatics 22 yd, barrier3+2",
+        "input": {
+          "gravity": 1,
+          "pressure": 1,
+          "height": 22,
+          "hp": 10,
+          "fallType": "normal",
+          "customTerminal": 120,
+          "hardSurface": true,
+          "acrobatics": true,
+          "breakable": true,
+          "barrierHp": 3,
+          "barrierDr": 2,
+          "tab": "fall",
+          "collisionMode": "object",
+          "object": {
+            "hpA": 10,
+            "hpB": 10,
+            "speedA": 5,
+            "speedB": 5,
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": 10,
+            "speed": 5,
+            "hardSurface": true,
+            "breakable": false,
+            "barrierHp": 10,
+            "barrierDr": 0
+          },
+          "overrun": {
+            "hpA": 60,
+            "hpB": 10,
+            "speedA": 25,
+            "speedB": 5,
+            "angle": "rearEnd",
+            "smA": 2,
+            "smB": 0,
+            "st": ""
+          }
+        },
+        "expected": {
+          "speed": 19,
+          "damage": "4d",
+          "cap": 5
+        },
+        "actual": {
+          "speed": 19,
+          "damage": "4d",
+          "cap": 5
+        },
+        "pass": true
+      },
+      {
+        "name": "Vacuum 10000 yd",
+        "input": {
+          "gravity": 1,
+          "pressure": 0,
+          "height": 10000,
+          "hp": 10,
+          "fallType": "normal",
+          "customTerminal": 120,
+          "hardSurface": true,
+          "acrobatics": false,
+          "breakable": false,
+          "barrierHp": 10,
+          "barrierDr": 0,
+          "tab": "fall",
+          "collisionMode": "object",
+          "object": {
+            "hpA": 10,
+            "hpB": 10,
+            "speedA": 5,
+            "speedB": 5,
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": 10,
+            "speed": 5,
+            "hardSurface": true,
+            "breakable": false,
+            "barrierHp": 10,
+            "barrierDr": 0
+          },
+          "overrun": {
+            "hpA": 60,
+            "hpB": 10,
+            "speedA": 25,
+            "speedB": 5,
+            "angle": "rearEnd",
+            "smA": 2,
+            "smB": 0,
+            "st": ""
+          }
+        },
+        "expected": {
+          "speed": 463,
+          "damage": "93d"
+        },
+        "actual": {
+          "speed": 463,
+          "damage": "93d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Terminal 10000 yd",
+        "input": {
+          "gravity": 1,
+          "pressure": 1,
+          "height": 10000,
+          "hp": 10,
+          "fallType": "normal",
+          "customTerminal": 120,
+          "hardSurface": true,
+          "acrobatics": false,
+          "breakable": false,
+          "barrierHp": 10,
+          "barrierDr": 0,
+          "tab": "fall",
+          "collisionMode": "object",
+          "object": {
+            "hpA": 10,
+            "hpB": 10,
+            "speedA": 5,
+            "speedB": 5,
+            "angle": "headOn"
+          },
+          "obstacle": {
+            "hp": 10,
+            "speed": 5,
+            "hardSurface": true,
+            "breakable": false,
+            "barrierHp": 10,
+            "barrierDr": 0
+          },
+          "overrun": {
+            "hpA": 60,
+            "hpB": 10,
+            "speedA": 25,
+            "speedB": 5,
+            "angle": "rearEnd",
+            "smA": 2,
+            "smB": 0,
+            "st": ""
+          }
+        },
+        "expected": {
+          "speed": 80,
+          "damage": "16d"
+        },
+        "actual": {
+          "speed": 80,
+          "damage": "16d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Slower A head-on cap",
+        "mode": "object",
+        "input": {
+          "hpA": 100,
+          "hpB": 10,
+          "speedA": 5,
+          "speedB": 10,
+          "angle": "headOn"
+        },
+        "expected": {
+          "speed": 15,
+          "toB": "2d",
+          "toA": "2d"
+        },
+        "actual": {
+          "speed": 15,
+          "toB": "2d",
+          "toA": "2d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Book rear-end",
+        "mode": "object",
+        "input": {
+          "hpA": 60,
+          "hpB": 10,
+          "speedA": 25,
+          "speedB": 5,
+          "angle": "rearEnd",
+          "smA": 2,
+          "smB": 0,
+          "st": ""
+        },
+        "expected": {
+          "speed": 20,
+          "toB": "12d",
+          "toA": "2d"
+        },
+        "actual": {
+          "speed": 20,
+          "toB": "12d",
+          "toA": "2d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Side-on response cap",
+        "mode": "object",
+        "input": {
+          "hpA": 10,
+          "hpB": 100,
+          "speedA": 10,
+          "speedB": 99,
+          "angle": "sideOn"
+        },
+        "expected": {
+          "speed": 10,
+          "toB": "1d",
+          "toA": "1d"
+        },
+        "actual": {
+          "speed": 10,
+          "toB": "1d",
+          "toA": "1d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Overrun via HP",
+        "mode": "overrun",
+        "input": {
+          "hpA": 60,
+          "hpB": 10,
+          "speedA": 25,
+          "speedB": 5,
+          "angle": "rearEnd",
+          "smA": 2,
+          "smB": 0,
+          "st": ""
+        },
+        "expected": {
+          "speed": 20,
+          "toB": "12d",
+          "toA": "2d",
+          "extra": "3d"
+        },
+        "actual": {
+          "speed": 20,
+          "toB": "12d",
+          "toA": "2d",
+          "extra": "3d"
+        },
+        "pass": true
+      },
+      {
+        "name": "Overrun via ST25",
+        "mode": "overrun",
+        "input": {
+          "hpA": 60,
+          "hpB": 10,
+          "speedA": 25,
+          "speedB": 5,
+          "angle": "rearEnd",
+          "smA": 2,
+          "smB": 0,
+          "st": 25
+        },
+        "expected": {
+          "speed": 20,
+          "toB": "12d",
+          "toA": "2d",
+          "extra": "1d-1"
+        },
+        "actual": {
+          "speed": 20,
+          "toB": "12d",
+          "toA": "2d",
+          "extra": "1d-1"
+        },
+        "pass": true
+      }
+    ]
+  },
+  "resources": {
+    "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "devices": [
+      {
+        "vendorId": 65535,
+        "deviceId": 65535,
+        "subSysId": 0,
+        "revision": 0,
+        "vendorString": "Google Inc. (Google)",
+        "deviceString": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver-5.0.0)",
+        "driverVendor": "SwANGLE",
+        "driverVersion": "5.0.0"
+      }
+    ],
+    "samples": 301,
+    "maxCpuPercent": 78.094,
+    "maxCpuAfterMitigation": 46.841,
+    "maxGpuPercent": 0,
+    "breaches": [
+      {
+        "at": "2026-11-14T12:01:41.2710761+03:00",
+        "cpuPercent": 78.094,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "reduced-all-owned-affinity-to-one-core",
+        "jobAssignmentFailures": 0
+      }
+    ],
+    "series": [
+      {
+        "at": "2026-11-14T12:01:37.0002231+03:00",
+        "cpuPercent": 0,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:01:41.2710761+03:00",
+        "cpuPercent": 78.094,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "reduced-all-owned-affinity-to-one-core",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:01:45.4378415+03:00",
+        "cpuPercent": 26.609,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:01:49.5821724+03:00",
+        "cpuPercent": 6.007,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:01:53.7713623+03:00",
+        "cpuPercent": 6.013,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:01:57.9449913+03:00",
+        "cpuPercent": 5.972,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:02.1231734+03:00",
+        "cpuPercent": 5.992,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:06.2809209+03:00",
+        "cpuPercent": 5.989,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:10.4313458+03:00",
+        "cpuPercent": 6.01,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:14.5720559+03:00",
+        "cpuPercent": 6.048,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:18.7120686+03:00",
+        "cpuPercent": 6.032,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:22.8423250+03:00",
+        "cpuPercent": 6.046,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:26.9860151+03:00",
+        "cpuPercent": 6.034,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:31.1463114+03:00",
+        "cpuPercent": 6.027,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:35.3016096+03:00",
+        "cpuPercent": 6.006,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:39.4834859+03:00",
+        "cpuPercent": 6.008,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:43.6831555+03:00",
+        "cpuPercent": 5.986,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:47.8730116+03:00",
+        "cpuPercent": 5.958,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:52.0229370+03:00",
+        "cpuPercent": 5.987,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:02:56.1737832+03:00",
+        "cpuPercent": 6.016,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:00.3209790+03:00",
+        "cpuPercent": 6.022,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:04.4690632+03:00",
+        "cpuPercent": 6.027,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:08.6240664+03:00",
+        "cpuPercent": 6.027,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:12.7817725+03:00",
+        "cpuPercent": 6.022,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:16.9567480+03:00",
+        "cpuPercent": 5.994,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:21.1121008+03:00",
+        "cpuPercent": 6.006,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:25.2750626+03:00",
+        "cpuPercent": 6.009,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:29.4487479+03:00",
+        "cpuPercent": 6,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:33.6273086+03:00",
+        "cpuPercent": 5.988,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:37.7713811+03:00",
+        "cpuPercent": 5.99,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:41.9093366+03:00",
+        "cpuPercent": 6.046,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:46.0440197+03:00",
+        "cpuPercent": 6.038,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:50.1733086+03:00",
+        "cpuPercent": 6.047,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:54.3269119+03:00",
+        "cpuPercent": 6.042,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:03:58.4849687+03:00",
+        "cpuPercent": 6.022,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:02.6367415+03:00",
+        "cpuPercent": 6.017,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:06.7922602+03:00",
+        "cpuPercent": 6.026,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:10.9453169+03:00",
+        "cpuPercent": 6.019,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:15.0860683+03:00",
+        "cpuPercent": 6.015,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:19.2528236+03:00",
+        "cpuPercent": 6.026,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:23.4069761+03:00",
+        "cpuPercent": 6.01,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:27.5714754+03:00",
+        "cpuPercent": 6.013,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:31.7189864+03:00",
+        "cpuPercent": 6.001,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:35.8734768+03:00",
+        "cpuPercent": 6.024,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:40.0126138+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:44.1598018+03:00",
+        "cpuPercent": 6.038,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:48.3105570+03:00",
+        "cpuPercent": 6.027,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:52.4487891+03:00",
+        "cpuPercent": 6.029,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:04:56.6013459+03:00",
+        "cpuPercent": 6.037,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:00.7518607+03:00",
+        "cpuPercent": 6.022,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:04.9064951+03:00",
+        "cpuPercent": 6.02,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:09.0621560+03:00",
+        "cpuPercent": 6.007,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:13.1980193+03:00",
+        "cpuPercent": 6.037,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:17.3440741+03:00",
+        "cpuPercent": 6.041,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:21.4799425+03:00",
+        "cpuPercent": 6.017,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:25.6283408+03:00",
+        "cpuPercent": 6.048,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:29.7701647+03:00",
+        "cpuPercent": 6.02,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:33.9431192+03:00",
+        "cpuPercent": 6.045,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:38.1092136+03:00",
+        "cpuPercent": 5.974,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:42.2487918+03:00",
+        "cpuPercent": 6.021,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:46.3812650+03:00",
+        "cpuPercent": 6.037,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:50.5135457+03:00",
+        "cpuPercent": 6.055,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:54.6574587+03:00",
+        "cpuPercent": 6.033,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:05:58.8424514+03:00",
+        "cpuPercent": 6.032,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:03.0311188+03:00",
+        "cpuPercent": 5.96,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:07.1846183+03:00",
+        "cpuPercent": 5.991,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:11.3396752+03:00",
+        "cpuPercent": 6.016,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:15.5160862+03:00",
+        "cpuPercent": 6.013,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:19.6689910+03:00",
+        "cpuPercent": 5.995,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:23.8410380+03:00",
+        "cpuPercent": 6.021,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:28.0124571+03:00",
+        "cpuPercent": 5.979,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:32.1891145+03:00",
+        "cpuPercent": 6,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:36.3589271+03:00",
+        "cpuPercent": 5.978,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:40.5165452+03:00",
+        "cpuPercent": 6,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:44.6629010+03:00",
+        "cpuPercent": 6.025,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:48.7991829+03:00",
+        "cpuPercent": 6.032,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:52.9538448+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:06:57.1028562+03:00",
+        "cpuPercent": 6.022,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:01.2544793+03:00",
+        "cpuPercent": 6.015,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:05.3901041+03:00",
+        "cpuPercent": 6.037,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:09.5404512+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:13.7067618+03:00",
+        "cpuPercent": 5.995,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:17.8599386+03:00",
+        "cpuPercent": 6.027,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:22.0384310+03:00",
+        "cpuPercent": 6.002,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:26.1965259+03:00",
+        "cpuPercent": 5.988,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:30.3808116+03:00",
+        "cpuPercent": 5.997,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:34.5207770+03:00",
+        "cpuPercent": 6.009,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:38.6608768+03:00",
+        "cpuPercent": 6.047,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:42.7984892+03:00",
+        "cpuPercent": 6.022,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:46.9281392+03:00",
+        "cpuPercent": 6.058,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:51.0831856+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:55.2462178+03:00",
+        "cpuPercent": 6.011,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:07:59.4140039+03:00",
+        "cpuPercent": 6.005,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:03.5789750+03:00",
+        "cpuPercent": 6.005,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:07.7199243+03:00",
+        "cpuPercent": 6.011,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:11.8503210+03:00",
+        "cpuPercent": 6.038,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:15.9997620+03:00",
+        "cpuPercent": 6.047,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:20.1430548+03:00",
+        "cpuPercent": 6.024,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:24.2735942+03:00",
+        "cpuPercent": 6.034,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:28.4093354+03:00",
+        "cpuPercent": 6.064,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:32.5492833+03:00",
+        "cpuPercent": 6.024,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:36.6849983+03:00",
+        "cpuPercent": 6.053,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:40.8196684+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:45.0118060+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:49.1738303+03:00",
+        "cpuPercent": 5.972,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:53.3233196+03:00",
+        "cpuPercent": 6.002,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:08:57.4937387+03:00",
+        "cpuPercent": 6.034,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:01.6622211+03:00",
+        "cpuPercent": 5.976,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:05.8017275+03:00",
+        "cpuPercent": 6.01,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:09.9494747+03:00",
+        "cpuPercent": 6.041,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:14.0803731+03:00",
+        "cpuPercent": 6.034,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:18.2290102+03:00",
+        "cpuPercent": 4.527,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:22.3703173+03:00",
+        "cpuPercent": 6.033,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:26.5283528+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:30.6656136+03:00",
+        "cpuPercent": 6.027,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:34.8048600+03:00",
+        "cpuPercent": 6.033,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:38.9354384+03:00",
+        "cpuPercent": 6.048,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:43.0843964+03:00",
+        "cpuPercent": 6.037,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:47.2407410+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:51.3785399+03:00",
+        "cpuPercent": 6.013,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:55.5221454+03:00",
+        "cpuPercent": 6.039,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:09:59.6468950+03:00",
+        "cpuPercent": 6.043,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:03.7811599+03:00",
+        "cpuPercent": 6.053,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:07.9138432+03:00",
+        "cpuPercent": 6.046,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:12.0534586+03:00",
+        "cpuPercent": 6.045,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:16.1916243+03:00",
+        "cpuPercent": 6.048,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:20.3357975+03:00",
+        "cpuPercent": 6.026,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:24.4840495+03:00",
+        "cpuPercent": 6.045,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:28.6378802+03:00",
+        "cpuPercent": 6.012,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:32.7899456+03:00",
+        "cpuPercent": 6.025,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:36.9676541+03:00",
+        "cpuPercent": 6.019,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:41.1290326+03:00",
+        "cpuPercent": 5.98,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:45.3130057+03:00",
+        "cpuPercent": 6.008,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:49.5365771+03:00",
+        "cpuPercent": 5.943,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:53.7256203+03:00",
+        "cpuPercent": 5.936,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:10:57.8887363+03:00",
+        "cpuPercent": 5.983,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:02.0596611+03:00",
+        "cpuPercent": 6.019,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:06.2243076+03:00",
+        "cpuPercent": 5.99,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:10.3749478+03:00",
+        "cpuPercent": 6.002,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:14.5293630+03:00",
+        "cpuPercent": 6.017,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:18.6799029+03:00",
+        "cpuPercent": 6.024,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:22.8260956+03:00",
+        "cpuPercent": 6.022,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:26.9832633+03:00",
+        "cpuPercent": 6.03,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:31.1563756+03:00",
+        "cpuPercent": 5.996,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:35.3271702+03:00",
+        "cpuPercent": 5.998,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:39.4869944+03:00",
+        "cpuPercent": 5.99,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:43.6370721+03:00",
+        "cpuPercent": 6.021,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:47.8216727+03:00",
+        "cpuPercent": 6.003,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:51.9880110+03:00",
+        "cpuPercent": 5.98,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:11:56.1401339+03:00",
+        "cpuPercent": 6.024,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:00.2684838+03:00",
+        "cpuPercent": 6.028,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:04.4135113+03:00",
+        "cpuPercent": 6.046,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:08.5760802+03:00",
+        "cpuPercent": 6.018,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:12.7456760+03:00",
+        "cpuPercent": 6.003,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:16.9028765+03:00",
+        "cpuPercent": 6.005,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:21.0643465+03:00",
+        "cpuPercent": 6.009,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:25.2179107+03:00",
+        "cpuPercent": 6.011,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:29.4030421+03:00",
+        "cpuPercent": 6.011,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:33.5718617+03:00",
+        "cpuPercent": 5.984,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:37.7588890+03:00",
+        "cpuPercent": 5.991,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:41.9196288+03:00",
+        "cpuPercent": 5.982,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:46.0880636+03:00",
+        "cpuPercent": 6.009,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:50.2626470+03:00",
+        "cpuPercent": 5.995,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:54.3983926+03:00",
+        "cpuPercent": 5.993,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:12:58.5499755+03:00",
+        "cpuPercent": 6.047,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:02.7390864+03:00",
+        "cpuPercent": 5.976,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:06.8973087+03:00",
+        "cpuPercent": 6.005,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:11.0695392+03:00",
+        "cpuPercent": 6.001,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:15.2381032+03:00",
+        "cpuPercent": 5.991,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:19.4085900+03:00",
+        "cpuPercent": 6.012,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:23.5806196+03:00",
+        "cpuPercent": 5.984,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:27.7217804+03:00",
+        "cpuPercent": 6.013,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:31.8823106+03:00",
+        "cpuPercent": 6.018,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:36.0383344+03:00",
+        "cpuPercent": 6.018,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:40.1918682+03:00",
+        "cpuPercent": 6.012,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:44.3732718+03:00",
+        "cpuPercent": 6.021,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:48.5217319+03:00",
+        "cpuPercent": 5.982,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:52.6494210+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:13:56.8052584+03:00",
+        "cpuPercent": 6.034,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:00.9396237+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:05.0688035+03:00",
+        "cpuPercent": 6.046,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:09.2147185+03:00",
+        "cpuPercent": 6.048,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:13.3512075+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:17.5204453+03:00",
+        "cpuPercent": 6.023,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:21.6725960+03:00",
+        "cpuPercent": 6.003,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:25.8111988+03:00",
+        "cpuPercent": 6.032,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:29.9518573+03:00",
+        "cpuPercent": 6.039,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:34.0825675+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:38.2272842+03:00",
+        "cpuPercent": 6.051,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:42.4046404+03:00",
+        "cpuPercent": 6.019,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:46.5649676+03:00",
+        "cpuPercent": 5.978,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:50.7597221+03:00",
+        "cpuPercent": 5.996,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:54.9280295+03:00",
+        "cpuPercent": 5.981,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:14:59.0709995+03:00",
+        "cpuPercent": 6.001,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:03.2065463+03:00",
+        "cpuPercent": 6.03,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:07.3403715+03:00",
+        "cpuPercent": 6.052,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:11.4987680+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:15.6279750+03:00",
+        "cpuPercent": 6.031,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:19.7757300+03:00",
+        "cpuPercent": 6.049,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:23.9253284+03:00",
+        "cpuPercent": 6.016,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:28.0652604+03:00",
+        "cpuPercent": 6.032,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:32.2541708+03:00",
+        "cpuPercent": 6.019,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:36.4231423+03:00",
+        "cpuPercent": 5.984,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:40.5690480+03:00",
+        "cpuPercent": 6.003,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:44.7194239+03:00",
+        "cpuPercent": 6.025,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:48.9101445+03:00",
+        "cpuPercent": 5.986,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:53.0458853+03:00",
+        "cpuPercent": 6.007,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:15:57.2061523+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:01.3535964+03:00",
+        "cpuPercent": 6.006,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:05.4938570+03:00",
+        "cpuPercent": 6.027,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:09.6346641+03:00",
+        "cpuPercent": 6.046,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:13.7809868+03:00",
+        "cpuPercent": 6.032,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:17.9214794+03:00",
+        "cpuPercent": 6.043,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:22.0643852+03:00",
+        "cpuPercent": 6.034,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:26.2269896+03:00",
+        "cpuPercent": 6.017,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:31.5981708+03:00",
+        "cpuPercent": 5.852,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:35.7414091+03:00",
+        "cpuPercent": 5.97,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:39.9176926+03:00",
+        "cpuPercent": 6.021,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:44.0520639+03:00",
+        "cpuPercent": 6.007,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:48.1921140+03:00",
+        "cpuPercent": 6.047,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:52.3419787+03:00",
+        "cpuPercent": 6.026,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:16:56.4798496+03:00",
+        "cpuPercent": 6.041,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:00.6259568+03:00",
+        "cpuPercent": 6.035,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:04.7895712+03:00",
+        "cpuPercent": 6.013,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:08.9479062+03:00",
+        "cpuPercent": 6.008,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:13.1243481+03:00",
+        "cpuPercent": 6.01,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:17.2711793+03:00",
+        "cpuPercent": 6.002,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:21.4540263+03:00",
+        "cpuPercent": 6.006,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:25.6038342+03:00",
+        "cpuPercent": 6,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:29.7451099+03:00",
+        "cpuPercent": 6.019,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:33.8963107+03:00",
+        "cpuPercent": 6.042,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:38.0458892+03:00",
+        "cpuPercent": 6.013,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:42.1939505+03:00",
+        "cpuPercent": 6.029,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:46.3454105+03:00",
+        "cpuPercent": 6.025,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:50.5305180+03:00",
+        "cpuPercent": 6.019,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:54.7272437+03:00",
+        "cpuPercent": 5.969,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:17:58.8695187+03:00",
+        "cpuPercent": 5.975,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:03.0057629+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:07.1599699+03:00",
+        "cpuPercent": 6.031,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:11.3455282+03:00",
+        "cpuPercent": 6.01,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:15.5188209+03:00",
+        "cpuPercent": 5.96,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:19.6554625+03:00",
+        "cpuPercent": 6.02,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:23.7967763+03:00",
+        "cpuPercent": 6.042,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:27.9354918+03:00",
+        "cpuPercent": 6.04,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:32.1185516+03:00",
+        "cpuPercent": 6.03,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:36.2621432+03:00",
+        "cpuPercent": 5.967,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:40.4018193+03:00",
+        "cpuPercent": 6.05,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:44.5565405+03:00",
+        "cpuPercent": 6.037,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:48.6990545+03:00",
+        "cpuPercent": 6.015,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:52.8309374+03:00",
+        "cpuPercent": 6.039,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:18:56.9629228+03:00",
+        "cpuPercent": 6.055,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:19:01.1273351+03:00",
+        "cpuPercent": 6.037,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:19:05.2666366+03:00",
+        "cpuPercent": 6.008,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:19:09.4576052+03:00",
+        "cpuPercent": 6.008,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "none",
+        "jobAssignmentFailures": 0
+      },
+      {
+        "at": "2026-11-14T12:19:46.6321146+03:00",
+        "cpuPercent": 0,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 13
+      },
+      {
+        "at": "2026-11-14T12:19:49.9762794+03:00",
+        "cpuPercent": 6.994,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 13
+      },
+      {
+        "at": "2026-11-14T12:19:53.3824957+03:00",
+        "cpuPercent": 5.51,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:19:56.7611047+03:00",
+        "cpuPercent": 5.559,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:00.1265226+03:00",
+        "cpuPercent": 5.594,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:03.5396793+03:00",
+        "cpuPercent": 5.454,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:06.9456716+03:00",
+        "cpuPercent": 5.55,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:10.3923064+03:00",
+        "cpuPercent": 5.445,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:13.8932036+03:00",
+        "cpuPercent": 5.39,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:17.2491761+03:00",
+        "cpuPercent": 5.499,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:20.6046012+03:00",
+        "cpuPercent": 5.575,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:23.8958623+03:00",
+        "cpuPercent": 5.655,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:27.3778322+03:00",
+        "cpuPercent": 5.478,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:30.6923009+03:00",
+        "cpuPercent": 5.609,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:33.9850453+03:00",
+        "cpuPercent": 5.651,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:37.3568506+03:00",
+        "cpuPercent": 5.689,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:40.6799320+03:00",
+        "cpuPercent": 5.529,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:43.9459804+03:00",
+        "cpuPercent": 5.704,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:47.2785278+03:00",
+        "cpuPercent": 5.688,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:50.5722502+03:00",
+        "cpuPercent": 5.665,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:53.8655877+03:00",
+        "cpuPercent": 5.679,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:20:57.1824475+03:00",
+        "cpuPercent": 5.685,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:21:00.5825341+03:00",
+        "cpuPercent": 5.638,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:21:03.8809587+03:00",
+        "cpuPercent": 5.536,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "cpu-job-hard-cap-35-percent",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:21:36.4090755+03:00",
+        "cpuPercent": 0,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:21:59.4833586+03:00",
+        "cpuPercent": 25.207,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:22:14.0137524+03:00",
+        "cpuPercent": 24.124,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:23:10.7896952+03:00",
+        "cpuPercent": 21.466,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:25:24.2562654+03:00",
+        "cpuPercent": 20.978,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 12
+      },
+      {
+        "at": "2026-11-14T12:26:21.4075580+03:00",
+        "cpuPercent": 36.355,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:06.6891756+03:00",
+        "cpuPercent": 17.657,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:25.4451463+03:00",
+        "cpuPercent": 46.841,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "reduced-owned-affinity",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:29.1672735+03:00",
+        "cpuPercent": 26.395,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:32.6567539+03:00",
+        "cpuPercent": 24.017,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:36.0544705+03:00",
+        "cpuPercent": 21.887,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:39.7624922+03:00",
+        "cpuPercent": 22.525,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:43.4059692+03:00",
+        "cpuPercent": 24.297,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:27:47.3024938+03:00",
+        "cpuPercent": 24.313,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:28:12.1903067+03:00",
+        "cpuPercent": 14.584,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:28:28.1573419+03:00",
+        "cpuPercent": 25.488,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:28:31.7667861+03:00",
+        "cpuPercent": 32.077,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:28:35.3995366+03:00",
+        "cpuPercent": 24.145,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:28:48.7436099+03:00",
+        "cpuPercent": 16.422,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:28:52.2293329+03:00",
+        "cpuPercent": 33.809,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:28:55.7672333+03:00",
+        "cpuPercent": 22.953,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:29:11.0201232+03:00",
+        "cpuPercent": 11.392,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      },
+      {
+        "at": "2026-11-14T12:29:27.8593039+03:00",
+        "cpuPercent": 24.649,
+        "gpuMaxPercent": 0,
+        "gpuError": null,
+        "action": "job-cap-35-percent-and-shared-four-CPUs",
+        "jobAssignmentFailures": 11
+      }
+    ],
+    "limitation": "One measured startup CPU violation. Chrome child sandbox jobs reject reassignment: all owned QA processes then used shared affinity plus aggregate sampling; no global/user process changes."
+  },
+  "cleanup": {
+    "actorSystemsEqual": true,
+    "deletedMessages": 28,
+    "qaFlagsRestored": true,
+    "baselineMessagesRetained": true,
+    "rolesRetained": true,
+    "primaryUser": "Распорядитель",
+    "remainingOwnPids": [],
+    "ownedBrowserPid": 19172,
+    "tempBytesBeforeBrowserClose": 171153359,
+    "browserClosed": true,
+    "tempDirectory": "A:\\CodexTemp\\olegurps-fall-collision-20261114",
+    "estimatedPeakBytes": 171322047,
+    "tempDirectoryRemoved": true,
+    "completedAt": "2026-11-14T12:36:22.251123+03:00"
+  },
+  "macroNameMigration": {
+    "renamed": [
+      "LUbV9P8DOIOug3ie",
+      "sG2xyCLXnnonOfmi"
+    ],
+    "macros": [
+      {
+        "id": "LUbV9P8DOIOug3ie",
+        "name": "Падения и столкновения",
+        "command": "game.olegurpsQOL.falling.open();"
+      },
+      {
+        "id": "sG2xyCLXnnonOfmi",
+        "name": "Падения и столкновения",
+        "command": "game.olegurpsQOL.falling.open();"
+      }
+    ]
+  },
+  "files": [
+    {
+      "file": "scripts/tools/falling.js",
+      "bytes": 9756,
+      "sha256": "8ecb5d23590adef93d7ede20f387808df3c3f6334ebaea319f83013403e7d863"
+    },
+    {
+      "file": "scripts/tools/fall-collision-rules.js",
+      "bytes": 9877,
+      "sha256": "52fc4297269671ce8313b1f3a4451c890e96fbbcae2bdede259bfba938a3584b"
+    },
+    {
+      "file": "scripts/tools/fall-collision-presentation.js",
+      "bytes": 5632,
+      "sha256": "d67a2cfcd8bb7b4f6635491f75099a6bd8d33cf507a75fc720e203418f764910"
+    },
+    {
+      "file": "scripts/module-macros.js",
+      "bytes": 4074,
+      "sha256": "a0140ae535faa06674d2cacb1ebf9defa66085d9e8d83c13c9f6184969a24e7e"
+    },
+    {
+      "file": "scripts/russian-ui.js",
+      "bytes": 137290,
+      "sha256": "19d69bd3e0daff7081fb7c38482e518178bd5bc3c8ff55c574b1039b9b2c8a42"
+    },
+    {
+      "file": "styles/olegurps-qol.css",
+      "bytes": 54015,
+      "sha256": "40511c6864c1176ef930eee4a33c4378716d5e9ed723f9079b019f643a550f85"
+    },
+    {
+      "file": "lang/ru.json",
+      "bytes": 180444,
+      "sha256": "5d91809c548adef12c09fb58052cb0e76de96cf3312ef2112cb28fb3531c5b44"
+    },
+    {
+      "file": "lang/en.json",
+      "bytes": 127664,
+      "sha256": "9890f31420728510232ebed8675483708c9670474115c1ff4d5f09dbea242cb6"
+    },
+    {
+      "file": "data/macros/olegurps-macros.json",
+      "bytes": 6551,
+      "sha256": "71fc2b347b50558aef8cf3b1d353e63fa959d0df9789353a419d350ab5265f70"
+    },
+    {
+      "file": "tests/fall-collision.test.mjs",
+      "bytes": 13016,
+      "sha256": "d9c5ccd2d7c1773ea7f93f2f74f4f78a3ecb01466002f8e09f11d359583b8dab"
+    },
+    {
+      "file": "tools/fall-collision-live.mjs",
+      "bytes": 8181,
+      "sha256": "adcd4347d01a99175daf312b9b509e57d30071ce4b5fc7ce9368716159960ac0"
+    },
+    {
+      "file": "tools/fall-collision-scenarios.js",
+      "bytes": 9884,
+      "sha256": "510ade40cd5c5c879ebfdc232727218032d5a42ef9cd2efcbd728db67fd5ef41"
+    },
+    {
+      "file": "tools/fall-collision-monitor.ps1",
+      "bytes": 4394,
+      "sha256": "6a91fd34daab628ef171b57dab5392d3472a6891f67ea38286fc0f89dfafbeb2"
+    },
+    {
+      "file": "tools/build-fall-collision-report.mjs",
+      "bytes": 26146,
+      "sha256": "03bf3cba72265235bf36720bd15bb5e916937adbd7f706752a01b65b0558c10d"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "screenshots/before-fall.png",
+      "bytes": 77760,
+      "sha256": "972a44c1566ff74c546bf4b560fbac38ada81668a094ddc1d69f2f06921e3478"
+    },
+    {
+      "file": "screenshots/after-fall.png",
+      "bytes": 46621,
+      "sha256": "b8668e36c4425b23a4dd41d91faa517dfcc950e4755883ed4372ad9c501ec640"
+    },
+    {
+      "file": "screenshots/after-object.png",
+      "bytes": 29783,
+      "sha256": "59b2b948589263b8b897ac87a264492954b2cfe4cdcd7486916f3d2d8b5d8b5c"
+    },
+    {
+      "file": "screenshots/after-obstacle.png",
+      "bytes": 30893,
+      "sha256": "654cc6655ac317f96460e4870eb3fc7f39ba4b4f63226833ffea494f2e847ebb"
+    },
+    {
+      "file": "screenshots/after-overrun.png",
+      "bytes": 46341,
+      "sha256": "c478531571aa4cfb15ff499d6fbe8b9f59f1eea02e5b1ab5d3eb4e3256660025"
+    }
+  ],
+  "limitations": [
+    "No full Foundry server restart; client F5 verified for both roles.",
+    "Half HP/ST below 1 or outside safe integer range has no supported thrust entry: additional Overrun damage is explicitly manual.",
+    "B431 table and alternative formula differ at 100 yards (47 vs 46); requested rounded formula is used consistently.",
+    "Initial before screenshot contains a Foundry viewport warning; final screenshots use 1300×1100 with no warning.",
+    "PLAYER checks require no Actor or token; Actor OWNER permissions are not used by this tool."
+  ]
+}

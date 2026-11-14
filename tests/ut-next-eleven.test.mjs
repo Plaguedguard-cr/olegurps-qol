@@ -66,9 +66,9 @@ test('Reality Stabilizer uses its own HT and has no fictitious victim-HT modifie
  assert.equal(visionResistanceModifier(e,{ht:12}).modifier,0);assert.throws(()=>visionResistanceModifier(e,{ht:null}));
  assert.match(resistanceOutcome(e,{finaltarget:12,rtotal:13,margin:-1,failure:true,isCritSuccess:false,isCritFailure:false},{ht:12}).consequence,/вручную/);
 });
-for(const [robotId,modeId] of [['hunter','WInB0nYjRLMJm5Ha-'],['hunter','WuZRkhqwMzX3gyVWL'],['striker','WpvG7-bGWCtwNOPFf'],['striker','WNK4gk21iQ4le2Lxr']]){
+for(const [robotId,modeId] of [['hunter','WInB0nYjRLMJm5Ha-'],['hunter','WuZRkhqwMzX3gyVWL'],['striker','WpvG7-bGWCtwNOPFf'],['striker','WNK4gk21iQ4le2Lxr'],['floater','WpvG7-bGWCtwNOPFf'],['floater','WNK4gk21iQ4le2Lxr']]){
  test(robotId+' / '+modeId+': separate stock, selected warhead, launch without shooter Roll, frozen Damage',async()=>{
-  const f=await gaussFixture(modeId),types=f.candidates(),t=types.find(t=>t.robot?.id===robotId&&t.robot.tl===9&&t.recipe?.variantId==='ut_he');assert.ok(t);
+  const f=await gaussFixture(modeId),types=f.candidates(),t=types.find(t=>t.robot?.id===robotId&&t.robot.tl===(robotId==='floater'?10:9)&&t.recipe?.variantId==='ut_he');assert.ok(t);
   assert.ok(robotAmmunitionAllowed(modeId,t));assert.equal(robotAmmunitionAllowed(robotId==='hunter'?'WpvG7-bGWCtwNOPFf':'WInB0nYjRLMJm5Ha-',t),false);
   await f.load(t,1);const r=await f.shoot();assert.equal(r.spent,1);assert.equal(r.message.rolls,undefined);assert.equal(r.rollData.robotLaunch,true);assert.equal(r.profile.damage.rules.robot.id,robotId);
   assert.equal(r.profile.damage.rules.robot.warhead.recipe.variantId,'ut_he');assert.ok(r.profile.damage.formula.endsWith(' cr ex'));assert.equal(r.profile.damage.components.some(c=>c.role==='kinetic'||c.role==='backblast'),false);
@@ -77,15 +77,18 @@ for(const [robotId,modeId] of [['hunter','WInB0nYjRLMJm5Ha-'],['hunter','WuZRkhq
   assert.equal(campaignAmmunitionAdmission({...t,robot:{id:robotId,tl:10}},catalogs,9,modeId).allowed,false);
  });
 }
-test('robot payload matrix covers every ready warhead and excludes duplicated guidance and invented Floater binding',async()=>{
+test('robot payload matrix covers every ready warhead and excludes duplicated guidance and inherits Floater 100mm binding',async()=>{
  for(const modeId of ['WInB0nYjRLMJm5Ha-','WpvG7-bGWCtwNOPFf']){
   const f=await gaussFixture(modeId),all=f.candidates(),robots=all.filter(t=>t.robot);
-  for(const t of robots){assert.ok(!['ut_homing','ut_reactionless'].includes(t.recipe?.variantId));assert.equal(robotAmmunitionAllowed(modeId,{...t,robot:{id:'floater',tl:10}}),false);}
+  for(const t of robots){assert.ok(!['ut_homing','ut_reactionless'].includes(t.recipe?.variantId));}
   const warheads=new Set(all.filter(t=>!t.unavailable&&!t.robot&&!['ut_homing','ut_reactionless'].includes(t.recipe?.variantId)&&!t.recipe?.parameters?.reactionless).map(t=>t.recipe?.variantId??'solid'));
   assert.deepEqual(new Set(robots.map(t=>t.recipe?.variantId??'solid')),warheads);
  }
- assert.deepEqual(ROBOTS.floater.launcherModeIds,[]);assert.deepEqual(ROBOTS.shuriken.launcherModeIds,[]);
+ assert.deepEqual(ROBOTS.floater.launcherModeIds,ROBOTS.striker.launcherModeIds);assert.equal(ROBOTS.floater.warheadMm,100);assert.deepEqual(ROBOTS.shuriken.launcherModeIds,[]);
  assert.equal(ROBOTS.hunter.radarYards,2000);assert.equal(ROBOTS.striker.radarYards,4000);assert.equal(ROBOTS.floater.rangeMiles,320);
+ assert.equal(ROBOTS.floater.weightLb,5);assert.deepEqual(ROBOTS.floater.attributes,{ST:3,DX:14,IQ:6,HT:12,HP:6,Will:6,Per:13,Speed:8,Dodge:11,Move:0,SM:-4});
+ assert.equal(ROBOTS.floater.minutes,10);assert.equal(ROBOTS.floater.airMove,120);assert.deepEqual(ROBOTS.floater.skills,{Aerobatics:12,Observation:11});assert.deepEqual(ROBOTS.floater.costByTL,{10:5000,11:1000});
+ assert.ok(ROBOTS.floater.traits.includes('Blindness'));assert.ok(!ROBOTS.floater.traits.includes('Hyperspectral Vision'));assert.equal(ROBOTS.striker.weightLb,17);
 });
 test('Smart Shuriken: thrown physical unit, no imaginary collision Damage, manual return and C cell',async()=>{
  const f=await gaussFixture(ROBOTS.shuriken.modeId);assert.equal(f.attack().readinessReason,null);await f.load(f.candidates()[0],1);
@@ -111,11 +114,28 @@ test('every offered robot warhead resolves through the common resolver with its 
   }
  }
 });
-test('AESA has host facts without copied Tactical Disruptor stats',()=>{
- const m=catalogs.getMode(AESA.modeId);for(const key of ['accuracy','range','shots','recoil'])assert.equal(m.stats[key],null);
- assert.equal(AESA.host.detectionMiles,10);assert.match(AESA.blockedReason,/полные/);
+test('AESA inherits combat only and keeps unlimited vehicle power separate from detection',async()=>{
+ const m=catalogs.getMode(AESA.modeId),f=await gaussFixture(AESA.modeId);
+ assert.equal(m.stats.accuracy,'18');assert.equal(m.stats.range,'600/1200');assert.equal(m.raw_calc.damage,'HT-8 aff (3 yd)');
+ assert.equal(m.stats.rate_of_fire,'1');assert.equal(m.stats.recoil,'1');assert.equal(m.stats.shots,null);assert.equal(m.stats.strength,null);assert.equal(m.stats.bulk,null);
+ assert.deepEqual(m.governing_skill.skill,{name:'Gunner',specialization:'Beams',modifier:0});
+ assert.equal(AESA.host.detectionMiles,10);assert.equal(AESA.blockedReason,undefined);assert.equal(AESA.vehiclePower,true);
+ assert.equal(f.power(),null);assert.equal(f.attack().readinessReason,null);assert.equal(f.weapon().ammunitionInventory,undefined);
+ const before=f.state().weapons,r=await f.shoot();assert.equal(r.rolled,true);assert.equal(r.message.rolls.length,1);
+ assert.deepEqual(f.state().weapons,before);assert.equal(r.receipt.spent,0);assert.equal(r.receipt.power,undefined);
+ const effect=messageResistanceEffect(r.message);assert.equal(effect.modifier,-8);assert.equal(effect.halfRange,600);assert.equal(effect.condition,'microwave-disruptor');
  assert.equal(createShotSnapshot({damage:{formula:null},resource:{}},{attackId:'legacy'}).attackId,'legacy');
 });
+
+test('UT-INHERIT legacy AESA read-through repairs only source baseline and preserves overrides and saved flags',async()=>{
+ const f=await gaussFixture(AESA.modeId),saved=f.actor.getFlag('olegurps-qol','standaloneWeapons'),m=saved.weapons[0].modes[0];
+ m.snapshot.raw_calc.damage='spec.';m.snapshot.stats={damage:{type:'spec.'},accuracy:null,range:null,rate_of_fire:null,recoil:null,shots:null,bulk:null,strength:null};
+ m.snapshot.governing_skill={status:'unresolved',skill:null,candidates:[]};m.snapshot.governing_skill_selection={strategy:'fixed',candidates:[],fallback_attribute:null};m.snapshot.defaults=[];
+ m.overrides.acc='20';await f.actor.setFlag('olegurps-qol','standaloneWeapons',saved);const before=JSON.stringify(saved);
+ assert.equal(f.attack().data.damage,'HT-8 aff (3 yd)');assert.equal(f.attack().acc,20);assert.equal(f.attack().data.range,'600/1200');assert.equal(f.attack().readinessReason,null);
+ assert.equal(JSON.stringify(f.actor.getFlag('olegurps-qol','standaloneWeapons')),before);
+});
+
 test('editing a robot payload preserves its physical identity, batch key and ownership',async()=>{
  const f=await gaussFixture('WInB0nYjRLMJm5Ha-'),original=f.candidates().find(t=>t.robot?.id==='hunter'&&t.recipe?.variantId==='ut_he');
  const p=automatic.prepare({modeId:'WInB0nYjRLMJm5Ha-',base:original,variantId:'ut_he',parameters:{...original.recipe.parameters,note:'own robot lot',batchId:'distinct'}});
