@@ -185,12 +185,17 @@ test('legacy direct custom Bulk stays manual while both published Bulk values re
  assert.deepEqual(f.attack().weaponHandling.bulkMetadata.sourceValues,[-12,-15]);assert.equal(f.profile().effective.bulk,-3);assert.equal(JSON.stringify(f.actor.flags),before);
 });
 
-test('changing ordinary LT minimum ST or actor ST cannot change Fire Control skill, aim or movement penalties',async()=>{
+test('confirmed LT shortage changes only the shared Fire Control ST channel',async()=>{
  globalThis.GURPS={ModifierBucket:{modifierStack:{modifierList:[]}}};
  const f=await fixture('WqrX0vMt5n6kLV5mq'),token={actor:f.actor},fire=createFireControlContext({token,fireService:new FireService({actor:f.actor,token})});
  const bands=[{index:0,max:20,penalty:0,label:'20'}],targeting={getSelection:id=>({zoneId:id,label:id,canonicalKeys:[id],penalty:0})};
  const values={rangeIndex:0,shots:1,targetDistanceOverride:8,aimSeconds:2,braced:false,moveAndAttack:false,hitLocationId:'torso',visibility:{mode:'normal'}};
  const before=fire.calculateEffectiveFireSkillDetails(f.attack(),values,bands,targeting);assert.ok(before);
  f.actor.system.attributes.ST.value=1;const after=fire.calculateEffectiveFireSkillDetails({...f.attack(),st:'999',data:{...f.attack().data,st:'999'}},values,bands,targeting);
- assert.equal(after.effectiveSkill,before.effectiveSkill);assert.equal(after.moveAttackPenalty,before.moveAttackPenalty);assert.deepEqual(after.modifiers,before.modifiers);
+ const channels=calculation=>calculation.combatCalculation.channels;
+ const strength=calculation=>channels(calculation).find(c=>c.id==='weaponStrength').resolvedValue;
+ assert.equal(strength(before),0);assert.equal(strength(after),-5);
+ assert.equal(after.effectiveSkill,before.effectiveSkill-5);
+ assert.equal(after.moveAttackPenalty,before.moveAttackPenalty);
+ assert.deepEqual(channels(after).filter(c=>c.id!=='weaponStrength'),channels(before).filter(c=>c.id!=='weaponStrength'));
 });

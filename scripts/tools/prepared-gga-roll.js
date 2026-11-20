@@ -1,4 +1,5 @@
 import { recoilNotApplicable, validateAttackRecoil } from './weapon-recoil.js';
+import {drunkenTaggedCredit} from './ma-combat-perks.js';
 import { rangedStrengthExplanation } from './ranged-weapon-strength.js';
 import { weaponStrengthExplanation } from './weapon-strength-display.js';
 import { validateProximityShot } from './ut-he-proximity.js';
@@ -71,7 +72,7 @@ export async function createRollChatMessage(ChatMessage, messageData, options) {
   return ChatMessage.create(messageData, options);
 }
 
-export async function executeWithCapturedRollMessage({ ChatMessage = globalThis.ChatMessage, actorId = "", execute } = {}) {
+export async function executeWithCapturedRollMessage({ ChatMessage = globalThis.ChatMessage, actorId = "", messageFilter=null, execute } = {}) {
   if (typeof ChatMessage?.create !== "function" || typeof execute !== "function") {
     return { result: await execute?.(), message: null };
   }
@@ -85,7 +86,7 @@ export async function executeWithCapturedRollMessage({ ChatMessage = globalThis.
       const speakerActor = String(messageData?.speaker?.actor ?? "");
       const hasRoll = Array.isArray(messageData?.rolls) && messageData.rolls.length > 0;
       for (const session of captureState.sessions) {
-        if (!session.messagePromise && hasRoll && (!session.actorId || speakerActor === session.actorId)) {
+        if (!session.messagePromise && hasRoll && (!session.actorId || speakerActor === session.actorId)&&(!session.messageFilter||session.messageFilter(messageData))) {
           session.messagePromise = creation;
         }
       }
@@ -95,7 +96,7 @@ export async function executeWithCapturedRollMessage({ ChatMessage = globalThis.
     ACTIVE_CHAT_MESSAGE_CAPTURES.set(ChatMessage, captureState);
   }
 
-  const session = { actorId: String(actorId ?? ""), messagePromise: null };
+  const session = { actorId: String(actorId ?? ""), messageFilter,messagePromise: null };
   captureState.sessions.add(session);
   let result;
   try {
@@ -166,6 +167,7 @@ export async function executePreparedGgaRoll({
   quickShotBonus = 0,
   quickShotLabel = null,
   combatCalculation = null,
+  beforeRoll = null,
   runtime = globalThis
 }) {
   validateProximityShot(attackProfile);
@@ -257,11 +259,20 @@ export async function executePreparedGgaRoll({
   const preparedSkill = Math.trunc(Number(effectiveSkill));
   let finaltarget = Number.isFinite(preparedSkill) ? preparedSkill : baseSkill + modifier;
   if (combatType !== "ranged" && Number.isFinite(preparedSkill)) finaltarget += modifier;
+  if (combatType === 'melee' && Number.isFinite(preparedSkill)) {
+    const drunken=combatCalculation?.metadata?.combatPerks?.find(perk=>perk.name==='Drunken Fighting');
+    finaltarget+=drunkenTaggedCredit(actor,attack,drunken,'melee',game);
+  }
   if (skillCap !== null && Number.isFinite(Number(skillCap))) finaltarget = Math.min(finaltarget, Number(skillCap));
   if (Number.isFinite(maximumTarget)) finaltarget = Math.min(finaltarget, maximumTarget);
+  if (combatCalculation?.metadata?.maOptions?.rapidCount > 2 && finaltarget < 3) {
+    throw new Error(game?.i18n?.lang==='ru'?'Итоговый навык ниже 3, бросок атаки невозможен (B345).':
+      'Effective skill below 3 prevents the attack roll (B345).');
+  }
   finaltarget = Math.max(3, finaltarget);
 
   const formula = `3d6[${cleanName.replaceAll("[", "").replaceAll("]", "").trim()}]`;
+  if(beforeRoll)await beforeRoll();
   const { roll, testRoll } = await evaluatePreparedCheck(formula, runtime, "prepared-attack");
   const total = Number(roll.total);
   const margin = finaltarget - total;

@@ -1,4 +1,9 @@
 import { generateId } from "../random-id.js";
+import { maRangedKinds, projectThrownBurst, readiedThrowFeed, resolveMaRangedPlan } from './ma-ranged-options.js';
+import { ltPersonalProfile } from '../lt-personal-source.js';
+import { nativeTechniqueCheck } from './melee-technique-procedures.js';
+import { maRussian } from './ma-combat-options.js';
+import { rangedPerkContext } from './ma-combat-perks.js';
 import {weaponWeightControls,openWeaponWeightEditor} from './weapon-weight-app.js';
 import {setWeaponBackpack,readWeaponWeightState} from './weapon-weight.js';
 import {WeaponListVisibility, rangedVisibilityEntries, hiddenWeaponsHTML, visibilityText} from './weapon-list-visibility.js';
@@ -664,14 +669,27 @@ export async function openAmmoManager() {
   function calculateHitsFromMargin(shots, rcl, margin, rollData) {
     return fireService.calculateHitsFromMargin(shots, rcl, margin, rollData);
   }
-  function parseShotOptions(weapon, attack, values, rangeBands, targetingService, effectRangePenalty = null) {
+  function parseShotOptions(weapon, attack, values, rangeBands, targetingService, effectRangePenalty = null, ammunition = null) {
+    const sourceAttack=attack;
+    const readyThrown=values.readyThrownAmmoKey&&ammunition?.ammoKey===values.readyThrownAmmoKey&&ltPersonalProfile(weapon)?.kind==='thrown';
+    const ammunitionContext=readyThrown?{weaponId:weapon.id,ammunition}:{};
+    const rangedOption=values.maRanged?.kind?resolveMaRangedPlan(actor,attack,
+      resolveRangedGoverningSkill({actor,binding:attack?.governingSkillBinding}),values,
+      resolveRuntimeAttackProfile({actor,attack,weaponId:weapon.id,...ammunitionContext})):null;
+    if(values.maRanged?.kind&&!rangedOption||rangedOption&&values.rangedRapidStrike)
+      throw Error(maRussian()?'Проверьте условия особой атаки (MA119-121).':'Check the special attack requirements (MA119-121).');
+    if(rangedOption?.kind==='thrownBurst'){
+      attack=projectThrownBurst(attack,rangedOption);
+      values={...values,shots:rangedOption.count,rofMode:0,aimSeconds:0,braced:false,laserSight:false};
+    }else if(rangedOption)values={...values,shots:1,aimSeconds:0,braced:false,laserSight:false};
     const visibility = normalizeVisibility(values.visibility);
     const visibilityRule = visibilityRules(visibility);
     if (visibilityRule?.random) {
       values = { ...values, aimSeconds: 0, braced: false, laserSight: false,
         hitLocationId: "silhouette", hitRegionId: null };
     }
-    const loaded = standaloneAvailableRounds(weapon);
+    const loaded = rangedOption?.kind.startsWith('thrown')&&ammunition?
+      Math.min(ammunition.available,ammunition.total):standaloneAvailableRounds(weapon);
     const shotLimits = getShotLimits(attack, loaded, values.rofMode);
     if (values.rangedRapidStrikePart) shotLimits.minShots = 1;
     const shotsText = String(values.shots ?? "").trim();
@@ -767,7 +785,7 @@ export async function openAmmoManager() {
     }
 
     const skillDetails = calculateEffectiveFireSkillDetails(
-      attack, values, rangeBands, targetingService, targetedAttackContext);
+      sourceAttack, values, rangeBands, targetingService, targetedAttackContext, ammunitionContext);
     const effectiveSkill = skillDetails?.effectiveSkill ?? null;
     const rcl = fireService.parseAttackRcl(attack);
     if (rcl === null && !recoilNotApplicable(attack)) {
@@ -778,6 +796,9 @@ export async function openAmmoManager() {
       shots,
       fluidDoses:values.fluidDoses??1,fluidBounces:values.fluidBounces??0,
       physicalShots: shots,
+      maRanged:rangedOption,
+      ...(values.consumeAction===false?{consumeAction:false}:{}),
+      ...(values.contextLabel?{contextLabel:values.contextLabel}:{}),
       effectiveRoF: fireMode.effectiveRoF,
       rofProfile: fireMode.profile,
       rofMode: shotLimits.modeIndex,
@@ -886,7 +907,7 @@ export async function openAmmoManager() {
     return `<div class="olegurps-fire-chat-body">${lines.map(line => `<div>${line}</div>`).join("")}</div>`;
   }
 
-  async function fireAndRoll(state, weaponId, rawShotOptions, targetingService, trademarkMove = false, preparedSnapshot = null, expectedEffectiveSkill = null) {
+  async function fireAndRoll(state, weaponId, rawShotOptions, targetingService, trademarkMove = false, preparedSnapshot = null, expectedEffectiveSkill = null, bowPreparation = null) {
     const visibility = normalizeVisibility(rawShotOptions.visibility);
     if (visibility?.mode === "unseen" && !preparedSnapshot) {
       if (Boolean(visibility.targetTokenId) === Boolean(visibility.blindFireHex))
@@ -921,24 +942,32 @@ export async function openAmmoManager() {
     const attackId = newAttackId();
     let result;
     try {
-      result = await ammoService.executeShot({ weaponId, attackId,
+      const readyThrownAmmoKey=rawShotOptions.maRanged?.kind?.startsWith('thrown')?
+        rawShotOptions.readyThrownAmmoKey??ammoService.readAttackAmmunition(weaponId)?.ammoKey:null;
+      result = await ammoService.executeShot({ weaponId, attackId, readyThrownAmmoKey,
         prepare: ({ state: current, ammunition }) => {
           const context = getWeaponContext(current, weaponId);
           weapon = context.weapon;
           if (!context.attack) throw new Error(attackProfileError("AttackMissing"));
           if (context.attack.readinessReason) throw new Error(context.attack.readinessReason);
-          if (context.attack.ammunitionReadinessReason) throw Error(attackProfileError(context.attack.ammunitionReadinessReason));
+          if (context.attack.ammunitionReadinessReason&&!readyThrownAmmoKey)
+            throw Error(attackProfileError(context.attack.ammunitionReadinessReason));
           if (ammunition && Math.min(ammunition.available, ammunition.total) <= 0)
             throw new Error("InsufficientRounds");
+          const selectedAttack=readyThrownAmmoKey&&ammunition?.ammoKey===readyThrownAmmoKey&&ltPersonalProfile(weapon)?.kind==='thrown'?
+            withRuntimeAmmoStats(context.attack,actor,current,ammunition):context.attack;
           shotOptions = preparedSnapshot?.shotOptions ??
-            parseShotOptions(weapon, context.attack, rawShotOptions, rangeBands, targetingService, effectRangePenalty);
+            parseShotOptions(weapon, selectedAttack, rawShotOptions, rangeBands, targetingService, effectRangePenalty,ammunition);
           if (!shotOptions) return null;
+          if(shotOptions.maRanged&&!ammunition)throw Error('InsufficientRounds');
           if (trademarkMove) shotOptions = applyTrademarkMoveBonus(shotOptions);
           if (trademarkMove && Number.isFinite(expectedEffectiveSkill) && shotOptions.effectiveSkill !== expectedEffectiveSkill)
             throw new Error("Эффективный навык изменился. Проверьте обновлённый расчёт перед броском.");
-          rollAttack = preparedSnapshot?.attack ?? context.attack;
+          rollAttack = preparedSnapshot?.attack ?? selectedAttack;
           const profile = resolveRuntimeAttackProfile({ actor, attack: rollAttack, weaponId,
             state: current, ammunition, context: { kind: preparedSnapshot ? "ranged-rapid-strike" : "normal",
+              ...rangedPerkContext(shotOptions.combatCalculation),
+              ...(shotOptions.maRanged?{maCombatOptions:shotOptions.maRanged}:{}),
               fluidDoses:shotOptions.fluidDoses??1,fluidBounces:shotOptions.fluidBounces??0,
               supportSelection:shotOptions.supportSelection??null,braced:shotOptions.braced,
               tokenId: token.id, hitLocation: shotOptions.hitLocationLabel, physicalShots: shotOptions.physicalShots, effectiveSkill: shotOptions.effectiveSkill,
@@ -955,12 +984,51 @@ export async function openAmmoManager() {
                 closeDamageMultiplier: shotOptions.closeDamageMultiplier, damageApplication: "native-GGA-GM-selection" } } });
           return { profile, amount: shotOptions.physicalShots };
         },
-        execute: ({ profile }) => {
+        execute: async ({ profile }) => {
+          const option=shotOptions.maRanged;
+          let maRangedReceipt;
+          if(option?.kind==='quickBow'){
+            if(profile.damage?.rules?.ltBow?.physicalUnits>1)throw Error('Quick-Shooting Bows (MA119; LT75)');
+            if(rawShotOptions.maRanged?.ready!==true&&option.fastDraw===null)
+              throw Error(maRussian()?'Подготовьте стрелу или выберите Fast-Draw (Arrow).':'Ready an arrow or choose Fast-Draw (Arrow).');
+            const signature=JSON.stringify([weaponId,profile.binding?.confirmed?.modeId,profile.ammunition?.ammoKey,
+              profile.damage?.rules?.ltBow?.drawing,option.draw,option.penalty,option.fastDraw,rawShotOptions.maRanged?.ready]);
+            if(bowPreparation?.draw?.signature===signature){
+              maRangedReceipt=bowPreparation.draw.receipt;
+            }else{
+              if(bowPreparation)bowPreparation.draw=null;
+              if(option.fastDraw!==null){
+                const check=await nativeTechniqueCheck({actor,name:'Fast-Draw (Arrow)',level:option.fastDraw,details:'MA120; B195'});
+                if(!check.rolled)return {rolled:false};
+                if(!check.success){
+                  await check.message.update({content:check.message.content+(maRussian()?
+                    '<p>Стрела выпущена из рук. Ход потрачен на Ready (MA120).</p>':
+                    '<p>Arrow dropped. This turn is spent on Ready (MA120).</p>')});
+                  return {rolled:true,preparationOnly:true,message:check.message};
+                }
+              }
+              const draw=await nativeTechniqueCheck({actor,name:'Bow (Quick Draw)',level:option.draw,details:option.drawDeficit?
+                (maRussian()?'Нехватка ST: -'+option.drawDeficit+' к Bow. Учтите расход 1 ЕУ после боя, если бой вызвал усталость (LT75, B270).':
+                  'ST deficit: -'+option.drawDeficit+' to Bow. Record 1 FP at the end of a fight long enough to cause fatigue (LT75, B270).'):'MA119'});
+              if(!draw.rolled||!draw.success){
+                if(draw.message)await draw.message.update({content:draw.message.content+(maRussian()?
+                  (draw.criticalFailure?'<p>Лук выпущен из рук (MA119).</p>':'<p>Лук натянут слишком медленно. Выстрел возможен в следующий ход (MA119).</p>'):
+                  (draw.criticalFailure?'<p>Bow dropped (MA119).</p>':'<p>Bow drawn too slowly. Shoot on a later turn (MA119).</p>'))});
+                return {rolled:false,preparationComplete:!!draw.rolled};
+              }
+              maRangedReceipt={messageId:draw.message.id,target:draw.finaltarget,total:draw.total};
+              if(bowPreparation){
+                bowPreparation.draw={signature,receipt:maRangedReceipt};
+                return {rolled:false,preparationReady:true};
+              }
+            }
+          }
           const options = { ...shotOptions, attackProfile: profile, attackId, resourceTiming: "after-attack" };
-          return rollAttack?.platformRules?.areaAttack || visibility?.mode === "unseen" && visibility.blindFireHex ||
+          const roll=await (rollAttack?.platformRules?.areaAttack || visibility?.mode === "unseen" && visibility.blindFireHex ||
             visibility?.mode === "blind" && !visibility.knownLocation
             ? withClearedFoundryTargets(() => executeRangedAttack(rollAttack, options))
-            : executeRangedAttack(rollAttack, options);
+            : executeRangedAttack(rollAttack, options));
+          return maRangedReceipt?{...roll,maRangedReceipt}:roll;
         }
       });
     } catch (error) {
@@ -969,6 +1037,11 @@ export async function openAmmoManager() {
         return false;
       }
       throw error;
+    }
+    if(result.preparationReady)return false;
+    if(result.preparationOnly||result.preparationComplete){
+      if(result.state)Object.assign(state,result.state);
+      return true;
     }
     if (!result.rolled) {
       ui.notifications.warn(
@@ -989,6 +1062,7 @@ export async function openAmmoManager() {
     const fired = result.profile.damage?.rules?.ltFlame ? 1 : result.profile.resource.kind === "unmanaged" ? shotOptions.physicalShots : result.spent;
     const firedAmmoType = result.profile.resource.kind === "unmanaged" ? null : ammoDisplayName(result.profile.ammunition) ?? weapon.ammoType;
 
+    if(shotOptions.maRanged?.kind==='thrownSequence'&&result.rollData?.isCritFailure)state.maThrowInterrupted=true;
     const rcl = shotOptions.rcl;
     const margin = extractMarginFromRoll(result.rollData);
     const hits = calculateHitsFromMargin(shotOptions.effectiveRoF, rcl, margin, result.rollData);
@@ -1486,7 +1560,22 @@ export async function openAmmoManager() {
     TARGETED_ATTACK_CONTEXTS.set(targetingService, targetedAttackContext);
     const rateOfFireProfile = fireService.parseRateOfFire(attack.rof);
     let preparation;
+    const bowPreparation={draw:null};
     const currentAttack = () => preparation?.attack ?? attack;
+    const thrownChoices = current => current.weapons.flatMap(entry=>{
+      if(entry.ammunitionReview)return [];
+      const {weapon:choice,attack:mode}=getWeaponContext(current,entry.id);
+      const skill=resolveRangedGoverningSkill({actor,binding:mode?.governingSkillBinding});
+      if(!maRangedKinds(mode,skill).includes('thrownSequence'))return [];
+      const ammunition=ammoService.readAttackAmmunition(entry.id);
+      if(choice.ammunitionInventory&&ltPersonalProfile(choice)?.kind==='thrown')return choice.ammunitionInventory.stocks.flatMap((stock,index)=>{
+        const feed=readiedThrowFeed(choice,ammunition,stock.key);
+        const lot=ammoDisplayName(stock.type)||((maRussian()?'Партия ':'Lot ')+(index+1));
+        return feed?.available?[{weaponId:entry.id,ammoKey:stock.key,available:feed.available,
+          label:choice.name+' · '+lot+' ('+feed.available+')'}]:[];
+      });
+      return ammunition?.available?[{weaponId:entry.id,ammoKey:ammunition.ammoKey??null,available:ammunition.available,label:choice.name}]:[];
+    });
     preparation = new FirePreparationApp({
       token,
       weapon,
@@ -1501,6 +1590,7 @@ export async function openAmmoManager() {
       onHearingCheck: manualLevel => checkHearingMinusTwo(actor, manualLevel),
       initialGoverningSpecialty: weapon.governingSpecialty,
       maximumShots: getMaximumShots(attack, loaded),
+      thrownChoices:()=>thrownChoices(state),
       rateOfFireProfile,
       calculateShotLimits: modeIndex => getShotLimits(currentAttack(),
         standaloneAvailableRounds(preparation?.weapon ?? weapon), modeIndex),
@@ -1604,7 +1694,51 @@ export async function openAmmoManager() {
         }
         TARGETED_ATTACK_CONTEXTS.set(currentTargetingService, preparation?.targetedAttackContext ?? targetedAttackContext);
         const latest = await loadState();
-        const changed = await fireAndRoll(latest, weaponId, rawShotOptions, currentTargetingService);
+        if(rawShotOptions.maRanged?.kind==='thrownSequence'){
+          const choices=thrownChoices(latest);
+          const defaultChoice=choices.find(choice=>choice.weaponId===weaponId&&
+            choice.ammoKey===ammoService.readAttackAmmunition(weaponId)?.ammoKey)??choices.find(choice=>choice.weaponId===weaponId);
+          const entries=rawShotOptions.maRangedSlots??[];
+          const unavailable=()=>Error(maRussian()?'Недостаточно готовых экземпляров для серии (MA120).':'There are not enough readied weapons for the sequence (MA120).');
+          if(entries.length!==Number(rawShotOptions.maRanged.count)||entries.length<2)throw unavailable();
+          const slots=entries.map((entry,index)=>{
+            const choice=entry.thrownChoice?
+              choices.find(choice=>choice.weaponId===entry.thrownChoice.weaponId&&choice.ammoKey===entry.thrownChoice.ammoKey):defaultChoice;
+            if(!choice||choice.available<1)throw unavailable();
+            choice.available--;
+            const {attack:mode}=getWeaponContext(latest,choice.weaponId);
+            const skill=resolveRangedGoverningSkill({actor,binding:mode?.governingSkillBinding});
+            const options={...rawShotOptions,...entry,readyThrownAmmoKey:choice.ammoKey,shots:1,contextLabel:'RS '+(index+1)};
+            const plan=resolveMaRangedPlan(actor,mode,skill,options);
+            if(!plan)throw unavailable();
+            return {weaponId:choice.weaponId,label:'RS '+(index+1),
+              summary:mode.name+' | '+(skill?.name??mode.skillDescription??'')+' '+plan.penalty,options};
+          });
+          const execution=new RangedAttackExecutionApp({
+            slots,
+            ordered:true,
+            execute:async (slot,consumeAction)=>{
+              const fresh=await loadState();
+              const targets=slot.options.targetTokenId?[slot.options.targetTokenId]:[];
+              const {attack:mode}=getWeaponContext(fresh,slot.weaponId);
+              TARGETED_ATTACK_CONTEXTS.set(currentTargetingService,createTargetedAttackContext({actor,attack:mode}));
+              const done=await withFoundryTargets(targets,()=>fireAndRoll(fresh,slot.weaponId,
+                {...slot.options,consumeAction},currentTargetingService));
+              if(done&&managerApp?.rendered){managerApp.setManagerState(fresh);await managerApp.refreshContent({weaponIds:[slot.weaponId]});}
+              return fresh.maThrowInterrupted?'stop':done;
+            }
+          },{window:{title:maRussian()?'Последовательное метание':'Rapid Strike with Thrown Weapons'}});
+          await execution.render({force:true});
+          return true;
+        }
+        const quickBow=rawShotOptions.maRanged?.kind==='quickBow';
+        if(!quickBow)bowPreparation.draw=null;
+        const changed = await fireAndRoll(latest, weaponId, rawShotOptions, currentTargetingService,
+          false,null,null,quickBow?bowPreparation:null);
+        if(quickBow&&!changed){
+          preparation.maBowPrepared=!!bowPreparation.draw;
+          await preparation.render({force:true});
+        }
         if (!changed) return false;
         Object.assign(state, latest);
         if (managerApp?.rendered) {
@@ -1620,6 +1754,7 @@ export async function openAmmoManager() {
       }
     });
 
+    preparation.clearBowPreparation=()=>{bowPreparation.draw=null;};
     OPEN_FIRE_PREPARATIONS.set(preparationKey, preparation);
     try {
       await preparation.render({ force: true });

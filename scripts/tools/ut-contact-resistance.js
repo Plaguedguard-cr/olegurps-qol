@@ -7,7 +7,7 @@ export function utContactConditions(e,c){
  const integer=(v,max=100000)=>Number.isSafeInteger(v)&&v>=0&&v<=max;
  if(!c||typeof c.applicable!=='boolean'||!integer(c.dr)||typeof c.metal!=='boolean'||typeof c.recovery!=='boolean'||!integer(c.injury)||typeof c.nervousSystem!=='boolean')throw Error('Укажите применимость контакта, DR и условия сопротивления.');
  if(!c.applicable||['neural','inhibitor'].includes(e.kind)&&!c.nervousSystem)return {applies:false,immunity:'Контакт / применимость эффекта не подтверждены.',modifier:e.modifier,lines:[]};
- if(e.kind==='lethal')return {applies:c.injury>0,immunity:c.injury>0?null:'Без травмы проверка B432 не требуется.',modifier:-Math.floor(c.injury/2),lines:['Фактическая травма: '+c.injury+'; −1 HT за полные 2 HP травмы. B432.']};
+ if(e.kind==='lethal')return {applies:c.injury>0,immunity:c.injury>0?null:'Без травмы проверка B432 не требуется.',modifier:-Math.floor(c.injury/2),lines:['Фактическая травма: '+c.injury+'; -1 HT за полные 2 HP травмы. B432.']};
  const bonus=c.recovery||['extinguisher','inhibitor'].includes(e.kind)?0:e.kind==='emd'&&c.metal?0:Math.floor(c.dr/e.armorDivisor);
  return {applies:true,modifier:(c.recovery&&e.kind==='emd'?-5:e.modifier)+bonus,lines:[c.recovery?'Восстановление: HT-5 без DR, UT165.':'Применимый DR '+c.dr+', AD('+e.armorDivisor+'): +'+bonus+' HT.','Контакт, защита и последствия определяются вручную; отдельный физический Damage не отменяется. '+e.source]};
 }
@@ -27,7 +27,7 @@ export function utContactConsequence(e,n,c,success){
  if(success)return 'Воздействие отражено; отдельный физический Damage сохраняется.';
  const margin=n.margin<0?-n.margin:null,duration=margin===null?'длительность автоматического провала определяется вручную':margin+' мин.';
  if(e.kind==='emd')return 'Knockdown и Paralysis. HT-5 каждую секунду для восстановления без DR. Поддержание контакта Concentrate запрещает восстановление; ещё заряд/секунду вручную. UT165.';
- if(e.kind==='lethal')return (n.margin<=-5||n.isCritFailure?'Heart Attack. ':'Unconsciousness при токе и ещё max(1,20−HT) минут; затем −2 DX столько же времени. ')+'Фактическая травма и состояния вручную. B432.';
+ if(e.kind==='lethal')return (n.margin<=-5||n.isCritFailure?'Heart Attack. ':'Unconsciousness при токе и ещё max(1,20-HT) минут; затем -2 DX столько же времени. ')+'Фактическая травма и состояния вручную. B432.';
  if(e.kind==='extinguisher')return 'Stun и Blindness: '+(margin===null?'длительность по автоматическому провалу вручную':margin+' с')+'. UT87.';
  if(e.kind==='inhibitor')return 'Forearm: паралич руки и отсутствие боли; шея: паралич ниже шеи; череп: Unconsciousness до снятия. Новая HT-6 каждую секунду контакта вручную. UT201.';
  if(e.setting==='death')return 'Heart Attack. UT165; UT122; B429.';

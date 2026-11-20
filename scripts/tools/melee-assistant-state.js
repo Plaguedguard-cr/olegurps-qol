@@ -10,6 +10,7 @@ import {createMeleeTargetedAttackContext} from './targeted-attack-service.js';
 import {parseStandaloneSkill} from './standalone-skill-service.js';
 import { resolveMeleeProfile, meleeProfileContext } from './melee-profile-service.js';
 import { normalizeVisibility } from './limited-visibility.js';
+import {normalizeMeleeTechniques} from './melee-penalty-techniques.js';
 
 const FLAG_SCOPE = "world";
 const FLAG_KEY = "olegurpsMeleeAssistant";
@@ -103,12 +104,14 @@ export function normalizeMeleeAssistantState(value) {
     const weaponBond = raw.weaponBond === true;
     const override = normalizeMeleeAttackOverride(raw.override);
     const hasVisibility = Object.hasOwn(raw, 'visibility');
+    const hasTechniques=Object.hasOwn(raw,'techniques');
     const safeKey = normalizeStoredAttackKey(key);
-    if (safeKey && (governingSkill || rapidStrikeMastery || weaponBond || override || hasVisibility)) attacks[safeKey] = {
+    if (safeKey && (governingSkill || rapidStrikeMastery || weaponBond || override || hasVisibility || hasTechniques)) attacks[safeKey] = {
       ...(governingSkill ? { governingSkill } : {}),
       ...(rapidStrikeMastery ? { rapidStrikeMastery: true } : {}),
       ...(weaponBond ? { weaponBond: true } : {}),
       ...(hasVisibility ? { visibility: normalizeVisibility(raw.visibility) } : {}),
+      ...(hasTechniques?{techniques:normalizeMeleeTechniques(raw.techniques)}:{}),
       ...(override ? { override } : {})
     };
   }
@@ -206,6 +209,11 @@ export function setMeleeVisibility(state, attack, visibility) {
   state.attacks ??= {};
   state.attacks[key] = { ...(state.attacks[key] ?? {}), visibility: normalizeVisibility(visibility) };
   return true;
+}
+
+export function setMeleeTechniques(state,attack,value){
+ const key=storedAttackKey(attack);if(!key)return false;
+ state.attacks??={};state.attacks[key]={...(state.attacks[key]??{}),techniques:normalizeMeleeTechniques(value)};return true;
 }
 
 export function setMeleeWeaponBond(state, attack, enabled) {

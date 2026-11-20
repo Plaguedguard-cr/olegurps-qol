@@ -42,7 +42,7 @@ test('LT125 crossbow utility construction is TL2, distinct from the TL1 hand-thr
 });
 test('LT125 exact fractional delivery distance reaches shared Fire Control without rounding to an SSR band',async()=>{
  const {FirePreparationApp}=await import('../scripts/tools/fire-preparation-app.js');
- const app={mode:'standalone',attack:{ammunitionLTPersonal:{kind:'crossbow-hook'}},fireState:{projectileDistance:'10.4',hitLocation:{zoneId:'torso'}},_getShotsValue:()=>1,rangeBands:[{index:0,max:15,penalty:-5}]};
+ const app={mode:'standalone',attack:{ammunitionLTPersonal:{kind:'crossbow-hook'}},fireState:{projectileDistance:'10.4',hitLocation:{zoneId:'torso'}},_getShotsValue:()=>1,_supportSelection:()=>null,_rangedHandAllowed:()=>false,rangeBands:[{index:0,max:15,penalty:-5}]};
  const options=FirePreparationApp.prototype.getShotOptions.call(app);
  assert.equal(options.targetDistanceOverride,10.4);
  assert.equal(FirePreparationApp.prototype.getShotOptions.call({...app,attack:{}}).targetDistanceOverride,null);

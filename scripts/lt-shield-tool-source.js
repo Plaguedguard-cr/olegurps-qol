@@ -5468,7 +5468,7 @@ export function ltShieldToolHints(p){
  if(p.shield)return ['Щит остаётся одним физическим предметом. Shield Bash не получает DB к навыку; Block, DB, DR/HP, Parry и защитные броски GGA не изменяются. LT68; LT113–116; B220.',
   'Reach 1, занятая рука и подготовка щита проверяются игроком; эти условия не блокируют Attack. Guige без руки не допускает Bash (LT113); условие применения проверяется вручную.',
   ...(p.requiredFitting?['Атака требует явно выбранного установленного шипа/кромки этого экземпляра. Качество кромки не усиливает обычный cr удар поверхностью. LT68; LT114; B287.']:[]),
-  ...(p.skillAttackModifiers?['Dueling Long Shield: Shield−2 или Staff−4 уже учтены один раз. Exotic Weapon Training и Hook – вручную. LT116.']:[])];
+  ...(p.skillAttackModifiers?['Dueling Long Shield: Shield-2 или Staff-4. Exotic Weapon Training снимает этот штраф при расчёте от навыка (MA50; LT116). Hook разрешается вручную.']:[])];
  return ['Инструмент: обычный опубликованный удар отделён от рабочего действия. Зацеп, застревание, повреждение инструмента и смена хвата – вручную. '+p.sourcePages.join('; ')+'.'];
 }
 export function applyLTShieldToolSourceMode(mode,equipment,{snapshot=false}={}){

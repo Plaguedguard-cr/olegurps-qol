@@ -3,8 +3,8 @@
 export const UT_SWARM_TYPES=Object.freeze(Object.fromEntries([
   ['cannibal','Cannibal Swarm',12,'Собирает заданное изделие из подходящего сырья: до 10 lb/yd², (масса lb / площадь yd²) минут; сырьё преобразуется.'],
   ['devourer','Devourer Swarm',10,'Внутри роя: 1d(2) cor/сек.; защищает только Sealed DR.'],
-  ['disassembler','Disassembler Swarm',11,'Только nanobots: 1d−2(10) cor/сек.; защищает только Sealed DR. Стандартная длительность – 30 секунд.'],
-  ['gremlin','Gremlin Swarm',10,'Негерметичная техника с мелкими подвижными частями: 1 HP/ход на yd² без DR; Malf17, ещё −1 за каждые потерянные 10% HP.'],
+  ['disassembler','Disassembler Swarm',11,'Только nanobots: 1d-2(10) cor/сек.; защищает только Sealed DR. Стандартная длительность – 30 секунд.'],
+  ['gremlin','Gremlin Swarm',10,'Негерметичная техника с мелкими подвижными частями: 1 HP/ход на yd² без DR; Malf17, ещё -1 за каждые потерянные 10% HP.'],
   ['sentry','Sentry Swarm',10,'Против других microbot swarms: 2d/ход на hex; тип урона не указан.'],
   ['stinger','Stinger Swarm',10,'Живые при контакте без Sealed: 1 FP/ход; одежда замедляет рой.'],
   ['terminator','Terminator Swarm',10,'Живые при контакте без Sealed: 1 tox/ход.'],

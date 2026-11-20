@@ -5,6 +5,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { createHash } from "node:crypto";
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
+import { CATALOG_DEFINITIONS } from '../scripts/catalog-service.js';
 import { catalogs, compatibility, automatic, resolver, context, profile, api, inventoryFixture, modes } from "./fixtures/ht-special-context.mjs";
 import { CASE_VARIANTS, sourceCaseDefinition, reviewCaseDefinition, inventoryPhysicalTotals } from "../scripts/tools/case-technology.js";
 import { resolveAmmunitionEffects } from "../scripts/tools/ammunition-effects.js";
@@ -143,7 +145,8 @@ test("P7 source identities, ordinary ammo, legacy +P and other variants retain m
   for(const [path,hash]of Object.entries(hashes)){
     // Historical document checkpoints remain pinned; copies are verified outside normal tests.
     if (path.startsWith('docs/')) { assertHistoricalAudit(path,hash,{historicalWhitespace:path==='docs/audit/olegurps_ht64_source_review_v1.md'}); continue; }
-    assert.equal(createHash('sha256').update(fs.readFileSync(path)).digest('hex'),hash,path);
+    const book=Object.entries(CATALOG_DEFINITIONS).find(([,source])=>path.endsWith('/'+source.filename))?.[0];
+    assert.equal(createHash('sha256').update(restorePublishedCatalogCheckpoint(fs.readFileSync(path),book)).digest('hex'),hash,path);
   }
 });
 

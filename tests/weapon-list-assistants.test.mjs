@@ -5,9 +5,16 @@ globalThis.Element=class{};
 globalThis.ui={notifications:{error:()=>{}}};
 const {WeaponAssistantApp}=await import('../scripts/tools/weapon-assistant-app.js');
 const {MeleeAssistantApp}=await import('../scripts/tools/melee-assistant-app.js');
-const {WeaponListVisibility,meleeVisibilityEntries}=await import('../scripts/tools/weapon-list-visibility.js');
+const {WeaponListVisibility,SHARED_WEAPON_LIST_FLAG,meleeVisibilityEntries}=await import('../scripts/tools/weapon-list-visibility.js');
 function fixture(){const flags={},user={id:'me',getFlag:(_s,k)=>flags[k],async setFlag(_s,k,v){const parts=k.split('.'),base=parts.shift();let o=flags[base]??={};while(parts.length>1)o=o[parts.shift()]??={};o[parts[0]]=structuredClone(v);}};globalThis.game={user};
- const rows=[1,2].map(n=>({key:'a'+n,name:'Knife',standaloneRef:{weaponId:'physical'+n}})),actor={uuid:'Actor.a',isOwner:true,system:{}},app=Object.assign(Object.create(MeleeAssistantApp.prototype),{actor,sourceAttacks:rows,selectedAttackKey:'a1',rendered:true,weaponVisibility:new WeaponListVisibility(actor)});
+ const shared={hiddenById:{}};
+ const actor={uuid:'Actor.a',isOwner:true,system:{},getFlag:(scope,key)=>scope==='olegurps-qol'&&key===SHARED_WEAPON_LIST_FLAG?structuredClone(shared):undefined,
+  async update(patch){for(const [path,value] of Object.entries(patch)){
+   const [flags,scope,key,field,id]=path.split('.');
+   assert.deepEqual([flags,scope,key,field],['flags','olegurps-qol',SHARED_WEAPON_LIST_FLAG,'hiddenById']);
+   shared.hiddenById[id]=structuredClone(value);
+  }}};
+ const rows=[1,2].map(n=>({key:'a'+n,name:'Knife',standaloneRef:{weaponId:'physical'+n}})),app=Object.assign(Object.create(MeleeAssistantApp.prototype),{actor,sourceAttacks:rows,selectedAttackKey:'a1',rendered:true,weaponVisibility:new WeaponListVisibility(actor)});
  let renders=0;app.render=async()=>{renders++;};app._selectAttack=async key=>{app.selectedAttackKey=key;};return {app,actor,rows,user,renders:()=>renders};}
 test('hiding selected melee instance selects another visible instance without saving Actor selection',async()=>{const f=fixture();let received;f.app._selectAttack=async(key,options)=>{received=options;f.app.selectedAttackKey=key;};await f.app.weaponVisibility.change('hide','standalone:physical1',()=>meleeVisibilityEntries(f.actor,f.rows));await f.app._refreshVisibleWeapons();assert.deepEqual(received,{persistSelection:false});assert.equal(f.app.selectedAttackKey,'a2');assert.equal(f.renders(),1);assert.doesNotMatch(f.app._buildAttackOptions(),/value="a1"/);});
 test('local selection executes the real selection method without state or preference writes',async()=>{

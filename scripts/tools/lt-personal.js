@@ -39,7 +39,7 @@ function throwingDistance(actor,st,weight){
 }
 export function resolveLTPersonalRange({actor,profile,configuration={},skillLevel=0,sourceRange=null}={}){
  const state=readActorStrength(actor),arm=configuration.applyArmST?state.advantages.levels.arm+state.modifiers.arm:0;
- const st=state.kinds.st.effective===null?null:state.kinds.st.effective+arm,p=profile;
+ const st=state.derivedST.effective===null?null:state.derivedST.effective+arm,p=profile;
  if(p.kind.startsWith('crossbow-')){
   const parent=ltBowProfile(p.parentModeId),ratedST=numeric(configuration.utilityRatedST),orientation=configuration.utilityOrientation??'horizontal';
   if(!parent||!Number.isSafeInteger(ratedST)||ratedST<parent.minRatedST||!['horizontal','vertical'].includes(orientation))return {ready:false,reason:'Укажите Rated ST этого арбалета и направление доставки по LT125.'};
@@ -70,13 +70,13 @@ export function resolveLTPersonalRange({actor,profile,configuration={},skillLeve
 const manual={
  bolas:['Обвивание и освобождение – вручную после защиты цели; Bolas против ST для выбивания удерживаемого предмета. B410.'],
  harpoon:['Зазубрины и освобождение – вручную; длина привязи ограничивает движение, натяжение – состязание ST. B411.'],
- pilum:['После попадания согнут: выпрямление – 3 Ready и ST. Застрявший в щите: −1; при массе ≥½/полной массы щита – −2/−4. LT73.'],
+ pilum:['После попадания согнут: выпрямление – 3 Ready и ST. Застрявший в щите: -1; при массе ≥½/полной массы щита – -2/-4. LT73.'],
  hungamunga:['Мягкое железо TL2: после броска 1d, 1–3 – согнут; 10 с и Armoury+3 для исправления. Сталь TL3+ не гнётся по этому правилу. LT72.'],
  cloak:['Набрасывание плаща: защиту и фейнт/захват по Cloak разрешите вручную; автоматического ослепления нет. B404.'],
- 'net-large':['После неудачной защиты цель опутана. Освобождение: три успешных DX−4, по Ready; три последовательных провала – нужна помощь/разрезание. B411.'],
- 'net-small':['При броске – сеть: DX−4 с +3 за малую сеть; в контакте применяется отдельная процедура лассо/bolas. B411.'],
- lariat:['После захвата поддерживайте натяжение каждым Ready; состязание ST, для шеи у цели −5; нога – DX, при беге −4. B411.'],
- powder:['Порошок: ближняя атака Blowpipe +2, до 1 ярда; ветер снаружи даёт −2 и хуже. Действие вещества – вручную по способу доставки. B180.'],
+ 'net-large':['После неудачной защиты цель опутана. Освобождение: три успешных DX-4, по Ready; три последовательных провала – нужна помощь/разрезание. B411.'],
+ 'net-small':['При броске – сеть: DX-4 с +3 за малую сеть; в контакте применяется отдельная процедура лассо/bolas. B411.'],
+ lariat:['После захвата поддерживайте натяжение каждым Ready; состязание ST, для шеи у цели -5; нога – DX, при беге -4. B411.'],
+ powder:['Порошок: ближняя атака Blowpipe +2, до 1 ярда; ветер снаружи даёт -2 и хуже. Действие вещества – вручную по способу доставки. B180.'],
  metsubushi:['Metsubushi: один заранее снаряжённый заряд, Ready 1 с; снаряжение устройства в бою непрактично. Ближняя атака Blowpipe +2 до 1 ярда. LT72; B180.'],
  grapnel:['Крюк брошен: закрепление и удержание верёвки проверяются вручную. Звук о твёрдую поверхность – 4 ярда. LT125.'],
  'grapnel-padded':['Мягкая обмотка: звук удара о твёрдую поверхность – 2 ярда. Закрепление крюка и удержание верёвки – вручную. LT125.']

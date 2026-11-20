@@ -114,24 +114,28 @@ test("unload and stock changes update named counts without merging variants or i
   assert.ok(renderBadges(weapon).includes(`title="${ammoWindowText("Empty")}"`));assert.doesNotMatch(renderBadges(weapon),/gam-mag-name/);
 });
 
-test("skill summary follows actual selected mode and leaves effective skill and probability intact", () => {
+test("skill summary follows the imported base of the selected mode and preserves the effective preview", () => {
   const actor = { system: { skills: {
     rifle: { name: "Guns/TL9 (Rifle)", uuid: "rifle", level: 13 },
     pistol: { name: "Guns/TL9 (Pistol)", uuid: "pistol", level: 14 }
   } } };
   const app = Object.create(FirePreparationApp.prototype);
   const skills = listRangedGoverningSkills(actor);
-  Object.assign(app, { mode: "weapon", actor, attack: { level: 13, governingSkillBinding: bindingForGoverningSkill(skills[0]) },
+  const select = skill => bindingForGoverningSkill(skill, { explicitCleanSkill: true });
+  Object.assign(app, { mode: "weapon", actor, attack: { level: 13, governingSkillBinding: select(skills[0]) },
     calculateEffectiveSkill: () => 13, getShotOptions: () => ({}), targetingService: {} });
   const preview = app._getSkillPreview();
   for (const language of ["ru", "en"]) {
     game.i18n.lang = language;
-    const prefix = "Навык";
-    assert.equal(app._getSourceSkillText(language), prefix + ": Guns/TL9 (Rifle) \u2013 13");
-    app.attack.governingSkillBinding = bindingForGoverningSkill(skills[1]);
-    assert.equal(app._getSourceSkillText(language), prefix + ": Guns/TL9 (Pistol) \u2013 14");
+    assert.equal(app._getSourceSkillText(language), "Исходная база навыка: 13.");
+    app.attack.governingSkillBinding = select(skills[1]);
+    // An unbound GGA attack keeps its imported total when the skill binding changes.
+    assert.equal(app._getSourceSkillText(language), "Исходная база навыка: 13.");
+    app.attack.level = 14;
+    assert.equal(app._getSourceSkillText(language), "Исходная база навыка: 14.");
     assert.deepEqual(app._getSkillPreview(), preview);
-    app.attack.governingSkillBinding = bindingForGoverningSkill(skills[0]);
+    app.attack.governingSkillBinding = select(skills[0]);
+    app.attack.level = 13;
   }
   assert.equal(preview.level, "13");
   assert.equal(preview.chance, "83,8");

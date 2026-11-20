@@ -49,6 +49,7 @@ export function assertHTEquipmentProjection(source,projected){
   if(v)assertMeleeVector(mode,v);
   if(!original)continue;
   const rest=structuredClone(mode),before=structuredClone(original);
+  if(!Object.hasOwn(before,'massFeed'))before.massFeed=null;
   // Only these explicitly source-reviewed projection fields may change. Numeric
   // fields above are checked against the independent books, remaining bytes below.
   const work=new Set(['w97_uEiMUqcFVpfJ-','wOHIhliBGjYJKge6m','wkuw7NCOcOmCIFJlp','wYstTcATjL8Paidyz','wflnXSn-N842a_IQ6','wSLBM4cOvxbGUGddB','wdNSXATftsRhxldVJ','wxBDv-EZaY9iEhu-A','wM-IloFzOSMLUuolU','wj3S12NiNIJQ6W6x8','wVie_2KxErcQeMUaG']);
@@ -69,6 +70,8 @@ export function assertHTEquipmentProjection(source,projected){
 }
 export function expectedHTAmmoProjection(source){
  const result=structuredClone(source),ids=['ht_12_gauge_2_75_18_5x70mmr','ht_12_gauge_2_75_18_5x70mmr_heavy_load'];
+ for(const record of result.ammo_items)record.mass??=null;
+ for(const record of result.feed_devices_reference_only??[])record.massFeed??=null;
  for(const a of result.ammo_items)if(ids.includes(a.id))for(const key of ['weapon_mode_ids','compatible_weapon_mode_ids'])if(Array.isArray(a[key]))a[key].push('WHTM28CondorTonfaFired');
  for(const f of result.ammo_families)if(f.ammo_item_ids.some(id=>ids.includes(id)))f.compatible_weapon_mode_ids.push('WHTM28CondorTonfaFired');
  return result;

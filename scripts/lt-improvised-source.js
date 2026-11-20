@@ -1,3 +1,5 @@
+import {resolveCombatTechnique} from "./tools/combat-technique-registry.js";
+import {readCombatTechniqueSkills} from "./tools/combat-technique-data.js";
 import {LT_CLOSEOUT_PROFILES} from './lt-improvised-closeout-data.js';
 import {ltBladeSource,ltBladeGripPolicy} from './lt-blade-source.js';
 import {ltImpactSource,ltImpactGripPolicy} from './lt-impact-source.js';
@@ -40,8 +42,8 @@ function mode(e,key,damage,reach,parry,st,skills,penalty=0,extra={}){
 const punch=(e,key,damage='thr-1 cr',skills=['Brawling'],penalty=0,extra={})=>mode(e,key,damage,'C','0',null,skills,penalty,{unarmedSkillBonus:true,...extra});
 const hammer=e=>punch(e,'Hammer Fist','thr-1 cr',['Hammer Fist'],e.improvised?-1:0,{technique:'Hammer Fist',sourcePages:[...e.sourcePages,'LT64','MA73','B182','B203'],damagePart:'fist-load'});
 let e=item('abacus','Abacus');punch(e,'Punch','thr cr',['Brawling'],-2,{stats:{damage:'thr cr',reach:'C',parry:'No',st:null}});
-e=item('arrow-or-bolt','Arrow or Bolt');mode(e,'Thrust','thr-1 imp','C','No','5',['Knife'],0,{damageCap:'1d-4',sourcePages:['LT63','LT67'],hints:['Обычный наконечник. Барбы и иной тип наконечника выбираются вручную по LT73; предел Damage 1d−4. Поломка на 1–3 после успешного удара/парирования – вручную.']});
-e=item('belt','Belt');mode(e,'Buckle','sw-2 cr','1','No','5',['Flail'],-1);mode(e,'Whip','sw-3(0.5) cr','1','No','6',['Whip'],-2,{motion:'swing',hints:['Одноярдовый ремень как Whip; Crack и опутывание – отдельные ручные действия.']});
+e=item('arrow-or-bolt','Arrow or Bolt');mode(e,'Thrust','thr-1 imp','C','No','5',['Knife'],0,{damageCap:'1d-4',sourcePages:['LT63','LT67'],hints:['Обычный наконечник. Барбы и иной тип наконечника выбираются вручную по LT73; предел Damage 1d-4. Поломка на 1–3 после успешного удара/парирования – вручную.']});
+e=item('belt','Belt');mode(e,'Buckle','sw-2 cr','1','No','5',['Flail'],-1);mode(e,'Whip','sw-3(0.5) cr','1','No','6',['Whip'],-2,{motion:'swing',hints:['Одноярдовый ремень как Whip; Crack доступен только при явном кинематографическом допуске MA70. Опутывание выполняется вручную.']});
 e=item('book-or-codex','Book or Codex');punch(e,'Punch','thr-2 cr',['Brawling'],-2,{stats:{damage:'thr-2 cr',reach:'C',parry:'No',st:'7'}});
 e=item('boots-shoes-or-sandals','Boots, Shoes, or Sandals');punch(e,'In hand','thr-1 cr',['Brawling'],-2,{stats:{damage:'thr-1 cr',reach:'C',parry:'0',st:'7'}});mode(e,'By laces','sw-2 cr','1','No','5',['Flail'],-2);
 e=item('bottle-broken','Bottle, Broken');mode(e,'Swing','sw-3(0.5) cut','C,1','No','5',['Knife'],-2);mode(e,'Thrust','thr-1(0.5) imp','C','No','5',['Knife'],-2);
@@ -74,7 +76,7 @@ e=item('yawara','Yawara',{improvised:false,cost:10,mass:0.25,pages:['LT64','LT65
 e=item('rigid-scabbard','Rigid Scabbard',{pages:['LT57','LT69']});mode(e,'Swing','sw cr','1','0','6',['Shortsword'],0,{hints:['Только жёсткие ножны массой не менее 1 lb. Цена/масса зависят от конкретного меча; Cheap относится к поломке полых ножен. LT57.']});mode(e,'Thrust','thr cr','1','0','6',['Shortsword']);
 e=item('wooden-leg','Wooden Leg',{tl:2,cost:250,mass:10,improvised:false,pages:['LT149','B271','B231','MA75']});mode(e,'Kick','thr+1 cr','C,1','No',null,['Kicking'],0,{hands:0,technique:'Kicking',unarmedSkillBonus:true,motion:'thrust',hints:['Удар установленным деревянным протезом. Падение после промаха и Lame – вручную; это не удар снятой ногой. LT149; B271.']});
 e=item('adze','Adze',{tl:0,cost:40,mass:2,improvised:false,construction:'blade',qualityClass:'cutting',pages:['LT28','LT65']});mode(e,'Swing','sw cut','1','0','8',['Axe/Mace'],-2);
-e=item('fishing-spear','Fishing Spear',{tl:0,improvised:false,cost:30,mass:2,construction:'blade',qualityClass:'impaling',pages:['LT29','LT69']});mode(e,'Thrust','thr+1 imp','1','0','6',['Spear'],0,{hints:['Штраф −2 LT29 относится только к метанию; обычный melee Thrust его не получает.']});
+e=item('fishing-spear','Fishing Spear',{tl:0,improvised:false,cost:30,mass:2,construction:'blade',qualityClass:'impaling',pages:['LT29','LT69']});mode(e,'Thrust','thr+1 imp','1','0','6',['Spear'],0,{hints:['Штраф -2 LT29 относится только к метанию; обычный melee Thrust его не получает.']});
 e=item('bayonet','Bayonet (detached)',{tl:4,improvised:false,cost:40,mass:1,construction:'blade',qualityClass:'cutting',pages:['LT54','LT55','LT67']});mode(e,'Swing','sw-2 cut','C,1','-1','6',['Knife']);mode(e,'Thrust','thr imp','C','-1','6',['Knife']);
 e=item('climbing-pole','Climbing Pole',{tl:1,cost:80,mass:5,improvised:false,construction:'wood',pages:['LT125','LT69']});mode(e,'Swing','sw+2 cr','2,3','+2','10†',['Staff'],-2);mode(e,'Thrust','thr+2 cr','2,3','+2','10†',['Staff'],-2);
 e=item('piton','Piton',{tl:2,cost:4,mass:0.75,improvised:false,construction:'blade',qualityClass:'impaling',pages:['LT125','LT67']});mode(e,'Thrust','thr-1 imp','C','-1','5',['Knife'],-2);
@@ -92,26 +94,12 @@ export function ltImprovisedGripPolicy(p){
  const policy=base&&(ltBladeGripPolicy(base)??ltImpactGripPolicy(base)??ltPolearmGripPolicy(base)??ltFlexibleGripPolicy(base));
  return policy?{...policy,grips:policy.grips.filter(g=>g!=='tip')}:{grips:p.martialGrips??[],twoHanded:p.hands===2};
 }
-function skillRows(actor){
- const out=[];const walk=t=>{for(const r of Object.values(t??{}))if(r&&typeof r==='object'){out.push(r);walk(r.contains);walk(r.collapsed);}};walk(actor?.system?.skills);return out;
-}
+const skillRows=actor=>readCombatTechniqueSkills(actor,{objectRows:true});
 // Only these published techniques. No recursive defaults and no generic technique-as-skill rule.
 export function resolveImprovisedTechnique(actor,p){
  if(!p?.technique)return null;
- const rows=skillRows(actor),learned=r=>(Number(r.points)>0||r.learned===true)&&Number.isFinite(Number(r.level??r.import));
- const bases=rows.filter(r=>['Brawling','Karate'].includes(r.name)&&learned(r)).map(r=>({name:r.name,level:Number(r.level??r.import)}));
- const candidates=[];
- for(const b of bases)candidates.push({level:b.level+(p.technique==='Kicking'?-2:-1),source:'skill-default',sourceName:b.name,sourceLevel:b.level,defaultPenalty:p.technique==='Kicking'?-2:-1,baseSkill:b.name});
- if(p.technique==='Kicking'&&Number.isFinite(Number(actor?.system?.attributes?.DX?.value)))candidates.push({level:Number(actor.system.attributes.DX.value)-2,source:'attribute-default',sourceName:'DX',sourceLevel:Number(actor.system.attributes.DX.value),defaultPenalty:-2,baseSkill:'DX'});
- for(const r of rows.filter(learned)){
-  const m=/^(Hammer Fist|Kicking)(?:\s*\((Brawling|Karate)\))?$/i.exec(String(r.name));if(!m||m[1].toLowerCase()!==p.technique.toLowerCase())continue;
-  const base=bases.filter(b=>!m[2]||b.name.toLowerCase()===m[2].toLowerCase()).sort((a,b)=>b.level-a.level)[0];
-  if(!base)continue;
-  candidates.push({level:Math.min(Number(r.level??r.import),base.level),source:'learned-technique',sourceName:r.name,sourceLevel:Number(r.level??r.import),defaultPenalty:0,baseSkill:base.name});
- }
- candidates.sort((a,b)=>b.level-a.level);
- const best=candidates[0];return best?{...best,name:p.technique,resolved:true,learned:best.source==='learned-technique',level:best.level+p.attackModifier,directWeaponPenalty:p.attackModifier,penalty:best.defaultPenalty+p.attackModifier,candidates:[]}:
- {name:p.technique,resolved:false,level:null,candidates:[],reason:'Нет изученного базового Brawling/Karate для Hammer Fist (LT64; MA73).'};
+ const id=p.technique==='Hammer Fist'?'hammerFist':p.technique==='Kicking'?'kicking':null;
+ return id?resolveCombatTechnique(id,{actor,profile:p}):null;
 }
 export function techniqueDamageBonus(p,skill,actor){
  const name=skill.baseSkill,base=skillRows(actor).filter(r=>r.name===name&&(Number(r.points)>0||r.learned===true)).sort((a,b)=>Number(b.level??b.import)-Number(a.level??a.import))[0];
@@ -127,7 +115,7 @@ export function publishedHandParry(p,name,skill,actor){
 }
 export function ltImprovisedHints(p){return [
  ...(p.improvised?['Опубликованная ударная часть: Cheap; Fine, Superfine и материал соседнего оружия не назначаются. '+p.sourcePages[0]+'.']:[]),
- ...(p.improvised&&p.sourcePages.includes('LT63')?['Improvised Weapons для нужного навыка снимает его импровизированный штраф, но не штраф Damage. Если перк ещё не учтён итогом GGA, поправка задаётся вручную. LT9; LT63.']:[]),
+ ...(p.improvised&&p.sourcePages.includes('LT63')?['Improvised Weapons снимает импровизированный штраф при расчёте от указанного в перке навыка (MA50; LT9,63). Итог GGA сохраняется.']:[]),
  ...(p.breakageQuality==='Good'?['Железная сковорода ломается как Good; это не бонус Damage. LT63.']:[]),
  ...(p.damageCap?['Предел Damage '+p.damageCap+' применяется к итоговому профилю. LT63.']:[]),
  ...(p.stats.parry==='No'?['Этим способом предмет не парирует. Проверка защиты – вручную. '+p.sourcePages[0]+'.']:[]),
@@ -177,23 +165,23 @@ const gripTemplates={
  eLTM26climbingpole:'wk4ty2OdpeeoKr0i0',eLTM26PryBar20:'wrdwSAqzcb2G6SYD-'
 };
 export const LT_IMPROVISED_MANUAL={
- 'lt:bootlaces':'Только удушение как верёвочной гарротой: Garrote−2 и −1 Damage. Обычной числовой атаки нет. LT63; B405.',
- 'lt:belt':'Удушение: Garrote−1 и −1 Damage верёвочной гарроты. Опутывание как одноярдовым Whip при Whip−2 – вручную. LT63; B405.',
- 'lt:book-or-codex':'В двух руках может служить малым щитом при Shield−1; защита и экипировка не автоматизируются. LT63.',
- 'lt:boots-shoes-or-sandals':'Метание за шнурки как Bola Perdida при Sling−2, −1 Damage и половинной дальности – отдельное ranged-применение. Шнурки: Garrote−2 и −1 Damage при удушении. LT63.',
- 'lt:chain-unweighted':'Опутывание как Kusari при Kusari−4 – вручную. Цепь Cheap: $6 и 2 lb за ярд; без подтверждённой длины общая цена/масса не вычисляются. LT63.',
- 'lt:chair-or-stool':'В одной руке может служить средним щитом при Shield−1; обычный удар требует двух рук. LT63.',
- 'lt:pan-iron':'В одной руке может служить железным малым щитом при Shield−1; защита и экипировка не автоматизируются. LT63.',
- 'lt:scarf':'Удушение как верёвочной гарротой при Garrote−1, без штрафа Damage. Обычный Flail-удар требует уже завязанного тяжёлого предмета. LT63; B405.',
- 'lt:strigil':'Hook при Knife−1 и применение Pressure Secrets – ручные процедуры. Режущий край меняет тип именно специальной Pressure Secrets атаки; обычный Hammer Fist остаётся cr. LT63.',
- 'lt:chopstick':'Pressure Secrets вместо Hammer Fist: обычный штраф −2 этой процедуры и +1 к последующему Pressure Secrets; обычный Damage предмета не заменяется. LT63.',
+ 'lt:bootlaces':'Только удушение как верёвочной гарротой: Garrote-2 и -1 Damage. Обычной числовой атаки нет. LT63; B405.',
+ 'lt:belt':'Удушение: Garrote-1 и -1 Damage верёвочной гарроты. Опутывание как одноярдовым Whip при Whip-2 – вручную. LT63; B405.',
+ 'lt:book-or-codex':'В двух руках может служить малым щитом при Shield-1; защита и экипировка не автоматизируются. LT63.',
+ 'lt:boots-shoes-or-sandals':'Метание за шнурки как Bola Perdida при Sling-2, -1 Damage и половинной дальности – отдельное ranged-применение. Шнурки: Garrote-2 и -1 Damage при удушении. LT63.',
+ 'lt:chain-unweighted':'Опутывание как Kusari при Kusari-4 – вручную. Цепь Cheap: $6 и 2 lb за ярд; без подтверждённой длины общая цена/масса не вычисляются. LT63.',
+ 'lt:chair-or-stool':'В одной руке может служить средним щитом при Shield-1; обычный удар требует двух рук. LT63.',
+ 'lt:pan-iron':'В одной руке может служить железным малым щитом при Shield-1; защита и экипировка не автоматизируются. LT63.',
+ 'lt:scarf':'Удушение как верёвочной гарротой при Garrote-1, без штрафа Damage. Обычный Flail-удар требует уже завязанного тяжёлого предмета. LT63; B405.',
+ 'lt:strigil':'Hook при Knife-1 и применение Pressure Secrets – ручные процедуры. Режущий край меняет тип именно специальной Pressure Secrets атаки; обычный Hammer Fist остаётся cr. LT63.',
+ 'lt:chopstick':'Pressure Secrets вместо Hammer Fist: обычный штраф -2 этой процедуры и +1 к последующему Pressure Secrets; обычный Damage предмета не заменяется. LT63.',
  'lt:comb-or-brush':'Pressure Secrets применяется вручную; +1 к последующей проверке не является бонусом обычной атаки. LT63.',
  'lt:key-skeleton':'Pressure Secrets применяется вручную; +1 к последующей проверке не является бонусом обычной атаки. LT63.',
  'lt:rim-of-bottle-cup-or-glass':'Pressure Secrets применяется вручную; +1 к последующей проверке не является бонусом обычной атаки. LT63.',
  'lt:bottle-intact':'Стекло ломается на 1–3 на 1d при ударе/парировании; при 1 наносит thr cut руке. Переход к разбитой бутылке и последствия – вручную. LT63.',
  'lt:bottle-broken':'Стекло ломается на 1–3 на 1d при ударе/парировании; при 1 наносит thr cut руке. Последствия – вручную. LT63.',
  'lt:cane':'Трость с крюком допускает Hook; добавление крюка не меняет опубликованные цену и массу. Процедура зацепа остаётся ручной. LT55; LT54.',
- 'lt:yawara':'Hammer Fist: +1 от Yawara компенсирует −1 Damage техники. Hurting Yourself использует 1/10 вместо 1/5; +1 к последующим Judo holds/locks – вручную. LT64; MA73.',
+ 'lt:yawara':'Hammer Fist: +1 от Yawara компенсирует -1 Damage техники. Hurting Yourself использует 1/10 вместо 1/5; +1 к последующим Judo holds/locks – вручную. LT64; MA73.',
  'lt:purse-coin-filled':'При поломке содержимое рассыпается; монеты и инвентарь автоматически не меняются. LT63.'
 };
 for(const p of Object.values(profiles)){

@@ -136,3 +136,11 @@ test("turning Rapid Strike off and on restores both slot configurations", () => 
   app._refreshAttackSlots();
   assert.equal(app._attackSlotStates[1].manualModifier, "4");
 });
+
+test('MA-PENALTY pure preview cannot overwrite another slot target with the currently selected Token',()=>{
+ const app=assistant(),before=game.user.targets;try{
+  app._attackSlotStates[0].targetIds=['saved-target'];game.user.targets=new Set([{id:'current-target'}]);
+  app._saveActiveAttackConfiguration();assert.deepEqual(app._attackSlotStates[0].targetIds,['saved-target']);
+  app._saveActiveAttackConfiguration({captureTargets:true});assert.deepEqual(app._attackSlotStates[0].targetIds,['current-target']);
+ }finally{game.user.targets=before;}
+});

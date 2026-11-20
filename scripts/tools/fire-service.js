@@ -2,13 +2,15 @@ import { parseRecoil, recoilNotApplicable, validateAttackRecoil } from './weapon
 export { parseRecoil } from './weapon-recoil.js';
 import { validateProximityShot } from './ut-he-proximity.js';
 import { calculateHitsFromMargin, executePreparedGgaRoll } from "./prepared-gga-roll.js";
+import { rangedPerkContext } from './ma-combat-perks.js';
 import { f4Text } from "./ammunition-f4-localization.js";
 import { resolveRuntimeAttackProfile, newAttackId, pendingShotSnapshot, attackProfileError } from "./attack-profile-runtime.js";
 import {persistShotSnapshot} from './shot-history-storage.js';
 import { createShotSnapshot, immutableCopy } from "./attack-profile-resolver.js";
 import { moduleText } from '../localization.js';
 import { rangedStrengthSignature, resolveRangedWeaponStrength } from './ranged-weapon-strength.js';
-import { parseWeaponBulk } from "./weapon-bulk.js";
+import { normalizeBulk } from "./weapon-bulk.js";
+export { normalizeBulk } from "./weapon-bulk.js";
 import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 
 export function parseRateOfFire(value) {
@@ -115,10 +117,6 @@ export function calculateBracingBonus(braced, aimSeconds) {
   const enabled = braced === true || braced === 1 ||
     ["true", "1", "on"].includes(String(braced ?? "").trim().toLowerCase());
   return enabled && normalizeAimSeconds(aimSeconds) > 0 ? 1 : 0;
-}
-
-export function normalizeBulk(value) {
-  return parseWeaponBulk(value)?.numericBulk ?? null;
 }
 
 export function calculateMoveAttackPenalty(bulk, moveAndAttack) {
@@ -407,10 +405,14 @@ export class FireService {
     // A prepaid suppression/spraying profile freezes ammunition ballistics, not today's handling ST.
     if(attackProfile.weaponStrength){
       attackProfile=immutableCopy({...attackProfile,context:{...attackProfile.context,supportSelection}});
+      const burst=attackProfile.damage?.rules?.maThrownBurst;
+      const strengthProfile=burst?{...attackProfile,damage:{...attackProfile.damage,formula:burst.singleDamage}}:attackProfile;
       attackProfile=immutableCopy({...attackProfile,
-        weaponStrength:resolveRangedWeaponStrength({actor:this.actor,attack,profile:attackProfile,catalogs:globalThis.OleGURPSQOL?.catalogs})});
+        weaponStrength:resolveRangedWeaponStrength({actor:this.actor,attack,profile:strengthProfile,catalogs:globalThis.OleGURPSQOL?.catalogs})});
     }
     if(expectedStrength&&rangedStrengthSignature(expectedStrength)!==rangedStrengthSignature(attackProfile.weaponStrength))throw Error(moduleText('OleGURPS.Strength.Stale'));
+    const perkContext=rangedPerkContext(options.combatCalculation);
+    if(Object.keys(perkContext).length)attackProfile=immutableCopy({...attackProfile,context:{...attackProfile.context,...perkContext}});
     const strengthDelta=options.combatCalculation?.channels?.find(c=>c.id==='weaponStrength')?.resolvedValue??options.weaponStrengthDelta;
     if(attackProfile.weaponStrength&&Number.isFinite(strengthDelta))attackProfile=immutableCopy({...attackProfile,
       weaponStrength:{...attackProfile.weaponStrength,support:{...(expectedStrength?.support??attackProfile.weaponStrength.support),

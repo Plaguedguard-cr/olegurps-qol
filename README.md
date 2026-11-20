@@ -2,7 +2,7 @@
 
 Foundry VTT module for GURPS Game Aid.
 
-Текущая версия: **0.2.3a**. [Изменения релиза](docs/releases/v0.2.3a.md).
+Текущая версия: **0.2.4a**. [Изменения релиза](docs/releases/v0.2.4a.md).
 Установочный ZIP и manifest публикуются GitHub Actions по тегу версии.
 
 В этой версии восстановлены боевой профиль Tactical AESA, совместимость Floater

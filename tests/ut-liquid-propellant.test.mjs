@@ -291,7 +291,7 @@ test('compact LP ChatMessage preserves Note, saving throw, radius and descriptio
   const fx=await fixture('WdUnAFzFvv59Smhhk'),base=fx.candidates().find(t=>!t.recipe),parameters={note:'Custom <lot> '.repeat(20),savingThrow:'Custom HT',description:'User description '.repeat(20),radius:{yards:17,units:'yards',origin:'manual'}};
   const p=automatic.prepare({modeId:fx.carrier.standaloneModeId,base,variantId:'ut_biochemical_liquid',parameters});await fx.transaction('save-recipe',{type:p.type});await load(fx,p.type);await configure(fx);await setMode(fx,'low-velocity');
   for(const lang of ['ru','en']){game.i18n.lang=lang;const profile=fx.profile(),data=ammunitionChatData(profile),html=ammunitionChatHTML(profile,escapePayload);
-    assert.ok(data.lines.length<=3);assert.match(html,/Low Velocity/);assert.match(html,/−3/);assert.match(html,/UT139/);assert.match(html,/Custom HT/);assert.match(html,/17/);
+    assert.ok(data.lines.length<=3);assert.match(html,/Low Velocity/);assert.match(html,/-3/);assert.match(html,/UT139/);assert.match(html,/Custom HT/);assert.match(html,/17/);
     assert.ok(html.includes(escapePayload(p.type.recipe.parameters.note)));assert.ok(html.includes(p.type.recipe.parameters.description));assert.doesNotMatch(html,/<details[^>]*\bopen|Basic Set|Non-Rechargeable|capacityUnits/);
   }game.i18n.lang='ru';const result=await shoot(fx);assert.match(result.message.content,/Low Velocity/);
 });

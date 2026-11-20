@@ -28,7 +28,7 @@ export const ammoEffectMessages = {
     "native-scope-unresolved": "scope bonus is not confirmed",
     "subsonic-original-speed-or-cartridge-class-unresolved": "original velocity or cartridge class is unconfirmed",
     "native-required-strength-unresolved": "weapon minimum ST is unconfirmed",
-    "plus-p-loading-check-required": "for powder-and-shot the GM must confirm a successful Armoury (Small Arms) or IQ-based Guns−2 check before loading",
+    "plus-p-loading-check-required": "for powder-and-shot the GM must confirm a successful Armoury (Small Arms) or IQ-based Guns-2 check before loading",
     ContractChanged: "contract changed after initialization",
     AdapterUnavailable: "OleGURPS: ammunition effects disabled – incompatible GGA integration points: {points}. Native GGA rolls remain available.",
     Unresolved: "OleGURPS: ammunition effects could not be applied completely ({reason}); using native GGA Damage.",

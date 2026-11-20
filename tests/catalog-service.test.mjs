@@ -1,4 +1,5 @@
 import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 import {assertProjectedUTCatalog} from './helpers/ut-projected-catalog-contract.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -387,7 +388,7 @@ test("current catalog bytes match the verified SHA-256 values", async () => {
       const { assertWeaponPreservation } = await import("./fixtures/ht-preservation-contract.mjs");
       const proof = readAuditFixture('ht-v1-3-preservation');
       assertWeaponPreservation(data.toString("utf8"), proof);
-    } else assert.equal(createHash("sha256").update(data).digest("hex"), sourceHashes[book], filename);
+    } else assert.equal(createHash("sha256").update(restorePublishedCatalogCheckpoint(data,book)).digest("hex"), sourceHashes[book], filename);
     assert.doesNotThrow(() => new TextDecoder("utf-8", { fatal: true }).decode(data));
     await assert.rejects(fs.access(new URL("../" + filename, import.meta.url)), { code: "ENOENT" });
   }

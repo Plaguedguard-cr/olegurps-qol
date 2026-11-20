@@ -1,4 +1,8 @@
 import {installExoticBeamDamage} from './tools/exotic-beam-damage.js';
+import {installMeleeTechniqueProcedureHooks} from './tools/melee-technique-procedures.js';
+import {installMeleeStrikeProcedureHooks} from './tools/melee-strike-procedures.js';
+Hooks.once('ready',installMeleeTechniqueProcedureHooks);
+Hooks.once('ready',installMeleeStrikeProcedureHooks);
 import {registerWeaponListVisibilityHooks} from './tools/weapon-list-visibility.js';
 import {registerWeaponAssistantReset} from './tools/weapon-assistant-reset.js';
 import { openUnifiedLauncher, registerLauncherSettings } from './unified-launcher.js';

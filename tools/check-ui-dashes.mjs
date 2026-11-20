@@ -4,13 +4,10 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const registry = JSON.parse(fs.readFileSync(new URL('./ui-dash-exceptions.json', import.meta.url), 'utf8'));
-// Also check escapes and HTML entities so encoding a new UI dash cannot evade this gate.
-const emDash = /\u2014|\\u(?:2014|\{2014\})|&#(?:8212|x2014);|&mdash;/giu;
+// Include escaped signs and HTML entities as well as literal characters.
+const nonUiSign = /[\u2014\u2212]|\\u(?:2014|2212|\{(?:2014|2212)\})|&#(?:0*(?:8212|8722)|x0*(?:2014|2212));|&(?:mdash|minus);/iu;
 export function unapprovedUIDash(file, text) {
-  emDash.lastIndex = 0;
-  const present = emDash.test(text);
-  emDash.lastIndex = 0;
-  return present && !registry.some(entry => entry.file === file && entry.text === text && entry.reason);
+  return nonUiSign.test(text) && !registry.some(entry => entry.file === file && entry.text === text && entry.reason);
 }
 export function checkUIDashes(directory = root) {
   const errors = [];
@@ -30,5 +27,5 @@ export function checkUIDashes(directory = root) {
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const errors = checkUIDashes();
   if (errors.length) { console.error(JSON.stringify(errors, null, 2)); process.exitCode = 1; }
-  else console.log('UI dash check passed (scripts, lang, templates, styles; exact classified exceptions).');
+  else console.log('UI dash and minus check passed (scripts, lang, templates, styles; exact classified exceptions).');
 }

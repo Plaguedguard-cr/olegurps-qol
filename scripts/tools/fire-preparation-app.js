@@ -1,5 +1,7 @@
 import {weaponResourceStatLines} from './weapon-resource-presentation.js';
-import { rangedStrengthExplanation } from './ranged-weapon-strength.js';
+import { maOptionText, maRussian } from './ma-combat-options.js';
+import { maRangedKinds, throwingArtRangeMultipliers } from './ma-ranged-options.js';
+import { canChooseRangedHand, rangedStrengthExplanation } from './ranged-weapon-strength.js';
 import { recoilNotApplicable } from './weapon-recoil.js';
 import {ltEarlyProfile} from '../lt-early-firearms-source.js';
 import {duckFootFieldsHTML,captureDuckFootInputs,readDuckFootContext} from './lt-duck-foot.js';
@@ -233,6 +235,7 @@ const FIRE_PREPARATION_CSS = `
   .gam-fire-braced:has([name="supportChoice"]) { grid-template-columns:max-content auto minmax(0,1fr); gap:6px; }
   .gam-fire-support { display:inline-flex; align-items:center; justify-content:flex-end; gap:5px; min-width:0; margin:0; font-size:.92em; }
   .gam-fire-support select { width:108px; min-width:0; max-width:100%; height:26px; margin:0; padding:0 3px; }
+  .gam-fire-hand-controls { display:flex; flex-wrap:wrap; gap:6px; min-width:0; }
 
 
   .gam-fire-rof {
@@ -748,7 +751,7 @@ export class FirePreparationApp extends ApplicationV2 {
     position: { width: 1120, height: "auto" }
   };
 
-  constructor({ mode = "weapon", parseRateOfFire, token, actor = null, weapon, attack, rangeBands, recommendation, getTargetRangeRecommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", initialStandaloneValues = null, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateLaserBonus, calculateFireMode, calculateEffectiveSkill, onTargetingServiceChange, onGoverningSpecialtyChange, onStandaloneValuesChange, onConfirm, onClose, initialVisibility = null, onHearingCheck = null, placementApps = [] }, options = {}) {
+  constructor({ mode = "weapon", parseRateOfFire, token, actor = null, weapon, attack, rangeBands, recommendation, getTargetRangeRecommendation, beamWeapon = false, targetingService, targetedAttackContext = null, initialGoverningSpecialty = "", initialStandaloneValues = null, maximumShots, rateOfFireProfile, calculateShotLimits, calculateRapidFireBonus, calculateAimBonus, calculateBracingBonus, calculateLaserBonus, calculateFireMode, calculateEffectiveSkill, onTargetingServiceChange, onGoverningSpecialtyChange, onStandaloneValuesChange, onConfirm, onClose, initialVisibility = null, onHearingCheck = null, placementApps = [], thrownChoices = null }, options = {}) {
     super({
       ...options,
       id: options.id ?? (mode === "standalone" ? "olegurps-fire-control-standalone" : `olegurps-fire-preparation-${token.id}-${weapon.id}`),
@@ -781,6 +784,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this.calculateLaserBonus = calculateLaserBonus;
     this.calculateFireMode = calculateFireMode;
     this.calculateEffectiveSkill = calculateEffectiveSkill;
+    this.thrownChoices = thrownChoices;
     this.targetingServiceChangeCallback = onTargetingServiceChange;
     this.governingSpecialtyChangeCallback = onGoverningSpecialtyChange;
     this.standaloneValuesChangeCallback = onStandaloneValuesChange;
@@ -810,6 +814,7 @@ export class FirePreparationApp extends ApplicationV2 {
       aimSeconds: this._lastAimStatusSeconds ? String(this._lastAimStatusSeconds) : "",
       braced: false,
       supportChoice: 'none',
+      rangedHand: 'main',
       laserSight: false,
       moveAndAttack: false,
       allOutAttack: false,
@@ -1125,7 +1130,7 @@ export class FirePreparationApp extends ApplicationV2 {
     if (user && globalThis.game?.user && user !== globalThis.game.user) return;
     if (this._switchingRrsTarget) return;
     this._syncTargetElevation();
-    if (this.fireState.rangedRapidStrike && this._rrsSlots) {
+    if ((this.fireState.rangedRapidStrike||this.fireState.maRanged?.kind==='thrownSequence') && this._rrsSlots) {
       const targets = [...(globalThis.game?.user?.targets ?? [])];
       this._rrsSlots[this._activeRrsSlot].targetId = targets.length === 1 ? targets[0].id : null;
     }
@@ -1216,6 +1221,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this.fireState.aimSeconds = root.querySelector('[name="aimSeconds"]')?.value ?? "";
     this.fireState.braced = !!root.querySelector('[name="braced"]')?.checked;
     this.fireState.supportChoice = root.querySelector('[name="supportChoice"]')?.value ?? this.fireState.supportChoice;
+    this.fireState.rangedHand = root.querySelector('[name="rangedHand"]')?.value ?? 'main';
     this.fireState.laserSight = !!root.querySelector('[name="laserSight"]')?.checked;
     this.fireState.moveAndAttack = !!root.querySelector('[name="moveAndAttack"]')?.checked;
     this.fireState.allOutAttack = !!root.querySelector('[name="allOutAttack"]')?.checked;
@@ -1250,6 +1256,14 @@ export class FirePreparationApp extends ApplicationV2 {
 
   getShotOptions() {
     const supportSelection=this._supportSelection();
+    const handAllowed=this._rangedHandAllowed(supportSelection);
+    const handField=this.element?.querySelector('[name="rangedHand"]');
+    if(!handAllowed)this.fireState.rangedHand='main';
+    if(handField){
+      handField.disabled=!handAllowed;
+      handField.closest('label').hidden=!handAllowed;
+      handField.value=this.fireState.rangedHand??'main';
+    }
     this.fireState.manualGuidanceConfirmed = this.element?.querySelector('[name="manualGuidanceConfirmed"]')?.checked === true;
     // Refresh only the perk toggle; keep the GGA skill and all other attack values.
     if (this.mode === "weapon" && this.weapon && this.attack) {
@@ -1279,6 +1293,7 @@ export class FirePreparationApp extends ApplicationV2 {
       duckArc:readDuckFootContext(this),
       fluidBounces:Number(this.element?.querySelector('[name="fluidBounces"]')?.value??this.fireState.fluidBounces??0),
       shots: this._getShotsValue(),
+      maRanged:this.fireState.maRanged?.kind?{...this.fireState.maRanged}:null,
       manualGuidanceConfirmed:this.fireState.manualGuidanceConfirmed,
       areaPoint:this.fireState.areaPoint??null,
       areaSquaredScatter:this.fireState.areaSquaredScatter===true,
@@ -1293,6 +1308,7 @@ export class FirePreparationApp extends ApplicationV2 {
       aimSeconds: this.attack?.ammunitionLTEarly?.noAim || this.attack?.platformRules?.rofJet || rules && !rules.aimAllowed ? 0 : this.fireState.aimSeconds,
       braced: this.attack?.ammunitionLTEarly?.noAim || this.attack?.platformRules?.rofJet || rules && !rules.aimAllowed ? false : this.fireState.braced,
       supportSelection,
+      rangedHand: handAllowed&&this.fireState.rangedHand==='off'?'off':'main',
       laserSight: this.attack?.platformRules?.rofJet || rules?.random ? false : this.fireState.laserSight,
       visibility,
       targetDistanceOverride: Number.isFinite(areaDistance)?areaDistance:distance,
@@ -1361,6 +1377,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const targets = [...(globalThis.game?.user?.targets ?? [])];
     return {
       shots: String(this.fireState.shots || "1"),
+      manualModifier: this.fireState.manualModifier,
       hitLocation: { ...this.fireState.hitLocation },
       selectedRangeIndex: this.fireState.selectedRangeIndex,
       manualRangeSelected: this.fireState.manualRangeSelected,
@@ -1374,8 +1391,8 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   _saveActiveRrsSlot() {
-    if (this.fireState.rangedRapidStrike && this._rrsSlots)
-      this._rrsSlots[this._activeRrsSlot] = this._snapshotRrsSlot();
+    if ((this.fireState.rangedRapidStrike||this.fireState.maRanged?.kind==='thrownSequence') && this._rrsSlots)
+      this._rrsSlots[this._activeRrsSlot] = {...this._rrsSlots[this._activeRrsSlot],...this._snapshotRrsSlot()};
   }
 
   _getRrsRangeMarkers(rangeIndex) {
@@ -1404,6 +1421,7 @@ export class FirePreparationApp extends ApplicationV2 {
 
   _applyRrsSlot(slot) {
     this.fireState.shots = slot.shots;
+    if(this.fireState.maRanged?.kind==='thrownSequence')this.fireState.manualModifier=slot.manualModifier??'';
     this.fireState.hitLocation = { ...slot.hitLocation };
     this.fireState.selectedRangeIndex = slot.selectedRangeIndex;
     this.fireState.manualRangeSelected = slot.manualRangeSelected;
@@ -1415,7 +1433,7 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   async _switchRrsSlot(index) {
-    if (!this._rrsSlots || index === this._activeRrsSlot || ![0, 1].includes(index)) return;
+    if (!this._rrsSlots?.[index] || index === this._activeRrsSlot) return;
     this._captureFields();
     this._saveActiveRrsSlot();
     this._activeRrsSlot = index;
@@ -1443,7 +1461,7 @@ export class FirePreparationApp extends ApplicationV2 {
     this.fireState.rangedRapidStrike = true;
   }
 
-  getRrsShotOptions() {
+  getRrsShotOptions(thrownSequence = false) {
     this._saveActiveRrsSlot();
     const shared = this.getShotOptions();
     return this._rrsSlots?.map((slot, index) => ({
@@ -1453,10 +1471,53 @@ export class FirePreparationApp extends ApplicationV2 {
       elevationDirection: slot.elevationDirection, targetDistanceOverride: slot.distance,
       attackEnvironment: slot.attackEnvironment ?? "air", depthFeet: slot.depthFeet ?? "",
       visibility: slot.visibility, targetTokenId: slot.targetId,
-      rangedRapidStrike: true, rangedRapidStrikePart: true,
+      ...(thrownSequence?{thrownChoice:slot.thrownChoice,manualModifier:slot.manualModifier}:{}),
+      rangedRapidStrike: !thrownSequence, rangedRapidStrikePart: !thrownSequence,
       contextLabel: "Атака " + (index + 1)
     })) ?? [];
   }
+  _buildMaRangedOptions() {
+    if(this.mode!=='weapon')return '';
+    const kinds=maRangedKinds(this.attack,this._getGoverningSkill());
+    if(!kinds.length)return '';
+    const state=this.fireState.maRanged??{},ru=maRussian();
+    const option=id=>`<option value="${id}" ${id===state.kind?'selected':''}>${escapeHTML(maOptionText(id).label)}</option>`;
+    const tip=id=>{
+      const {label,hint}=maOptionText(id), text=escapeHTML(label+' – '+hint);
+      return `<span class="gam-melee-martial-help" title="${text}" aria-label="${text}">(?)</span>`;
+    };
+    const check=(key,label)=>`<label><input type="checkbox" name="maRanged.${key}" ${state[key]?'checked':''}>${label}</label>`;
+    const number=(key,label,step)=>`<label>${label} <input type="number" name="maRanged.${key}"
+      value="${escapeHTML(state[key]??'')}" min="${key==='count'?2:step}" step="${step}"></label>`;
+    const throwing=state.kind==='thrownBurst'||state.kind==='thrownSequence';
+    const active=this._rrsSlots?.[this._activeRrsSlot]?.thrownChoice;
+    const choices=state.kind==='thrownSequence'?this.thrownChoices?.()??[]:[];
+    return `<div class="gam-ma-options">
+      <div class="gam-melee-martial-row"><label>${ru?'Боевая опция':'Combat option'}
+        <select name="maRanged.kind"><option value="">${ru?'Нет':'None'}</option>${kinds.map(option).join('')}</select>
+      </label> ${kinds.includes(state.kind)?tip(state.kind):''}</div>
+      ${state.kind==='quickBow'?`<div class="gam-melee-martial-row">
+        ${check('ready',ru?'Стрела готова':'Arrow ready')}
+        ${check('fastDraw','Fast-Draw (Arrow)')}
+        ${check('realistic',ru?'Реалистичный бой (-4)':'Realistic combat (-4)')}</div>`:''}
+      ${throwing?`<div class="gam-melee-martial-row">${number('count',ru?'Предметов':'Items',1)}
+        ${state.kind==='thrownBurst'?number('weight',ru?'Вес одного (lb)':'Weight each (lb)','0.01'):''}
+        ${check('ready',ru?'Готовы к метанию':'Ready to throw')}</div>`:''}
+      ${choices.length&&this._rrsSlots?.length?`<div class="gam-melee-martial-row"><label>${ru?'Оружие и партия':'Weapon and lot'}
+        <select name="maRanged.thrownChoice"><option value="">${ru?'Текущее оружие':'Current weapon'}</option>
+          ${choices.map((choice,index)=>`<option value="${index}" ${active?.weaponId===choice.weaponId&&active?.ammoKey===choice.ammoKey?'selected':''}>${escapeHTML(choice.label)}</option>`).join('')}
+        </select></label></div>`:''}
+      ${state.kind==='thrownBurst'?`<div class="gam-melee-martial-row">
+        ${check('sharp',ru?'Острые':'Sharp')}
+        ${check('container',ru?'Из ёмкости':'From container')}
+        ${check('throwingArt','Throwing Art')}</div>
+        ${state.throwingArt&&!throwingArtRangeMultipliers(this.attack)?`<div class="gam-melee-martial-row"><label
+          title="${ru?'Дальность с бонусом ST от Throwing Art до сокращения за метание горстью.':'Range with the Throwing Art ST bonus before reducing it for a thrown burst.'}">
+          ${ru?'Дальность с Throwing Art':'Throwing Art range'}
+          <input type="text" name="maRanged.rangeWithArt" placeholder="1/2D/Max" value="${escapeHTML(state.rangeWithArt??'')}"></label></div>`:''}`:''}
+    </div>`;
+  }
+
   _getShotLimits(fireState = this.fireState) {
     if(this.attack?.ammunitionLTEarly?.kind==='flame')return {minShots:1,maxShots:1};
     const calculated = this.calculateShotLimits?.(fireState.rofMode);
@@ -1750,7 +1811,7 @@ export class FirePreparationApp extends ApplicationV2 {
     const fluid=fluidProfile(this.attack?.standaloneRef?.modeId);
     if(fluid){
       const range=fluidEffectiveRange(fluid,Number(this.fireState.fluidBounces??0)),filler=FLUID_FILLERS[this.attack?.ammunitionFluid?.fillerId];
-      return `<p class="hint">Полная длина пути: до ${range.at(-1)} ярдов${range.length===2?'; ½D '+range[0]+' ярдов':''}. ${fluid.vortex?'Косые рикошеты: −2 к атаке и −10% исходной дальности за каждый. Прямое столкновение раскрывает газовое кольцо.':'Струя без штрафа за дальность. Респираторный агент – в лицо без штрафа за зону; контактный – на тело.'}</p>`+
+      return `<p class="hint">Полная длина пути: до ${range.at(-1)} ярдов${range.length===2?'; ½D '+range[0]+' ярдов':''}. ${fluid.vortex?'Косые рикошеты: -2 к атаке и -10% исходной дальности за каждый. Прямое столкновение раскрывает газовое кольцо.':'Струя без штрафа за дальность. Респираторный агент – в лицо без штрафа за зону; контактный – на тело.'}</p>`+
         (fluid.modeId==='WXki2UKT5ScYY4QsY'?'<p class="hint">Баллон DR10: пробитие может выпустить весь запас как 100mm biochemical – вручную, UT134,153.</p>':'')+
         `<details><summary>Наполнитель: ${escapeHTML(filler?.name??'не выбран')}</summary><p>${escapeHTML(filler?.brief??'')}</p></details>`;
     }
@@ -2014,6 +2075,38 @@ export class FirePreparationApp extends ApplicationV2 {
   }
 
   async _onInput(event) {
+    const maField=event.target;
+    if(maField?.name?.startsWith('maRanged.')){
+      if(event.type!=='change')return;
+      const key=maField.name.split('.')[1];
+      if(key==='thrownChoice'){
+        this._captureFields();
+        const choice=maField.value===''?null:this.thrownChoices?.()[Number(maField.value)];
+        if(this._rrsSlots?.[this._activeRrsSlot])
+          this._rrsSlots[this._activeRrsSlot].thrownChoice=choice?{weaponId:choice.weaponId,ammoKey:choice.ammoKey}:null;
+        return;
+      }
+      this.fireState.maRanged??={};
+      if(this.maBowPrepared){
+        this.maBowPrepared=false;
+        this.clearBowPreparation?.();
+      }
+      this.fireState.maRanged[key]=maField.type==='checkbox'?maField.checked:maField.value;
+      if(key==='kind'){
+        this.fireState.maRanged={kind:maField.value};
+        if(maField.value){this.fireState.rangedRapidStrike=false;this._rrsSlots=null;}
+      }
+      if(this.fireState.maRanged.kind==='thrownSequence'&&key==='count'){
+        const count=Number(maField.value), current=this._snapshotRrsSlot();
+        const available=(this.thrownChoices?.()??[]).reduce((total,choice)=>total+choice.available,0);
+        if(Number.isSafeInteger(count)&&count>=2&&count<=available){
+          this._rrsSlots=Array.from({length:count},(_,index)=>this._rrsSlots?.[index]??{...current,shots:'1'});
+          this._activeRrsSlot=Math.min(this._activeRrsSlot??0,count-1);
+        }else this._rrsSlots=null;
+      }
+      await this.render({force:true});
+      return;
+    }
     if(['psionicMode','kineticStun'].includes(event.target.name)){
       if(event.type!=='change')return;
       const field=event.target;try{this._captureFields();await new AmmoService(this.actor).setExoticBeamConfiguration(this.weapon.id,{[field.name]:field.name==='kineticStun'?field.checked:field.value});this._onActorUpdate(this.actor);}
@@ -2162,6 +2255,7 @@ export class FirePreparationApp extends ApplicationV2 {
       this._aimManuallyEdited = true;
     } else if (field.name === "braced") this.fireState.braced = field.checked;
     else if (field.name === 'supportChoice') { this.fireState.supportChoice=field.value;this._supportSelection(); }
+    else if (field.name === 'rangedHand') this.fireState.rangedHand=field.value;
     else if (field.name === "laserSight") this.fireState.laserSight = field.checked;
     else if(field.name==='areaSquaredScatter')this.fireState.areaSquaredScatter=field.checked;
     else if (field.name === "moveAndAttack") {
@@ -2378,6 +2472,14 @@ export class FirePreparationApp extends ApplicationV2 {
     button.disabled = true;
     try {
       const options = this.fireState.rangedRapidStrike ? this.getRrsShotOptions() : this.getShotOptions();
+      if(!Array.isArray(options)&&options.maRanged?.kind==='thrownSequence')
+        options.maRangedSlots=this.getRrsShotOptions(true).map(slot=>({
+          thrownChoice:slot.thrownChoice,
+          manualModifier:slot.manualModifier,
+          targetTokenId:slot.targetTokenId,rangeIndex:slot.rangeIndex,manualRangeSelected:slot.manualRangeSelected,
+          targetDistanceOverride:slot.targetDistanceOverride,hitLocationId:slot.hitLocationId,hitRegionId:slot.hitRegionId,
+          elevationDirection:slot.elevationDirection,height:slot.height,visibility:slot.visibility
+        }));
       if (Array.isArray(options) && !validateRangedRapidStrikeSplit(
         Number(options[0]?.shots), Number(options[1]?.shots), this._availableRrsRoF())) {
         globalThis.ui?.notifications?.warn?.("Ranged Rapid Strike: split available RoF between both attacks.");
@@ -2745,7 +2847,7 @@ export class FirePreparationApp extends ApplicationV2 {
   _supportSelection() {
     const definition=this._supportDefinition(),identity=definition?.weaponIdentity;
     const key=identity?JSON.stringify([identity.actorId,identity.instanceId,identity.equipmentId,identity.modeId]):null;
-    if(this._supportIdentityKey!==key){this.fireState.supportChoice='none';this._supportIdentityKey=key;}
+    if(this._supportIdentityKey!==key){this.fireState.supportChoice='none';this.fireState.rangedHand='main';this._supportIdentityKey=key;}
     if(!definition?.support?.availableTypes?.includes(this.fireState.supportChoice))this.fireState.supportChoice='none';
     const select=this.element?.querySelector('[name="supportChoice"]');
     if(select&&select.value!==this.fireState.supportChoice)select.value=this.fireState.supportChoice;
@@ -2763,6 +2865,21 @@ export class FirePreparationApp extends ApplicationV2 {
     this._supportSelection();
     const types=this._supportDefinition()?.support?.availableTypes??['none'];
     return `<label class="gam-fire-support"><span>${escapeHTML(moduleText('OleGURPS.Support.Label'))}</span><select name="supportChoice" aria-label="${escapeHTML(moduleText('OleGURPS.Support.Label'))}">${types.map(type=>`<option value="${type}"${type===this.fireState.supportChoice?' selected':''}>${escapeHTML(moduleText('OleGURPS.Support.'+type))}</option>`).join('')}</select></label>`;
+  }
+
+  _rangedHandAllowed(supportSelection) {
+    if(this.mode!=='weapon'||!this.attack||this.fireState.rangedRapidStrike)return false;
+    const profile=resolveRuntimeAttackProfile({actor:this.actor,attack:this.attack,weaponId:this.weapon?.id,context:{supportSelection}});
+    return canChooseRangedHand(this.actor,this.attack,profile);
+  }
+
+  _buildRangedHandChoice() {
+    if(!this._rangedHandAllowed(null))return '';
+    const t=(key,fallback)=>globalThis.game?.i18n?.localize?.('OleGURPS.CombatPerk.'+key)??fallback;
+    return `<label class="gam-fire-support"><span>${escapeHTML(t('Hand','Рука'))}</span><select name="rangedHand">
+      <option value="main">${escapeHTML(t('MainHand','Основная'))}</option>
+      <option value="off"${this.fireState.rangedHand==='off'?' selected':''}>${escapeHTML(t('OffHand','Неосновная'))}</option>
+    </select></label>`;
   }
 
   _buildContent(fireState) {
@@ -2846,7 +2963,7 @@ export class FirePreparationApp extends ApplicationV2 {
           <div class="gam-fire-left">
             <div class="gam-fire-fields">
               ${fluidProfile(this.attack?.standaloneRef?.modeId)?.maxDoses===3?`<label class="gam-fire-field"><span>Доз за применение</span><input type="number" name="fluidDoses" min="1" max="3" step="1" value="${escapeHTML(fireState.fluidDoses??1)}"></label>`:''}
-              ${fluidProfile(this.attack?.standaloneRef?.modeId)?.vortex?`<label class="gam-fire-field"><span>Рикошеты (−2 и −10% Range за каждый)</span><input type="number" name="fluidBounces" min="0" max="9" step="1" value="${escapeHTML(fireState.fluidBounces??0)}"></label>`:''}
+              ${fluidProfile(this.attack?.standaloneRef?.modeId)?.vortex?`<label class="gam-fire-field"><span>Рикошеты (-2 и -10% Range за каждый)</span><input type="number" name="fluidBounces" min="0" max="9" step="1" value="${escapeHTML(fireState.fluidBounces??0)}"></label>`:''}
               <label class="gam-fire-field">
                 <span data-shots-label>${shotsLabel}</span>
                 <input type="number" name="shots" value="${escapeHTML(fireState.shots)}" placeholder="${shotLimits.minShots}" min="${shotLimits.minShots}"${shotsMax} step="1" ${this.mode === "weapon" ? "autofocus" : ""}>
@@ -2872,19 +2989,20 @@ export class FirePreparationApp extends ApplicationV2 {
               <div class="gam-fire-braced">
                   <span>Упор</span>
                   <input type="checkbox" name="braced" title="Бонус применяется только при прицеливании" ${visibilityRules(this.visibility)?.aimAllowed === false ? "disabled" : ""} aria-label="Упор" ${fireState.braced ? "checked" : ""}>
-                  ${this._buildSupportChoice()}
+                  <div class="gam-fire-hand-controls">${this._buildSupportChoice()}${this._buildRangedHandChoice()}</div>
                 </div>
               <div class="gam-fire-field gam-fire-field-checkbox">
                   <span>\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430 <strong>+1</strong></span>
                   <input type="checkbox" name="allOutAttack" aria-label="\u0422\u043e\u0442\u0430\u043b\u044c\u043d\u0430\u044f \u0430\u0442\u0430\u043a\u0430" ${fireState.allOutAttack ? "checked" : ""}>
                 </div>
+              ${this._buildMaRangedOptions()}
               ${this.mode === "weapon" ? `<button type="button" class="gam-techniques-button" data-fire-action="techniques">\u0422\u0435\u0445\u043d\u0438\u043a\u0438</button>` : ""}
-              <div class="gam-fire-rof-row ${fireState.rangedRapidStrike && this._rrsSlots ? "has-rrs-slots" : ""}">
+              <div class="gam-fire-rof-row ${(fireState.rangedRapidStrike||fireState.maRanged?.kind==='thrownSequence') && this._rrsSlots ? "has-rrs-slots" : ""}">
                 <div class="gam-fire-rof-container" data-rof-container>${rofContent}</div>
-                ${fireState.rangedRapidStrike && this._rrsSlots ? `<div class="gam-attack-slots gam-rrs-slots">
+                ${(fireState.rangedRapidStrike||fireState.maRanged?.kind==='thrownSequence') && this._rrsSlots ? `<div class="gam-attack-slots gam-rrs-slots">
                   ${this._rrsSlots.map((_slot, index) => `<button type="button" data-rrs-slot="${index}"
                     class="gam-attack-slot gam-rapid-attack-${index + 1} ${index === this._activeRrsSlot ? "is-active" : ""}"
-                    aria-pressed="${index === this._activeRrsSlot}">Attack ${index + 1}</button>`).join("")}
+                    aria-pressed="${index === this._activeRrsSlot}">${fireState.maRanged?.kind==='thrownSequence'?'RS':'Attack'} ${index + 1}</button>`).join("")}
                   <span data-rrs-split></span></div>` : ""}
               </div>
             </div>
@@ -2925,7 +3043,9 @@ export class FirePreparationApp extends ApplicationV2 {
           ${this._buildHitLocationContent(fireState)}
         </div>
         <div class="gam-fire-actions">
-          <button type="button" data-fire-action="confirm" ${this.visibility?.mode === "unseen" && !this._hasUnseenDirection() ? "disabled" : ""} title="${this.visibility?.mode === "unseen" && !this._hasUnseenDirection() ? "\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u0435\u043a\u0441 \u0434\u043b\u044f \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b" : ""}"><i class="fa-solid fa-crosshairs"></i> ${this.attack?.ammunitionRobot?'Зарегистрировать запуск':'Выполнить выстрел'}</button>
+          <button type="button" data-fire-action="confirm" ${this.visibility?.mode === "unseen" && !this._hasUnseenDirection() ? "disabled" : ""} title="${this.visibility?.mode === "unseen" && !this._hasUnseenDirection() ? "\u0421\u043d\u0430\u0447\u0430\u043b\u0430 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u0438\u0442\u0435 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435 \u0446\u0435\u043b\u0438 \u0438\u043b\u0438 \u0432\u044b\u0431\u0435\u0440\u0438\u0442\u0435 \u0433\u0435\u043a\u0441 \u0434\u043b\u044f \u0441\u0442\u0440\u0435\u043b\u044c\u0431\u044b" : ""}"><i class="fa-solid fa-crosshairs"></i> ${fireState.maRanged?.kind==='quickBow'?
+            (this.maBowPrepared?(maRussian()?'Выстрелить':'Shoot'):(maRussian()?'Натянуть лук':'Draw bow')):
+            this.attack?.ammunitionRobot?'Зарегистрировать запуск':'Выполнить выстрел'}</button>
           <button type="button" data-fire-action="cancel"><i class="fa-solid fa-xmark"></i> Отмена</button>
         </div>
       </div>

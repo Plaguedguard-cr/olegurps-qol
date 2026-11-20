@@ -1,6 +1,6 @@
 import { FALL_PRESETS, ANGLES, COLLISION_MODES } from './fall-collision-rules.js';
 const fmt = n => Number.isFinite(n) ? new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 4 }).format(n) : 'не ограничена';
-const dice = v => v.replace('d', 'к').replace('-', '−');
+const dice = v => v.replace('d', 'к');
 const damage = d => `${dice(d.dice)} дробящего`;
 const row = (label, value) => `<tr><th style="text-align:left;padding:3px 5px">${label}</th><td style="padding:3px 5px">${value}</td></tr>`;
 
@@ -17,7 +17,7 @@ export function fallCollisionMessage(r) {
       ['Местная конечная скорость', r.pressure === 0 ? 'Вакуум – не ограничена' : `${fmt(r.terminalEarth)} × √${fmt(r.gravity)} / √${fmt(r.pressure)} = ${fmt(r.terminalSpeed)} ярдов/с`],
       ['Ограничение конечной скоростью', r.limited ? 'Применено после округления скорости свободного падения' : 'Не достигнута'],
       ['Скорость столкновения', `${fmt(r.speed)} ярдов/с`]);
-    if (r.acrobatics) special.push('Успешная акробатика: −5 ярдов');
+    if (r.acrobatics) special.push('Успешная акробатика: -5 ярдов');
   } else {
     title = `Столкновение – ${COLLISION_MODES[r.kind]}${r.angle ? ': ' + ANGLES[r.angle] : ''}`;
     brief.push(`Скорость столкновения: ${fmt(r.speed)} ярдов/с.`);
@@ -34,7 +34,7 @@ export function fallCollisionMessage(r) {
     brief.push(`A → B: <strong>${damage(r.toB)}</strong>; B → A: <strong>${damage(r.toA)}</strong>.`);
     rows.push(['Характер столкновения', ANGLES[r.angle]], ['HP A / HP B', `${fmt(r.hpA)} / ${fmt(r.hpB)}`],
       ['Скорость A / скорость B', `${fmt(r.speedA)} / ${fmt(r.speedB)} ярдов/с`],
-      ['Скорость столкновения (B432)', `${r.angle === 'headOn' ? 'vA + vB' : r.angle === 'rearEnd' ? 'max(0, vA − vB)' : 'vA'} = ${fmt(r.speed)} ярдов/с`],
+      ['Скорость столкновения (B432)', `${r.angle === 'headOn' ? 'vA + vB' : r.angle === 'rearEnd' ? 'max(0, vA - vB)' : 'vA'} = ${fmt(r.speed)} ярдов/с`],
       ['A → B до ограничения', `${fmt(r.hpA)} × ${fmt(r.speed)} / 100 = ${fmt(r.originalA.rawDice)}к`],
       ['B → A до ограничения', `${fmt(r.hpB)} × ${fmt(r.speed)} / 100 = ${fmt(r.originalB.rawDice)}к`],
       ['Ограничения B432', r.limits.length ? r.limits.map(side => `${side}: кубики ограничены уроном другого участника (${r.angle === 'headOn' ? 'более медленный участник' : 'ответный урон цели B'})`).join('; ') : 'Дополнительное ограничение кубиков не потребовалось'],

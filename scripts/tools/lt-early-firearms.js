@@ -212,14 +212,14 @@ export function ltEarlyDamage({modeId,actor,raw={},attack={},weapon,type,catalog
  const rawDistance=context.physicalDistance??context.shotgun?.physicalDistance,distance=Number.isFinite(rawDistance)?rawDistance:null;
  const farDuck=p.kind==='duck'&&distance!==null&&distance>2;
  const brief=[],chargeEffects=[{serpentine:'Serpentine',corned:'Corned','source-black-powder':'Чёрный порох, сорт в таблице не указан'}[p.powder],{loose:'раздельное снаряжение',measured:'мерная навеска',paper:'бумажный патрон',cloth:'тканевый пакет'}[params.loading??'loose']];
- if(gonne)brief.push(configuration.crew===1?'Один стрелок: без бонуса Acc за Aim, −2 за внимание к запалу. LT91.':'Два стрелка: помощник поджигает заряд проверкой DX или Guns; задержка / потеря запала – вручную. LT91.');
+ if(gonne)brief.push(configuration.crew===1?'Один стрелок: без бонуса Acc за Aim, -2 за внимание к запалу. LT91.':'Два стрелка: помощник поджигает заряд проверкой DX или Guns; задержка / потеря запала – вручную. LT91.');
  if(p.kind==='puckle')brief.push('Смена подготовленного цилиндра – 15 Ready; между выстрелами совместить следующую камору рукояткой. LT92–93.');
  if(p.kind==='ten-eyed')brief.push('Порядок пяти зарядов каждой стороны; затем разворот за 1 Ready. Внутренние заряды снаряжаются по 60 с. LT91.');
  if(p.kind==='facing')brief.push('Второй ствол доступен после разворота за 1 Ready. LT91.');
  if(p.kind==='duck')brief.push(farDuck?'Отдельный выстрел по выбранной цели; остальные в дуге 30° – B389 по порядку, максимум четыре поражённые цели. LT93.':'До 2 ярдов: залп четырёх стволов по одной цели, попадания по RoF1×4/Rcl1. LT93.');
- if(improvised)chargeEffects.push('подручный снаряд: −1 Acc, Damage/Range ×0,5, Malf−2');
- if(boosted)chargeEffects.push('усиление: Damage/Range/ST ×1,1'+(params.safety==='checked'?' (безопасность проверена владельцем)':' (предел превышен: Malf−2, вызванный им отказ – взрыв)'));
- if(quality)chargeEffects.push('некачественный порох: −1 за исходный куб, Malf−2');
+ if(improvised)chargeEffects.push('подручный снаряд: -1 Acc, Damage/Range ×0,5, Malf-2');
+ if(boosted)chargeEffects.push('усиление: Damage/Range/ST ×1,1'+(params.safety==='checked'?' (безопасность проверена владельцем)':' (предел превышен: Malf-2, вызванный им отказ – взрыв)'));
+ if(quality)chargeEffects.push('некачественный порох: -1 за исходный куб, Malf-2');
  if(params.careful)chargeEffects.push('Careful Loading: Acc+1, время ×2');
  brief.unshift(chargeEffects.filter(Boolean).join('; ')+'. LT85,94–95.');
  const malformed=(improvised?2:0)+(boosted&&params.safety==='exceeded'?2:0)+(quality?2:0);

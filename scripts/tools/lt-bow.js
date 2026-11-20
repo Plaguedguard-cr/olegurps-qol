@@ -3,6 +3,7 @@ import {basicStrengthDamage} from './gurps-strength-damage.js';
 import {readActorStrength} from './strength-service.js';
 import {inferMeleeDamageModel} from './melee-damage-model.js';
 import {applyLTQuality,validLTQuality} from './lt-quality.js';
+import {strongbowBonus} from './ma-combat-perks.js';
 
 export const LT_HEAD_VARIANTS=Object.freeze(['regular','bodkin','barbed','blunt','cutting','bowel_raker','fire_arrow','fire_cage','flight','humming_bulb','flaming','flaming_humming','crossbow_regular','crossbow_bodkin']);
 const boltIds=['lt_standard_crossbow_bolt','lt_bodkin_crossbow_bolt','lt_gastraphetes_bolt_lt76','lt_bodkin_gastraphetes_bolt_lt76'];
@@ -19,7 +20,8 @@ const modeIdOf=attack=>attack?.standaloneRef?.modeId??attack?.ltBowModeId;
 export function ltBowDrawing(actor,modeId,configuration){
  const p=ltBowProfile(modeId),state=readActorStrength(actor),base=state.kinds.lifting.effective,method=p.kind==='repeating'?'hand':configuration.drawMethod;
  const arm=method==='hand'&&configuration.applyArmST?state.advantages.levels.arm+state.modifiers.arm:0;
- const strength=base===null?null:base+arm;
+ const strongbow=p.kind==='bow'?strongbowBonus(actor):0;
+ const strength=base===null?null:base+arm+strongbow;
  const ratio=method==='cranequin'?p.cranequin:method==='belly'?1.3:method==='goats-foot'?[1.3,1.4]:method==='one-leg'?[1.1,1.2]:method==='two-legs'?[1.2,1.3]:null;
  let ready=p.kind==='bow'?'Стрела: Ready 1 с; натянуть 1 с; выстрел 1 с.':p.kind==='repeating'?'Цикл рычага 1 с, выстрел 1 с; подача болта автоматическая.':
   p.kind==='slurbow'?'Взвести по LT74; размещение каждого дротика – 2 Ready.':'Взвод вручную 2 с, подготовка и размещение болта ещё 2 с.';
@@ -32,14 +34,21 @@ export function ltBowDrawing(actor,modeId,configuration){
   ready=deficit<=2?'Взвод 6 с, подготовка/размещение болта ещё 2 с (B410).':deficit<=4?'Нужна козья нога: взвод 20 с плюс подготовка болта (B410).':'Для взвода требуется механическое приспособление или другой взводящий (B410).';
  }
  if(configuration.shotMode==='navak'&&method==='hand')ready='Дротик: взять 1 с, уложить в направляющую 1 с, натянуть 1 с; выстрел 1 с (LT78).';
- if(configuration.shotMode==='panjagan5')ready+=' Пять стрел: обычное время подготовки, Fast-Draw (Arrow) −3 (LT78).';
+ if(configuration.shotMode==='panjagan5')ready+=' Пять стрел: обычное время подготовки, Fast-Draw (Arrow) -3 (LT78).';
  if(configuration.shotMode==='panjagan10')ready+=' Кинематографический Panjagan: десять стрел, подготовка вручную (LT78); отдельного численного Fast-Draw для десяти книга не задаёт.';
  const selfCocking=p.kind==='repeating'?{...LT_REPEATING_COCKING_POLICY,maximumRatedST:strength,
   allowed:strength!==null&&number(configuration.ratedST)!==null&&Number(configuration.ratedST)>0&&configuration.ratedST<=strength,preparationOnly:true,automaticCocking:false}:null;
+ // LT75 permits over-strength use with normal skill and FP penalties. The accepted
+ // LT route keeps those consequences manual. Only compare a confirmed hand draw here.
+ const drawDeficit=p.kind==='bow'&&method==='hand'&&strength!==null&&number(configuration.ratedST)!==null?
+  Math.max(0,configuration.ratedST-strength):null;
  return {strength,base:state.kinds.st.effective,lifting:state.advantages.levels.lifting+state.modifiers.lifting,arm,striking:0,method,ratio,ready,
+  ...(p.kind==='bow'?{drawDeficit,assessment:drawDeficit===null?'manual':drawDeficit?'over-strength':'full-draw'}:{}),
+  ...(strongbow&&base!==null?{perks:[{name:'Strongbow',modifier:strongbow,source:'MA51'}]}:{}),
   ...(selfCocking?{selfCocking,sourceDecision:LT_REPEATING_COCKING_POLICY}:{}),
   note:p.kind==='repeating'?'Предел самостоятельного взвода – 100% применимой ST ('+strength+'): '+(selfCocking.allowed?'взвод доступен.':'взвод недоступен.')+' Уже взведённым арбалетом можно стрелять. LT73; решение пользователя, не официальная эррата.':
-   p.kind==='bow'?'Достаточность силы и подготовку проверяет владелец по LT74; новых ST-штрафов к попаданию нет.':'Натяжение учитывается вручную; уже взведённый арбалет может выстрелить у более слабого стрелка.'};
+   p.kind==='bow'?(drawDeficit?'Для полного натяжения не хватает '+drawDeficit+' ST. Штраф навыка и расход FP по LT75 разрешаются вручную.':
+    'Подготовку и применимость способа натяжения проверяет владелец (LT74–75).'):'Натяжение учитывается вручную; уже взведённый арбалет может выстрелить у более слабого стрелка.'};
 }
 export function resolveLTBowBase({modeId,configuration,actor=null,sourceStats=null}={}){
  const p=ltBowProfile(modeId);if(!p)return null;
@@ -97,6 +106,7 @@ export function ltBowDamage({raw={},modeId,configuration,actor=null,type=null,ca
   ltBow:{version:1,modeId,kind:p.kind,ratedST:base.ratedST,effectiveDamageST:base.effectiveDamageST,rangeST:base.rangeST,
    baseFormula:base.baseFormula,weaponBonus:base.weaponBonus,configuration:c,projectile:identity.id,variant:rule,
    physicalUnits:ltBowUnits(modeId,c),drawing:base.drawing,source:'LT73-78; B277'},ammunitionSource:'LT73-78'};
+ if(base.drawing?.assessment==='over-strength')brief.push(base.drawing.note);
  if(rule==='bodkin'){damageType='pi';divisor='2';rules.ammunitionSource='B277';}
  if(rule==='blunt')damageType='cr';
  if(['cutting','bowel_raker'].includes(rule))damageType='cut';
@@ -111,7 +121,7 @@ export function ltBowDamage({raw={},modeId,configuration,actor=null,type=null,ca
  const dice=addDice(base.baseFormula,bonus),formula=dice+(divisor?'('+divisor+')':'')+(base.minimum?'!':'')+' '+damageType+(base.extension?' '+base.extension:'');
  const distance=number(context.physicalDistance??context.shotgun?.physicalDistance);
  if(rule==='flight'){rules.ltBow.flightDamage=distance!==null&&distance>range[0]?'zero':'half';rules.ltBow.distance=distance;rules.ltBow.halfDamage=range[0];}
- if(panjagan){rules.ltBow.cinematic=c.shotMode==='panjagan10';brief.push(c.shotMode==='panjagan10'?'Кинематографический Panjagan: десять стрел; подготовка и число попаданий – вручную. LT78.':'Panjagan: пять стрел; Fast-Draw (Arrow) −3, подготовка вручную.');}
+ if(panjagan){rules.ltBow.cinematic=c.shotMode==='panjagan10';brief.push(c.shotMode==='panjagan10'?'Кинематографический Panjagan: десять стрел; подготовка и число попаданий – вручную. LT78.':'Panjagan: пять стрел; Fast-Draw (Arrow) -3, подготовка вручную.');}
  if(navak)brief.push('Дротик: взять, уложить в направляющую, натянуть – 3 Ready.');
  if(ltBowUnits(modeId,c)>1)rules.ltBow.manualSpreadHits=true;
  rules.ballisticRange={minimum:null,halfDamage:range[0],maximum:range[1],source:'LT74-78'};

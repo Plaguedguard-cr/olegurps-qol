@@ -28,7 +28,7 @@ export function specializedPlatform(mode, source) {
   if(ltFlame)return {kind:'lt-flame',source:ltFlame.source,accNotApplicable:true,rclNotApplicable:true,...(ltFlame.jet?{rofJet:true}:{hitLocationNotApplicable:true})};
   if(source==='UT'&&sonicShuriken(mode?.weapon_mode_id))return {kind:'sonic-shuriken',rclNotApplicable:true,source:'UT166'};
   if(source==='UT'&&nextElevenPlatform(mode))return nextElevenPlatform(mode);
-  if(source==='HT'&&mode?.weapon_mode_id===HT_TEAR_SPRAY_MODE)return {kind:'ht-tear-spray',source:'HT180',instruction:'\u0421\u0442\u0440\u0443\u044f +2 \u043a \u0430\u0442\u0430\u043a\u0435; \u043b\u0438\u0446\u043e \u22125. Reach1\u20132; 20 \u0437\u0430\u0440\u044f\u0434\u043e\u0432. \u0424\u0430\u043a\u0442\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u0432\u043e\u0437\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u044f\u0435\u0442\u0441\u044f \u0432\u0440\u0443\u0447\u043d\u0443\u044e.'};
+  if(source==='HT'&&mode?.weapon_mode_id===HT_TEAR_SPRAY_MODE)return {kind:'ht-tear-spray',source:'HT180',instruction:'\u0421\u0442\u0440\u0443\u044f +2 \u043a \u0430\u0442\u0430\u043a\u0435; \u043b\u0438\u0446\u043e -5. Reach1\u20132; 20 \u0437\u0430\u0440\u044f\u0434\u043e\u0432. \u0424\u0430\u043a\u0442\u0438\u0447\u0435\u0441\u043a\u043e\u0435 \u0432\u043e\u0437\u0434\u0435\u0439\u0441\u0442\u0432\u0438\u0435 \u043e\u043f\u0440\u0435\u0434\u0435\u043b\u044f\u0435\u0442\u0441\u044f \u0432\u0440\u0443\u0447\u043d\u0443\u044e.'};
   const fluid=source==='UT'&&fluidProfile(mode?.weapon_mode_id);
   if(fluid&&!fluid.underbarrel)return {kind:'fluid-projector',source:'UT134',hitLocationNotApplicable:true,...(!fluid.vortex?{rofJet:true,accNotApplicable:true}:{})};
   if(source==='UT'&&['WVP2b1TCXvqHt6azn','WX57fdTm6ELTN3VdA','W5BEH4zTOtg2ds7is','WATP5TU7jVQnEpqB0'].includes(mode?.weapon_mode_id))return {
@@ -46,12 +46,12 @@ export function specializedPlatform(mode, source) {
   if(microwave)return {kind:'microwave-cone',source:microwave.source,hitLocationNotApplicable:true};
   const electro=source==='UT'&&electrolaserProfile(mode?.weapon_mode_id);
   if(electro?.underbarrel)return {kind:'host-dependent',source:'UT119',hostBulkAdjustment:0,emHost:true,
-    instruction:'UT119: Bulk (−3 или ниже), ST и прицельные бонусы берутся у носителя; батарея электролазера отдельная.'};
+    instruction:'UT119: Bulk (-3 или ниже), ST и прицельные бонусы берутся у носителя; батарея электролазера отдельная.'};
   if(electro?.specialty==='Beams')return {kind:'mounted',source:'UT119–120',
     instruction:'Установка на треноге или машине; ограничения ST18M, размещение и обслуживание учитываются вручную. UT119–120.'};
   if(source==='UT'&&mode?.weapon_mode_id==='Wq7SXzV-qosc5iY1q')return {
     kind:'host-dependent',source:'UT141',hostBulkAdjustment:0,emHost:true,
-    instruction:'UT141: Bulk, ST и прицельные бонусы берутся у выбранного носителя с Bulk −3 или ниже. Собственные подача и C cell EMGL учитываются отдельно.'};
+    instruction:'UT141: Bulk, ST и прицельные бонусы берутся у выбранного носителя с Bulk -3 или ниже. Собственные подача и C cell EMGL учитываются отдельно.'};
   const dazzler=source==='UT'&&utDazzlerProfile(mode?.weapon_mode_id);
   if(dazzler)return {kind:'vision-laser',source:'UT113',hitLocationNotApplicable:true,
     instruction:`Конус ${dazzler.coneWidth} ярд. на максимальной дальности; охват и направление взгляда – вручную. UT113.`};
@@ -82,7 +82,7 @@ export function configuredPlatform(platform, overrides={}) {
     const bulk=String(overrides.hostBulk??'').replaceAll('\u2212','-');
     if(!/^-\d+$/.test(bulk)||Number(bulk)>-3||platform.maximumHostBulkMagnitude&&Number(bulk)<-platform.maximumHostBulkMagnitude||!/^\d+[BM†]*$/.test(String(overrides.st??''))||
       !/^\d+(?:\+\d+)?$/.test(String(overrides.acc??'')))return {
-        platform,reason:'Укажите Bulk (−3 или ниже), ST и Acc с прицельными бонусами оружия-носителя.'};
+        platform,reason:'Укажите Bulk (-3 или ниже), ST и Acc с прицельными бонусами оружия-носителя.'};
     return {platform:{...platform,installation:'host',hostBulk:Number(bulk)},bulk};
   }
   if(overrides.bulk!=null && /^-?\d+\*?$/.test(String(overrides.bulk)))return {platform:{...platform,installation:'explicit-bulk'}};

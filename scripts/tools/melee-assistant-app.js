@@ -1,4 +1,14 @@
 import {captureMeleeExecutionState,notifyMeleeExecutionError} from './melee-execution-state.js';
+import {meleeTechniqueControls,readTechniqueContextField,meleeTechniqueExplanation,filterMeleeTechniquePicker,MELEE_TECHNIQUE_CSS} from './melee-technique-controls.js';
+import {normalizeMeleeTechniques,meleeSkillFamily,isCleanTechniqueAttack,meleeAttackUsesHand,learnedMeleeSkills,readMeleePosture,techniqueIdentity,hasCombatTrait,cinematicTraining} from './melee-penalty-techniques.js';
+import {getCombatRule,resolveCombatTechnique} from './combat-technique-registry.js';
+import {validateDualWeaponSequence,resolveCombination,offHandAttackPenalty,physicalMeleeIdentity} from './melee-technique-sequences.js';
+import {combatPerkLabel} from './ma-combat-perks.js';
+import {attemptReverseGrip,acknowledgeTechniqueReady,assertMeleeTechniqueReady,advanceMeleeTechniqueTurn,initialCarvingProgress,executeMeleeSpecialCheck} from './melee-technique-procedures.js';
+import {meleeSpecialRollPreviews} from './melee-service.js';
+import {allowsCinematicTechniqueDefaults} from './combat-technique-preference.js';
+import { allOutMeleeModes, expandedRapidStrikeCount, extraAttackRanks, maAttackApplicability, maOptionText, maProjectedAttack, maRapidStrikePenalty, maRussian, readShieldDefenseBonus } from './ma-combat-options.js';
+import {generateId} from '../random-id.js';
 import {readGgaShieldAttack} from './shield-equipment-adapter.js';
 import {weaponWeightControls,openWeaponWeightEditor} from './weapon-weight-app.js';
 import {setWeaponBackpack,readWeaponWeightState} from './weapon-weight.js';
@@ -10,7 +20,9 @@ import { getEvaluateStatusTurns } from "./aim-status-effects.js";
 import { checkHearingMinusTwo, meleeVisibilityRules, normalizeVisibility } from "./limited-visibility.js";
 import { TargetingService } from "./targeting-service.js";
 import { MeleeAttackExecutionApp, executeMeleeAttackSnapshot } from "./melee-attack-execution-app.js";
+import { orderedWhirlwindTargets,buildWhirlwindSlots } from './melee-strike-sequence.js';
 import { getMeleeAttackSlots } from "./melee-attack-slots.js";
+import {replaceFoundryTargets} from './foundry-targets.js';
 import { createMeleeTargetedAttackContext } from "./targeted-attack-service.js";
 import { openMeleeAttackEditor } from "./melee-attack-editor.js";
 import { openStrengthEditor } from './strength-editor-app.js';
@@ -23,7 +35,7 @@ import { inferMeleeDamageModel } from './melee-damage-model.js';
 import { committedStrongEligible, defensiveAttackContext, meleeMartialText } from './melee-martial-rules.js';
 import {blindFightingContextKey} from './blind-fighting-context.js';
 import {executeWithCapturedRollMessage} from './prepared-gga-roll.js';
-import { MeleeProfileService } from './melee-profile-service.js';
+import { MeleeProfileService,meleeProfileContext,meleeMartialGrips,resolveMeleeProfile } from './melee-profile-service.js';
 import { meleeCombatControls, meleeCombatControlsHTML, saveMeleeCombatControl, selectMeleeCombatMode,meleePhysicalAttackGroups,meleeOutcomeLabel } from './melee-combat-controls.js';
 import {utMeleeResourceReason,utMeleeResourceLabel} from './ut-melee-resources.js';
 import { readStandaloneAttack, listStandaloneAttacks } from "./standalone-attack-service.js";
@@ -39,6 +51,7 @@ import {
   setMeleeRapidStrikeMastery,
   setMeleeWeaponBond,
   setMeleeVisibility,
+  setMeleeTechniques,
   setSelectedMeleeAttack
 } from "./melee-assistant-state.js";
 import {
@@ -60,6 +73,20 @@ const escapeHTML = value => globalThis.foundry?.utils?.escapeHTML
   : String(value ?? "").replace(/[&<>"']/g, character => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[character]);
+
+function meleeOptionHelp(id) {
+  const { hint, label } = maOptionText(id);
+  const text = escapeHTML(label + ' – ' + hint);
+  return `<span class="gam-melee-martial-help" tabindex="0" title="${text}" aria-label="${text}">(?)</span>`;
+}
+
+function meleeSlotColorClass(slot, index) {
+  if (slot.extraAttack) {
+    const color = (Number(slot.type.slice(2)) - 1) % 4 + 1;
+    return `gam-melee-colored-slot gam-melee-ea-color-${color}`;
+  }
+  return slot.type === 'rs3' ? 'gam-melee-colored-slot gam-melee-rs3-color' : 'gam-rapid-attack-' + (index + 1);
+}
 
 const MARTIAL_ARTS_HINTS = Object.freeze({
   telegraphic: "+4 \u043a \u043f\u043e\u043f\u0430\u0434\u0430\u043d\u0438\u044e; +2 \u043a \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0439 \u0437\u0430\u0449\u0438\u0442\u0435 \u0446\u0435\u043b\u0438. \u041d\u0435 \u0441\u043e\u0447\u0435\u0442\u0430\u0435\u0442\u0441\u044f \u0441 Deceptive Attack."
@@ -133,13 +160,22 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this.fireState.rapidStrikeMastery =
       getMeleeAttackSettings(state, sourceAttack).rapidStrikeMastery === true;
     this.fireState.rapidStrike = false;
-    this._attackSlots = getMeleeAttackSlots(this.fireState);
-    this._attackSlotStates = [this._snapshotAttackConfiguration()];
+    this._techniqueSelection=normalizeMeleeTechniques(getMeleeAttackSettings(state,sourceAttack).techniques);
+    this._specialConfirmations={};
+    this.fireState.techniqueSequence=this._techniqueSelection.ids.includes('combination')?'combination':this._techniqueSelection.ids.includes('dualWeaponAttack')?'dualWeaponAttack':null;
+    this.fireState.combinationLength=(this._techniqueSelection.sequence?.configurations?.length??this._techniqueSelection.context.combinationLength)===3?3:2;
+    this._requestedCombination=this._techniqueSelection.context.requestedCombination??null;
+    this._fixedCombination=this.fireState.techniqueSequence==='combination'?this._techniqueSelection.sequence??null:null;
+    this._attackSlots = this._getAttackSlots();
+    this._attackSlotStates = this._attackSlots.map(()=>this._snapshotAttackConfiguration());
+    if(this._fixedCombination&&this.fireState.techniqueSequence==='combination')this._attackSlotStates=this._fixedCombination.configurations.map(c=>this._cloneAttackConfiguration(c));
+    if(this.fireState.techniqueSequence==='dualWeaponAttack'&&this._techniqueSelection.sequence?.configurations)this._attackSlotStates=this._techniqueSelection.sequence.configurations.slice(-2).map(c=>this._cloneAttackConfiguration(c));
     this._attackConfigurationCache = new Map();
     this._activeAttackSlot = 0;
     this._executionWindows = new Set();
     this._effectiveDamage = null;
     this._damagePreviewRevision = 0;
+    if(this.fireState.techniqueSequence&&this._attackSlotStates[0])this._applyAttackConfiguration(this._attackSlotStates[0]);
     if (!this._visibleAttacks().length) this.selectedAttackKey = '';
   }
 
@@ -151,6 +187,12 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _snapshotAttackConfiguration() {
     return {
+      attackKey:this.selectedAttackKey,governingSpecialty:this.fireState.governingSpecialty,
+      rapidStrikeMastery:this.fireState.rapidStrikeMastery===true,
+      spendEffort:this._attackSlotStates?.[this._activeAttackSlot]?.spendEffort !== false,
+      feintSlot:this._attackSlotStates?.[this._activeAttackSlot]?.feintSlot??'',
+      techniques:{ids:(this._techniqueSelection?.ids??[]).filter(id=>!['combination','dualWeaponAttack'].includes(id)),context:structuredClone(this._techniqueSelection?.context??{})},
+      targetIds:Array.from(globalThis.game?.user?.targets??[]).map(t=>t.id),
       manualModifier: String(this.fireState.manualModifier ?? ""),
       deceptiveAttack: String(this.fireState.deceptiveAttack ?? "0"),
       telegraphicAttack: this.fireState.telegraphicAttack === true,
@@ -160,6 +202,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _cloneAttackConfiguration(configuration) {
     return {
+      attackKey:configuration?.attackKey??this.selectedAttackKey,governingSpecialty:configuration?.governingSpecialty??this.fireState.governingSpecialty,
+      rapidStrikeMastery:(configuration?.rapidStrikeMastery??this.fireState.rapidStrikeMastery)===true,
+      spendEffort:configuration?.spendEffort!==false,
+      feintSlot:configuration?.feintSlot??'',
+      techniques:normalizeMeleeTechniques(configuration?.techniques),targetIds:[...(configuration?.targetIds??[])],
       manualModifier: String(configuration?.manualModifier ?? ""),
       deceptiveAttack: String(configuration?.deceptiveAttack ?? "0"),
       telegraphicAttack: configuration?.telegraphicAttack === true,
@@ -169,7 +216,20 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _applyAttackConfiguration(configuration) {
     const state = this._cloneAttackConfiguration(configuration);
+    if(this.fireState.techniqueSequence||this.fireState.useExtraAttacks){
+      const source=this.sourceAttacks.find(a=>a.key===state.attackKey);
+      if(source){this.selectedAttackKey=source.key;this.sourceAttack=source;this.attack=applyMeleeAttackOverride(source,this._meleeState,this.actor);
+        this.targetedAttackContext=createMeleeTargetedAttackContext({actor:this.actor,attack:this.attack});
+        if(this.targetingService instanceof TargetingService){const previous=this.targetingService;
+          this.targetingService=new TargetingService({definition:previous.definition,table:previous.table,tableSource:previous.tableSource,attack:this.attack});
+          this._targetingServices?.set(this.targetingService.bodyplan,this.targetingService);}}
+      this.fireState.governingSpecialty=state.governingSpecialty;
+      this.fireState.rapidStrikeMastery=state.rapidStrikeMastery;
+      this._techniqueSelection=state.techniques;
+    }
+    this._syncTechniqueTargeting();
     const selection = this.targetingService.getSelection(state.hitLocation.zoneId, state.hitLocation.regionId);
+    if(!selection&&this._buildingAttackSnapshots)throw Error('Выбранная зона недоступна оружию этого шага последовательности.');
     this.fireState.manualModifier = state.manualModifier;
     this.fireState.deceptiveAttack = state.deceptiveAttack;
     this.fireState.telegraphicAttack = state.telegraphicAttack;
@@ -178,8 +238,10 @@ export class MeleeAssistantApp extends FirePreparationApp {
       : { ...this.targetingService.getDefaultSelection() };
   }
 
-  _saveActiveAttackConfiguration() {
-    if (this._attackSlotStates) this._attackSlotStates[this._activeAttackSlot] = this._snapshotAttackConfiguration();
+  _saveActiveAttackConfiguration({captureTargets=false}={}) {
+    if(this._attackSlotStates){const previous=this._attackSlotStates[this._activeAttackSlot],next=this._snapshotAttackConfiguration();
+      if(!captureTargets&&previous)next.targetIds=[...(previous.targetIds??[])];
+      this._attackSlotStates[this._activeAttackSlot]=next;}
   }
 
   _normalizeAttackConfigurationLocations({ reset = false } = {}) {
@@ -198,8 +260,15 @@ export class MeleeAssistantApp extends FirePreparationApp {
     ));
   }
 
+  _getAttackSlots(){
+    const selection=this._techniqueSelection;
+    const manualGrappleFirstAttack=selection?.context?.strikeGrapple==='newHead'&&selection.ids.some(id=>id==='kneeStrike'||id==='uppercut');
+    return getMeleeAttackSlots({...this.fireState,manualGrappleFirstAttack,
+      rapidCount:this._rapidStrikeCount(), extraAttacks:this.fireState.useExtraAttacks?extraAttackRanks(this.actor):[]});
+  }
+
   _refreshAttackSlots() {
-    this._saveActiveAttackConfiguration();
+    this._saveActiveAttackConfiguration({captureTargets:!this._sequencePreviewRunning&&!this._buildingAttackSnapshots});
     const previous = new Map(this._attackSlots.map((slot, index) => [slot.type, this._attackSlotStates[index]]));
     for (const [type, configuration] of previous) this._attackConfigurationCache.set(type, this._cloneAttackConfiguration(configuration));
     const previousActive = this._attackSlots[this._activeAttackSlot]?.type;
@@ -207,11 +276,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
       aoa1: ["aoa", "attack", "rs1"], aoa2: ["rs1", "rs2", "attack"],
       rs1: ["aoa2", "attack", "aoa"], rs2: ["aoa2", "rs1", "attack"] };
     const fallback = this._attackSlotStates[this._activeAttackSlot];
-    this._attackSlots = getMeleeAttackSlots(this.fireState);
+    this._attackSlots = this._getAttackSlots();
     this._attackSlotStates = this._attackSlots.map(slot => {
       const existing = previous.get(slot.type) ?? this._attackConfigurationCache.get(slot.type);
-      const source = existing ??
-        aliases[slot.type].map(type => previous.get(type) ?? this._attackConfigurationCache.get(type)).find(Boolean) ?? fallback;
+      const source = slot.label==='Удар после захвата'&&fallback?fallback:existing ??
+        (aliases[slot.type]??[]).map(type => previous.get(type) ?? this._attackConfigurationCache.get(type)).find(Boolean) ?? fallback;
       const configuration = this._cloneAttackConfiguration(source);
       return configuration;
     });
@@ -221,20 +290,117 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this._updateAttackSlotControls();
   }
 
-  _switchAttackSlot(index) {
+  async _switchAttackSlot(index) {
     const next = Number(index);
     if (!Number.isInteger(next) || next < 0 || next >= this._attackSlots.length) return;
-    this._saveActiveAttackConfiguration();
+    this._saveActiveAttackConfiguration({captureTargets:true});
     this._activeAttackSlot = next;
     this._applyAttackConfiguration(this._attackSlotStates[next]);
+    if(this.fireState.techniqueSequence&&(globalThis.canvas?.tokens?.setTargets||globalThis.game?.user?.updateTokenTargets))await replaceFoundryTargets(this._attackSlotStates[next]?.targetIds??[]);
     this._refreshHitLocationContent();
     this._updateMeleePreview();
+    if(this.fireState.techniqueSequence){setSelectedMeleeAttack(this._meleeState,this.sourceAttack);await this._persistCurrentPreferences();}
   }
 
   _getRapidStrikePenalty() {
-    return this._attackSlots[this._activeAttackSlot]?.rapidStrike
-      ? getRapidStrikePenalty(this.fireState.rapidStrikeMastery)
-      : 0;
+    if (!this._attackSlots[this._activeAttackSlot]?.rapidStrike) return 0;
+    const mastery = cinematicTraining(this.actor, this._governingMeleeSkill(), this.attack,
+      { weaponMasterApplies:this.fireState.rapidStrikeMastery }) || this.fireState.rapidStrikeMastery;
+    const count = this._attackSlots.filter(slot=>slot.rapidStrike).length;
+    return count === 2 ? getRapidStrikePenalty(mastery) : maRapidStrikePenalty(count, mastery, false);
+  }
+
+  _rapidStrikeCount() {
+    if(!this.fireState.rapidStrike)return 2;
+    return expandedRapidStrikeCount(this.fireState.maRapidCount, allowsCinematicTechniqueDefaults());
+  }
+
+  _maState() {
+    const slot = this._attackSlots?.[this._activeAttackSlot];
+    const targets = globalThis.game?.user?.targets;
+    const targetShield = targets?.size===1 ? readShieldDefenseBonus([...targets][0]?.actor) : null;
+    return { movement:this.fireState.maMovement, movementConfirmed:this.fireState.maMovementConfirmed,
+      effort:this.fireState.maEffort, floorLunge:this.fireState.maFloorLunge,
+      stunt:this.fireState.maStunt||'tumbling', stuntPenalty:this.fireState.maStuntPenalty,
+      stuntRebounds:this.fireState.maStuntRebounds, evadeJump:this.fireState.maEvadeJump,
+      standing:this.fireState.maStanding, byLegs:this.fireState.maByLegs, swingNeedsJump:this.fireState.maSwingNeedsJump,
+      rapidCount:slot?.rapidStrike?this._attackSlots.filter(step=>step.rapidStrike).length:null, extraAttack:slot?.extraAttack,
+      feintSlot:this._attackSlotStates?.[this._activeAttackSlot]?.feintSlot??'',
+      attackOption:this.fireState.maAttackOption, attackOptionConfirmed:this.fireState.maAttackOptionConfirmed,
+      pummelConfirmed:this.fireState.maPummelConfirmed, pummelGuarded:this.fireState.maPummelGuarded,
+      shinArmor:this.fireState.maShinArmor, shieldDB:this.fireState.maShieldDB??'',
+      targetShield, shieldHandheld:this.fireState.maShieldHandheld,
+      shieldDisarm:targetShield?.handheld===false?false:this.fireState.maShieldDisarm,
+      spend:this._attackSlotStates?.[this._activeAttackSlot]?.spendEffort !== false };
+  }
+
+  _buildAdditionalMeleeOptions() {
+    const state = this.fireState, ru = maRussian(), slot = this._attackSlots[this._activeAttackSlot];
+    const tip = meleeOptionHelp;
+    const check = (name, label, current) =>
+      `<label><input type="checkbox" name="${name}" ${current?'checked':''}>${escapeHTML(label)}</label>`;
+    const choose = (name, label, ids, selected) => `<label>${escapeHTML(label)}
+      <select name="${name}"><option value="">${ru?'Нет':'None'}</option>
+      ${ids.map(id=>`<option value="${id}" ${selected===id?'selected':''}>${escapeHTML(maOptionText(id).label)}</option>`).join('')}</select></label>
+      ${ids.includes(selected) ? tip(selected) : ''}`;
+    const rank = extraAttackRanks(this.actor).length;
+    const strikes=this._techniqueSelection?.ids?.filter(id=>['spinningKick','kicking','jam'].includes(id)).map(id=>({id}));
+    const profile = maAttackApplicability(this.attack,this._governingMeleeSkill(),{strikes});
+    const attackOptions=['pummel','shin','shove','strikeShield'].filter(id=>profile[id]);
+    const requiresDB=state.maAttackOption==='strikeShield'||state.maAttackOption==='shove'&&profile.shield;
+    const recordedShield=state.maAttackOption==='strikeShield'?this._maState().targetShield:null;
+    const shieldHandheld=recordedShield?.handheld??state.maShieldHandheld;
+    const efforts = state.moveAndAttack ? ['lunge','charge'] : state.allOutAttack || state.defensiveAttack ?
+      (state.rapidStrike?['flurry']:[]) : state.committedAttack ?
+        ['lunge',...(state.rapidStrike?['flurry']:[])] : ['mighty','lunge',...(state.rapidStrike?['flurry']:[])];
+    return `<div class="gam-melee-martial-options gam-ma-options">
+      ${attackOptions.length?`<div class="gam-melee-martial-row">
+        ${choose('maAttackOption',ru?'Вариант удара':'Attack option',attackOptions,state.maAttackOption)}</div>`:''}
+      ${state.maAttackOption==='pummel'&&profile.pummelNeedsConfirmation?`<div class="gam-melee-martial-row">
+        ${check('maPummelConfirmed',ru?'Оружие подходит для Pummeling':'Weapon suits Pummeling',state.maPummelConfirmed)}
+        ${check('maPummelGuarded',ru?'Есть защитная дужка':'Has a basket hilt',state.maPummelGuarded)}</div>`:''}
+      ${state.maAttackOption==='shin'?`<div class="gam-melee-martial-row">
+        ${check('maAttackOptionConfirmed',ru?'Цель спереди или сбоку и не лежит':'Target is upright and ahead or to the side',state.maAttackOptionConfirmed)}
+        ${check('maShinArmor',ru?'Жёсткая броня голени':'Rigid shin armor',state.maShinArmor)}</div>`:''}
+      ${requiresDB?`<div class="gam-melee-martial-row"><label>DB <input ${recordedShield?'readonly':'name="maShieldDB"'} type="number" min="0"
+        step="1" value="${escapeHTML(recordedShield?.value??state.maShieldDB??'')}"></label>
+        ${state.maAttackOption==='strikeShield'&&recordedShield?.handheld==null?
+          check('maShieldHandheld',ru?'Ручной щит или плащ':'Hand-held buckler or cloak',state.maShieldHandheld):''}
+        ${state.maAttackOption==='strikeShield'&&shieldHandheld?
+          check('maShieldDisarm',ru?'Выбить из рук':'Disarm',state.maShieldDisarm):''}</div>`:''}
+      ${state.moveAndAttack ? `<div class="gam-melee-martial-row">
+        ${choose('maMovement',ru?'Движение':'Movement',['acrobatic','flying'],state.maMovement)}
+        ${state.maMovement ? check('maMovementConfirmed',ru?'Могу достать цель после движения':'Can reach target after movement',state.maMovementConfirmed) : ''}</div>` : ''}
+      ${state.moveAndAttack&&state.maMovement==='acrobatic'?`<div class="gam-melee-martial-row">
+        <label>${ru?'Трюк':'Stunt'} <select name="maStunt">${[
+          ['tumbling',ru?'Кувырок':'Tumbling'],['banister',ru?'По перилам':'Banister sliding'],
+          ['swinging',ru?'На верёвке':'Swinging'],['ticTac','Tic-Tac'],['spinning',ru?'Разворот':'Spinning'],
+          ['evade',ru?'Проскочить мимо':'Evade'],['skid',ru?'Скольжение':'Skidding']
+        ].map(([id,label])=>`<option value="${id}" ${(state.maStunt||'tumbling')===id?'selected':''}>${label}</option>`).join('')}</select></label>
+        ${['swinging','ticTac','spinning','evade','skid'].includes(state.maStunt)?
+          `<label>${ru?'Штраф трюка':'Stunt penalty'} <input name="maStuntPenalty" type="number" ${state.maStunt==='evade'?'':'min="0"'} step="1" value="${escapeHTML(state.maStuntPenalty??(state.maStunt==='skid'?2:0))}"></label>`:''}
+        ${state.maStunt==='ticTac'?`<label>${ru?'Отскоков':'Rebounds'} <input name="maStuntRebounds" type="number"
+          min="1" step="1" value="${escapeHTML(state.maStuntRebounds??1)}"></label>`:''}
+        ${state.maStunt==='evade'?check('maEvadeJump',ru?'Прыгать через цель':'Jump over the foe',state.maEvadeJump):''}
+        ${state.maStunt==='banister'?check('maStanding',ru?'Стоя':'Standing',state.maStanding):''}
+        ${state.maStunt==='swinging'?check('maByLegs',ru?'Вис на ногах':'Swing by legs',state.maByLegs)+
+          check('maSwingNeedsJump',ru?'Нужно допрыгнуть':'Jump to reach',state.maSwingNeedsJump):''}</div>`:''}
+      ${rank?`<div class="gam-melee-martial-row">${check('useExtraAttacks',maOptionText('extraAttack').label+' '+rank,state.useExtraAttacks)} ${tip('extraAttack')}</div>`:''}
+      ${state.rapidStrike&&allowsCinematicTechniqueDefaults()?`<div class="gam-melee-martial-row">
+        <label>${escapeHTML(maOptionText('expanded').label)} <input name="maRapidCount" type="number" min="2"
+          step="1" value="${this._rapidStrikeCount()}"></label> ${tip('expanded')}</div>`:''}
+      ${this._attackSlots.length>1&&!slot?.type.startsWith('combo')&&!slot?.type.startsWith('dwa')?
+        `<div class="gam-melee-martial-row"><label>${escapeHTML(maOptionText('feintSlot').label)}
+          <select name="maFeintSlot">${[['',ru?'Атака':'Attack'],['feint','Feint'],['beat','Beat'],
+            ['ruse','Ruse'],['defensive','Defensive Feint']].map(([id,label])=>
+            `<option value="${id}" ${this._maState().feintSlot===id?'selected':''}>${label}</option>`).join('')}</select></label> ${tip('feintSlot')}</div>`:''}
+      ${efforts.length?`<div class="gam-melee-martial-row">
+        ${choose('maEffort',ru?'Сверхусилие':'Extra effort',efforts,state.maEffort)}
+        ${this._attackSlots.length>1&&((state.maEffort==='flurry'&&slot?.rapidStrike)||state.maEffort==='mighty')?
+          check('maSpendEffort',ru?'Применить в этом слоте':'Apply to this slot',this._maState().spend):''}</div>`:''}
+      ${(state.allOutAttack&&state.allOutAttackMode==='long'||state.maEffort==='lunge')?
+        `<div class="gam-melee-martial-row">${check('maFloorLunge',ru?'Выпад с опорой':'Floor lunge',state.maFloorLunge)}</div>`:''}
+    </div>`;
   }
 
   _getHitLocationMarkers(zoneId, regionId = null) {
@@ -245,7 +411,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       const matchesRegion = regionId === null || !selection?.regionId || selection.regionId === regionId;
       if (!matchesZone || !matchesRegion) return [];
       return [{
-        className: "gam-rapid-attack-" + (index + 1) + (index === this._activeAttackSlot ? " is-active" : ""),
+        className: meleeSlotColorClass(this._attackSlots[index], index) + (index === this._activeAttackSlot ? " is-active" : ""),
         label: this._attackSlots[index].label
       }];
     });
@@ -389,14 +555,35 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _getLocationResult() {
     this._refreshStandaloneAttack();
+    this._syncTechniqueTargeting();
     const visibility = this._getMeleeVisibilityRules();
-    const selection = visibility?.random ? this.targetingService.getSelection("silhouette") : this._getSelectedLocation();
+    const newRules=(this._techniqueSelection?.ids??[]).map(getCombatRule).filter(rule=>rule?.strikeProfile);
+    const fixedLocation=newRules.find(rule=>rule.strikeProfile.fixedLocation)?.strikeProfile.fixedLocation;
+    const selection = fixedLocation?this._fixedStrikeLocation(fixedLocation):
+      visibility?.random ? this.targetingService.getSelection("silhouette") : this._getSelectedLocation();
     const zone = this.targetingService.getZone(selection?.zoneId);
-    const targetedAttack = visibility?.random ? null : this.targetedAttackContext?.resolve({
+    const strikeIds=(this._techniqueSelection?.ids??[]).filter(id=>['backKick','backStrike','hammerFist','kicking','crack','pressurePointStrike'].includes(id));
+    if(this.attack?.unarmedRef&&this.attack.meleeProfile?.attackType==='kick'&&!strikeIds.some(id=>['kicking','backKick'].includes(id)))strikeIds.push('kicking');
+    const context=this._techniqueContext();
+    const strikes=strikeIds.map(id=>resolveCombatTechnique(id,{actor:this.actor,attack:this.attack,meleePenalty:true,governingSkill:this._governingMeleeSkill(),context})).filter(r=>r.available);
+    if(!fixedLocation){
+      for(const rule of newRules.filter(r=>r.strikeProfile.projected!==false)){
+        const strike=resolveCombatTechnique(rule.id,{actor:this.actor,attack:this.attack,governingSkill:this._governingMeleeSkill(),context,previewStrike:true});
+        if(strike.available)strikes.push({...strike,defaultModifier:strike.originalModifier});
+      }
+    }
+    for(const strike of strikes)if(strike.id==='kicking')strike.aliases=[this.attack.name,this.attack.mode].filter(Boolean);
+    for(const strike of strikes)if(['backKick','backStrike'].includes(strike.id)&&selection?.penalty<0)strike.targetPenalty=-1;
+    const tipSlash=this._techniqueSelection?.ids.includes('initialCarving')&&context.carvingTipSlash&&/\bimp\b/.test(this.attack.damage);
+    if(tipSlash){const skill=this._governingMeleeSkill();strikes.push({id:'tipSlash',name:'Tip Slash',level:skill?.level,modifier:0,defaultModifier:0});}
+    const targetOptions={
       specialty: this.fireState.governingSpecialty,
       target: selection?.canonicalKeys ?? [selection?.canonicalKey, ...(zone?.taAliases ?? [])],
       basePenalty: selection?.penalty ?? 0
-    }) ?? null;
+    };
+    const candidates=visibility?.random||fixedLocation?[]:strikes.map(strike=>this.targetedAttackContext?.resolve({...targetOptions,strikeTechnique:strike})).filter(Boolean);
+    if(!fixedLocation&&!newRules.length&&!tipSlash&&!strikeIds.some(id=>['backKick','backStrike','hammerFist','kicking','crack'].includes(id))&&!visibility?.random){const ordinary=this.targetedAttackContext?.resolve(targetOptions);if(ordinary)candidates.push(ordinary);}
+    const targetedAttack=candidates.sort((a,b)=>b.effectivePenalty-a.effectivePenalty)[0]??null;
     return {
       selection,
       targetedAttack,
@@ -405,11 +592,172 @@ export class MeleeAssistantApp extends FirePreparationApp {
     };
   }
 
+  _fixedStrikeLocation(zone){
+    const name={eye:'Глаз',face:'Верхняя часть лица',ear:'Ухо'}[zone];
+    return {...this.targetingService.getSelection(zone),zoneId:zone,canonicalKey:zone,canonicalKeys:[zone],label:name,penalty:0,random:false};
+  }
+
+  _governingMeleeSkill(){
+    if(this.attack?.unarmedRef)return this.attack.meleeProfile?.skill;
+    const bound=this.attack?.standaloneRef?.governingSkill??this.attack?.equipmentRef?.governingSkill;if(bound)return bound;
+    const selected=this.targetedAttackContext?.specialtyOptions?.find(s=>s.value===this.fireState.governingSpecialty);
+    return selected?{name:selected.label,level:selected.level}:null;
+  }
+
+  _syncTechniqueTargeting(){
+    if(!(this.targetingService instanceof TargetingService))return;
+    const ids=this._techniqueSelection?.ids??[],context=this._techniqueContext();
+    const skill=this._governingMeleeSkill();
+    let pressureSecrets=false,damageType=null;
+    const strikeRules=ids.map(getCombatRule).filter(rule=>rule?.strikeProfile);
+    const restrictEye=strikeRules.some(rule=>rule.id==='uppercut');
+    const waiveGroin=ids.includes('kneeStrike')&&context.strikeGrapple==='front';
+    const fixed=strikeRules.find(rule=>rule.strikeProfile.fixedLocation)?.strikeProfile.fixedLocation;
+    const strikeDamage=strikeRules.find(rule=>rule.strikeProfile.damage)?.strikeProfile.damage;
+    if(strikeDamage)damageType=strikeDamage.split(/\s+/).at(-1);
+    if(ids.includes('pressurePointStrike')&&/^Pressure Secrets/i.test(context.pressureSkill??''))pressureSecrets=resolveCombatTechnique('pressurePointStrike',{actor:this.actor,attack:this.attack,governingSkill:skill,context}).available===true;
+    if(ids.includes('initialCarving')&&context.carvingTipSlash){const result=resolveCombatTechnique('initialCarving',{actor:this.actor,attack:this.attack,governingSkill:skill,context});if(result.available)damageType=result.damageType;}
+    const previous=this.targetingService;
+    const strikeTargetingSignature=JSON.stringify([restrictEye,fixed??null,waiveGroin]);
+    if(!!previous.damageProfile.pressureSecrets===pressureSecrets&&(previous.damageProfile.techniqueDamageType??null)===damageType&&
+      (previous.damageProfile.strikeTargetingSignature??'[false,null,false]')===strikeTargetingSignature)return;
+    this.targetingService=new TargetingService({definition:previous.definition,table:previous.table,tableSource:previous.tableSource,attack:{...this.attack,meleeTechniqueTargeting:{pressureSecrets,damageType,allowEye:restrictEye||fixed==='eye',waiveGroin}}});
+    this.targetingService.damageProfile.techniqueDamageType=damageType;
+    this.targetingService.damageProfile.strikeTargetingSignature=strikeTargetingSignature;
+    this._targetingServices?.set(this.targetingService.bodyplan,this.targetingService);
+  }
+
   _getBaseSkillLevel() {
     this._refreshStandaloneAttack();
     if (this.attack?.standaloneRef) return this.attack.standaloneRef.governingSkill?.resolved ? this.attack.level : null;
     const attackLevel = Number(this.attack?.level ?? this.sourceAttack?.level);
     return Number.isFinite(attackLevel) ? Math.trunc(attackLevel) : null;
+  }
+
+  _currentTechniqueSelection(){
+    const selected=normalizeMeleeTechniques(this._techniqueSelection),slot=this._attackSlots?.[this._activeAttackSlot];
+    selected.context=this._techniqueContext();
+    selected.ids=selected.ids.filter(id=>!['combination','dualWeaponAttack'].includes(id));
+    if(this.fireState.techniqueSequence==='dualWeaponAttack'&&slot?.type.startsWith('dwa'))selected.ids.push('dualWeaponAttack');
+    if(this.fireState.techniqueSequence==='combination'&&slot?.type.startsWith('combo'))selected.ids.push('combination');
+    if(this._fixedCombination)selected.sequence=structuredClone(this._fixedCombination);
+    const hands=this.attack?.unarmedRef?(meleeAttackUsesHand(this.attack)?1:0):this.attack?.meleeProfile?.strength?.hands??this.attack?.meleeProfile?.hands?.hands;
+    if(Number.isInteger(hands))selected.context.weaponHands=hands;
+    selected.context.hand=slot?.hand??selected.context.hand??'main';
+    selected.context.weaponMasterApplies=this.fireState.rapidStrikeMastery===true;
+    const location=this._getLocationResult().selection;
+    selected.context.targetLocationKeys=location?.canonicalKeys??[location?.canonicalKey??location?.zoneId];
+    selected.context.targetVitals=selected.context.targetLocationKeys.includes('vitals');
+    return selected;
+  }
+
+  _techniqueContext(){
+    const ids=this._techniqueSelection?.ids??[],saved=this._techniqueSelection?.context??{};
+    const context={...saved,cinematicDefaults:allowsCinematicTechniqueDefaults()};
+    delete context.specialConfirmed;
+    if(Object.keys(this._specialConfirmations??{}).length)context.specialConfirmed={...this._specialConfirmations};
+    delete context.retryCarving;
+    if(ids.includes('attackFromAbove'))context.fromAbove=true;
+    if(ids.includes('closeCombat'))context.closeCombat=true;
+    if(saved.rearAttackConfirmed===undefined)context.rearAttackConfirmed=saved.behindKnown===true&&saved.legsFree===true;
+    if(saved.rearAttackConfirmed!==undefined)context.behindKnown=context.legsFree=saved.rearAttackConfirmed;
+    if(ids.includes('cavalryTraining')){
+      context.mounted=true;
+      const riding=learnedMeleeSkills(this.actor).filter(s=>/^Riding(?:\s*\(|$)/i.test(s.name));
+      if(riding.length===1)context.ridingSkill=riding[0].name;
+    }
+    if(ids.includes('fightingWhileSeated')&&readMeleePosture(this.actor).value==='sitting'&&saved.posture===undefined)context.posture='seated';
+    if(ids.includes('pressurePointStrike')){
+      const options=this._pressureSkillOptions(context);
+      if(options.length===1)context.pressureSkill=options[0];
+    }
+    if(ids.some(id=>getCombatRule(id)?.strikeProfile)){
+      const targets=[...(globalThis.game?.user?.targets??[])];
+      const token=targets.length===1?targets[0]:null;
+      const target=token?.actor??globalThis.game?.actors?.get?.(context.strikeTargetActorId);
+      if(target)context.strikeTarget={
+        actorId:target.id,tokenId:token?.id??null,sceneId:token?.document?.parent?.id??null,name:token?.name??target.name,
+        posture:readMeleePosture(target).value,sm:target.system?.attributes?.SM?.value??target.system?.SM??null,
+        hasEyes:hasCombatTrait(target,'No Eyes')||hasCombatTrait(target,'No Head')?false:null,
+        hp:target.system?.HP?.max??null
+      };
+    }
+    if(ids.some(id=>id==='crack'||id==='reverseGrip')){
+      const source=meleeProfileContext(this.actor,this.attack);
+      const profile=source?.profiles.find(p=>p.modeId===(source.saved.modeId||source.source.modeId));
+      if(ids.includes('crack')&&['lt:whip','lt:light-whip'].includes(profile?.modelId))context.whipKind='ordinary';
+      if(ids.includes('reverseGrip')){
+        context.reversibleWeapon=!!profile&&meleeMartialGrips(profile).includes('reversed');
+        context.canThrust=!!source?.profiles.some(p=>/^thr/i.test(p.stats.damage));
+      }
+    }
+    context.manualTurn=String(this.actor?.getFlag?.('olegurps-qol','meleeTechniqueManualTurn')??'0');
+    if(ids.includes('initialCarving')){
+      context.letter=String(context.letter??'').trim().toUpperCase();
+      context.strokeCount=context.strokeCount??2;
+      context.autoCarvingProgress=true;
+      context.carvingTipSlash=!/\bcut\b/.test(this.attack?.damage??'')&&/\bimp\b/.test(this.attack?.damage??'');
+      const progress=initialCarvingProgress(this.actor,context);
+      context.retryCarving=this._retryCarving===context.carvingId&&progress.completed>1;
+      context.stroke=context.retryCarving?progress.completed:progress.stroke;
+      return this._tipSlashContext(context);
+    }
+    return context;
+  }
+
+  _pressureSkillOptions(context){
+    const skill=this._governingMeleeSkill();
+    return [...new Set(learnedMeleeSkills(this.actor)
+      .filter(s=>/^Pressure (?:Points|Secrets)(?:\s*\(|$)/i.test(s.name))
+      .filter(s=>resolveCombatTechnique('pressurePointStrike',{actor:this.actor,attack:this.attack,governingSkill:skill,
+        context:{...context,pressureSkill:s.name,cinematicDefaults:true}}).available)
+      .map(s=>s.name))];
+  }
+
+  _tipSlashContext(input){
+    const context={...input};
+    if(!context.carvingTipSlash||!this._techniqueSelection?.ids?.includes('initialCarving'))return context;
+    const source=meleeProfileContext(this.actor,this.attack);
+    if(!source||this.attack.hasMeleeDamageOverride)return context;
+    const grip=this.attack.meleeProfile?.grip,hands=this.attack.meleeProfile?.strength?.hands;
+    const profiles=source.profiles.map(p=>resolveMeleeProfile({actor:this.actor,attack:this.attack,context:source,selection:{...source.saved,modeId:p.modeId}}))
+      .filter(a=>!a.readinessReason&&a.meleeProfile?.grip===grip&&a.meleeProfile?.strength?.hands===hands);
+    const reaches=profiles.map(a=>String(a.meleeProfile?.reach??a.reach??''));
+    if(!reaches.length||reaches.some(r=>!r||!/^[C\d.,*\s–-]+$/i.test(r)))return context;
+    const distances=reaches.flatMap(r=>[...r.matchAll(/\d+(?:\.\d+)?/g)].map(m=>Number(m[0])));
+    context.tipSlashReach=distances.length?String(Math.max(...distances)):'C';
+    context.tipSlashReachSource='profile';
+    return context;
+  }
+
+  _techniquePanelHTML(){
+    const selection=this._currentTechniqueSelection();
+    const options=this._getMeleeCalculationOptions(),plan=resolveMeleeCombatCalculation(options)?.metadata.meleeTechniques;
+    const currentTargets=[...(globalThis.game?.user?.targets??[])].map(t=>t.id);
+    const targets=new Set((this._attackSlotStates??[]).flatMap((slot,i)=>{
+      const ids=i===this._activeAttackSlot?currentTargets:slot.targetIds??[];
+      return ids.length?ids:[slot.techniques?.context?.manualTarget].filter(Boolean);
+    }));
+    const knownHands=!!this.attack?.unarmedRef||Number.isInteger(this.attack?.meleeProfile?.strength?.hands);
+    const knownWhip=selection.context.whipKind==='ordinary'&&['lt:whip','lt:light-whip'].includes(meleeProfileContext(this.actor,this.attack)?.source.modelId);
+    const knownTipReach=selection.context.tipSlashReachSource==='profile';
+    const sequenceSetup=this.fireState.techniqueSequence==='combination'?this._combinationSetupHTML():'';
+    return meleeTechniqueControls({...options,selection,errors:plan?.errors??[],picker:this._techniquePicker,
+      activeOpen:this._activeTechniquesOpen,sequenceSetup,
+      pressureOptions:selection.ids.includes('pressurePointStrike')?this._pressureSkillOptions(selection.context):[],
+      hasTarget:currentTargets.length>0,needsAdjacency:targets.size>1,knownHands,knownWhip,knownTipReach,
+      hasEncounter:!!this.actor?.getFlag?.('olegurps-qol','meleeTechniqueUses')},escapeHTML);
+  }
+
+  _combinationSetupHTML(){
+    const length=this.fireState.combinationLength;
+    const recipe=this._fixedCombination?.name??this._requestedCombination??'Выберите атаку и зону в каждом слоте.';
+    const count=this._requestedCombination?'':`<label>Атак в Combination <select name="meleeCombinationLength">
+      <option value="2" ${length===2?'selected':''}>2</option>
+      <option value="3" ${length===3?'selected':''}>3</option></select></label>`;
+    return `<div class="gam-melee-combination-setup">${count}
+      <button type="button" data-melee-technique-action="fix-combination">Закрепить шаги</button>
+      <small>${escapeHTML(recipe)}</small></div>`;
   }
 
   _getMeleeCalculationOptions() {
@@ -423,7 +771,8 @@ export class MeleeAssistantApp extends FirePreparationApp {
       actor: this.actor,
       attack: this.attack,
       attackSlot: this._attackSlots[this._activeAttackSlot]?.type ?? null,
-      governingSkill: this.attack?.unarmedRef ? this.attack.meleeProfile?.skill : this.attack?.standaloneRef?.governingSkill ?? this.attack?.equipmentRef?.governingSkill ?? (governing ? { name: governing.label, level: governing.level } : null),
+      governingSkill: this._governingMeleeSkill(),
+      meleeTechniques:this._currentTechniqueSelection(),
       baseSkill: this._getBaseSkillLevel(),
       weaponBond: !this.attack?.unarmedRef && getMeleeAttackSettings(this._meleeState, this.sourceAttack).weaponBond === true,
       manualModifier: this.fireState.manualModifier,
@@ -436,19 +785,21 @@ export class MeleeAssistantApp extends FirePreparationApp {
       committedAttack: this.fireState.committedAttack,
       committedMode: this.fireState.committedMode,
       committedSteps: this.fireState.committedSteps,
+      defensiveAttack: this.fireState.defensiveAttack,
       hitLocationPenalty: location.penalty,
       hitLocationBasePenalty: location.selection?.penalty ?? 0,
       hitLocationLabel: "Зона попадания: " + (location.selection?.label ?? ""),
       targetedAttack: location.targetedAttack,
       precisionPenalty,
       rapidStrikePenalty: this._getRapidStrikePenalty(),
+      maOptions: this._maState(),
       visibilityPenalty: this._getMeleeVisibilityRules()?.penalty ?? 0,
       visibilityCap: this._getMeleeVisibilityRules()?.cap ?? false
     };
   }
 
-  _normalizeManeuverState() {
-    if (!["determined", "strong", "double"].includes(this.fireState.allOutAttackMode)) {
+  _normalizeManeuverState(sequenceSkillBeforeDeceptive=null) {
+    if (!allOutMeleeModes.includes(this.fireState.allOutAttackMode)) {
       this.fireState.allOutAttackMode = "determined";
     }
     if (!["determined", "strong"].includes(this.fireState.committedMode)) {
@@ -459,7 +810,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
       this.fireState.allOutAttack = false;
       this.fireState.committedAttack = false;
       this.fireState.defensiveAttack = false;
-      this.fireState.deceptiveAttack = "0";
+      if(this.fireState.maEffort!=='charge')this.fireState.deceptiveAttack = "0";
     } else if (this.fireState.allOutAttack) {
       this.fireState.committedAttack = false;
       this.fireState.defensiveAttack = false;
@@ -468,11 +819,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
     }
     if (this.fireState.telegraphicAttack) this.fireState.deceptiveAttack = "0";
     const options = this._getMeleeCalculationOptions();
-    const beforeDeceptive = calculateMeleeSkillBeforeDeceptive(options);
+    const beforeDeceptive = Number.isFinite(sequenceSkillBeforeDeceptive)?sequenceSkillBeforeDeceptive:calculateMeleeSkillBeforeDeceptive(options);
     const deceptive = normalizeDeceptiveAttackPenalty(
       this.fireState.deceptiveAttack,
       beforeDeceptive,
-      this.fireState.moveAndAttack,
+      this.fireState.moveAndAttack&&this.fireState.maEffort!=='charge',
       this.fireState.telegraphicAttack
     );
     this.fireState.deceptiveAttack = String(deceptive);
@@ -485,12 +836,12 @@ export class MeleeAssistantApp extends FirePreparationApp {
       defenseModifier: calculation?.metadata.defenseModifier ??
         getDeceptiveDefensePenalty(deceptive) + (this.fireState.telegraphicAttack ? 2 : 0),
       maximum: getMaximumDeceptiveAttackPenalty(beforeDeceptive,
-        this.fireState.moveAndAttack, this.fireState.telegraphicAttack)
+        this.fireState.moveAndAttack&&this.fireState.maEffort!=='charge', this.fireState.telegraphicAttack)
     };
   }
 
-  _buildDeceptiveOptions(selected = this.fireState.deceptiveAttack) {
-    const maneuver = this._normalizeManeuverState();
+  _buildDeceptiveOptions(selected = this.fireState.deceptiveAttack,sequenceSkillBeforeDeceptive=null) {
+    const maneuver = this._normalizeManeuverState(sequenceSkillBeforeDeceptive);
     const selectedValue = Number(selected);
     const options = [];
     for (let penalty = 0; penalty <= maneuver.maximum; penalty += 2) {
@@ -504,7 +855,16 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _calculateEffectiveSkill() {
     this._normalizeManeuverState();
-    return calculateMeleeEffectiveSkill(this._getMeleeCalculationOptions());
+    return this._resolvedMeleeCalculation()?.effectiveSkill??null;
+  }
+
+  _resolvedMeleeCalculation(){
+    const ordinary=resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+    if(!ordinary||!this.fireState.techniqueSequence||this._buildingAttackSnapshots||this._sequencePreviewRunning)return ordinary;
+    this._sequencePreviewRunning=true;
+    try{return this._createAttackSnapshots({preview:true})[this._activeAttackSlot]?.combatCalculation??ordinary;}
+    catch(error){return {...ordinary,effectiveSkill:null,metadata:{...ordinary.metadata,meleeSequenceError:error.message}};}
+    finally{this._sequencePreviewRunning=false;}
   }
 
   _buildAttackModifierDetails(_locationResult, _maneuver, effectiveSkill, calculation = null) {
@@ -522,16 +882,21 @@ export class MeleeAssistantApp extends FirePreparationApp {
     return details;
   }
 
-  _buildAttackStats(damage = this._effectiveDamage?.formula ?? this.attack?.damage) {
+  _buildAttackStats(damage = this._effectiveDamage?.formula ?? this.attack?.damage,reach=this._effectiveDamage?.evidence?.techniques?.reach) {
+    const strikePlan=this._effectiveDamage?.evidence?.techniques;
+    const physicalStrike=strikePlan?.primaryStrike;
     const values = [
       meleeOutcomeLabel(this.attack,damage),
-      "Reach " + (this.attack?.reach || "-"),
-      "Parry " + (this.attack?.parry || "-")
+      "Reach " + (reach || this.attack?.reach || "-")
     ];
+    if(!physicalStrike)values.push("Parry " + (this.attack?.parry || "-"));
     const resource=utMeleeResourceLabel(this.actor,this.attack);
     if(resource)values.push(resource);
     const unarmed=this.attack?.meleeProfile?.unarmed;
-    if(unarmed)values.push(unarmed.alreadyIncluded?'Исходный Damage GGA':unarmed.manualDamage?'Ручной Damage':unarmed.selectedSkill+' +'+unarmed.bonusPerDie+'/куб thrust'+(unarmed.naturalPerDie?' · естественное оружие +'+unarmed.naturalPerDie+'/куб':''));
+    if(physicalStrike){
+      const skill=strikePlan.results.find(row=>row.id===physicalStrike.id)?.governingSkill;
+      if(skill)values.push(skill);
+    }else if(unarmed)values.push(unarmed.alreadyIncluded?'Исходный Damage GGA':unarmed.manualDamage?'Ручной Damage':unarmed.selectedSkill+' +'+unarmed.bonusPerDie+'/куб thrust'+(unarmed.naturalPerDie?' · естественное оружие +'+unarmed.naturalPerDie+'/куб':''));
     return values.join(" · ");
   }
 
@@ -592,6 +957,11 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
   _onRender(context, options) {
     super._onRender(context, options);
+    this._updateAttackSlotControls();
+    this._onActiveTechniquesToggle ??= ({target}) => {
+      if (target.matches?.('[data-melee-active-techniques]')) this._activeTechniquesOpen=target.open;
+    };
+    this.element?.addEventListener('toggle',this._onActiveTechniquesToggle,true);
     if (this._weaponVisibilityHook == null && globalThis.Hooks?.on) this._weaponVisibilityHook = Hooks.on('updateUser', (user, changes) => {
       if (user.id === game.user.id && changes.flags?.['olegurps-qol']?.weaponListVisibility && this.rendered && !this._visibilityBusy && !this._visibilityClosed)
         {this.sourceAttacks=collectMeleeAttacks(this.actor);void this._refreshVisibleWeapons();}
@@ -601,11 +971,13 @@ export class MeleeAssistantApp extends FirePreparationApp {
   _buildContent(fireState) {
     if (!this._visibleAttacks().length) return `<div class="gam-fire-preparation gam-melee-preparation"><p>${visibilityText('EmptyMelee')}</p>${hiddenWeaponsHTML(this.weaponVisibility,this._visibilityEntries(),'melee','data-melee-action')}<button type="button" data-melee-action="standalone-library" aria-label="${visibilityText('AddToList')}">+</button></div>`;
     const skillPreview = this._getSkillPreview();
-    const calculation=resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+    const calculation=this._resolvedMeleeCalculation();
+    const techniqueErrors=this.element?.querySelector('[data-melee-technique-errors]');
+    if(techniqueErrors)techniqueErrors.textContent=calculation?.metadata.meleeTechniques?.errors.join(' ')??'';
     const baseSkill = calculation?.baseSkill;
     const baseSkillText = Number.isFinite(baseSkill) ? String(baseSkill) : "-";
-    const maneuver = this._normalizeManeuverState();
-    const deceptiveOptions = this._buildDeceptiveOptions(maneuver.deceptive);
+    const maneuver = this._normalizeManeuverState(calculation?.metadata.beforeDeceptive);
+    const deceptiveOptions = this._buildDeceptiveOptions(maneuver.deceptive,maneuver.beforeDeceptive);
     const defenseText = fireState.telegraphicAttack ? "\u0417\u0430\u0449\u0438\u0442\u0430 \u0446\u0435\u043b\u0438: +2"
       : maneuver.defensePenalty === 0 ? "\u0437\u0430\u0449\u0438\u0442\u0430 0" : "\u0437\u0430\u0449\u0438\u0442\u0430 " + maneuver.defensePenalty;
     const attackStats = this._buildAttackStats();
@@ -637,6 +1009,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
           </div>
         </div>
         ${this._buildVisibilityContent()}
+        <style>${MELEE_TECHNIQUE_CSS}</style><section data-melee-technique-controls>${this._techniquePanelHTML()}</section>
         <div class="gam-fire-layout">
           <div class="gam-fire-left gam-melee-left">
             <div class="gam-fire-fields gam-melee-fields">
@@ -656,22 +1029,27 @@ export class MeleeAssistantApp extends FirePreparationApp {
               </div>
               <div class="gam-attack-slots gam-melee-attack-slots" data-melee-attack-slots></div>
               <div class="gam-fire-field gam-melee-all-out">
-                <span class="gam-melee-all-out-controls">
+                <div class="gam-melee-all-out-controls">
                   <label class="gam-melee-maneuver-toggle">
                   <input type="checkbox" name="allOutAttack" aria-label="Тотальная атака" ${fireState.allOutAttack ? "checked" : ""}>
                   <span>Тотальная атака</span></label>
-                  <select name="allOutAttackMode" aria-label="Вариант тотальной атаки" ${fireState.allOutAttack ? "" : "disabled"}>
-                    <option value="determined" ${fireState.allOutAttackMode === "determined" ? "selected" : ""}>Точная</option>
-                    <option value="strong" ${fireState.allOutAttackMode === "strong" ? "selected" : ""}>Сильная</option>
-                    <option value="double" ${fireState.allOutAttackMode === "double" ? "selected" : ""}>Двойная</option>
-                  </select>
-                </span>
+                  <div class="gam-melee-all-out-variant">
+                    <select name="allOutAttackMode" aria-label="Вариант тотальной атаки" ${fireState.allOutAttack ? "" : "disabled"}>
+                      <option value="determined" ${fireState.allOutAttackMode === "determined" ? "selected" : ""}>Determined</option>
+                      <option value="strong" ${fireState.allOutAttackMode === "strong" ? "selected" : ""}>Strong</option>
+                      <option value="double" ${fireState.allOutAttackMode === "double" ? "selected" : ""}>Double</option>
+                      <option value="long" ${fireState.allOutAttackMode === "long" ? "selected" : ""}>Long</option>
+                    </select>
+                    ${fireState.allOutAttack && fireState.allOutAttackMode === 'long' ? meleeOptionHelp('long') : ''}
+                  </div>
+                </div>
               </div>
               ${this._buildMartialArtsOptions(fireState)}
+              ${this._buildAdditionalMeleeOptions()}
               <label class="gam-fire-field gam-melee-deceptive">
                 <span>Обманная атака</span>
                 <span class="gam-melee-deceptive-controls">
-                  <select name="deceptiveAttack" aria-label="Штраф обманной атаки" ${fireState.moveAndAttack || fireState.telegraphicAttack || maneuver.maximum === 0 ? "disabled" : ""}>
+                  <select name="deceptiveAttack" aria-label="Штраф обманной атаки" ${fireState.moveAndAttack && fireState.maEffort!=='charge' || fireState.telegraphicAttack || maneuver.maximum === 0 ? "disabled" : ""}>
                     ${deceptiveOptions}
                   </select>
                   <small data-deceptive-defense>${defenseText}</small>
@@ -687,7 +1065,7 @@ export class MeleeAssistantApp extends FirePreparationApp {
           ${this._buildHitLocationContent(fireState)}
         </div>
         <div class="gam-fire-actions">
-          <button type="button" data-melee-action="confirm"><i class="fa-solid fa-sword"></i> Выполнить атаку</button>
+          <button type="button" data-melee-action="confirm"><i class="fa-solid fa-sword"></i> <span data-melee-confirm-label>Выполнить атаку</span></button>
           <button type="button" data-melee-action="cancel"><i class="fa-solid fa-xmark"></i> Отмена</button>
         </div>
       </div>
@@ -710,7 +1088,17 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this._updateMeleePreview();
   }
 
-  _registerTargetHook() {}
+  _registerTargetHook() {
+    if(this._targetHookId!=null)return;
+    this._targetHookId=globalThis.Hooks?.on('targetToken',user=>{
+      if(user!==globalThis.game?.user||this._submitting||this._buildingAttackSnapshots)return;
+      if(this.fireState.maAttackOption==='strikeShield'){
+        this.fireState.maShieldDisarm=false;
+        void this.render({force:true});
+      }
+      if(this._techniqueSelection?.ids.length||this.fireState.techniqueSequence)this._updateMeleePreview();
+    });
+  }
 
   _onActorUpdate(updated, changes) {
     if (!sameStrengthActor(updated,this.actor)) return;
@@ -737,15 +1125,27 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   _updateMeleePreview() {
     this._refreshStandaloneAttack();
-    const maneuver = this._normalizeManeuverState();
+    let maneuver = this._normalizeManeuverState();
     const evaluateInput = this.element?.querySelector('[name="evaluate"]');
     if (evaluateInput) evaluateInput.disabled = !!this.fireState.telegraphicAttack;
     const base = this.element?.querySelector("[data-melee-base-skill]");
-    const calculation=resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+    const calculation=this._resolvedMeleeCalculation();
+    if(this.fireState.techniqueSequence)maneuver=this._normalizeManeuverState(calculation?.metadata.beforeDeceptive);
+    const techniqueRoot=this.element?.querySelector('[data-melee-technique-controls]');
+    const hasSpecialRoll=this._techniqueSelection?.ids.some(id=>getCombatRule(id)?.operation==='SPECIAL_CHECK');
+    const techniqueFingerprint=JSON.stringify([this.selectedAttackKey,calculation?.governingSkill,this._currentTechniqueSelection(),
+      hasSpecialRoll?this.fireState.manualModifier:null,hasSpecialRoll?calculation?.channels?.map(c=>c.resolvedValue):null,
+      [...(globalThis.game?.user?.targets??[])].map(t=>t.id),calculation?.metadata.meleeTechniques?.results.map(r=>[r.id,r.level,r.maximum,r.available,r.reason]),calculation?.metadata.meleeTechniques?.errors]);
+    if(techniqueRoot&&techniqueFingerprint!==this._techniqueControlFingerprint){
+      techniqueRoot.innerHTML=this._techniquePanelHTML();
+      this._techniqueControlFingerprint=techniqueFingerprint;
+    }
+    const errors=this.element?.querySelector('[data-melee-technique-errors]');if(errors)errors.textContent=[...(calculation?.metadata.meleeTechniques?.errors??[]),calculation?.metadata.meleeSequenceError].filter(Boolean).join(' ');
     const baseSkill = calculation?.baseSkill;
     if (base) {
       base.textContent = Number.isFinite(baseSkill) ? String(baseSkill) : "-";
-      base.title=weaponStrengthExplanation(this.attack?.meleeProfile?.weaponStrength??this.attack?.weaponStrength,{baseLevel:baseSkill});
+      base.title=[weaponStrengthExplanation(this.attack?.meleeProfile?.weaponStrength??this.attack?.weaponStrength,{baseLevel:baseSkill}),
+        ...(calculation?.metadata.combatPerks??[]).map(perk=>combatPerkLabel(perk))].filter(Boolean).join('\n');
     }
 
     const manual = this.element?.querySelector('[name="manualModifier"]');
@@ -787,9 +1187,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
     if(defensiveHelp){const hint=this._getDefensiveContext().hint;defensiveHelp.dataset.tooltip=hint;defensiveHelp.setAttribute('aria-label',hint);}
     const deceptive = this.element?.querySelector('[name="deceptiveAttack"]');
     if (deceptive) {
-      deceptive.innerHTML = this._buildDeceptiveOptions(maneuver.deceptive);
+      deceptive.innerHTML = this._buildDeceptiveOptions(maneuver.deceptive,maneuver.beforeDeceptive);
       deceptive.value = String(maneuver.deceptive);
-      deceptive.disabled = !!this.fireState.moveAndAttack ||
+      deceptive.disabled = !!this.fireState.moveAndAttack && this.fireState.maEffort!=='charge' ||
         !!this.fireState.telegraphicAttack || maneuver.maximum === 0;
     }
     const defense = this.element?.querySelector("[data-deceptive-defense]");
@@ -807,16 +1207,19 @@ export class MeleeAssistantApp extends FirePreparationApp {
     root.hidden = this._attackSlots.length < 2;
     root.innerHTML = this._attackSlots.map((slot, index) =>
       `<button type="button" data-melee-action="attack-slot" data-attack-slot="${index}"
-        class="gam-attack-slot gam-melee-rapid-attack gam-rapid-attack-${index + 1} ${index === this._activeAttackSlot ? "is-active" : ""}"
-        aria-pressed="${index === this._activeAttackSlot}">${escapeHTML(slot.label)}</button>`
+        class="gam-attack-slot gam-melee-rapid-attack ${meleeSlotColorClass(slot, index)} ${index === this._activeAttackSlot ? "is-active" : ""}"
+        title="${escapeHTML(slot.handLabel??slot.label)}" aria-pressed="${index === this._activeAttackSlot}">${escapeHTML(slot.label)}</button>`
     ).join("");
   }
 
   _getEffectiveDamageOptions() {
     this._refreshStandaloneAttack();
+    const metadata=resolveMeleeCombatCalculation(this._getMeleeCalculationOptions())?.metadata;
     return {
       actor: this.actor,
       attack: this.attack,
+      techniquePlan:metadata?.meleeTechniques??null,
+      maOptions:metadata?.maOptions??null,
       dicePlusAdds: this.fireState.dicePlusAdds,
       allOutStrong: this.fireState.allOutAttack && this.fireState.allOutAttackMode === "strong",
       committedStrong: this.fireState.committedAttack && this.fireState.committedMode === "strong" && committedStrongEligible(this.attack),
@@ -831,13 +1234,23 @@ export class MeleeAssistantApp extends FirePreparationApp {
   _showEffectiveDamage(preparedDamage,reason='Формула урона не определена') {
     const resourceReason=utMeleeResourceReason(this.actor,this.attack);
     const confirm=this.element?.querySelector('[data-melee-action="confirm"]');
-    if(confirm){confirm.disabled=!!resourceReason||this.attack?.meleeProfile?.utExotic?.contactProcedure===true;confirm.title=resourceReason??(this.attack?.meleeProfile?.utExotic?.contactProcedure?'Подтвердите контакт в редакторе экземпляра.':'');}
+    if(confirm){
+      const context=this._techniqueSelection?.ids.includes('initialCarving')?this._techniqueContext():null;
+      const finished=context&&!context.retryCarving&&initialCarvingProgress(this.actor,context).finished;
+      const special=this._techniqueSelection?.ids.map(getCombatRule).find(rule=>rule?.specialProfile)?.specialProfile;
+      const ownCheck=special&&special.kind!=='attack';
+      const confirmation=special?.confirm&&!this._specialConfirmations[special.ref];
+      const label=confirm.querySelector('[data-melee-confirm-label]');
+      if(label)label.textContent=ownCheck?'Броски в «Активных техниках»':context?context.retryCarving?'Повторить бросок штриха':'Бросок штриха '+context.stroke:'Выполнить атаку';
+      confirm.disabled=this._submitting||!!ownCheck||!!confirmation||!!finished||!!resourceReason||this.attack?.meleeProfile?.utExotic?.contactProcedure===true;
+      confirm.title=confirmation?special.confirm:finished?'Нажмите «Начать заново» для новой надписи.':resourceReason??(this.attack?.meleeProfile?.utExotic?.contactProcedure?'Подтвердите контакт в редакторе экземпляра.':'');
+    }
     this._effectiveDamage = preparedDamage;
     const button=this.element?.querySelector('[data-melee-action="damage"]');
     if(button){button.disabled=!preparedDamage;button.title=preparedDamage?'Бросить текущий урон':reason;}
     const meta = this.element?.querySelector("[data-melee-attack-meta]");
     if (!meta) return;
-    const text = this._buildAttackStats(preparedDamage?.formula ?? reason);
+    const text = this._buildAttackStats(preparedDamage?.formula ?? reason,preparedDamage?.evidence?.techniques?.reach);
     meta.textContent = text;
     meta.title = text;
   }
@@ -867,8 +1280,24 @@ export class MeleeAssistantApp extends FirePreparationApp {
 
   async _persistCurrentPreferences() {
     if (!this.selectedAttackKey) return;
+    if(this.fireState.techniqueSequence)this._saveActiveAttackConfiguration({captureTargets:!this._sequencePreviewRunning&&!this._buildingAttackSnapshots});
     const settings = getMeleeAttackSettings(this._meleeState, this.sourceAttack);
     let changed = false;
+    const techniques=this._currentTechniqueSelection();
+    techniques.context=structuredClone(this._techniqueSelection?.context??{});
+    delete techniques.context.cinematicDefaults;
+    delete techniques.context.requestedCombination;
+    delete techniques.context.strikeTarget;
+    if(techniques.context.strikeGrapple==='newHead')delete techniques.context.strikeGrapple;
+    if(this.fireState.techniqueSequence==='combination'){
+      techniques.context.combinationLength=this.fireState.combinationLength;
+      if(this._requestedCombination)techniques.context.requestedCombination=this._requestedCombination;
+    }
+    if(this.fireState.techniqueSequence==='dualWeaponAttack')techniques.sequence={kind:'dualWeaponAttack',configurations:this._attackSlotStates.map(c=>this._cloneAttackConfiguration(c))};
+    else if(this.fireState.techniqueSequence==='combination'&&this._fixedCombination)techniques.sequence={...this._fixedCombination,configurations:this._attackSlotStates.filter((_,i)=>this._attackSlots[i].type.startsWith('combo')).map(c=>this._cloneAttackConfiguration(c))};
+    if(JSON.stringify(settings.techniques??{ids:[],context:{}})!==JSON.stringify(techniques)){
+      setMeleeTechniques(this._meleeState,this.sourceAttack,techniques);changed=true;
+    }
     if (JSON.stringify(settings.visibility ?? null) !== JSON.stringify(normalizeVisibility(this.visibility))) {
       setMeleeVisibility(this._meleeState, this.sourceAttack, this.visibility);
       changed = true;
@@ -913,15 +1342,27 @@ export class MeleeAssistantApp extends FirePreparationApp {
         this.sourceAttack.standaloneRef.modeId !== sourceAttack.standaloneRef.modeId)
       await selectMeleeCombatMode(this.actor, sourceAttack);
     this.selectedAttackKey = sourceAttack.key;
+    this.fireState.maPummelConfirmed=false;
+    this.fireState.maPummelGuarded=false;
+    this._specialConfirmations={};
+    if(this.fireState.techniqueSequence&&this._attackSlotStates[this._activeAttackSlot])this._attackSlotStates[this._activeAttackSlot].attackKey=sourceAttack.key;
     this.sourceAttack = sourceAttack;
     this.attack = applyMeleeAttackOverride(sourceAttack, this._meleeState,this.actor);
     this._effectiveDamage = null;
     this._damagePreviewRevision += 1;
     this.targetedAttackContext = createMeleeTargetedAttackContext({ actor: this.actor, attack: this.attack });
     const attackSettings = getMeleeAttackSettings(this._meleeState, sourceAttack);
+    this._techniqueSelection=normalizeMeleeTechniques(attackSettings.techniques);
     this.visibility = normalizeVisibility(attackSettings.visibility);
     const saved = attackSettings.governingSkill ?? "";
     this.fireState.governingSpecialty = this._resolveGoverningSkill(saved);
+    if(this.fireState.techniqueSequence&&this._attackSlotStates[this._activeAttackSlot]){
+      const current=this._attackSlotStates[this._activeAttackSlot];
+      const coordinates=Object.fromEntries(['hand','manualTarget','adjacentTargets','encounter'].filter(k=>current.techniques?.context?.[k]!==undefined).map(k=>[k,current.techniques.context[k]]));
+      this._techniqueSelection.context={...coordinates,...this._techniqueSelection.context};
+      current.governingSpecialty=this.fireState.governingSpecialty;current.techniques=normalizeMeleeTechniques(this._techniqueSelection);
+      current.rapidStrikeMastery=attackSettings.rapidStrikeMastery===true;
+    }
     this.fireState.rapidStrikeMastery = attackSettings.rapidStrikeMastery === true;
     if (persistSelection) {
       setSelectedMeleeAttack(this._meleeState, sourceAttack);
@@ -1031,13 +1472,16 @@ export class MeleeAssistantApp extends FirePreparationApp {
   }
 
 
-  _createAttackSnapshots() {
+  _createAttackSnapshots({preview=false}={}) {
     if (this.weaponVisibility && !this._visibleAttacks().some(a=>a.key===this.selectedAttackKey)) throw Error(visibilityText('Empty'));
     this._refreshStandaloneAttack();
     if (this.attack?.readinessReason) throw new Error(this.attack.readinessReason);
-    this._saveActiveAttackConfiguration();
+    assertMeleeTechniqueReady(this.actor,this.attack,this._techniqueSelection?.context?.manualTurn);
+    if(this._techniqueSelection?.ids.includes('reverseGrip'))throw Error('Для Reverse Grip используйте отдельный бросок быстрой смены хвата; обычная атака не выполняет перехват.');
+    this._saveActiveAttackConfiguration({captureTargets:!preview});
     const previousActive = this._activeAttackSlot;
     const snapshots = [];
+    const maManeuverEffort={};
     this._buildingAttackSnapshots=true;
     try {
       for (let index = 0; index < this._attackSlots.length; index += 1) {
@@ -1049,7 +1493,28 @@ export class MeleeAssistantApp extends FirePreparationApp {
         const randomLocation = locationResult.selection?.random === true;
         const locationText = !randomLocation && locationResult.selection?.label && Number(locationResult.penalty) === 0
           ? "Зона попадания: " + locationResult.selection.label : "";
-        const combatCalculation = resolveMeleeCombatCalculation(this._getMeleeCalculationOptions());
+        let calculationOptions=this._getMeleeCalculationOptions();
+        const maSelection=this._maState();
+        let feint=null;
+        if(maSelection.feintSlot&&this._attackSlots.length>1&&!slot.type.startsWith('combo')&&!slot.type.startsWith('dwa')){
+          const result=resolveCombatTechnique('feint',{...calculationOptions,
+            context:{...calculationOptions.meleeTechniques?.context,specialFeint:maSelection.feintSlot}});
+          const check=result?.special?.rolls?.[0];
+          if(!result?.available||!Number.isFinite(check?.level))throw Error(result?.reason??'Feint (B365)');
+          feint={name:maSelection.feintSlot==='feint'?'Feint':maSelection.feintSlot==='defensive'?'Defensive Feint':
+            maSelection.feintSlot[0].toUpperCase()+maSelection.feintSlot.slice(1), base:check.level,
+            skill:result.special.selectedSkill};
+          calculationOptions={...calculationOptions,baseSkill:check.level,meleeTechniques:null,weaponBond:false,
+            hitLocationPenalty:0,hitLocationBasePenalty:0,telegraphicAttack:false,targetedAttack:null,
+            deceptiveAttack:0,precisionPenalty:0,maOptions:{...maSelection,spend:false}};
+        }
+        const combatCalculation = resolveMeleeCombatCalculation(calculationOptions);
+        const option=combatCalculation?.metadata.maOptions;
+        if(option?.error)throw Error(option.error);
+        if(combatCalculation?.metadata.meleeTechniques?.available===false)throw Error(combatCalculation.metadata.meleeTechniques.errors.join(' '));
+        const special=combatCalculation?.metadata.meleeTechniques?.special?.special;
+        if(special?.kind&&special.kind!=='attack')throw Error('Используйте свой бросок в «Активных техниках».');
+        if(special?.error)throw Error(special.error);
         const effectiveSkill = combatCalculation?.effectiveSkill;
         if (!Number.isFinite(effectiveSkill)) throw new Error("Effective skill is unavailable.");
         const telegraphicCriticalBonus = getTelegraphicCriticalBonus(this._getMeleeCalculationOptions());
@@ -1069,13 +1534,21 @@ export class MeleeAssistantApp extends FirePreparationApp {
           sourceAttack,
           executionState:captureMeleeExecutionState(this.actor,sourceAttack),
           damageOptions: this._getEffectiveDamageOptions(),
-          skillCap: this.fireState.moveAndAttack || this._getMeleeVisibilityRules()?.cap ? 9 : null,
+          techniqueTargets:(this._attackSlotStates[index]?.targetIds??[]).map(id=>({tokenId:id,actorId:globalThis.canvas?.scene?.tokens?.get?.(id)?.actorId??null})),
+          skillCap: combatCalculation.metadata.meleeCaps.some(cap=>cap.maximum===9) ? 9 : null,
           selectedAttack: globalThis.foundry?.utils?.deepClone?.(this.attack) ?? structuredClone(this.attack),
           governingSkill: this.fireState.governingSpecialty,
+          governingSkillInfo:combatCalculation.governingSkill,
+          targetIds:[...(this._attackSlotStates[index]?.targetIds??[])],
+          techniqueContext:this._currentTechniqueSelection().context,
+          hand:slot.hand??this._currentTechniqueSelection().context.hand??'main',
           baseSkill: combatCalculation.baseSkill,
           effectiveSkill,
           combatCalculation,
-          hitLocation: { ...(randomLocation ? locationResult.selection : this.fireState.hitLocation) },
+          calculationOptions,
+          maSelection, feint,
+          maManeuverEffort,
+          hitLocation: { ...(randomLocation||combatCalculation.metadata.meleeTechniques?.fixedLocation ? locationResult.selection : this.fireState.hitLocation) },
           visibility: normalizeVisibility(this.visibility),
           blindFighting: blindFightingAttempt?.result ?? null,
           blindFightingAttempt,
@@ -1101,7 +1574,9 @@ export class MeleeAssistantApp extends FirePreparationApp {
           rapidStrikePenalty: this._getRapidStrikePenalty(),
           locationText,
           overrideText: [this._attackSlots.length > 1 ? slot.label : "", locationText,
-            ...martialNotes].filter(Boolean).join("<br>"),
+            ...martialNotes,
+            ...(combatCalculation.metadata.combatPerks??[]).map(perk=>escapeHTML(combatPerkLabel(perk)))].filter(Boolean).join("<br>")+
+            meleeTechniqueExplanation(combatCalculation.metadata.meleeTechniques,escapeHTML),
           modifierDetails: this._buildAttackModifierDetails(locationResult, maneuverState, effectiveSkill, combatCalculation),
           randomLocation,
           targetingService: this.targetingService,
@@ -1113,9 +1588,100 @@ export class MeleeAssistantApp extends FirePreparationApp {
       this._buildingAttackSnapshots=false;
       this._activeAttackSlot = previousActive;
       this._applyAttackConfiguration(this._attackSlotStates[previousActive]);
-      this._refreshHitLocationContent();
-      this._updateMeleePreview();
+      if(!preview){this._refreshHitLocationContent();this._updateMeleePreview();}
     }
+    const sequence=this._applyTechniqueSequence(snapshots,{fix:this._fixingCombination===true});
+    if(!preview&&sequence.some(slot=>slot.maSelection?.extraAttack)){
+      const used = new Set();
+      const unready = new Set();
+      for(const slot of sequence){
+        const rank=slot.maSelection?.extraAttack;
+        const attack=slot.selectedAttack;
+        const key=attack.unarmedRef?
+          'body:'+String(attack.unarmedRef.profile?.part??attack.unarmedRef.id)+':'+slot.hand:
+          physicalMeleeIdentity(attack);
+        const skill=techniqueIdentity(slot.feint?.skill??slot.governingSkillInfo?.name);
+        if(rank&&(rank.unresolvedSpecialization||rank.singleSkill&&!([skill,meleeSkillFamily({name:skill})].includes(rank.singleSkill)))){
+          throw Error(slot.label+' – '+(maRussian()?'Нужен указанный в преимуществе навык.':'The advantage requires its specified skill.')+' (MA44).');
+        }
+        if(rank&&!rank.multiStrike&&used.has(key)&&!slot.feint){
+          throw Error(slot.label+' – '+(maRussian()?'Нужен другой экземпляр оружия или другая конечность.':
+            'Use a different weapon or limb.')+' (B53, MA44).');
+        }
+        if(unready.has(key))throw Error(slot.label+' – '+(maRussian()?'Оружию требуется Ready после предыдущей атаки.':
+          'This weapon requires Ready after the preceding attack.')+' (MA127).');
+        if(!slot.feint){
+          used.add(key);
+          if(attack.meleeProfile?.strength?.ready)unready.add(key);
+        }
+      }
+    }
+    return sequence;
+  }
+
+  _sequenceSteps(snapshots){
+    return snapshots.filter(s=>this.fireState.techniqueSequence==='dualWeaponAttack'?s.type.startsWith('dwa'):s.type.startsWith('combo')).map(s=>{
+      const location=s.targetingService.getSelection(s.hitLocation.zoneId,s.hitLocation.regionId),attack=s.selectedAttack;
+      const effects=s.combatCalculation.metadata.meleeTechniques?.results.filter(r=>['hammerFist','kicking','backKick','backStrike','crack','pressurePointStrike','initialCarving'].includes(r.id))??[];
+      const attackName=effects.length?effects.map(r=>r.id==='kicking'?'Kick':r.id==='initialCarving'?'Initial Carving ('+s.techniqueContext.letter+', '+s.techniqueContext.stroke+')':r.name).join(' + '):(attack.unarmedRef?(attack.meleeProfile?.attackType==='kick'?'Kick':'Punch'):
+        attack.meleeProfile?.motion==='swing'?'Swing':attack.meleeProfile?.motion==='thrust'?'Thrust':attack.mode);
+      const ids=s.targetIds??[],manual=s.techniqueContext.manualTarget;
+      if(ids.length>1)throw Error('Для каждого шага выберите одну цель.');
+      if(ids.some(id=>!globalThis.canvas?.scene?.tokens?.get?.(id)))throw Error('Сохранённая цель отсутствует на текущей сцене; выберите цель этого шага заново.');
+      const targetId=ids[0]??(manual?'manual:'+manual:null);if(!targetId)throw Error('Для последовательности нужна цель Token или явный ручной ID.');
+      const rawKey=location?.canonicalKeys?.[0]??location?.canonicalKey??s.hitLocation.zoneId;
+      const hands=meleeAttackUsesHand(attack)?attack.meleeProfile?.strength?.hands??attack.meleeProfile?.hands?.hands??s.techniqueContext.weaponHands??(attack.unarmedRef?1:null):0;
+      return {snapshot:s,actor:this.actor,attack,attackName,skill:s.governingSkillInfo,
+        targetId,targetKey:String(rawKey).replace(/(^|[- ])\w/g,v=>v.toUpperCase()),randomLocation:s.randomLocation,
+        effectiveSkill:s.combatCalculation.metadata.beforeDeceptive??s.effectiveSkill,masteryContext:s.techniqueContext,hand:meleeAttackUsesHand(attack)&&hands!==2?s.hand:'none',hands,
+        grapple:!attack.damage};
+    });
+  }
+
+  _applyTechniqueSequence(snapshots,{fix=false}={}){
+    if(!this.fireState.techniqueSequence)return snapshots;
+    const steps=this._sequenceSteps(snapshots),mode=this.fireState.techniqueSequence;
+    const targets=new Set(steps.map(s=>s.targetId));
+    const adjacent=targets.size<=1||steps.every(s=>s.snapshot.techniqueContext.adjacentTargets===true);
+    let sequence;
+    if(mode==='dualWeaponAttack')sequence=validateDualWeaponSequence({actor:this.actor,steps,rapidStrike:this.fireState.rapidStrike,adjacent});
+    else{
+      if(!fix&&!this._fixedCombination)throw Error('Сначала закрепите состав и порядок Combination.');
+      if(!adjacent)throw Error('Пропуски между целями расходуют атаки (MA127) и нарушают фиксированную Combination. Подтвердите смежность целей.');
+      sequence=resolveCombination({actor:this.actor,steps,rapidStrike:this.fireState.rapidStrike,
+        fixedName:fix?this._requestedCombination:this._fixedCombination?.name});
+    }
+    if(!sequence.available)throw Error(sequence.errors.join(' '));
+    const signature=JSON.stringify(steps.map(s=>[s.skill.name,s.attackName,s.targetKey,s.hand]));
+    if(mode==='combination'&&!fix&&this._fixedCombination.signature&&this._fixedCombination.signature!==signature)throw Error('Изменены атаки, руки или зоны фиксированной Combination; закрепите новый состав.');
+    const encounter=globalThis.game?.combat?.id??this.actor?.getFlag?.('olegurps-qol','meleeTechniqueEncounter')??steps[0]?.snapshot.techniqueContext.encounter??'manual';
+    const group=generateId(globalThis,{preferFoundry:true});
+    for(const [index,s] of steps.entries()){
+      const snapshot=s.snapshot;
+      snapshot.hand=s.hand;
+      const extra=mode==='combination'?sequence.steps[index].modifier+offHandAttackPenalty(this.actor,s.attack,s.skill,s.hand):offHandAttackPenalty(this.actor,s.attack,s.skill,s.hand);
+      const included=s.hand==='off'&&!s.attack.unarmedRef&&!isCleanTechniqueAttack(s.attack)?snapshot.techniqueContext.offHandIncluded:null;
+      if(s.hand==='off'&&!s.attack.unarmedRef&&!isCleanTechniqueAttack(s.attack)&&!Number.isFinite(included))throw Error('Неизвестно, включён ли off-hand штраф в исходный уровень. Укажите его явно.');
+      if(Number.isFinite(included)&&(included>0||included<-4))throw Error('Уже учтённый off-hand штраф должен быть от -4 до 0.');
+      const transmittedExtra=extra-(Number.isFinite(included)?included:0);
+      const selection=snapshot.calculationOptions.meleeTechniques;
+      const sequenceOptions={...snapshot.calculationOptions,meleeTechniques:{...selection,context:{...selection?.context,sameDualWeaponTarget:sequence.sameTarget===true}},
+        sequenceModifier:{id:mode==='combination'?'combination':'offHand',label:mode==='combination'?'Combination':'Другая рука',value:transmittedExtra}};
+      snapshot.combatCalculation=resolveMeleeCombatCalculation(sequenceOptions);
+      if(sequence.steps[index].perks?.length)snapshot.combatCalculation.metadata.combatPerks=[
+        ...(snapshot.combatCalculation.metadata.combatPerks??[]),...sequence.steps[index].perks];
+      snapshot.combatCalculation.metadata.meleeSequence=structuredClone(sequence);
+      snapshot.effectiveSkill=snapshot.combatCalculation.effectiveSkill;
+      snapshot.deceptiveAttack=snapshot.combatCalculation.metadata.deceptivePenalty;
+      snapshot.deceptiveDefensePenalty=getDeceptiveDefensePenalty(snapshot.deceptiveAttack);
+      snapshot.telegraphicCriticalBonus=getTelegraphicCriticalBonus(sequenceOptions);
+      snapshot.modifierDetails=snapshot.combatCalculation.modifiers.filter(m=>m.value).map(m=>({label:m.explanation||m.label,value:m.value}));
+      snapshot.sequence={version:1,id:group,kind:mode,index,length:steps.length,name:sequence.name??'Dual-Weapon Attack',targetId:s.targetId,encounter:encounter??null,
+        defenseModifier:mode==='dualWeaponAttack'?sequence.defenseModifier:0,sources:sequence.sources,definition:structuredClone(sequence)};
+      snapshot.damageOptions={...snapshot.damageOptions,sequence:snapshot.sequence,techniquePlan:snapshot.combatCalculation.metadata.meleeTechniques};
+      snapshot.overrideText+='<details class="olegurps-chat-details"><summary>Последовательность</summary><p>'+escapeHTML(snapshot.sequence.name)+'; '+(index+1)+'/'+steps.length+'; '+extra+'. '+escapeHTML(sequence.sources.join('; '))+'</p></details>';
+    }
+    if(fix){this._fixedCombination={kind:'combination',name:sequence.name,signature,configurations:this._attackSlotStates.filter((_,i)=>this._attackSlots[i].type.startsWith('combo')).map(c=>this._cloneAttackConfiguration(c))};}
     return snapshots;
   }
 
@@ -1143,10 +1709,37 @@ export class MeleeAssistantApp extends FirePreparationApp {
     this._submitting = true;
     button.disabled = true;
     try {
-      const snapshots = this._createAttackSnapshots();
-      if (snapshots.length === 1) {
-        await executeMeleeAttackSnapshot(snapshots[0]);
-      } else {
+      if(this._techniqueSelection?.ids.includes('initialCarving')&&!this._techniqueSelection.context.carvingId){
+        this._techniqueSelection.context.carvingId=generateId();
+        await this._persistCurrentPreferences();
+      }
+      let snapshots = this._createAttackSnapshots();
+      if(this._techniqueSelection.ids.includes('whirlwindAttack')){
+        if(snapshots.length!==1)throw Error('Whirlwind Attack занимает весь манёвр.');
+        const context=snapshots[0].techniqueContext;
+        const targets=orderedWhirlwindTargets({actor:this.actor,tokens:[...(globalThis.game?.user?.targets??[])],
+          direction:context.strikeDirection,confirmed:context.strikeWhirlwind,theaterNames:context.strikeFoes,
+          actors:globalThis.game?.actors?.contents??[]});
+        snapshots=await buildWhirlwindSlots(snapshots[0],targets,context.strikeDirection);
+      }
+      this._pairEarClaps(snapshots);
+      let movementConfirmation=false;
+      const single=snapshots.length===1&&!snapshots[0].sequence;
+      if (single) {
+        const result=await executeMeleeAttackSnapshot(snapshots[0]);
+        movementConfirmation=result.movementConfirmation===true;
+        if(movementConfirmation)snapshots[0].movementConfirmation=true;
+        if(result.message)delete this._specialConfirmations.Counterattack;
+        if(result.message)this._retryCarving=null;
+        if(result.message&&snapshots[0].techniqueContext.strikeGrapple==='newHead'){
+          this._techniqueSelection.context.strikeGrapple='';
+          this.fireState.allOutAttack=false;
+          this._refreshAttackSlots();
+          await this._persistCurrentPreferences();
+          await this.render({force:true});
+        }
+      }
+      if(!single||movementConfirmation){
         const app = new MeleeAttackExecutionApp({
           slots: snapshots,
           onClose: () => this._executionWindows.delete(app)
@@ -1166,9 +1759,96 @@ export class MeleeAssistantApp extends FirePreparationApp {
     }
   }
 
+  _pairEarClaps(snapshots){
+    const effect=snapshot=>snapshot.combatCalculation.metadata.meleeTechniques?.strikes?.find(strike=>strike.procedure==='ear');
+    if(!snapshots.some(snapshot=>snapshot.techniqueContext.strikeTwoEars&&effect(snapshot)))return;
+    const steps=snapshots.filter(snapshot=>effect(snapshot));
+    const targets=steps.map(snapshot=>effect(snapshot).target);
+    if(steps.length!==2||!targets[0]?.actorId||targets.some(target=>target.actorId!==targets[0].actorId||target.tokenId!==targets[0].tokenId))throw Error('Для двойного Ear Clap нужны два удара по одной выбранной цели.');
+    if(steps.some(snapshot=>!snapshot.selectedAttack.unarmedRef))throw Error('Для двойного Ear Clap нужны две свободные пустые руки.');
+    const id=generateId();
+    steps.forEach((snapshot,index)=>{
+      snapshot.earPair={id,index,length:2};
+      if(!snapshot.sequence){
+        snapshot.sequence={kind:'earClap',id,index,length:2,name:'Ear Clap',targetId:targets[index].tokenId??targets[index].actorId,
+          sources:['MA70'],defenseModifier:0};
+      }
+    });
+  }
+
   async _onInput(event) {
+    const maField = event.target;
+    if (['maMovement','maMovementConfirmed','maEffort','maFloorLunge','maSpendEffort','maRapidCount','maFeintSlot',
+      'maAttackOption','maAttackOptionConfirmed','maPummelConfirmed','maPummelGuarded','maShinArmor','maShieldDB','maShieldHandheld','maShieldDisarm',
+      'maStunt','maStuntPenalty','maStuntRebounds','maEvadeJump','maStanding','maByLegs','maSwingNeedsJump','useExtraAttacks'].includes(maField?.name)) {
+      if (event.type !== 'change') return;
+      if (maField.name === 'maSpendEffort') this._attackSlotStates[this._activeAttackSlot].spendEffort=maField.checked;
+      else if (maField.name === 'maFeintSlot') this._attackSlotStates[this._activeAttackSlot].feintSlot=maField.value;
+      else this.fireState[maField.name]=maField.type==='checkbox'?maField.checked:maField.value;
+      if(maField.name==='maMovement')this.fireState.maMovementConfirmed=false;
+      if(maField.name==='maStunt'){
+        delete this.fireState.maStuntPenalty;
+        this.fireState.maMovementConfirmed=false;
+      }
+      if(maField.name==='maAttackOption'){
+        this.fireState.maAttackOptionConfirmed=false;
+        this.fireState.maPummelConfirmed=false;
+        this.fireState.maPummelGuarded=false;
+      }
+      if(maField.name==='maShieldHandheld'&&!maField.checked)this.fireState.maShieldDisarm=false;
+      if(maField.name==='maRapidCount'||maField.name==='useExtraAttacks')this._refreshAttackSlots();
+      await this.render({force:true});
+      return;
+    }
     const field = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement ? event.target : null;
     if (!field) return;
+    if(field.name==='meleeTechniqueSearch'){
+      this._techniquePicker.query=field.value;
+      filterMeleeTechniquePicker(field);
+      return;
+    }
+    if(field.dataset.meleeTechniqueContext||field.dataset.meleeTechniqueIncluded||field.dataset.meleeTechniqueDamageIncluded){
+      if(event.type!=='change')return;
+      if(field.dataset.meleeTechniqueIncluded||field.dataset.meleeTechniqueDamageIncluded){const name=field.dataset.meleeTechniqueIncluded?'includedModifiers':'includedDamage',id=field.dataset.meleeTechniqueIncluded??field.dataset.meleeTechniqueDamageIncluded;
+        this._techniqueSelection.context[name]??={};if(field.value==='')delete this._techniqueSelection.context[name][id];else this._techniqueSelection.context[name][id]=Number(field.value);}
+      else{
+        const [key,value]=readTechniqueContextField(field);
+        const context=this._techniqueSelection.context;
+        if(key==='letter'){
+          const letter=value.trim().toUpperCase();
+          if(letter!==(context.letter??'')){context.carvingId=generateId();this._retryCarving=null;}
+          context.letter=letter;
+        }else if(key.startsWith('strikeSkill:')){
+          context.strikeSkills??={};
+          const id=key.slice('strikeSkill:'.length);
+          if(value)context.strikeSkills[id]=value;else delete context.strikeSkills[id];
+        }else if(key.startsWith('specialSkill:')){
+          context.specialSkills??={};
+          context.specialSkills[key.slice('specialSkill:'.length)]=value;
+        }else if(key.startsWith('specialConfirm:')){
+          this._specialConfirmations[key.slice('specialConfirm:'.length)]=value;
+          this._updateMeleePreview();
+          return;
+        }else{
+          context[key]=value;
+          if(key==='strikeGrapple'){
+            if(value==='newHead'){
+              this.fireState.allOutAttack=true;
+              this.fireState.allOutAttackMode='double';
+              this.fireState.moveAndAttack=false;
+              this.fireState.committedAttack=false;
+              this.fireState.defensiveAttack=false;
+              this.fireState.rapidStrike=false;
+            }
+            this._refreshAttackSlots();
+          }
+        }
+      }
+      await this._persistCurrentPreferences();this._saveActiveAttackConfiguration();await this.render({force:true});this._updateMeleePreview();return;
+    }
+    if(field.name==='meleeCombinationLength'){
+      this.fireState.combinationLength=Number(field.value)===3?3:2;this._fixedCombination=null;this._refreshAttackSlots();await this._persistCurrentPreferences();await this.render({force:true});return;
+    }
     if (['governingSpecialty', 'meleePrimarySkill', 'meleeGrip', 'rapidStrikeMastery'].includes(field.name)) this._captureFields();
     if (field.name === "meleeVisibility") {
       await this.activateVisibility(field.checked ? { mode: "partial", partialPenalty: -1 } : null);
@@ -1251,13 +1931,13 @@ export class MeleeAssistantApp extends FirePreparationApp {
         this.fireState.moveAndAttack = false;
         this.fireState.committedAttack = false;
         this.fireState.defensiveAttack = false;
-        if (!["determined", "strong", "double"].includes(this.fireState.allOutAttackMode)) {
+        if (!allOutMeleeModes.includes(this.fireState.allOutAttackMode)) {
           this.fireState.allOutAttackMode = "determined";
         }
       }
       this._refreshAttackSlots();
     } else if (field.name === "allOutAttackMode") {
-      this.fireState.allOutAttackMode = ["determined", "strong", "double"].includes(field.value)
+      this.fireState.allOutAttackMode = allOutMeleeModes.includes(field.value)
         ? field.value : "determined";
       this._refreshAttackSlots();
     } else if (field.name === "committedAttack") {
@@ -1293,10 +1973,112 @@ export class MeleeAssistantApp extends FirePreparationApp {
       await this._persistState();
     }
     this._updateMeleePreview();
+    if(this.rendered&&['moveAndAttack','rapidStrike','allOutAttack','allOutAttackMode','committedAttack','defensiveAttack'].includes(field.name))
+      await this.render({force:true});
   }
 
   async _onClick(event) {
     const target = event.target instanceof Element ? event.target : null;
+    const picker=target?.closest('[data-technique-picker]');
+    if(picker){
+      const mode=picker.dataset.techniquePicker;
+      this._techniquePicker=this._techniquePicker?.mode===mode?null:{mode,query:''};
+      const root=this.element.querySelector('[data-melee-technique-controls]');
+      root.innerHTML=this._techniquePanelHTML();
+      root.querySelector('[name="meleeTechniqueSearch"]')?.focus();
+      return;
+    }
+    const add=target?.closest('[data-melee-technique-add]');
+    if(add){
+      const id=add.dataset.meleeTechniqueAdd,rule=getCombatRule(id);
+      if(add.dataset.strikeSkill){
+        this._techniqueSelection.context.strikeSkills??={};
+        this._techniqueSelection.context.strikeSkills[id]=add.dataset.strikeSkill;
+      }
+      if(!rule?.meleePenalty&&rule?.operation!=='SEQUENCE')return;
+      if(rule.specialProfile){
+        const idSet=this._techniqueSelection.ids;
+        this._techniqueSelection.ids=idSet.filter(current=>!getCombatRule(current)?.specialProfile||current===id);
+        const context=this._techniqueSelection.context;
+        context.specialSkills??={};
+        if(add.dataset.specialSkill)context.specialSkills[id]=add.dataset.specialSkill;else delete context.specialSkills[id];
+        delete this._specialConfirmations[rule.specialProfile.ref];
+      }
+      this._techniquePicker=null;
+      this._activeTechniquesOpen=true;
+      if(!this._techniqueSelection.ids.includes(id))this._techniqueSelection.ids.push(id);
+      const context=this._techniqueSelection.context;
+      if(id==='initialCarving'){
+        const letter=add.dataset.techniqueLetter??'';
+        if(!context.carvingId||letter!==(context.letter??'')){
+          context.carvingId=generateId();
+          this._retryCarving=null;
+        }
+        context.letter=letter;
+      }
+      if(id==='combination'||id==='dualWeaponAttack'){
+        this.fireState.techniqueSequence=id;
+        this._requestedCombination=add.dataset.techniqueRecipe??null;
+        if(this._requestedCombination)this.fireState.combinationLength=Number(add.dataset.techniqueCount);
+        if(!this._requestedCombination||techniqueIdentity(this._fixedCombination?.name)!==techniqueIdentity(this._requestedCombination))this._fixedCombination=null;
+        this._refreshAttackSlots();
+      }
+      await this._persistCurrentPreferences();
+      await this.render({force:true});
+      this._updateMeleePreview();
+      return;
+    }
+    const techniqueAction=target?.closest('[data-melee-technique-action]');
+    if(techniqueAction?.dataset.meleeTechniqueAction==='special-roll'){
+      if(this._submitting)return;
+      this._submitting=true;
+      techniqueAction.disabled=true;
+      try{
+        this._captureFields();
+        this._refreshStandaloneAttack();
+        const options=this._getMeleeCalculationOptions();
+        const plan=resolveMeleeCombatCalculation(options)?.metadata.meleeTechniques;
+        const result=plan?.special;
+        if(!plan?.available||result?.id!==techniqueAction.dataset.specialId)
+          throw Error(plan?.errors.join(' ')||'Выберите особую технику.');
+        const roll=meleeSpecialRollPreviews(options,result.special).find(step=>step.id===techniqueAction.dataset.specialRoll);
+        const shin=result.id==='jam'&&options.maOptions?.attackOption==='shin'?
+          maProjectedAttack(options,{strikes:[{id:'jam'}]}):null;
+        if(shin?.error)throw Error(shin.error);
+        await executeMeleeSpecialCheck({actor:this.actor,attack:options.attack,result,roll,shin});
+      }catch(error){ui.notifications.error(error.message);}
+      finally{this._submitting=false;if(techniqueAction.isConnected)techniqueAction.disabled=false;}
+      return;
+    }
+    if(['new-carving','retry-carving','new-encounter','ordinary-mounted'].includes(techniqueAction?.dataset.meleeTechniqueAction)){
+      const action=techniqueAction.dataset.meleeTechniqueAction,context=this._techniqueSelection.context;
+      if(action==='new-encounter')await this.actor.setFlag('olegurps-qol','meleeTechniqueEncounter',generateId());
+      if(action==='new-carving'){context.carvingId=generateId();this._retryCarving=null;}
+      if(action==='retry-carving')this._retryCarving=context.carvingId;
+      if(action==='ordinary-mounted')context.mountedStyle='ordinary';
+      await this._persistCurrentPreferences();
+      await this.render({force:true});
+      return;
+    }
+    if(['reverse-grip','pickup-ready','advance-turn'].includes(techniqueAction?.dataset.meleeTechniqueAction)){
+      techniqueAction.disabled=true;
+      try{
+        const options=this._getMeleeCalculationOptions();
+        if(techniqueAction.dataset.meleeTechniqueAction==='advance-turn')await advanceMeleeTechniqueTurn(this.actor,generateId());
+        else if(techniqueAction.dataset.meleeTechniqueAction==='pickup-ready')await acknowledgeTechniqueReady(this.actor,this.attack,options.meleeTechniques.context.manualTurn);
+        else{
+          const result=await attemptReverseGrip({actor:this.actor,attack:this.attack,skill:options.governingSkill,context:options.meleeTechniques.context});
+          if(result.success)this._techniqueSelection.ids=this._techniqueSelection.ids.filter(id=>id!=='reverseGrip');
+        }
+        this._refreshStandaloneAttack();await this._persistCurrentPreferences();await this.render({force:true});
+      }catch(error){ui.notifications.error(moduleMessage(error));}finally{techniqueAction.disabled=false;}return;
+    }
+    if(techniqueAction?.dataset.meleeTechniqueAction==='fix-combination'){
+      try{this._fixingCombination=true;this._createAttackSnapshots();await this._persistCurrentPreferences();await this.render({force:true});}
+      catch(error){ui.notifications.error(moduleMessage(error));}finally{this._fixingCombination=false;}return;
+    }
+    const remove=target?.closest('[data-melee-technique-remove]');
+    if(remove){const id=remove.dataset.meleeTechniqueRemove;this._techniqueSelection.ids=this._techniqueSelection.ids.filter(value=>value!==id);if(id===this.fireState.techniqueSequence){this.fireState.techniqueSequence=null;this._fixedCombination=null;this._refreshAttackSlots();}await this._persistCurrentPreferences();await this.render({force:true});return;}
     const hitControl = this._getHitControl(target);
     if (hitControl) {
       await super._onClick(event);

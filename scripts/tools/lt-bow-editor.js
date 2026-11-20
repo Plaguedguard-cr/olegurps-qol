@@ -1,6 +1,7 @@
 import {ltBowProfile} from '../lt-bow-source.js';
 import {resolveLTBowBase,LT_HEAD_VARIANTS,ltBowRecipeAssessment} from './lt-bow.js';
 import {ltQualityHTML} from './lt-quality.js';
+import {combatPerkLabel} from './ma-combat-perks.js';
 
 export function ltBowEditorHTML(configuration,modeId,actor,esc){
  const p=ltBowProfile(modeId);if(!p)return '';
@@ -23,7 +24,7 @@ export function ltBowEditorSummary(configuration,modeId,actor){
  if(!b.ready)return b.reason;
  return 'Rated ST '+b.ratedST+(p.kind==='steel'?' → Damage ST '+b.effectiveDamageST+'; Range ST '+b.rangeST:'')+
   ' · Исходные Damage '+b.dice+' '+b.type+' · Range '+b.range.join('/')+' ярд. · ST натяжения '+(b.drawing?.strength??'не определена')+'. '+
-  b.drawing.ready+' '+b.drawing.note;
+  [b.drawing.ready,b.drawing.note,...(b.drawing.perks??[]).map(perk=>combatPerkLabel(perk))].join(' ');
 }
 export function bindLTBowEditor(root,{getModeId,getConfiguration,setField,onChange}){
  const update=()=>{const line=root.querySelector('[data-lt-bow-summary]');if(line)line.textContent=ltBowEditorSummary(getConfiguration(),getModeId(),root._ltBowActor);};

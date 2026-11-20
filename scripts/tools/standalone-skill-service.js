@@ -2,6 +2,7 @@ import { readWeaponSkillTLPolicy } from "./weapon-skill-tl-policy.js";
 import { publishedTL } from './tech-level.js';
 import { meleeSource, meleeSkillRules } from '../melee-source-data.js';
 import {resolveImprovisedTechnique} from '../lt-improvised-source.js';
+import {weaponAdaptations,weaponPenaltyPerk} from './ma-combat-perks.js';
 
 // Catalog defaults are directed rules. Never infer defaults from similar names or recurse through them.
 const clean = value => String(value ?? "").normalize("NFKC").trim();
@@ -41,20 +42,23 @@ function tlPenalty(source, target) {
   if (difference > 0) return -5 * difference;
   return difference < 0 ? -(2 * Math.abs(difference) - 1) : 0;
 }
-export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.game?.user } = {}) {
+export function resolveStandaloneSkill({ actor, record, mode, hands = null, user = globalThis.game?.user } = {}) {
   const tlPolicy = readWeaponSkillTLPolicy(user);
   const snapshot = mode?.snapshot;
   const explicit = clean(mode?.overrides?.governingSkill);
   const sourceSkill = snapshot?.governing_skill?.skill;
   const melee=meleeSource(mode?.modeId);
-  if(melee&&explicit&&!melee.primarySkills.some(n=>canonical(n)===canonical(explicit)||
+  const adaptation=weaponAdaptations(actor,melee).find(perk=>canonical(perk.skill)===canonical(explicit));
+  if(adaptation?.hands===2&&hands===1)return {resolved:false,level:null,candidates:[],
+    reason:'Эта специализация Weapon Adaptation требует двуручного хвата (MA52).'};
+  if(melee&&explicit&&!adaptation&&!melee.primarySkills.some(n=>canonical(n)===canonical(explicit)||
     parseStandaloneSkill(n)?.family==='shield'&&parseStandaloneSkill(explicit)?.family==='shield'&&sameSkill(parseStandaloneSkill(n),parseStandaloneSkill(explicit))))return {
     resolved:false,level:null,reason:'Выберите опубликованный навык этого режима.',candidates:[]};
   const alternatives = snapshot?.governing_skill?.candidates ?? snapshot?.governing_skill_selection?.candidates;
   if(snapshot?.governing_skill_selection?.strategy==='best-available-unmodified' && alternatives?.length>1) {
     const permitted=alternatives.map(s=>parseStandaloneSkill(s.name,s.specialization));
     const selected=explicit&&parseStandaloneSkill(explicit);
-    if(explicit&&(!selected||!permitted.some(s=>sameSkill(s,selected))))return {
+    if(explicit&&!adaptation&&(!selected||!permitted.some(s=>sameSkill(s,selected))))return {
       resolved:false,level:null,tlPolicy,reason:'Выберите один из опубликованных навыков этого режима.'};
     if(!explicit) {
       const best=alternatives.map(s=>resolveStandaloneSkill({actor,record,mode:{...mode,overrides:{...mode.overrides,governingSkill:s.name+(s.specialization?' ('+s.specialization+')':'')}},user})).filter(s=>s.resolved).sort((a,b)=>b.level-a.level)[0];
@@ -90,12 +94,17 @@ export function resolveStandaloneSkill({ actor, record, mode, user = globalThis.
   const common = { name: label, family: required.family, specialty: required.family === "guns" ?
     ({ "light anti-armor weapon": "law", "light machine gun": "lmg", "submachine gun": "smg" }[required.specialty] ?? required.specialty) : required.specialty,
     tl: required.tl, tlPolicy, key: "standalone:" + record.id + ":" + mode.modeId };
-  const attackModifier=Number.isInteger(snapshot?.governing_skill?.attack_modifier)?snapshot.governing_skill.attack_modifier:0;
+  const rawAttackModifier=Number.isInteger(snapshot?.governing_skill?.attack_modifier)?snapshot.governing_skill.attack_modifier:0;
+  const perk=weaponPenaltyPerk(actor,melee,label,rawAttackModifier);
+  const perks=[adaptation,perk].filter(Boolean);
+  if(perks.length)common.perks=perks;
+  const attackModifier=rawAttackModifier+(perk?.modifier??0);
   if(melee?.technique)return {...common,...resolveImprovisedTechnique(actor,melee)};
   const exactModifier=melee?.water?-4:attackModifier;
   if (exact) return { ...common, resolved: true, level: exact.level+exactModifier, learned: true,
     source: "learned", sourceName: exact.name, sourceLevel:exact.level, directWeaponPenalty:exactModifier,
     defaultPenalty:0, penalty: exactModifier, entry: exact.entry, candidates: [] };
+  if(adaptation)return {...common,resolved:false,level:null,learned:false,candidates:[],reason:'Требуется изученный навык Weapon Adaptation: '+label};
   // A manual replacement without catalog rules may use an exact learned skill only.
   const original = snapshot?.governing_skill?.skill;
   const originalIdentity = original && parseStandaloneSkill(original.name, original.specialization);

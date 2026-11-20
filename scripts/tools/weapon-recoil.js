@@ -1,5 +1,6 @@
 /** Source applicability is independent of a missing value or an arbitrary numeric fallback. */
 export function recoilNotApplicable(attack, profile = null) {
+  if(profile?.context?.maCombatOptions?.kind==='thrownBurst'||attack?.maThrownBurst===true)return false;
   const id=profile?.binding?.confirmed?.modeId??attack?.standaloneRef?.modeId;
   const catalogs=globalThis.OleGURPSQOL?.catalogs,mode=catalogs?.getMode?.(id);
   if(mode&&catalogs.getEquipmentForMode?.(id)?.source==='LT')return mode.lt_ranged_contract?.rclNotApplicable===true;

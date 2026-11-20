@@ -43,7 +43,7 @@ export function electrolaserDamage(raw,id,weapon,context={}){
   const vacuum=c.environment==='vacuum',formula=vacuum?'1d-3 burn':p.burn;
   const lines=vacuum?['Вакуум / следовая атмосфера: только лазерный ожог; электрического воздействия нет. UT119.']:
     [`Электрический эффект HT${p.modifier} (2): оглушение${c.mode==='kill'?'; провал на 5+ – Heart Attack (B428–429), у Electrical – отказ систем до ремонта':''}. UT119.`];
-  if(c.environment==='humid'||c.environment==='rain')lines.push('Среда: '+(c.environment==='humid'?'влажность −2':'дождь / морось / сильный туман −6')+' к попаданию. UT119.');
+  if(c.environment==='humid'||c.environment==='rain')lines.push('Среда: '+(c.environment==='humid'?'влажность -2':'дождь / морось / сильный туман -6')+' к попаданию. UT119.');
   if(c.visibilityDR)lines.push('Добавочный DR лучу от видимости: '+c.visibilityDR+'; применяется вручную к ожогу. UT119.');
   return {status:valid?'resolved':'unresolved',nativeSafe:valid,reason:valid?null:'Проверьте штатный профиль и условия электролазера.',rawFormula:raw.damage,
     formula,components:[{role:'kinetic',status:valid?'resolved':'unresolved',formula}],transformations:[],effectiveChanges:{damage:formula},
@@ -62,7 +62,7 @@ export function electrolaserControlsHTML(w,escape){
     c.mode==='kill'?'Heart Attack при провале HT на 5+; для Electrical – отказ систем до ремонта. Kill: LC2.':'Провал HT: оглушение.';
   return `<div class="gam-fire-electrolaser-controls" data-electrolaser-controls><div class="gam-fire-electrolaser-fields">`+
     `<label>Режим<select name="electrolaserMode" title="${escape(hint)}">${[['standard','Standard'],['kill','Kill']].map(([v,l])=>`<option value="${v}"${c.mode===v?' selected':''}>${l}</option>`).join('')}</select></label>`+
-    `<label>Среда<select name="electrolaserEnvironment" title="Влажность: −2 к попаданию; дождь, морось, сильный туман: −6. В вакууме электрический эффект не действует.">${[['air','Обычная'],['humid','Влажность −2'],['rain','Дождь/туман −6'],['vacuum','Вакуум']].map(([v,l])=>`<option value="${v}"${c.environment===v?' selected':''}>${l}</option>`).join('')}</select></label>`+
+    `<label>Среда<select name="electrolaserEnvironment" title="Влажность: -2 к попаданию; дождь, морось, сильный туман: -6. В вакууме электрический эффект не действует.">${[['air','Обычная'],['humid','Влажность -2'],['rain','Дождь/туман -6'],['vacuum','Вакуум']].map(([v,l])=>`<option value="${v}"${c.environment===v?' selected':''}>${l}</option>`).join('')}</select></label>`+
     `<label title="Добавочный DR лазерному лучу от штрафа видимости; применяется вручную к ожогу.">DR<input aria-label="Добавочный DR лучу от видимости" name="electrolaserVisibilityDR" type="number" min="0" max="10000" step="1" value="${escape(c.visibilityDR)}"></label></div>`+
     `<small title="${escape(hint)} UT119–120.">${c.mode==='kill'?'Kill: 2 заряда':'Standard: 1 заряд'}/выстрел; смена режима – Ready</small></div>`;
 }

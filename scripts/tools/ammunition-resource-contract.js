@@ -70,13 +70,15 @@ export function validateLTPhysicalAmmunition(modeId, type, api,configuration=nul
     { code: result.reasons?.[0]?.code ?? 'LT_PHYSICAL_LOAD_UNPROVEN', compatibility: result.status });
 }
 
-/** The current carrier/party is authoritative, never the profile supplied by a caller. */
-export function validateLTWeaponAmmunition(actor, weapon, api = globalThis.OleGURPSQOL) {
+/** Use the carrier's installed load or the selected ready lot from its inventory. */
+export function validateLTWeaponAmmunition(actor, weapon, api = globalThis.OleGURPSQOL, readyThrownAmmoKey = null) {
   if (!weapon) return;
   const modeId = weapon.standaloneModeId ?? (ltEarlyProfile(weapon.catalogModeId)?weapon.catalogModeId:api?.weaponCatalogBindings?.analyzeMode(actor, weapon.attackRef?.path)?.binding?.modeId);
   const deferred=ltDeferredExecutionReason(modeId??weapon.catalogModeId);if(deferred)throw Error(deferred);
   const inventory = weapon.ammunitionInventory;
   const magazine = inventory?.magazines.find(m => m.id === inventory.installedId);
-  const type = ltEarlyProfile(modeId)?magazine?.ltEarlyCharges?.[0]?.type??inventory?.stocks.find(s => s.key === magazine?.ammoKey)?.type:inventory?.stocks.find(s => s.key === magazine?.ammoKey)?.type;
+  const ammoKey = ltPersonalProfile(modeId)?.kind === 'thrown' ? readyThrownAmmoKey ?? magazine?.ammoKey : magazine?.ammoKey;
+  const stockType = inventory?.stocks.find(stock => stock.key === ammoKey)?.type;
+  const type = ltEarlyProfile(modeId) ? magazine?.ltEarlyCharges?.[0]?.type ?? stockType : stockType;
   validateLTPhysicalAmmunition(modeId, type, api,readLTBowConfiguration(actor,weapon));
 }

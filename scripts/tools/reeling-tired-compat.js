@@ -2,6 +2,12 @@ const MODULE_ID = "olegurps-qol";
 const SETTING_KEY = "fix-reeling-tired";
 const ACTOR_MARKER = Symbol.for("olegurps-qol.reeling-tired-actor");
 const EFFECT_MARKER = Symbol.for("olegurps-qol.reeling-tired-effect");
+const unexhaustedStrength = new WeakMap();
+
+export function getStrengthBeforeExhaustion(actor) {
+  const prepared = unexhaustedStrength.get(actor);
+  return prepared?.attribute === actor?.system?.attributes?.ST ? prepared?.value : undefined;
+}
 
 function enabled() {
   return game.settings.get(MODULE_ID, SETTING_KEY);
@@ -36,15 +42,18 @@ export function getEffectiveReelingTiredState(actor) {
   };
 }
 
-function hasExhaustedStChange(actor) {
-  return Array.from(actor.appliedEffects ?? actor.effects ?? []).some(effect =>
-    activeStatus(effect, "exhausted") && Array.from(effect.changes ?? []).some(change =>
-      change.key === "system.attributes.ST.import"
-      && change.type === "multiply" && Number(change.value) === 0.5));
+function isExhaustedStChange(change) {
+  return change?.key === "system.attributes.ST.import"
+    && change.type === "multiply" && Number(change.value) === 0.5;
 }
 
 function restoreExhaustedStImport(actor) {
-  if (!hasExhaustedStChange(actor)) return;
+  const changes = Array.from(actor.appliedEffects ?? actor.effects ?? [])
+    .filter(effect => !effect.disabled && !effect.isSuppressed && effect.active !== false)
+    .flatMap(effect => Array.from(effect.system?.changes ?? effect.changes ?? [])
+      .filter(change => change.key === "system.attributes.ST.import").map(change => ({ effect, change })));
+  if (changes.length !== 1 || !isExhaustedStChange(changes[0].change)
+    || !activeStatus(changes[0].effect, "exhausted")) return;
   // A preexisting GGA effect may already have applied its ST.import multiplier.
   // The Foundry v14 change handler is intercepted below; this also covers
   // actors prepared before installation or by a different effect path.
@@ -92,6 +101,7 @@ export function installReelingTiredCompatibility() {
   if (!actorPrototype[ACTOR_MARKER]) {
     const original = actorPrototype.calculateDerivedValues;
     actorPrototype.calculateDerivedValues = function (...args) {
+      unexhaustedStrength.delete(this);
       if (!enabled()) return original.apply(this, args);
 
       const state = getEffectiveReelingTiredState(this);
@@ -102,8 +112,11 @@ export function installReelingTiredCompatibility() {
       // GGA computes every encumbrance row, current Move and Dodge here.
       const result = original.apply(this, args);
       if (state.tired) {
-        const strength = Number(this.system.attributes?.ST?.value);
-        if (Number.isFinite(strength)) this.system.attributes.ST.value = Math.ceil(strength / 2);
+        const attribute = this.system.attributes?.ST;
+        if (Number.isFinite(attribute?.value)) {
+          unexhaustedStrength.set(this, { attribute, value: attribute.value });
+          attribute.value = Math.ceil(attribute.value / 2);
+        }
       }
       return result;
     };
@@ -117,8 +130,7 @@ export function installReelingTiredCompatibility() {
       // Keep GGA's exhausted status and all other changes. Its ST.import
       // multiplier would affect Basic Lift and damage during data preparation.
       if (enabled() && targetDoc instanceof ActorClass
-        && change?.key === "system.attributes.ST.import"
-        && change.type === "multiply" && Number(change.value) === 0.5
+        && isExhaustedStChange(change)
         && change.effect && activeStatus(change.effect, "exhausted")) {
         return {};
       }

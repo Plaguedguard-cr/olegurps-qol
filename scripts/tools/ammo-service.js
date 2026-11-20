@@ -1,4 +1,5 @@
 import { generateId } from "../random-id.js";
+import { readiedThrowFeed } from './ma-ranged-options.js';
 import { readGgaWeaponModes } from "../weapon-catalog-binding-service.js";
 import {UT_MELEE_RESOURCE_FLAG,utMeleeResourceContext,utMeleeResourceReason,newUTMeleeResource,utMeleeResourcePlan,utMeleeSameResource} from './ut-melee-resources.js';
 import {copyAmmoResources,writeAmmoResources,persistShotSnapshot,findPendingShot,reserveShotId,cancelShotId} from './shot-history-storage.js';
@@ -1043,7 +1044,8 @@ export class AmmoService {
 
   // Same queue as install/load/unload. Resolve, native execution and resource commit use one magazine.
   // A caller-supplied ID identifies an execution, not a request to roll it again.
-  executeShot({ weaponId, attackId, prepare, execute, resourceTiming = "after-attack", deferConsumption = false, sessionKey = null }) {
+  executeShot({ weaponId, attackId, prepare, execute, resourceTiming = "after-attack", deferConsumption = false,
+    sessionKey = null, readyThrownAmmoKey = null }) {
     if (!attackId) return Promise.reject(new Error("AttackIdRequired"));
     let executions = shotExecutions.get(this.actor);
     if (!executions) { executions = new Map(); shotExecutions.set(this.actor, executions); }
@@ -1060,9 +1062,15 @@ export class AmmoService {
       const state=copyAmmoResources(persisted,clone);
       const weapon = state.weapons.find(entry => entry.id === weaponId);
       if (!weapon) throw new Error("WeaponMissing");
-      const ammunition = readAttackAmmunition(weapon);
+      const originalAmmunition = readAttackAmmunition(weapon);
+      const readyThrows=readyThrownAmmoKey?readiedThrowFeed(weapon,originalAmmunition,readyThrownAmmoKey):null;
+      if(readyThrownAmmoKey&&!readyThrows&&
+        (ltPersonalProfile(weapon)?.kind==='thrown'||originalAmmunition?.ammoKey!==readyThrownAmmoKey))
+        throw Error('InsufficientRounds');
+      const ammunition = readyThrows?{...originalAmmunition,ammoKey:readyThrows.ammoKey,
+        type:readyThrows.type,available:readyThrows.available}:originalAmmunition;
       if(ltBowProfile(weapon))weapon.ltBow=clone(readLTBowConfiguration(this.actor,weapon));
-      validateLTWeaponAmmunition(this.actor, weapon);
+      validateLTWeaponAmmunition(this.actor, weapon, undefined, readyThrows?.ammoKey);
       if(ltEarlyProfile(weapon)?.kind==='flame'){const reason=ltEarlyReadiness(weapon);if(reason)throw Error(reason);}
       if(ammunition?.type?.recipe?.parameters?.chemicalId&&!chemicalAllowed(CHEMICAL_SUBSTANCES[ammunition.type.recipe.parameters.chemicalId],biochemicalDelivery(ammunition.type)))throw Error('TypeUnavailable');
       const prepared = await prepare({ state, weapon, ammunition });
@@ -1182,15 +1190,30 @@ export class AmmoService {
         profile=immutableCopy({...profile,resource:{...profile.resource,ltEarlyCharges:earlyPlan,...(early.kind==='flame'?{ltFlame:{chargeId:earlyPlan[0].charge.id,secondsSpent:earlyPlan[0].secondsSpent,physicalUnitsSpent:earlyPlan[0].spent,before:earlyPlan[0].charge.flame.remaining,after:earlyPlan[0].charge.flame.remaining-1}}:{})}});
       }
       const personal=ltPersonalProfile(weapon);
+      const handBurst=profile.context?.maCombatOptions?.kind==='thrownBurst'?profile.context.maCombatOptions:null;
+      if(readyThrows&&!['thrownBurst','thrownSequence'].includes(profile.context?.maCombatOptions?.kind))
+        throw Error('Unconfirmed readied throw');
+      if(handBurst&&(!ammunition||personal&&personal.kind!=='thrown'||amount!==handBurst.count||
+        handBurst.rof!==amount||handBurst.rcl!==2||profile.context.effectiveRoF!==amount||deferConsumption))
+        throw Error('Rapid Fire with Thrown Weapons (MA120)');
       if(personal){
         const native=weapon.attackRef?.path?.split('.').reduce((v,k)=>v?.[k],this.actor);
         const actual=weapon.standaloneWeaponId?readStandaloneAttack(this.actor,weapon.standaloneWeaponId,personal.modeId):{...native,data:native};
         const expected=ltPersonalDamage({actor:this.actor,attack:actual??{},raw:actual?.data??profile.raw,modeId:personal.modeId,weapon,type:ammunition?.type,
           catalogs:globalThis.OleGURPSQOL?.catalogs,compatibility:globalThis.OleGURPSQOL?.ammunitionCompatibility,context:profile.context});
-        if(amount!==1||deferConsumption||profile.context?.physicalShots!==undefined&&profile.context.physicalShots!==1||profile.context?.effectiveRoF!==undefined&&profile.context.effectiveRoF!==1||ammunition?.kind!=='physical-magazine'||!ammunition.magazineId||!expected.nativeSafe||!profile.damage?.nativeSafe||
+        if(!handBurst&&(amount!==1||profile.context?.physicalShots!==undefined&&profile.context.physicalShots!==1||profile.context?.effectiveRoF!==undefined&&profile.context.effectiveRoF!==1)||deferConsumption||ammunition?.kind!=='physical-magazine'||!ammunition.magazineId||!expected.nativeSafe||!profile.damage?.nativeSafe||
           profile.actorId!==this.actor.id||profile.weaponId!==weapon.id||utModeId!==personal.modeId||profile.damage.formula!==expected.formula||
           JSON.stringify(profile.damage.rules.ltPersonal)!==JSON.stringify(expected.rules.ltPersonal)||JSON.stringify(profile.damage.rules.attackResult)!==JSON.stringify(expected.rules.attackResult))
           throw Error('Профиль персональной атаки LT изменился. Подготовьте применение заново.');
+      }
+      if(handBurst){
+        const [halfDamage,maximum]=handBurst.range.split('/').map(Number);
+        profile=immutableCopy({...profile,
+          effective:{...profile.effective,damage:handBurst.damage,range:handBurst.range,acc:0,
+            bulk:handBurst.bulk,rof:handBurst.rof,shots:handBurst.count,rcl:2},
+          damage:{...profile.damage,formula:handBurst.damage,components:[],
+            rules:{...profile.damage.rules,ballisticRange:{minimum:null,halfDamage,maximum,source:handBurst.source},
+              maThrownBurst:{...handBurst,singleDamage:profile.damage.formula}}}});
       }
       if(ltBow){
         const actual=readStandaloneAttack(this.actor,weapon.standaloneWeaponId,ltBow.modeId);
@@ -1258,11 +1281,15 @@ export class AmmoService {
       if(profile.weaponStrength&&executedStrength&&['actorId','instanceId','equipmentId','modeId'].every(key=>
         executedStrength.weaponIdentity?.[key]===profile.weaponStrength.weaponIdentity?.[key]))
         profile=immutableCopy({...profile,weaponStrength:executedStrength});
+      if(result.maRangedReceipt)profile=immutableCopy({...profile,context:{...profile.context,
+        maCombatOptions:{...profile.context.maCombatOptions,preparation:result.maRangedReceipt}}});
       // Configuration writers can run while GGA awaits; retain their current settings.
       const current = copyAmmoResources(this.actor.getFlag(FLAG_SCOPE, FLAG_KEY),clone);
       const currentWeapon = current.weapons.find(entry => entry.id === weaponId);
       const latest = readAttackAmmunition(currentWeapon);
-      if (JSON.stringify(latest) !== JSON.stringify(ammunition)) throw new Error("AmmunitionChangedDuringAttack");
+      if (JSON.stringify(latest) !== JSON.stringify(originalAmmunition)||
+        readyThrows&&JSON.stringify(readiedThrowFeed(currentWeapon,latest,readyThrows.ammoKey))!==JSON.stringify(readyThrows))
+        throw new Error("AmmunitionChangedDuringAttack");
       const currentPowerOwner=uawPowerOwner(current,currentWeapon);
       if(htProfile&&unitCost!==(htProfile.kind==='flame'&&currentWeapon.htJetMode==='continuous'?htProfile.continuousUnits??1:1))throw Error('Режим струи изменился во время атаки.');
       validateWeaponResources(uawWeaponView(current,currentWeapon),profile,latest);
@@ -1272,7 +1299,11 @@ export class AmmoService {
       const spent = ammunition && !deferConsumption ? early?.kind==='flame'?earlyPlan[0].spent:physicalAmount : 0;
       if(fluid?.disposable)currentWeapon.fluidSpent=true;
       if (!deferConsumption && ammunition?.kind === "physical-magazine") {
-        if(early){consumeLTEarlyShot(currentWeapon,earlyPlan);}
+        if(readyThrows){
+          const loaded=Math.min(physicalAmount,readyThrows.loaded);
+          if(loaded)applyInventoryOperation(currentWeapon,'consume',{magazineId:ammunition.magazineId,amount:loaded});
+          if(physicalAmount>loaded)applyInventoryOperation(currentWeapon,'remove-stock',{ammoKey:readyThrows.ammoKey,amount:physicalAmount-loaded});
+        }else if(early){consumeLTEarlyShot(currentWeapon,earlyPlan);}
         else if(feedPlan){
           if(JSON.stringify(fixedFeedPlan(currentWeapon,physicalAmount))!==JSON.stringify(feedPlan))throw Error('AmmunitionChangedDuringAttack');
           for(const entry of feedPlan){currentWeapon.ammunitionInventory.installedId=entry.magazineId;applyInventoryOperation(currentWeapon,'consume',{magazineId:entry.magazineId,amount:entry.spent});}
@@ -1310,7 +1341,7 @@ export class AmmoService {
       await this.saveState(current, { inventoryWrite: true, preserveSprayingSessions: !sessionKey, receipt });
       const snapshot = createShotSnapshot(profile, { attackId, spent, resourceTiming,
         resourceReceiptId: attackId, messageId: result.message?.id ?? null, outcome: result.rollData });
-      if (!deferConsumption && result.message?.setFlag) {
+      if (!deferConsumption && !result.preparationOnly && result.message?.setFlag) {
         try { await persistShotSnapshot(result.message,snapshot); }
         catch (error) { console.error("OleGURPS QOL | Shot metadata persistence:", error); }
       }

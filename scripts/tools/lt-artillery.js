@@ -87,9 +87,9 @@ export function ltArtilleryDamage({modeId,raw={},attack={},weapon,type,catalogs,
  if(p.bundle)brief.push('Связка: '+p.pellets+' отдельных снарядов по 1 lb. LT80–81.');
  if(a.kind==='chain'){formula=dice+'(0.5) cut';range={halfDamage:range.halfDamage/2,maximum:range.maximum/2};reloadSeconds*=1.2;costMultiplier=2;brief.push('Два подкалиберных ядра на цепи; Range /2, снаряжение ×1,2, цена ×2. LT88.');}
  if(a.kind==='grape'){formula=htDamageDice(Number(m[1]),adds,Number(m[3]??1),1/Math.sqrt(manifest.projectiles))+' pi+';range={halfDamage:60,maximum:600};rcl=1;brief.push('Картечь: '+manifest.projectiles+' железных шариков 0,5″ в холщовом мешке; Damage /√'+manifest.projectiles+'. LT88.');}
- if(a.kind==='heated'){reloadSeconds*=1.5;malfDelta--;components.push({role:'linked',relation:'linked',status:'resolved',formula:'3d burn'});brief.push('Раскалённое ядро: Malf−1, снаряжение ×1,5, +2 заряжающих; 3d burn/с до 30 с вручную. LT88.');}
- if(a.kind==='flaming'){attackBonus=-2;components.push({role:'linked',relation:'linked',status:'resolved',formula:'1 burn'});brief.push('Горящий болт: подготовка 10 с, использовать за 3 с; −2 к атаке, +1 burn; критическая неудача обжигает машину. LT83; B410.');}
- if(quality)brief.push('Некачественный порох: −1 за исходный куб, Malf−2. LT85.');
+ if(a.kind==='heated'){reloadSeconds*=1.5;malfDelta--;components.push({role:'linked',relation:'linked',status:'resolved',formula:'3d burn'});brief.push('Раскалённое ядро: Malf-1, снаряжение ×1,5, +2 заряжающих; 3d burn/с до 30 с вручную. LT88.');}
+ if(a.kind==='flaming'){attackBonus=-2;components.push({role:'linked',relation:'linked',status:'resolved',formula:'1 burn'});brief.push('Горящий болт: подготовка 10 с, использовать за 3 с; -2 к атаке, +1 burn; критическая неудача обжигает машину. LT83; B410.');}
+ if(quality)brief.push('Некачественный порох: -1 за исходный куб, Malf-2. LT85.');
  if(configuration.standAside&&p.narrowVision)acc=0;
  const indirect=p.indirectDefault||configuration.indirect;
  if(indirect&&!p.indirectAvailable)return fail('Этот персональный режим не поддерживает непрямой огонь.');

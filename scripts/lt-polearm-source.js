@@ -7535,18 +7535,18 @@ export function ltPolearmHints(profile){
  const out=[];
  if(profile.modelId==='lt:qian-kun-ri-yue-dao')out.push(profile.unarmedSkillBonus?
   'Удар режущей гардой: Brawling или DX; бонус изученного Brawling учитывается один раз. DR гарды и поломка – вручную. LT60,65; LT71[5,6].':
-  'Qian Kun Ri Yue Dao: прямой штраф −1 Staff уже учтён. Удар обоими концами использует отдельную табличную строку; Dual-Weapon Attack и DR гарды – вручную. LT60,69; LT71[6,19].');
+  'Qian Kun Ri Yue Dao: прямой штраф -1 Staff уже учтён. Удар обоими концами использует отдельную табличную строку; Dual-Weapon Attack и DR гарды – вручную. LT60,69; LT71[6,19].');
  if(profile.stats.reach.includes('*'))out.push('Для смены отмеченного Reach требуется Ready. Рабочую дистанцию выбирает игрок. LT64; B269.');
  if(profile.damagePart==='shaft')out.push('Удар тупым древком: отдельная строка Staff без +2 Parry посоха. Качество и материал кромки не усиливают древко. LT69; LT71[18].');
  if(profile.motion==='swing'&&/^thr/.test(profile.stats.damage))out.push('Tip Slash: Swing с базой thrust; качество действует обычно. Используется максимальный Reach текущего удержания; смена длины – вручную. LT62; MA113.');
  if(profile.hook)out.push('Hook: табличный Damage; попадание, зацеп, обезоруживание и сбивание всадника выполняет игрок. LT54; LT71[2,8].');
- if(profile.modelId==='lt:trident')out.push('Trident: −2 к атаке уже учтён один раз. Противник получает −1 Dodge, +1 Block/Parry вручную; обезоруживание – без штрафа не-фехтовального оружия. LT69; LT71[8,17].');
+ if(profile.modelId==='lt:trident')out.push('Trident: -2 к атаке уже учтён один раз. Противник получает -1 Dodge, +1 Block/Parry вручную; обезоруживание – без штрафа не-фехтовального оружия. LT69; LT71[8,17].');
  if(profile.modelId==='lt:pollaxe')out.push('Pollaxe: табличная головка – молот; вариант с топором использует Dueling Halberd. Defensive Grip допустим. LT60,68.');
  if(profile.modelId==='lt:ankus')out.push('Ankus: обычный тупой Thrust и вариант с острым шипом – разные формы наконечника; выбирайте соответствующий экземпляру режим. Тупой Hook не наносит отдельного урона. LT54.');
  if(profile.modelId==='lt:tuja')out.push('Tuja: одноручный малый трезубец со статистикой Sai и AD(0.5). Main-Gauche использует Parry F; +2 к обезоруживанию при Jitte/Sai – вручную. LT61,66–67; LT71[11].');
  if(profile.modelId==='lt:lance')out.push('Урон конной атаки, скорость и упор копья учитываются вручную. Здесь обычный табличный Thrust. LT58,67; LT71[16]; B397.');
  if(['lt:pilum','lt:angon'].includes(profile.modelId))out.push('Обычный ближний бой как Spear. Изгиб после метания, застревание в щите и выпрямление – вручную; числовой Staff для погнутого экземпляра не задан. LT73.');
- if(profile.modelId==='lt:harpoon')out.push('Ближний бой: Heavy Spear с Reach1,2* и прямым штрафом −2, уже учтённым один раз. Линь не превращает гарпун в оружие опутывания. LT72,69.');
+ if(profile.modelId==='lt:harpoon')out.push('Ближний бой: Heavy Spear с Reach1,2* и прямым штрафом -2, уже учтённым один раз. Линь не превращает гарпун в оружие опутывания. LT72,69.');
  if(profile.modelId==='lt:crescent-headed-spear')out.push('Этот экземпляр имеет серповидную режущую головку: обычный Thrust наносит cut без штрафа Tip Slash. Прочие параметры как Spear. LT62,69.');
  if(profile.modelId==='lt:sodegarami')out.push('Sodegarami: зацеп одежды – вручную. Sasumata не имеет Thrust+2 cr; pin/shove и pole-lasso не являются обычными атаками этой модели. LT62.');
  if(profile.modelId==='lt:pike')out.push('Длина Pike выбирается при изготовлении: 4/5/6 ярдов – отдельные экземпляры каталога, не смена хвата. Упор против сближения, поломка и работа вдвоём – вручную. LT55,60,69.');

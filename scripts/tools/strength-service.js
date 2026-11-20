@@ -1,5 +1,6 @@
 import { withActorResourceWrite } from './actor-resource-writes.js';
 import { basicStrengthDamage } from './gurps-strength-damage.js';
+import { getStrengthBeforeExhaustion } from './reeling-tired-compat.js';
 
 export const STRENGTH_FLAG = 'strengthAdjustments';
 export const STRENGTH_KINDS = Object.freeze(['st','striking','lifting','arm']);
@@ -57,14 +58,19 @@ export function readActorStrength(actor, adjustments=readStrengthAdjustments(act
   const advantages=readStrengthAdvantages(actor),credited=Object.values(advantages.credited).reduce((n,v)=>n+v,0);
   const base=current===null?null:current-credited;
   const st=base===null?null:base+adjustments.modifiers.st;
-  const variant=(kind,label)=>({label,supported:true,imported:advantages.levels[kind],current:advantages.levels[kind],
-    effective:st===null?null:st+advantages.levels[kind]+adjustments.modifiers[kind],
+  const preExhaustion=getStrengthBeforeExhaustion(actor);
+  const baseForDerived=preExhaustion===undefined?base:preExhaustion-credited;
+  const forDerived=baseForDerived===null?null:baseForDerived+adjustments.modifiers.st;
+  const variant=(kind,label,baseST=st)=>({label,supported:true,imported:advantages.levels[kind],current:advantages.levels[kind],
+    effective:baseST===null?null:baseST+advantages.levels[kind]+adjustments.modifiers[kind],
     source:'Actor.system.ads.*.level',alreadyIncludedInGga:advantages.credited[kind]});
   return {version:1,actorId:actor?.id??null,revision:adjustments.revision,modifiers:{...adjustments.modifiers},
     kinds:{st:{label:'ST',supported:current!==null,imported,current,effective:st,baseCurrent:base,source:'Actor.system.attributes.ST',
       ...(current===null?{reason:'Не определено: отсутствует численное ST.value GGA.'}:{})},
-      striking:variant('striking','Striking ST'),lifting:variant('lifting','Lifting ST'),
+      striking:variant('striking','Striking ST',forDerived),lifting:variant('lifting','Lifting ST'),
       arm:{...variant('arm','Arm ST'),application:'Явный выбор владельца для конкретной атаки.'}},advantages,
+    derivedST:{base:baseForDerived,effective:forDerived,
+      lifting:forDerived===null?null:forDerived+advantages.levels.lifting+adjustments.modifiers.lifting},
     ggaDamage:{swing:String(actor?.system?.swing??'').trim(),thrust:String(actor?.system?.thrust??'').trim()}};
 }
 
@@ -80,19 +86,20 @@ export function resolveStrengthDamage(actor, mode, {applyArmST=false,maximumST=n
       return {...result,ready:true,strengthKind:'gga-imported-damage',baseFormula:strength.ggaDamage[mode],source:'Actor.system.'+mode};
     return {...result,reason:base.reason};
   }
-  const anchor=base.imported??base.baseCurrent,levels=strength.advantages.levels;
+  const sourceST=integer(actor?._source?.system?.attributes?.ST?.import);
+  const anchor=sourceST??base.imported??strength.derivedST.base,levels=strength.advantages.levels;
   const striking=levels.striking+strength.modifiers.striking,arm=applyArmST?levels.arm+strength.modifiers.arm:0;
-  const uncappedST=base.effective+striking+arm;
+  const uncappedST=strength.derivedST.effective+striking+arm;
   const effectiveST=Number.isFinite(maximumST)&&maximumST>0?Math.min(uncappedST,maximumST):uncappedST;
   const importedPair=strength.ggaDamage;
-  const anchors=[anchor,anchor+levels.striking,anchor+levels.striking+levels.arm,
-    base.baseCurrent,base.baseCurrent+levels.striking,base.baseCurrent+levels.striking+levels.arm];
+  const anchors=[...new Set([anchor,base.imported,strength.derivedST.base])].filter(st=>st!==null)
+    .flatMap(st=>[st,st+levels.striking,st+levels.striking+levels.arm]);
   const mismatch=!anchors.some(st=>['swing','thrust'].every(kind=>!importedPair[kind]||
     normalizedDice(importedPair[kind])===normalizedDice(basicStrengthDamage(st,kind))));
   if(mismatch){
     if(maximumST&&uncappedST>maximumST)return {...result,
       reason:'Импортированный урон не определяет точный профиль ST для применения предела B270. Проверьте исходную формулу.'};
-    if(base.baseCurrent===anchor&&damageUnchanged&&/^\d+d(?:6)?(?:[+-]\d+)?$/.test(importedPair[mode]??''))
+    if(strength.derivedST.base===anchor&&damageUnchanged&&/^\d+d(?:6)?(?:[+-]\d+)?$/.test(importedPair[mode]??''))
       return {...result,ready:true,strengthKind:'gga-imported-damage',baseFormula:importedPair[mode],source:'Actor.system.'+mode,
         reason:'Разновидность ST в импортированном уроне не определена; повторные бонусы не добавляются.'};
     return {...result,reason:'Импортированные Swing/Thrust не согласуются с базовой ST по B16. Разновидность ST и уже учтённые бонусы не определены; пересчёт временной поправки невозможен.'};
@@ -101,7 +108,7 @@ export function resolveStrengthDamage(actor, mode, {applyArmST=false,maximumST=n
   if(!formula)return {...result,reason:'Нет точной проверенной строки урона для ST '+effectiveST+'. Интерполяция не применяется.'};
   return {...result,ready:true,effectiveST,strengthKind:applyArmST?'st+striking+arm':'st+striking',
     ...(maximumST?{maximumST,uncappedST}:{}),
-    applied:{st:base.effective,striking,arm,lifting:0,applyArmST},baseFormula:formula};
+    applied:{st:strength.derivedST.effective,striking,arm,lifting:0,applyArmST},baseFormula:formula};
 }
 
 export class StrengthService {

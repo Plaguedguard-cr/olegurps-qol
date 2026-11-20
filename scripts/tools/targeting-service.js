@@ -310,11 +310,15 @@ export class TargetingService {
     this.table = table;
     this.tableSource = tableSource;
     this.damageProfile = this._inspectDamageProfile(attack);
+    if(attack?.meleeTechniqueTargeting?.pressureSecrets===true)this.damageProfile={...this.damageProfile,reliable:true,precisionEligible:true,pressureSecrets:true};
+    const technique=attack?.meleeTechniqueTargeting;
+    if(technique?.damageType)this.damageProfile={...this.damageProfile,reliable:true,
+      precisionEligible:/^(?:pi[+-]*|imp)$/i.test(technique.damageType),types:[technique.damageType]};
     this.zones = definition.zones.map(zone => ({
       ...zone,
-      penalty: this._resolvePenalty(zone),
-      available: !zone.precisionOnly || !this.damageProfile.reliable || this.damageProfile.precisionEligible,
-      unavailableReason: zone.precisionOnly && this.damageProfile.reliable && !this.damageProfile.precisionEligible
+      penalty: zone.id==='groin'&&technique?.waiveGroin?0:this._resolvePenalty(zone),
+      available: zone.id==='eye'&&technique?.allowEye||!zone.precisionOnly || !this.damageProfile.reliable || this.damageProfile.precisionEligible,
+      unavailableReason: !(zone.id==='eye'&&technique?.allowEye)&&zone.precisionOnly && this.damageProfile.reliable && !this.damageProfile.precisionEligible
         ? "Доступно только для impaling, piercing и tight-beam burning атак"
         : ""
     }));
@@ -477,7 +481,8 @@ export class TargetingService {
     const profiles = [];
     for (const expression of expressions) {
       try {
-        const action = globalThis.GURPS.parselink(`[${expression}]`)?.action;
+        // GGA parselink takes the OTF expression itself, without chat brackets.
+        const action = globalThis.GURPS.parselink(expression.replace(/^\[(.*)\]$/, '$1'))?.action;
         const translated = globalThis.GURPS.DamageTables?.translate?.(action?.damagetype) ?? action?.damagetype;
         const type = String(translated ?? "").toLowerCase();
         if (!type) return { reliable: false, precisionEligible: true, types: [] };

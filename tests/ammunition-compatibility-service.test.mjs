@@ -1,4 +1,5 @@
 import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -198,7 +199,7 @@ test("current catalog byte hashes match the verified upgrade checkpoint", async 
   for (const [b, d] of Object.entries(CATALOG_DEFINITIONS)) {
     const bytes = await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url));
     if (b === "weapons") assertWeaponPreservation(bytes.toString("utf8"), proof);
-    else assert.equal(createHash("sha256").update(bytes).digest("hex"), hashes[b]);
+    else assert.equal(createHash("sha256").update(restorePublishedCatalogCheckpoint(bytes,b)).digest("hex"), hashes[b]);
   }
 });
 test("main exposes the same reference service on all existing module API aliases", async () => {

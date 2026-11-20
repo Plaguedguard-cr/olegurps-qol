@@ -43,13 +43,13 @@ test("+P HT165/166 applies Damage, both ranges, required ST and cost from immuta
   assert.equal(p.transformations.find(t=>t.effectId.endsWith(":Malf")).applied, false); assert.equal(JSON.stringify(raw), before);
   assert.equal(resolveAmmunitionEffects({ raw, variantId: "ht_plus_p", baseStatus: "compatible", constructionStatus: "compatible", previousTransformations:p.transformations }).nativeSafe, false);
 });
-test("+P required ST rounds to nearest, preserves operating suffixes and uses the shared skill channel", () => {
+test("+P required ST rounds to nearest, preserves operating suffixes and requires shared channel provenance", () => {
   for (const [st, expected] of [[9,10],[10,11],[11,12],[15,17]]) {
     for(const suffix of ["","\u2020","\u2021","R","B","M"]) assert.equal(scaleRequiredStrength(st+suffix),expected+suffix);
   }
   assert.equal(scaleRequiredStrength("9/11"), null); assert.equal(scaleRequiredStrength("9 unknown"), null); assert.equal(scaleRequiredStrength(null),null);
   const actor={system:{attributes:{ST:{value:9}}}}, before=JSON.stringify(actor);
-  assert.equal(weaponStrengthPenalty({ammunitionRequiredStrength:{value:10,application:"existing-fire-skill-channels"}},actor),-1);
+  assert.equal(weaponStrengthPenalty({ammunitionRequiredStrength:{value:10,application:"existing-fire-skill-channels"}},actor),0);
   assert.equal(weaponStrengthPenalty({ammunitionRequiredStrength:{value:12,application:"manual-GM-existing-support-rules"}},actor),0);
   assert.equal(JSON.stringify(actor),before);
 });

@@ -19,11 +19,16 @@ import { resolveRuntimeAttackProfile, newAttackId } from "./attack-profile-runti
 import { AttackProfileResolver, createShotSnapshot } from "./attack-profile-resolver.js";
 import { resolveStrengthDamage } from './strength-service.js';
 import { getMeleeNativeDamageParser, parseCompleteMeleeDamage, inferMeleeDamageModel, parseMeleeDamageTerms } from './melee-damage-model.js';
-import { installMeleeNativeDamage, numericMeleeDamageEvent } from './melee-native-damage.js';
+import { installMeleeNativeDamage, numericMeleeDamageEvent, basicDamageOnly, rollBasicDamage } from './melee-native-damage.js';
 import { meleeStrengthChannel } from './melee-weapon-strength.js';
 import { resolveCombatCalculation } from "./combat-calculation-engine.js";
-import { getCombatRules } from "./combat-technique-registry.js";
+import { getCombatRules,resolveMeleeTechniques } from "./combat-technique-registry.js";
+import {hasCombatTrait,isCleanTechniqueAttack,meleeTechniqueRuntimeContext} from './melee-penalty-techniques.js';
+import {combatPerkLabel,drunkenFighting,drunkenTaggedCredit,hasSpecializedCombatPerk} from './ma-combat-perks.js';
+import {offHandAttackPenalty} from './melee-technique-sequences.js';
 import { committedStrongEligible } from './melee-martial-rules.js';
+import { strikeDamageDelta } from './melee-strike-techniques.js';
+import { extendedMeleeReach, maRussian, resolveMeleeCombatOptions, spendCombatFatigue } from './ma-combat-options.js';
 
 const integer = value => {
   const number = Number(String(value ?? "").trim().replace(",", "."));
@@ -53,40 +58,84 @@ function resolveMeleePass(options, deceptivePenalty = 0) {
   if (!Number.isFinite(baseSkill)) return null;
   const hitLocationBase = Number(options.hitLocationBasePenalty ?? options.hitLocationPenalty ?? 0);
   const precisionPenalty = integer(options.precisionPenalty);
+  const techniqueContext=meleeTechniqueRuntimeContext(options.actor,{...options.meleeTechniques?.context,
+    rapidStrike:!!options.rapidStrikePenalty,combination:!!options.combination});
+  const techniquePlan=options.meleeTechniques?.ids?.length?resolveMeleeTechniques({...options,
+    baseSkill,selection:options.meleeTechniques,context:techniqueContext}):null;
+  const replacement=techniquePlan?.available&&techniquePlan.strikeManeuver;
+  const moveAndAttack=!!options.moveAndAttack&&!replacement;
+  const maOptions=resolveMeleeCombatOptions({...options, strengthDamage:isStrengthBasedMeleeDamage(options.attack)},techniquePlan);
+  const projected=maOptions?.projected;
+  const replacedSkill=Number.isFinite(projected?.level);
+  const shieldTarget=projected?.action==='strikeShield';
+  const capMove=moveAndAttack&&!maOptions?.bypassMoveCap;
+  const fixedLocation=!!techniquePlan?.fixedLocation;
+  const waiveLocationPenalty=techniquePlan?.available&&techniquePlan.strikes?.some(strike=>strike.waiveLocationPenalty);
+  const projectedSkill=techniquePlan?.available&&techniquePlan.primaryStrike&&techniquePlan.results.find(row=>row.id===techniquePlan.primaryStrike.id);
+  const specialKind=techniquePlan?.special?.special?.kind;
+  const drunken=!specialKind||specialKind==='attack'?drunkenFighting(options.actor):null;
+  const ordinaryOffHand=!options.sequenceModifier&&techniqueContext.hand==='off'&&techniqueContext.weaponHands===1&&
+    !options.meleeTechniques?.ids?.some(id=>['dualWeaponAttack','combination'].includes(id))&&
+    !options.attack?.unarmedRef&&isCleanTechniqueAttack(options.attack)&&(!specialKind||specialKind==='attack');
+  const offHand=ordinaryOffHand?offHandAttackPenalty(options.actor,options.attack,options.governingSkill,'off'):0;
+  const offHandPerk=ordinaryOffHand&&!offHand&&!hasCombatTrait(options.actor,'Ambidexterity')&&hasSpecializedCombatPerk(options.actor,'Off-Hand Weapon Training',options.governingSkill?.name)?
+    {name:'Off-Hand Weapon Training',modifier:4,source:'MA50'}:null;
+  const perks=[...(options.attack?.meleeProfile?.skill?.perks??[]),...(options.attack?.meleeProfile?.unarmed?.perks??[]),
+    ...(techniquePlan?.available?techniquePlan.results.flatMap(row=>row.perks??[]):[]),...[drunken,offHandPerk].filter(Boolean)];
   const context = {
-    weaponBond: !options.attack?.unarmedRef && options.weaponBond === true,
-    targetedAttack: options.targetedAttack ?? null,
-    hitLocationBase, hitLocationLabel: options.hitLocationLabel ?? "Зона попадания",
-    rapidStrikePenalty: integer(options.rapidStrikePenalty),
+    meleeTechniques:techniquePlan,
+    weaponBond: !replacedSkill&&!options.attack?.unarmedRef && options.weaponBond === true,
+    targetedAttack: fixedLocation||waiveLocationPenalty||shieldTarget?null:options.targetedAttack ?? null,
+    hitLocationBase:waiveLocationPenalty||shieldTarget?0:hitLocationBase, hitLocationLabel: options.hitLocationLabel ?? "Зона попадания",
+    rapidStrikePenalty: integer(maOptions?.rapidPenalty??options.rapidStrikePenalty),
     telegraphicAttack: !!options.telegraphicAttack, deceptivePenalty,
-    evaluateBonus: getEvaluateBonus(options.evaluate), moveAndAttack: !!options.moveAndAttack,
-    allOutAttack: !!options.allOutAttack, allOutAttackMode: options.allOutAttackMode,
-    committedAttack: !!options.committedAttack, committedMode: options.committedMode,
-    committedSteps: !!options.committedSteps
+    evaluateBonus: getEvaluateBonus(options.evaluate), moveAndAttack,
+    allOutAttack: !!options.allOutAttack&&!replacement, allOutAttackMode: options.allOutAttackMode,
+    committedAttack: !!options.committedAttack&&!replacement, committedMode: options.committedMode,
+    committedSteps: !!options.committedSteps&&!replacement
   };
-  return resolveCombatCalculation({ combatType: "melee", actor: options.actor,
-    attack: options.attack, baseAttackLevel: baseSkill, governingSkill: options.governingSkill,
+  const calculation=resolveCombatCalculation({ combatType: "melee", actor: options.actor,
+    attack: options.attack, baseAttackLevel: replacedSkill?projected.level:baseSkill, governingSkill: replacedSkill?
+      {name:projected.skill,level:projected.level,resolved:true}:projectedSkill?
+      {name:projectedSkill.governingSkill,level:projectedSkill.governingSkillLevel,learned:projectedSkill.governingSkill!=='DX',resolved:true}:options.governingSkill,
     attackSlot: options.attackSlot, context,
     channels: [
-      meleeStrengthChannel(options.attack?.meleeProfile?.weaponStrength??options.attack?.weaponStrength, { reconcileExternal: true }),
+      meleeStrengthChannel(techniquePlan?.primaryStrike||replacedSkill?null:options.attack?.meleeProfile?.weaponStrength??options.attack?.weaponStrength, { reconcileExternal: true }),
       { id:'ammunitionConstruction',value:options.attack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE||options.attack?.meleeProfile?.htSpecial?.spray?2:0,label:'Широкая струя (HT180)' },
       { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
+      ...(drunken?[{id:'drunkenFighting',value:drunken.modifier,label:combatPerkLabel(drunken),kind:'perk',source:drunken.source}]:[]),
+      ...(ordinaryOffHand?[{id:'offHand',value:offHand,label:'Неосновная рука',source:'B14; MA50'}]:[]),
       { id: "situational", value: integer(options.manualModifier), label: "\u0411\u043e\u043d\u0443\u0441\u044b/\u0448\u0442\u0440\u0430\u0444\u044b" },
       { id: "evaluate", value: 0, label: "\u041e\u0446\u0435\u043d\u043a\u0430" },
       { id: "telegraphicAttack", value: 0, label: "Telegraphic Attack" },
       { id: "committedSteps", value: 0, label: "Committed Attack (2 steps)" },
       { id: "maneuverAttackBonus", value: 0, label: "Бонус атаки от манёвра" },
       { id: "moveAndAttack", value: 0, label: "\u0414\u0432\u0438\u0436\u0435\u043d\u0438\u0435 \u0438 \u0430\u0442\u0430\u043a\u0430" },
+      ...(maOptions?.moveDelta?[{id:'maMovement',value:maOptions.moveDelta,
+        label:maOptions.effort==='charge'?'Heroic Charge':'Move and Attack (MA107)',source:'MA107; MA131'}]:[]),
+      ...(shieldTarget?[{id:'maStrikeShield',value:projected.hitModifier,label:'Striking at Shields',source:'MA112'}]:[]),
       { id: "rapidStrike", value: 0, label: "Rapid Strike" },
       { id: "visibility", value: integer(options.visibilityPenalty), label: "\u0412\u0438\u0434\u0438\u043c\u043e\u0441\u0442\u044c" },
-      { id: "hitLocation", value: Number.isFinite(hitLocationBase) ? hitLocationBase : 0,
+      { id: "hitLocation", value: !shieldTarget&&!fixedLocation&&!waiveLocationPenalty&&Number.isFinite(hitLocationBase) ? hitLocationBase : 0,
         label: options.hitLocationLabel ?? "Зона попадания" },
-      { id: "precision", value: precisionPenalty, label: "Precision" },
-      { id: "deceptiveAttack", value: 0, label: "Deceptive Attack" }
+      { id: "precision", value: fixedLocation||shieldTarget?0:precisionPenalty, label: "Precision" },
+      { id: "deceptiveAttack", value: 0, label: "Deceptive Attack" },
+      ...(options.sequenceModifier?[{id:options.sequenceModifier.id,value:options.sequenceModifier.value,label:options.sequenceModifier.label??options.sequenceModifier.id,kind:'learned-technique',source:'MA-PENALTY-1'}]:[]),
+      ...(techniquePlan?.available?techniquePlan.channels:[])
     ], rules: getCombatRules("melee"), caps: [
-      ...(options.moveAndAttack ? [{ maximum: 9, label: "Предел навыка при движении и атаке: 9" }] : []),
-      ...(options.visibilityCap ? [{ maximum: 9, label: "Предел навыка при ограниченной видимости: 9" }] : [])
+      ...(capMove ? [{ maximum: 9, label: "Предел навыка при движении и атаке: 9" }] : []),
+      ...(options.visibilityCap ? [{ maximum: 9, label: "Предел навыка при ограниченной видимости: 9" }] : []),
+      ...(techniquePlan?.available?techniquePlan.caps:[])
     ] });
+  if(techniquePlan)calculation.metadata.meleeTechniques=techniquePlan;
+  if(perks.length)calculation.metadata.combatPerks=perks;
+  calculation.metadata.meleeCaps=[...(capMove||options.visibilityCap?[{maximum:9}]:[]),...(techniquePlan?.available?techniquePlan.caps:[])];
+  if(maOptions)calculation.metadata.maOptions=maOptions;
+  if(techniquePlan?.available&&techniquePlan.strikes){
+    calculation.metadata.parryModifier=techniquePlan.strikes.reduce((sum,strike)=>sum+strike.targetParry,0);
+    calculation.metadata.defenseModifier=(calculation.metadata.defenseModifier??0)+techniquePlan.strikes.reduce((sum,strike)=>sum+strike.targetDefenseModifier,0);
+  }
+  return calculation;
 }
 
 export function calculateMeleeSkillBeforeDeceptive(options = {}) {
@@ -97,13 +146,74 @@ export function resolveMeleeCombatCalculation(options = {}) {
   const before = resolveMeleePass(options);
   if (!before) return null;
   const deceptivePenalty = normalizeDeceptiveAttackPenalty(options.deceptiveAttack,
-    before.effectiveSkill, options.moveAndAttack, options.telegraphicAttack);
+    before.effectiveSkill, options.moveAndAttack&&!before.metadata.maOptions?.bypassMoveCap, options.telegraphicAttack);
   const result = resolveMeleePass(options, deceptivePenalty);
   if (result) result.metadata = { ...result.metadata,
     defenseModifier: (result.metadata.defenseModifier ?? 0),
     deceptivePenalty, beforeDeceptive: before.effectiveSkill,
     weaponStrengthDelta: result.channels.find(c=>c.id==='weaponStrength')?.resolvedValue??0 };
   return result;
+}
+
+export function meleeSpecialRollPreviews(options, special) {
+  if (!special?.rolls) return [];
+  return special.rolls.map(roll => {
+    if (!Number.isFinite(roll.level)) return { ...roll, effectiveLevel: null };
+    if (roll.kind !== 'hit') return { ...roll, effectiveLevel: roll.level + integer(options.manualModifier) };
+    const grand = special.ref === 'GrandDisarm';
+    const result = resolveMeleeCombatCalculation({ ...options, meleeTechniques: null,
+      baseSkill: roll.level + (options.attack?.meleeProfile?.projectedStrengthDelta ?? 0),
+      hitLocationPenalty: 0, hitLocationBasePenalty: 0, targetedAttack: null, precisionPenalty: 0,
+      ...(grand ? { allOutAttack: false, moveAndAttack: false, committedAttack: false,
+        deceptiveAttack: 0, telegraphicAttack: false, evaluate: 0, rapidStrikePenalty: 0 } : {}) });
+    return { ...roll, effectiveLevel: result?.effectiveSkill ?? null,
+      skillCap: result?.metadata?.meleeCaps?.some(cap => cap.maximum === 9) ? 9 : null,
+      ...(result?.metadata?.combatPerks?.length?{combatPerks:result.metadata.combatPerks}:{}),
+      modifiers: result?.channels.map(({ id, resolvedValue }) => ({ id, value: resolvedValue })) ?? [] };
+  });
+}
+
+// A special-technique hit may have no damage and a standalone weapon need not
+// have a GGA melee row. Use the native attack roll with the prepared target.
+export async function performSpecialMeleeAttack({actor, attack, rollName, level, skillCap,
+  details='', maneuver, deceptiveDefensePenalty=0, damageLink=false, drunken=null}) {
+  const {doRoll}=await import('/systems/gurps/module/dierolls/dieroll.js');
+  const GGA=globalThis.GURPS;
+  const name=String(attack.name).replace(/\[[^\]]*]/g,'').trim();
+  const exact=attack.mode?name+' ('+attack.mode+')':name;
+  const quoted=exact.replaceAll('\\','\\\\').replaceAll('"','\\"');
+  const ref=type=>'[@'+actor.id+'@'+type+':"'+quoted+'"]';
+  const action={type:'attack',name:exact,orig:'M:"'+quoted+'"',isMelee:true,isRanged:false,maneuver,deceptiveDefensePenalty};
+  const mods=GGA.ModifierBucket,stack=mods.modifierStack;
+  const capDesc=Number.isFinite(skillCap)?'Предел атаки *Max:'+skillCap:null;
+  const addCap=capDesc&&!stack.modifierList.some(mod=>mod.desc===capDesc);
+  try {
+    return await doRoll({actor,thing:rollName??name,chatthing:ref('M'),
+      origtarget:level+drunkenTaggedCredit(actor,attack,drunken,'melee'),action,
+      targetmods:addCap?[{mod:'0',modint:0,desc:capDesc}]:[],
+      optionalArgs:{action,obj:attack.data??attack,text:details,followon:damageLink?ref('D'):undefined}});
+  } finally {
+    // Native cancellation removes tagged entries. This zero-valued *Max is
+    // forwarded by GGA as an untagged entry, so remove only our cap.
+    if(addCap&&stack.modifierList.some(mod=>mod.desc===capDesc)){
+      stack.modifierList=stack.modifierList.filter(mod=>mod.desc!==capDesc);
+      stack.sum();
+      mods.refresh();
+    }
+  }
+}
+
+async function rollCounterattack({actor,attack,profile,attackId,level,skillCap,details,maneuver,deceptiveDefensePenalty,telegraphicCriticalBonus,drunken}) {
+  const GGA=globalThis.GURPS;
+  GGA.SetLastActor?.(actor);
+  const name=String(attack.name).replace(/\[[^\]]*]/g,'').trim();
+  const execute=()=>withTelegraphicCriticalLimit(GGA,actor.id,name,telegraphicCriticalBonus,
+    ()=>performSpecialMeleeAttack({actor,attack,level,skillCap,details,maneuver,deceptiveDefensePenalty,damageLink:true,drunken}));
+  const {result,message}=await executeWithCapturedRollMessage({actorId:actor.id,
+    messageFilter:data=>String(data.rolls?.[0]?.formula??'').startsWith('3d6['+name+']'),execute});
+  if(message)await message.setFlag('olegurps-qol','shotSnapshot',
+    structuredClone(createShotSnapshot(profile,{attackId,messageId:message.id})));
+  return {rolled:!!message,rollData:message?GGA.lastTargetedRolls?.[actor.id]:null,hit:message?result!==false:false,message};
 }
 
 export function getMaximumDeceptiveAttackPenalty(skillBeforeDeceptive, moveAndAttack = false, telegraphicAttack = false) {
@@ -245,6 +355,14 @@ export function freezeMeleeAttackProfile({actor,attack,preparedDamage,context={}
   const profile=structuredClone(new AttackProfileResolver().resolve({actorId:actor?.id,
     attack,rawAttack:{...attack?.data,damage:preparedDamage?.formula??attack?.damage},ammunition:null,context:{...context,kind:'melee'}}));
   profile.effective.damage=preparedDamage?.formula??null;
+  if(preparedDamage?.evidence?.techniques?.reach!==null&&preparedDamage?.evidence?.techniques?.reach!==undefined)profile.effective.reach=preparedDamage.evidence.techniques.reach;
+  if(preparedDamage?.evidence?.techniques?.motion)profile.effective.motion=preparedDamage.evidence.techniques.motion;
+  if(preparedDamage?.evidence?.maOptions){
+    const options=structuredClone(preparedDamage.evidence.maOptions);
+    profile.context.maCombatOptions=options;
+    if(options.projected?.reach)profile.effective.reach=options.projected.reach;
+    if(options.long)profile.effective.reach=extendedMeleeReach(profile.effective.reach??attack?.meleeProfile?.reach??attack?.reach);
+  }
   if(attack?.equipmentRef){
     profile.mode.equipmentRef=structuredClone(attack.equipmentRef);
     // GGA's native D:name(mode) link names its original row. The chosen attacking
@@ -257,7 +375,16 @@ export function freezeMeleeAttackProfile({actor,attack,preparedDamage,context={}
     status:preparedDamage?'resolved':'unresolved',components:[],reason:preparedDamage?null:'melee-damage-unresolved',
     rules:{meleeSnapshot:{version:1,action:preparedDamage?structuredClone(preparedDamage.action):null,
       evidence:preparedDamage?.evidence??null,combatProfile:attack?.meleeProfile?structuredClone(attack.meleeProfile):null}}};
+  if(preparedDamage?.evidence?.techniques?.motion&&profile.damage.rules.meleeSnapshot.combatProfile)profile.damage.rules.meleeSnapshot.combatProfile.motion=preparedDamage.evidence.techniques.motion;
+  if(preparedDamage?.evidence?.maOptions?.projected?.shieldDisarm){
+    profile.effective.damage=null;
+    profile.damage={...profile.damage,formula:null,rules:{...profile.damage.rules,instructionOnly:true,
+      meleeSnapshot:{...profile.damage.rules.meleeSnapshot,action:null}}};
+  }
   const weaponStrength=attack?.meleeProfile?.weaponStrength??attack?.weaponStrength;
+  if(preparedDamage?.evidence?.techniques)profile.damage.rules.meleeTechniques=structuredClone(preparedDamage.evidence.techniques);
+  if(preparedDamage?.evidence?.sequence)profile.damage.rules.meleeSequence=structuredClone(preparedDamage.evidence.sequence);
+  if(preparedDamage?.evidence?.techniqueTargets)profile.context.techniqueTargets=structuredClone(preparedDamage.evidence.techniqueTargets);
   if(weaponStrength){
     profile.damage.rules.weaponStrength={...structuredClone(weaponStrength),
       transmittedDelta:Number.isFinite(context.weaponStrengthDelta)?context.weaponStrengthDelta:null};
@@ -303,8 +430,44 @@ export async function executeUTMeleeContact({actor,attack,confirmed=false}={}){
   }});
 }
 
-export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0, damageOptions = {}, combatCalculation = null, skillCap = null, expectedExecution = null } = {}) {
+export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveSkill, locationText = "", overrideText = "", modifierDetails = [], captureMessage = false, maneuver = null, deceptiveDefensePenalty = 0, telegraphicCriticalBonus = 0, damageOptions = {}, combatCalculation = null, skillCap = null, expectedExecution = null, maManeuverEffort = null } = {}) {
+  const techniquePlan=combatCalculation?.metadata?.meleeTechniques??damageOptions.techniquePlan;
+  const counterattack=techniquePlan?.special?.id==='counterattack';
+  if(techniquePlan&&!techniquePlan.available)throw Error(techniquePlan.errors.join(' '));
+  if(techniquePlan)damageOptions={...damageOptions,techniquePlan};
+  const knownExternal=(techniquePlan?.externalAdjustments??[]).reduce((n,e)=>n+e.value,0);
+  const perks=combatCalculation?.metadata?.combatPerks??[];
+  const drunken=perks.find(perk=>perk.name==='Drunken Fighting');
+  const rollEffectiveSkill=effectiveSkill-knownExternal;
   const validateExecution=()=>assertMeleeExecutionState(actor,sourceAttack,expectedExecution);
+  const maOptions=damageOptions.maOptions;
+  const rollWithCombatOptions = async (profile, args, alreadyLocked=false) => {
+    let receipt;
+    const result=await executePreparedGgaRoll({...args,attackProfile:profile,
+      ...(maOptions?.effortCost?{beforeRoll:async()=>{
+        const shared=maManeuverEffort&&['lunge','charge'].includes(maOptions.effort);
+        const previous=shared?maManeuverEffort[maOptions.effort]:null;
+        if(previous){
+          const fp=actor.system?.FP?.value,hp=actor.system?.HP?.value;
+          if(fp<=-actor.system?.FP?.max)
+            throw Error(maRussian()?'Персонаж без сознания при -FP (B426).':'The actor is unconscious at -FP (B426).');
+          profile.context.maCombatOptions.fatigue={before:fp,after:fp,hpBefore:hp,hpAfter:hp,cost:0,injury:0,
+            source:previous.source,unconscious:false,reused:true};
+        }else{
+          receipt=await spendCombatFatigue(actor,maOptions.effortCost,{alreadyLocked,requireConscious:true});
+          profile.context.maCombatOptions.fatigue=receipt;
+          if(shared)maManeuverEffort[maOptions.effort]=receipt;
+        }
+      }}:{})});
+    if(receipt&&result.message){
+      const critical=result.rollData?.isCritFailure===true;
+      const hint=maRussian()?
+        `ЕУ: ${receipt.before} → ${receipt.after}. ЕЖ: ${receipt.hpBefore} → ${receipt.hpAfter}. ${receipt.unconscious?'При -макс. ЕУ персонаж без сознания до восстановления положительных ЕУ (B426).':receipt.after<=0?'Проверяйте Will перед каждым манёвром, кроме Do Nothing. При провале персонаж падает и бездействует до положительных ЕУ. При критическом провале немедленно проверьте HT на сердечный приступ (B426, B429).':''} ${critical?'Критический провал: 1 ЕЖ травмы конечности сверх обычных последствий (B357).':''}`:
+        `FP: ${receipt.before} → ${receipt.after}. HP: ${receipt.hpBefore} → ${receipt.hpAfter}. ${receipt.unconscious?'At -max FP, the character is unconscious until FP are positive (B426).':receipt.after<=0?'Roll Will before each maneuver other than Do Nothing. Failure causes collapse and incapacity until FP are positive. On a critical failure, immediately roll HT to avoid a heart attack (B426, B429).':''} ${critical?'Critical miss: 1 HP of injury to the limb in addition to normal consequences (B357).':''}`;
+      await result.message.update({content:result.message.content+'<p>'+hint+'</p>'});
+    }
+    return result;
+  };
   validateExecution();
   if(maneuver?.type==='defensiveAttack')maneuver={type:'defensiveAttack'};
   if(sourceAttack?.standaloneRef?.modeId===HT_TEAR_SPRAY_MODE){
@@ -312,7 +475,7 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
     const service=new AmmoService(actor);await service.loadState();const weapon=actor.getFlag('world','gurpsAmmoManager').weapons.find(w=>w.standaloneWeaponId===sourceAttack.standaloneRef.weaponId),attackId=newAttackId();
     const result=await service.executeShot({weaponId:weapon.id,attackId,
       prepare:({state,ammunition})=>({amount:1,profile:resolveRuntimeAttackProfile({actor,attack:sourceAttack,weaponId:weapon.id,state,ammunition,context:{kind:'melee',effectiveSkill}})}),
-      execute:({profile})=>executePreparedGgaRoll({actor,attack:sourceAttack,attackProfile:profile,shotSnapshot:createShotSnapshot(profile,{attackId}),baseSkill:sourceAttack.level,baseSkillName:sourceAttack.skillDescription,effectiveSkill,physicalShots:1,effectiveRoF:1,rcl:1,combatType:'melee',maneuver,combatCalculation,skillCap,attackContextHtml:overrideText||locationText})});
+      execute:({profile})=>executePreparedGgaRoll({actor,attack:sourceAttack,attackProfile:profile,shotSnapshot:createShotSnapshot(profile,{attackId}),baseSkill:sourceAttack.level,baseSkillName:sourceAttack.skillDescription,effectiveSkill:rollEffectiveSkill,physicalShots:1,effectiveRoF:1,rcl:1,combatType:'melee',maneuver,combatCalculation,skillCap,attackContextHtml:overrideText||locationText})});
     return {success:result.rolled,hit:result.rollData?!result.rollData.failure:false,message:result.message,rollData:result.rollData};
   }
   if(sourceAttack?.equipmentRef)assertShieldEquipmentReference(actor,sourceAttack.equipmentRef);
@@ -333,23 +496,27 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
     const profile = freezeMeleeAttackProfile({ actor, attack, preparedDamage,
       context: { effectiveSkill, weaponBond:combatCalculation?.channels?.find(c=>c.id==='weaponBond')?.resolvedValue===1,
         weaponStrengthDelta:combatCalculation?.metadata?.weaponStrengthDelta,
+        ...(perks.length?{combatPerks:perks}:{}),
         deceptiveDefensePenalty, telegraphicCriticalBonus } });
+    if(damageOptions.techniqueTargets)profile.context.techniqueTargets=structuredClone(damageOptions.techniqueTargets);
     validateWeaponShotResources(actor,profile,1,attack);
     const attackId = newAttackId();
     const run=async evidence=>{
     if(evidence){profile.resourceConsumption={utMelee:structuredClone(evidence)};profile.damage.rules.utExotic.resource=structuredClone(evidence);}
-    return executePreparedGgaRoll({ actor, attack, attackProfile: profile,
-      shotSnapshot: createShotSnapshot(profile, { attackId }), baseSkill: sourceAttack.level,
-      baseSkillName: sourceAttack.skillDescription, effectiveSkill, physicalShots: 1, effectiveRoF: 1, rcl: 1,
+    if(counterattack&&!maOptions)return rollCounterattack({actor,attack,profile,attackId,level:rollEffectiveSkill,skillCap,drunken,
+      details:(overrideText||locationText)+unarmedDamageExplanation(selectedAttack),maneuver,deceptiveDefensePenalty,telegraphicCriticalBonus});
+    return rollWithCombatOptions(profile,{ actor, attack,
+      shotSnapshot: maOptions?null:createShotSnapshot(profile, { attackId }), baseSkill: sourceAttack.level,
+      baseSkillName: sourceAttack.skillDescription, effectiveSkill:rollEffectiveSkill, physicalShots: 1, effectiveRoF: 1, rcl: 1,
       combatType: "melee", maneuver, telegraphicCriticalBonus, combatCalculation, skillCap,
-      deceptiveDefensePenalty, attackContextHtml: (overrideText || locationText)+unarmedDamageExplanation(selectedAttack) });};
+      deceptiveDefensePenalty, attackContextHtml: (overrideText || locationText)+unarmedDamageExplanation(selectedAttack) },!!utSource);};
     const result=utSource?await new AmmoService(actor).executeMeleeResource({attack:selectedAttack,modeId:selectedId,attackId,validate:validateExecution,execute:run}):await run(null);
     if(result.rolled&&result.utMeleeResourceEvidence){
       const resource=structuredClone(result.utMeleeResourceEvidence);profile.damage.rules.utExotic.resource=resource;profile.resourceConsumption={utMelee:resource};
       const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
       await result.message.update({content:result.message.content+'<p>Ресурс: '+resource.after+'/'+resource.capacity+' '+esc(resource.unit)+'; расход '+resource.spent+'.</p>'});
     }
-    if (result.rolled) await result.message.setFlag("olegurps-qol", "shotSnapshot",
+    if (result.rolled&&(!counterattack||maOptions||result.utMeleeResourceEvidence)) await result.message.setFlag("olegurps-qol", "shotSnapshot",
       structuredClone(createShotSnapshot(profile, { attackId, messageId: result.message.id })));
     return { success: result.rolled, hit: result.rollData ? !result.rollData.failure : false,
       message: result.message, rollData: result.rollData };
@@ -361,8 +528,23 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   const profile=freezeMeleeAttackProfile({actor,attack:selectedAttack,preparedDamage,
     context:{effectiveSkill,weaponBond:combatCalculation?.channels?.find(c=>c.id==='weaponBond')?.resolvedValue===1,
       weaponStrengthDelta:combatCalculation?.metadata?.weaponStrengthDelta,
+      ...(perks.length?{combatPerks:perks}:{}),
       deceptiveDefensePenalty,telegraphicCriticalBonus,maneuver}});
   const attackId=newAttackId();
+  if(maOptions){
+    validateWeaponShotResources(actor,profile,1,selectedAttack);
+    const result=await rollWithCombatOptions(profile,{actor,attack:selectedAttack,baseSkill:combatCalculation?.baseSkill,
+      effectiveSkill:rollEffectiveSkill,physicalShots:1,effectiveRoF:1,rcl:1,combatType:'melee',maneuver,
+      telegraphicCriticalBonus,combatCalculation,skillCap,deceptiveDefensePenalty,attackContextHtml:overrideText||locationText});
+    if(result.rolled)await result.message.setFlag('olegurps-qol','shotSnapshot',
+      structuredClone(createShotSnapshot(profile,{attackId,messageId:result.message.id})));
+    return {success:result.rolled,hit:result.rollData?!result.rollData.failure:false,message:result.message,rollData:result.rollData};
+  }
+  if(counterattack){
+    const result=await rollCounterattack({actor,attack:sourceAttack,profile,attackId,level:rollEffectiveSkill,skillCap,drunken,
+      details:overrideText||locationText,maneuver,deceptiveDefensePenalty,telegraphicCriticalBonus});
+    return {success:result.rolled,hit:result.hit,message:result.message,rollData:result.rollData};
+  }
   const originalLevel = Number(sourceAttack?.level ?? sourceAttack?.import);
   if (!Number.isFinite(originalLevel) || !Number.isFinite(Number(effectiveSkill))) {
     throw new Error("Не удалось определить уровень выбранной melee-атаки.");
@@ -371,7 +553,7 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
   const mode = String(sourceAttack?.mode ?? "").trim();
   if (!name) throw new Error("У выбранной melee-атаки нет названия.");
   const actionName = mode ? name + " (" + mode + ")" : name;
-  const modifier = Math.trunc(Number(effectiveSkill)) - Math.trunc(originalLevel);
+  const modifier = Math.trunc(Number(rollEffectiveSkill)) - Math.trunc(originalLevel)+drunkenTaggedCredit(actor,sourceAttack,drunken,'melee');
   const [compactModifier] = buildCompactAttackModifiers(modifier);
   const modifierBreakdown = buildAttackModifierBreakdownHtml(modifierDetails,weaponStrengthExplanation(
     profile.damage?.rules?.weaponStrength,{baseLevel:combatCalculation?.baseSkill??originalLevel}));
@@ -408,7 +590,7 @@ export async function executeNativeMeleeAttack({ actor, sourceAttack, effectiveS
 }
 
 function materializeDamageAction(source, actor, { dicePlusAdds = false, allOutStrong = false,
-  committedStrong = false, defensiveAttack = false, applyArmST = false, meleeProfile=null, martialAttack=null } = {}, overrideText = "") {
+  committedStrong = false, defensiveAttack = false, applyArmST = false, meleeProfile=null, martialAttack=null,techniquePlan=null,maOptions=null } = {}, overrideText = "") {
   if (!source || !["damage", "deriveddamage"].includes(source.type)) return null;
   const applyCommitted = committedStrong && committedStrongEligible(martialAttack,source);
   const action = { ...source };
@@ -426,7 +608,8 @@ function materializeDamageAction(source, actor, { dicePlusAdds = false, allOutSt
       mode,baseFormula:strength.baseFormula,source:strength.source,applied:strength.applied??null,
       modifiers:strength.strength.modifiers,ggaDamage:strength.strength.ggaDamage};
   }
-  const quality=meleeProfile?.quality;
+  const primaryStrike=techniquePlan?.primaryStrike;
+  const quality=primaryStrike?null:meleeProfile?.quality;
   if(quality){
     if(quality.damageBonus&&quality.damageTypes.includes(action.damagetype)){
       action.formula=resolveDerivedDamageFormula(action.formula,(quality.damageBonus>0?'+':'')+quality.damageBonus);
@@ -445,15 +628,15 @@ function materializeDamageAction(source, actor, { dicePlusAdds = false, allOutSt
       }
     }
   }
-  const grip=meleeProfile?.gripEffects;
-  const unarmed=meleeProfile?.unarmed;
+  const grip=primaryStrike?null:meleeProfile?.gripEffects;
+  const unarmed=primaryStrike?null:meleeProfile?.unarmed;
   if(unarmed&&!unarmed.alreadyIncluded&&!unarmed.manualDamage&&source.type==='deriveddamage'&&/^thr/i.test(source.derivedformula)){
     const bonus=unarmed.baseThrustDice*(unarmed.bonusPerDie+unarmed.naturalPerDie);
     action.formula=resolveDerivedDamageFormula(action.formula,(bonus>=0?'+':'')+bonus);
     if(!action.formula)return null;
     action.olegurpsUnarmed=structuredClone(unarmed);
   }
-  if(meleeProfile?.damageSkill?.bonusPerDie){
+  if(!primaryStrike&&meleeProfile?.damageSkill?.bonusPerDie){
     const dice=Number(/^(\d+)d/.exec(action.formula)?.[1]??0),bonus=dice*meleeProfile.damageSkill.bonusPerDie;
     action.formula=resolveDerivedDamageFormula(action.formula,'+'+bonus);
     if(!action.formula)return null;
@@ -464,19 +647,45 @@ function materializeDamageAction(source, actor, { dicePlusAdds = false, allOutSt
     action.formula=resolveDerivedDamageFormula(action.formula,(adjustment>=0?'+':'')+adjustment);
     if(!action.formula)return null;
   }
-  if (allOutStrong) action.formula = applyAllOutAttackStrong(action.formula);
+  if(techniquePlan){
+    if(!techniquePlan.available)throw Error(techniquePlan.errors.join(' '));
+    const dice=Number(/^(\d+)d/.exec(action.formula)?.[1]??0);
+    const strikeBonus=(primaryStrike?.bonusPerDie??0)*dice;
+    const strikeAdditions=(techniquePlan.strikes??[]).reduce((sum,strike)=>sum+strikeDamageDelta(strike,dice),0);
+    const delta=techniquePlan.damageFlat-(techniquePlan.damageReduction?Math.max(2,dice):0)+strikeBonus+strikeAdditions;
+    if(delta){action.formula=resolveDerivedDamageFormula(action.formula,(delta>0?'+':'')+delta);if(!action.formula)return null;}
+    if(techniquePlan.damageType)action.damagetype=techniquePlan.damageType;
+    action.olegurpsMeleeTechniques=structuredClone(techniquePlan);
+  }
+  if (allOutStrong&&!techniquePlan?.strikeManeuver) action.formula = applyAllOutAttackStrong(action.formula);
+  const optionAttack=maOptions?.projected;
+  if(optionAttack?.bonus||optionAttack?.flat){
+    const dice=Number(/^(\d+)d/.exec(action.formula)?.[1]??0);
+    const delta=dice*(optionAttack.bonus??0)+(optionAttack.flat??0);
+    if(delta)action.formula=resolveDerivedDamageFormula(action.formula,(delta>0?'+':'')+delta);
+    if(!action.formula)return null;
+  }
+  if(optionAttack?.knockbackOnly)action.olegurpsKnockbackOnly=true;
+  if(maOptions?.swingPenalty&&!optionAttack?.formula){
+    const dice=Number(/^(\d+)d/.exec(action.formula)?.[1]??0);
+    action.formula=resolveDerivedDamageFormula(action.formula,String(-Math.max(2,dice)));
+    if(!action.formula)return null;
+  }
   if (applyCommitted || defensiveAttack) {
-    action.formula = applyMartialArtsDamage(action.formula, { committedStrong:applyCommitted, defensiveAttack, strengthBased:applyCommitted });
-    if(applyCommitted)action.olegurpsCommittedStrong={applied:true,bonus:1,source:'MA100',sourceType:source.type,derivedformula:source.derivedformula};
+    const committed=applyCommitted&&!techniquePlan?.strikeManeuver;
+    action.formula = applyMartialArtsDamage(action.formula, { committedStrong:committed, defensiveAttack, strengthBased:committed });
+    if(committed)action.olegurpsCommittedStrong={applied:true,bonus:1,source:'MA100',sourceType:source.type,derivedformula:source.derivedformula};
   }
   if (dicePlusAdds) action.formula = modifyDicePlusAdds(action.formula);
-  if(meleeProfile?.damageCap){
+  if(!primaryStrike&&meleeProfile?.damageCap){
     const cap=/^1d([+-]\d+)?$/.exec(meleeProfile.damageCap);
     const value=/^(\d+)d(?:6)?([+-]\d+)?(.*)$/.exec(action.formula);
     if(!cap||!value)throw Error('Не удалось проверить предел Damage стрелы (LT63).');
     if(Number(value[1])>1||Number(value[2]??0)>Number(cap[1]??0))action.formula=meleeProfile.damageCap+value[3];
     action.olegurpsDamageCap={maximum:meleeProfile.damageCap,source:'LT63'};
   }
+  if(techniquePlan)action.overridetxt=action.formula;
+  if(techniquePlan?.strikes?.some(strike=>strike.procedure==='lethalEye'))action.hitlocation='Eye';
   if(source.next){
     action.next=materializeDamageAction(source.next,actor,{dicePlusAdds,allOutStrong,committedStrong,defensiveAttack,applyArmST},source.next.orig??'');
     if(!action.next)return null;
@@ -500,6 +709,13 @@ function structuredDamageAction(attack) {
   return null;
 }
 
+function projectedStrikeDamageAction(expression){
+ const model=inferMeleeDamageModel(expression);
+ if(model.mode!=='thrust')return fallbackDamageAction(expression);
+ const formula=model.bonus>0?'+'+model.bonus:model.bonus<0?String(model.bonus):'';
+ return {type:'deriveddamage',derivedformula:'thr',formula,damagetype:model.damageType,orig:expression};
+}
+
 function fallbackDamageAction(expression) {
   const match = String(expression ?? "").trim().match(
     /^(?<formula>(?:\d+d(?:6)?(?:[+-]\d+)?|\d+)(?:[xX*]\d+(?:\.\d+)?)?(?:\(\d*\.?\d+\))?!?)\s+(?<type>[^\s,]+)(?<extra>.*)$/u
@@ -515,21 +731,36 @@ function fallbackDamageAction(expression) {
 }
 
 export async function buildMeleeDamageAction({ actor, attack, damage, dicePlusAdds = false,
-  allOutStrong = false, committedStrong = false, defensiveAttack = false } = {}) {
+  allOutStrong = false, committedStrong = false, defensiveAttack = false,techniquePlan=null,maOptions=null } = {}) {
+  if(maOptions?.error)throw Error(maOptions.error);
+  if(techniquePlan?.available===false)throw Error(techniquePlan.errors.join(' '));
+  if(techniquePlan?.special?.special.kind&&techniquePlan.special.special.kind!=='attack')return null;
+  const optionAttack=maOptions?.projected;
+  const projection=optionAttack?.formula?
+    {damage:optionAttack.formula,part:optionAttack.action==='pummel'&&!optionAttack.reversed?'hand':'weapon'}:techniquePlan?.primaryStrike;
+  if(projection){
+    if(!projection.damage)throw Error('Для этой техники ещё не определён Damage.');
+    damage=projection.damage;
+    attack={...attack,damage:projection.damage,sourceDamage:'',damageModel:null,
+      applyArmST:optionAttack?.reversed?attack.applyArmST:['hand','hands','elbow','finger'].includes(projection.part),
+      meleeProfile:{...(optionAttack?.formula?{}:attack.meleeProfile),
+        strength:{maximumST:optionAttack?.reversed?attack.meleeProfile?.strength?.maximumST??null:null},
+        motion:projection.damage.startsWith('thr')?'thrust':'collision'}};
+  }
   const expression = String(damage ?? attack?.damage ?? "").trim();
   const sourceExpression = String(Array.isArray(attack?.sourceDamage)
     ? attack.sourceDamage.join(", ")
     : attack?.sourceDamage ?? "").trim();
   const hasDamageOverride = !!sourceExpression && expression !== sourceExpression;
-  let action = hasDamageOverride ? null : structuredDamageAction(attack);
+  let action = projection?projectedStrikeDamageAction(expression):hasDamageOverride?null:structuredDamageAction(attack);
   if (!action && expression) {
     const nativeParser = await getMeleeNativeDamageParser();
     action = parseCompleteMeleeDamage(expression,nativeParser) ?? (!nativeParser?fallbackDamageAction(expression):null);
   }
-  const applyStrong = allOutStrong && isStrengthBasedMeleeDamage(attack);
+  const applyStrong = (allOutStrong || maOptions?.effort==='mighty') && isStrengthBasedMeleeDamage(attack);
   return materializeDamageAction(action, actor,
     { dicePlusAdds, allOutStrong: applyStrong, committedStrong, defensiveAttack, applyArmST:attack?.applyArmST===true,
-      meleeProfile:attack?.meleeProfile??null,martialAttack:attack }, expression);
+      meleeProfile:attack?.meleeProfile??null,martialAttack:attack,techniquePlan,maOptions }, expression);
 }
 
 export function formatMeleeDamageAction(action) {
@@ -541,16 +772,19 @@ export function formatMeleeDamageAction(action) {
 }
 
 export async function prepareEffectiveMeleeDamage({ actor, attack, dicePlusAdds = false,
-  allOutStrong = false, committedStrong = false, defensiveAttack = false } = {}) {
+  allOutStrong = false, committedStrong = false, defensiveAttack = false,techniquePlan=null,sequence=null,techniqueTargets=null,strikePrerequisite=null,maOptions=null } = {}) {
   const action = await buildMeleeDamageAction({ actor, attack, dicePlusAdds, allOutStrong,
-    committedStrong, defensiveAttack });
+    committedStrong, defensiveAttack,techniquePlan,maOptions });
   if(!action)return null;
+  if(sequence?.kind==='whirlwind'&&sequence.location?.key)action.hitlocation=sequence.location.key;
   const components=[];for(let node=action;node;node=node.next)components.push(formatMeleeDamageAction(node));
   return {action,formula:components.join(', '),
     evidence:{version:1,sourceDamage:String(attack?.damage??''),damageModel:attack?.damageModel??inferMeleeDamageModel(attack?.damage),
       combatProfile:attack?.meleeProfile?structuredClone(attack.meleeProfile):null,
-      applyArmST:attack?.applyArmST===true,strength:action.olegurpsStrength??null,
-      martial:{dicePlusAdds,allOutStrong:allOutStrong&&isStrengthBasedMeleeDamage(attack),
+      applyArmST:attack?.applyArmST===true,strength:action.olegurpsStrength??null,...(techniquePlan?{techniques:structuredClone(techniquePlan)}:{}),...(sequence?{sequence:structuredClone(sequence)}:{}),...(techniqueTargets?{techniqueTargets:structuredClone(techniqueTargets)}:{}),
+      ...(strikePrerequisite?{strikePrerequisite:structuredClone(strikePrerequisite)}:{}),
+      ...(maOptions?{maOptions:structuredClone(maOptions)}:{}),
+      martial:{dicePlusAdds,allOutStrong:allOutStrong&&!techniquePlan?.strikeManeuver&&isStrengthBasedMeleeDamage(attack),
         committedStrongRequested:committedStrong,committedStrong:action.olegurpsCommittedStrong?.applied===true,defensiveAttack}}};
 }
 
@@ -568,6 +802,12 @@ export async function executeNativeMeleeDamage({ actor, attack, dicePlusAdds = f
   const targets = getCurrentTargetNames();
   let rolled = false;
   while (action) {
+    if(basicDamageOnly(action)){
+      const message=await rollBasicDamage(actor,action);
+      if(!message)return rolled;
+      action=action.next;rolled=true;
+      continue;
+    }
     await createGgaDamageWithEasterEgg({
       DamageChat,
       actor,

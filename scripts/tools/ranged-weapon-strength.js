@@ -38,6 +38,17 @@ export function rangedStrengthBase(actor, attack, governingSkill = resolveRanged
     source: clean ? 'ranged-skill:' + governingSkill.source : manual ? 'owner-override' : 'native-total', governingSkill };
 }
 
+export function canChooseRangedHand(actor, attack, profile, skill, catalogs = globalThis.OleGURPSQOL?.catalogs) {
+  const mode = catalogs?.getMode(profile?.binding?.confirmed?.modeId);
+  if (!mode || !rangedStrengthBase(actor, attack, skill).clean ||
+      profile.weaponStrength?.support?.confirmedType === 'pistol-two-handed' ||
+      /[†‡]/.test(profile.raw?.st ?? mode.stats?.strength ?? '')) return false;
+  if (rangedWeaponKind(mode).pistol) return true;
+  const published = mode.governing_skill?.skill;
+  return mode.weapon_family === 'beam' && published?.name === 'Beam Weapons' &&
+    published.specialization === 'Pistol' && !['two-handed-marker','two-handed'].includes(mode.hand_use?.value);
+}
+
 export function resolveRangedWeaponStrength({ actor, attack, profile, catalogs, weapon = null }) {
   const binding = profile.binding?.confirmed, modeId=binding?.modeId, mode=catalogs?.getMode(modeId), equipment=catalogs?.getEquipmentForMode(modeId);
   const instanceId=attack?.standaloneRef?.weaponId??profile.weaponId??attack?.data?.parentuuid??attack?.key??attack?.path;

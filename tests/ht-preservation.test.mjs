@@ -3,9 +3,10 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import { assertWeaponPreservation, restoreApprovedErrata, restoreHaflaErrata, sha256 } from "./fixtures/ht-preservation-contract.mjs";
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 
 const proof = readAuditFixture('ht-v1-3-preservation');
-const raw = await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json", import.meta.url), "utf8");
+const raw = restorePublishedCatalogCheckpoint(await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json", import.meta.url)), 'weapons');
 const catalog = JSON.parse(raw);
 const historical = restoreApprovedErrata(raw, proof);
 const mode = data => data.equipment.flatMap(item => item.modes).find(item => item.weapon_mode_id === "WRziobjV56cvaJtG2");

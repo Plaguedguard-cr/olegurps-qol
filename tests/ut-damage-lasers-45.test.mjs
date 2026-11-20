@@ -108,7 +108,7 @@ test('Semi-Portable chemical exception records user authority and unique UT115 t
   assert.equal(p.projectPolicy.authority,'user-approved-project-exception');
   assert.deepEqual(p.projectPolicy.tank,{sizeModifier:-2,dr:10,hp:12,splashDamage:'2d cor',splashRadiusYards:2,weightLb:null,cost:null});
   assert.match(p.projectPolicy.sourceConflict,/70\/Ep/);await f.battery();
-  const data=ammunitionChatData(f.profile());assert.equal(data.lines.length,3);assert.match(data.lines.join(' '),/SM−2, DR10, HP12/);
+  const data=ammunitionChatData(f.profile());assert.equal(data.lines.length,3);assert.match(data.lines.join(' '),/SM-2, DR10, HP12/);
 });
 test('old Semi-Portable E-cell does not authorize chemical fire or get silently converted',async()=>{
   const f=await gaussFixture('WY4jJpxSq5uG4KNl2'),s=f.state();s.weapons[0].beamBattery={type:'E',capacity:100,charge:73,cells:1,nonRechargeable:false};

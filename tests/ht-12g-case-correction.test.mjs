@@ -16,6 +16,7 @@ import { createShotSnapshot } from "../scripts/tools/attack-profile-resolver.js"
 import { resolveHTCatalogFacts } from "../scripts/ht-option-eligibility.js";
 import { AutomaticAmmunitionProfileService } from "../scripts/tools/automatic-ammunition-profiles.js";
 import { assertWeaponPreservation, restoreHaflaErrata } from "./fixtures/ht-preservation-contract.mjs";
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 import { assertUnprovenPressure, ownerRuntime } from "./fixtures/ht-plus-p-owner.mjs";
 import { setAmmunitionApproval } from "../scripts/tools/ammunition-approval-service.js";
 
@@ -163,7 +164,7 @@ test("unchanged source catalogs and historical audits retain exact byte hashes",
       const proof = readAuditFixture('ht-v1-3-preservation');
       assertWeaponPreservation(bytes.toString("utf8"), proof); // Current bytes: only approved FN BAR and HAFLA errata.
       bytes = restoreHaflaErrata(bytes.toString("utf8"), proof); // Keep the original 12G-era byte baseline too.
-    }
+    } else bytes=restorePublishedCatalogCheckpoint(bytes,'ht');
     assert.equal(createHash("sha256").update(bytes).digest("hex"),hash);
   }
   assert.equal(rows.length,21);assert.ok(rows.every(r=>r.reason==="plus-p-heavy-load-baseline-unresolved"));

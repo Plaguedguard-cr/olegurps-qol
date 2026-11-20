@@ -209,8 +209,8 @@ test("Russian bundle exactly matches locale; English and poisoned caches cannot 
 });
 test("ammo instructions are exact, numbered-ready and preserve all mandatory manual limits",()=>{
   assert.match(automaticAmmoText("F2Falloff","en"),/floor\(207\/\(2×3\)\)=34/);
-  assert.match(f3Text("RuleIllumination"),/−3/);assert.doesNotMatch(f3Text("RuleIllumination"),/−5/);
-  assert.match(f3Text("RuleSignal"),/−5/);
+  assert.match(f3Text("RuleIllumination"),/-3/);assert.doesNotMatch(f3Text("RuleIllumination"),/-5/);
+  assert.match(f3Text("RuleSignal"),/-5/);
   // HT171: radius (yards) / 5 is development time in seconds, not a smaller cloud.
   for(const lang of ["ru","en"]){const runtime={game:{i18n:{lang}}};
     assert.match(f3Text("RuleOtherCloud",runtime),/радиус\/5 секунд/);
@@ -218,5 +218,5 @@ test("ammo instructions are exact, numbered-ready and preserve all mandatory man
     assert.match(f3Text("RuleCloud",runtime),/1 секунду на каждые 5 ярдов радиуса/);
   }
   assert.match(f3Text("RuleWP"),/1d\(0\.2\) burn/);assert.match(f3Text("RuleWP"),/6 интервалов \/ 60 секунд/);
-  assert.match(f3Text("RuleGasVision"),/только участок/);assert.match(f3Text("RuleGasVision"),/−3 за ярд/);assert.match(automaticAmmoText("F1VomitingGas"),/5×MoF/);
+  assert.match(f3Text("RuleGasVision"),/только участок/);assert.match(f3Text("RuleGasVision"),/-3 за ярд/);assert.match(automaticAmmoText("F1VomitingGas"),/5×MoF/);
 });

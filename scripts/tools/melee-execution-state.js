@@ -2,6 +2,7 @@
 // legitimately change between prepared slots. No Actor.system writes.
 import {moduleMessage} from '../localization.js';
 import {getAttackOverrideKey} from './weapon-attack-overrides.js';
+import {physicalMeleeIdentity,meleeActorTurnKey} from './melee-technique-sequences.js';
 const canonical=value=>JSON.stringify(value,(_key,v)=>v&&typeof v==='object'&&!Array.isArray(v)?Object.fromEntries(Object.keys(v).sort().map(k=>[k,v[k]])):v);
 export function captureMeleeExecutionState(actor,attack) {
  const ref=attack?.standaloneRef,eq=attack?.equipmentRef;
@@ -18,6 +19,9 @@ export function captureMeleeExecutionState(actor,attack) {
    resource:resource?{replacementId:resource.replacementId,capacity:resource.capacity,type:resource.type,nonRechargeable:resource.nonRechargeable}:null});
 }
 export function assertMeleeExecutionState(actor,attack,expected) {
+ if(Object.values(actor?.getFlag?.('olegurps-qol','meleeTechniqueReadiness')??{}).some(s=>s.turnEnded&&s.turnKey===meleeActorTurnKey(actor)))throw Error('Провал Reverse Grip завершил ход персонажа; другая атака в этом ходу невозможна.');
+ const readiness=actor?.getFlag?.('olegurps-qol','meleeTechniqueReadiness')?.[encodeURIComponent(String(physicalMeleeIdentity(attack))).replaceAll('.','%2E')];
+ if(readiness?.dropped)throw Error('Оружие выпущено после Reverse Grip; требуется подтверждённый Ready/подбор на новом ходу.');
  if(expected!=null&&captureMeleeExecutionState(actor,attack)!==expected)
   throw Error('\u041e\u0440\u0443\u0436\u0438\u0435 \u0438\u043b\u0438 \u0435\u0433\u043e \u043d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438 \u0438\u0437\u043c\u0435\u043d\u0438\u043b\u0438\u0441\u044c. \u041f\u043e\u0434\u0433\u043e\u0442\u043e\u0432\u044c\u0442\u0435 \u0430\u0442\u0430\u043a\u0443 \u0437\u0430\u043d\u043e\u0432\u043e.');
 }

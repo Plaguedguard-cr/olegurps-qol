@@ -21,8 +21,8 @@ export function beamConditions(id) {
   if(p.chemical){
     lines.push('Химический выхлоп: 1 HP tox/с в пределах 1 ярда. UT114.');
     lines.push(id==='WY4jJpxSq5uG4KNl2'?
-      'Отдельный бак: SM−2, DR10, HP12; при выводе из строя 2d cor в радиусе 2 ярдов, вручную. UT115.':
-      'Ранец: SM−4, DR10, HP7; при выводе из строя 1d cor в радиусе 1 ярда, вручную. UT115.');
+      'Отдельный бак: SM-2, DR10, HP12; при выводе из строя 2d cor в радиусе 2 ярдов, вручную. UT115.':
+      'Ранец: SM-4, DR10, HP7; при выводе из строя 1d cor в радиусе 1 ярда, вручную. UT115.');
   }
   return lines.map(text=>({id:'BeamCondition',text}));
 }

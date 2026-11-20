@@ -1,4 +1,5 @@
 import { readAuditFixture, assertHistoricalAudit } from './fixtures/ht-audit-contracts.mjs';
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs/promises";
@@ -13,6 +14,8 @@ proof.catalogs.ht.currentSha256 = "435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc
 proof.catalogs.weapons.currentSha256 = "f98687171a69b27ff46d89ab12d24b457375972de293fe482e881aceb63b5460";
 const audit = readAuditFixture('olegurps_ht178_68_mode_pairs_v1');
 const originals = Object.fromEntries(await Promise.all(Object.entries(CATALOG_DEFINITIONS).map(async ([b, d]) => [b, JSON.parse(await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url), "utf8"))])));
+const historical = Object.fromEntries(await Promise.all(Object.entries(CATALOG_DEFINITIONS).map(async ([b, d]) => [b,
+  restorePublishedCatalogCheckpoint(await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url)), b)])));
 const hash = data => createHash("sha256").update(JSON.stringify(data)).digest("hex");
 async function loaded(mutate = () => {}) { const data = structuredClone(originals); mutate(data); const calls = []; const catalogs = new CatalogService({ logger: null, fetcher: async url => { const b = Object.keys(CATALOG_DEFINITIONS).find(key => url.endsWith(CATALOG_DEFINITIONS[key].filename)); assert.ok(b); calls.push(b); return { ok: true, json: async () => data[b] }; } }); const service = new AmmunitionCompatibilityService(catalogs); await service.load(); return { service, catalogs, calls }; }
 const { service, catalogs, calls } = await loaded();
@@ -45,6 +48,7 @@ for (const pair of audit.pairs) test("HT178 explicit " + pair.mode_id + " / " + 
   assert.equal(catalogs.getStatus("ht").relationships.internal.ht178Pairs, 68); assert.ok(catalogs.getStatus("lt").warnings.some(w => w.code === "HISTORICAL_SOURCE_POINTER"));
 });
  test("all prior equipment IDs, modes and attack data preserved except declared tags and exact HT120 range / HT145 HAFLA Acc errata", () => {
+  const checkpoints = Object.fromEntries(Object.entries(historical).map(([book, bytes]) => [book, JSON.parse(bytes)]));
   const correction = originals.weapons.catalog_errata_v1.mode_stat_corrections.WRziobjV56cvaJtG2;
   assert.deepEqual(correction, { field: "range", previous: "1,600", corrected: "1,600/6,600" });
   assert.equal(originals.weapons.catalog_errata_v1.revision, 2);
@@ -53,17 +57,17 @@ for (const pair of audit.pairs) test("HT178 explicit " + pair.mode_id + " / " + 
   assert.deepEqual(haflaCorrection, { field: "accuracy", previous: null, corrected: "0" });
   assert.equal(nativeMode(originals, "Wr3VDL3Z6SR3KCz3K").stats.accuracy, haflaCorrection.corrected);
   assert.equal(nativeMode(originals, "WRziobjV56cvaJtG2").stats.range, correction.corrected);
-  const equipment = structuredClone(originals.weapons.equipment); for (const e of equipment) for (const m of e.modes) {
+  const equipment = checkpoints.weapons.equipment; for (const e of equipment) for (const m of e.modes) {
     const tag = originals.weapons.rules_audit_v5_6.ut_mode_tag_additions[m.weapon_mode_id];
     if (tag) m.ammunition_profile.platform_tags = m.ammunition_profile.platform_tags.filter(t => t !== tag);
     if (m.weapon_mode_id === "WRziobjV56cvaJtG2") m.stats.range = correction.previous;
     if (m.weapon_mode_id === "Wr3VDL3Z6SR3KCz3K") m.stats.accuracy = haflaCorrection.previous;
   } assert.equal(hash(equipment), proof.weaponEquipmentHash);
-  for (const [b, collections] of Object.entries(proof.preservedCollections)) for (const [collection, expected] of Object.entries(collections)) { const records = structuredClone(originals[b][collection]); if (b === "ht") for (const record of records) delete record.eligibility_v1; assert.equal(hash(records), expected, b + "/" + collection); }
+  for (const [b, collections] of Object.entries(proof.preservedCollections)) for (const [collection, expected] of Object.entries(collections)) { const records = checkpoints[b][collection]; if (b === "ht") for (const record of records) delete record.eligibility_v1; assert.equal(hash(records), expected, b + "/" + collection); }
   const rules = structuredClone(originals.ht.interchangeability_rules); for (const r of rules) delete r.explicit_direction_v1; assert.equal(hash(rules), proof.legacyHTRulesHash);
 });
- test("LT unchanged and new catalog bytes match verified hashes", async () => {
-  for (const [b, d] of Object.entries(CATALOG_DEFINITIONS)) { const bytes = await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url)); assert.equal(createHash("sha256").update(bytes).digest("hex"), b === "lt" ? proof.ltSha256 : proof.catalogs[b].currentSha256); }
+ test("Published catalog extensions preserve the prior verified byte checkpoints", () => {
+  for (const [b, bytes] of Object.entries(historical)) { assert.equal(createHash("sha256").update(bytes).digest("hex"), b === "lt" ? proof.ltSha256 : proof.catalogs[b].currentSha256); }
 });
  test("conventional 12G case gains only the seven HT106 permissions, never general higher-pressure admission", () => {
   const pairs = audit.pairs.filter(p => p.source_ammo_item_id.includes("heavy_load") || p.target_ammo_item_id.includes("heavy_load")); assert.ok(pairs.length);

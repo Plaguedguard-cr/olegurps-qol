@@ -478,7 +478,7 @@
 .melee-assistant .gam-melee-fields {
   align-content: start;
   grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-  grid-template-areas: "manual move" "rapid deceptive" "allout evaluate" "slots slots" "martial martial";
+  grid-template-areas: "manual move" "rapid deceptive" "allout evaluate" "slots slots" "martial martial" "maoptions maoptions";
 }
 .melee-assistant .gam-melee-manual { grid-area:manual; }
 .melee-assistant .gam-melee-move { grid-area:move; }
@@ -488,6 +488,7 @@
 .melee-assistant .gam-melee-fields > .gam-melee-evaluate { grid-area:evaluate; }
 .melee-assistant .gam-melee-fields > .gam-melee-attack-slots { grid-area:slots; }
 .melee-assistant .gam-melee-fields > .gam-melee-martial-options { grid-area:martial; }
+.melee-assistant .gam-melee-fields > .gam-ma-options { grid-area:maoptions; }
 .melee-assistant .gam-melee-left { container-type:inline-size; container-name:melee-panel; }
 .melee-assistant .gam-melee-maneuver-toggle { display:flex; align-items:center; gap:6px; margin:0; white-space:normal; }
 .melee-assistant .gam-melee-maneuver-toggle input { flex:0 0 auto; width:auto; margin:0; }
@@ -497,14 +498,27 @@
 .gam-melee-editor .gam-melee-editor-check input { width:auto; flex:0 0 auto; margin:0; }
 @container melee-panel (max-width:26rem) {
   .melee-assistant .gam-melee-fields { grid-template-columns:minmax(0,1fr);
-    grid-template-areas:"manual" "move" "rapid" "deceptive" "allout" "evaluate" "slots" "martial"; }
+    grid-template-areas:"manual" "move" "rapid" "deceptive" "allout" "evaluate" "slots" "martial" "maoptions"; }
 }
 
 .melee-assistant .gam-melee-all-out-controls {
-  display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(76px,auto);
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+}
+
+.melee-assistant .gam-melee-all-out-controls .gam-melee-maneuver-toggle {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.melee-assistant .gam-melee-all-out-variant {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 8em;
   min-width: 0;
 }
 
@@ -520,6 +534,8 @@
   height: 30px;
   margin: 0;
 }
+
+.melee-assistant .gam-melee-all-out-variant .gam-melee-martial-help { flex: 0 0 auto; }
 
 .melee-assistant .gam-melee-martial-options {
   grid-column: 1 / -1;
@@ -548,6 +564,38 @@
   cursor: help;
   font-size: 0.76em;
   opacity: 0.75;
+}
+
+.gam-fire-fields > .gam-ma-options {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 4px;
+}
+
+.gam-ma-options .gam-melee-martial-row,
+.gam-ma-options .gam-melee-martial-row label {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+.gam-ma-options .gam-melee-martial-row :is(select, input) { width: auto; margin: 0; }
+.gam-ma-options .gam-melee-martial-row input[type="number"] { width: 5em; }
+.gam-ma-options .gam-melee-martial-help { cursor: help; font-size: 0.76em; opacity: 0.75; }
+
+.melee-assistant .gam-technique-reference {
+  cursor: help;
+}
+
+.melee-assistant .gam-technique-reference:hover {
+  background: var(--button-background-color, transparent);
+  color: var(--button-text-color, inherit);
+}
+
+#tooltip.gam-melee-special-hint {
+  max-width: min(430px, calc(100vw - 24px));
+  text-align: left;
 }
 
 .melee-assistant .gam-melee-martial-row small {
@@ -653,6 +701,22 @@
 }
 .olegurps-qol .gam-attack-slot.gam-rapid-attack-3 {
   color: var(--gam-rapid-attack-3);
+}
+.melee-assistant .gam-melee-rs3-color { --gam-melee-slot-color: #83d875; }
+.melee-assistant .gam-melee-ea-color-1 { --gam-melee-slot-color: #b99aff; }
+.melee-assistant .gam-melee-ea-color-2 { --gam-melee-slot-color: #56dacd; }
+.melee-assistant .gam-melee-ea-color-3 { --gam-melee-slot-color: #ff946b; }
+.melee-assistant .gam-melee-ea-color-4 { --gam-melee-slot-color: #f28cde; }
+.melee-assistant .gam-attack-slot.gam-melee-colored-slot {
+  color: var(--gam-melee-slot-color);
+}
+.melee-assistant .gam-hit-selection-marker.gam-melee-colored-slot {
+  background: var(--gam-melee-slot-color);
+  color: var(--gam-melee-slot-color);
+}
+.melee-assistant .gam-hit-region-marker.gam-melee-colored-slot .gam-hit-region-shape {
+  stroke: var(--gam-melee-slot-color);
+  filter: drop-shadow(0 0 2px var(--gam-melee-slot-color));
 }
 .olegurps-qol .gam-attack-slots {
   display: flex;

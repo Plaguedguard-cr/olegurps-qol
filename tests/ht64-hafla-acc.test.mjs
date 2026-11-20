@@ -8,6 +8,7 @@ import { readStandaloneAttack } from "../scripts/tools/standalone-attack-service
 import { FireService, normalizeAccuracy, calculateAimBonus, resolveAimedFireBonuses } from "../scripts/tools/fire-service.js";
 import { createFireControlContext } from "../scripts/tools/fire-control-context.js";
 import { assertWeaponPreservation, restoreHaflaErrata } from "./fixtures/ht-preservation-contract.mjs";
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 
 const mid = "Wr3VDL3Z6SR3KCz3K", aid = "ht_specific_hafla_dm34_35mm_wp";
 test("HAFLA source, draft snapshot and ordinary standalone attack preserve known Acc zero", async () => {
@@ -51,7 +52,7 @@ test("unknown Acc remains unknown and positive Acc/caps/Move and Attack remain u
   assert.equal(resolveAimedFireBonuses({accuracy:0,aimSeconds:3,moveAndAttack:true}).aimBonus,0);
 });
 test("source errata is exactly HAFLA null to zero; all other weapon stats/IDs/hashes stay unchanged", async () => {
-  const raw = await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",import.meta.url),"utf8"), proof = readAuditFixture('ht-v1-3-preservation');
+  const raw = restorePublishedCatalogCheckpoint(await fs.readFile(new URL("../data/catalogs/olegurps_weapon_reference_catalog_v5_6.json",import.meta.url)), 'weapons'), proof = readAuditFixture('ht-v1-3-preservation');
   assertWeaponPreservation(raw,proof);
   const previous = JSON.parse(restoreHaflaErrata(raw,proof)), expected = structuredClone(previous);
   expected.equipment.flatMap(e=>e.modes).find(m=>m.weapon_mode_id===mid).stats.accuracy="0";

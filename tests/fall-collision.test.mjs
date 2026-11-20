@@ -117,7 +117,7 @@ for (const [name, fn]of [
 ])test('Reject invalid '+name,()=>assert.throws(fn));
 test('Summary preserves visible result and closed calculation details',()=>{
   const html=fallCollisionMessage(fall({height:22,acrobatics:true,breakable:true,barrierHp:3,barrierDr:2}));
-  const visible=html.split('<details')[0];assert.match(visible,/4к дробящего/);assert.match(visible,/−5 ярдов/);assert.match(visible,/не более 5/);
+  const visible=html.split('<details')[0];assert.match(visible,/4к дробящего/);assert.match(visible,/-5 ярдов/);assert.match(visible,/не более 5/);
   assert.match(html,/Исходная высота/);assert.match(html,/Эффективная высота/);assert.doesNotMatch(html,/<details[^>]*\sopen/);
   assert.match(fallCollisionMessage(calculateCollision('overrun',D.overrun)),/Дополнительно A → B/);
 });

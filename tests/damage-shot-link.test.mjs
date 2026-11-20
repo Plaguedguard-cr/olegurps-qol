@@ -111,6 +111,19 @@ test('melee snapshot replays exact numeric action and properties after ST and so
     assert.equal(JSON.stringify(source.message.flags),before);assert.equal(JSON.stringify(source.actor.inventory),inventory);
   }
 });
+
+test('MA-PENALTY sequence Damage uses frozen Token identity and restores current targets',async()=>{
+ const fx=fixture({effects:true}),s=fx.source(),p=structuredClone(s.shot.profile),changes=[];
+ p.damage={formula:'1d cut',nativeSafe:true,components:[],rules:{meleeSnapshot:{version:1,action:{type:'damage',formula:'1d',damagetype:'cut'}},meleeSequence:{kind:'dualWeaponAttack'}}};
+ p.context={...p.context,techniqueTargets:[{tokenId:'frozen',actorId:'victim'}]};
+ s.shot=createShotSnapshot(p,{attackId:'attack-A',messageId:'A'});s.message.flags[scope].shotSnapshot=structuredClone(s.shot);
+ fx.runtime.canvas={scene:{tokens:new Map([['frozen',{actorId:'victim'}]])}};
+ fx.runtime.game.user.targets=new Set([{id:'current'}]);fx.runtime.game.user.updateTokenTargets=async ids=>{changes.push([...ids]);fx.runtime.game.user.targets=new Set(ids.map(id=>({id})))};
+ const saved=JSON.stringify(s.message.flags);await fx.damage(s);
+ assert.deepEqual(changes,[['frozen'],['current']]);assert.deepEqual([...fx.runtime.game.user.targets].map(t=>t.id),['current']);assert.equal(JSON.stringify(s.message.flags),saved);
+ changes.length=0;fx.runtime.canvas.scene.tokens.set('frozen',{actorId:'replacement-actor'});await fx.damage(s);
+ assert.deepEqual(changes,[[],['current']],'A reused Token ID cannot redirect historical Damage to another Actor');
+});
 test('M2.8 Sedgley frozen linked bullet keeps native parser metadata and source identity without another Attack',async()=>{
   const fx=fixture({effects:true,nativeMetadata:true}),s=fx.source(),p=structuredClone(s.shot.profile);
   p.damage={formula:'1d-1 cr',nativeSafe:true,components:[{role:'kinetic',status:'resolved',formula:'1d-1 cr'},{role:'linked',status:'resolved',formula:'2d-1 pi'}],rules:{componentOrder:['kinetic','linked'],meleeSnapshot:{version:1,action:{type:'damage',formula:'1d-1',damagetype:'cr'}},htSpecial:{manualLinkedAction:{type:'damage',formula:'2d-1',damagetype:'pi'}}}};

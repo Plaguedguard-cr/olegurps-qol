@@ -11,7 +11,7 @@
   },
   {
     "file": "scripts/tools/fright.js",
-    "text": "    [12,12,\"12\",\"Спазмы желудка. Рвота в течение (25 − ЗД) секунд, затем — каждую секунду бросок против ЗД для восстановления.\"],",
+    "text": "    [12,12,\"12\",\"Спазмы желудка. Рвота в течение (25 - ЗД) секунд, затем — каждую секунду бросок против ЗД для восстановления.\"],",
     "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
   },
   {
@@ -31,12 +31,12 @@
   },
   {
     "file": "scripts/tools/fright.js",
-    "text": "    [36,36,\"36\",\"Серьёзный физический эффект — как в пункте 24, но эквивалентен −20 очкам.\"],",
+    "text": "    [36,36,\"36\",\"Серьёзный физический эффект — как в пункте 24, но эквивалентен -20 очкам.\"],",
     "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
   },
   {
     "file": "scripts/tools/fright.js",
-    "text": "    [37,37,\"37\",\"Серьёзный физический эффект — как в пункте 24, но эквивалентен −30 очкам.\"],",
+    "text": "    [37,37,\"37\",\"Серьёзный физический эффект — как в пункте 24, но эквивалентен -30 очкам.\"],",
     "reason": "Existing source table wording retained as a book excerpt (Basic Set Fright Check table)."
   },
   {
@@ -48,5 +48,40 @@
     "file": "scripts/tools/ammunition-chat-summary.js",
     "text": "    for (const separator of [' \\u2014 ', ' – ']) if (name.endsWith(separator + p.note)) {",
     "reason": "Read-only matching of legacy persisted names; no UI output or data migration."
+  },
+  {
+    "file": "scripts/tools/combat-technique-targeted.js",
+    "text": "  .replace(/[ё]/g, \"е\").replace(/[‐‑‒–—−]/g, \"-\")",
+    "reason": "Input normalization of GGA/GCS technique names; character class accepts source punctuation and is never rendered as UI text."
+  },
+  {
+    "file": "scripts/tools/melee-penalty-techniques.js",
+    "text": "export const techniqueIdentity=v=>String(v??'').normalize('NFKC').trim().toLowerCase().replace(/[‐‑‒–—−]/g,'-').replace(/\\s+/g,' ');",
+    "reason": "Input normalization of GGA/GCS technique names; character class accepts source punctuation and is never rendered as UI text."
+  },
+  {
+    "file": "scripts/tools/ma-combat-perks.js",
+    "text": "  .replace(/[‐‑‒–—−]/g, '-').replace(/\\s+/g, ' ');",
+    "reason": "Input normalization for matching perk names replaces all accepted dash variants with ASCII before comparison."
+  },
+  {
+    "file": "scripts/tools/damage.js",
+    "text": "    .replace(/\\u2212/g, \"-\")",
+    "reason": "Accepts the typographic minus in damage formulas entered by users."
+  },
+  {
+    "file": "scripts/ht-specialized-platforms.js",
+    "text": "    const bulk=String(overrides.hostBulk??'').replaceAll('\\u2212','-');",
+    "reason": "Reads legacy or user-entered host Bulk."
+  },
+  {
+    "file": "scripts/ht-specialized-platforms.js",
+    "text": "  const host=String(overrides.hostBulk??'').trim().replaceAll('\\u2212','-');",
+    "reason": "Reads legacy or user-entered host Bulk."
+  },
+  {
+    "file": "scripts/ut-exotic-beam-source.js",
+    "text": "const normalize=s=>String(s).replace(/\\s/g,'').replaceAll('×','x').replaceAll('−','-');",
+    "reason": "Reads source damage formulas with either minus character."
   }
 ]

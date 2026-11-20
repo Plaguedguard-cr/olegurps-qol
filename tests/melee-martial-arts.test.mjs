@@ -13,8 +13,8 @@ import {
 } from "../scripts/tools/melee-service.js";
 
 class FakeApplicationV2 {}
-class FakeInput { constructor(name, checked = false) { this.name = name; this.checked = checked; } }
-class FakeSelect { constructor(name, value) { this.name = name; this.value = value; } }
+class FakeInput { constructor(name, checked = false) { this.name = name; this.checked = checked; this.dataset = {}; } }
+class FakeSelect { constructor(name, value) { this.name = name; this.value = value; this.dataset = {}; } }
 globalThis.HTMLInputElement = FakeInput;
 globalThis.HTMLSelectElement = FakeSelect;
 globalThis.foundry = { applications: { api: { ApplicationV2: FakeApplicationV2 } },

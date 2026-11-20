@@ -2,7 +2,8 @@ import { generateId } from "../random-id.js";
 import {exoticDamageProvenance} from './exotic-beam-damage.js';
 import {renderLTFlameBurn} from './lt-flame-burn.js';
 import {applyLTBowDamageResult} from './lt-bow.js';
-import { installMeleeNativeDamage, numericMeleeDamageEvent } from './melee-native-damage.js';
+import { installMeleeNativeDamage, numericMeleeDamageEvent, basicDamageOnly, rollBasicDamage } from './melee-native-damage.js';
+import {withFoundryTargets} from './foundry-targets.js';
 import { immutableCopy, SHOT_FLAG_SCOPE } from "./attack-profile-resolver.js";
 import { diagnoseGgaDamageAdapters, warnGgaDamageCompatibility, ammoEffectText } from "./gga-damage-compatibility.js";
 import { appendInstructionSteps } from "../localization.js";
@@ -316,9 +317,19 @@ export function installDamageShotLink(runtime = globalThis) {
       return false;
     }
     // GGA's LastActor may belong to another window. Use this clicked source's Actor; native canRoll still runs.
+    if(basicDamageOnly(dispatched)&&context.status==='linked'){
+      const title=dispatched.olegurpsMeleeTechniques?.primaryStrike?.name;
+      return rollBasicDamage(context.actor??actor,dispatched,title,
+        {attackId:context.shot.attackId,originatingAttackMessageId:context.sourceMessageId}).then(Boolean);
+    }
     let forwarded=forwardEvent(event,context);
     if((context.shot?.damage?.rules?.meleeSnapshot||ltLinkedShot(context.shot))&&dispatched?.type==='damage'){
       forwarded=numericMeleeDamageEvent(forwarded,dispatched);events.set(forwarded,context);
+    }
+    if(context.shot?.damage?.rules?.meleeSequence){
+      const references=context.shot.context?.techniqueTargets??[];
+      const ids=references.filter(r=>runtime.canvas?.scene?.tokens?.get?.(r.tokenId)?.actorId===r.actorId).map(r=>r.tokenId);
+      return withFoundryTargets(ids,()=>originals.perform.call(this,dispatched,context.actor??actor,forwarded,...args),runtime);
     }
     return originals.perform.call(this, dispatched, context.actor ?? actor, forwarded, ...args);
   };

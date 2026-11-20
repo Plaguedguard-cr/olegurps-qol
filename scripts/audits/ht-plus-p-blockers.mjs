@@ -82,7 +82,7 @@ export function auditPlusPBlockers({ catalogs, compatibility }) {
         linkedModeIds: ammo.native_linked_mode_ids ?? [], flags: mode.resolution_flags ?? [] });
     const loading = ammo.ammunition_construction === "powder_and_shot" || ammo.ammunition_class === "separate_powder_and_shot";
     if (loading) restrictions.push({ code: "plus-p-loading-check-required", status: "GM-condition",
-      detail: "До снаряжения GM подтверждает Armoury (Small Arms) или IQ-based Guns−2; это не штраф стрелка и не недостающий численный вход." });
+      detail: "До снаряжения GM подтверждает Armoury (Small Arms) или IQ-based Guns-2; это не штраф стрелка и не недостающий численный вход." });
     const standaloneReadinessRestrictions = [];
     if (raw.acc === null || !Number.isFinite(Number(String(raw.acc).split("+")[0]))) standaloneReadinessRestrictions.push("Acc");
     if (!/^\d+$/.test(String(raw.rcl)) || Number(raw.rcl) < 1) standaloneReadinessRestrictions.push("Rcl");

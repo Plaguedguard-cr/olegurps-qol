@@ -11,8 +11,11 @@ globalThis.GURPS = { ModifierBucket: { modifierStack: { modifierList: [] } } };
 const { FirePreparationApp } = await import("../scripts/tools/fire-preparation-app.js");
 
 function fixture({ perk = true, attackLevel = 13 } = {}) {
-  const saved = { weapons: [{ id: "ak", weaponBond: false }, { id: "control", weaponBond: false }] };
+  const saved = { weapons: ["ak", "control"].map(id => ({
+    id, weaponBond: false, loadedIndex: 0, magazines: [10], totalAmmo: 10
+  })) };
   const actor = { id: "actor", getFlag(scope, key) {
+    if (scope === "olegurps-qol" && key === "strengthAdjustments") return undefined;
     assert.equal(scope, "world"); assert.equal(key, "gurpsAmmoManager"); return saved;
   }, system: { skills: { rifle: { name: "Guns/TL9 (Rifle)", uuid: "rifle", import: 13, level: 13 } },
     ads: perk ? { bond: { name: "Weapon Bond" } } : {} } };

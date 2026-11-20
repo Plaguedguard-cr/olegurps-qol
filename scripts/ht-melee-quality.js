@@ -55,7 +55,7 @@ export function resolveHTMeleeQuality(p,s={}, {imported=false,manualDamage=false
  const compoundUnknown=p.gradePriceShift&&material==='stainless'&&!high&&!s.quality;
  const combinedBladeCostUnknown=p.combined&&p.damagePart==='blade'&&(grade!==p.baselineQuality||!['published','steel'].includes(material)||blade==='superfine'||s.coating);
  const price=p.cost==null||unknown||compoundUnknown||combinedBladeCostUnknown?null:p.cost*(fixed?1:(to.scale??1)*edgeMultiplier*((paidGrade?.costMultiplier??1)+(s.coating?2:0)));
- const hints=[...(p.hints??[]),...(material==='stainless'?['Stainless Steel: для sword стандарт Cheap до ТУ6 и Good с ТУ7; улучшения ×8/×40. Отдельный −1 cut не задан. HT198.']:[]),
+ const hints=[...(p.hints??[]),...(material==='stainless'?['Stainless Steel: для sword стандарт Cheap до ТУ6 и Good с ТУ7; улучшения ×8/×40. Отдельный -1 cut не задан. HT198.']:[]),
   ...(to.breakageQuality?['Материал: поломка как '+to.breakageQuality+'; обычный Damage без отдельной поправки. HT198.']:[]),
   ...(blade==='superfine'?['Superfine: итоговые +2 cut/imp и AD(2), без дополнительного Fine; согласованное консервативное правило модуля. UT163.']:[]),
   ...(weaponTL===null?['ТУ изготовления не задан: опубликованный профиль сохранён. ТУ кампании не подставляется.']:[]),

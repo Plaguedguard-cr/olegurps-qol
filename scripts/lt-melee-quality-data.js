@@ -87,7 +87,7 @@ export function ltMaterialEffect(profile,id){
 export function ltMaterialHints(profile,id,quality){
  const m=LT_MATERIALS[id],out=[];
  if(!m)return out;
- if(id==='bone')out.push('Кость: −1 к урону. На предусмотренном LT71 броске поломки 1–2 ломает всё оружие; проверка и последствия вручную.');
+ if(id==='bone')out.push('Кость: -1 к урону. На предусмотренном LT71 броске поломки 1–2 ломает всё оружие; проверка и последствия вручную.');
  if(id==='horn')out.push('Рог/зуб: режущее лезвие наносит cr; колющий наконечник имеет AD(0.5). LT71.');
  if(id==='wood'||id==='greenWood')out.push('Дерево: кромка наносит cr; колющий наконечник имеет AD(0.5). Закалка огнём и состояние кромки выбираются вручную. LT71.');
  if(id==='obsidian')out.push(profile.ltConstruction.construction==='obsidian-edge'?

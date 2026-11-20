@@ -5,6 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 import { CatalogService, CATALOG_DEFINITIONS } from '../scripts/catalog-service.js';
 import { AmmunitionCompatibilityService } from '../scripts/ammunition-compatibility-service.js';
 import { AttackProfileResolver, createShotSnapshot } from '../scripts/tools/attack-profile-resolver.js';
@@ -55,7 +56,7 @@ test('protected source bytes, IDs, GCS hashes, unrelated modes and HT/LT retaine
   const hashes={weapons:'f98687171a69b27ff46d89ab12d24b457375972de293fe482e881aceb63b5460',ut:'888dd25f46b43c8d51d7e81b529d616d84e1cde6591ffc0da5a5b9613d527ccc',ht:'435ed962d86dd8f097bd61ffb0553c703b465cb5e6ebc611f34c8c64734be385',lt:'2e520c12f437ca917ab87cf6322128ce2e4776f7abd7e1a547503681a0914cdd'};
   for(const [b,d]of Object.entries(CATALOG_DEFINITIONS)) {
     const bytes=await readFile(new URL('../data/catalogs/'+d.filename,import.meta.url));
-    assert.equal(createHash('sha256').update(bytes).digest('hex'),hashes[b]);
+    assert.equal(createHash('sha256').update(restorePublishedCatalogCheckpoint(bytes,b)).digest('hex'),hashes[b]);
     assert.deepEqual(catalogs.getSourceCatalog(b),raw[b]);
   }
   assert.deepEqual(catalogs.getCatalog('weapons').sources,raw.weapons.sources);

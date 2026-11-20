@@ -101,7 +101,9 @@ export const sameWeaponResource = sameBattery;
 export function validateWeaponShotResources(actor,profile,amount=1,attack=null) {
   const modeId=profile?.binding?.confirmed?.modeId??profile?.mode?.standaloneRef?.modeId??attack?.standaloneRef?.modeId;
   const weapon=shotResourceWeapon(actor,profile,attack);
-  validateLTWeaponAmmunition(actor, weapon);
+  const option=profile?.context?.maCombatOptions?.kind;
+  const readyThrownAmmoKey=['thrownSequence','thrownBurst'].includes(option)?profile.ammunition?.ammoKey:null;
+  validateLTWeaponAmmunition(actor, weapon, undefined, readyThrownAmmoKey);
   validateWeaponResources(weapon,profile);
   const reason=weaponResourceReason(weapon,amount,modeId);if(reason)throw Error(reason);
 }

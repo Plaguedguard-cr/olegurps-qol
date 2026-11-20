@@ -20,10 +20,10 @@ export class LTPersonalProcedureApp extends foundry.applications.api.Application
   return {state,weapon,p,attack};}
  async _prepareContext(){const c=this.current(),range=resolveLTPersonalRange({actor:this.actor,profile:c.p,configuration:ltPersonalConfiguration(c.weapon),skillLevel:c.attack.level});return {...c,range};}
  async _renderHTML({weapon,p,attack,range}){
-  return `<div class="standard-form"><h3>${escape(weapon.name)}</h3><p>${p.procedure==='melee-powder'?'Ближняя атака Blowpipe +2 по B180; без Aim и штрафа дистанционной стрельбы.':'Бросок снаряжения: Throwing либо DX−3 по LT125; дальность по массе и ST, B355.'}</p>`+
+  return `<div class="standard-form"><h3>${escape(weapon.name)}</h3><p>${p.procedure==='melee-powder'?'Ближняя атака Blowpipe +2 по B180; без Aim и штрафа дистанционной стрельбы.':'Бросок снаряжения: Throwing либо DX-3 по LT125; дальность по массе и ST, B355.'}</p>`+
    `<p>Исходное умение: ${escape(attack.level??'не определено')}; предел дистанции: ${escape(range.ready?range.maximum:'не определён')} ярд.</p>`+
    '<label>Фактическая дистанция, ярды<input type="number" name="lt-procedure-distance" min="0" step="any" value="1"></label>'+
-   `<label>${p.procedure==='melee-powder'?'Модификатор условий; ветер снаружи −2 и хуже (B180)':'Модификатор условий и размера цели'}<input type="number" name="lt-procedure-modifier" step="1" value="0"></label>`+
+   `<label>${p.procedure==='melee-powder'?'Модификатор условий; ветер снаружи -2 и хуже (B180)':'Модификатор условий и размера цели'}<input type="number" name="lt-procedure-modifier" step="1" value="0"></label>`+
    '<p role="status" data-lt-procedure-message></p></div><footer class="form-footer"><button type="button" data-lt-procedure-action="apply">Выполнить проверку и применить предмет</button><button type="button" data-lt-procedure-action="cancel">Отмена</button></footer>';
  }
  _replaceHTML(html,content){content.innerHTML=html;}

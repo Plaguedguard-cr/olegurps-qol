@@ -69,7 +69,7 @@ export function attackProfileError(code, runtime = globalThis) {
 }
 
 /** Preview overlays only: resolve again from Actor.system, never from an already adjusted data clone. */
-export function withRuntimeAmmoStats(attack, actor, state) {
+export function withRuntimeAmmoStats(attack, actor, state, ammunition = undefined) {
   if(!attack)return attack;
   const cleanAttack = { ...attack };
   // A previous +P preview must not leave its effective ST on an ordinary magazine.
@@ -108,7 +108,7 @@ export function withRuntimeAmmoStats(attack, actor, state) {
   delete cleanAttack.ammunitionRequiredStrength;
   delete cleanAttack.weaponStrength;
   try {
-    const profile = resolveRuntimeAttackProfile({ actor, attack:cleanAttack, state });
+    const profile = resolveRuntimeAttackProfile({ actor, attack:cleanAttack, state, ammunition });
     cleanAttack.weaponStrength=profile.weaponStrength;
     const artilleryCarrier=(state??actor.getFlag?.('world','gurpsAmmoManager'))?.weapons?.find(w=>w.id===profile.weaponId);
     const artillerySkill=ltArtillerySkill(actor,artilleryCarrier);

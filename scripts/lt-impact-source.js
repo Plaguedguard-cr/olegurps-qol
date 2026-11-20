@@ -94,10 +94,10 @@ export function ltImpactHints(profile){
  if(['lt:pick','lt:warhammer'].includes(profile.modelId))out.push('Оружие может застрять; извлечение и сопротивление – вручную. Штраф за щели в доспехе уменьшается на 2 вручную. LT65,70–71[3,4]; B405.');
  if(['lt:axe','lt:mace','lt:round-mace','lt:throwing-axe'].includes(profile.modelId))out.push('Одноручная и двуручная атаки – разные опубликованные строки. Defensive Grip является отдельным хватом. LT54,58,64–65,70; MA111.');
  if(profile.modelId==='lt:gada'&&/^thr/.test(profile.stats.damage))out.push('Thrust: удар с удержанием рядом с головкой. Смена хвата/Reach требует Ready; автоматического учёта времени нет. LT56,70; B269.');
- if(profile.modelId==='lt:blackjack')out.push('Скрытые ушибы: Diagnosis−2 для обнаружения при беглом осмотре, вручную. LT54.');
+ if(profile.modelId==='lt:blackjack')out.push('Скрытые ушибы: Diagnosis-2 для обнаружения при беглом осмотре, вручную. LT54.');
  if(profile.modelId==='lt:myrmex')out.push('Myrmex: DR1 только кисти, вручную; не складывать с другими перчатками. LT71[6].');
  if(profile.modelId==='lt:cestus')out.push('Cestus: DR4 только кисти, вручную. Удлинённый вариант и Elbow Strike остаются особыми процедурами (?). LT55; LT71[6].');
- if(profile.modelId==='lt:combat-fan'&&profile.attackModifier)out.push('Режущая атака Combat Fan: прямой штраф −2 к навыку уже учтён. LT65.');
+ if(profile.modelId==='lt:combat-fan'&&profile.attackModifier)out.push('Режущая атака Combat Fan: прямой штраф -2 к навыку уже учтён. LT65.');
  if(['lt:baton','lt:light-club','lt:short-staff'].includes(profile.modelId))out.push('Cane использует Light Club, лёгкая трость – Short Staff. Жёсткие ножны не легче 1 lb используют Baton и Cheap для поломки. Hook остаётся ручным действием. LT55,57.');
  if(!out.length)out.push('Опубликован только Swing; отдельный Thrust не задан. Ограничения парирования и поломку учитывает игрок. LT65; B269,376.');
  return out;

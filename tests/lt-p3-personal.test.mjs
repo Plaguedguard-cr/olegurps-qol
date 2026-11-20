@@ -9,6 +9,7 @@ import {StandaloneWeaponService,StandaloneWeaponDraft,standaloneAmmoCarrier,sear
 import {readStandaloneAttack,standaloneCatalogBinding} from '../scripts/tools/standalone-attack-service.js';
 import {AttackProfileResolver} from '../scripts/tools/attack-profile-resolver.js';
 import {AmmoService,readAttackAmmunition} from '../scripts/tools/ammo-service.js';
+import {validateWeaponShotResources} from '../scripts/tools/weapon-resources.js';
 import {ammoTypeKey} from '../scripts/tools/ammo-inventory.js';
 import {ammunitionChatData} from '../scripts/tools/ammunition-chat-summary.js';
 import {ltBowDrawing} from '../scripts/tools/lt-bow.js';
@@ -36,6 +37,37 @@ async function fixture(id,configuration={},a=actor()){
  const shoot=(attackId=crypto.randomUUID(),execute=async()=>({rolled:true,rollData:{failure:false,rtotal:10,finaltarget:20,margin:10},messageId:'native-'+attackId}))=>service.executeShot({weaponId:weapon.id,attackId,prepare:({state,ammunition})=>({profile:profile(state,ammunition),amount:1}),execute});
  return {actor:a,draft,record,weapon,current,definitions,service,profile,attack,tx,load,shoot};
 }
+test('MA120: the next slot validates its readied LT lot after the installed feed becomes empty', async () => {
+ const modeId='Wbeu-Rh82UeIe7Gqs', f=await fixture(modeId);
+ const first=type(ltPersonalAmmoId(LT_PERSONAL_PROFILES[modeId]));
+ const alternate={...first,recipe:{version:1,variantId:'lt_personal_load',customId:'second-lot',parameters:{}}};
+ alternate.key=ammoTypeKey(alternate);
+ await f.load(first);
+ await f.tx('save-recipe',{type:alternate},alternate);
+ await f.tx('add-stock',{ammoKey:alternate.key,amount:2},alternate);
+ const throwOne=(ammoKey,rolled)=>f.service.executeShot({
+  weaponId:f.weapon.id,attackId:crypto.randomUUID(),readyThrownAmmoKey:ammoKey,
+  prepare:({state,ammunition})=>{
+   const profile=f.profile(state,ammunition);
+   return {amount:1,profile:{...profile,context:{...profile.context,maCombatOptions:{kind:'thrownSequence'}}}};
+  },
+  execute:async({profile})=>{
+   validateWeaponShotResources(f.actor,profile,1,f.attack());
+   return {rolled,rollData:{failure:false,rtotal:10,finaltarget:14,margin:4}};
+  }
+ });
+ const firstThrow=await throwOne(first.key,true);
+ assert.equal(firstThrow.spent,1);
+ assert.equal(readAttackAmmunition(f.current()).available,0);
+ const before=structuredClone(f.current().ammunitionInventory);
+ assert.equal((await throwOne(alternate.key,false)).spent,0);
+ assert.deepEqual(f.current().ammunitionInventory,before);
+ const secondThrow=await throwOne(alternate.key,true);
+ assert.equal(secondThrow.spent,1);
+ assert.equal(secondThrow.snapshot.profile.ammunition.ammoKey,alternate.key);
+ assert.equal(f.current().ammunitionInventory.stocks.find(stock=>stock.key===alternate.key).rounds,1);
+ assert.equal(f.current().ammunitionInventory.stocks.find(stock=>stock.key===first.key).rounds,0);
+});
 test('Repeating uses the user-approved 100% preparation limit; 70%, 100%, above 100%, temporary and source-applicable ST stay separate from firing',()=>{
  const a=actor();a.system.attributes.ST.value=20;
  const draw=(ratedST,applyArmST=false)=>ltBowDrawing(a,'WwpI_P5DL8za5501B',{ratedST,drawMethod:'hand',applyArmST});

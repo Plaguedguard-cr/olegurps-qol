@@ -14409,7 +14409,7 @@ export const LT_CLOSEOUT_PROFILES={
   ],
   "damageCap": "1d-4",
   "hints": [
-   "Обычный наконечник. Барбы и иной тип наконечника выбираются вручную по LT73; предел Damage 1d−4. Поломка на 1–3 после успешного удара/парирования – вручную."
+   "Обычный наконечник. Барбы и иной тип наконечника выбираются вручную по LT73; предел Damage 1d-4. Поломка на 1–3 после успешного удара/парирования – вручную."
   ],
   "ltConstruction": {
    "construction": "fixed",
@@ -15309,7 +15309,7 @@ export const LT_CLOSEOUT_PROFILES={
    }
   ],
   "hints": [
-   "Штраф −2 LT29 относится только к метанию; обычный melee Thrust его не получает."
+   "Штраф -2 LT29 относится только к метанию; обычный melee Thrust его не получает."
   ],
   "ltConstruction": {
    "modelId": "lt:fishing-spear",
@@ -15375,7 +15375,7 @@ export const LT_CLOSEOUT_PROFILES={
    "balanceOptions": [],
    "qualityOptions": [],
    "hints": [
-    "Штраф −2 LT29 относится только к метанию; обычный melee Thrust его не получает."
+    "Штраф -2 LT29 относится только к метанию; обычный melee Thrust его не получает."
    ],
    "damageTypes": [
     "imp"

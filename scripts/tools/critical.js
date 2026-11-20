@@ -1,11 +1,8 @@
 import { buildTableNote } from "./table-reference.js";
 import { criticalTableSelectionHTML } from "./critical-table-selection.js";
+import { applyMessageMode } from './chat-message-mode.js';
 
-export async function openCriticalTables() {
-  const DialogV2 = foundry?.applications?.api?.DialogV2;
-  if (!DialogV2) return ui.notifications.error("Этот инструмент требует DialogV2.");
-  const esc=v=>foundry?.utils?.escapeHTML?foundry.utils.escapeHTML(String(v??"")):String(v??"");
-  const TABLES={
+const TABLES={
     hit:{name:"Критические попадания",note:"Любое удваивание или утраивание повреждений относится к базовому вреду. Цель не получает права на активную защиту против этих атак.",entries:[
       [3,3,"3","Удар наносит тройной вред."],[4,4,"4","СП цели защищает с половинной эффективностью после применения всех делителей брони."],[5,5,"5","Удар наносит двойной вред."],[6,6,"6","Удар наносит максимальный обычный вред."],[7,7,"7","Если вред прошёл через СП, считайте удар серьёзной раной независимо от реально нанесённого вреда."],[8,8,"8","Если вред пробивает СП, удар наносит удвоенный болевой шок; при попадании в конечность или придаток может временно покалечить его."],[9,11,"9, 10, 11","Только обычный вред."],[12,12,"12","Обычный вред, и жертва роняет всё, что держит, независимо от пробития СП."],[13,14,"13, 14","Если вред прошёл через СП, считайте удар серьёзной раной независимо от реально нанесённого вреда."],[15,15,"15","Удар наносит максимальный обычный вред."],[16,16,"16","Удар наносит двойной вред."],[17,17,"17","СП цели защищает с половинной эффективностью после применения всех делителей брони."],[18,18,"18","Удар наносит тройной вред."]]},
     head:{name:"Критические попадания в голову",note:"Используется только для критических попаданий в лицо, череп или глаза. Цель не получает возможности активной защиты.",entries:[
@@ -16,10 +13,18 @@ export async function openCriticalTables() {
       [3,3,"3","Вы вырубили себя. Бросайте ЗД каждые 30 минут для восстановления сознания."],[4,4,"4","Вы растянули используемую конечность или мышцы шеи; конечность считается временно покалеченной."],[5,5,"5","Вы ударили в твёрдый объект вместо врага или парирования; используемая конечность получает тупой вред, равный вашему прямому вреду."],[6,6,"6","Аналогично 5, но половина вреда; природное оружие может сломаться и получить штраф к будущим атакам."],[7,7,"7","Вы спотыкаетесь; при атаке проходите за противника и заканчиваете ход, отвернувшись от него; при парировании падаете."],[8,8,"8","Вы падаете!"],[9,11,"9, 10, 11","Вы теряете равновесие: ничего больше не делаете до следующего хода, активные защиты получают -2."],[12,12,"12","Вы поскользнулись; бросьте ЛВ, чтобы не упасть, с дополнительными штрафами для некоторых атак ногами."],[13,13,"13","Вы ослабили защиту: активные защиты получают -2 на следующий ход, а некоторые бонусы противников усиливаются."],[14,14,"14","Вы спотыкаетесь; см. 7."],[15,15,"15","Вы растянули мышцы: получаете 1к-3 вреда, штрафы к атаке, защите и действиям повреждённой конечностью до исцеления."],[16,16,"16","Вы попали в твёрдый объект; см. 5."],[17,17,"17","Вы растянули мышцу или конечность, как в 4; для животных с низким ИН возможна паническая реакция."],[18,18,"18","Вы вырубили себя; см. 3."]]
     }
   };
+const esc=v=>globalThis.foundry?.utils?.escapeHTML(String(v??""))??String(v??"");
+export async function openCriticalTables() {
+  const DialogV2 = foundry?.applications?.api?.DialogV2;
+  if (!DialogV2) return ui.notifications.error("Этот инструмент требует DialogV2.");
   const data=await DialogV2.input({window:{title:"Критические результаты"},position:{width:560},content:criticalTableSelectionHTML(esc),ok:{label:"Бросить",icon:"fa-solid fa-dice"},rejectClose:false,modal:false});
-  if(!data)return; const key=String((data.object??data).table??""); const table=TABLES[key]; if(!table)return ui.notifications.error("Выберите таблицу.");
+  if(data)return rollCriticalTable(String((data.object??data).table??""));
+}
+
+export async function rollCriticalTable(key,{actor,context='',flags}={}) {
+  const table=TABLES[key]; if(!table)return ui.notifications.error("Выберите таблицу.");
   const roll=await new Roll("3d6").evaluate(); const total=Number(roll.total); const e=table.entries.find(x=>total>=x[0]&&total<=x[1]); if(!e)return ui.notifications.error("Результат таблицы не найден.");
   const details=(label,text)=>text?`<details style="margin-top:8px"><summary style="cursor:pointer;font-weight:700">${esc(label)}</summary><div style="margin-top:5px">${esc(text)}</div></details>`:"";
   const tableNote=buildTableNote({entries:table.entries,entry:e,note:table.note,escapeHTML:esc});
-  await ChatMessage.create({speaker:ChatMessage.getSpeaker(),rolls:[roll],content:`<div style="font-size:.92em;line-height:1.35"><h3 style="margin:0 0 7px">${esc(table.name)}</h3><div>Результат 3к6: <strong>${total}</strong></div><div style="margin-top:8px;padding:9px 10px;border:1px solid rgba(128,128,128,.42);border-radius:6px"><strong>Результат ${esc(e[2])}</strong><div>${esc(e[3])}</div></div>${tableNote}${details("Особые случаи",table.footer)}</div>`});
+  return ChatMessage.create(applyMessageMode(ChatMessage,{speaker:ChatMessage.getSpeaker(actor?{actor}:undefined),rolls:[roll],flags,content:`<div style="font-size:.92em;line-height:1.35"><h3 style="margin:0 0 7px">${esc(table.name)}</h3>${context?'<p>'+esc(context)+'</p>':''}<div>Результат 3к6: <strong>${total}</strong></div><div style="margin-top:8px;padding:9px 10px;border:1px solid rgba(128,128,128,.42);border-radius:6px"><strong>Результат ${esc(e[2])}</strong><div>${esc(e[3])}</div></div>${tableNote}${details("Особые случаи",table.footer)}</div>`},globalThis.game));
 }

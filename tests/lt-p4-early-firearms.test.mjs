@@ -153,7 +153,7 @@ test('Duck Foot B389 follows the selected arc order, caps intentional chances at
 
 test('P4 Russian UI identifies physical stock, debit and manual conditions without creating state',async()=>{
  const f=await fixture('WeCQz_2guzg8JWBca'),t=f.type(),before=JSON.stringify(f.actor.flags);
- const html=ltEarlyManagementHTML(f.current(),{ammoKey:t.key},[t],s=>String(s));assert.match(html,/Выстрел использует один подготовленный заряд/);assert.match(html,/Чистка: 2 минуты/);assert.match(html,/Malf−4/);assert.match(html,/Новая партия имеет запас 0/);assert.doesNotMatch(html,/\ufffd/);assert.equal(JSON.stringify(f.actor.flags),before);
+ const html=ltEarlyManagementHTML(f.current(),{ammoKey:t.key},[t],s=>String(s));assert.match(html,/Выстрел использует один подготовленный заряд/);assert.match(html,/Чистка: 2 минуты/);assert.match(html,/Malf-4/);assert.match(html,/Новая партия имеет запас 0/);assert.doesNotMatch(html,/\ufffd/);assert.equal(JSON.stringify(f.actor.flags),before);
 });
 
 test('charge places use a separate view without replacing recipe drafts or creating ammunition',async()=>{

@@ -6416,9 +6416,9 @@ export function ltFlexibleHints(p){
  if(p.manualOnly)return [p.manualHint];
  const out=[];
  if(p.damagePart==='chain'||p.damagePart==='blade-on-chain'||chainModels.has(p.modelId)&&p.damagePart==='flexible')
-  out.push('Защита цели: Parry −4 (F не может), Block −2; опутывание, обезоруживание и Ready по рабочему Reach – вручную. LT71[9]; B406.');
+  out.push('Защита цели: Parry -4 (F не может), Block -2; опутывание, обезоруживание и Ready по рабочему Reach – вручную. LT71[9]; B406.');
  else if(p.primarySkills.some(s=>['Flail','Two-Handed Flail'].includes(s)))
-  out.push('Защита цели: Parry '+(halfFlail.has(p.modelId)?'−2':'−4')+' (F не может), Block '+(halfFlail.has(p.modelId)?'−1':'−2')+'; все эффекты защиты вручную. LT71[9].');
+  out.push('Защита цели: Parry '+(halfFlail.has(p.modelId)?'-2':'-4')+' (F не может), Block '+(halfFlail.has(p.modelId)?'-1':'-2')+'; все эффекты защиты вручную. LT71[9].');
  if(p.modelId==='lt:kusarigama')out.push(p.damagePart==='kama-edge'?
   'Кама: обычный Sickle, другая рука держит цепь; обе руки заняты. Качество кромки не усиливает дробящие удары цепью. Hook/застревание – вручную. LT58,65; LT71[2,3].':
   p.damagePart==='blade-on-chain'?'Кама на цепи: кинематографический Swing; не может опутывать или обезоруживать как Kusari. LT58; LT71[15].':
@@ -6429,18 +6429,18 @@ export function ltFlexibleHints(p){
  if(p.modelId==='lt:rope-dart')out.push('Rope Dart: только удары; Entangle и другие специальные правила кнута не применяются. LT61,67; LT71[13].');
  if(['lt:whip','lt:light-whip'].includes(p.modelId)){
   if(p.lengthYards>=2)out.push('Требуется Ready после атаки. После парирования тоже: '+(p.lengthYards===2?'один Ready':'два Ready')+'; время учитывается вручную. B406.');
-  out.push(p.attackOnlyModifier?'Crack: −4 только к атаке и +2 Damage уже учтены; дополнительного штрафа Parry нет. Захват и выпадение оружия – вручную. B406.':
+  out.push(p.attackOnlyModifier?'Crack: -4 только к атаке и +2 Damage уже учтены; дополнительного штрафа Parry нет. Захват и выпадение оружия – вручную. B406.':
    'Entangle, обезоруживание и последствия болезненного удара кнутом – вручную. B406.');
  }
- if(['lt:urumi','lt:belt-sword'].includes(p.modelId))out.push('Только хлещущие удары: Entangle и другие специальные правила кнута не применяются. '+(p.modelId==='lt:belt-sword'?'+1 Holdout; дополнительный −1 Parry уже учтён. ':'')+'LT64,70; LT71[13].');
- if(p.modelId==='lt:three-part-staff')out.push('Прямой −1 к навыку уже учтён. Режим обоими концами требует две руки; Dual-Weapon Attack выбирается вручную и не запускается автоматически. LT62,70; LT71[19].');
+ if(['lt:urumi','lt:belt-sword'].includes(p.modelId))out.push('Только хлещущие удары: Entangle и другие специальные правила кнута не применяются. '+(p.modelId==='lt:belt-sword'?'+1 Holdout; дополнительный -1 Parry уже учтён. ':'')+'LT64,70; LT71[13].');
+ if(p.modelId==='lt:three-part-staff')out.push('Прямой -1 к навыку уже учтён. Режим обоими концами требует две руки; Dual-Weapon Attack выбирается вручную и не запускается автоматически. LT62,70; LT71[19].');
  if(p.modelId==='lt:thonged-club'&&p.cheapHandheld)out.push('В руке действует как Cheap Blackjack: Cheap для поломки, без автоматической смены качества всего экземпляра. Бонус Brawling применяется один раз. LT62,65; LT71[5].');
  if(p.unarmedSkillBonus)out.push('Табличный удар: бонус изученного Brawling/Karate применяется один раз; уже включённый GGA итог не усиливается повторно. LT65; LT71[5]; B182,203.');
  if(p.modelId==='lt:hook-sword')out.push(p.damagePart==='guard-edge'?'Удар режущей гардой – отдельный Brawling/DX. DR гарды – вручную. LT65; LT71[5,6].':
   p.damagePart==='hook-edge'?'Hook: числовой Damage отдельно; зацеп, удержание и обезоруживание вручную. LT54,56,66; LT71[2,8].':'Основная часть Hook Sword тупая: качество режущей гарды не повышает cr. LT56,66.');
  if(['lt:deer-antlers','lt:knife-wheel','lt:slashing-wheel'].includes(p.modelId))out.push('Удержание за перекладину; обычный и фехтовальный Parry – разные опубликованные строки. DR гарды действует на 1–3 на 1d вручную. LT58,62,67; LT71[6].');
  if(['lt:quadrens','lt:large-quadrens','lt:sai'].includes(p.modelId))out.push('Точные опубликованные навыки и Parry сохранены; +2 к обезоруживанию при Jitte/Sai – вручную, не бонус к обычному Damage. LT60–61,66–69; LT71[11].');
- if(p.motion==='swing'&&/^thr/.test(p.stats.damage))out.push('Tip Slash: Swing на базе thrust, imp−2 → cut; максимальный Reach текущего удержания. LT62; MA113.');
+ if(p.motion==='swing'&&/^thr/.test(p.stats.damage))out.push('Tip Slash: Swing на базе thrust, imp-2 → cut; максимальный Reach текущего удержания. LT62; MA113.');
  return out;
 }
 export function applyLTFlexibleSourceMode(mode,equipment,{snapshot=false}={}){

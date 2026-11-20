@@ -1,4 +1,5 @@
 import { normalizeAccuracy, normalizeBulk } from "./fire-service.js";
+import { projectThrownBurst, resolveMaRangedPlan } from './ma-ranged-options.js';
 import { tracerBonus } from "./ammunition-f4.js";
 import { f4Text } from "./ammunition-f4-localization.js";
 import { parseWeaponBulk } from "./weapon-bulk.js";
@@ -15,9 +16,11 @@ import { automaticAmmoText } from "./automatic-ammunition-localization.js";
 import { airburstAttackBonus } from "./fuze-tracer-ammunition.js";
 import {nativeRangedModifierEvidence,externalRangedModifierEvidence} from './ranged-modifier-provenance.js';
 import { resolveRuntimeAttackProfile } from './attack-profile-runtime.js';
-import { rangedStrengthBase, rangedStrengthChannel } from './ranged-weapon-strength.js';
+import { canChooseRangedHand, rangedStrengthBase, rangedStrengthChannel } from './ranged-weapon-strength.js';
 import { withSupportBulk } from './ranged-support.js';
 import { moduleText } from '../localization.js';
+import { combatIntoxication, combatPerkLabel, drunkenFighting, drunkenPreviewCredit, drunkenTaggedCredit,
+  hasSpecializedCombatPerk, readCombatPerks } from './ma-combat-perks.js';
 
 export function sceneDistanceToYards(value, runtime = globalThis) {
   if(value===null||value===undefined||String(value).trim()==='')return null;
@@ -321,7 +324,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
       const data = effectUi.getData();
       if (!data || typeof data.then === "function") return [];
       const entries = [
-        ...(Array.isArray(data.selfmodifiers) ? data.selfmodifiers : []),
+        ...(Array.isArray(data.selfmodifiers) ? data.selfmodifiers.map(entry=>({...entry,actorSelf:true})) : []),
         ...(!skipTargets && Array.isArray(data.targets)
           ? data.targets.flatMap(group => Array.isArray(group?.targetmodifiers) ? group.targetmodifiers : [])
           : [])
@@ -346,14 +349,22 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     return fireService.getPreviewModifierTotal();
   }
 
-  function calculateEffectiveFireSkillDetails(attack, values, rangeBands, targetingService, targetedAttackContext = null) {
+  function calculateEffectiveFireSkillDetails(attack, values, rangeBands, targetingService, targetedAttackContext = null,
+    {weaponId = null, ammunition} = {}) {
     const governingSkill = mode === "weapon" ? resolveRangedGoverningSkill({
       actor: token?.actor, binding: attack?.governingSkillBinding
     }) : null;
-    const strengthProfile=mode==='weapon'?resolveRuntimeAttackProfile({actor:token?.actor,attack,context:{braced:parseBoolean(values?.braced),supportSelection:values?.supportSelection}}):null;
+    const strengthProfile=mode==='weapon'?resolveRuntimeAttackProfile({actor:token?.actor,attack,weaponId,ammunition,
+      context:{braced:parseBoolean(values?.braced),supportSelection:values?.supportSelection}}):null;
     const strength=strengthProfile?.weaponStrength;
     attack=withSupportBulk(attack,strength?.support?.effects);
-    const baseLevel = mode==='weapon'?(strength?.baseLevel??rangedStrengthBase(token?.actor,attack,governingSkill).level):Number(attack?.level);
+    const combatOption=mode==='weapon'?resolveMaRangedPlan(token?.actor,attack,governingSkill,values,strengthProfile):null;
+    const burst=combatOption?.kind==='thrownBurst'?combatOption:null;
+    if(burst){
+      attack=projectThrownBurst(attack,burst);
+      values={...values,shots:burst.count,aimSeconds:0,braced:false,laserSight:false};
+    }
+    const baseLevel = burst?.level??(mode==='weapon'?(strength?.baseLevel??rangedStrengthBase(token?.actor,attack,governingSkill).level):Number(attack?.level));
     if (!Number.isFinite(baseLevel) || baseLevel <= 0) return null;
     if ((parseBoolean(values?.moveAndAttack) || parseBoolean(values?.closeCombat) || values?.closeHipShooting) &&
         normalizeBulk(attack?.data?.bulk ?? attack?.bulk) === null) return null;
@@ -416,7 +427,19 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         governingSpecialty: governingSkill?.specialty ?? values?.governingSpecialty }) : null;
     const bucketModifier = configuredPreview ? 0 : getPreviewBucketTotal();
     const effectEntries=configuredPreview?[]:getApplicableEffectModifiers(attack,blindUnknown);
-    const effectModifier=effectEntries.reduce((n,e)=>n+e.modint,0);
+    const actor=token?.actor;
+    const condition=mode==='weapon'?combatIntoxication(actor):null;
+    const shownPenalty=drunkenPreviewCredit(condition,effectEntries.filter(entry=>entry.actorSelf));
+    const nativePenalty=configuredPreview?0:drunkenTaggedCredit(actor,attack,condition,'ranged');
+    const effectModifier=effectEntries.reduce((n,e)=>n+e.modint,0)+shownPenalty-nativePenalty;
+    const drawnPerks=strengthProfile?.damage?.rules?.ltBow?.drawing?.perks??[];
+    const drunken=mode==='weapon'&&!/^artillery\b/i.test(governingSkill?.name??'')?
+      drunkenFighting(actor,condition):null;
+    const offHand=values?.rangedHand==='off'&&!values?.rangedRapidStrike&&canChooseRangedHand(actor,attack,strengthProfile,governingSkill);
+    const ambidexterity=offHand&&readCombatPerks(actor,'Ambidexterity').some(perk=>!perk.specialization);
+    const trainedOffHand=offHand&&!ambidexterity&&hasSpecializedCombatPerk(actor,'Off-Hand Weapon Training',governingSkill?.name);
+    const offHandPenalty=offHand&&!ambidexterity&&!trainedOffHand?-4:0;
+    const offHandPerk=trainedOffHand?{name:'Off-Hand Weapon Training',modifier:4,source:'B14; MA50'}:null;
     const modifierEvidence=mode==='weapon'?[...nativeRangedModifierEvidence(token?.actor,attack),
       ...externalRangedModifierEvidence(effectEntries,'GGA tagged modifier'),
       ...externalRangedModifierEvidence(configuredPreview?[]:(fireService._previewModifierSnapshot??fireService.getModifierSnapshot?.()??[]).filter(e=>!e.tagged),'Modifier Bucket')]:[];
@@ -439,7 +462,7 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     const nextTurnTracer = configuredPreview ? 0 : tracerBonus(token?.actor?.id, token?.id);
     const calculation = resolveCombatCalculation({
       combatType: "ranged", actor: token?.actor, attack, baseAttackLevel: baseLevel,
-      governingSkill, attackSlot: values?.contextLabel ?? null,
+      governingSkill:burst?{name:burst.skill,level:burst.level,resolved:true}:governingSkill, attackSlot: values?.contextLabel ?? null,
       context: { weaponBond: bondSelected||bondIncluded!==0,weaponBondAdjustment:Number(bondSelected)-bondIncluded,
         rapidStrike, targetedAttack, hitLocationBase: locationPenalty,
         hitLocationLabel, closeQuartersBattle, closeQuartersBattleLabel: cqbLabel,
@@ -452,8 +475,15 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
         { id: "fluidBounce", value: attack?.ammunitionFluid?.vortex?-2*Number(values?.fluidBounces??0):0, label: "\u0420\u0438\u043a\u043e\u0448\u0435\u0442\u044b Vortex" },
         { id: "ammunitionConstruction", value: attack?.ammunitionHitBonus??0, label: "Конструкция боеприпаса" },
         ...(fuzeBonus ? [{ id: "ammunitionAirburst", value: fuzeBonus, label: automaticAmmoText("P6ht_airburst") }] : []),
-        ...(mode==='weapon'?[rangedStrengthChannel(strength)]:[]),
+        ...(mode==='weapon'&&!burst?[rangedStrengthChannel(strength)]:[]),
+        ...(combatOption?.penalty?[{id:'maRangedOption',value:combatOption.penalty,
+          label:combatOption.kind==='quickBow'?'Quick-Shooting Bows':'Rapid Strike with Thrown Weapons',source:combatOption.source}]:[]),
+        ...(combatOption?.heroic?[{id:'maHeroicArcher',value:combatOption.attackAccuracy+
+          (values.moveAndAttack?-(moveAttackPenalty??0):0),label:'Heroic Archer',source:'MA45; MA97'}]:[]),
         { id: "weaponBond", value: 0, label: "Weapon Bond", kind: "perk" },
+        ...(drunken?[{id:'drunkenFighting',value:drunken.modifier+nativePenalty,label:combatPerkLabel(drunken),
+          kind:'perk',source:drunken.source}]:[]),
+        ...(offHand?[{id:'offHand',value:offHandPenalty,label:game.i18n?.localize?.('OleGURPS.CombatPerk.OffHand')??'Off hand',source:'B14; MA50'}]:[]),
         { id: "modifierBucket", value: bucketModifier, label: "Набор модификаторов", roll: false },
         { id: "ggaEffects", value: effectModifier, label: "\u042d\u0444\u0444\u0435\u043a\u0442\u044b GGA", roll: false },
         { id: "range", value: rangeAdjustment, label: `\u0420\u0430\u0441\u0441\u0442\u043e\u044f\u043d\u0438\u0435: ${effectiveRange?.label ?? ""}` },
@@ -477,6 +507,11 @@ export function createFireControlContext({ token, fireService, mode = "weapon" }
     });
     const movementChannel = calculation.channels.find(channel => channel.id === "moveAndAttack");
     calculation.metadata.weaponStrength=strength??null;
+    if(combatOption)calculation.metadata.maRanged=combatOption;
+    const perks=[...drawnPerks,drunken?{...drunken,ggaCredit:nativePenalty}:null,offHandPerk].filter(Boolean);
+    if(perks.length)calculation.metadata.combatPerks=perks;
+    if(condition)calculation.metadata.intoxication={status:condition.status,taggedPenalty:-nativePenalty,previewPenalty:-shownPenalty};
+    if(offHand)calculation.metadata.rangedHand={hand:'off',hands:1,skill:governingSkill.name,penalty:offHandPenalty,ambidexterity,trained:trainedOffHand};
     calculation.metadata.weaponStrengthDelta=calculation.channels.find(c=>c.id==='weaponStrength')?.resolvedValue??null;
     return { effectiveSkill: calculation.effectiveSkill, calculatedSkill: calculation.uncappedSkill,
       environment: environment ?? null,modifierEvidence,supportSelection:strength?.support?.selection??null,

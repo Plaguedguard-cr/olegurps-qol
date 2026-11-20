@@ -17,7 +17,7 @@ export const f2Messages = {
     Tandem: "No ERA: stages can accumulate. With ERA: resolve stages in order. Unknown ERA: no confirmed total. Do not apply both the sum and the stages; Linked remains separate.",
     Spall: "HESH: when neither impact nor blast penetrates nonlaminated armor, spall is one tenth of maximum blast damage against DR/100. Round both up (HT170).",
     Falloff: "Thermobaric at r>0: floor(original Damage/(2×r)). Do not reduce twice or apply GGA Explosion /3r to the reduced value. Contact r=0 and unknown distances require separate adjudication. This result is not applied.",
-    Reliability: "SAPLE TL5–6: use a confirmed native 1d result, functioning on ≤ TL−2. TL7+ has no such check. Unknown results do not confirm an explosion; preserve the carrier strike. Repeated Damage does not require another 1d.",
+    Reliability: "SAPLE TL5–6: use a confirmed native 1d result, functioning on ≤ TL-2. TL7+ has no such check. Unknown results do not confirm an explosion; preserve the carrier strike. Repeated Damage does not require another 1d.",
     Flight: "Self-Destruct requires a specific fuse, sourced destruct distance and actual path. Do not substitute ½D. Reaching the distance creates no extra explosion or resource expense.",
     distance: "Distance from center, yards", target: "Specific target (manual input)", sm: "Target SM", posture: "Target posture", cover: "Confirmed cover penalty", total: "Confirmed GGA 3d6 total",
     standing: "Standing", crouching: "Crouching", kneeling: "Kneeling", crawling: "Crawling", sitting: "Sitting", lying: "Lying",

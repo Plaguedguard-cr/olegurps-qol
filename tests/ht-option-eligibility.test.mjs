@@ -7,6 +7,7 @@ import { CatalogService, CATALOG_DEFINITIONS } from "../scripts/catalog-service.
 import { AmmunitionCompatibilityService } from "../scripts/ammunition-compatibility-service.js";
 import { evaluateHTOptionEligibility, resolveHTCatalogFacts } from "../scripts/ht-option-eligibility.js";
 import { assertWeaponPreservation } from "./fixtures/ht-preservation-contract.mjs";
+import { restorePublishedCatalogCheckpoint } from './fixtures/published-catalog-checkpoint.mjs';
 const data = Object.fromEntries(await Promise.all(Object.entries(CATALOG_DEFINITIONS).map(async ([b,d]) => [b, JSON.parse(await fs.readFile(new URL("../data/catalogs/" + d.filename, import.meta.url), "utf8"))])));
 const collections = ["cartridge_upgrades", "projectile_options", "projectile_upgrades", "case_construction_options"];
 const variants = collections.flatMap(c => data.ht[c]);
@@ -25,7 +26,7 @@ test("all 64 contracts and review IDs match; four current catalogs ready", async
   const audit=readAuditFixture('olegurps_ht_64_structured_review_v1'); assert.equal(variants.length,64);assert.equal(audit.total,64);assert.deepEqual(audit.records.map(r=>r.id).sort(),variants.map(r=>r.id).sort());assert.equal(catalogs.getStatus("ht").version.revision,"1.3");assert.equal(catalogs.getStatus("ht").relationships.internal.eligibilityOptions,64);for(const b of Object.keys(CATALOG_DEFINITIONS))assert.equal(catalogs.getStatus(b).status,"ready");
 });
 test("all original HT fields, mechanics, HT178 and rocket data retained", async()=>{
-  const proof=readAuditFixture('ht-v1-3-preservation'); const normalized=structuredClone(data.ht);for(const c of collections)for(const r of normalized[c])delete r.eligibility_v1;normalized.revision="1.2";delete normalized.audit.structured_option_review_count;delete normalized.audit.structured_option_review_version;delete normalized.data_rule_review_v1_3;assert.equal(createHash("sha256").update(JSON.stringify(normalized)).digest("hex"),proof.normalizedPreviousHash);
+  const proof=readAuditFixture('ht-v1-3-preservation'); const normalized=JSON.parse(restorePublishedCatalogCheckpoint(await fs.readFile(new URL('../data/catalogs/'+CATALOG_DEFINITIONS.ht.filename,import.meta.url)),'ht'));for(const c of collections)for(const r of normalized[c])delete r.eligibility_v1;normalized.revision="1.2";delete normalized.audit.structured_option_review_count;delete normalized.audit.structured_option_review_version;delete normalized.data_rule_review_v1_3;assert.equal(createHash("sha256").update(JSON.stringify(normalized)).digest("hex"),proof.normalizedPreviousHash);
 });
 test("matching type/TL cannot replace pressure proof",()=>{
   const r=service.checkCompatibility(python,"ht_plus_p",{availabilityTL:9});assert.equal(r.status,"undetermined");assert.ok(r.eligibility.checks.some(c=>c.field==="munition_classes_any"&&c.status==="confirmed")); assert.ok(r.reasons.some(c=>c.message.includes("weapon_pressure_rating_verified")));

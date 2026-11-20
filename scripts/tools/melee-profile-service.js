@@ -1,3 +1,4 @@
+import {combatGripAvailable} from "./combat-technique-registry.js";
 import {utExoticSource,utExoticHints,utExoticEffect,utExoticQuality,normalizeUTExoticSelection} from '../ut-exotic-melee-source.js';
 import {resolveUnarmedAttack} from './bs-unarmed.js';
 import {assertShieldEquipmentReference} from './shield-equipment-adapter.js';
@@ -11,6 +12,7 @@ import { meleeSource, meleeSiblingSources, meleeSkillRules } from '../melee-sour
 import { readActorStrength } from './strength-service.js';
 import { resolveProfileWeaponStrength, projectMeleeStrength, unboundMeleeStrength } from './melee-weapon-strength.js';
 import { resolveStandaloneSkill, standaloneSkillDescription } from './standalone-skill-service.js';
+import { armorFamiliarity } from './ma-combat-perks.js';
 import { withActorResourceWrite } from './actor-resource-writes.js';
 import { parseCampaignTL } from './tech-level.js';
 import { ltMeleeQualityProfile,ltMaterialChoices,ltMaterialEffect,ltMaterialHints,LT_MATERIALS,
@@ -201,7 +203,7 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
     const same=profile.modeId===context.source.modeId;
     const recordMode=context.record?.modes.find(m=>m.modeId===profile.modeId);
     const manual=recordMode?.overrides??{};
-    const grip=selection.grip||'published',gripPolicy=htSpecialGripPolicy(profile)??htOrdinaryGripPolicy(profile)??ltImprovisedGripPolicy(profile)??ltShieldToolGripPolicy(profile)??ltFlexibleGripPolicy(profile)??ltBladeGripPolicy(profile)??ltImpactGripPolicy(profile)??ltPolearmGripPolicy(profile),martial=meleeMartialGrips(profile).includes(grip);
+    const grip=selection.grip||'published',gripPolicy=htSpecialGripPolicy(profile)??htOrdinaryGripPolicy(profile)??ltImprovisedGripPolicy(profile)??ltShieldToolGripPolicy(profile)??ltFlexibleGripPolicy(profile)??ltBladeGripPolicy(profile)??ltImpactGripPolicy(profile)??ltPolearmGripPolicy(profile),martial=combatGripAvailable(grip,meleeMartialGrips(profile));
     const chosenSkill=selection.skill||profile.primarySkills[0];
     if(profile.skillAttackModifiers?.[chosenSkill]!==undefined)profile={...profile,attackModifier:profile.skillAttackModifiers[chosenSkill]};
     if(profile.skillStats?.[chosenSkill])profile={...profile,stats:{...profile.stats,...profile.skillStats[chosenSkill]}};
@@ -248,7 +250,7 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
         gripEffects.damage=grip==='tip'?0:twoHanded?0:1;
         gripEffects.swingReduction=grip==='defensive'&&twoHanded&&motion==='swing';
         gripEffects.parry=1;
-        gripEffects.conditions.push('Обе руки заняты оружием. Parry показан спереди (+1); сбоку вместо этого суммарный штраф −3 к базовому Parry (MA111; B390).');
+        gripEffects.conditions.push('Обе руки заняты оружием. Parry показан спереди (+1); сбоку вместо этого суммарный штраф -3 к базовому Parry (MA111; B390).');
         if(grip==='tip'){
           reach='C';gripEffects.conditions.push('Только Thrust за остриё; Swing невозможен. Штраф за щели в доспехе уменьшается на 2 вручную (MA111).');
         }
@@ -264,12 +266,12 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
     const importedBaseline=context.imported&&!selection.skill&&same;
     let skill=profile.contactProcedure?{resolved:true,name:'\u041a\u043e\u043d\u0442\u0430\u043a\u0442',level:0,source:'manual-contact'}:importedBaseline?{resolved:true,name:'Импортированный итог GGA',level:attack.level,
       source:'gga-imported-total',directWeaponPenalty:profile.attackModifier,directPenaltyAlreadyIncluded:true}:
-      resolveStandaloneSkill({actor,record:context.record??{id:context.key,equipmentSnapshot:context.catalogs?.getEquipment(profile.equipmentId)},mode:{modeId:profile.modeId,
+      resolveStandaloneSkill({actor,hands:hands.hands,record:context.record??{id:context.key,equipmentSnapshot:context.catalogs?.getEquipment(profile.equipmentId)},mode:{modeId:profile.modeId,
         overrides:{governingSkill:rawSkill},snapshot:{governing_skill:{status:'resolved',skill:{name:profile.primarySkills[0]},attack_modifier:profile.attackModifier},
           defaults:meleeSkillRules(profile,rawSkill)}}});
     const ownerOverride=same?attack.meleeManualOverride:null;
     if(ownerOverride)skill={...skill,resolved:true,level:ownerOverride.skillLevel,source:'owner-override',
-      directPenaltyAlreadyIncluded:true};
+      directPenaltyAlreadyIncluded:true,perks:undefined};
     const damageSkill=unarmedSkillBonus?{...(profile.technique?techniqueDamageBonus(profile,skill,actor):ltImpactSkillDamage({...profile,unarmedSkillBonus:true},rawSkill,skill,actor)),
       alreadyIncluded:context.imported&&same&&!rebuildUnarmed,
       ...((context.imported&&same&&!rebuildUnarmed||manual.damage||attack.hasMeleeDamageOverride)?{bonusPerDie:0}:{})}:profile.damagePart==='hilt'?{name:'Brawling',source:'LT71[5]; B182',alreadyIncluded:context.imported&&same,
@@ -278,17 +280,27 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
     const attackOnly=importedBaseline||ownerOverride?0:profile.attackOnlyModifier??0;
     const weaponStrength=resolveProfileWeaponStrength({actor,attack,profile,context,selection,skill,importedBaseline,ownerOverride,st,hands,martial,motion});
     const additional=quality.skillBonus+gripEffects.skill+attackOnly;
-    const levelBeforeStrength=skill.resolved?skill.level+additional:null;
+    const adaptation=skill.perks?.find(perk=>perk.name==='Weapon Adaptation');
+    const fencingSkill=!importedBaseline&&!ownerOverride&&['Main-Gauche','Rapier','Saber','Smallsword'].includes(skill.name);
+    const fencingEncumbrance=fencingSkill?Number(Object.values(actor?.system?.encumbrance??{}).find(e=>e.current)?.level??0):0;
+    const fencingArmor=armorFamiliarity(actor,skill.name,fencingEncumbrance);
+    const encumbrancePenalty=fencingEncumbrance-fencingArmor;
+    if(fencingArmor)skill={...skill,perks:[...(skill.perks??[]),{name:'Armor Familiarity',modifier:fencingArmor,source:'MA49; B208'}]};
+    const levelBeforeStrength=skill.resolved?skill.level+additional-encumbrancePenalty:null;
     const level=projectMeleeStrength(levelBeforeStrength,weaponStrength);
     const projectedStrengthDelta=weaponStrength.proposedDelta??0;
-    const defenseLevel=level===null?null:level-attackOnly;
+    const defenseLevel=level===null?null:level-attackOnly+encumbrancePenalty;
+    const publishedStaffBonus=['lt:jo','lt:quarterstaff','lt:long-staff'].includes(profile.modelId);
+    const adaptedParry=adaptation?.skill==='Staff'&&profile.damagePart!=='shaft'?2:
+      adaptation?.from==='Staff'&&publishedStaffBonus?-2:0;
     let parry=same?attack.parry:manual.parry??sourceStats.parry;
     if(ownerOverride){
       parry=ownerOverride.parry;
       if(additional&&/^\d+[UF]*$/i.test(parry))parry=parry.replace(/^\d+/,v=>String(Number(v)+Math.floor(level/2)-Math.floor(skill.level/2)));
     }else if(!importedBaseline){
       const match=/^([+-]?\d+)([UF]*)$/i.exec(manual.parry??sourceStats.parry);
-      if(match&&defenseLevel!==null)parry=String(3+Math.floor(defenseLevel/2)+Number(match[1])-(profile.parrySkillAlreadyIncluded??0))+match[2];
+      if(match&&defenseLevel!==null)parry=String(3+Math.floor(defenseLevel/2)+Number(match[1])-(profile.parrySkillAlreadyIncluded??0)-encumbrancePenalty+adaptedParry)+
+        (adaptation?match[2].replace(/F/ig,'')+(fencingSkill?'F':''):match[2]);
     }else if((additional||projectedStrengthDelta)&&/^\d+[UF]*$/i.test(parry))parry=parry.replace(/^\d+/,v=>String(Number(v)+Math.floor(level/2)-Math.floor(attack.level/2)));
     if(gripEffects.parry&&/^\d+[UF]*$/i.test(parry))parry=parry.replace(/^\d+/,v=>String(Number(v)+gripEffects.parry));
     // LT63: this is the user's hand, not the improvised object or its attack technique.
@@ -307,7 +319,7 @@ export function resolveMeleeProfile({actor,attack,selection=null,context=meleePr
       ...(profile.attackOnlyModifier?{attackOnlyModifier:profile.attackOnlyModifier,attackOnlyAlreadyIncluded:importedBaseline||!!ownerOverride}:{}),
       ...(profile.occupiedHands?{occupiedHands:profile.occupiedHands}:{}),
       motion,
-      skill:{...skill,entry:undefined,candidates:undefined},attackLevel:level,levelBeforeStrength,projectedStrengthDelta,weaponStrength,directWeaponPenalty:profile.attackModifier,
+      skill:{...skill,entry:undefined,candidates:undefined},attackLevel:level,levelBeforeStrength,projectedStrengthDelta,weaponStrength,directWeaponPenalty:skill.directWeaponPenalty??profile.attackModifier,
       applyArmST:selection.applyArmST??attack.applyArmST===true,
       strength:{...hands,actualST,penaltyAlreadyIncluded:importedBaseline||!!ownerOverride},damageExpression:damage,reach,parry,
       conditions:[hands.ready,...gripEffects.conditions].filter(Boolean)};

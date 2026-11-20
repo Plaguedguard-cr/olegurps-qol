@@ -39,8 +39,8 @@ export function utBriefInstructions(variantId, { caliberMm, doses, ammunitionSup
     shaped_charge:'Кумулятивный заряд: linked-взрыв, осколки и incendiary.',
     hemp:'Кумулятивный заряд: linked-взрыв, осколки и incendiary.',
     memory_baton:'Double knockback.',
-    monochain:'Шея, лицо, череп, конечности либо SM ≤ −2: вместо piercing – cutting (10).',
-    burrow_darts:`После ≥1 HP injury: ещё 1 HP/ход, до смерти или ${caliberMm} секунд. Извлечение: First Aid −1 за секунду бурения; попытка наносит 1 HP.`,
+    monochain:'Шея, лицо, череп, конечности либо SM ≤ -2: вместо piercing – cutting (10).',
+    burrow_darts:`После ≥1 HP injury: ещё 1 HP/ход, до смерти или ${caliberMm} секунд. Извлечение: First Aid -1 за секунду бурения; попытка наносит 1 HP.`,
     stingray:'Linked electrical: lethal electrical injury и Surge.',
     thermobaric: payload.atmosphere === 'very-thin' ? 'Очень тонкая атмосфера: урон /2.' :
       ['trace','vacuum'].includes(payload.atmosphere) ? 'Следовая атмосфера/вакуум: урон /4.' : '',
@@ -50,9 +50,9 @@ export function utBriefInstructions(variantId, { caliberMm, doses, ammunitionSup
     implosion:'Knockback к центру; радиационный компонент ослабевает как 1/r.',
     flare:'Освещение 5 минут; на дистанции до 1% радиуса – HT (HT-3 в темноте), ослепление на MoF секунд.',
     emp:'Electrical: HT-8 (2), отказ на MoF секунд; робот – без сознания, полный киборг – Seizure.',
-    expendable_jammer:'Радио/радар: Electronics Operation (Comm) −10.',
+    expendable_jammer:'Радио/радар: Electronics Operation (Comm) -10.',
     strobe:`Вспышка: ${row.damage ?? ''}; HT +1 за ярд. Stun/Blindness на MoF секунд; провал 5+ или Epilepsy – Seizure на MoF минут.`,
-    warbler:`Звук: ${row.damage ?? ''}; HT +1 за ярд. Deafness и moderate pain на MoF минут; провал 5+ – crippling hearing loss. Работает 10 секунд. Hearing: −10 в радиусе, −5 до 2r, −2 до 5r.`,
+    warbler:`Звук: ${row.damage ?? ''}; HT +1 за ярд. Deafness и moderate pain на MoF минут; провал 5+ – crippling hearing loss. Работает 10 секунд. Hearing: -10 в радиусе, -5 до 2r, -2 до 5r.`,
     swarm: row.capacity ? `Вместимость роя: ${parseInt(row.capacity,10)} кв. ярдов.` : '',
     stasis:`Стазис: ${payload.durationSeconds ?? 300} секунд; учитываются защитные force fields.`,
     vortex:'Нужны атмосфера и гравитация; перенос предметов, помещающихся в радиус.',
@@ -75,9 +75,9 @@ export function utBriefInstructions(variantId, { caliberMm, doses, ammunitionSup
   }
   if (id === 'expendable_jammer' && caliberMm === 25 && payload.radius?.origin === 'manual')
     lines.push('Радиус задан пользователем.');
-  if (id === 'psi_bomb') lines.push('Will−5: stun, восстановление −5, амнезия 2 секунд; провал 5+ – без сознания на MoF минут.');
-  if (id === 'message_psi_bomb') lines.push('Will−2: сообщение из Note и stun; провал 5+ – Moderate Pain на MoF минут после восстановления.');
-  if (id === 'terror_psi_bomb') lines.push('Fright Check −5.');
+  if (id === 'psi_bomb') lines.push('Will-5: stun, восстановление -5, амнезия 2 секунд; провал 5+ – без сознания на MoF минут.');
+  if (id === 'message_psi_bomb') lines.push('Will-2: сообщение из Note и stun; провал 5+ – Moderate Pain на MoF минут после восстановления.');
+  if (id === 'terror_psi_bomb') lines.push('Fright Check -5.');
   if (['psi_bomb','message_psi_bomb','terror_psi_bomb'].includes(id)) lines.push('Mind Shield помогает; Digital Mind и IQ0 не затрагиваются.');
   return unique([...lines, ...(swarm?[swarm.source]:[]),utSources[variantId] ?? compactAmmoSource(source ?? rules.ammunitionSource)]);
 }
@@ -102,18 +102,18 @@ export function htBrief(profile) {
     ht_airburst:'Воздушный подрыв: бонус области и рассеивание по выбранному взрывателю.',
     ht_incendiary:'Incendiary.', ht_tracer:'Трассер: видимый след; +1 к стрельбе в следующий ход при выполнении условий.',
     ht_silent:'Бесшумный: слышимость по таблице с дистанцией 16 ярдов.',
-    ht_subsonic_pistol:'Hearing выстрела −1.', ht_subsonic_rifle:'Hearing выстрела −2.',
+    ht_subsonic_pistol:'Hearing выстрела -1.', ht_subsonic_rifle:'Hearing выстрела -2.',
     ht_poison:'Доставка выбранного яда при выполнении условий контакта/пробития.',
     ht_poison_gas:'Газовый linked-компонент; доставка выбранного вещества.',
     ht_liquid:'Доставка выбранной жидкости.',
-    ht_illumination:'Освещение: штраф темноты не хуже −3; контакт – 1d burn/с, до 10 секунд.',
-    ht_signal_flare:'Сигнальный свет: штраф темноты не хуже −5; контакт – 1d burn/с, до 10 секунд.',
-    ht_smoke:'Обычное зрение −10.', ht_colored_smoke:'Зрение и визуально наводимые атаки через дым −7.',
-    ht_hot_smoke:'Зрение, Infravision и Hyperspectral Vision −10.',
-    ht_prism_smoke:'Зрение, Infravision и Hyperspectral Vision −10; блокирует лазеры.',
-    ht_em_smoke:'Зрение, Infravision, Hyperspectral Vision, Radar и Imaging Radar −10.',
-    ht_tear_gas:'Две независимые HT-2: Coughing и Blindness; зрение −3 за ярд газа, до −10.',
-    ht_tear_gas_vomit:'Три независимые HT-2: Coughing, Blindness и Retching; зрение −3 за ярд газа, до −10.',
+    ht_illumination:'Освещение: штраф темноты не хуже -3; контакт – 1d burn/с, до 10 секунд.',
+    ht_signal_flare:'Сигнальный свет: штраф темноты не хуже -5; контакт – 1d burn/с, до 10 секунд.',
+    ht_smoke:'Обычное зрение -10.', ht_colored_smoke:'Зрение и визуально наводимые атаки через дым -7.',
+    ht_hot_smoke:'Зрение, Infravision и Hyperspectral Vision -10.',
+    ht_prism_smoke:'Зрение, Infravision и Hyperspectral Vision -10; блокирует лазеры.',
+    ht_em_smoke:'Зрение, Infravision, Hyperspectral Vision, Radar и Imaging Radar -10.',
+    ht_tear_gas:'Две независимые HT-2: Coughing и Blindness; зрение -3 за ярд газа, до -10.',
+    ht_tear_gas_vomit:'Три независимые HT-2: Coughing, Blindness и Retching; зрение -3 за ярд газа, до -10.',
     ht_white_phosphorus:'При сохраняющемся контакте: 1d(0.2) burn каждые 10 секунд, до минуты; удаление – DX.'
   }[id];
   const lines = [description];
@@ -185,7 +185,7 @@ export function ammunitionChatData(profile) {
   const refs = unique(chargeRefs.length ? chargeRefs : [compactAmmoSource(source)]);
   lines = unique(lines.filter(line => !/^(UT|HT)\d/.test(line)));
   if(profile.weaponConfiguration?.variant==='gauss'&&profile.weaponConfiguration.fireMode!=='standard')lines.unshift(
-    (profile.weaponConfiguration.fireMode==='boosted'?'Повышенная скорость EM':'Пониженная скорость EM; обнаружение звука −3')+' – UT141/139.');
+    (profile.weaponConfiguration.fireMode==='boosted'?'Повышенная скорость EM':'Пониженная скорость EM; обнаружение звука -3')+' – UT141/139.');
   if(profile.weaponConfiguration?.variant==='lp')lines.unshift(profile.weaponConfiguration.hearingModifier===-3?moduleText('OleGURPS.LP.Sound'):'LP '+(profile.weaponConfiguration.fireMode==='boosted'?'Boosted':'Standard')+' - UT139.');
   if(profile.weaponConfiguration?.variant==='etc') {lines.unshift('ETC – UT139.');}
   const fields = [];

@@ -9,6 +9,8 @@ import { MeleeProfileService, meleeProfileContext, resolveMeleeProfile } from '.
 import { normalizeMeleeAssistantState, setMeleeVisibility, getMeleeAttackSettings, setMeleeRapidStrikeMastery } from '../scripts/tools/melee-assistant-state.js';
 import { resolveMeleeCombatCalculation } from '../scripts/tools/melee-service.js';
 import { checkUIDashes, unapprovedUIDash } from '../tools/check-ui-dashes.mjs';
+import { normalizeDamageFormula } from '../scripts/tools/damage.js';
+import { techniqueIdentity } from '../scripts/tools/melee-penalty-techniques.js';
 
 const catalogs = new CatalogService({logger:null,fetcher:async url=>({ok:true,json:async()=>JSON.parse(await fs.readFile(new URL('../data/catalogs/'+url.split('/').at(-1),import.meta.url),'utf8'))})});
 await catalogs.load(); globalThis.OleGURPSQOL={catalogs};
@@ -91,10 +93,16 @@ test('source-only melee offers the catalog alternatives through the same row and
  const live=readStandaloneAttack(a,raw.standaloneRef.weaponId,raw.standaloneRef.modeId);
  assert.equal(resolveMeleeProfile({actor:a,attack:live}).level,15);assert.equal(meleeCombatControls(a,live).skill,'Knife');assert.equal(JSON.stringify(a.system),system);
 });
-test('new literal, escaped or entity em dashes fail the repository gate; classified source/matcher exceptions remain intact',()=>{
+test('literal, escaped or entity em dashes and typographic minuses fail the UI gate',()=>{
  assert.deepEqual(checkUIDashes(),[]);
- for(const dash of ['\u2014','\\u2014','\\u{2014}','&#8212;','&#x2014;','&mdash;'])assert.equal(unapprovedUIDash('scripts/new-ui.js','label = "'+dash+'"'),true);
+ for(const sign of ['\u2014','\\u2014','\\u{2014}','&#8212;','&#x2014;','&mdash;',
+  '\u2212','\\u2212','\\u{2212}','&#8722;','&#x2212;','&minus;']){
+  assert.equal(unapprovedUIDash('scripts/new-ui.js','label = "'+sign+'"'),true);
+ }
  assert.equal(unapprovedUIDash('scripts/new-ui.js','label = "–"'),false);
+ assert.equal(unapprovedUIDash('scripts/new-ui.js','label = "Parry -2"'),false);
+ assert.equal(normalizeDamageFormula('2d6\u22123'),'2d-3');
+ assert.equal(techniqueIdentity('Eye\u2212Poke'),techniqueIdentity('Eye-Poke'));
 });
 test('GGA restores the original actor-skill selector without a catalog requirement or an imported-total placeholder',()=>{
  const a=actor(),raw={path:'system.melee.00000',name:'Unbound imported Axe',mode:'Swing',level:19,st:'11',damage:'sw+2 cut'};

@@ -132,14 +132,14 @@ export function ltBladeTipDamage(profile){
 export function ltBladeHints(profile){
  const out=['Reach – справка о дистанции, не блокировка Attack. C – вплотную; * – смена длины требует Ready. LT64; B270.',
   'Parry – только подсказка: F – фехтование; U – нельзя парировать в ход атаки; No – парировать нельзя. Защиту выбирают вручную. LT64.'];
- if(ltBladeGripPolicy(profile)?.freeReverse)out.push('Haladie: выбор обычного/обратного хвата свободный, без смены оружия; −1 к навыку уже учтён. Pummeling невозможен. LT56.');
+ if(ltBladeGripPolicy(profile)?.freeReverse)out.push('Haladie: выбор обычного/обратного хвата свободный, без смены оружия; -1 к навыку уже учтён. Pummeling невозможен. LT56.');
  else out.push('Смена хвата требует Ready; время и Grip Mastery учитывает игрок. MA102; MA109–112.');
  if(ltBladeGripPolicy(profile)?.reason)out.push(ltBladeGripPolicy(profile).reason);
  if(profile.modelId==='lt:balisong')out.push('Для открытия этого низкотехнологичного Balisong нужен Ready; Fast-Draw не открывает его автоматически. LT54.');
  if(['lt:estoc','lt:rondel-dagger','lt:stiletto','lt:katar','lt:large-katar'].includes(profile.modelId))out.push('При выборе щелей в доспехе уменьшить штраф на 2; цель и условие выбираются вручную. LT71[4].');
  if(['lt:katar','lt:large-katar'].includes(profile.modelId))out.push('Для Katar-рукояти допустимо лучшее Brawling/Karate Parry; защита и DR гарды учитываются вручную. LT57; LT71[6,12].');
  if(profile.modelId==='lt:pata')out.push('Pata имеет встроенную перчатку/гарду; DR руки учитывается вручную. LT57; LT71[6].');
- if(profile.modelId==='lt:shotel')out.push('Shotel: −2 к атаке уже учтён один раз. Противник получает −1 к Block/Parry вручную. LT62; LT65; LT71[7].');
+ if(profile.modelId==='lt:shotel')out.push('Shotel: -2 к атаке уже учтён один раз. Противник получает -1 к Block/Parry вручную. LT62; LT65; LT71[7].');
  if(profile.modelId==='lt:khopesh')out.push('Hook: числовой урон указан в таблице; зацеп, обезоруживание и последствия выполняются вручную. LT54; LT57; LT65; LT71[2].');
  if(profile.damagePart==='hilt')out.push('Удар гардой: Brawling или DX. Бонус Brawling +1 за куб при изученном навыке DX+2 уже учитывается; качество и материал клинка не усиливают гарду. LT65; LT71[5]; B182.');
  else if(profile.modelId!=='lt:haladie')out.push('Pummeling – отдельная ручная процедура по MA111, не дополнительный универсальный режим Attack. Качество кромки к рукояти не применяется.');
@@ -171,7 +171,7 @@ export function projectLTBladeSourceData(book,data){
  if(!data.equipment.some(e=>e.equipment_id==='eLTM21Haladie')){
   const template=data.equipment.find(e=>e.equipment_id==='e4Cqh4R-bWl7CS7dQ');
   if(template){const e=structuredClone(template);Object.assign(e,{equipment_id:'eLTM21Haladie',name:'Haladie',reference:'LT56',tech_level:null,
-   local_notes:'Двуклинковый нож: свободный выбор обычного/обратного хвата; −1 к навыку. Не допускает Pummeling. LT56.',
+   local_notes:'Двуклинковый нож: свободный выбор обычного/обратного хвата; -1 к навыку. Не допускает Pummeling. LT56.',
    lt_blade_origin:'module-printed-source-overlay',modes:[]});
    for(const p of Object.values(LT_BLADE_PROFILES).filter(p=>p.equipmentId===e.equipment_id)){
     const mode=structuredClone(template.modes.find(m=>m.combat_type==='melee'&&m.raw_calc?.damage.startsWith(p.stats.damage.startsWith('sw')?'sw':'thr')));

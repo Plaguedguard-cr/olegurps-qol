@@ -1,5 +1,6 @@
 import { readWeaponSkillTLPolicy, saveWeaponSkillTLPreference } from "./weapon-skill-tl-policy.js";
 import { readDamageDiceAddsPolicy, saveDamageDiceAddsPreference } from './damage-dice-adds.js';
+import { allowsCinematicTechniqueDefaults, saveCinematicTechniqueDefaults } from './combat-technique-preference.js';
 
 import { moduleText } from "../localization.js";
 const text = name => moduleText("OleGURPS.WeaponSkillTL." + name);
@@ -13,11 +14,13 @@ export class WeaponSkillSettingsApp extends foundry.applications.api.Application
     form: { closeOnSubmit: true, handler: async function(_event, _form, formData) {
       await saveWeaponSkillTLPreference(formData.object.ignoreWeaponSkillTLDifferences === true);
       await saveDamageDiceAddsPreference(formData.object.convertDamageAddsToDice === true);
+      await saveCinematicTechniqueDefaults(formData.object.cinematicTechniqueDefaults === true);
     } }
   };
-  async _prepareContext() { return { ...readWeaponSkillTLPolicy(), diceAdds: readDamageDiceAddsPolicy() }; }
+  async _prepareContext() { return { ...readWeaponSkillTLPolicy(), diceAdds: readDamageDiceAddsPolicy(),
+    cinematicDefaults: allowsCinematicTechniqueDefaults() }; }
   async _renderHTML(context) {
-    return `<div class="standard-form"><div class="form-group"><label for="olegurps-ignore-weapon-tl">${escape(text("Label"))}</label><div class="form-fields"><input id="olegurps-ignore-weapon-tl" name="ignoreWeaponSkillTLDifferences" type="checkbox" ${context.ignoreWeaponSkillTLDifferences ? "checked" : ""}></div><p class="hint">${escape(text("Hint"))}</p></div><div class="form-group"><label for="olegurps-damage-dice-adds">${escape(moduleText("OleGURPS.DamageDiceAdds.Label"))}</label><div class="form-fields"><input id="olegurps-damage-dice-adds" name="convertDamageAddsToDice" type="checkbox" ${context.diceAdds?.enabled !== false ? "checked" : ""}></div><p class="hint">${escape(moduleText("OleGURPS.DamageDiceAdds.Hint"))}</p></div><footer class="form-footer"><button type="submit"><i class="fas fa-save"></i>${escape(text("Save"))}</button></footer></div>`;
+    return `<div class="standard-form"><div class="form-group"><label for="olegurps-ignore-weapon-tl">${escape(text("Label"))}</label><div class="form-fields"><input id="olegurps-ignore-weapon-tl" name="ignoreWeaponSkillTLDifferences" type="checkbox" ${context.ignoreWeaponSkillTLDifferences ? "checked" : ""}></div><p class="hint">${escape(text("Hint"))}</p></div><div class="form-group"><label for="olegurps-damage-dice-adds">${escape(moduleText("OleGURPS.DamageDiceAdds.Label"))}</label><div class="form-fields"><input id="olegurps-damage-dice-adds" name="convertDamageAddsToDice" type="checkbox" ${context.diceAdds?.enabled !== false ? "checked" : ""}></div><p class="hint">${escape(moduleText("OleGURPS.DamageDiceAdds.Hint"))}</p></div><div class="form-group"><label for="olegurps-cinematic-defaults">Кинематографические техники по Default</label><div class="form-fields"><input id="olegurps-cinematic-defaults" name="cinematicTechniqueDefaults" type="checkbox" ${context.cinematicDefaults ? "checked" : ""}></div><p class="hint">Разрешить применение по Default, если это допускает правило техники. Личные настройки.</p></div><footer class="form-footer"><button type="submit"><i class="fas fa-save"></i>${escape(text("Save"))}</button></footer></div>`;
   }
   _replaceHTML(result, content) { content.innerHTML = result; }
 }

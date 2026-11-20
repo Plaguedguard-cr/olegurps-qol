@@ -6,6 +6,10 @@ export function parseWeaponBulk(value) {
   return { rawBulk, numericBulk: Number(match[1]), hasFoldingStock: !!match[2] };
 }
 
+export function normalizeBulk(value) {
+  return parseWeaponBulk(value)?.numericBulk ?? null;
+}
+
 /** LT81: explicit owner choice; no strength lookup, restrictions or inferred wielding state. */
 export function sourceWeaponHandling(mode, bulkState = 'mounted', manualBulk = null) {
   const contract = mode?.lt_ranged_contract;

@@ -33,7 +33,7 @@ export function fallingContent(v) {
     ${select('fallType', 'Положение тела / форма', v.fallType, { ...Object.fromEntries(Object.entries(FALL_PRESETS).map(([k, p]) => [k, p.optionLabel])), custom: 'Своё значение' })}
     <div data-custom-terminal>${field('customTerminal', 'Своя земная конечная скорость, ярдов/с', v.customTerminal, { min: '.000001' })}</div>
     <p class="oq-fall-hint" data-terminal-preview></p>
-    ${surface('hardSurface', v.hardSurface)}${check('acrobatics', 'Успешная акробатика (−5 ярдов)', v.acrobatics)}
+    ${surface('hardSurface', v.hardSurface)}${check('acrobatics', 'Успешная акробатика (-5 ярдов)', v.acrobatics)}
     <p class="oq-fall-hint">Галочка означает уже выполненный успешный бросок Acrobatics.</p>
     ${barrier('', v)}
   </section>

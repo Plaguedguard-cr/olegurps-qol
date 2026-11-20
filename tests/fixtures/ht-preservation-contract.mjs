@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
+import { restorePublishedCatalogCheckpoint } from './published-catalog-checkpoint.mjs';
 
 export const sha256 = value => createHash("sha256").update(value).digest("hex");
 
@@ -11,6 +12,7 @@ function replaceExactlyOnce(raw, before, after) {
 const approvalFor = (proof, revision) => revision === 1 ? proof.approvedWeaponErrata : proof.approvedHaflaErrata ?? proof.approvedWeaponErrata;
 
 export function restoreApprovedErrata(raw, proof, { errataRevision } = {}) {
+  raw = restorePublishedCatalogCheckpoint(raw, 'weapons');
   const catalog = JSON.parse(raw);
   const approval = approvalFor(proof, errataRevision);
   assert.deepEqual(catalog.catalog_errata_v1, approval.metadata, "only approved errata revision and metadata are allowed");
@@ -29,6 +31,7 @@ export function restoreApprovedErrata(raw, proof, { errataRevision } = {}) {
 }
 
 export function restoreHaflaErrata(raw, proof) {
+  raw = restorePublishedCatalogCheckpoint(raw, 'weapons');
   const catalog = JSON.parse(raw), approval = proof.approvedHaflaErrata;
   assert.deepEqual(catalog.catalog_errata_v1, approval.metadata);
   const modes = catalog.equipment.flatMap(e => e.modes).filter(m => m.weapon_mode_id === approval.modeId);
@@ -42,6 +45,7 @@ export function restoreHaflaErrata(raw, proof) {
 }
 
 export function restoreHTPointer(raw) {
+  raw = restorePublishedCatalogCheckpoint(raw, 'weapons');
   const pointer = JSON.parse(raw).ht_ammunition_catalog_link;
   assert.deepEqual(pointer, {
     catalog_kind: "olegurps-ht-ammunition-catalog-v1",
@@ -56,6 +60,7 @@ export function restoreHTPointer(raw) {
 }
 
 export function assertWeaponPreservation(raw, proof, { historical = false, errataRevision } = {}) {
+  raw = restorePublishedCatalogCheckpoint(raw, 'weapons');
   if (historical) {
     assert.equal(JSON.parse(raw).catalog_errata_v1, undefined);
     assert.equal(sha256(raw), proof.weaponCurrentSha256, "historical HT 1.3 baseline");

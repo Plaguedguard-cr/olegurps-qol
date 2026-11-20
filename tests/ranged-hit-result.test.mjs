@@ -10,6 +10,7 @@ import { ammoDisplayName } from "../scripts/tools/ammo-management-localization.j
 import { weaponResourceLabel as beamResourceLabel } from '../scripts/tools/weapon-resources.js';
 import { weaponResourcePresentation, shotResourceLines } from '../scripts/tools/weapon-resource-presentation.js';
 import { resolveRuntimeAttackProfile, newAttackId, attackProfileError } from "../scripts/tools/attack-profile-runtime.js";
+import { rangedPerkContext } from '../scripts/tools/ma-combat-perks.js';
 
 // Use the production transaction boundary in the private-closure tests as well.
 function attachAmmoState(actor, state, onSave = () => {}) {
@@ -151,7 +152,7 @@ function shootingFixture(fx, scenario) {
   const execute = privateFunction("async function fireAndRoll(", "async function spendWithoutRoll(", {
     normalizeVisibility: () => null,
     ammoService, actor: fx.actor, token: { id: "source" }, newAttackId, ammoDisplayName,
-    resolveRuntimeAttackProfile, attackProfileError, beamResourceLabel, weaponResourcePresentation,
+    resolveRuntimeAttackProfile, attackProfileError, beamResourceLabel, weaponResourcePresentation, rangedPerkContext,
     repairState: async () => {}, getWeaponContext: () => ({ weapon, attack: fx.attack }),
     getRangeBands: () => [], getTaggedModifierSettings: () => null,
     parseShotOptions: () => options, getCloseDamageReport: () => null,

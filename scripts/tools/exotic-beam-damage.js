@@ -64,7 +64,7 @@ export function configureExoticDamageApplication(app,contract,runtime=globalThis
   if(!owner(app.actor,runtime))throw Error('Нет прав применять урон к этому персонажу.');
   // Both native Apply paths use the computed injury, including legitimate blunt trauma.
   const result=originalResolve.call(this,keepOpen,calc.pointsToApply,publicly,results);
-  if(dis)Promise.resolve(result).then(()=>{const hp=app.actor.system?.HP;if(hp&&hp.value<=-10*hp.max)runtime.ui?.notifications?.info?.('Цель достигла порога дезинтеграции (−10×HP). UT130.');});
+  if(dis)Promise.resolve(result).then(()=>{const hp=app.actor.system?.HP;if(hp&&hp.value<=-10*hp.max)runtime.ui?.notifications?.info?.('Цель достигла порога дезинтеграции (-10×HP). UT130.');});
   return result;
  };
  app.submitDirectApply=function(keepOpen,publicly){return this.resolveInjury(keepOpen,calc.pointsToApply,publicly);};

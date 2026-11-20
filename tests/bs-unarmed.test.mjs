@@ -70,7 +70,7 @@ test('M2.11 common controls, no Weapon Bond, kick defense and maneuvers',async()
  const a=actor(14,{Karate:13}),punch=raw(a,'punch');await saveMeleeCombatControl(a,punch,'skill','Karate');assert.equal(meleeCombatControls(a,punch).skill,'Karate');
  const state=normalizeMeleeAssistantState({});for(const mode of collectMeleeAttacks(a)){setSelectedMeleeAttack(state,mode);const restored=normalizeMeleeAssistantState(JSON.parse(JSON.stringify(state)));assert.equal(restored.selectedAttackKey,mode.key);assert.ok(collectMeleeAttacks(a).some(r=>r.key===restored.selectedAttackKey));}
  const attack=resolveUnarmedAttack(a,punch);assert.equal(resolveMeleeCombatCalculation({actor:a,attack,baseSkill:13,weaponBond:true}).effectiveSkill,13);assert.equal(committedStrongEligible(attack),true);
- assert.match(unarmedParryHint(BS_UNARMED.punch,{name:'Boxing'}),/−2.*−3/);assert.match(unarmedParryHint(BS_UNARMED.punch,{name:'Karate'}),/encumbrance/);
+ assert.match(unarmedParryHint(BS_UNARMED.punch,{name:'Boxing'}),/-2.*-3/);assert.match(unarmedParryHint(BS_UNARMED.punch,{name:'Karate'}),/encumbrance/);
  assert.equal(defensiveAttackContext(resolveUnarmedAttack(a,raw(a,'kick'))).kind,'kick');assert.equal((await prepare(a,attack,{allOutStrong:true})).formula,'1d+3 cr');
  assert.equal((await prepare(a,attack,{dicePlusAdds:true})).formula,'1d+1 cr');
 });

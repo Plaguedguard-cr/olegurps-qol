@@ -3,6 +3,11 @@ import {withActorResourceWrite} from './actor-resource-writes.js';
 import {getAttackOverrideKey} from './weapon-attack-overrides.js';
 import {WeaponListVisibility} from './weapon-list-visibility.js';
 import { naturalWeaponStrength } from './melee-weapon-strength.js';
+import {resolveCombatTechnique,resolveMeleePenaltyTechnique} from './combat-technique-registry.js';
+import {readCombatTechniqueSkills} from './combat-technique-data.js';
+import {unarmedBonus} from './combat-technique-unarmed.js';
+import {armorFamiliarity,kickingAdaptation,readCombatPerks} from './ma-combat-perks.js';
+export {unarmedBonus} from './combat-technique-unarmed.js';
 
 // Basic Set 4e, printed pages. Body profiles are projections, never GGA Items.
 export const BS_UNARMED = Object.freeze({
@@ -18,18 +23,16 @@ const key=v=>clean(v).toLowerCase();
 function entries(tree){const out=[];for(const v of Object.values(tree??{})){if(!v||typeof v!=='object')continue;out.push(v);out.push(...entries(v.contains),...entries(v.collapsed));}return out;}
 const aliases={brawling:['brawling','драка'],boxing:['boxing','бокс'],karate:['karate','каратэ']};
 export function unarmedSkills(actor,profile){
- const dx=Number(actor?.system?.attributes?.DX?.value),learned=entries(actor?.system?.skills);
- return profile.skills.map(name=>{
+ const dx=Number(actor?.system?.attributes?.DX?.value),learned=readCombatTechniqueSkills(actor,{objectRows:true});
+ const bites=profile.part==='teeth'&&readCombatPerks(actor,'Biting Mastery').some(perk=>!perk.specialization);
+ const options=bites&&!profile.skills.includes('Karate')?[...profile.skills,'Karate']:[...profile.skills];
+ if(profile.penalty===-2&&kickingAdaptation(actor,'Acrobatics'))options.push('Acrobatics');
+ return options.map(name=>{
   const e=name==='DX'?null:learned.filter(e=>(aliases[key(name)]??[key(name)]).includes(key(e.name))&&(Number(e.points)>0||e.learned===true)&&Number(e.level??e.import)>0).sort((a,b)=>Number(b.level??b.import)-Number(a.level??a.import))[0];
   const level=name==='DX'?dx:e?Number(e.level??e.import):null;
   // GGA's level is the prepared learned level, before maneuver/location penalties.
   return {name,resolved:Number.isFinite(level)&&level>0,level,baseLevel:level,dx,learned:!!e,source:name==='DX'?'attribute-roll':'learned',key:'bs-unarmed:'+name};
  });
-}
-export function unarmedBonus(skill){
- if(!skill?.learned||!Number.isFinite(skill.dx)||!Number.isFinite(skill.baseLevel))return 0;
- const r=skill.baseLevel-skill.dx;
- return skill.name==='Brawling'?(r>=2?1:0):skill.name==='Boxing'?(r>=2?2:r>=1?1:0):skill.name==='Karate'?(r>=1?2:r>=0?1:0):0;
 }
 function traits(actor){return entries(actor?.system?.ads).filter(e=>e.disabled!==true&&e.active!==false);}
 const has=(actor,names)=>traits(actor).some(e=>names.includes(key(e.name)));
@@ -91,8 +94,12 @@ export function resolveUnarmedAttack(actor,attack,selection=unarmedSelection(act
  const ref=attack?.unarmedRef;if(!ref)return attack;
  const p=ref.profile,skills=unarmedSkills(actor,p),native=ref.native&&!selection.skill;
  const skill=native?{resolved:true,name:'GGA',level:attack.level,source:'gga-imported-total'}:skills.find(s=>s.name===(selection.skill||'DX'));
- const enc=skill?.name==='Karate'?Number(Object.values(actor?.system?.encumbrance??{}).find(e=>e.current)?.level??0):0;
- const level=attack.meleeManualOverride?.skillLevel??(native?attack.level:skill?.resolved?skill.level+(p.penalty??0)-enc:null);
+ const rawEnc=skill?.name==='Karate'?Number(Object.values(actor?.system?.encumbrance??{}).find(e=>e.current)?.level??0):0;
+ const armor=armorFamiliarity(actor,skill?.name,rawEnc),enc=rawEnc-armor;
+ const kickTechnique=!native&&p.penalty===-2&&skill?.learned&&(['Brawling','Karate'].includes(skill.name)||kickingAdaptation(actor,skill.name))?
+  resolveMeleePenaltyTechnique('kicking',{actor,attack:{...attack,meleeProfile:{attackType:'kick'}},governingSkill:skill}):null;
+ const level=attack.meleeManualOverride?.skillLevel??(native?attack.level:p.penalty===-2?
+  kickTechnique?.available?kickTechnique.level-enc:resolveCombatTechnique('basicKick',{profile:p,skill,encumbrance:enc}):skill?.resolved?skill.level+(p.penalty??0)-enc:null);
  const preserveDamage=native||attack.hasMeleeDamageOverride===true;
  const damage=preserveDamage?attack.damage:selectedDamage(attack,p);
  const strength=resolveStrengthDamage(actor,'thrust',{applyArmST:attack.applyArmST===true});
@@ -100,7 +107,11 @@ export function resolveUnarmedAttack(actor,attack,selection=unarmedSelection(act
  const bonusPerDie=preserveDamage?0:unarmedBonus(skill),naturalPerDie=preserveDamage?0:p.naturalPerDie??0;
  const parryLevel=p.part==='striker'?Math.max(skill?.level??0,Number(actor?.system?.attributes?.DX?.value)||0):skill?.level??0;
  const parry=attack.meleeManualOverride?.parry??(p.parry==='No'?'No':native?attack.parry:String(Math.floor(parryLevel/2)+3-enc));
- const evidence={id:p.id,part:p.part,equipmentId:p.equipmentId??null,instanceId:p.instanceId??null,nativeSource:ref.native,selectedSkill:native?'GGA':skill?.name,baseSkill:skill?.baseLevel??null,dx:skill?.dx??null,attackPenalty:p.penalty??0,encumbrancePenalty:enc,baseThrust:strength.baseFormula,baseThrustDice:dice,bonusPerDie,naturalPerDie,totalBonus:dice*(bonusPerDie+naturalPerDie),alreadyIncluded:native,manualDamage:attack.hasMeleeDamageOverride===true,pages:p.pages};
+ const perks=[];
+ if(armor&&attack.meleeManualOverride?.skillLevel==null)perks.push({name:'Armor Familiarity',modifier:armor,source:'MA49'});
+ if(p.part==='teeth'&&skill?.name==='Karate'&&skill.resolved)perks.push({name:'Biting Mastery',skill:skill.name,source:'MA49'});
+ if(kickTechnique?.perks)perks.push(...kickTechnique.perks);
+ const evidence={id:p.id,part:p.part,equipmentId:p.equipmentId??null,instanceId:p.instanceId??null,nativeSource:ref.native,selectedSkill:native?'GGA':skill?.name,baseSkill:skill?.baseLevel??null,dx:skill?.dx??null,attackPenalty:p.penalty??0,encumbrancePenalty:enc,baseThrust:strength.baseFormula,baseThrustDice:dice,bonusPerDie,naturalPerDie,totalBonus:dice*(bonusPerDie+naturalPerDie),alreadyIncluded:native,manualDamage:attack.hasMeleeDamageOverride===true,pages:p.pages,...(perks.length?{perks}:{}),...(kickTechnique?.available?{technique:{id:'kicking',learned:kickTechnique.learned,level:kickTechnique.level,modifier:kickTechnique.modifier,defaultModifier:-2,governingSkill:skill.name}}:{})};
  return {...attack,level,damage,parry,skillDescription:native?'Исходный итог GGA':(skill?.name??selection.skill)+': '+level,
   readinessReason:skill?.resolved?null:'Выбранный навык не изучен; выберите DX или изученный навык.',
   meleeProfile:{unarmed:evidence,skill,weaponStrength:naturalWeaponStrength(actor,attack),motion:/^thr/.test(damage)?'thrust':'fixed',attackType:p.penalty===-2?'kick':'unarmed',sourcePages:p.pages,strength:{maximumST:null},manualHints:[unarmedHint(p),unarmedParryHint(p,skill)].filter(Boolean),conditions:[],gripEffects:{}},
@@ -109,9 +120,9 @@ export function resolveUnarmedAttack(actor,attack,selection=unarmedSelection(act
 export function unarmedParryHint(p,skill){
  if(p.parry==='No')return '';
  if(p.part==='striker')return 'Striker парирует как оружие; используется лучшее из DX/2+3 и Brawling Parry (B88).';
- if(skill?.name==='Boxing')return 'Boxing Parry: −2 против ударов ногой; −3 против оружия, кроме прямых атак. По одному парированию каждой рукой (B182).';
- if(skill?.name==='Brawling')return 'Brawling Parry: −3 против оружия, кроме прямых атак. По одному парированию каждой рукой (B182).';
- if(skill?.name==='Karate')return 'Karate Parry: без обычного −3 против оружия; штраф encumbrance сохраняется. По одному парированию каждой рукой (B203).';
+ if(skill?.name==='Boxing')return 'Boxing Parry: -2 против ударов ногой; -3 против оружия, кроме прямых атак. По одному парированию каждой рукой (B182).';
+ if(skill?.name==='Brawling')return 'Brawling Parry: -3 против оружия, кроме прямых атак. По одному парированию каждой рукой (B182).';
+ if(skill?.name==='Karate')return 'Karate Parry: без обычного -3 против оружия; штраф encumbrance сохраняется. По одному парированию каждой рукой (B203).';
  return '';
 }
 export function unarmedHint(p){return p.pages.join('; ')+'. '+(p.id==='boots'?'Требуется тяжёлая обувь; когти не усиливают удар в обуви. ':p.part==='claws'?'Естественные когти: DX или Brawling; Karate и Boxing не применяются. ':'')+(p.penalty===-2?'При промахе ногой: DX против падения (B274). ':'')+(p.part==='teeth'?'Рот должен быть свободен; зубы не парируют. ':'')+'Готовность конечности и защита проверяются вручную (B369, B376). Захват: DX/Judo/Wrestling, без обычного Damage (B370). Wrestling DX+1/+2 даёт ST+1/+2 только для борьбы (B228); броски, удержание и удушение разрешаются вручную (B371, B403–404).';}

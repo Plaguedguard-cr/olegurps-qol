@@ -7,6 +7,7 @@ import { readActorStrength } from './strength-service.js';
 import { weaponStrengthExplanation } from './weapon-strength-display.js';
 import { StandaloneWeaponDraft, StandaloneWeaponService } from './standalone-weapon-service.js';
 import { resolveStandaloneSkill } from './standalone-skill-service.js';
+import { combatPerkLabel, weaponAdaptations } from './ma-combat-perks.js';
 
 const defaultRoute = skill => skill?.resolved && ['attribute-default','skill-default'].includes(skill.source) && Number.isFinite(skill.defaultPenalty)
   ? skill.sourceName + (skill.defaultPenalty > 0 ? '+' + skill.defaultPenalty : skill.defaultPenalty < 0 ? String(skill.defaultPenalty) : '') : '';
@@ -43,11 +44,11 @@ export function meleeCombatControls(actor, attack,{attacks=[]}={}) {
   const projected = context ? resolveMeleeProfile({ actor, attack, context }) : attack;
   const skills = [];
   if (context?.imported || !attack?.standaloneRef&&!attack?.equipmentRef?.virtual) skills.push({ value: '', label: 'Итог GGA' });
-  if (profile) for (const name of profile.primarySkills) {
+  if (profile) for (const name of [...new Set([...profile.primarySkills,...weaponAdaptations(actor,profile).map(perk=>perk.skill)])]) {
     const result = resolveMeleeProfile({ actor, attack, context, selection: { ...selection, skill: name } });
     const skill = result.meleeProfile?.skill;
     skills.push({ value: name, label: skillLabel(name,skill),
-      hint: result.skillDescription ?? result.readinessReason ?? name, disabled: !skill?.resolved });
+      hint: [result.skillDescription ?? result.readinessReason ?? name,...(skill?.perks??[]).map(perk=>combatPerkLabel(perk))].join(' · '), disabled: !skill?.resolved });
   }
   // Source-only records still use the catalog's permitted skills and its existing default resolver.
   const ref = attack?.standaloneRef;
@@ -109,7 +110,7 @@ export async function selectMeleeCombatMode(actor, attack) {
   const context = editorMeleeContext(actor, attack);
   if (!context || !attack?.standaloneRef || !context.saved.modeId || context.saved.modeId === context.source.modeId) return;
   const profile = context.source, selection = { ...context.saved, modeId: profile.modeId };
-  if (!profile.primarySkills.includes(selection.skill)) selection.skill = '';
+  if (!profile.primarySkills.includes(selection.skill)&&!weaponAdaptations(actor,profile).some(perk=>perk.skill===selection.skill)) selection.skill = '';
   const grip = selection.grip || 'published';
   if (!meleeMartialGrips(profile).includes(grip) && resolveMeleeHands(profile.stats.st, grip, readActorStrength(actor).kinds.st.effective, profile.hands, profile.requiresTwoHands).reason)
     selection.grip = 'published';

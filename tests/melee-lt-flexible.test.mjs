@@ -136,8 +136,8 @@ test('M2.4 Ready and defense hints match exact types, lengths and parts',async()
   assert.equal(hint.includes('Требуется Ready после атаки.'),LT_FLEXIBLE_PROFILES[row.modeId].lengthYards>=2);
   assert.ok(!hint.includes('Без дополнительного Ready')&&!hint.includes('Направление защиты учитывается вручную'));
  }
- const kama=await weapon(a,'wLTM24KusarigamaKamaSwing');assert.ok(!meleeCombatControls(a,kama).hint.includes('Parry −4'));
- const chain=readStandaloneAttack(a,kama.standaloneRef.weaponId,'w4pZRqUWQMcym0hgH');assert.ok(meleeCombatControls(a,chain).hint.includes('Parry −4'));
+ const kama=await weapon(a,'wLTM24KusarigamaKamaSwing');assert.ok(!meleeCombatControls(a,kama).hint.includes('Parry -4'));
+ const chain=readStandaloneAttack(a,kama.standaloneRef.weaponId,'w4pZRqUWQMcym0hgH');assert.ok(meleeCombatControls(a,chain).hint.includes('Parry -4'));
 });
 
 test('M2.4 exact projection preserves raw source, ranged modes, unrelated records and cardinality; idempotent',async()=>{
